@@ -1792,11 +1792,11 @@ test("village trees (P9, giant Mallorn style): root flare of bark at ground leve
   }
 });
 test("village bridges: the rail is one continuous stepped line (consecutive rail fences are face-adjacent, no diagonal-only joins)", () => {
-  const bridges = [...STRAIGHT, ...DOGS].map((spec) => { // the shapes the combos are built from (a bridge is never a piece of its own)
+  const bridges = STRAIGHT.map((spec) => { // the shapes the combos are built from (a bridge is never a piece of its own)
     const b = buildBridge(spec.length, spec);
     return { name: spec.name, blocks: [...b.blocks].map(([k, v]) => { const [x, y, z] = k.split(",").map(Number); return { x, y, z, name: v.name }; }) };
   });
-  assert.equal(bridges.length, 9);
+  assert.equal(bridges.length, 5);
   for (const p of bridges) {
     const rail = new Set(p.blocks.filter((b) => b.name === FENCE).map((b) => `${b.x},${b.y},${b.z}`));
     let sawStep = false;
@@ -1811,7 +1811,7 @@ test("village bridges: the rail is one continuous stepped line (consecutive rail
         assert.ok(joined, `${p.name}: diagonal-only rail join at ${k} -> ${[dx, dy, dz]}`);
       }
     }
-    if (/bridge_(9|11|13)$|dog/.test(p.name)) assert.ok(sawStep, `${p.name}: expected stepped rails`);
+    if (/bridge_(9|11|13)$/.test(p.name)) assert.ok(sawStep, `${p.name}: expected stepped rails`);
     const seen = new Set(); let comps = 0; // one rail line per side
     for (const k of rail) {
       if (seen.has(k)) continue;
@@ -1825,7 +1825,7 @@ test("village bridges: the rail is one continuous stepped line (consecutive rail
   }
 });
 import { bridgeShape } from "../lothlorien_bp/scripts/village_bridge.js";
-import { buildBridge, STRAIGHT, DOGS, rotateCell } from "../tools/village_combo.mjs";
+import { buildBridge, STRAIGHT, rotateCell } from "../tools/village_combo.mjs";
 test("bridgeShape: dog-legs shift one block sideways per block forward, walk stays 3 wide and connected, exits at the ends", () => {
   for (const [len, off] of [[11, 2], [11, -2], [13, 3], [13, -3], [9, 0], [9, 4]]) {
     const s = bridgeShape(len, off, len <= 7 ? 1 : 2), xs = (z) => s.walk.filter((c) => c[2] === z).map((c) => c[0]).sort((a, b) => a - b);

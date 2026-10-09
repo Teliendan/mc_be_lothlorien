@@ -43,8 +43,8 @@ export function rotateBlocks(blocks, k) {
 }
 
 // ---- bridge: the slab arch of scripts/village_bridge.js as a block map (deck layer y 0, z 0 = north end) ------------------
-export function buildBridge(length, { shift = 0, mirror = false, lanterns = false } = {}) {
-  const shape = bridgeShape(length, mirror ? -shift : shift, length <= 7 ? 1 : 2);
+export function buildBridge(length, { lanterns = false } = {}) {
+  const shape = bridgeShape(length, 0, length <= 7 ? 1 : 2);
   const blocks = new Map(), [W, sy] = shape.size;
   const KIND = { plank: planks, slab_bottom: () => slab("bottom"), slab_top: () => slab("top"), air: () => AIR };
   for (const c of shape.cells) blocks.set(key(c.x, c.y, c.z), KIND[c.kind]());
@@ -62,8 +62,6 @@ export function buildBridge(length, { shift = 0, mirror = false, lanterns = fals
 }
 
 export const STRAIGHT = [7, 9, 11, 13, 15].map((L) => ({ name: `bridge_${L}`, length: L, lanterns: L >= 9 }));
-export const DOGS = [["bridge_dog_11_l", 11, 2, false], ["bridge_dog_11_r", 11, 2, true], ["bridge_dog_13_l", 13, 3, false], ["bridge_dog_13_r", 13, 3, true]]
-  .map(([name, length, shift, mirror]) => ({ name, length, shift, mirror }));
 
 // ---- combo: bridge (north) + rotated node/tower (south) in one frame ------------------------------------------------------
 // tree = buildTree() result (not changed); entryIdx = which of its connectors (name village_deck, lower level) receives the bridge.

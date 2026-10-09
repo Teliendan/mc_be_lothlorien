@@ -1,4 +1,4 @@
-// Geometry for the Elven village jigsaw pieces (see temp/elven_village/PLAN.md, R3 spec and connector standard):
+// Geometry for the Elven village jigsaw pieces (connector standard and design: docs/design/lothlorien_jigsaw_settlement.md):
 // platform decks with rim connectors, the one-and-only rail block, slab arches, the slab spiral stair, crown pieces.
 // Pure: build_village.mjs writes the files.
 //

@@ -138,7 +138,6 @@ export function* scoreGen(at, cands, opts) {
   }
   return list.sort((a, b) => b.value - a.value);
 }
-export const scoreCandidates = (at, cands, opts) => drive(scoreGen(at, cands, opts));
 
 // overlay world: writes of chosen plans on top of the snapshot
 export function overlay(at) {

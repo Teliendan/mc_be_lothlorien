@@ -4,7 +4,7 @@
 //    lothlorien_bp/worldgen/template_pools/village_<pool>.json         (id lothlorien:village/<pool>)
 //    lothlorien_bp/worldgen/structures/elven_village.json              (no structure set: /place structure only)
 // Pieces: tree nodes = platform piece (rim connectors, trunk to deck + 5) + crown piece on an upward jigsaw; two-level
-// towers with a slab spiral stair; slab-arched bridges (straight and dog-leg); balcony / lookout / plug ends; central tree.
+// towers with a slab spiral stair; slab-arched straight bridges; balcony / lookout / plug ends; central tree.
 // Connector standard: one jigsaw per connection in the deck layer, on the outer face of the piece box, in the middle of a
 // 3-wide walk opening (deck under 5 cells, rails at +-2), name = target = lothlorien:village_deck (upper-level connectors of
 // towers: name village_deck_hi, parent role only), aligned joint, final state planks.
@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 import { toMcstructure } from "./build_structures.mjs";
 import { B } from "./flet_mallorn.mjs";
 import { checkWalk } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs"; // shared walkability checker (headroom, steps, edges, rings, rail links)
-import { makeCombo, buildBalcony, STRAIGHT, DOGS } from "./village_combo.mjs";
+import { makeCombo, buildBalcony, STRAIGHT } from "./village_combo.mjs";
 import { sideTarget } from "../lothlorien_bp/scripts/village_loop.js"; // the runtime's own rim test decides where a side marker may stand
 import {
   ROOTS, FLOOR_H, LEVEL_H, FACING, SHAPES, key, AIR, planks, slab, Deck, buildTree, buildCrown, deckJigsaw, lantern, lonelyRail,
@@ -213,39 +213,30 @@ const NODES = {
 }
 
 // --- combo pieces: bridge + destination tree in one piece ------------------------------------------------------------------
-// Every (node, entry connector) pair gets a straight bridge (lengths cycle 7..15) and every second pair also a dog-leg
-// (cycle 11l, 11r, 13l, 13r); the entry connector's face is the bridge side, the other connectors stay exits.
-// Owner 2026-10-08: dog-legs inside combos are "ugly and unnecessary, it could have been straight" (the destination tree
-// moves with the bridge anyway). Combos use straight bridges only; the diagonal stays for the loop-closer, which must
-// reach exits that are offset sideways.
-const DOG_COMBOS = false;
+// Every (node, entry connector) pair gets one straight bridge (lengths cycle 7..15); the entry connector's face is the bridge side,
+// the other connectors stay exits. Owner 2026-10-08: dog-legs inside combos are "ugly and unnecessary, it could have been straight",
+// so combos use straight bridges only (the diagonal exists only in the runtime planner's bridges).
 const comboList = [];
 {
-  let pair = 0;
-  const next = { straight: 0, dog: 0 }; // each bridge variant is used in turn
+  let next = 0; // each bridge length is used in turn
   for (const [node, tree] of Object.entries(NODES)) {
     for (let ei = 0; ei < tree.connectors.length; ei++) {
       const facing = tree.connectors[ei].facing;
       if (makeCombo(tree, ei, STRAIGHT[0], POOL("combos")).why?.match(/^(entry|another)/)) continue; // no bridge side on this connector
-      const want = [[STRAIGHT, "straight"]];
-      if (DOG_COMBOS && pair % 2 === 0) want.push([DOGS, "dog"]);
-      for (const [list, kind] of want) {
-        for (let t = 0; t < list.length; t++) {
-          const spec = list[(next[kind] + t) % list.length];
-          const cb = makeCombo(tree, ei, spec, POOL("combos"));
-          if (cb.why) continue; // this bridge sticks out of this node's width: next one
-          const name = `combo_${node}_${facing}_${spec.name}`;
-          const nodeWardens = wardenCells(node, tree.blocks, WARDENS[node] ?? 0, 5).map(cb.wardenMap);
-          writePiece(name, cb.blocks, cb.size, cb.origin, cb.connectors, {
-            markers: [[cb.bridgeMid[0], cb.bridgeMid[1]], [cb.axis[0] + 0.5, cb.axis[1] + 0.5]], wardens: nodeWardens,
-            loopMarkers: sideMarkerCells(cb.blocks, cb.origin, (x, z) => z >= cb.bridgeLen), // the node's rims; the bridge half has none
-          });
-          comboList.push({ name, kind, node });
-          next[kind] += t + 1;
-          break;
-        }
+      for (let t = 0; t < STRAIGHT.length; t++) {
+        const spec = STRAIGHT[(next + t) % STRAIGHT.length];
+        const cb = makeCombo(tree, ei, spec, POOL("combos"));
+        if (cb.why) continue; // this bridge sticks out of this node's width: next one
+        const name = `combo_${node}_${facing}_${spec.name}`;
+        const nodeWardens = wardenCells(node, tree.blocks, WARDENS[node] ?? 0, 5).map(cb.wardenMap);
+        writePiece(name, cb.blocks, cb.size, cb.origin, cb.connectors, {
+          markers: [[cb.bridgeMid[0], cb.bridgeMid[1]], [cb.axis[0] + 0.5, cb.axis[1] + 0.5]], wardens: nodeWardens,
+          loopMarkers: sideMarkerCells(cb.blocks, cb.origin, (x, z) => z >= cb.bridgeLen), // the node's rims; the bridge half has none
+        });
+        comboList.push({ name, node });
+        next += t + 1;
+        break;
       }
-      pair++;
     }
   }
 }
@@ -304,7 +295,7 @@ const pool = (name, elements, fallback) => {
 };
 pool("start", [["central_mallorn_01", 1]]);
 // a platform exit gets a combo (bridge + tree) or, when none fits, a railing / braced balcony / lookout; never a bridge alone
-pool("combos", comboList.map((c) => [c.name, (c.kind === "dog" ? 2 : 3) + (c.node.startsWith("tower_") ? 2 : 0)]) // towers weigh more: most villages should climb to a second level
+pool("combos", comboList.map((c) => [c.name, 3 + (c.node.startsWith("tower_") ? 2 : 0)]) // towers weigh more: most villages should climb to a second level
     .concat(Object.entries(EARLY_END)), POOL("exits"));
 pool("exits", [["railing_end", EXIT_WEIGHTS.railing], ["balcony_braced", EXIT_WEIGHTS.balcony], ["lookout_01", EXIT_WEIGHTS.lookout]], POOL("plugs"));
 pool("plugs", [["railing_end", 1]]);
