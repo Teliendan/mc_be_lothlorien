@@ -12,7 +12,8 @@
       "minecraft:tags": [
         "minecraft:is_hoe_item_destructible",
         "leaves",
-        "minecraft:leaves"
+        "minecraft:leaves",
+        "minecraft:is_shears_item_destructible"
       ],
       "minecraft:destructible_by_mining": {
         "seconds_to_destroy": 0.2

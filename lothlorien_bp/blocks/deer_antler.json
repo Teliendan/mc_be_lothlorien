@@ -17,6 +17,8 @@
       }
     },
     "components": {
+      "minecraft:tags": ["minecraft:is_pickaxe_item_destructible"],
+      "minecraft:flammable": false,
       "minecraft:collision_box": false,
       "minecraft:light_dampening": 0,
       "minecraft:selection_box": {
@@ -32,10 +34,10 @@
         ]
       },
       "minecraft:destructible_by_mining": {
-        "seconds_to_destroy": 0.3
+        "seconds_to_destroy": 2
       },
       "minecraft:destructible_by_explosion": {
-        "explosion_resistance": 0
+        "explosion_resistance": 2
       },
       "minecraft:sound": {
         "sound": "bone_block"

@@ -14,19 +14,14 @@
       }
     },
     "components": {
-      "minecraft:tags": [
-        "minecraft:is_axe_item_destructible"
-      ],
+      "minecraft:tags": [],
       "minecraft:destructible_by_mining": {
         "seconds_to_destroy": 0
       },
       "minecraft:destructible_by_explosion": {
         "explosion_resistance": 0
       },
-      "minecraft:flammable": {
-        "catch_chance_modifier": 60,
-        "destroy_chance_modifier": 100
-      },
+      "minecraft:flammable": false,
       "minecraft:sound": {
         "sound": "grass"
       },

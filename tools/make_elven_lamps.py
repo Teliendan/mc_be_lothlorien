@@ -669,13 +669,18 @@ def write_texture_set(name):
 
 
 def lamp_block(ident, light, geometry, placement_faces, boxes, extra_perms=None, map_color="#e8c050",
-               seconds=0.8, tile_glow=None, sound="wood"):
+               seconds=None, tile_glow=None, sound="wood"):
     mats = {"*": {"texture": f"{NS}:elven_lamp", "render_method": "opaque"}}
     if tile_glow:
         mats["glow"] = {"texture": f"{NS}:{tile_glow}", "render_method": "opaque", "ambient_occlusion": 0.0}
+    # Glass jar versus lantern frame; retain the shared material policy on regeneration.
+    glass = ident == "firefly_jar"
+    strength = 0.3 if glass else 3.5
     comps = {
-        "minecraft:destructible_by_mining": {"seconds_to_destroy": seconds},
-        "minecraft:destructible_by_explosion": {"explosion_resistance": 1},
+        "minecraft:tags": [] if glass else ["minecraft:is_pickaxe_item_destructible"],
+        "minecraft:destructible_by_mining": {"seconds_to_destroy": strength if seconds is None else seconds},
+        "minecraft:destructible_by_explosion": {"explosion_resistance": strength},
+        "minecraft:flammable": False,
         "minecraft:sound": {"sound": sound},
         "minecraft:light_emission": light,
         "minecraft:light_dampening": 0,
@@ -817,7 +822,7 @@ def main():
     dump(BP / "blocks/elven_chandelier.json", lamp_block(
         "elven_chandelier", 15, G + "elven_chandelier", ["down"],
         {"minecraft:collision_box": False, "minecraft:selection_box": box((-7, 0, -7), (14, 16, 14))},
-        tile_glow="elven_lantern_glow", seconds=1.0))
+        tile_glow="elven_lantern_glow"))
 
     # ---- icons
     items = RP / "textures/items"

@@ -11,6 +11,7 @@
       }
     },
     "components": {
+      "minecraft:tags": ["minecraft:is_shears_item_destructible"],
       "minecraft:collision_box": false,
       "minecraft:light_dampening": 0,
       "minecraft:selection_box": {
@@ -33,7 +34,8 @@
       },
       "minecraft:flammable": {
         "catch_chance_modifier": 60,
-        "destroy_chance_modifier": 100
+        "destroy_chance_modifier": 100,
+        "lava_flammable": "never"
       },
       "minecraft:sound": {
         "sound": "grass"

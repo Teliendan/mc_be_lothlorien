@@ -5,8 +5,10 @@
       "identifier": "lothlorien:star_canopy"
     },
     "components": {
+      "minecraft:tags": ["minecraft:is_pickaxe_item_destructible"],
+      "minecraft:flammable": false,
       "minecraft:destructible_by_mining": {
-        "seconds_to_destroy": 1.5
+        "seconds_to_destroy": 3.5
       },
       "minecraft:destructible_by_explosion": {
         "explosion_resistance": 6

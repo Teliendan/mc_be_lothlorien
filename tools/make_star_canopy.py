@@ -81,8 +81,10 @@ def main():
     dump(BP / "blocks/star_canopy.json", {"format_version": "1.26.50", "minecraft:block": {
         "description": {"identifier": f"{NS}:star_canopy"},
         "components": {
-            "minecraft:destructible_by_mining": {"seconds_to_destroy": 1.5},
+            "minecraft:tags": ["minecraft:is_pickaxe_item_destructible"],
+            "minecraft:destructible_by_mining": {"seconds_to_destroy": 3.5},
             "minecraft:destructible_by_explosion": {"explosion_resistance": 6},
+            "minecraft:flammable": False,
             "minecraft:sound": {"sound": "stone"},
             "minecraft:light_emission": 6,
             "minecraft:map_color": "#161e48",

@@ -83,7 +83,7 @@ def block():
             "minecraft:collision_box": False,
             "minecraft:light_dampening": 0,
             "minecraft:selection_box": {"origin": [-5, 2, -5], "size": [10, 14, 10]},
-            "minecraft:destructible_by_mining": {"seconds_to_destroy": 0.1},
+            "minecraft:destructible_by_mining": {"seconds_to_destroy": 0},
             "minecraft:destructible_by_explosion": {"explosion_resistance": 0},
             "minecraft:flammable": {"catch_chance_modifier": 60, "destroy_chance_modifier": 100},
             "minecraft:sound": {"sound": "grass"},

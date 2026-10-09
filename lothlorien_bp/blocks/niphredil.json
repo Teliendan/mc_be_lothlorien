@@ -33,7 +33,8 @@
       },
       "minecraft:flammable": {
         "catch_chance_modifier": 60,
-        "destroy_chance_modifier": 100
+        "destroy_chance_modifier": 100,
+        "lava_flammable": "never"
       },
       "minecraft:sound": {
         "sound": "grass"

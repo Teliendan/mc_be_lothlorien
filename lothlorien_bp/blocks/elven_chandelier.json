@@ -12,11 +12,13 @@
       }
     },
     "components": {
+      "minecraft:tags": ["minecraft:is_pickaxe_item_destructible"],
+      "minecraft:flammable": false,
       "minecraft:destructible_by_mining": {
-        "seconds_to_destroy": 1.0
+        "seconds_to_destroy": 3.5
       },
       "minecraft:destructible_by_explosion": {
-        "explosion_resistance": 1
+        "explosion_resistance": 3.5
       },
       "minecraft:sound": {
         "sound": "wood"

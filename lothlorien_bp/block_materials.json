@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "blocks": {
+    "lothlorien:athelas": {
+      "profile": "flower",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:deer_antler": {
+      "profile": "bone",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:elanor": {
+      "profile": "flower",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:elven_chandelier": {
+      "profile": "lantern",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:elven_lantern": {
+      "profile": "lantern",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:elven_lantern_heartwood": {
+      "profile": "lantern",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:elven_rope": {
+      "profile": "ladder",
+      "reason": "Climbable rope uses ladder strength/axe; organic fibres intentionally burn unlike a vanilla ladder.",
+      "overrides": {
+        "minecraft:flammable": {
+          "catch_chance_modifier": 60,
+          "destroy_chance_modifier": 100,
+          "lava_flammable": "never"
+        }
+      },
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:elven_rope_hanging": {
+      "profile": "ladder",
+      "reason": "Climbable rope uses ladder strength/axe; organic fibres intentionally burn unlike a vanilla ladder.",
+      "overrides": {
+        "minecraft:flammable": {
+          "catch_chance_modifier": 60,
+          "destroy_chance_modifier": 100,
+          "lava_flammable": "never"
+        }
+      },
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:firefly_jar": {
+      "profile": "glass",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:golden_fern": {
+      "profile": "fern",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:great_mallorn_sprout": {
+      "profile": "sapling",
+      "reason": "Preserve protected scripted great-tree growth marker.",
+      "overrides": {
+        "minecraft:destructible_by_explosion": {
+          "explosion_resistance": 1200
+        }
+      },
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_blossom": {
+      "profile": "ground_cover",
+      "reason": "Segmented Mallorn cover uses petal mining strength but deliberately retains dry organic cover fire behavior.",
+      "overrides": {
+        "minecraft:flammable": {
+          "catch_chance_modifier": 60,
+          "destroy_chance_modifier": 100,
+          "lava_flammable": "never"
+        }
+      },
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_button": {
+      "profile": "wood_control",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_door": {
+      "profile": "wood_door",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_double_slab": {
+      "profile": "wood_planks",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_fence": {
+      "profile": "wood_planks",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_fence_gate": {
+      "profile": "wood_planks",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_golden_leaves": {
+      "profile": "leaves",
+      "harvest": "Normal leaves: shears collect leaves; existing random stick/acorn pools remain, Silk Touch not yet implemented. Golden decorative leaves intentionally always self-drop; no decay."
+    },
+    "lothlorien:mallorn_heartwood_button": {
+      "profile": "wood_control",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_heartwood_door": {
+      "profile": "wood_door",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_heartwood_double_slab": {
+      "profile": "wood_planks",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_heartwood_fence": {
+      "profile": "wood_planks",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_heartwood_fence_gate": {
+      "profile": "wood_planks",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_heartwood_planks": {
+      "profile": "wood_planks",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_heartwood_pressure_plate": {
+      "profile": "wood_control",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_heartwood_slab": {
+      "profile": "wood_planks",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_heartwood_stairs": {
+      "profile": "wood_planks",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_heartwood_trapdoor": {
+      "profile": "wood_door",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_leaf_carpet": {
+      "profile": "ground_cover",
+      "reason": "Segmented Mallorn cover uses petal mining strength but deliberately retains dry organic cover fire behavior.",
+      "overrides": {
+        "minecraft:flammable": {
+          "catch_chance_modifier": 60,
+          "destroy_chance_modifier": 100,
+          "lava_flammable": "never"
+        }
+      },
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_leaves": {
+      "profile": "leaves",
+      "harvest": "Normal leaves: shears collect leaves; existing random stick/acorn pools remain, Silk Touch not yet implemented. Golden decorative leaves intentionally always self-drop; no decay."
+    },
+    "lothlorien:mallorn_log": {
+      "profile": "wood_log",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_planks": {
+      "profile": "wood_planks",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_pressure_plate": {
+      "profile": "wood_control",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_sapling": {
+      "profile": "sapling",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_slab": {
+      "profile": "wood_planks",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_stairs": {
+      "profile": "wood_planks",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_stripped_log": {
+      "profile": "wood_log",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_stripped_wood": {
+      "profile": "wood_log",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_trapdoor": {
+      "profile": "wood_door",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:mallorn_wood": {
+      "profile": "wood_log",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:nectar_bloom": {
+      "profile": "flower",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:niphredil": {
+      "profile": "flower",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:star_canopy": {
+      "profile": "stone_tiles",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    },
+    "lothlorien:western_corn": {
+      "profile": "crop",
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+    }
+  }
+}

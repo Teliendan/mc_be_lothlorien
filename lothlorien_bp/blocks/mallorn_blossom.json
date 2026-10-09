@@ -46,14 +46,15 @@
         ]
       },
       "minecraft:destructible_by_mining": {
-        "seconds_to_destroy": 0.05
+        "seconds_to_destroy": 0
       },
       "minecraft:destructible_by_explosion": {
         "explosion_resistance": 0
       },
       "minecraft:flammable": {
         "catch_chance_modifier": 60,
-        "destroy_chance_modifier": 100
+        "destroy_chance_modifier": 100,
+        "lava_flammable": "never"
       },
       "minecraft:sound": {
         "sound": "grass"

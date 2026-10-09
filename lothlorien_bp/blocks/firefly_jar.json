@@ -12,11 +12,12 @@
       }
     },
     "components": {
+      "minecraft:flammable": false,
       "minecraft:destructible_by_mining": {
-        "seconds_to_destroy": 0.8
+        "seconds_to_destroy": 0.3
       },
       "minecraft:destructible_by_explosion": {
-        "explosion_resistance": 1
+        "explosion_resistance": 0.3
       },
       "minecraft:sound": {
         "sound": "glass"
