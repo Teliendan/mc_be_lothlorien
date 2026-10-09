@@ -393,3 +393,9 @@ lothlorien.message.dash.started=[lothlorien] detektor zrychlení: sleduji moby d
 lothlorien.message.dash.row=%s: %s mobů, %s výkyvů rychlosti, maximum %s bloků za sekundu
 ## Context: Reports that the detector window ended without any speed spike, or with no mobs in range.
 lothlorien.message.dash.none=[lothlorien] detektor zrychlení: žádný výkyv rychlosti (podrobnosti jsou v logu obsahu).
+## Context: Developer diagnostic: /scriptevent lothlorien:village plan found no loop marker within 160 blocks, so there is nothing to plan.
+lothlorien.message.village.plan.none=[lothlorien] plánovač vesnice: v okolí nejsou žádné značky vesnice (vesnice už je naplánovaná, nebo žádná není načtená).
+## Context: Developer diagnostic: the village planner finished a run started by /scriptevent lothlorien:village plan.
+lothlorien.message.village.plan.done=[lothlorien] plánovač vesnice: postaveno propojení: %s (%s).
+## Context: Developer diagnostic: the village planner run started by /scriptevent lothlorien:village plan failed, for example the ticking area quota was too small or loading timed out.
+lothlorien.message.village.plan.failed=[lothlorien] plánovač vesnice: tuto vesnici se nepodařilo naplánovat (viz obsahový log).

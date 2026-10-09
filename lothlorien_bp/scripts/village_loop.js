@@ -1,9 +1,10 @@
-// Loop closer rules for the Elven village (round 4, P7). Pure JS (no fs, no Node or Bedrock imports): scripts/loop_marker.js runs it
-// in game, tools/village_sim.mjs runs the very same functions on the simulated village, tests/run.mjs checks them with fixtures.
+// Loop plan builders for the Elven village (round 4, P7; the per-marker closer was replaced by the village planner on 2026-10-09). Pure JS (no fs,
+// no Node or Bedrock imports): scripts/village_planner.js chooses the links, scripts/loop_marker.js loads the village and writes them, tools/village_sim.mjs
+// runs the very same functions on the simulated village, tests/run.mjs checks them with fixtures.
 //
 // A jigsaw village is a tree, so exits that found no room end in a `railing_end` piece (5 planks + 5 fences, carrying one invisible
-// `lothlorien:loop_marker`). When two such exits face each other on the same deck height, the marker of the one with the smaller
-// (x, z) builds an arched slab bridge between them (scripts/village_bridge.js) and the other stands down.
+// `lothlorien:loop_marker`). The planner joins two such exits that face each other on the same deck height with an arched slab bridge
+// (scripts/village_bridge.js), and also uses the plaza, L-join and side joins below.
 //
 // P7b: an exit may also join the SIDE of any platform (node / tower deck at either level, central deck, braced balcony, lookout): a straight
 // run of 5 rail cells perpendicular to the bridge, deck under them, and two rows of open deck behind (see sideTarget).
@@ -21,7 +22,7 @@ export const PLANKS = "lothlorien:mallorn_planks", SLAB = "lothlorien:mallorn_sl
 // Round 2 (owner 2026-10-09): minDist 6 -> 2 with a flat deck for length <= flatMax (F2), maxOffset 5 -> 8 (F3), sideSearch = how far along a rim a
 // side marker looks for its 5-run (F1), clutterMargin = no foreign deck within that many cells of a NEW kind of join. legacyMinDist / legacyMaxOffset
 // are the old limits: a join inside them is the old kind (no clutter test). LOOP.corner = F5 L-join limits (legs of `minLeg`..maxDist blocks).
-export const LOOP = { minDist: 2, maxDist: 17, maxSpan: 30, maxOffset: 8, maxSpanOffset: 8, landing: 5, pierMaxDepth: 48, maxTries: 6, radius: 36, lightTarget: 8, lanternLight: 14,
+export const LOOP = { minDist: 2, maxDist: 17, maxSpan: 30, maxOffset: 8, maxSpanOffset: 8, landing: 5, pierMaxDepth: 48, lightTarget: 8, lanternLight: 14,
   flatMax: 5, sideSearch: 6, sideStarts: 8, clutterMargin: 2, legacyMinDist: 6, legacyMaxOffset: 5, minLeg: 3 };
 // F4 plaza: filled deck over the bounding rectangle of two facing exits that no bridge can join (dist 1..maxDist, |lat| <= maxLat), fill cells at most
 // `cantilever` (Chebyshev) from an existing deck cell, a log pier under the patch when a fill cell is more than `needPier` from the old deck.
@@ -58,14 +59,11 @@ export function exitAt(at, x, y, z) {
   return null;
 }
 
-const before = (a, b) => a.x < b.x || (a.x === b.x && a.z < b.z);
-const same = (a, b) => a.x === b.x && a.y === b.y && a.z === b.z;
-
 // Reach of a span of `dist` blocks: sideways shift allowed (a direct bridge: <= length - 3; a span with a landing: maxSpanOffset)
-const reach = (dist) => (dist > LOOP.maxDist ? LOOP.maxSpanOffset : Math.min(LOOP.maxOffset, dist + 1 - 3));
+export const reach = (dist) => (dist > LOOP.maxDist ? LOOP.maxSpanOffset : Math.min(LOOP.maxOffset, dist + 1 - 3));
 // Every cell ahead of A within reach that `accept(x, z)` takes, nearest first (a sideways shift counts 3). offset is the shift along
 // ex = (dir.z, -dir.x), the "east" of a bridge drawn by bridgeShape heading south. -> [{ x, z, dist, length, offset, score }]
-function scanAhead(A, accept) {
+export function scanAhead(A, accept) {
   const d = A.dir, ex = [d[1], -d[0]], out = [];
   for (let dist = LOOP.minDist; dist <= LOOP.maxSpan; dist++) {
     const maxOff = reach(dist);
@@ -75,17 +73,6 @@ function scanAhead(A, accept) {
     }
   }
   return out.sort((a, b) => a.score - b.score || a.dist - b.dist);
-}
-
-// Best exit facing `A` (opposite direction, same deck height, dist minDist..maxSpan ahead, sideways within reach): nearest first.
-// -> { B, length, dist, offset, score } or null.
-export function findPartner(at, A) {
-  const d = A.dir;
-  for (const c of scanAhead(A, (x, z) => at(x, A.y + 1, z) === FENCE)) {
-    const B = exitAt(at, c.x, A.y, c.z);
-    if (B && B.dir[0] === -d[0] && B.dir[1] === -d[1]) return { B, length: c.length, dist: c.dist, offset: c.offset, score: c.score };
-  }
-  return null;
 }
 
 // ---- the bridge in world coordinates ---------------------------------------------------------------------------------------------
@@ -226,15 +213,6 @@ export function sideTarget(at, x, y, z, d) {
   }
   return true;
 }
-// Platform sides ahead of A (same reach as findPartner), skipping railing exits, nearest first.
-// -> [{ B: {x,y,z}, length, dist, offset, score }]; findSide = the first
-export function findSides(at, A) {
-  const d = A.dir;
-  return scanAhead(A, (x, z) => at(x, A.y + 1, z) === FENCE && !exitAt(at, x, A.y, z) && sideTarget(at, x, A.y, z, d))
-    .map((c) => ({ B: { x: c.x, y: A.y, z: c.z }, length: c.length, dist: c.dist, offset: c.offset, score: c.score }));
-}
-export const findSide = (at, A) => findSides(at, A)[0] ?? null;
-
 // ---- F1: a side as the START of a bridge ---------------------------------------------------------------------------------------------
 // A side marker sits on a rim deck cell of a platform. -> the rim cell (within LOOP.sideSearch cells along the rim, nearest first) where
 // sideTarget holds for a bridge heading INTO the platform, as an exit-like start { x, y, z, dir (outward), side: true }, or null.
@@ -250,19 +228,6 @@ export function sideStarts(at, x, y, z) {
   }
   return found.sort((p, q) => p.score - q.score).slice(0, LOOP.sideStarts).map(({ score, ...A }) => A);
 }
-export const sideAt = (at, x, y, z) => sideStarts(at, x, y, z)[0] ?? null;
-// A side marker: try the rim cells near it one after the other (a foreign bridge beside the first may reject it by the clutter rule, the next
-// start further along the rim may be free). -> the first decide() result that builds, else the first one's answer.
-export function decideSide(at, x, y, z, opts = {}) {
-  let first = null;
-  for (const S of sideStarts(at, x, y, z)) {
-    const d = decide(at, S, { ...opts, sideStart: true });
-    if (d.action === "build") return d;
-    first ??= d;
-  }
-  return first ?? { action: "none", reason: "no rim" };
-}
-
 // ---- clutter rule (owner 2026-10-09): a NEW kind of join is refused when a foreign deck / rail lies within clutterMargin cells of its footprint ----
 // Footprint = the plan's cells on rows 1..length-2; the three rows at each end are skipped (they belong to the platforms being joined).
 export function clutter(at, plan, margin = LOOP.clutterMargin) {
@@ -280,7 +245,7 @@ export function clutter(at, plan, margin = LOOP.clutterMargin) {
   }
   return false;
 }
-const isNewKind = (sideStart, dist, offset) => sideStart || dist < LOOP.legacyMinDist || Math.abs(offset) > LOOP.legacyMaxOffset;
+export const isNewKind = (sideStart, dist, offset) => sideStart || dist < LOOP.legacyMinDist || Math.abs(offset) > LOOP.legacyMaxOffset;
 
 // ---- F4 plaza ------------------------------------------------------------------------------------------------------------------------------
 const isDeck = (n) => n === PLANKS || n === SLAB;
@@ -496,72 +461,6 @@ export function findLs(at, A) {
     }
   }
   return out.sort((a, b) => a.score - b.score || a.s - b.s);
-}
-
-// What a marker at start A does: build / standDown / none (+ reason). A is an exit (railing_end, balcony, lookout) or, with opts.sideStart, a platform
-// side (sideAt). Order (owner 2026-10-09): exit-exit bridge, exit-side bridge, side-side bridge (sideStart), plaza, L-join. Exit-exit: both exits must
-// pick each other, the smaller (x, z) builds (opts.hasMarker(B) = false: the partner has no marker, e.g. a balcony of an older world, so A builds).
-// A span with a landing also needs a pier down to the ground (planPier); a corridor, pier or clutter conflict moves on to the next target.
-// Joins outside the old limits (dist < 6, sideways > 5, any side start) must also pass the clutter rule; plaza and L have their own checks
-// (plaza: every cell of the patch free; L: legs and landing free, the legs pass the clutter rule).
-export function decide(at, A, opts = {}) {
-  const hasMarker = opts.hasMarker ?? (() => true), sideStart = !!opts.sideStart;
-  const p = sideStart ? null : findPartner(at, A);
-  let why = "no partner", blockedList = null, partner = null;
-  const tryPlan = (B, dist, offset, side) => {
-    const plan = planSpan(A, B, dist, offset, side, sideStart), blocked = blockedCells(at, plan);
-    if (blocked.length) return { blocked };
-    if (isNewKind(sideStart, dist, offset) && clutter(at, plan)) return { error: "clutter" };
-    if (plan.landing) {
-      const pier = planPier(at, plan.landing);
-      if (pier.error) return { error: pier.error };
-      plan.pier = pier.blocks;
-    }
-    return { plan };
-  };
-  if (p) {
-    const q = findPartner(at, p.B);
-    if (!q || !same(q.B, A)) why = "not mutual";
-    else if (!before(A, p.B) && hasMarker(p.B)) return { action: "standDown", partner: p.B };
-    else {
-      const r = tryPlan(p.B, p.dist, p.offset, false);
-      if (r.plan) return { action: "build", kind: "exit", partner: p.B, plan: r.plan };
-      why = r.error ?? "blocked"; blockedList = r.blocked ?? null; partner = p.B;
-    }
-  }
-  let sideFail = null;
-  for (const sd of findSides(at, A)) {
-    const r = tryPlan(sd.B, sd.dist, sd.offset, true);
-    if (r.plan) return { action: "build", kind: sideStart ? "sideside" : "side", partner: sd.B, plan: r.plan };
-    sideFail ??= { ...r, partner: sd.B };
-  }
-  let extraFail = null;
-  if (!sideStart) {
-    for (const c of findPlazaPartners(at, A)) { // F4: two facing exits no bridge can join
-      const qs = findPlazaPartners(at, c.B);
-      if (!qs.length || !same(qs[0].B, A)) continue;
-      if (!before(A, c.B) && hasMarker(c.B)) return { action: "standDown", partner: c.B };
-      const plan = planPlaza(at, A, c.B);
-      if (plan.error) { extraFail ??= { error: plan.error, blocked: plan.blocked, partner: c.B }; continue; }
-      return { action: "build", kind: "plaza", partner: c.B, plan };
-    }
-    for (const c of findLs(at, A)) { // F5: exits at right angles, a landing at the crossing
-      const qs = findLs(at, c.B);
-      if (!qs.length || !same(qs[0].B, A)) continue;
-      if (!before(A, c.B) && hasMarker(c.B)) return { action: "standDown", partner: c.B };
-      const plan = planL(A, c.B, c.s, c.u), blocked = blockedCells(at, plan);
-      if (blocked.length) { extraFail ??= { blocked, partner: c.B }; continue; }
-      if (clutter(at, plan)) { extraFail ??= { error: "clutter", partner: c.B }; continue; }
-      const pier = planPier(at, plan.landing);
-      if (pier.error) { extraFail ??= { error: pier.error, partner: c.B }; continue; }
-      plan.pier = pier.blocks;
-      return { action: "build", kind: "L", partner: c.B, plan };
-    }
-  }
-  const g = sideFail ?? (blockedList ? { blocked: blockedList, partner } : why !== "no partner" && why !== "not mutual" ? { error: why, partner } : null) ?? extraFail;
-  if (g?.blocked) return { action: "none", reason: "blocked", blocked: g.blocked, partner: g.partner };
-  if (g?.error) return { action: "none", reason: g.error, partner: g.partner };
-  return { action: "none", reason: why };
 }
 
 // ---- lanterns: the generator's greedy (tools/village_mallorn.mjs addLanterns) on the bridge alone ---------------------------------

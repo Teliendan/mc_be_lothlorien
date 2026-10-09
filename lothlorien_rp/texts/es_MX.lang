@@ -393,3 +393,9 @@ lothlorien.message.dash.started=[lothlorien] detector de aceleraciones: vigiland
 lothlorien.message.dash.row=%s: %s mobs, %s picos de velocidad, máximo %s bloques por segundo
 ## Context: Reports that the detector window ended without any speed spike, or with no mobs in range.
 lothlorien.message.dash.none=[lothlorien] detector de aceleraciones: no se encontraron picos de velocidad (los detalles están en el registro de contenido).
+## Context: Developer diagnostic: /scriptevent lothlorien:village plan found no loop marker within 160 blocks, so there is nothing to plan.
+lothlorien.message.village.plan.none=[lothlorien] planificador de aldea: no hay marcadores de aldea cerca (la aldea ya se planificó o no hay ninguna cargada).
+## Context: Developer diagnostic: the village planner finished a run started by /scriptevent lothlorien:village plan.
+lothlorien.message.village.plan.done=[lothlorien] planificador de aldea: enlaces construidos: %s (%s).
+## Context: Developer diagnostic: the village planner run started by /scriptevent lothlorien:village plan failed, for example the ticking area quota was too small or loading timed out.
+lothlorien.message.village.plan.failed=[lothlorien] planificador de aldea: no se pudo planificar esta aldea (consulta el registro de contenido).

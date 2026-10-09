@@ -11174,6 +11174,191 @@
               "status": "ai-draft"
             }
           }
+        },
+        "lothlorien.message.village.plan.none": {
+          "source": "[lothlorien] village planner: no village markers near you (the village was already planned, or none is loaded).",
+          "context": {
+            "meaning": "Developer diagnostic: /scriptevent lothlorien:village plan found no loop marker within 160 blocks, so there is nothing to plan.",
+            "location": "lothlorien_rp: chat",
+            "trigger": "Player runs the village planner debug command and no marker is near.",
+            "tone": "Technical and concise",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loop_marker.js",
+              "lothlorien_bp/scripts/main.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "[lothlorien] plánovač vesnice: v okolí nejsou žádné značky vesnice (vesnice už je naplánovaná, nebo žádná není načtená).",
+              "based_on": "eef69ec77fdfa637376f5ca8e5993d07b829071a7973b2a074f97a89d648bcae",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "[lothlorien] planificador de aldea: no hay marcadores de aldea cerca (la aldea ya se planificó o no hay ninguna cargada).",
+              "based_on": "eef69ec77fdfa637376f5ca8e5993d07b829071a7973b2a074f97a89d648bcae",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "[lothlorien] planificador de aldea: no hay marcadores de aldea cerca (la aldea ya se planificó o no hay ninguna cargada).",
+              "based_on": "eef69ec77fdfa637376f5ca8e5993d07b829071a7973b2a074f97a89d648bcae",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "[lothlorien] planeador da aldeia: não há marcadores de aldeia por perto (a aldeia já foi planeada ou nenhuma está carregada).",
+              "based_on": "eef69ec77fdfa637376f5ca8e5993d07b829071a7973b2a074f97a89d648bcae",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "[lothlorien] planejador da vila: não há marcadores de vila por perto (a vila já foi planejada ou nenhuma está carregada).",
+              "based_on": "eef69ec77fdfa637376f5ca8e5993d07b829071a7973b2a074f97a89d648bcae",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "[lothlorien] Dorfplaner: keine Dorfmarker in der Nähe (das Dorf wurde schon geplant, oder es ist keines geladen).",
+              "based_on": "eef69ec77fdfa637376f5ca8e5993d07b829071a7973b2a074f97a89d648bcae",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "[lothlorien] planificateur de village : aucun marqueur de village à proximité (le village est déjà planifié ou aucun n’est chargé).",
+              "based_on": "eef69ec77fdfa637376f5ca8e5993d07b829071a7973b2a074f97a89d648bcae",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "[lothlorien] planer wioski: w pobliżu nie ma znaczników wioski (wioska została już zaplanowana albo żadna nie jest załadowana).",
+              "based_on": "eef69ec77fdfa637376f5ca8e5993d07b829071a7973b2a074f97a89d648bcae",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.village.plan.done": {
+          "source": "[lothlorien] village planner: %s link(s) built (%s).",
+          "context": {
+            "meaning": "Developer diagnostic: the village planner finished a run started by /scriptevent lothlorien:village plan.",
+            "location": "lothlorien_rp: chat",
+            "trigger": "Player runs the village planner debug command and the run completes.",
+            "tone": "Technical and concise",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loop_marker.js",
+              "lothlorien_bp/scripts/main.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "count",
+              "type": "number",
+              "meaning": "count: number of extra bridge links the planner built"
+            },
+            {
+              "name": "kinds",
+              "type": "string",
+              "meaning": "kinds: comma separated technical join kinds (exit, side, sideside, plaza, L) or a dash when none"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "[lothlorien] plánovač vesnice: postaveno propojení: %s (%s).",
+              "based_on": "01ac888aeeec03e0e5f414ea3443dff21caf6264cacc95e1a3c9c400473217b8",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "[lothlorien] planificador de aldea: enlaces construidos: %s (%s).",
+              "based_on": "01ac888aeeec03e0e5f414ea3443dff21caf6264cacc95e1a3c9c400473217b8",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "[lothlorien] planificador de aldea: enlaces construidos: %s (%s).",
+              "based_on": "01ac888aeeec03e0e5f414ea3443dff21caf6264cacc95e1a3c9c400473217b8",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "[lothlorien] planeador da aldeia: ligações construídas: %s (%s).",
+              "based_on": "01ac888aeeec03e0e5f414ea3443dff21caf6264cacc95e1a3c9c400473217b8",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "[lothlorien] planejador da vila: ligações construídas: %s (%s).",
+              "based_on": "01ac888aeeec03e0e5f414ea3443dff21caf6264cacc95e1a3c9c400473217b8",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "[lothlorien] Dorfplaner: gebaute Verbindungen: %s (%s).",
+              "based_on": "01ac888aeeec03e0e5f414ea3443dff21caf6264cacc95e1a3c9c400473217b8",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "[lothlorien] planificateur de village : liaisons construites : %s (%s).",
+              "based_on": "01ac888aeeec03e0e5f414ea3443dff21caf6264cacc95e1a3c9c400473217b8",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "[lothlorien] planer wioski: zbudowane połączenia: %s (%s).",
+              "based_on": "01ac888aeeec03e0e5f414ea3443dff21caf6264cacc95e1a3c9c400473217b8",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.village.plan.failed": {
+          "source": "[lothlorien] village planner: this village could not be planned (see the content log).",
+          "context": {
+            "meaning": "Developer diagnostic: the village planner run started by /scriptevent lothlorien:village plan failed, for example the ticking area quota was too small or loading timed out.",
+            "location": "lothlorien_rp: chat",
+            "trigger": "Player runs the village planner debug command and the run fails.",
+            "tone": "Technical and concise",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loop_marker.js",
+              "lothlorien_bp/scripts/main.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "[lothlorien] plánovač vesnice: tuto vesnici se nepodařilo naplánovat (viz obsahový log).",
+              "based_on": "825c3c852af06cef4cdbb0fcffee9149aad9d0f0db2b173e1e1b1986f27a7c9a",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "[lothlorien] planificador de aldea: no se pudo planificar esta aldea (consulta el registro de contenido).",
+              "based_on": "825c3c852af06cef4cdbb0fcffee9149aad9d0f0db2b173e1e1b1986f27a7c9a",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "[lothlorien] planificador de aldea: no se pudo planificar esta aldea (consulta el registro de contenido).",
+              "based_on": "825c3c852af06cef4cdbb0fcffee9149aad9d0f0db2b173e1e1b1986f27a7c9a",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "[lothlorien] planeador da aldeia: não foi possível planear esta aldeia (consulta o registo de conteúdo).",
+              "based_on": "825c3c852af06cef4cdbb0fcffee9149aad9d0f0db2b173e1e1b1986f27a7c9a",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "[lothlorien] planejador da vila: não foi possível planejar esta vila (veja o registro de conteúdo).",
+              "based_on": "825c3c852af06cef4cdbb0fcffee9149aad9d0f0db2b173e1e1b1986f27a7c9a",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "[lothlorien] Dorfplaner: dieses Dorf konnte nicht geplant werden (siehe Inhaltsprotokoll).",
+              "based_on": "825c3c852af06cef4cdbb0fcffee9149aad9d0f0db2b173e1e1b1986f27a7c9a",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "[lothlorien] planificateur de village : ce village n’a pas pu être planifié (voir le journal de contenu).",
+              "based_on": "825c3c852af06cef4cdbb0fcffee9149aad9d0f0db2b173e1e1b1986f27a7c9a",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "[lothlorien] planer wioski: nie udało się zaplanować tej wioski (zobacz dziennik zawartości).",
+              "based_on": "825c3c852af06cef4cdbb0fcffee9149aad9d0f0db2b173e1e1b1986f27a7c9a",
+              "status": "ai-draft"
+            }
+          }
         }
       }
     }

@@ -393,3 +393,9 @@ lothlorien.message.dash.started=[lothlorien] wykrywacz zrywów: obserwuję moby 
 lothlorien.message.dash.row=%s: %s mobów, %s skoków prędkości, maksimum %s bloków na sekundę
 ## Context: Reports that the detector window ended without any speed spike, or with no mobs in range.
 lothlorien.message.dash.none=[lothlorien] wykrywacz zrywów: nie znaleziono skoków prędkości (szczegóły w dzienniku zawartości).
+## Context: Developer diagnostic: /scriptevent lothlorien:village plan found no loop marker within 160 blocks, so there is nothing to plan.
+lothlorien.message.village.plan.none=[lothlorien] planer wioski: w pobliżu nie ma znaczników wioski (wioska została już zaplanowana albo żadna nie jest załadowana).
+## Context: Developer diagnostic: the village planner finished a run started by /scriptevent lothlorien:village plan.
+lothlorien.message.village.plan.done=[lothlorien] planer wioski: zbudowane połączenia: %s (%s).
+## Context: Developer diagnostic: the village planner run started by /scriptevent lothlorien:village plan failed, for example the ticking area quota was too small or loading timed out.
+lothlorien.message.village.plan.failed=[lothlorien] planer wioski: nie udało się zaplanować tej wioski (zobacz dziennik zawartości).

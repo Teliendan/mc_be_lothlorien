@@ -522,3 +522,10 @@ Owner decisions: (1) two facing plain platform rims get a bridge (F1, markers on
 (5) L-joins: leave A, straight bridge, a square 5 x 5 railed landing on a pier, turn 90 degrees, straight bridge into B, no diagonals (F5);
 (6) clutter rule: no new join within 2 cells of another structure's deck, one join per pair, never through other structures. Standing rules: arched slab bridges with a
 continuous slab body, continuous rails, light >= 8 on every walk cell, headroom and walkability by the shared checker. Status: simulator and unit tests only.
+
+## 16b. Village loop planner (owner decisions 2026-10-09, replaces the per-marker closer)
+
+Diagnosis: the per-marker closer waited for every chunk within 36 blocks to be loaded, which never happens beyond the simulation distance, so almost no marker ever decided in the owner's world. Decisions:
+(1) "Yes, build the planner": ONE planner run per village, the whole village loaded by a script-owned ticking area (`world.tickingAreaManager`), links chosen globally, all links written in one job, the old per-marker closer removed;
+(2) budget: up to 3 extra links per village; (3) "trigger it at the first tree discovered": every tree / platform piece carries a loop marker and the first one that loads starts the planner for its whole village (the village is found by growing the ticking area until no new marker shows up; planned once, remembered in a world dynamic property, markers removed afterwards);
+(4) "I don't want to try the hybrid. Just jigsaw + planner": no worldgen-built extra links (no loop-capable jigsaw pieces); the village stays a jigsaw tree plus the runtime links. All join kinds and standing rules of section 16 stay. Details, numbers and the in-game checklist: `docs/TECHNICAL_NOTES.md` P8. Status: simulator, unit tests and a dump of a real village only.

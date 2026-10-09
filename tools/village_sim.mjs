@@ -17,7 +17,8 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const bp = join(root, "lothlorien_bp");
 import { RAIL, SLAB, lightField } from "./village_mallorn.mjs";
 import { protectedCells, checkWalk } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs"; // shared walkability checker (cells a piece owns)
-import { MARKER_ID, decide, exitAt, finalBlocks, sideAt, decideSide } from "../lothlorien_bp/scripts/village_loop.js";
+import { MARKER_ID, finalBlocks } from "../lothlorien_bp/scripts/village_loop.js";
+import { PLAN, planVillage, discoverSync, boundedReader, chunksIn, inRect } from "../lothlorien_bp/scripts/village_planner.js";
 export const PLANKS = "lothlorien:mallorn_planks", FENCE = RAIL, LANTERN_ID = "lothlorien:elven_lantern";
 const EMPTY = "minecraft:empty", AIR = "minecraft:air", JIGSAW = "minecraft:jigsaw";
 const FACING_VEC = { 2: [0, -1], 3: [0, 1], 4: [-1, 0], 5: [1, 0] };
@@ -459,7 +460,7 @@ export function nearMisses(res, max = 8) {
   return out;
 }
 
-// ---- loop closing (P7): the same pure rules as scripts/loop_marker.js, run on the simulated world ----------------------------------
+// ---- loop planner (owner 2026-10-09): the same pure functions as scripts/loop_marker.js, run on the simulated village ------------------------
 // Marker cells of a placed piece (railing_end, balcony_braced, lookout_01 carry loop markers): the template entity positions turned with the
 // piece (continuous quarter turns, x' = sz - z, z' = x). -> [[x, y, z]] deck cells under the markers
 export function markerCells(p) {
@@ -471,11 +472,6 @@ export function markerCells(p) {
 }
 export const markerCell = (p) => markerCells(p)[0] ?? null;
 const LOG_IDS = new Set(["lothlorien:mallorn_log", "lothlorien:mallorn_wood"]);
-// Every marker acts once, on the world as the earlier ones left it. Exit markers (railing_end, balcony, lookout rim) go first in (x, z) order, then the
-// side markers of platform rims (the runtime delays them so the exits win); a joined plan is applied to `world` / `states` exactly like
-// scripts/loop_marker.js writes it (finalBlocks, then the fence links of rail_mender_rules). The ground for piers is the lowest log of the village.
-// opts.pieces: piece names that carry markers (default all pieces); opts.verify: run the walk and light checks on every join (see joinChecks).
-// -> { markers, sideMarkers, missed, loops, byKind, landings, lengths, offsets, reasons, remaining, builds, bad }
 const LINK_SIDES = { north: [0, -1], south: [0, 1], west: [-1, 0], east: [1, 0] };
 export function applyPlan(world, states, plan) {
   const blocks = finalBlocks(plan);
@@ -523,45 +519,56 @@ export function joinChecks(world, states, plan, doApply) {
   }
   return { walk: fresh, light: worst, lightAt: at };
 }
-export function closeLoops(res, world, states, opts = {}) {
+// The planner as the game runs it: ONE start marker (opts.start = index into the sorted marker list), chunk-aligned ticking areas grown round by round
+// (discoverSync = the runtime's discoverVillage), a block reader that sees only the final area (undefined outside, like unloaded chunks), planVillage
+// with the markers it found, every pick applied and checked (walk + light) like the runtime writes it. The sim's chunk grid is shifted by opts.shift
+// ([sx, sz], default [0, 0]) so the village does not always start on a chunk edge; opts.maxChunks models a quota (default none).
+// -> { markers, found, complete, rounds, sizes, chunks, stable, error, nRaw, loops, byKind, landings, lengths, offsets, picks, log, bad }
+// Discovery alone from EVERY marker as the first one (any tree may be the first to load): how many starts find the whole village.
+export function discoveryCoverage(res, opts = {}) {
+  const all = [...new Map(res.placed.flatMap(markerCells).map((c) => [c.join(","), c])).values()];
+  const [sx, sz] = opts.shift ?? [0, 0], maxChunks = opts.maxChunks ?? Infinity, game = ([x, y, z]) => [x + sx, y, z + sz];
+  const env = { claim: () => {}, remove: () => {}, create: () => undefined, hasCapacity: (r) => chunksIn(r) <= maxChunks, markersIn: (r) => all.map(game).filter(([x, , z]) => inRect(r, x, z)) };
+  const out = { starts: all.length, complete: 0, worst: 0, maxChunks: 0, rounds: 0, errors: 0 };
+  for (const a of all) {
+    try {
+      const f = discoverSync(env, game(a), "cov");
+      if (f.known.length === all.length) out.complete++; else out.worst = Math.max(out.worst, all.length - f.known.length);
+      out.maxChunks = Math.max(out.maxChunks, ...f.sizes); out.rounds = Math.max(out.rounds, f.rounds);
+    } catch { out.errors++; }
+  }
+  return out;
+}
+export function planLoops(res, world, states, opts = {}) {
   let ground = 1e9;
   for (const [k, n] of world) if (LOG_IDS.has(n)) ground = Math.min(ground, wdecode(k)[1]);
-  const at = (x, y, z) => world.get(wkey(x, y, z)) ?? (y < ground ? "minecraft:stone" : AIR);
-  const names = opts.pieces;
-  const all = res.placed.filter((p) => !names || names.includes(p.name)).flatMap(markerCells);
-  const isExit = ([x, y, z]) => !!exitAt(at, x, y, z);
-  const markers = all.filter(isExit).sort((a, b) => a[0] - b[0] || a[2] - b[2]);
-  const sideMarkers = all.filter((m) => !isExit(m)).sort((a, b) => a[0] - b[0] || a[2] - b[2]);
-  const marked = new Set(all.map(([x, y, z]) => `${x},${y},${z}`));
-  const hasMarker = (B) => marked.has(`${B.x},${B.y},${B.z}`);
-  const out = { markers: markers.length, sideMarkers: sideMarkers.length, missed: 0, loops: 0, byKind: {}, loopsExit: 0, loopsSide: 0, landings: 0, lengths: [], offsets: [], reasons: {}, remaining: 0, builds: [], bad: [] };
-  const act = (A, kind0, d) => {
-    if (d.action === "build") {
-      const doApply = () => applyPlan(world, states, d.plan);
-      if (opts.verify) {
-        const r = joinChecks(world, states, d.plan, doApply);
-        if (r.walk.length || r.light < 8) out.bad.push({ kind: d.kind, A: d.plan.A, B: d.plan.B, walk: r.walk.slice(0, 3), light: r.light, lightAt: r.lightAt });
-      } else doApply();
-      out.loops++; out.byKind[d.kind] = (out.byKind[d.kind] ?? 0) + 1;
-      if (d.kind === "side") out.loopsSide++; else if (d.kind === "exit") out.loopsExit++;
-      if (d.plan.landing) out.landings++;
-      out.lengths.push(d.plan.length); out.offsets.push(Math.abs(d.plan.offset)); out.builds.push({ ...d.plan, kind: d.kind });
-    } else if (d.action === "none") out.reasons[d.reason] = (out.reasons[d.reason] ?? 0) + 1;
+  const rawAt = (x, y, z) => world.get(wkey(x, y, z)) ?? (y < ground ? "minecraft:stone" : AIR);
+  const all = [...new Map(res.placed.flatMap(markerCells).map((c) => [c.join(","), c])).values()].sort((a, b) => a[0] - b[0] || a[2] - b[2]);
+  const out = { markers: all.length, found: 0, complete: false, rounds: 0, sizes: [], chunks: 0, stable: false, error: null, nRaw: 0, loops: 0, byKind: {}, landings: 0, lengths: [], offsets: [], picks: [], log: [], bad: [] };
+  if (!all.length) return out;
+  const [sx, sz] = opts.shift ?? [0, 0], maxChunks = opts.maxChunks ?? Infinity;
+  const game = ([x, y, z]) => [x + sx, y, z + sz], back = ([x, y, z]) => [x - sx, y, z - sz];
+  const env = {
+    claim: () => {}, remove: () => {}, create: () => undefined, hasCapacity: (r) => chunksIn(r) <= maxChunks,
+    markersIn: (r) => all.map(game).filter(([x, , z]) => inRect(r, x, z)),
   };
-  for (const [x, y, z] of markers) {
-    const A = exitAt(at, x, y, z);
-    if (!A) { if (at(x, y + 1, z) === FENCE) out.missed++; continue; } // gone = closed from the other side
-    act(A, "exit", decide(at, A, { hasMarker }));
+  let found;
+  try { found = discoverSync(env, game(all[(opts.start ?? 0) % all.length]), "sim"); } catch (e) { out.error = e.message; return out; }
+  const known = found.known.map(back), rect = { x0: found.rect.x0 - sx, x1: found.rect.x1 - sx, z0: found.rect.z0 - sz, z1: found.rect.z1 - sz };
+  Object.assign(out, { found: known.length, complete: known.length === all.length, rounds: found.rounds, sizes: found.sizes, chunks: Math.max(...found.sizes), stable: found.stable });
+  const at = boundedReader(rawAt, rect), r = planVillage(at, known, { budget: opts.budget ?? PLAN.budget });
+  out.nRaw = r.nRaw; out.log = r.log;
+  for (const p of r.picks) {
+    const doApply = () => applyPlan(world, states, p.plan);
+    if (opts.verify) {
+      const c = joinChecks(world, states, p.plan, doApply);
+      if (c.walk.length || c.light < 8) out.bad.push({ kind: p.kind, A: p.plan.A, B: p.plan.B, walk: c.walk.slice(0, 3), light: c.light, lightAt: c.lightAt });
+    } else doApply();
+    out.loops++; out.byKind[p.kind] = (out.byKind[p.kind] ?? 0) + 1;
+    if (p.plan.landing) out.landings++;
+    out.lengths.push(p.plan.length); out.offsets.push(Math.abs(p.plan.offset)); out.picks.push({ ...p, plan: undefined, planRef: p.plan });
   }
-  for (const [x, y, z] of sideMarkers) { // a side marker: the exit it may have become, else a rim run
-    const A = exitAt(at, x, y, z);
-    if (A) { act(A, "exit", decide(at, A, { hasMarker })); continue; }
-    if (!sideAt(at, x, y, z)) { out.gone = (out.gone ?? 0) + 1; continue; }
-    act(null, "sideside", decideSide(at, x, y, z, { hasMarker }));
-  }
-  out.left = [];
-  for (const [x, y, z] of markers) { const e = exitAt(at, x, y, z); if (e) { out.remaining++; out.left.push(e); } }
-  out.at = at;
+  out.at = rawAt;
   return out;
 }
 
@@ -620,7 +627,9 @@ function main() {
   for (const f of readdirSync(outDir)) if (f.endsWith(".png")) unlinkSync(join(outDir, f));
   const rows = runSeeds(data, count, first);
   for (const row of rows) { // P7: the loop closer acts on the finished village (after the checks above), then the deck must still be walkable
-    row.lp = closeLoops(row.res, row.ck.world, row.ck.states, { verify: true });
+    const n = Math.max(1, row.res.placed.flatMap(markerCells).length), shift = [(row.seed * 7) % 16, (row.seed * 11) % 16];
+    row.lp = planLoops(row.res, row.ck.world, row.ck.states, { verify: true, start: (row.seed * 13) % n, shift });
+    row.cov = discoveryCoverage(row.res, { shift });
     row.lpUnreach = walkability(row.res, row.ck.world, row.ck.states).unreachable.length;
   }
   console.log(`max_depth ${data.structure.max_depth}`);
@@ -639,15 +648,14 @@ function main() {
   console.log(`  pieces ${mm((r) => r.res.placed.length)} | trees ${mm((r) => r.ck.kinds.trees)} | towers avg ${avg((r) => r.ck.kinds.tower)} | levels used ${mm((r) => r.ck.levels)} (villages with 2+ levels: ${rows.filter((r) => r.ck.levels >= 2).length}/${rows.length})`);
   console.log(`  bridges straight ${avg((r) => r.ck.kinds.straight)} dog-leg ${avg((r) => r.ck.kinds.dog)} | balconies ${avg((r) => r.ck.kinds.balcony)} lookouts ${avg((r) => r.ck.kinds.lookout)} plugs ${avg((r) => r.ck.kinds.plug)} | open connectors ${avg((r) => r.ck.open)} (vertical ${avg((r) => r.ck.openVertical)}) | crowns ${avg((r) => r.ck.kinds.crown)}, small fallback ${avg((r) => r.ck.kinds.crownSmall)} | wardens per village (template entities) ${mm((r) => r.ck.kinds.wardens)}`);
   console.log(`  exits ending in railing ${avg((r) => r.ck.kinds.plug)} / braced balcony ${avg((r) => r.ck.kinds.balcony)} / lookout ${avg((r) => r.ck.kinds.lookout)} per village; bridges without a destination tree ${rows.reduce((a, r) => a + r.ck.kinds.bridgesNoDest, 0)}, unsupported balconies ${rows.reduce((a, r) => a + r.ck.kinds.unsupported, 0)}`);
-  const lsum = (f) => rows.reduce((a, r) => a + f(r.lp), 0), reasons = {};
-  for (const r of rows) for (const [k, v] of Object.entries(r.lp.reasons)) reasons[k] = (reasons[k] ?? 0) + v;
-  const kinds = {};
+  const lsum = (f) => rows.reduce((a, r) => a + f(r.lp), 0), kinds = {};
   for (const r of rows) for (const [k, v] of Object.entries(r.lp.byKind)) kinds[k] = (kinds[k] ?? 0) + v;
-  const perV = (n) => (n / rows.length).toFixed(2);
-  console.log(`  loops (round 2: exit markers + rim markers): ${avg((r) => r.lp.loops)} per village, villages with a loop ${rows.filter((r) => r.lp.loops).length}/${rows.length}; per village ` +
+  const perV = (n) => (n / rows.length).toFixed(2), pct = (a, b) => `${(100 * a / Math.max(1, b)).toFixed(1)}%`;
+  console.log(`  loop planner (budget ${PLAN.budget}, one run per village from one start marker): ${avg((r) => r.lp.loops)} links per village, villages with a link ${rows.filter((r) => r.lp.loops).length}/${rows.length} (${pct(rows.filter((r) => r.lp.loops).length, rows.length)}); per village ` +
     `${Object.entries(kinds).map(([k, v]) => `${k} ${perV(v)}`).join(", ")}; landings with pier ${avg((r) => r.lp.landings)}`);
-  console.log(`  markers per village: exit rims ${avg((r) => r.lp.markers)}, plain rim runs ${avg((r) => r.lp.sideMarkers)}; closed exits left ${avg((r) => r.lp.remaining)}; reasons ${JSON.stringify(reasons)}; ` +
-    `markers not on an exit ${lsum((l) => l.missed)}; unreachable walk cells after the loops ${rows.reduce((a, r) => a + r.lpUnreach, 0)}; joins failing the walk / light checks ${lsum((l) => l.bad.length)}`);
+  console.log(`  markers per village ${mm((r) => r.lp.markers)}; start-marker run found all of them in ${rows.filter((r) => r.lp.complete).length}/${rows.length} villages; area rounds ${mm((r) => r.lp.rounds)}, biggest area ${mm((r) => r.lp.chunks)} chunks; errors ${rows.filter((r) => r.lp.error).length}; ` +
+    `every marker as the first one: ${rows.reduce((a, r) => a + r.cov.complete, 0)}/${rows.reduce((a, r) => a + r.cov.starts, 0)} starts find the whole village (worst miss ${Math.max(...rows.map((r) => r.cov.worst))} markers), most chunks ${Math.max(...rows.map((r) => r.cov.maxChunks))}, most rounds ${Math.max(...rows.map((r) => r.cov.rounds))}`);
+  console.log(`  unreachable walk cells after the links ${rows.reduce((a, r) => a + r.lpUnreach, 0)}; links failing the walk / light checks ${lsum((l) => l.bad.length)}; candidates per village ${avg((r) => r.lp.nRaw)}`);
   const sum = (f) => rows.reduce((a, r) => a + f(r.ck.info), 0);
   console.log(`  totals: unreachable walk cells ${rows.reduce((a, r) => a + r.ck.unreachable, 0)}, overlaps ${rows.reduce((a, r) => a + r.ck.overlaps, 0)}, wrong ropes ${sum((i) => i.ropeWrong)}/${sum((i) => i.ropes)}, ` +
     `decaying leaves ${sum((i) => i.decay)}/${sum((i) => i.leaves)}, one-way fence links (open ends only) ${sum((i) => i.fenceOneWay)} (dangling stub ends ${sum((i) => i.fenceDangling)}), near-miss ends ${sum((i) => i.nearMiss)}`);

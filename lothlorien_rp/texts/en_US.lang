@@ -393,3 +393,9 @@ lothlorien.message.dash.started=[lothlorien] dash detector: watching mobs within
 lothlorien.message.dash.row=%s: %s mobs, %s speed spikes, peak %s blocks per second
 ## Context: Reports that the detector window ended without any speed spike, or with no mobs in range.
 lothlorien.message.dash.none=[lothlorien] dash detector: no speed spikes found (details are in the content log).
+## Context: Developer diagnostic: /scriptevent lothlorien:village plan found no loop marker within 160 blocks, so there is nothing to plan.
+lothlorien.message.village.plan.none=[lothlorien] village planner: no village markers near you (the village was already planned, or none is loaded).
+## Context: Developer diagnostic: the village planner finished a run started by /scriptevent lothlorien:village plan.
+lothlorien.message.village.plan.done=[lothlorien] village planner: %s link(s) built (%s).
+## Context: Developer diagnostic: the village planner run started by /scriptevent lothlorien:village plan failed, for example the ticking area quota was too small or loading timed out.
+lothlorien.message.village.plan.failed=[lothlorien] village planner: this village could not be planned (see the content log).

@@ -110,6 +110,7 @@ export function wardenCells(name, blocks, count, want) {
 // Where a platform's plain rim sides can start a bridge (F1): one marker per straight rim run, on the run's middle cell, where the runtime's
 // sideTarget holds for a bridge heading into the platform (5-run of rail on 5 planks, two plain deck rows behind with open air; a stair opening,
 // trunk, slab or connector row fails it). `inRegion(x, z)` limits the cells (a combo's bridge half is excluded). -> [[x, z, deckY]] in box coordinates.
+// A platform with no such run still gets one marker (see the end of the function) so every tree piece can start the village planner.
 export function sideMarkerCells(blocks, origin, inRegion = () => true) {
   const nameAt = (x, y, z) => blocks.get(key(x, y, z))?.name ?? "minecraft:air";
   const runs = new Map();
@@ -133,6 +134,16 @@ export function sideMarkerCells(blocks, origin, inRegion = () => true) {
       res.push(r.out[0] ? [r.line, along, r.y] : [along, r.line, r.y]);
       start = i;
     }
+  }
+  if (!res.length) { // planner trigger (owner 2026-10-09: the first tree that loads starts the village planner): a platform without a usable rim run still carries a marker
+    let best = null; // on its lowest deck cell with a rail above, nearest to the middle of the region; sideStarts finds no rim there, so the marker only wakes the planner
+    for (const [k, b] of blocks) {
+      if (b.name !== B.planks) continue;
+      const [x, y, z] = k.split(",").map(Number);
+      if (!inRegion(x, z) || nameAt(x, y + 1, z) !== RAIL) continue;
+      if (!best || y < best[2]) best = [x, z, y];
+    }
+    if (best) res.push(best);
   }
   return res.sort((a, b) => a[2] - b[2] || a[0] - b[0] || a[1] - b[1]).map(([x, z, y]) => [x + origin[0] + 0.5, z + origin[2] + 0.5, y]);
 }
