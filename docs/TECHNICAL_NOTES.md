@@ -3,6 +3,10 @@
 Facts checked against the installed game data (`C:\mcmods\reference\vanilla\current`) and the docs,
 kept here so later phases do not re-derive them. Design lives in `design/`.
 
+Water update (2026-10-09): [WATER.md](WATER.md) supersedes the older missing-waterlogging
+and water-flow-breaking notes below. All 44 blocks now declare a policy; actual engine
+flow, rendering and drops still need validation.
+
 ## Biome (Phase 1)
 
 Files:

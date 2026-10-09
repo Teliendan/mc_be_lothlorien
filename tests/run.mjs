@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import "./support_motion.mjs";
 import "./rope_lifecycle.mjs";
+import "./stair_water.mjs";
 import { leafUndersideY } from "../lothlorien_bp/scripts/leaf_fall.js";
 import { BONEMEAL_TABLE, SPREAD_TRIES, COVERS, pickWeighted } from "../lothlorien_bp/scripts/flora_table.js";
 import { readFileSync } from "node:fs";

@@ -110,7 +110,10 @@
         "detection_rules": [
           {
             "liquid_type": "water",
-            "can_contain_liquid": true
+            "can_contain_liquid": true,
+            "on_liquid_touches": "blocking",
+            "use_liquid_clipping": false,
+            "stops_liquid_flowing_from_direction": []
           }
         ]
       }

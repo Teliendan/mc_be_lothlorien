@@ -89,7 +89,18 @@
       "minecraft:movable": {
         "movement_type": "popped"
       },
-      "lothlorien:motion_support": {}
+      "lothlorien:motion_support": {},
+      "minecraft:liquid_detection": {
+        "detection_rules": [
+          {
+            "liquid_type": "water",
+            "can_contain_liquid": true,
+            "on_liquid_touches": "blocking",
+            "use_liquid_clipping": false,
+            "stops_liquid_flowing_from_direction": []
+          }
+        ]
+      }
     },
     "permutations": [
       {

@@ -4,21 +4,52 @@ Run python -B tools/configure_support.py after any block generator.
 The native placement filters remain authoritative for eligibility.
 """
 import json
+import importlib.util
 import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 BP = ROOT / "lothlorien_bp"
+STAIRS_SOURCE = ROOT.parents[1] / ".claude/skills/bedrock-block-families/scripts/gen_stairs.py"
+_stairs_spec = importlib.util.spec_from_file_location("stairs_water", STAIRS_SOURCE)
+_stairs = importlib.util.module_from_spec(_stairs_spec)
+_stairs_spec.loader.exec_module(_stairs)
 MOUNTED = {"deer_antler", "elven_lantern", "elven_lantern_heartwood", "firefly_jar", "elven_chandelier",
            "mallorn_button", "mallorn_heartwood_button"}
 EXTRA = {"mallorn_door", "mallorn_heartwood_door", "elven_rope", "elven_rope_hanging"}
 COVERS = {"mallorn_leaf_carpet", "mallorn_blossom"}
+WATER_POP = {"athelas", "elanor", "golden_fern", "nectar_bloom", "niphredil",
+             "western_corn", "mallorn_sapling", "great_mallorn_sprout"} | COVERS
+WATER_SOLID = {"mallorn_log", "mallorn_wood", "mallorn_stripped_log", "mallorn_stripped_wood",
+               "mallorn_planks", "mallorn_heartwood_planks", "mallorn_double_slab",
+               "mallorn_heartwood_double_slab", "star_canopy"}
+WATER_LOGGABLE = {"deer_antler", "elven_chandelier", "elven_lantern", "elven_lantern_heartwood",
+                 "firefly_jar", "elven_rope", "elven_rope_hanging", "mallorn_leaves", "mallorn_golden_leaves"}
+WATER_LOGGABLE |= {prefix + part for prefix in ("mallorn_", "mallorn_heartwood_")
+                  for part in ("slab", "stairs", "fence", "fence_gate", "trapdoor", "door", "button", "pressure_plate")}
+
+
+def configure_water(block):
+    """Explicit approved inventory: unknown new blocks must get a water decision."""
+    body = block["minecraft:block"]
+    name = body["description"]["identifier"].split(":")[1]
+    if name not in WATER_POP | WATER_SOLID | WATER_LOGGABLE:
+        raise ValueError(f"No water policy decided for {name}; see docs/WATER.md")
+    rule = {"liquid_type": "water", "can_contain_liquid": name in WATER_LOGGABLE,
+            "on_liquid_touches": "popped" if name in WATER_POP else "blocking"}
+    if name in WATER_LOGGABLE:
+        # Match current 1.26 rendering explicitly; multipart/empty colliders need game checks.
+        rule.update(use_liquid_clipping=False, stops_liquid_flowing_from_direction=[])
+    body["components"]["minecraft:liquid_detection"] = {"detection_rules": [rule]}
+    if name in {"mallorn_stairs", "mallorn_heartwood_stairs"}:
+        _stairs.configure_stair_water(body)
 
 
 def configure(block):
     b = block["minecraft:block"]
     name = b["description"]["identifier"].split(":")[1]
     c = b["components"]
+    configure_water(block)
     placement = c.get("minecraft:placement_filter")
     if not (placement or name in MOUNTED or name in EXTRA):
         return None
@@ -45,9 +76,8 @@ def main():
     for path in sorted((BP / "blocks").glob("*.json")):
         block = json.loads(path.read_text(encoding="utf8"))
         policy = configure(block)
-        if policy is None:
-            continue
-        policies[block["minecraft:block"]["description"]["identifier"]] = policy
+        if policy is not None:
+            policies[block["minecraft:block"]["description"]["identifier"]] = policy
         # Preserve the repository's newline convention on Windows.
         baseline = subprocess.run(["git", "show", "HEAD:" + path.relative_to(ROOT).as_posix()],
                                   cwd=ROOT, capture_output=True).stdout

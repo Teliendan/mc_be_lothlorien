@@ -53,6 +53,17 @@
           "ambient_occlusion": 0.0,
           "isotropic": true
         }
+      },
+      "minecraft:liquid_detection": {
+        "detection_rules": [
+          {
+            "liquid_type": "water",
+            "can_contain_liquid": true,
+            "on_liquid_touches": "blocking",
+            "use_liquid_clipping": false,
+            "stops_liquid_flowing_from_direction": []
+          }
+        ]
       }
     }
   }

@@ -119,7 +119,16 @@
         ],
         "looping": true
       },
-      "minecraft:loot": "loot_tables/blocks/mallorn_blossom.json"
+      "minecraft:loot": "loot_tables/blocks/mallorn_blossom.json",
+      "minecraft:liquid_detection": {
+        "detection_rules": [
+          {
+            "liquid_type": "water",
+            "can_contain_liquid": false,
+            "on_liquid_touches": "popped"
+          }
+        ]
+      }
     },
     "permutations": [
       {

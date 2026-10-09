@@ -81,6 +81,15 @@
           2
         ],
         "looping": true
+      },
+      "minecraft:liquid_detection": {
+        "detection_rules": [
+          {
+            "liquid_type": "water",
+            "can_contain_liquid": false,
+            "on_liquid_touches": "popped"
+          }
+        ]
       }
     }
   }
