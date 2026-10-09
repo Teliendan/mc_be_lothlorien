@@ -2508,17 +2508,18 @@ test("loop merge (F6, gap8 / gap9): decks 0 or 1 cell apart open into one - shar
     const f = mk(gap), res = PL.planVillage(f.at, marks(gap), { budget: 0 });
     assert.equal(res.merges.length, 1, `gap ${gap}`); assert.equal(res.picks.length, 0);
     const m = res.merges[0];
-    assert.equal(m.gap, gap); assert.equal(m.len, 7, "rows 1..7 face each other (the corner posts at z 0 and 8 have no deck behind them)");
+    assert.equal(m.gap, gap); assert.equal(m.len, 7, "rows 1..7 face each other (the corner posts at z 0 and 8 have no deck behind them: they ARE the end posts, the whole stretch opens)");
     joined(f, { action: "build", kind: "merge", plan: m.plan });
-    for (const z of [2, 3, 4, 5, 6]) { // the opening
+    for (const z of [1, 2, 3, 4, 5, 6, 7]) { // the opening
       assert.equal(f.at(-1, 41, z), "minecraft:air"); assert.equal(f.at(gap, 41, z), "minecraft:air");
       if (gap) { assert.equal(f.at(0, 40, z), PLANKS); assert.equal(f.at(0, 41, z), "minecraft:air"); }
     }
-    for (const z of [1, 7]) { assert.equal(f.at(-1, 41, z), FENCE); assert.equal(f.at(gap, 41, z), FENCE); if (gap) { assert.equal(f.at(0, 40, z), PLANKS); assert.equal(f.at(0, 41, z), FENCE, "end cap on the filled gap"); } }
+    for (const z of [0, 8]) { assert.equal(f.at(-1, 41, z), FENCE); assert.equal(f.at(gap, 41, z), FENCE); if (gap) { assert.equal(f.at(0, 40, z), PLANKS); assert.equal(f.at(0, 41, z), FENCE, "end cap on the filled gap"); } }
     const st = (x, z) => f.states.get(wkey(x, 41, z)) ?? {};
-    assert.equal(st(-1, 1)["minecraft:connection_south"], false, "the end post lets go of the removed rail");
-    assert.equal(st(-1, 1)["minecraft:connection_north"], true, "and keeps the rim");
-    if (gap) { assert.equal(st(0, 1)["minecraft:connection_west"], true); assert.equal(st(0, 1)["minecraft:connection_east"], true); }
+    assert.equal(st(-1, 0)["minecraft:connection_south"], false, "the end post lets go of the removed rail");
+    assert.equal(st(-1, 0)["minecraft:connection_north"], false, "and keeps what it had (nothing north of the corner)");
+    assert.equal(st(-1, 0)["minecraft:connection_east"], true, "to the partner corner post (gap 0) or the cap (gap 1)");
+    if (gap) { assert.equal(st(0, 0)["minecraft:connection_west"], true); assert.equal(st(0, 0)["minecraft:connection_east"], true); }
     const walk = checkWalk((x, y, z) => { const k = wkey(x, y, z), n = f.world.get(k); return n === undefined || n === "minecraft:air" ? undefined : { name: n, states: f.states.get(k) }; }, { x0: -10, x1: 10, y0: 35, y1: 46, z0: -1, z1: 9 }, { must: [{ x: -5, y: 41, z: 4 }, { x: 5, y: 41, z: 4 }] });
     assert.deepEqual(walk.violations.filter((v) => v.rule !== "unguarded_edge"), [], "walkable and connected (the open sides of the fixture platforms' far ends are not the merge's business)");
   }
@@ -2527,7 +2528,23 @@ test("loop merge (F6, gap8 / gap9): decks 0 or 1 cell apart open into one - shar
   const high = mkWorld((w) => { addPlatform(w, -9, -1, 0, 8); addPlatform(w, 1, 9, 0, 8, 41); });
   assert.equal(PL.planVillage(high.at, [[-1, 40, 4], [1, 41, 4]], { budget: 0 }).merges.length, 0, "different heights are skipped");
   const short = mkWorld((w) => { addPlatform(w, -9, -1, 0, 4); addPlatform(w, 1, 9, 0, 4); });
-  assert.equal(PL.planVillage(short.at, [[-1, 40, 2]], { budget: 0 }).merges.length, 0, "a 3-cell run is too short (MERGE.minRun 4)");
+  assert.equal(PL.planVillage(short.at, [[-1, 40, 2]], { budget: 0 }).merges.length, 1, "3 deck cells between real corner posts: a 3-wide opening (it was too short under the old minRun 4)");
+  // no real end post on one side (the far rim row stops at the stretch): that last cell stays a post, 2 cells must remain
+  const open1 = mkWorld((w) => { addPlatform(w, -9, -1, 0, 4); addPlatform(w, 1, 9, 0, 4); w.delete("1,41,0"); w.set("1,40,0", "minecraft:air"); });
+  const o1 = PL.planVillage(open1.at, [[-1, 40, 2]], { budget: 0 }).merges;
+  assert.deepEqual([o1.length, o1[0]?.len], [1, 2], "no post on one end: that end cell stays a post, 2 cells open (openMinTrim)");
+  const open2 = mkWorld((w) => { addPlatform(w, -9, -1, 0, 3); addPlatform(w, 1, 9, 0, 3); w.delete("1,41,0"); w.set("1,40,0", "minecraft:air"); });
+  assert.equal(PL.planVillage(open2.at, [[-1, 40, 2]], { budget: 0 }).merges.length, 0, "no post on one end and a 2-cell core: 1 cell left, too narrow");
+  // real world TT 2026-10-09 (gap8): two 5-wide end caps touching, staggered by 2 cells: A rim row z = 0 (x 0..4), B rim row z = 1 (x 2..6). They share ONE
+  // interior cell (x = 3), between two real posts on each row: a 1-cell door
+  const stag = (edit) => mkWorld((w) => { addPlatform(w, 0, 4, -8, 0); addPlatform(w, 2, 6, 1, 9); edit?.(w); });
+  const sf = stag(), sres = PL.planVillage(sf.at, [[2, 40, -4]], { budget: 0 });
+  assert.equal(sres.merges.length, 1, "staggered caps merge"); assert.equal(sres.merges[0].len, 1);
+  joined(sf, { action: "build", kind: "merge", plan: sres.merges[0].plan });
+  assert.equal(sf.at(3, 41, 0), "minecraft:air"); assert.equal(sf.at(3, 41, 1), "minecraft:air");
+  for (const [x, z] of [[2, 0], [4, 0], [2, 1], [4, 1]]) assert.equal(sf.at(x, 41, z), FENCE, `post ${x},${z}`);
+  const swalk = checkWalk((x, y, z) => { const k = wkey(x, y, z), n = sf.world.get(k); return n === undefined || n === "minecraft:air" ? undefined : { name: n, states: sf.states.get(k) }; }, { x0: -2, x1: 8, y0: 35, y1: 46, z0: -9, z1: 10 }, { must: [{ x: 2, y: 41, z: -4 }, { x: 4, y: 41, z: 5 }] });
+  assert.deepEqual(swalk.violations.filter((v) => v.rule !== "unguarded_edge"), [], "the door connects the two decks");
   const lane = mkWorld((w) => { for (let x = 0; x <= 6; x++) { w.set(`${x},40,0`, PLANKS); w.set(`${x},40,1`, PLANKS); } w.set("3,41,0", FENCE); w.set("3,41,1", FENCE); });
   assert.equal(PL.openWalk(lane.at, { x: 0, y: 40, z: 0 }, { x: 6, y: 40, z: 0 }, 20), false, "a railing wall across the deck blocks the walk");
   lane.world.delete(wkey(3, 41, 1));

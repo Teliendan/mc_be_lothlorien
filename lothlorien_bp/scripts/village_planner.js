@@ -165,7 +165,7 @@ export function* planGen(at0, markers, opts = {}) {
         if (!r.plan) { log.push(`merge ${m.run[0][0]},${m.run[0][1]} (${m.run.length}, gap ${m.g}): ${r.error}`); continue; }
         if (openWalk(at, r.plan.A, r.plan.B, MERGE.minNet - 1)) { log.push(`merge ${m.run[0][0]},${m.run[0][1]}: decks already joined by a short walk`); continue; }
         at.apply(r.plan);
-        merges.push({ kind: "merge", A: r.plan.A, B: r.plan.B, plan: r.plan, len: m.run.length, gap: m.g });
+        merges.push({ kind: "merge", A: r.plan.A, B: r.plan.B, plan: r.plan, len: m.span[1] - m.span[0] + 1, gap: m.g });
       }
     }
   }

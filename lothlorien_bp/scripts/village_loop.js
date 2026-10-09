@@ -514,23 +514,34 @@ export function planLanterns(shape) {
 
 // ---- F6 merge (owner 2026-10-09, screenshots gap8 / gap9): two decks that touch (0 cells apart: a double railing) or nearly touch (1 cell apart) ----
 // Jigsaw puts two pieces side by side and each keeps its own rim. A merge opens ONE shared stretch of the two rims: both railings go along the stretch,
-// a 1-cell gap is filled with planks, and the two end posts of the stretch stay (with a fence on the filled gap cell between them, so the opening has
-// closed ends). It adds no bridge, so it does not count toward the link budget (village_planner.js: PLAN.mergeCap). Same deck height only (a half slab
-// or one block of height difference is skipped: the rims would need a step).
-//   minRun: shared cells along the rims (the opening is minRun - 2 wide, so 2 at the least; the sim over 300 villages found 2 stretches of 3-4 cells: touching decks are rare there); minNet (planner): the two decks must not already be joined
-//   by a walk of fewer than this many steps (a 2-thick fence wall inside one deck is not a merge).
-export const MERGE = { minRun: 4, maxGap: 1, minNet: 10 };
+// a 1-cell gap is filled with planks, and the stretch is closed at both ends by posts. It adds no bridge, so it does not count toward the link budget
+// (village_planner.js: PLAN.mergeCap). Same deck height only (a half slab or one block of height difference is skipped: the rims would need a step).
+// The CORE of a stretch = rim pairs with standing deck behind both (cells the walker can enter from both sides). A pair just beyond the core whose two
+// rim cells both exist (the corner posts of the pieces) is a real END POST: the whole core opens (a 1-cell door fits between two posts; real world TT
+// 2026-10-09: two 5-wide end caps staggered by 2 cells share ONE such cell, 3 rim cells). Without a real post on an end, that end's last core cell stays as
+// the post (the opening is one cell shorter there). openMin / openMinTrim: opening width needed with posts on both ends / otherwise (2).
+// minNet (planner): the two decks must not already be joined by a walk of fewer than this many steps (a 2-thick fence wall inside one deck is not a merge).
+export const MERGE = { openMin: 1, openMinTrim: 2, maxGap: 1, minNet: 10 };
 const isRimCell = (at, x, y, z) => at(x, y, z) === PLANKS && at(x, y + 1, z) === FENCE;
 const standCell = (at, x, y, z) => at(x, y, z) === PLANKS && isAir(at(x, y + 1, z)) && isAir(at(x, y + 2, z)); // deck with standing room
 const freeCell = (n) => isAir(n) || isLeaves(n);
+const gapFree = (at, y, x, z) => { for (let h = 0; h <= 3; h++) if (!freeCell(at(x, y + h, z))) return false; return true; };
 // is (x, z) with the partner g + 1 cells ahead (d) a facing rim pair? P = rim, Q = rim, standing deck behind both, the gap cell (g = 1) free
 export function mergePair(at, y, d, g, x, z) {
   const qx = x + d[0] * (g + 1), qz = z + d[1] * (g + 1);
   if (!isRimCell(at, x, y, z) || !isRimCell(at, qx, y, qz) || !standCell(at, x - d[0], y, z - d[1]) || !standCell(at, qx + d[0], y, qz + d[1])) return false;
-  if (g === 1) for (let h = 0; h <= 3; h++) if (!freeCell(at(x + d[0], y + h, z + d[1]))) return false;
-  return true;
+  return g === 0 || gapFree(at, y, x + d[0], z + d[1]);
 }
-// Every shared stretch within rect on level y: [{ y, d, g, a, run: [[x, z] ...] }] (run = the P cells in order along the rims), longest first.
+// an end post pair: both rim cells exist (no deck behind needed), the gap cell (g = 1) is free for the cap
+const mergePost = (at, y, d, g, x, z) => isRimCell(at, x, y, z) && isRimCell(at, x + d[0] * (g + 1), y, z + d[1] * (g + 1)) && (g === 0 || gapFree(at, y, x + d[0], z + d[1]));
+// which core cells open: [lo, hi] (indexes into run) | null when the stretch is too short
+function mergeSpan(at, y, d, g, run) {
+  const n = run.length, a = [d[1], d[0]], [x0, z0] = run[0], [x1, z1] = run[n - 1];
+  const p0 = mergePost(at, y, d, g, x0 - a[0], z0 - a[1]), p1 = mergePost(at, y, d, g, x1 + a[0], z1 + a[1]);
+  const lo = p0 ? 0 : 1, hi = p1 ? n - 1 : n - 2;
+  return hi - lo + 1 >= (p0 && p1 ? MERGE.openMin : MERGE.openMinTrim) ? [lo, hi] : null;
+}
+// Every shared stretch within rect on level y: [{ y, d, g, a, run: [[x, z] ...], span: [lo, hi] }] (run = the P cells of the core in order along the rims), widest opening first.
 export function* findMerges(at, y, rect) {
   const out = [];
   for (const d of [[1, 0], [0, 1]]) for (let g = 0; g <= MERGE.maxGap; g++) {
@@ -544,10 +555,12 @@ export function* findMerges(at, y, rect) {
       if (ok.has(`${x - a[0]},${z - a[1]}`)) continue; // not the start of its run
       const run = [];
       for (let i = 0; ok.has(`${x + a[0] * i},${z + a[1] * i}`); i++) run.push([x + a[0] * i, z + a[1] * i]);
-      if (run.length >= MERGE.minRun) out.push({ y, d, g, a, run });
+      const span = mergeSpan(at, y, d, g, run);
+      if (span) out.push({ y, d, g, a, run, span });
     }
   }
-  return out.sort((p, q) => q.run.length - p.run.length || p.run[0][0] - q.run[0][0] || p.run[0][1] - q.run[0][1]);
+  const w = (m) => m.span[1] - m.span[0];
+  return out.sort((p, q) => w(q) - w(p) || p.run[0][0] - q.run[0][0] || p.run[0][1] - q.run[0][1]);
 }
 
 // The real build of one stretch (re-checks every pair on the current world, so a stretch that an earlier merge changed fails cleanly).
@@ -555,9 +568,12 @@ export function* findMerges(at, y, rect) {
 export function planMerge(at, m) {
   const { y, d, g, run } = m, n = run.length, K = (x, z) => `${x},${z}`;
   if (!run.every(([x, z]) => mergePair(at, y, d, g, x, z))) return { error: "merge: stretch changed" };
+  const span = mergeSpan(at, y, d, g, run);
+  if (!span) return { error: "merge: stretch changed" };
+  const [lo, hi] = span, a = [d[1], d[0]];
   const P = run.map(([x, z]) => [x, z]), Q = run.map(([x, z]) => [x + d[0] * (g + 1), z + d[1] * (g + 1)]), G = run.map(([x, z]) => [x + d[0], z + d[1]]);
-  const removed = new Set(), added = new Set(), gapSet = new Set(g === 1 ? G.map(([x, z]) => K(x, z)) : []), cells = [];
-  for (let i = 1; i < n - 1; i++) {
+  const removed = new Set(), added = new Set(), gapSet = new Set(), cells = [];
+  for (let i = lo; i <= hi; i++) {
     for (const [x, z] of [P[i], Q[i]]) {
       const up2 = at(x, y + 2, z);
       if (!(freeCell(up2) || up2 === LANTERN)) return { error: "merge: no headroom over a removed rail" };
@@ -565,11 +581,12 @@ export function planMerge(at, m) {
       cells.push({ x, y, z, kind: "plank", row: 1 }, { x, y: y + 1, z, kind: "air", row: 1 }, { x, y: y + 2, z, kind: "air", row: 1 });
     }
   }
-  if (g === 1) {
-    for (let i = 0; i < n; i++) {
-      const [x, z] = G[i], cap = i === 0 || i === n - 1;
-      cells.push({ x, y, z, kind: "plank", row: 1 });
-      if (cap) { added.add(K(x, z)); cells.push({ x, y: y + 2, z, kind: "air", row: 1 }, { x, y: y + 3, z, kind: "air", row: 1 }); }
+  if (g === 1) { // gap planks under the opening; the caps (a fence on plank) sit one cell beyond each end, between the two end posts
+    const cap = (i) => [P[0][0] + a[0] * i + d[0], P[0][1] + a[1] * i + d[1]];
+    for (let i = lo - 1; i <= hi + 1; i++) {
+      const [x, z] = cap(i), isCap = i === lo - 1 || i === hi + 1;
+      gapSet.add(K(x, z)); cells.push({ x, y, z, kind: "plank", row: 1 });
+      if (isCap) { added.add(K(x, z)); cells.push({ x, y: y + 2, z, kind: "air", row: 1 }, { x, y: y + 3, z, kind: "air", row: 1 }); }
       else for (let h = 1; h <= 3; h++) cells.push({ x, y: y + h, z, kind: "air", row: 1 });
     }
   }
@@ -595,14 +612,14 @@ export function planMerge(at, m) {
     return at(x, yy, z);
   };
   const walk = [];
-  for (let i = 1; i < n - 1; i++) { walk.push(P[i], Q[i]); if (g === 1) walk.push(G[i]); }
+  for (let i = lo; i <= hi; i++) { walk.push(P[i], Q[i]); if (g === 1) walk.push(G[i]); }
   const xs = [...P, ...Q].map((c) => c[0]), zs = [...P, ...Q].map((c) => c[1]);
   const box = { x0: Math.min(...xs) - 12, x1: Math.max(...xs) + 12, z0: Math.min(...zs) - 12, z1: Math.max(...zs) + 12 };
   const posts = [];
   for (let x = box.x0 + 4; x <= box.x1 - 4; x++) for (let z = box.z0 + 4; z <= box.z1 - 4; z++) if (fenced(x, z)) posts.push([x, z]);
   const lamps = mergeLanterns(at, ovA, walk, posts, y, box);
   if (lamps.error) return lamps;
-  const mid = Math.floor(n / 2);
+  const mid = lo + Math.floor((hi - lo + 1) / 2);
   const A = { x: P[mid][0] - d[0], y, z: P[mid][1] - d[1] }, B = { x: Q[mid][0] + d[0], y, z: Q[mid][1] + d[1] };
   return { plan: { A, B, length: n, offset: 0, shape: null, cells, rails, lanterns: lamps.map(([x, yy, z]) => ({ x, y: yy, z, row: 1 })), side: false, merge: true, gap: g, pier: [] } };
 }
