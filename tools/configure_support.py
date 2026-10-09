@@ -50,6 +50,13 @@ def configure(block):
     name = b["description"]["identifier"].split(":")[1]
     c = b["components"]
     configure_water(block)
+    # Counterpart parity, also for blocks without a support-survival dependency.
+    # These four shapes are single slabs/stairs; double slabs remain solid cubes.
+    if name in {"mallorn_slab", "mallorn_heartwood_slab", "mallorn_stairs", "mallorn_heartwood_stairs"}:
+        c.setdefault("minecraft:light_dampening", 0)
+        c.setdefault("minecraft:redstone_conductivity", {"redstone_conductor": False})
+    if name in {"mallorn_leaves", "mallorn_golden_leaves"}:
+        c.setdefault("minecraft:movable", {"movement_type": "popped"})
     placement = c.get("minecraft:placement_filter")
     if not (placement or name in MOUNTED or name in EXTRA):
         return None

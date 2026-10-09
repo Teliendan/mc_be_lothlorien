@@ -87,6 +87,10 @@
             "stops_liquid_flowing_from_direction": []
           }
         ]
+      },
+      "minecraft:light_dampening": 0,
+      "minecraft:redstone_conductivity": {
+        "redstone_conductor": false
       }
     },
     "permutations": [

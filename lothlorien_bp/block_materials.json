@@ -101,7 +101,16 @@
     },
     "lothlorien:mallorn_golden_leaves": {
       "profile": "leaves",
-      "harvest": "Normal leaves: shears collect leaves; existing random stick/acorn pools remain, Silk Touch not yet implemented. Golden decorative leaves intentionally always self-drop; no decay."
+      "harvest": "Normal leaves: shears collect leaves; existing random stick/acorn pools remain, Silk Touch not yet implemented. Golden decorative leaves intentionally always self-drop; no decay.",
+      "property_checks": {
+        "minecraft:movable": {
+          "counterpart": "minecraft:oak_leaves",
+          "expected": {
+            "movement_type": "popped"
+          },
+          "source": "https://feedback.minecraft.net/hc/en-us/articles/36757734170125-Minecraft-Beta-Preview-1-21-90-26"
+        }
+      }
     },
     "lothlorien:mallorn_heartwood_button": {
       "profile": "wood_control",
@@ -133,11 +142,39 @@
     },
     "lothlorien:mallorn_heartwood_slab": {
       "profile": "wood_planks",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:light_dampening": {
+          "counterpart": "minecraft:oak_slab",
+          "expected": 0,
+          "source": "https://github.com/PrismarineJS/minecraft-data/blob/master/data/bedrock/1.20.71/blocks.json"
+        },
+        "minecraft:redstone_conductivity": {
+          "counterpart": "minecraft:oak_slab",
+          "expected": {
+            "redstone_conductor": false
+          },
+          "source": "https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_conductivity?view=minecraft-bedrock-stable"
+        }
+      }
     },
     "lothlorien:mallorn_heartwood_stairs": {
       "profile": "wood_planks",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:light_dampening": {
+          "counterpart": "minecraft:oak_stairs",
+          "expected": 0,
+          "source": "https://github.com/PrismarineJS/minecraft-data/blob/master/data/bedrock/1.20.71/blocks.json"
+        },
+        "minecraft:redstone_conductivity": {
+          "counterpart": "minecraft:oak_stairs",
+          "expected": {
+            "redstone_conductor": false
+          },
+          "source": "https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_conductivity?view=minecraft-bedrock-stable"
+        }
+      }
     },
     "lothlorien:mallorn_heartwood_trapdoor": {
       "profile": "wood_door",
@@ -157,7 +194,16 @@
     },
     "lothlorien:mallorn_leaves": {
       "profile": "leaves",
-      "harvest": "Normal leaves: shears collect leaves; existing random stick/acorn pools remain, Silk Touch not yet implemented. Golden decorative leaves intentionally always self-drop; no decay."
+      "harvest": "Normal leaves: shears collect leaves; existing random stick/acorn pools remain, Silk Touch not yet implemented. Golden decorative leaves intentionally always self-drop; no decay.",
+      "property_checks": {
+        "minecraft:movable": {
+          "counterpart": "minecraft:oak_leaves",
+          "expected": {
+            "movement_type": "popped"
+          },
+          "source": "https://feedback.minecraft.net/hc/en-us/articles/36757734170125-Minecraft-Beta-Preview-1-21-90-26"
+        }
+      }
     },
     "lothlorien:mallorn_log": {
       "profile": "wood_log",
@@ -177,11 +223,39 @@
     },
     "lothlorien:mallorn_slab": {
       "profile": "wood_planks",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:light_dampening": {
+          "counterpart": "minecraft:oak_slab",
+          "expected": 0,
+          "source": "https://github.com/PrismarineJS/minecraft-data/blob/master/data/bedrock/1.20.71/blocks.json"
+        },
+        "minecraft:redstone_conductivity": {
+          "counterpart": "minecraft:oak_slab",
+          "expected": {
+            "redstone_conductor": false
+          },
+          "source": "https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_conductivity?view=minecraft-bedrock-stable"
+        }
+      }
     },
     "lothlorien:mallorn_stairs": {
       "profile": "wood_planks",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:light_dampening": {
+          "counterpart": "minecraft:oak_stairs",
+          "expected": 0,
+          "source": "https://github.com/PrismarineJS/minecraft-data/blob/master/data/bedrock/1.20.71/blocks.json"
+        },
+        "minecraft:redstone_conductivity": {
+          "counterpart": "minecraft:oak_stairs",
+          "expected": {
+            "redstone_conductor": false
+          },
+          "source": "https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_conductivity?view=minecraft-bedrock-stable"
+        }
+      }
     },
     "lothlorien:mallorn_stripped_log": {
       "profile": "wood_log",

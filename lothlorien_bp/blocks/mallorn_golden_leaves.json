@@ -65,6 +65,9 @@
             "stops_liquid_flowing_from_direction": []
           }
         ]
+      },
+      "minecraft:movable": {
+        "movement_type": "popped"
       }
     }
   }
