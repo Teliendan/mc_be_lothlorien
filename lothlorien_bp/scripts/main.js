@@ -15,7 +15,7 @@ import "./athelas.js";
 import "./trees.js";
 import "./great_mallorn.js";
 import "./rail_mender.js";
-import { planNearest } from "./loop_marker.js";
+import { planNearest, toggleDebug } from "./loop_marker.js";
 import "./warden_replace.js";
 import { leafUndersideY } from "./leaf_fall.js";
 import { handleHarmonyEvent, startHarmony } from "./harmony_game.js";
@@ -142,7 +142,9 @@ function onScriptEvent(event) {
   if (!player || player.typeId !== "minecraft:player") return;
   if (handleHarmonyEvent(event, player)) return;
   if (event.id === "lothlorien:village") { // debug: plan the loop links of the nearest village now (see loop_marker.js)
-    if (event.message.trim() === "plan") planNearest(player);
+    const arg = event.message.trim();
+    if (arg === "plan") planNearest(player);
+    else if (arg === "debug") player.sendMessage(message(toggleDebug() ? "debug.on" : "debug.off")); // planner stage logging (loop_marker.js)
     return;
   }
   if (event.id === "lothlorien:depth") {

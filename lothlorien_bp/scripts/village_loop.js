@@ -511,3 +511,146 @@ export function planLanterns(shape) {
   }
   throw new Error("planLanterns: no convergence");
 }
+
+// ---- F6 merge (owner 2026-10-09, screenshots gap8 / gap9): two decks that touch (0 cells apart: a double railing) or nearly touch (1 cell apart) ----
+// Jigsaw puts two pieces side by side and each keeps its own rim. A merge opens ONE shared stretch of the two rims: both railings go along the stretch,
+// a 1-cell gap is filled with planks, and the two end posts of the stretch stay (with a fence on the filled gap cell between them, so the opening has
+// closed ends). It adds no bridge, so it does not count toward the link budget (village_planner.js: PLAN.mergeCap). Same deck height only (a half slab
+// or one block of height difference is skipped: the rims would need a step).
+//   minRun: shared cells along the rims (the opening is minRun - 2 wide, so 2 at the least; the sim over 300 villages found 2 stretches of 3-4 cells: touching decks are rare there); minNet (planner): the two decks must not already be joined
+//   by a walk of fewer than this many steps (a 2-thick fence wall inside one deck is not a merge).
+export const MERGE = { minRun: 4, maxGap: 1, minNet: 10 };
+const isRimCell = (at, x, y, z) => at(x, y, z) === PLANKS && at(x, y + 1, z) === FENCE;
+const standCell = (at, x, y, z) => at(x, y, z) === PLANKS && isAir(at(x, y + 1, z)) && isAir(at(x, y + 2, z)); // deck with standing room
+const freeCell = (n) => isAir(n) || isLeaves(n);
+// is (x, z) with the partner g + 1 cells ahead (d) a facing rim pair? P = rim, Q = rim, standing deck behind both, the gap cell (g = 1) free
+export function mergePair(at, y, d, g, x, z) {
+  const qx = x + d[0] * (g + 1), qz = z + d[1] * (g + 1);
+  if (!isRimCell(at, x, y, z) || !isRimCell(at, qx, y, qz) || !standCell(at, x - d[0], y, z - d[1]) || !standCell(at, qx + d[0], y, qz + d[1])) return false;
+  if (g === 1) for (let h = 0; h <= 3; h++) if (!freeCell(at(x + d[0], y + h, z + d[1]))) return false;
+  return true;
+}
+// Every shared stretch within rect on level y: [{ y, d, g, a, run: [[x, z] ...] }] (run = the P cells in order along the rims), longest first.
+export function* findMerges(at, y, rect) {
+  const out = [];
+  for (const d of [[1, 0], [0, 1]]) for (let g = 0; g <= MERGE.maxGap; g++) {
+    const ok = new Set(), a = [d[1], d[0]];
+    for (let x = rect.x0; x <= rect.x1; x++) {
+      for (let z = rect.z0; z <= rect.z1; z++) if (at(x, y + 1, z) === FENCE && mergePair(at, y, d, g, x, z)) ok.add(`${x},${z}`);
+      if (x % 8 === 0) yield;
+    }
+    for (const k of ok) {
+      const [x, z] = k.split(",").map(Number);
+      if (ok.has(`${x - a[0]},${z - a[1]}`)) continue; // not the start of its run
+      const run = [];
+      for (let i = 0; ok.has(`${x + a[0] * i},${z + a[1] * i}`); i++) run.push([x + a[0] * i, z + a[1] * i]);
+      if (run.length >= MERGE.minRun) out.push({ y, d, g, a, run });
+    }
+  }
+  return out.sort((p, q) => q.run.length - p.run.length || p.run[0][0] - q.run[0][0] || p.run[0][1] - q.run[0][1]);
+}
+
+// The real build of one stretch (re-checks every pair on the current world, so a stretch that an earlier merge changed fails cleanly).
+// -> { plan } in the plaza plan format (cells / rails / lanterns, plan.merge = true) | { error }
+export function planMerge(at, m) {
+  const { y, d, g, run } = m, n = run.length, K = (x, z) => `${x},${z}`;
+  if (!run.every(([x, z]) => mergePair(at, y, d, g, x, z))) return { error: "merge: stretch changed" };
+  const P = run.map(([x, z]) => [x, z]), Q = run.map(([x, z]) => [x + d[0] * (g + 1), z + d[1] * (g + 1)]), G = run.map(([x, z]) => [x + d[0], z + d[1]]);
+  const removed = new Set(), added = new Set(), gapSet = new Set(g === 1 ? G.map(([x, z]) => K(x, z)) : []), cells = [];
+  for (let i = 1; i < n - 1; i++) {
+    for (const [x, z] of [P[i], Q[i]]) {
+      const up2 = at(x, y + 2, z);
+      if (!(freeCell(up2) || up2 === LANTERN)) return { error: "merge: no headroom over a removed rail" };
+      removed.add(K(x, z));
+      cells.push({ x, y, z, kind: "plank", row: 1 }, { x, y: y + 1, z, kind: "air", row: 1 }, { x, y: y + 2, z, kind: "air", row: 1 });
+    }
+  }
+  if (g === 1) {
+    for (let i = 0; i < n; i++) {
+      const [x, z] = G[i], cap = i === 0 || i === n - 1;
+      cells.push({ x, y, z, kind: "plank", row: 1 });
+      if (cap) { added.add(K(x, z)); cells.push({ x, y: y + 2, z, kind: "air", row: 1 }, { x, y: y + 3, z, kind: "air", row: 1 }); }
+      else for (let h = 1; h <= 3; h++) cells.push({ x, y: y + h, z, kind: "air", row: 1 });
+    }
+  }
+  const fenced = (x, z) => added.has(K(x, z)) || (at(x, y + 1, z) === FENCE && !removed.has(K(x, z)));
+  const rails = [], seen = new Set();
+  const addRail = (x, z) => {
+    if (seen.has(K(x, z)) || !fenced(x, z)) return;
+    seen.add(K(x, z));
+    const st = {};
+    for (const v of N4) st[`minecraft:connection_${SIDE_OF(v)}`] = fenced(x + v[0], z + v[1]);
+    rails.push({ x, y: y + 1, z, states: st, row: 1 });
+  };
+  for (const k of [...removed, ...added]) { const [x, z] = k.split(",").map(Number); addRail(x, z); for (const v of N4) addRail(x + v[0], z + v[1]); }
+  // light: every walk cell of the stretch and every walk cell that was lit before must still have light >= lightTarget
+  const ovA = (x, yy, z) => {
+    const k = K(x, z);
+    if (gapSet.has(k)) {
+      if (yy === y) return PLANKS;
+      if (yy === y + 1 && added.has(k)) return FENCE;
+      if (yy > y && yy <= y + 3) return "minecraft:air";
+    }
+    if (removed.has(k) && (yy === y + 1 || yy === y + 2)) return "minecraft:air";
+    return at(x, yy, z);
+  };
+  const walk = [];
+  for (let i = 1; i < n - 1; i++) { walk.push(P[i], Q[i]); if (g === 1) walk.push(G[i]); }
+  const xs = [...P, ...Q].map((c) => c[0]), zs = [...P, ...Q].map((c) => c[1]);
+  const box = { x0: Math.min(...xs) - 12, x1: Math.max(...xs) + 12, z0: Math.min(...zs) - 12, z1: Math.max(...zs) + 12 };
+  const posts = [];
+  for (let x = box.x0 + 4; x <= box.x1 - 4; x++) for (let z = box.z0 + 4; z <= box.z1 - 4; z++) if (fenced(x, z)) posts.push([x, z]);
+  const lamps = mergeLanterns(at, ovA, walk, posts, y, box);
+  if (lamps.error) return lamps;
+  const mid = Math.floor(n / 2);
+  const A = { x: P[mid][0] - d[0], y, z: P[mid][1] - d[1] }, B = { x: Q[mid][0] + d[0], y, z: Q[mid][1] + d[1] };
+  return { plan: { A, B, length: n, offset: 0, shape: null, cells, rails, lanterns: lamps.map(([x, yy, z]) => ({ x, y: yy, z, row: 1 })), side: false, merge: true, gap: g, pier: [] } };
+}
+// Lanterns on post tops until every watched walk cell (the stretch + all deck cells that were lit before) is lit again; ovB / ovA = the world before / after.
+function mergeLanterns(ovB, ovA, walkXZ, posts, y, b) {
+  const k3 = (x, yy, z) => `${x},${yy},${z}`, R = LOOP.lanternLight, N6 = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
+  const inBox = (x, yy, z) => x >= b.x0 && x <= b.x1 && z >= b.z0 && z <= b.z1 && yy >= y - 1 && yy <= y + 5;
+  const passes = (ov, x, yy, z) => { if (!inBox(x, yy, z)) return false; const t = ov(x, yy, z); return isAir(t) || t === FENCE || t === LANTERN; };
+  const field = (ov, lamps) => {
+    const Lv = new Map(), q = [];
+    for (let x = b.x0; x <= b.x1; x++) for (let z = b.z0; z <= b.z1; z++) for (let yy = y - 1; yy <= y + 5; yy++) if (ov(x, yy, z) === LANTERN) { Lv.set(k3(x, yy, z), R); q.push([x, yy, z]); }
+    for (const l of lamps) { Lv.set(k3(...l), R); q.push(l); }
+    for (let i = 0; i < q.length; i++) {
+      const [x, yy, z] = q[i], v = Lv.get(k3(x, yy, z));
+      if (v <= 1) continue;
+      for (const [a, c, e] of N6) {
+        const nx = x + a, ny = yy + c, nz = z + e;
+        if ((Lv.get(k3(nx, ny, nz)) ?? 0) >= v - 1 || !passes(ov, nx, ny, nz)) continue;
+        Lv.set(k3(nx, ny, nz), v - 1); q.push([nx, ny, nz]);
+      }
+    }
+    return Lv;
+  };
+  const before = field(ovB, []), watch = new Map();
+  const standing = (x, z) => ovA(x, y, z) === PLANKS && isAir(ovA(x, y + 1, z));
+  for (const [x, z] of walkXZ) if (standing(x, z)) watch.set(k3(x, y + 1, z), [x, y + 1, z]);
+  for (let x = b.x0; x <= b.x1; x++) for (let z = b.z0; z <= b.z1; z++) if (standing(x, z) && (before.get(k3(x, y + 1, z)) ?? 0) >= LOOP.lightTarget) watch.set(k3(x, y + 1, z), [x, y + 1, z]);
+  const lamps = [];
+  for (let guard = 0; guard < 30; guard++) {
+    const Lv = field(ovA, lamps), dark = [...watch.values()].filter((c) => (Lv.get(k3(...c)) ?? 0) < LOOP.lightTarget);
+    if (!dark.length) return lamps;
+    const darkSet = new Set(dark.map((c) => k3(...c)));
+    let best = null, bg = 0;
+    for (const [px, pz] of posts) {
+      const p = [px, y + 2, pz];
+      if (!isAir(ovA(...p)) || lamps.some((l) => k3(...l) === k3(...p))) continue;
+      const seen = new Map([[k3(...p), 0]]), q = [p];
+      let cnt = 0;
+      for (let i = 0; i < q.length; i++) {
+        const [x, yy, z] = q[i], dd = seen.get(k3(x, yy, z));
+        if (darkSet.has(k3(x, yy, z))) cnt++;
+        if (dd >= R - LOOP.lightTarget) continue;
+        for (const [a, c, e] of N6) { const m = [x + a, yy + c, z + e]; if (!seen.has(k3(...m)) && passes(ovA, ...m)) { seen.set(k3(...m), dd + 1); q.push(m); } }
+      }
+      if (cnt > bg) { bg = cnt; best = p; }
+    }
+    if (!best) return { error: `merge: cannot light ${dark.length} walk cells` };
+    lamps.push(best);
+  }
+  return { error: "merge: lighting did not converge" };
+}

@@ -544,7 +544,7 @@ export function planLoops(res, world, states, opts = {}) {
   for (const [k, n] of world) if (LOG_IDS.has(n)) ground = Math.min(ground, wdecode(k)[1]);
   const rawAt = (x, y, z) => world.get(wkey(x, y, z)) ?? (y < ground ? "minecraft:stone" : AIR);
   const all = [...new Map(res.placed.flatMap(markerCells).map((c) => [c.join(","), c])).values()].sort((a, b) => a[0] - b[0] || a[2] - b[2]);
-  const out = { markers: all.length, found: 0, complete: false, rounds: 0, sizes: [], chunks: 0, stable: false, error: null, nRaw: 0, loops: 0, byKind: {}, landings: 0, lengths: [], offsets: [], picks: [], log: [], bad: [] };
+  const out = { merges: 0, mergeCells: [], markers: all.length, found: 0, complete: false, rounds: 0, sizes: [], chunks: 0, stable: false, error: null, nRaw: 0, loops: 0, byKind: {}, landings: 0, lengths: [], offsets: [], picks: [], log: [], bad: [] };
   if (!all.length) return out;
   const [sx, sz] = opts.shift ?? [0, 0], maxChunks = opts.maxChunks ?? Infinity;
   const game = ([x, y, z]) => [x + sx, y, z + sz], back = ([x, y, z]) => [x - sx, y, z - sz];
@@ -556,8 +556,15 @@ export function planLoops(res, world, states, opts = {}) {
   try { found = discoverSync(env, game(all[(opts.start ?? 0) % all.length]), "sim"); } catch (e) { out.error = e.message; return out; }
   const known = found.known.map(back), rect = { x0: found.rect.x0 - sx, x1: found.rect.x1 - sx, z0: found.rect.z0 - sz, z1: found.rect.z1 - sz };
   Object.assign(out, { found: known.length, complete: known.length === all.length, rounds: found.rounds, sizes: found.sizes, chunks: Math.max(...found.sizes), stable: found.stable });
-  const at = boundedReader(rawAt, rect), r = planVillage(at, known, { budget: opts.budget ?? PLAN.budget });
+  const at = boundedReader(rawAt, rect), r = planVillage(at, known, { budget: opts.budget ?? PLAN.budget, rect: opts.noRect ? undefined : rect, ...(opts.plan ?? {}) });
   out.nRaw = r.nRaw; out.log = r.log;
+  out.merges = 0; out.mergeCells = [];
+  for (const p of r.merges) { // merges first (the planner scored the links on the merged network), checked like a link
+    const doApply = () => applyPlan(world, states, p.plan);
+    const c = joinChecks(world, states, p.plan, doApply);
+    if (c.walk.length || c.light < 8) out.bad.push({ kind: "merge", A: p.plan.A, B: p.plan.B, walk: c.walk.slice(0, 3), light: c.light, lightAt: c.lightAt });
+    out.merges++; out.mergeCells.push(p.len);
+  }
   for (const p of r.picks) {
     const doApply = () => applyPlan(world, states, p.plan);
     if (opts.verify) {
@@ -651,7 +658,7 @@ function main() {
   const lsum = (f) => rows.reduce((a, r) => a + f(r.lp), 0), kinds = {};
   for (const r of rows) for (const [k, v] of Object.entries(r.lp.byKind)) kinds[k] = (kinds[k] ?? 0) + v;
   const perV = (n) => (n / rows.length).toFixed(2), pct = (a, b) => `${(100 * a / Math.max(1, b)).toFixed(1)}%`;
-  console.log(`  loop planner (budget ${PLAN.budget}, one run per village from one start marker): ${avg((r) => r.lp.loops)} links per village, villages with a link ${rows.filter((r) => r.lp.loops).length}/${rows.length} (${pct(rows.filter((r) => r.lp.loops).length, rows.length)}); per village ` +
+  console.log(`  loop planner (budget ${PLAN.budget}, one run per village from one start marker): ${avg((r) => r.lp.merges)} merges per village (villages with one ${rows.filter((r) => r.lp.merges).length}/${rows.length}, cap ${PLAN.mergeCap}, not part of the budget), ${avg((r) => r.lp.loops)} links per village, villages with a link ${rows.filter((r) => r.lp.loops).length}/${rows.length} (${pct(rows.filter((r) => r.lp.loops).length, rows.length)}); per village ` +
     `${Object.entries(kinds).map(([k, v]) => `${k} ${perV(v)}`).join(", ")}; landings with pier ${avg((r) => r.lp.landings)}`);
   console.log(`  markers per village ${mm((r) => r.lp.markers)}; start-marker run found all of them in ${rows.filter((r) => r.lp.complete).length}/${rows.length} villages; area rounds ${mm((r) => r.lp.rounds)}, biggest area ${mm((r) => r.lp.chunks)} chunks; errors ${rows.filter((r) => r.lp.error).length}; ` +
     `every marker as the first one: ${rows.reduce((a, r) => a + r.cov.complete, 0)}/${rows.reduce((a, r) => a + r.cov.starts, 0)} starts find the whole village (worst miss ${Math.max(...rows.map((r) => r.cov.worst))} markers), most chunks ${Math.max(...rows.map((r) => r.cov.maxChunks))}, most rounds ${Math.max(...rows.map((r) => r.cov.rounds))}`);

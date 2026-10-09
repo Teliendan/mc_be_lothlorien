@@ -8,14 +8,20 @@
 //   2 candidates  every exit-exit / exit-side / side-side / plaza / L target in reach (geometry only)
 //   3 score       value = shortcut gained (walking distance through the existing deck network) - cost of the new link
 //   4 greedy      take the best, build its real plan, apply it to an overlay world, enumerate and score again; stop at the budget
-import { PLANKS, SLAB, FENCE, LOOP, exitAt, sideTarget, sideStarts, scanAhead, findPlazaPartners, findLs, planSpan, planPlaza, planL, blockedCells, clutter, planPier, finalBlocks, isNewKind } from "./village_loop.js";
+import { PLANKS, SLAB, FENCE, LOOP, exitAt, sideTarget, sideStarts, scanAhead, findPlazaPartners, findLs, planSpan, planPlaza, planL, blockedCells, clutter, planPier, finalBlocks, isNewKind, MERGE, findMerges, planMerge } from "./village_loop.js";
 
 // budget: extra links per village (owner 2026-10-09: up to 3). minNet/minRatio: a link must save at least 30 cells of walking and be 2.5 times shorter
 // than the way round. value = min(dnet, maxNet) - 2 len - kindCost - landingCost - 0.5 |offset|; spread: a candidate within 12 blocks of a chosen end loses 15.
-export const PLAN = { budget: 3, minNet: 30, minRatio: 2.5, minValue: 10, spread: 12, kindCost: { exit: 0, plaza: 3, side: 3, sideside: 6, L: 8 }, landingCost: 6, maxNet: 140 };
+// mergeCap: merges (touching / nearly touching decks opened into one, village_loop.js MERGE) per village; they are NOT part of `budget` (they add no bridge,
+// they repair a jigsaw artefact: owner screenshots gap8 / gap9 2026-10-09).
+// L-joins (owner 2026-10-09 after the in-game run built L joins of total length 26 and 24: "I think we may exclude big L shapes"): total length
+// (both legs and the landing, = c.len) <= lMaxLen, each leg (bridge blocks between the exit and the landing edge, s - 2) <= lMaxLeg.
+export const PLAN = { mergeCap: 6, lMaxLen: 16, lMaxLeg: 10, budget: 3, minNet: 30, minRatio: 2.5, minValue: 10, spread: 12, kindCost: { exit: 0, plaza: 3, side: 3, sideside: 6, L: 8 }, landingCost: 6, maxNet: 140 };
 // Ticking area: margin = blocks added round the known markers each round (a village piece is at most ~40 blocks from the next marker), maxRounds,
 // and the smaller margins tried when the pack's chunk quota (TickingAreaManager.maxChunkCount) does not fit the first one.
-export const AREA = { margins: [32, 28, 24], maxRounds: 8, minPad: 12, maxDone: 64, maxTries: 3 };
+// seed = blocks added round the FIRST marker only, in round 1 (owner 2026-10-09: the 4-round run took ~13 s; villages are ~100 x 100 blocks, at most ~155), so a typical village is
+// found in 1-2 rounds instead of 4; later rounds grow from the known markers as before. Dropped when the quota does not fit it.
+export const AREA = { seed: 48, margins: [32, 28, 24], maxRounds: 8, minPad: 12, maxDone: 64, maxTries: 3 };
 
 const isWalk = (n) => n === PLANKS || n === SLAB || (typeof n === "string" && /_stairs?$/.test(n));
 const key = (x, y, z) => `${x},${y},${z}`;
@@ -33,6 +39,22 @@ export function walkDist(at, A, limit = 400) {
     }
   }
   return dist;
+}
+
+// can a walker get from A to B (deck cells of one height, no railing on top, 4-neighbours) in at most `limit` steps? (merges: are the two decks joined already)
+export function openWalk(at, A, B, limit) {
+  const dist = new Map([[key(A.x, A.y, A.z), 0]]), q = [[A.x, A.z]];
+  for (let i = 0; i < q.length; i++) {
+    const [x, z] = q[i], d = dist.get(key(x, A.y, z));
+    if (x === B.x && z === B.z) return true;
+    if (d >= limit) continue;
+    for (const [a, b] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const k = key(x + a, A.y, z + b);
+      if (dist.has(k) || at(x + a, A.y, z + b) !== PLANKS || at(x + a, A.y + 1, z + b) === FENCE) continue;
+      dist.set(k, d + 1); q.push([x + a, z + b]);
+    }
+  }
+  return false;
 }
 
 // Starts from the marker cells: an exit marker is an exit start; a marker on a plain rim gives up to LOOP.sideStarts rim starts.
@@ -62,7 +84,7 @@ export function enumerate(at, starts) {
       else if (!B && sideTarget(at, c.x, A.y, c.z, d)) add({ kind: "side", A, B: { x: c.x, y: A.y, z: c.z }, dist: c.dist, offset: c.offset, len: c.length, score: c.score });
     }
     for (const c of findPlazaPartners(at, A)) if (findPlazaPartners(at, c.B).some((q) => q.B.x === A.x && q.B.z === A.z)) add({ kind: "plaza", A, B: c.B, dist: c.dist, offset: c.lat, len: c.dist + 1, score: c.score });
-    for (const c of findLs(at, A)) if (findLs(at, c.B).some((q) => q.B.x === A.x && q.B.z === A.z)) add({ kind: "L", A, B: c.B, s: c.s, u: c.u, dist: c.s + c.u, offset: 0, len: c.s + c.u + 1, score: c.score });
+    for (const c of findLs(at, A)) if (c.s + c.u + 1 <= PLAN.lMaxLen && c.s - 2 <= PLAN.lMaxLeg && c.u - 2 <= PLAN.lMaxLeg && findLs(at, c.B).some((q) => q.B.x === A.x && q.B.z === A.z)) add({ kind: "L", A, B: c.B, s: c.s, u: c.u, dist: c.s + c.u, offset: 0, len: c.s + c.u + 1, score: c.score });
   }
   // side-to-side: per rim start and per 7 x 7 cell of the far side only the best (shortest, least sideways) pair of start cells
   const grp = new Map();
@@ -126,11 +148,27 @@ export function overlay(at) {
   return f;
 }
 
-// planVillage(at0, markers, opts) -> { picks: [{ kind, A, B, plan, dnet, len, value }], nRaw, log, at }
+// planVillage(at0, markers, opts) -> { merges: [{ kind: "merge", A, B, plan, len, gap }], picks: [{ kind, A, B, plan, dnet, len, value }], nRaw, log, at }
 //   markers: [[x, y, z]] deck cells under the loop markers. opts: PLAN overrides (budget ...).
 export const planVillage = (at0, markers, opts = {}) => drive(planGen(at0, markers, opts));
 export function* planGen(at0, markers, opts = {}) {
-  const o = { ...PLAN, ...opts }, at = overlay(at0), picks = [], log = [];
+  const o = { ...PLAN, ...opts }, at = overlay(at0), picks = [], log = [], merges = [];
+  // merges first: they change the deck network the links are scored on. Level = every deck height a marker stands on, area = opts.rect or the markers' hull + 24.
+  if (markers.length && o.mergeCap > 0) {
+    const rect = o.rect ?? growRect(hullOf(markers), 24), ys = [...new Set(markers.map((m) => m[1]))].sort((p, q) => p - q);
+    for (const y of ys) {
+      const found = yield* findMerges(at, y, rect);
+      for (const m of found) {
+        if (merges.length >= o.mergeCap) break;
+        yield;
+        const r = planMerge(at, m);
+        if (!r.plan) { log.push(`merge ${m.run[0][0]},${m.run[0][1]} (${m.run.length}, gap ${m.g}): ${r.error}`); continue; }
+        if (openWalk(at, r.plan.A, r.plan.B, MERGE.minNet - 1)) { log.push(`merge ${m.run[0][0]},${m.run[0][1]}: decks already joined by a short walk`); continue; }
+        at.apply(r.plan);
+        merges.push({ kind: "merge", A: r.plan.A, B: r.plan.B, plan: r.plan, len: m.run.length, gap: m.g });
+      }
+    }
+  }
   const startsOf = () => startsFromMarkers(at, markers);
   let cands = enumerate(at, startsOf());
   const nRaw = cands.length, tried = new Set();
@@ -155,7 +193,7 @@ export function* planGen(at0, markers, opts = {}) {
     yield;
     cands = enumerate(at, startsOf()); // the network and the rims changed
   }
-  return { picks, nRaw, log, at };
+  return { picks, merges, nRaw, log, at };
 }
 
 // ---- ticking area discovery ---------------------------------------------------------------------------------------------------------
@@ -184,11 +222,15 @@ export function* discoverGen(env, first, baseId) { // yields the promise of env.
   const known = new Map([[key(...first), first]]), sizes = [];
   let alive = null, rect = null, stable = false, rounds = 0;
   const hull = () => hullOf([...known.values()]);
-  const fit = () => { for (const m of AREA.margins) { const r = chunkAlign(growRect(hull(), m)); if (env.hasCapacity(r)) return r; } return null; };
+  const fit = () => {
+    for (const seed of rounds === 0 ? [AREA.seed, 0] : [0]) for (const m of AREA.margins) { const r = chunkAlign(growRect(hull(), m + seed)); if (env.hasCapacity(r)) return r; }
+    return null;
+  };
   for (; rounds < AREA.maxRounds;) {
     let next = fit();
     if (!next && alive) { env.remove(alive); alive = null; next = fit(); } // the old area counts against the quota: drop it first
     if (!next) { if (!rect) throw new Error("over chunk limit"); break; }
+    if (rect && next.x0 >= rect.x0 && next.x1 <= rect.x1 && next.z0 >= rect.z0 && next.z1 <= rect.z1) { stable = true; break; } // the loaded area already holds everything the next one would ask for
     env.claim(next);
     const id = `${baseId}_${++rounds}`;
     yield env.create(id, next);
@@ -221,4 +263,5 @@ export function boundedReader(get, rect) {
 }
 
 // one-line description of a pick for logs / chat
+export const describeMerge = (m) => `merge ${m.A.x},${m.A.y},${m.A.z} <-> ${m.B.x},${m.B.z} (${m.len} cells, gap ${m.gap})`;
 export const describePick = (p) => `${p.kind} ${p.A.x},${p.A.y},${p.A.z} -> ${p.B.x},${p.B.z} (length ${p.len}${p.plan.landing ? ", landing" : ""}, saves ${p.dnet})`;

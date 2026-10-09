@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import "./support_motion.mjs";
 import "./rope_lifecycle.mjs";
 import "./stair_water.mjs";
+import "./script_glue.mjs";
 import { leafUndersideY } from "../lothlorien_bp/scripts/leaf_fall.js";
 import { BONEMEAL_TABLE, SPREAD_TRIES, COVERS, pickWeighted } from "../lothlorien_bp/scripts/flora_table.js";
 import { readFileSync } from "node:fs";
@@ -2480,24 +2481,58 @@ test("loop closer (F4): the plaza - two close balcony ends 6 sideways (the owner
   const cant = mkWorld((w) => { exitPlatform(w, 0, 0, [0, 1], { depth: 2, half: 2 }); exitPlatform(w, 8, 6, [0, -1], { depth: 2, half: 2 }); });
   assert.notEqual(LEG.decide(cant.at, LOOP.exitAt(cant.at, 0, 40, 0)).kind, "plaza", "the patch would hang more than 4 cells out");
 });
-test("loop closer (F5): L-join - exits at right angles meet on a 5 x 5 railed, lit landing on a log pier; two straight legs, no diagonal; refused by clutter and by obstacles", () => {
-  const mk = (extra) => mkWorld((w) => { exitPlatform(w, 0, 0, [0, 1]); exitPlatform(w, 12, 12, [-1, 0]); extra?.(w); });
+test("loop closer (F5): L-join - exits at right angles meet on a 5 x 5 railed, lit landing on a log pier; two straight legs (an 8 / 7 L: total 16, within PLAN.lMaxLen 16; a 12 / 12 L of 25 is refused, owner 2026-10-09), no diagonal; refused by clutter and by obstacles", () => {
+  const mk = (extra) => mkWorld((w) => { exitPlatform(w, 0, 0, [0, 1]); exitPlatform(w, 7, 8, [-1, 0]); extra?.(w); });
   const f = mk(), A = LOOP.exitAt(f.at, 0, 40, 0);
-  assert.deepEqual(LOOP.findLs(f.at, A).map((c) => [c.s, c.u]), [[12, 12]]);
-  assert.equal(LEG.decide(f.at, LOOP.exitAt(f.at, 12, 40, 12)).kind, "L", "the other end finds the same L-join");
+  assert.deepEqual(LOOP.findLs(f.at, A).map((c) => [c.s, c.u]), [[8, 7]]);
+  assert.equal(LEG.decide(f.at, LOOP.exitAt(f.at, 7, 40, 8)).kind, "L", "the other end finds the same L-join");
   const d = LEG.decide(f.at, A);
   assert.equal(d.kind, "L");
   assert.ok(d.plan.parts.every((p) => p.offset === 0), "both legs straight");
   assert.ok(d.plan.pier.length > 20, "pier under the landing");
   joined(f, d);
   assert.equal(f.at(0, 41, 0), "minecraft:air");
-  assert.equal(f.at(12, 41, 12), "minecraft:air");
-  assert.equal(f.at(0, 40, 12), PLANKS);
-  const g = mk((w) => { w.set("0,42,7", "lothlorien:mallorn_log"); }); // in the arch of the first leg
+  assert.equal(f.at(7, 41, 8), "minecraft:air");
+  assert.equal(f.at(0, 40, 8), PLANKS);
+  assert.equal(PL.enumerate(mkWorld((w) => { exitPlatform(w, 0, 0, [0, 1]); exitPlatform(w, 12, 12, [-1, 0]); }).at, { exits: [LOOP.exitAt(mkWorld((w) => { exitPlatform(w, 0, 0, [0, 1]); exitPlatform(w, 12, 12, [-1, 0]); }).at, 0, 40, 0)], rims: [] }).filter((c) => c.kind === "L").length, 0, "big L refused");
+  const g = mk((w) => { w.set("0,42,3", "lothlorien:mallorn_log"); }); // in the arch of the first leg
   assert.notEqual(LEG.decide(g.at, LOOP.exitAt(g.at, 0, 40, 0)).kind, "L", "obstacle in a leg");
-  const h = mk((w) => { for (let x = 3; x <= 5; x++) { w.set(`${x},40,5`, PLANKS); w.set(`${x},41,5`, FENCE); } });
+  const h = mk((w) => { for (let x = 3; x <= 5; x++) { w.set(`${x},40,3`, PLANKS); w.set(`${x},41,3`, FENCE); } });
   assert.notEqual(LEG.decide(h.at, LOOP.exitAt(h.at, 0, 40, 0)).kind, "L", "foreign deck within 2 cells of the first leg");
   assert.ok(LOOP.planPier((x, y, z) => (y === 36 ? "minecraft:lava" : mk().at(x, y, z)), d.plan.landing).error, "the pier gives up over lava (existing error path)");
+});
+test("loop merge (F6, gap8 / gap9): decks 0 or 1 cell apart open into one - shared railings go, a 1-cell gap is planked and capped, walk + light pass, no budget used; other heights and short runs are left, openWalk is rail-aware", () => {
+  const mk = (gap, edit) => mkWorld((w) => { addPlatform(w, -9, -1, 0, 8); addPlatform(w, -1 + gap + 1, 8 + gap, 0, 8); edit?.(w); });
+  const marks = (gap) => [[-1, 40, 4], [gap, 40, 4]];
+  for (const gap of [0, 1]) {
+    const f = mk(gap), res = PL.planVillage(f.at, marks(gap), { budget: 0 });
+    assert.equal(res.merges.length, 1, `gap ${gap}`); assert.equal(res.picks.length, 0);
+    const m = res.merges[0];
+    assert.equal(m.gap, gap); assert.equal(m.len, 7, "rows 1..7 face each other (the corner posts at z 0 and 8 have no deck behind them)");
+    joined(f, { action: "build", kind: "merge", plan: m.plan });
+    for (const z of [2, 3, 4, 5, 6]) { // the opening
+      assert.equal(f.at(-1, 41, z), "minecraft:air"); assert.equal(f.at(gap, 41, z), "minecraft:air");
+      if (gap) { assert.equal(f.at(0, 40, z), PLANKS); assert.equal(f.at(0, 41, z), "minecraft:air"); }
+    }
+    for (const z of [1, 7]) { assert.equal(f.at(-1, 41, z), FENCE); assert.equal(f.at(gap, 41, z), FENCE); if (gap) { assert.equal(f.at(0, 40, z), PLANKS); assert.equal(f.at(0, 41, z), FENCE, "end cap on the filled gap"); } }
+    const st = (x, z) => f.states.get(wkey(x, 41, z)) ?? {};
+    assert.equal(st(-1, 1)["minecraft:connection_south"], false, "the end post lets go of the removed rail");
+    assert.equal(st(-1, 1)["minecraft:connection_north"], true, "and keeps the rim");
+    if (gap) { assert.equal(st(0, 1)["minecraft:connection_west"], true); assert.equal(st(0, 1)["minecraft:connection_east"], true); }
+    const walk = checkWalk((x, y, z) => { const k = wkey(x, y, z), n = f.world.get(k); return n === undefined || n === "minecraft:air" ? undefined : { name: n, states: f.states.get(k) }; }, { x0: -10, x1: 10, y0: 35, y1: 46, z0: -1, z1: 9 }, { must: [{ x: -5, y: 41, z: 4 }, { x: 5, y: 41, z: 4 }] });
+    assert.deepEqual(walk.violations.filter((v) => v.rule !== "unguarded_edge"), [], "walkable and connected (the open sides of the fixture platforms' far ends are not the merge's business)");
+  }
+  assert.equal(PL.planVillage(mk(0).at, marks(0), { budget: 0, mergeCap: 0 }).merges.length, 0, "cap 0 switches merges off");
+  assert.equal(PL.planVillage(mk(2).at, [[-1, 40, 4], [2, 40, 4]], { budget: 0 }).merges.length, 0, "2 cells apart is no merge");
+  const high = mkWorld((w) => { addPlatform(w, -9, -1, 0, 8); addPlatform(w, 1, 9, 0, 8, 41); });
+  assert.equal(PL.planVillage(high.at, [[-1, 40, 4], [1, 41, 4]], { budget: 0 }).merges.length, 0, "different heights are skipped");
+  const short = mkWorld((w) => { addPlatform(w, -9, -1, 0, 4); addPlatform(w, 1, 9, 0, 4); });
+  assert.equal(PL.planVillage(short.at, [[-1, 40, 2]], { budget: 0 }).merges.length, 0, "a 3-cell run is too short (MERGE.minRun 4)");
+  const lane = mkWorld((w) => { for (let x = 0; x <= 6; x++) { w.set(`${x},40,0`, PLANKS); w.set(`${x},40,1`, PLANKS); } w.set("3,41,0", FENCE); w.set("3,41,1", FENCE); });
+  assert.equal(PL.openWalk(lane.at, { x: 0, y: 40, z: 0 }, { x: 6, y: 40, z: 0 }, 20), false, "a railing wall across the deck blocks the walk");
+  lane.world.delete(wkey(3, 41, 1));
+  assert.equal(PL.openWalk(lane.at, { x: 0, y: 40, z: 0 }, { x: 6, y: 40, z: 0 }, 20), true, "one open cell lets it through");
+  assert.equal(PL.openWalk(lane.at, { x: 0, y: 40, z: 0 }, { x: 6, y: 40, z: 0 }, 5), false, "limit counts steps (a long way round is not a short walk)");
 });
 test("loop planner: 30 simulated villages - every join passes the shared walk checker and light >= 8, all join kinds occur over the seeds, deck stays walkable; marker counts stay modest", () => {
   const kinds = {}; let markers = 0, n = 0;
@@ -2548,7 +2583,7 @@ test("loop planner: discovery grows the ticking area round by round until the ma
   };
   const a = mkEnv(), found = PL.discoverSync(a.env, all[0], "t");
   assert.equal(found.known.length, 4, "grows 0 -> 30 -> 60 -> 90 and stops: the far village is not pulled in");
-  assert.ok(found.stable && found.rounds >= 3 && found.rounds <= PL.AREA.maxRounds);
+  assert.ok(found.stable && found.rounds >= 2 && found.rounds <= PL.AREA.maxRounds && found.sizes[0] > PL.chunksIn(PL.chunkAlign(PL.growRect(PL.hullOf([cell(0, 0)]), PL.AREA.margins[0]))), "round 1 is the seeded (bigger) area");
   assert.deepEqual([...a.alive], found.ids, "the previous area is removed once the next one is up; one area alive at the end");
   assert.ok(found.rect.x0 % 16 === 0 && (found.rect.x1 + 1) % 16 === 0, "areas are chunk aligned");
   assert.ok(found.known.every(([x, , z]) => PL.inRect(found.rect, x, z)));
@@ -2574,14 +2609,14 @@ test("loop planner: a planned village is remembered (done-list), markers inside 
   assert.ok(js.includes("isDone(") && js.includes("addDone(") && js.includes("setDynamicProperty(DONE") && js.includes("removeMarkers(dimension, found.rect)"), "runtime: done-list checked, written, markers removed after planning");
   assert.ok(js.includes("} finally {\n    for (const id of [...areas]) env.remove(id);"), "areas are removed in finally");
 });
-test("loop planner: the owner's real village V2 (dump of world TT) gets the plaza (gap6) and the side-to-side bridge (gap7) among 3 picks, from the live marker positions", () => {
+test("loop planner: the owner's real village V2 (dump of world TT) gets the plaza (gap6) and the side-to-side bridge (gap7) among the picks, from the live marker positions", () => {
   const f = JSON.parse(gunzipSync(readFileSync(new URL("./fixtures/village_v2.json.gz", import.meta.url)))), [ox, oy, oz] = f.origin, [sx, sy, sz] = f.size, blocks = new Int16Array(sx * sy * sz);
   f.cols.forEach((runs, ci) => { const i = Math.floor(ci / sz), k = ci % sz; let j = 0; for (let r = 0; r < runs.length; r += 2) for (let n = 0; n < runs[r + 1]; n++) blocks[(i * sy + j++) * sz + k] = runs[r]; });
   const at = (x, y, z) => { const i = x - ox, j = y - oy, k = z - oz; return i < 0 || j < 0 || k < 0 || i >= sx || j >= sy || k >= sz ? undefined : f.palette[blocks[(i * sy + j) * sz + k]]; };
   const markers = f.markers.map((p) => [Math.floor(p[0]), Math.floor(p[1]) - 1, Math.floor(p[2])]);
   assert.equal(markers.length, 44);
   const r = PL.planVillage(at, markers);
-  assert.equal(r.picks.length, 3);
+  assert.equal(r.picks.length, 2, "owner 2026-10-09: no big L joins (PLAN.lMaxLen 16); the former third pick of V2 was an L of 24-26");
   const plaza = r.picks.find((p) => p.kind === "plaza"), ss = r.picks.find((p) => p.kind === "sideside");
   assert.ok(plaza && [plaza.A, plaza.B].some((e) => e.x === 81 && e.z === 343) && [plaza.A, plaza.B].some((e) => e.x === 85 && e.z === 347), "gap6: plaza 81,343 / 85,347");
   assert.ok(ss && [ss.A, ss.B].some((e) => e.x === 49) && [ss.A, ss.B].some((e) => e.x === 61), "gap7: side-side from x 49 to x 61");
