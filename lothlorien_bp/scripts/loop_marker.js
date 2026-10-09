@@ -115,7 +115,8 @@ async function drain() {
         const [x, , z] = cellOf(entity);
         if (!force && ((claim && inRect(claim, x, z)) || failed.some((r) => inRect(r, x, z)))) { done?.(null); continue; }
         if (!force && isDone(parseDone(world.getDynamicProperty(DONE)), x, z)) { entity.remove(); done?.(null); continue; } // a straggler of a planned village
-        done?.(await planVillageAt(entity, force));
+        const result = await planVillageAt(entity, force); // not `done?.(await ...)`: an optional call skips its arguments when done is unset
+        done?.(result);
       } catch (e) { console.warn(`[lothlorien] planner: ${e}`); done?.(null); }
     }
   } finally { running = false; }
