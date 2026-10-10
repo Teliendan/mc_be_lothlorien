@@ -393,6 +393,16 @@ lothlorien.message.dash.started=[lothlorien] détecteur d'accélérations : surv
 lothlorien.message.dash.row=%s : %s mobs, %s pics de vitesse, maximum %s blocs par seconde
 ## Context: Reports that the detector window ended without any speed spike, or with no mobs in range.
 lothlorien.message.dash.none=[lothlorien] détecteur d'accélérations : aucun pic de vitesse trouvé (détails dans le journal de contenu).
+## Context: Announces the start of the tick-rate measurement.
+lothlorien.message.tps.started=[lothlorien] cadence des ticks : mesure pendant %s secondes de temps réel. Ne mettez pas le jeu en pause.
+## Context: Announces the start of the tick-rate measurement in comparison mode: the scripted checks that plants, lamps and ropes still stand on their support are paused during the window.
+lothlorien.message.tps.started_off=[lothlorien] cadence des ticks : mesure pendant %s secondes de temps réel, vérification du support des plantes et lampes en pause. Ne mettez pas le jeu en pause.
+## Context: Reports that a second tick-rate measurement was requested while one is running.
+lothlorien.message.tps.busy=[lothlorien] cadence des ticks : une mesure est déjà en cours.
+## Context: First result line of the tick-rate measurement: game ticks counted, real seconds elapsed, ticks per second, and game speed as a percentage of real time (100 is normal).
+lothlorien.message.tps.result=[lothlorien] cadence des ticks : %s ticks de jeu en %s s = %s tps (normal 20) ; le temps de jeu s'écoule à %s pour cent du temps réel.
+## Context: Second result line of the tick-rate measurement: average and longest real duration of one game tick, how many scripted support checks of plants, lamps and ropes ran per second, and how many such blocks the script remembers.
+lothlorien.message.tps.detail=[lothlorien] cadence des ticks : tick moyen %s ms (normal 50), le plus long %s ms ; vérifications de support %s par seconde, blocs mémorisés : %s.
 ## Context: Developer diagnostic: /scriptevent lothlorien:village plan found no loop marker within 160 blocks, so there is nothing to plan.
 lothlorien.message.village.plan.none=[lothlorien] planificateur de village : aucun marqueur de village à proximité (le village est déjà planifié ou aucun n’est chargé).
 ## Context: Developer diagnostic: the village planner finished a run started by /scriptevent lothlorien:village plan.

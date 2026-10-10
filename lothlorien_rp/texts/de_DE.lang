@@ -393,6 +393,16 @@ lothlorien.message.dash.started=[lothlorien] Spurt-Erkennung: Mobs im Umkreis vo
 lothlorien.message.dash.row=%s: %s Mobs, %s Geschwindigkeitsspitzen, Höchstwert %s Blöcke pro Sekunde
 ## Context: Reports that the detector window ended without any speed spike, or with no mobs in range.
 lothlorien.message.dash.none=[lothlorien] Spurt-Erkennung: keine Geschwindigkeitsspitzen gefunden (Einzelheiten im Inhaltslog).
+## Context: Announces the start of the tick-rate measurement.
+lothlorien.message.tps.started=[lothlorien] Tickrate: Messung über %s Sekunden Echtzeit. Das Spiel nicht pausieren.
+## Context: Announces the start of the tick-rate measurement in comparison mode: the scripted checks that plants, lamps and ropes still stand on their support are paused during the window.
+lothlorien.message.tps.started_off=[lothlorien] Tickrate: Messung über %s Sekunden Echtzeit, die Halt-Prüfung von Pflanzen und Lampen ist pausiert. Das Spiel nicht pausieren.
+## Context: Reports that a second tick-rate measurement was requested while one is running.
+lothlorien.message.tps.busy=[lothlorien] Tickrate: Es läuft bereits eine Messung.
+## Context: First result line of the tick-rate measurement: game ticks counted, real seconds elapsed, ticks per second, and game speed as a percentage of real time (100 is normal).
+lothlorien.message.tps.result=[lothlorien] Tickrate: %s Spielticks in %s s = %s tps (normal 20); die Spielzeit läuft mit %s Prozent der Echtzeit.
+## Context: Second result line of the tick-rate measurement: average and longest real duration of one game tick, how many scripted support checks of plants, lamps and ropes ran per second, and how many such blocks the script remembers.
+lothlorien.message.tps.detail=[lothlorien] Tickrate: durchschnittlicher Tick %s ms (normal 50), längster %s ms; Halt-Prüfungen %s pro Sekunde, gemerkte Blöcke: %s.
 ## Context: Developer diagnostic: /scriptevent lothlorien:village plan found no loop marker within 160 blocks, so there is nothing to plan.
 lothlorien.message.village.plan.none=[lothlorien] Dorfplaner: keine Dorfmarker in der Nähe (das Dorf wurde schon geplant, oder es ist keines geladen).
 ## Context: Developer diagnostic: the village planner finished a run started by /scriptevent lothlorien:village plan.

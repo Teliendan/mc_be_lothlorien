@@ -34,3 +34,10 @@ support teardown. The underlying owner engine probe passed 18/18; production
 loot/rendering, doors, rapid motion, chunk reloads and scale remain game checks.
 Cold attachments need placement or their first scheduled callback before motion
 to retain unobserved valid-to-valid departures; cache capacity is 16,384 records.
+
+**Scale suspect (2026-10-11, not yet measured in game).** The owner saw game time at half real speed in the
+forest (Harmony timer: 10 s per 20 s). Every worldgen ground-cover block (leaf carpet, blossoms, ferns, flowers,
+corn, nectar blooms) carries `minecraft:tick` [2,2] + `onTick` -> `observe()` (about 8-10 API calls), i.e. thousands
+of script callbacks per game tick within simulation distance. Measure with `/scriptevent lothlorien:tps [seconds]`
+and again with `off` (pauses the onTick work for the window; tick_rate.js); it also reports onTick calls per second
+and the record count. Notes: `temp/elven_inhabitants/harmony_time_debug.md`.

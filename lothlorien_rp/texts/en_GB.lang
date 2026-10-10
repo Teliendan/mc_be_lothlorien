@@ -394,6 +394,16 @@ lothlorien.message.dash.started=[lothlorien] dash detector: watching mobs within
 lothlorien.message.dash.row=%s: %s mobs, %s speed spikes, peak %s blocks per second
 ## Context: Reports that the detector window ended without any speed spike, or with no mobs in range.
 lothlorien.message.dash.none=[lothlorien] dash detector: no speed spikes found (details are in the content log).
+## Context: Announces the start of the tick-rate measurement.
+lothlorien.message.tps.started=[lothlorien] tick rate: measuring for %s seconds of real time. Keep the game unpaused.
+## Context: Announces the start of the tick-rate measurement in comparison mode: the scripted checks that plants, lamps and ropes still stand on their support are paused during the window.
+lothlorien.message.tps.started_off=[lothlorien] tick rate: measuring for %s seconds of real time with the support checks of plants and lamps paused. Keep the game unpaused.
+## Context: Reports that a second tick-rate measurement was requested while one is running.
+lothlorien.message.tps.busy=[lothlorien] tick rate: a measurement is already running.
+## Context: First result line of the tick-rate measurement: game ticks counted, real seconds elapsed, ticks per second, and game speed as a percentage of real time (100 is normal).
+lothlorien.message.tps.result=[lothlorien] tick rate: %s game ticks in %s s = %s tps (normal 20); game time runs at %s percent of real time.
+## Context: Second result line of the tick-rate measurement: average and longest real duration of one game tick, how many scripted support checks of plants, lamps and ropes ran per second, and how many such blocks the script remembers.
+lothlorien.message.tps.detail=[lothlorien] tick rate: average tick %s ms (normal 50), longest %s ms; support checks %s per second, %s blocks remembered.
 ## Context: Developer diagnostic: /scriptevent lothlorien:village plan found no loop marker within 160 blocks, so there is nothing to plan.
 lothlorien.message.village.plan.none=[lothlorien] village planner: no village markers near you (the village was already planned, or none is loaded).
 ## Context: Developer diagnostic: the village planner finished a run started by /scriptevent lothlorien:village plan.

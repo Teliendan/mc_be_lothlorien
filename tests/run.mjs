@@ -2983,6 +2983,51 @@ test("elven warden: village group is applied through the structure's definitions
   assert.ok(src.includes('"+lothlorien:village_warden"') && src.includes("invulnerable: false"));
 });
 
+import * as TR from "../lothlorien_bp/scripts/tick_rate_rules.js";
+test("tick rate: half speed reads as 10 tps / 50 percent, the longest gap is kept, support callbacks per second", () => {
+  const c = TR.createTickClock(1000, 500, 40);
+  let t = 1000;
+  for (let i = 1; i <= 100; i++) TR.addTick(c, (t += i === 50 ? 400 : 100));
+  assert.equal(c.longestMs, 400, "one slow tick shows as the longest gap");
+  assert.ok(!TR.isDone(c, 10999, 10) && TR.isDone(c, 11000, 10));
+  const r = TR.summarizeTicks(c, 11000, 600, 40 + 25000);
+  assert.equal(r.ticks, 100); assert.equal(r.seconds, 10); assert.equal(r.tps, 10); assert.equal(r.percent, 50);
+  assert.equal(r.averageMs, 100, "a tick takes 100 ms instead of 50"); assert.equal(r.callsPerSecond, 2500);
+  const n = TR.summarizeTicks(TR.createTickClock(0, 0), 10000, 200);
+  assert.equal(n.tps, TR.NORMAL_TPS); assert.equal(n.percent, 100); assert.equal(n.averageMs, 50); assert.equal(n.callsPerSecond, 0);
+});
+test("tick rate: arguments - seconds (default 10, max 60) and `off` in any order; junk falls back", () => {
+  assert.deepEqual(TR.parseTpsArgs(""), { seconds: 10, pause: false });
+  assert.deepEqual(TR.parseTpsArgs(undefined), { seconds: 10, pause: false });
+  assert.deepEqual(TR.parseTpsArgs("20"), { seconds: 20, pause: false });
+  assert.deepEqual(TR.parseTpsArgs("off 15"), { seconds: 15, pause: true });
+  assert.deepEqual(TR.parseTpsArgs("15 OFF"), { seconds: 15, pause: true });
+  assert.deepEqual(TR.parseTpsArgs("999"), { seconds: TR.MAX_SECONDS, pause: false });
+  assert.deepEqual(TR.parseTpsArgs("-3 x"), { seconds: 10, pause: false });
+});
+test("tick rate: the debug event is wired, its chat keys are RP catalog entries, support onTick is counted and pausable", () => {
+  const main = readFileSync(new URL("../lothlorien_bp/scripts/main.js", import.meta.url), "utf8");
+  assert.ok(main.includes('event.id === "lothlorien:tps"') && main.includes("startTickRateProbe(player, event.message)"));
+  const glue = readFileSync(new URL("../lothlorien_bp/scripts/tick_rate.js", import.meta.url), "utf8");
+  const entries = catalogEntries();
+  for (const key of ["tps.started", "tps.started_off", "tps.busy", "tps.result", "tps.detail"]) {
+    assert.ok(glue.includes(`"${key}"`), key);
+    assert.ok(entries[`lothlorien.message.${key}`], key);
+  }
+  assert.ok(/supportTickStats\.paused = false;[\s\S]*summarizeTicks/.test(glue), "the pause ends with the window");
+  const sm = readFileSync(new URL("../lothlorien_bp/scripts/support_motion.js", import.meta.url), "utf8");
+  assert.ok(/onTick\(\{ block \}\) \{\s*supportTickStats\.calls\+\+;\s*if \(!supportTickStats\.paused\) supportMotion\.observe\(block\);/.test(sm));
+});
+test("harmony: the timer is a game-tick clock - one second per 20 game ticks (at 10 tps it runs at half real speed)", () => {
+  const game = readFileSync(new URL("../lothlorien_bp/scripts/harmony_game.js", import.meta.url), "utf8");
+  assert.ok(game.includes("const TICK_SECONDS = 1;") && game.includes("tick(state, here, TICK_SECONDS)") && game.includes("}, TICK_SECONDS * 20);"));
+  const s = H.newState(); s.harmony = -5;
+  for (let i = 0; i < 59; i++) H.tick(s, true, 1);
+  assert.deepEqual([s.harmony, s.timer], [-5, 59]);
+  H.tick(s, true, 1);
+  assert.deepEqual([s.harmony, s.timer], [-4, 0], "60 runs of the 20-tick interval = +1");
+});
+
 import * as SS from "../lothlorien_bp/scripts/speed_stats.js";
 test("speed probe: speed is distance over elapsed ticks per entity, in blocks per second", () => {
   const st = SS.createStats();

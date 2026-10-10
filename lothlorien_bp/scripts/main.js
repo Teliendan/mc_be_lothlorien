@@ -30,6 +30,7 @@ import { handleRenownEvent, startRenown } from "./renown_game.js";
 import { startLoremaster } from "./loremaster.js";
 import { DEPTH_NAMES, estimateDepth, probeCount } from "./depth.js";
 import { startSpeedProbe } from "./speed_probe.js";
+import { startTickRateProbe } from "./tick_rate.js";
 
 const BIOME_ID = "lothlorien:lothlorien";
 
@@ -161,6 +162,10 @@ function onScriptEvent(event) {
   }
   if (event.id === "lothlorien:speed") {
     startSpeedProbe(player, event.message);
+    return;
+  }
+  if (event.id === "lothlorien:tps") { // debug: game ticks per real second; `off` pauses the support checks (tick_rate.js)
+    startTickRateProbe(player, event.message);
     return;
   }
   if (event.id !== "lothlorien:debug") return;

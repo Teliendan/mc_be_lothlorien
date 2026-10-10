@@ -11175,6 +11175,345 @@
             }
           }
         },
+        "lothlorien.message.tps.started": {
+          "source": "[lothlorien] tick rate: measuring for %s seconds of real time. Keep the game unpaused.",
+          "context": {
+            "meaning": "Announces the start of the tick-rate measurement.",
+            "location": "lothlorien_rp: chat message to the player who ran the command",
+            "trigger": "Player runs /scriptevent lothlorien:tps [seconds] [off], a one-shot developer measurement of the game's tick rate (game ticks per real second; normal is 20).",
+            "tone": "Technical and concise",
+            "grammar": "Short status line or measurement result; no player gender.",
+            "constraints": "Keep the [lothlorien] tag, the abbreviations tps and ms, and placeholder order unchanged.",
+            "source_paths": [
+              "lothlorien_bp/scripts/tick_rate.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "seconds",
+              "type": "string",
+              "meaning": "measurement window in real seconds"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "[lothlorien] rychlost ticků: měřím %s s skutečného času. Nepozastavuj hru.",
+              "based_on": "7540760bb18f18ae2621d89abb5f04a620416fb8d47a7d19e6179add26fcaed6",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "[lothlorien] ritmo de ticks: midiendo durante %s segundos de tiempo real. No pauses el juego.",
+              "based_on": "7540760bb18f18ae2621d89abb5f04a620416fb8d47a7d19e6179add26fcaed6",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "[lothlorien] ritmo de ticks: midiendo durante %s segundos de tiempo real. No pauses el juego.",
+              "based_on": "7540760bb18f18ae2621d89abb5f04a620416fb8d47a7d19e6179add26fcaed6",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "[lothlorien] ritmo de ticks: a medir durante %s segundos de tempo real. Não pauses o jogo.",
+              "based_on": "7540760bb18f18ae2621d89abb5f04a620416fb8d47a7d19e6179add26fcaed6",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "[lothlorien] ritmo de ticks: medindo por %s segundos de tempo real. Não pause o jogo.",
+              "based_on": "7540760bb18f18ae2621d89abb5f04a620416fb8d47a7d19e6179add26fcaed6",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "[lothlorien] Tickrate: Messung über %s Sekunden Echtzeit. Das Spiel nicht pausieren.",
+              "based_on": "7540760bb18f18ae2621d89abb5f04a620416fb8d47a7d19e6179add26fcaed6",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "[lothlorien] cadence des ticks : mesure pendant %s secondes de temps réel. Ne mettez pas le jeu en pause.",
+              "based_on": "7540760bb18f18ae2621d89abb5f04a620416fb8d47a7d19e6179add26fcaed6",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "[lothlorien] tempo ticków: mierzę przez %s s czasu rzeczywistego. Nie pauzuj gry.",
+              "based_on": "7540760bb18f18ae2621d89abb5f04a620416fb8d47a7d19e6179add26fcaed6",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.tps.started_off": {
+          "source": "[lothlorien] tick rate: measuring for %s seconds of real time with the support checks of plants and lamps paused. Keep the game unpaused.",
+          "context": {
+            "meaning": "Announces the start of the tick-rate measurement in comparison mode: the scripted checks that plants, lamps and ropes still stand on their support are paused during the window.",
+            "location": "lothlorien_rp: chat message to the player who ran the command",
+            "trigger": "Player runs /scriptevent lothlorien:tps [seconds] [off], a one-shot developer measurement of the game's tick rate (game ticks per real second; normal is 20).",
+            "tone": "Technical and concise",
+            "grammar": "Short status line or measurement result; no player gender.",
+            "constraints": "Keep the [lothlorien] tag, the abbreviations tps and ms, and placeholder order unchanged.",
+            "source_paths": [
+              "lothlorien_bp/scripts/tick_rate.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "seconds",
+              "type": "string",
+              "meaning": "measurement window in real seconds"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "[lothlorien] rychlost ticků: měřím %s s skutečného času s pozastavenou kontrolou opory rostlin a lamp. Nepozastavuj hru.",
+              "based_on": "812d30daaae9e331ca4b436785d55ab940f985f45b144a0ff9653debd692768e",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "[lothlorien] ritmo de ticks: midiendo durante %s segundos de tiempo real con la comprobación de soporte de plantas y lámparas en pausa. No pauses el juego.",
+              "based_on": "812d30daaae9e331ca4b436785d55ab940f985f45b144a0ff9653debd692768e",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "[lothlorien] ritmo de ticks: midiendo durante %s segundos de tiempo real con la comprobación de soporte de plantas y lámparas en pausa. No pauses el juego.",
+              "based_on": "812d30daaae9e331ca4b436785d55ab940f985f45b144a0ff9653debd692768e",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "[lothlorien] ritmo de ticks: a medir durante %s segundos de tempo real com a verificação de suporte de plantas e lanternas em pausa. Não pauses o jogo.",
+              "based_on": "812d30daaae9e331ca4b436785d55ab940f985f45b144a0ff9653debd692768e",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "[lothlorien] ritmo de ticks: medindo por %s segundos de tempo real com a verificação de suporte de plantas e lanternas pausada. Não pause o jogo.",
+              "based_on": "812d30daaae9e331ca4b436785d55ab940f985f45b144a0ff9653debd692768e",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "[lothlorien] Tickrate: Messung über %s Sekunden Echtzeit, die Halt-Prüfung von Pflanzen und Lampen ist pausiert. Das Spiel nicht pausieren.",
+              "based_on": "812d30daaae9e331ca4b436785d55ab940f985f45b144a0ff9653debd692768e",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "[lothlorien] cadence des ticks : mesure pendant %s secondes de temps réel, vérification du support des plantes et lampes en pause. Ne mettez pas le jeu en pause.",
+              "based_on": "812d30daaae9e331ca4b436785d55ab940f985f45b144a0ff9653debd692768e",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "[lothlorien] tempo ticków: mierzę przez %s s czasu rzeczywistego, sprawdzanie podparcia roślin i lamp wstrzymane. Nie pauzuj gry.",
+              "based_on": "812d30daaae9e331ca4b436785d55ab940f985f45b144a0ff9653debd692768e",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.tps.busy": {
+          "source": "[lothlorien] tick rate: a measurement is already running.",
+          "context": {
+            "meaning": "Reports that a second tick-rate measurement was requested while one is running.",
+            "location": "lothlorien_rp: chat message to the player who ran the command",
+            "trigger": "Player runs /scriptevent lothlorien:tps [seconds] [off], a one-shot developer measurement of the game's tick rate (game ticks per real second; normal is 20).",
+            "tone": "Technical and concise",
+            "grammar": "Short status line or measurement result; no player gender.",
+            "constraints": "Keep the [lothlorien] tag, the abbreviations tps and ms, and placeholder order unchanged.",
+            "source_paths": [
+              "lothlorien_bp/scripts/tick_rate.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "[lothlorien] rychlost ticků: jedno měření už běží.",
+              "based_on": "9dde916b6b2bd87b2c5c4fafb10871500ca7c1d2051fb0b97989b4c94384a788",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "[lothlorien] ritmo de ticks: ya hay una medición en curso.",
+              "based_on": "9dde916b6b2bd87b2c5c4fafb10871500ca7c1d2051fb0b97989b4c94384a788",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "[lothlorien] ritmo de ticks: ya hay una medición en curso.",
+              "based_on": "9dde916b6b2bd87b2c5c4fafb10871500ca7c1d2051fb0b97989b4c94384a788",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "[lothlorien] ritmo de ticks: já está a decorrer uma medição.",
+              "based_on": "9dde916b6b2bd87b2c5c4fafb10871500ca7c1d2051fb0b97989b4c94384a788",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "[lothlorien] ritmo de ticks: já há uma medição em andamento.",
+              "based_on": "9dde916b6b2bd87b2c5c4fafb10871500ca7c1d2051fb0b97989b4c94384a788",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "[lothlorien] Tickrate: Es läuft bereits eine Messung.",
+              "based_on": "9dde916b6b2bd87b2c5c4fafb10871500ca7c1d2051fb0b97989b4c94384a788",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "[lothlorien] cadence des ticks : une mesure est déjà en cours.",
+              "based_on": "9dde916b6b2bd87b2c5c4fafb10871500ca7c1d2051fb0b97989b4c94384a788",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "[lothlorien] tempo ticków: pomiar już trwa.",
+              "based_on": "9dde916b6b2bd87b2c5c4fafb10871500ca7c1d2051fb0b97989b4c94384a788",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.tps.result": {
+          "source": "[lothlorien] tick rate: %s game ticks in %s s = %s tps (normal 20); game time runs at %s percent of real time.",
+          "context": {
+            "meaning": "First result line of the tick-rate measurement: game ticks counted, real seconds elapsed, ticks per second, and game speed as a percentage of real time (100 is normal).",
+            "location": "lothlorien_rp: chat message to the player who ran the command",
+            "trigger": "Player runs /scriptevent lothlorien:tps [seconds] [off], a one-shot developer measurement of the game's tick rate (game ticks per real second; normal is 20).",
+            "tone": "Technical and concise",
+            "grammar": "Short status line or measurement result; no player gender.",
+            "constraints": "Keep the [lothlorien] tag, the abbreviations tps and ms, and placeholder order unchanged.",
+            "source_paths": [
+              "lothlorien_bp/scripts/tick_rate.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "ticks",
+              "type": "string",
+              "meaning": "game ticks counted"
+            },
+            {
+              "name": "seconds",
+              "type": "string",
+              "meaning": "real seconds elapsed, one decimal"
+            },
+            {
+              "name": "tps",
+              "type": "string",
+              "meaning": "game ticks per real second, one decimal"
+            },
+            {
+              "name": "percent",
+              "type": "string",
+              "meaning": "game speed in percent of real time"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "[lothlorien] rychlost ticků: %s herních ticků za %s s = %s tps (normálně 20); herní čas běží na %s procent skutečného času.",
+              "based_on": "f821849bbab73218c5335f25544877c381160a9b2842887850dc2e69e8003b1d",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "[lothlorien] ritmo de ticks: %s ticks de juego en %s s = %s tps (normal 20); el tiempo de juego va al %s por ciento del tiempo real.",
+              "based_on": "f821849bbab73218c5335f25544877c381160a9b2842887850dc2e69e8003b1d",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "[lothlorien] ritmo de ticks: %s ticks de juego en %s s = %s tps (normal 20); el tiempo de juego va al %s por ciento del tiempo real.",
+              "based_on": "f821849bbab73218c5335f25544877c381160a9b2842887850dc2e69e8003b1d",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "[lothlorien] ritmo de ticks: %s ticks de jogo em %s s = %s tps (normal 20); o tempo de jogo corre a %s por cento do tempo real.",
+              "based_on": "f821849bbab73218c5335f25544877c381160a9b2842887850dc2e69e8003b1d",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "[lothlorien] ritmo de ticks: %s ticks de jogo em %s s = %s tps (normal 20); o tempo de jogo corre a %s por cento do tempo real.",
+              "based_on": "f821849bbab73218c5335f25544877c381160a9b2842887850dc2e69e8003b1d",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "[lothlorien] Tickrate: %s Spielticks in %s s = %s tps (normal 20); die Spielzeit läuft mit %s Prozent der Echtzeit.",
+              "based_on": "f821849bbab73218c5335f25544877c381160a9b2842887850dc2e69e8003b1d",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "[lothlorien] cadence des ticks : %s ticks de jeu en %s s = %s tps (normal 20) ; le temps de jeu s'écoule à %s pour cent du temps réel.",
+              "based_on": "f821849bbab73218c5335f25544877c381160a9b2842887850dc2e69e8003b1d",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "[lothlorien] tempo ticków: %s ticków gry w %s s = %s tps (normalnie 20); czas gry płynie w %s procentach czasu rzeczywistego.",
+              "based_on": "f821849bbab73218c5335f25544877c381160a9b2842887850dc2e69e8003b1d",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.tps.detail": {
+          "source": "[lothlorien] tick rate: average tick %s ms (normal 50), longest %s ms; support checks %s per second, %s blocks remembered.",
+          "context": {
+            "meaning": "Second result line of the tick-rate measurement: average and longest real duration of one game tick, how many scripted support checks of plants, lamps and ropes ran per second, and how many such blocks the script remembers.",
+            "location": "lothlorien_rp: chat message to the player who ran the command",
+            "trigger": "Player runs /scriptevent lothlorien:tps [seconds] [off], a one-shot developer measurement of the game's tick rate (game ticks per real second; normal is 20).",
+            "tone": "Technical and concise",
+            "grammar": "Short status line or measurement result; no player gender.",
+            "constraints": "Keep the [lothlorien] tag, the abbreviations tps and ms, and placeholder order unchanged.",
+            "source_paths": [
+              "lothlorien_bp/scripts/tick_rate.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "average",
+              "type": "string",
+              "meaning": "average real milliseconds per game tick, one decimal"
+            },
+            {
+              "name": "longest",
+              "type": "string",
+              "meaning": "longest real milliseconds between two game ticks"
+            },
+            {
+              "name": "checks",
+              "type": "string",
+              "meaning": "support check callbacks per real second"
+            },
+            {
+              "name": "records",
+              "type": "string",
+              "meaning": "number of supported blocks the script remembers"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "[lothlorien] rychlost ticků: průměrný tick %s ms (normálně 50), nejdelší %s ms; kontrol opory %s za sekundu, zapamatovaných bloků %s.",
+              "based_on": "bf8b57d1821516fcab092b2fd2e8bd49ece8e50886d6f8d4a63789f0c47edf9d",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "[lothlorien] ritmo de ticks: tick medio %s ms (normal 50), el más largo %s ms; comprobaciones de soporte %s por segundo, bloques recordados: %s.",
+              "based_on": "bf8b57d1821516fcab092b2fd2e8bd49ece8e50886d6f8d4a63789f0c47edf9d",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "[lothlorien] ritmo de ticks: tick promedio %s ms (normal 50), el más largo %s ms; comprobaciones de soporte %s por segundo, bloques recordados: %s.",
+              "based_on": "bf8b57d1821516fcab092b2fd2e8bd49ece8e50886d6f8d4a63789f0c47edf9d",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "[lothlorien] ritmo de ticks: tick médio %s ms (normal 50), o mais longo %s ms; verificações de suporte %s por segundo, blocos memorizados: %s.",
+              "based_on": "bf8b57d1821516fcab092b2fd2e8bd49ece8e50886d6f8d4a63789f0c47edf9d",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "[lothlorien] ritmo de ticks: tick médio %s ms (normal 50), o mais longo %s ms; verificações de suporte %s por segundo, blocos memorizados: %s.",
+              "based_on": "bf8b57d1821516fcab092b2fd2e8bd49ece8e50886d6f8d4a63789f0c47edf9d",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "[lothlorien] Tickrate: durchschnittlicher Tick %s ms (normal 50), längster %s ms; Halt-Prüfungen %s pro Sekunde, gemerkte Blöcke: %s.",
+              "based_on": "bf8b57d1821516fcab092b2fd2e8bd49ece8e50886d6f8d4a63789f0c47edf9d",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "[lothlorien] cadence des ticks : tick moyen %s ms (normal 50), le plus long %s ms ; vérifications de support %s par seconde, blocs mémorisés : %s.",
+              "based_on": "bf8b57d1821516fcab092b2fd2e8bd49ece8e50886d6f8d4a63789f0c47edf9d",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "[lothlorien] tempo ticków: średni tick %s ms (normalnie 50), najdłuższy %s ms; sprawdzeń podparcia %s na sekundę, zapamiętanych bloków: %s.",
+              "based_on": "bf8b57d1821516fcab092b2fd2e8bd49ece8e50886d6f8d4a63789f0c47edf9d",
+              "status": "ai-draft"
+            }
+          }
+        },
         "lothlorien.message.village.plan.none": {
           "source": "[lothlorien] village planner: no village markers near you (the village was already planned, or none is loaded).",
           "context": {

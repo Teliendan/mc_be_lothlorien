@@ -393,6 +393,16 @@ lothlorien.message.dash.started=[lothlorien] detektor zrychlení: sleduji moby d
 lothlorien.message.dash.row=%s: %s mobů, %s výkyvů rychlosti, maximum %s bloků za sekundu
 ## Context: Reports that the detector window ended without any speed spike, or with no mobs in range.
 lothlorien.message.dash.none=[lothlorien] detektor zrychlení: žádný výkyv rychlosti (podrobnosti jsou v logu obsahu).
+## Context: Announces the start of the tick-rate measurement.
+lothlorien.message.tps.started=[lothlorien] rychlost ticků: měřím %s s skutečného času. Nepozastavuj hru.
+## Context: Announces the start of the tick-rate measurement in comparison mode: the scripted checks that plants, lamps and ropes still stand on their support are paused during the window.
+lothlorien.message.tps.started_off=[lothlorien] rychlost ticků: měřím %s s skutečného času s pozastavenou kontrolou opory rostlin a lamp. Nepozastavuj hru.
+## Context: Reports that a second tick-rate measurement was requested while one is running.
+lothlorien.message.tps.busy=[lothlorien] rychlost ticků: jedno měření už běží.
+## Context: First result line of the tick-rate measurement: game ticks counted, real seconds elapsed, ticks per second, and game speed as a percentage of real time (100 is normal).
+lothlorien.message.tps.result=[lothlorien] rychlost ticků: %s herních ticků za %s s = %s tps (normálně 20); herní čas běží na %s procent skutečného času.
+## Context: Second result line of the tick-rate measurement: average and longest real duration of one game tick, how many scripted support checks of plants, lamps and ropes ran per second, and how many such blocks the script remembers.
+lothlorien.message.tps.detail=[lothlorien] rychlost ticků: průměrný tick %s ms (normálně 50), nejdelší %s ms; kontrol opory %s za sekundu, zapamatovaných bloků %s.
 ## Context: Developer diagnostic: /scriptevent lothlorien:village plan found no loop marker within 160 blocks, so there is nothing to plan.
 lothlorien.message.village.plan.none=[lothlorien] plánovač vesnice: v okolí nejsou žádné značky vesnice (vesnice už je naplánovaná, nebo žádná není načtená).
 ## Context: Developer diagnostic: the village planner finished a run started by /scriptevent lothlorien:village plan.

@@ -40,6 +40,9 @@ export const supportMotion = createSupportMotionService({ now: () => system.curr
     dropWholeRope(dimension, record.position, face);
   },
 });
+// Debug counter for `/scriptevent lothlorien:tps` (tick_rate.js): onTick callbacks so far; `paused` skips their work
+// during a measurement window (the `off` option), so the cost of these checks can be compared.
+export const supportTickStats = { calls: 0, paused: false };
 system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
   blockComponentRegistry.registerCustomComponent("lothlorien:motion_support", {
     beforeOnPlayerPlace(event) {
@@ -54,7 +57,10 @@ system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
       const support = read(event.dimension, { x: x + offset.x, y: y + offset.y, z: z + offset.z });
       if (!support || support.isAir || support.isLiquid) event.cancel = true;
     },
-    onTick({ block }) { supportMotion.observe(block); },
+    onTick({ block }) {
+      supportTickStats.calls++;
+      if (!supportTickStats.paused) supportMotion.observe(block);
+    },
     onPlace({ block }) { supportMotion.observe(block, { reset: true }); },
   });
 });
