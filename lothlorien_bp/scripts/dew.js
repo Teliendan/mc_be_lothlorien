@@ -1,12 +1,14 @@
 import { world, system } from "@minecraft/server";
 import { MALLORN_LEAVES } from "./nectar_rules.js";
-import { DEW_CHANCE, NEW_DEW_BOTTLE_DAMAGE, addDrop, dewAfterTick, leavesAbove } from "./dew_rules.js";
+import { DEW_APPEAR, NEW_DEW_BOTTLE_DAMAGE, addDrop, dewAfterTick, leavesAbove } from "./dew_rules.js";
 import { GLASS_BOTTLE, mainhandSlot, swapHeldBottle, newItem } from "./bottles.js";
 import { repeatedUse } from "./use_guard.js";
 import { noteDeed } from "./deeds.js";
 
 // Phase 14b: morning dew on the Mallorn ground covers (leaf litter, blossoms). The bool state `lothlorien:dew` is set
-// by random tick in the morning window under Mallorn leaves and cleared outside it. A glass bottle on dewy cover
+// by random tick in the morning window under Mallorn leaves (appear chance falls, dry chance rises across the window) and
+// dried with certainty by the first random tick outside it (leftover dew vanishes during the day; a visible dewy
+// patch can always be collected, at any time). A glass bottle on dewy cover
 // starts a Dew bottle (durability item, damage = missing drops); each further use adds a drop; at 8 drops it becomes a
 // Bottle of morning dew. Rules: dew_rules.js.
 const DEW = "lothlorien:dew";
@@ -18,7 +20,7 @@ system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
     onRandomTick({ block, dimension }) {
       const dewy = block.permutation.getState(DEW) === true;
       const { x, y, z } = block.location;
-      const next = dewAfterTick(dewy, world.getTimeOfDay(), DEW_CHANCE[block.typeId] ?? 0, Math.random(), () =>
+      const next = dewAfterTick(dewy, world.getTimeOfDay(), DEW_APPEAR[block.typeId] ?? 0, Math.random(), () =>
         leavesAbove((dy) => dimension.getBlock({ x, y: y + dy, z })?.typeId, (id) => MALLORN_LEAVES.has(id))
       );
       if (next !== dewy) block.setPermutation(block.permutation.withState(DEW, next));
@@ -52,12 +54,12 @@ function collect(player, block) {
 world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
   const { block, player, itemStack } = event;
   if (itemStack?.typeId !== GLASS_BOTTLE && itemStack?.typeId !== DEW_BOTTLE) return;
-  if (!(block.typeId in DEW_CHANCE) || block.permutation.getState(DEW) !== true) return;
+  if (!(block.typeId in DEW_APPEAR) || block.permutation.getState(DEW) !== true) return;
   event.cancel = true;
   if (repeatedUse(player, "dew")) return;
   const { location, dimension } = block;
   system.run(() => {
     const b = dimension.getBlock(location);
-    if (b && b.typeId in DEW_CHANCE && b.permutation.getState(DEW) === true) collect(player, b);
+    if (b && b.typeId in DEW_APPEAR && b.permutation.getState(DEW) === true) collect(player, b);
   });
 });

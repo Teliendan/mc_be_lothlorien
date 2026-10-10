@@ -1090,14 +1090,38 @@ test("Phase 14b: morning dew window, chances and leaves-above scan", () => {
   assert.ok(DR.inDewWindow(24000 + 100), "time wraps");
   const yes = () => true;
   const no = () => false;
-  assert.equal(DR.dewAfterTick(false, 500, 1 / 8, 0.1, yes), true);
-  assert.equal(DR.dewAfterTick(false, 500, 1 / 8, 0.2, yes), false, "dice fail");
+  // t=500: share 0.375, appear 1/8 * 0.625
+  assert.equal(DR.dewAfterTick(false, 500, 1 / 8, 0.07, yes), true);
+  assert.equal(DR.dewAfterTick(false, 500, 1 / 8, 0.08, yes), false, "dice fail");
   assert.equal(DR.dewAfterTick(false, 500, 1, 0, no), false, "needs leaves above");
-  assert.equal(DR.dewAfterTick(true, 500, 0, 0.99, no), true, "dew stays within the window");
-  assert.equal(DR.dewAfterTick(true, 8000, 1, 0, yes), false, "dew dries outside the window");
+  assert.equal(DR.dewAfterTick(true, 500, 0, 0.19, no), true, "dew stays within the window");
+  assert.equal(DR.dewAfterTick(true, 500, 0, 0.18, no), false, "dew dries inside the window (r < 1/2 * f)");
+  assert.equal(DR.dewAfterTick(true, 8000, 1, 0.99, yes), false, "dew dries outside the window");
   assert.equal(DR.dewAfterTick(false, 8000, 1, 0, yes), false, "no new dew by day");
-  assert.equal(DR.DEW_CHANCE["lothlorien:mallorn_leaf_carpet"], 1 / 8);
-  assert.equal(DR.DEW_CHANCE["lothlorien:mallorn_blossom"], 1 / 2);
+  assert.equal(DR.DEW_APPEAR["lothlorien:mallorn_leaf_carpet"], 1 / 8);
+  assert.equal(DR.DEW_APPEAR["lothlorien:mallorn_blossom"], 1 / 4);
+  assert.equal(DR.DEW_DRY_MAX, 1 / 2);
+  assert.equal(DR.DEW_LENGTH, 4000);
+  assert.equal(DR.dawnShare(23000), 0);
+  assert.equal(DR.dawnShare(1000), 0.5);
+  assert.ok(Math.abs(DR.dawnShare(2999) - 0.99975) < 1e-9);
+  // 23000: full appear chance, no drying
+  assert.equal(DR.dewAfterTick(false, 23000, 1 / 8, 0.124, yes), true);
+  assert.equal(DR.dewAfterTick(false, 23000, 1 / 8, 0.126, yes), false);
+  assert.equal(DR.dewAfterTick(true, 23000, 0, 0, no), true, "no drying at the start");
+  // 1000: appear halves, dry 1/4
+  assert.equal(DR.dewAfterTick(false, 1000, 1 / 8, 0.06, yes), true);
+  assert.equal(DR.dewAfterTick(false, 1000, 1 / 8, 0.07, yes), false);
+  assert.equal(DR.dewAfterTick(true, 1000, 0, 0.24, no), false);
+  assert.equal(DR.dewAfterTick(true, 1000, 0, 0.26, no), true);
+  // 2999: appear ~0, dry ~1/2
+  assert.equal(DR.dewAfterTick(false, 2999, 1 / 4, 0.001, yes), false);
+  assert.equal(DR.dewAfterTick(true, 2999, 0, 0.49, no), false);
+  assert.equal(DR.dewAfterTick(true, 2999, 0, 0.51, no), true);
+  for (const t of [3000, 6000, 22999]) {
+    assert.equal(DR.dewAfterTick(true, t, 1, 0.999, yes), false, `dries at ${t}`);
+    assert.equal(DR.dewAfterTick(false, t, 1, 0, yes), false, `never appears at ${t}`);
+  }
   const leaf = (id) => id === "L";
   assert.ok(DR.leavesAbove((dy) => (dy === 5 ? "L" : "air"), leaf));
   assert.ok(!DR.leavesAbove(() => "air", leaf));

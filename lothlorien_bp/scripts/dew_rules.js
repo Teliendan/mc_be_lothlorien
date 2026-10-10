@@ -11,8 +11,17 @@ export function inDewWindow(timeOfDay) {
   return t >= DEW_START || t < DEW_END;
 }
 
-// Chance that one random tick makes a dry cover dewy inside the window.
-export const DEW_CHANCE = { "lothlorien:mallorn_leaf_carpet": 1 / 8, "lothlorien:mallorn_blossom": 1 / 2 };
+export const DEW_LENGTH = (DEW_END - DEW_START + 24000) % 24000;
+
+// Share of the window gone: 0 at DEW_START, 1 at DEW_END.
+export function dawnShare(timeOfDay) {
+  return ((((timeOfDay - DEW_START) % 24000) + 24000) % 24000) / DEW_LENGTH;
+}
+
+// Chance that one random tick makes a dry cover dewy at the start of the window; it falls linearly to 0 at the end.
+export const DEW_APPEAR = { "lothlorien:mallorn_leaf_carpet": 1 / 8, "lothlorien:mallorn_blossom": 1 / 4 };
+// Chance that one random tick dries a dewy cover at the end of the window (0 at the start); 1 outside the window.
+export const DEW_DRY_MAX = 1 / 2;
 
 // Is there Mallorn foliage above? typeAt(dy) gives the block id dy blocks up (undefined = unloaded, stops the scan).
 export function leavesAbove(typeAt, isLeaves, maxScan = 40) {
@@ -24,12 +33,14 @@ export function leavesAbove(typeAt, isLeaves, maxScan = 40) {
   return false;
 }
 
-// Dew after one random tick. Outside the window any dew dries; inside it a dry cover turns dewy with its
-// chance, but only under leaves (checked lazily, only after the dice succeed). r in [0, 1).
-export function dewAfterTick(dewy, timeOfDay, chance, r, hasLeavesAbove) {
+// Dew after one random tick. Outside the window any dew dries (chance 1). Inside it a dewy cover dries with
+// DEW_DRY_MAX * share, a dry cover turns dewy with appearStart * (1 - share), only under leaves (checked lazily,
+// only after the dice succeed). r in [0, 1).
+export function dewAfterTick(dewy, timeOfDay, appearStart, r, hasLeavesAbove) {
   if (!inDewWindow(timeOfDay)) return false;
-  if (dewy) return true;
-  return r < chance && hasLeavesAbove();
+  const f = dawnShare(timeOfDay);
+  if (dewy) return r >= DEW_DRY_MAX * f;
+  return r < appearStart * (1 - f) && hasLeavesAbove();
 }
 
 // A Dew bottle is a durability item: damage counts the missing drops (new bottle: 1 drop = damage 7).

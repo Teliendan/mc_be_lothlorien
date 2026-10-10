@@ -669,13 +669,13 @@ A small hanging cluster of golden Mallorn flowers under Mallorn leaves (vanilla 
   random tick in the morning window sets it, not a tick at night) and is gone by mid-morning. Simulation distance is the
   intended limit: dew forms only around a player who is there.
 - **State:** bool `lothlorien:dew` (droplet glints in the texture). **Chance per random tick** (owner, 2026-10-02): in the
-  morning window a dry cover turns dewy with its chance, **leaf litter 1/8, blossom 1/2** (owner: 1/8 rewards active collecting); outside the window any dew
-  dries. A picked cover can turn dewy again in the same morning: staying in the grove pays. Doubles the litter and
+  morning window a dry cover turns dewy with `appear * (1 - f)` (f = share of the window gone, 0 at 23000, 1 at 3000), **leaf litter 1/8, blossom 1/4 at the start**, and a dewy one dries with `1/2 * f`; on any random tick outside the window dew dries (chance 1). A visible dewy patch can always be collected (owner 2026-10-11: no empty outcome). Not yet seen in game. A picked cover can turn dewy again in the same morning: staying in the grove pays. Doubles the litter and
   blossom permutations (check the count).
 - **Collecting: a Dew bottle that fills up**, like Miruvor in reverse (owner: "like the bundle, but you can't empty it
   early"). Using a glass bottle on dewy cover turns it into a Dew bottle with one drop; each further drop fills it. Shown
   with the durability bar (Miruvor's mechanism, verified in game): damage counts the missing drops. At full it becomes a
   **Bottle of morning dew** (stackable). No way to pour it out.
+- **Yield (owner 2026-10-11, supersedes the estimate below; 8 drops per bottle, no cap; assumes a tick every ~1365 ticks, not measured):** eager player harvesting the whole window about 10 bottles (8.7 after sleeping, 13.4 / 6.8 at tick rate x2 / x0.5); casual about 5.4; a 64-blossom farm re-picked about 2.9. Older estimate:
 - **Yield: about one bottle per tree per morning** (owner). World "T" scan (2026-10-02, `tools/world_scan.py`, ~713
   trees): about 34 leaf-litter carpets and 1.3 blossom carpets per tree, a full blossom carpet on fewer than 1 tree in
   10. **8 drops per bottle** (owner). Expected, with about 4 random ticks per cover in the window (rate not measured): one
