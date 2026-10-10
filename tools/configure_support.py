@@ -27,6 +27,10 @@ WATER_LOGGABLE = {"deer_antler", "elven_chandelier", "elven_lantern", "elven_lan
                  "firefly_jar", "elven_rope", "elven_rope_hanging", "mallorn_leaves", "mallorn_golden_leaves"}
 WATER_LOGGABLE |= {prefix + part for prefix in ("mallorn_", "mallorn_heartwood_")
                   for part in ("slab", "stairs", "fence", "fence_gate", "trapdoor", "door", "button", "pressure_plate")}
+FULL_WOOD = {"mallorn_log", "mallorn_wood", "mallorn_stripped_log", "mallorn_stripped_wood",
+             "mallorn_planks", "mallorn_heartwood_planks", "mallorn_double_slab", "mallorn_heartwood_double_slab"}
+SINGLE_WOOD_SHAPES = {prefix + part for prefix in ("mallorn_", "mallorn_heartwood_")
+                     for part in ("slab", "stairs")}
 
 
 def configure_water(block):
@@ -49,6 +53,12 @@ def configure(block):
     b = block["minecraft:block"]
     name = b["description"]["identifier"].split(":")[1]
     c = b["components"]
+    # Owner 2026-10-10: native/default full-cube particles, native single-shape48.
+    # Other partial-family recipes retain48 pending actual native engine comparison.
+    if name in FULL_WOOD | SINGLE_WOOD_SHAPES:
+        c.setdefault("minecraft:destruction_particles", {})["particle_count"] = 100 if name in FULL_WOOD else 48
+    if name == "golden_fern":
+        c.pop("minecraft:replaceable", None)  # Owner: break it before replacement.
     configure_water(block)
     # Counterpart parity, also for blocks without a support-survival dependency.
     # These four shapes are single slabs/stairs; double slabs remain solid cubes.

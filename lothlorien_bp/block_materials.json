@@ -15,15 +15,45 @@
     },
     "lothlorien:elven_chandelier": {
       "profile": "lantern",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:sound": {
+          "counterpart": "minecraft:lantern",
+          "expected": {
+            "sound": "wood"
+          },
+          "reason": "Owner approved retaining material sound instead of functional counterpart sound, 2026-10-10.",
+          "source": "Owner decision docs/block-property-questions.md; references/remaining-block-properties.md sound comparison."
+        }
+      }
     },
     "lothlorien:elven_lantern": {
       "profile": "lantern",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:sound": {
+          "counterpart": "minecraft:lantern",
+          "expected": {
+            "sound": "wood"
+          },
+          "reason": "Owner approved retaining material sound instead of functional counterpart sound, 2026-10-10.",
+          "source": "Owner decision docs/block-property-questions.md; references/remaining-block-properties.md sound comparison."
+        }
+      }
     },
     "lothlorien:elven_lantern_heartwood": {
       "profile": "lantern",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:sound": {
+          "counterpart": "minecraft:lantern",
+          "expected": {
+            "sound": "wood"
+          },
+          "reason": "Owner approved retaining material sound instead of functional counterpart sound, 2026-10-10.",
+          "source": "Owner decision docs/block-property-questions.md; references/remaining-block-properties.md sound comparison."
+        }
+      }
     },
     "lothlorien:elven_rope": {
       "profile": "ladder",
@@ -35,7 +65,17 @@
           "lava_flammable": "never"
         }
       },
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:sound": {
+          "counterpart": "minecraft:ladder",
+          "expected": {
+            "sound": "grass"
+          },
+          "reason": "Owner approved retaining material sound instead of functional counterpart sound, 2026-10-10.",
+          "source": "Owner decision docs/block-property-questions.md; references/remaining-block-properties.md sound comparison."
+        }
+      }
     },
     "lothlorien:elven_rope_hanging": {
       "profile": "ladder",
@@ -47,7 +87,17 @@
           "lava_flammable": "never"
         }
       },
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:sound": {
+          "counterpart": "minecraft:ladder",
+          "expected": {
+            "sound": "grass"
+          },
+          "reason": "Owner approved retaining material sound instead of functional counterpart sound, 2026-10-10.",
+          "source": "Owner decision docs/block-property-questions.md; references/remaining-block-properties.md sound comparison."
+        }
+      }
     },
     "lothlorien:firefly_jar": {
       "profile": "glass",
@@ -55,7 +105,15 @@
     },
     "lothlorien:golden_fern": {
       "profile": "fern",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:replaceable": {
+          "counterpart": "minecraft:fern",
+          "absent": true,
+          "reason": "Owner rejects replacement; fern must be broken first, 2026-10-10.",
+          "source": "Owner decision docs/block-property-questions.md; omitted replaceable is nonreplaceable."
+        }
+      }
     },
     "lothlorien:great_mallorn_sprout": {
       "profile": "sapling",
@@ -89,7 +147,16 @@
     },
     "lothlorien:mallorn_double_slab": {
       "profile": "wood_planks",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:destruction_particles": {
+          "counterpart": "minecraft:oak_double_slab",
+          "expected": {
+            "particle_count": 100
+          },
+          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Documented default100; installed vanilla white_concrete_double_slab omits this override; actual native oak count not measured."
+        }
+      }
     },
     "lothlorien:mallorn_fence": {
       "profile": "wood_planks",
@@ -122,7 +189,16 @@
     },
     "lothlorien:mallorn_heartwood_double_slab": {
       "profile": "wood_planks",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:destruction_particles": {
+          "counterpart": "minecraft:oak_double_slab",
+          "expected": {
+            "particle_count": 100
+          },
+          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Documented default100; installed vanilla white_concrete_double_slab omits this override; actual native oak count not measured."
+        }
+      }
     },
     "lothlorien:mallorn_heartwood_fence": {
       "profile": "wood_planks",
@@ -134,7 +210,16 @@
     },
     "lothlorien:mallorn_heartwood_planks": {
       "profile": "wood_planks",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:destruction_particles": {
+          "counterpart": "minecraft:oak_planks",
+          "expected": {
+            "particle_count": 100
+          },
+          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Documented default100; installed vanilla white_concrete_double_slab omits this override; actual native oak count not measured."
+        }
+      }
     },
     "lothlorien:mallorn_heartwood_pressure_plate": {
       "profile": "wood_control",
@@ -155,6 +240,13 @@
             "redstone_conductor": false
           },
           "source": "https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_conductivity?view=minecraft-bedrock-stable"
+        },
+        "minecraft:destruction_particles": {
+          "counterpart": "minecraft:oak_slab",
+          "expected": {
+            "particle_count": 48
+          },
+          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Installed vanilla white_concrete_slab.block.json particle_count48; material-independent shape counterpart."
         }
       }
     },
@@ -173,12 +265,53 @@
             "redstone_conductor": false
           },
           "source": "https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_conductivity?view=minecraft-bedrock-stable"
+        },
+        "minecraft:destruction_particles": {
+          "counterpart": "minecraft:oak_stairs",
+          "expected": {
+            "particle_count": 48
+          },
+          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Installed vanilla white_concrete_stairs.block.json particle_count48; material-independent shape counterpart."
         }
       }
     },
     "lothlorien:mallorn_heartwood_trapdoor": {
       "profile": "wood_door",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:collision_box": {
+          "counterpart": "minecraft:trapdoor",
+          "expected": {
+            "origin": [
+              -8,
+              0,
+              -8
+            ],
+            "size": [
+              16,
+              2.92,
+              16
+            ]
+          },
+          "source": "references/support-collision-properties.md correction 2026-10-10; Bedrock1.26.30 extracted collision shapes96/98/45/101/103/105: thickness0.1825block=2.92units. Selection follows existing matching recipe; not independently extracted."
+        },
+        "minecraft:selection_box": {
+          "counterpart": "minecraft:trapdoor",
+          "expected": {
+            "origin": [
+              -8,
+              0,
+              -8
+            ],
+            "size": [
+              16,
+              2.92,
+              16
+            ]
+          },
+          "source": "references/support-collision-properties.md correction 2026-10-10; Bedrock1.26.30 extracted collision shapes96/98/45/101/103/105: thickness0.1825block=2.92units. Selection follows existing matching recipe; not independently extracted."
+        }
+      }
     },
     "lothlorien:mallorn_leaf_carpet": {
       "profile": "ground_cover",
@@ -207,11 +340,29 @@
     },
     "lothlorien:mallorn_log": {
       "profile": "wood_log",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:destruction_particles": {
+          "counterpart": "minecraft:oak_log",
+          "expected": {
+            "particle_count": 100
+          },
+          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Documented default100; installed vanilla white_concrete_double_slab omits this override; actual native oak count not measured."
+        }
+      }
     },
     "lothlorien:mallorn_planks": {
       "profile": "wood_planks",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:destruction_particles": {
+          "counterpart": "minecraft:oak_planks",
+          "expected": {
+            "particle_count": 100
+          },
+          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Documented default100; installed vanilla white_concrete_double_slab omits this override; actual native oak count not measured."
+        }
+      }
     },
     "lothlorien:mallorn_pressure_plate": {
       "profile": "wood_control",
@@ -236,6 +387,13 @@
             "redstone_conductor": false
           },
           "source": "https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_conductivity?view=minecraft-bedrock-stable"
+        },
+        "minecraft:destruction_particles": {
+          "counterpart": "minecraft:oak_slab",
+          "expected": {
+            "particle_count": 48
+          },
+          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Installed vanilla white_concrete_slab.block.json particle_count48; material-independent shape counterpart."
         }
       }
     },
@@ -254,24 +412,92 @@
             "redstone_conductor": false
           },
           "source": "https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_conductivity?view=minecraft-bedrock-stable"
+        },
+        "minecraft:destruction_particles": {
+          "counterpart": "minecraft:oak_stairs",
+          "expected": {
+            "particle_count": 48
+          },
+          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Installed vanilla white_concrete_stairs.block.json particle_count48; material-independent shape counterpart."
         }
       }
     },
     "lothlorien:mallorn_stripped_log": {
       "profile": "wood_log",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:destruction_particles": {
+          "counterpart": "minecraft:stripped_oak_log",
+          "expected": {
+            "particle_count": 100
+          },
+          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Documented default100; installed vanilla white_concrete_double_slab omits this override; actual native oak count not measured."
+        }
+      }
     },
     "lothlorien:mallorn_stripped_wood": {
       "profile": "wood_log",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:destruction_particles": {
+          "counterpart": "minecraft:stripped_oak_wood",
+          "expected": {
+            "particle_count": 100
+          },
+          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Documented default100; installed vanilla white_concrete_double_slab omits this override; actual native oak count not measured."
+        }
+      }
     },
     "lothlorien:mallorn_trapdoor": {
       "profile": "wood_door",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:collision_box": {
+          "counterpart": "minecraft:trapdoor",
+          "expected": {
+            "origin": [
+              -8,
+              0,
+              -8
+            ],
+            "size": [
+              16,
+              2.92,
+              16
+            ]
+          },
+          "source": "references/support-collision-properties.md correction 2026-10-10; Bedrock1.26.30 extracted collision shapes96/98/45/101/103/105: thickness0.1825block=2.92units. Selection follows existing matching recipe; not independently extracted."
+        },
+        "minecraft:selection_box": {
+          "counterpart": "minecraft:trapdoor",
+          "expected": {
+            "origin": [
+              -8,
+              0,
+              -8
+            ],
+            "size": [
+              16,
+              2.92,
+              16
+            ]
+          },
+          "source": "references/support-collision-properties.md correction 2026-10-10; Bedrock1.26.30 extracted collision shapes96/98/45/101/103/105: thickness0.1825block=2.92units. Selection follows existing matching recipe; not independently extracted."
+        }
+      }
     },
     "lothlorien:mallorn_wood": {
       "profile": "wood_log",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "property_checks": {
+        "minecraft:destruction_particles": {
+          "counterpart": "minecraft:oak_wood",
+          "expected": {
+            "particle_count": 100
+          },
+          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Documented default100; installed vanilla white_concrete_double_slab omits this override; actual native oak count not measured."
+        }
+      }
     },
     "lothlorien:nectar_bloom": {
       "profile": "flower",

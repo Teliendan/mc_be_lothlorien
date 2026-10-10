@@ -20,10 +20,25 @@ Shared schema checks now cover support, placement, boxes, friction, replacement,
 connections, light/redstone/movement, sounds/particles/weather/transforms/ticks,
 flower-pot markers and fence leash anchors. Current declarations pass; schema
 acceptance does not establish geometry, weather, knot-height or connection parity.
-Pending owner choices: golden-fern replacement, framed-light/rope sounds,
-trapdoor thickness and wood particles. Current behavior remains until answered;
-see workspace `docs/block-property-questions.md`. New slab/stair lighting and
-leaf piston behavior need game acceptance after reloading the deployed pack.
+Owner answers, 2026-10-10: golden fern stays nonreplaceable; framed lights keep
+wood sounds and ropes keep grass sounds as approved exceptions. These choices
+now have checked property records (including absence and RP sound precedence).
+Trapdoors should match vanilla Bedrock. Correction to the earlier question:
+extracted Bedrock1.26.30 trapdoor thickness is0.1825block=2.92units, already our
+collision size. Retain matching selection and the existing2.9-unit recipe mesh;
+do not substitute3units from a generic/Java trapdoor assumption. Mesh/selection
+native parity is not independently measured; collision source and limits are
+in the shared support reference. Exact base boxes are recorded against drift.
+
+Vanilla/default particle choice: eight full wood cubes/double slabs now use100;
+four single slabs/stairs retain48 from installed native shape definitions.
+Other12partial wood blocks retain48 in the existing family recipes, with exact
+hardcoded native particle counts still awaiting engine comparison. This is not
+an approved aesthetic exception; owner requests vanilla where evidence exists.
+The support post-pass restores reviewed counts after regeneration. The normal
+shared verifier enforces recorded matched values and approved exceptions.
+No design questions remain; slab/stair lighting, leaf pistons, particles and
+other current behavior need game acceptance after reloading the deployed pack.
 
 | Family | Counterpart | Mining parameter / blast | Efficient tools |
 | --- | --- | --- | --- |

@@ -31,7 +31,7 @@
         "up": "note.bassattack"
       },
       "minecraft:destruction_particles": {
-        "particle_count": 48
+        "particle_count": 100
       },
       "minecraft:map_color": "#b5bac0",
       "minecraft:geometry": "minecraft:geometry.full_block",
