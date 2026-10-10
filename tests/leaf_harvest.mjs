@@ -130,7 +130,11 @@ assert.throws(() => assertHarvest(broken), "duplicate auxiliary pools must not s
 const golden = readLoot("mallorn_golden_leaves");
 const nectar = readLoot("nectar_bloom");
 assert.deepEqual(dropExpectations(nectar, shears), { "lothlorien:nectar_bloom": 1 });
-for (const tool of [undefined, {}, silkHoe]) assert.deepEqual(dropExpectations(nectar, tool), {});
+assert.deepEqual(dropExpectations(nectar, silkHoe), { "lothlorien:nectar_bloom": 1 });
+assert.deepEqual(dropExpectations(nectar, { item: "minecraft:shears", enchantments: { silk_touch: 1 } }),
+  { "lothlorien:nectar_bloom": 1 }, "Silk-enchanted shears must not stack the two pools");
+for (const tool of [undefined, {}, { item: "minecraft:iron_hoe", enchantments: { fortune: 3 } }])
+  assert.deepEqual(dropExpectations(nectar, tool), {});
 for (const tool of [undefined, {}, shears, silkHoe])
   assert.deepEqual(dropExpectations(golden, tool), { "lothlorien:mallorn_golden_leaves": 1 });
 // Owner 2026-10-10: reusable jar and mounted antler collect with any tool.

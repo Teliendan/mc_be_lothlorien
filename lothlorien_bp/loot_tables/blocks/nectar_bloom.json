@@ -2,14 +2,60 @@
   "pools": [
     {
       "rolls": 1,
-      "conditions": [{ "condition": "match_tool", "item": "minecraft:shears" }],
+      "conditions": [
+        {
+          "condition": "match_tool",
+          "item": "minecraft:shears"
+        }
+      ],
       "entries": [
         {
           "type": "item",
           "name": "lothlorien:nectar_bloom",
           "functions": [
-            { "function": "set_count", "count": 1 },
-            { "function": "explosion_decay" }
+            {
+              "function": "set_count",
+              "count": 1
+            },
+            {
+              "function": "explosion_decay"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "match_tool",
+          "enchantments": [
+            {
+              "enchantment": "silk_touch",
+              "levels": {
+                "range_min": 1
+              }
+            }
+          ]
+        },
+        {
+          "condition": "match_tool",
+          "item": "minecraft:shears",
+          "operator": "not"
+        }
+      ],
+      "entries": [
+        {
+          "type": "item",
+          "name": "lothlorien:nectar_bloom",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": 1
+            },
+            {
+              "function": "explosion_decay"
+            }
           ]
         }
       ]

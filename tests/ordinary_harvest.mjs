@@ -38,20 +38,19 @@ for (const filename of readdirSync(new URL("blocks/", bp)).filter((name) => name
 assert.ok(!reviewed.includes("lothlorien:nectar_bloom") && reviewed.includes("lothlorien:star_canopy"));
 
 const nectar = read("loot_tables/blocks/nectar_bloom.json");
-const expectedNectar = { pools: [{ rolls: 1,
-  conditions: [{ condition: "match_tool", item: "minecraft:shears" }],
-  entries: [{ type: "item", name: "lothlorien:nectar_bloom",
-  functions: [{ function: "set_count", count: 1 }, { function: "explosion_decay" }],
-}] }] };
-assert.deepEqual(nectar, expectedNectar, "owner exception: shears only, one bloom with final native decay");
-for (const tool of [undefined, "minecraft:iron_axe", "minecraft:iron_pickaxe", "minecraft:shears"])
-  assert.equal(nectar.pools[0].conditions.every((condition) => condition.item === tool),
-    tool === "minecraft:shears", "hand and ordinary tools cannot satisfy the shears predicate");
+const shearsCondition = { condition: "match_tool", item: "minecraft:shears" };
+const silkCondition = { condition: "match_tool", enchantments: [
+  { enchantment: "silk_touch", levels: { range_min: 1 } }] };
+const expectedNectar = { pools: [[shearsCondition], [silkCondition, { ...shearsCondition, operator: "not" }]]
+  .map((conditions) => ({ rolls: 1, conditions, entries: [{ type: "item", name: "lothlorien:nectar_bloom",
+    functions: [{ function: "set_count", count: 1 }, { function: "explosion_decay" }],
+  }] })) };
+assert.deepEqual(nectar, expectedNectar, "owner exception: shears or Silk Touch, exclusive one-bloom pools with native decay");
 const bloom = read("blocks/nectar_bloom.json")["minecraft:block"];
 assert.deepEqual(bloom.description.states["lothlorien:nectar"], [0, 1, 2, 3]);
 assert.equal(bloom.components["minecraft:loot"], "loot_tables/blocks/nectar_bloom.json");
 for (const permutation of bloom.permutations)
-  assert.equal(permutation.components["minecraft:loot"], undefined, "every nectar stage inherits shears-only collection");
+  assert.equal(permutation.components["minecraft:loot"], undefined, "every nectar stage inherits shears/Silk collection");
 const generated = JSON.parse(execFileSync("python", ["-B", "-c",
   "import json,runpy; print(json.dumps(runpy.run_path('tools/make_nectar_bloom.py')['loot']()))"], {
   cwd: new URL("../", import.meta.url), encoding: "utf8",
@@ -62,4 +61,4 @@ for (const broken of [{ pools: [{ conditions: [{ condition: "match_tool", item: 
   { pools: [{ entries: [{ conditions: [{ condition: "match_tool", "minecraft:match_tool_filter_all": ["minecraft:is_pickaxe"] }] }] }] },
   { pools: [{ conditions: [{ condition: "killed_by_player" }] }] }])
   assert.throws(() => assertUngated(broken), "both pool/entry predicates and player-only conditions restrict ordinary collection");
-console.log(`ok   ordinary harvest: ${reviewed.length} ordinary block routes ungated; explicit shears-only nectar exception, all stages, decay and generator`);
+console.log(`ok   ordinary harvest: ${reviewed.length} ordinary block routes ungated; explicit shears/Silk nectar exception, all stages, decay and generator`);

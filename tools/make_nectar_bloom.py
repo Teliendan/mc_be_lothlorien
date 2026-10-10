@@ -105,12 +105,15 @@ def item():
 
 
 def loot():
-    """Owner 2026-10-11: shears-only bloom collection; native blast decay."""
-    return {"pools": [{"rolls": 1,
-                       "conditions": [{"condition": "match_tool", "item": "minecraft:shears"}],
+    """Owner 2026-10-11: shears or Silk Touch; exclusive pools avoid double drops."""
+    shears = {"condition": "match_tool", "item": "minecraft:shears"}
+    silk = {"condition": "match_tool", "enchantments": [
+        {"enchantment": "silk_touch", "levels": {"range_min": 1}}]}
+    conditions = [[shears], [silk, dict(shears, operator="not")]]
+    return {"pools": [{"rolls": 1, "conditions": checks,
                        "entries": [{"type": "item", "name": f"{NS}:nectar_bloom",
                        "functions": [{"function": "set_count", "count": 1},
-                                     {"function": "explosion_decay"}]}]}]}
+                                     {"function": "explosion_decay"}]}]} for checks in conditions]}
 
 
 def main():

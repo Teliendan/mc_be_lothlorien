@@ -657,7 +657,7 @@ A small hanging cluster of golden Mallorn flowers under Mallorn leaves (vanilla 
   and is just decoration. **Standard simulation-distance mechanics only** (owner): no catch-up, a bloom fills only while
   a player is near, like vanilla crops.
 - Glass bottle on a full bloom: one Mallorn nectar, bloom back to 0.
-- Owner clarification 2026-10-11: only shears collect the bloom item; native explosion decay applies. Hangs only under a full block face.
+- Owner clarification 2026-10-11: shears or Silk Touch collect the bloom item; native explosion decay applies. Hangs only under a full block face.
 - **Worldgen places blooms full** (owner): a few per natural Mallorn, under the crown. A sapling-grown Mallorn sometimes
   gets one.
 
@@ -698,7 +698,7 @@ dew in the middle, stone below; 8 per bottle was judged too generous). Crafting 
 ## Build
 
 1. Item `lothlorien:mallorn_nectar` (golden bottle icon), Miruvor recipe change.
-2. Nectar bloom block (4 stages, generated art), random tick + bottle in script (same kind as `crop.js`), shears-only drop (owner clarification 2026-10-11),
+2. Nectar bloom block (4 stages, generated art), random tick + bottle in script (same kind as `crop.js`), shears-or-Silk drop (owner clarification 2026-10-11),
    worldgen full on Mallorns, sapling chance in `trees.js`.
 3. Dew states on leaf litter and blossoms, dew art, morning random tick, Dew bottle filling + Bottle of morning dew.
 4. Blossom worldgen order (blossoms before litter).

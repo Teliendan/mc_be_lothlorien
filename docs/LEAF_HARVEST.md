@@ -20,8 +20,8 @@ explosion processing to native `explosion_decay`; for sticks it follows
 `set_count`. Its numerical runtime behavior is not simulated by our tests.
 
 Golden decorative leaves retain the owner's unconditional self-drop and no
-decay. Owner clarification 2026-10-11: nectar bloom is shears-only, with native
-blast decay. Silk Touch alone does not collect the bloom. Player
+decay. Owner clarification 2026-10-11: nectar bloom needs shears or Silk Touch,
+with native blast decay. Exclusive pools prevent duplicate drops on enchanted shears. Player
 persistence, the custom 10-step leaf reach,
 tree generation and decay scheduling are unchanged.
 

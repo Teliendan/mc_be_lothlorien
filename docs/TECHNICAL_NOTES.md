@@ -990,7 +990,7 @@ Leave and re-enter the world to load the entity and script changes. `/summon` wo
 - **Nectar bloom** `lothlorien:nectar_bloom` (`scripts/nectar.js`, rules `nectar_rules.js`): state `lothlorien:nectar` 0-3, four crossed-plane
   textures (`tools/make_nectar_bloom.py` writes block, item, loot and art). Hangs under a block via `placement_filter` (`allowed_faces: ["down"]`,
   filter = Mallorn leaves, logs, planks). Random tick, 1/7 per stage, only with Mallorn leaves (green or golden) directly above. Glass bottle on a
-  full bloom -> `lothlorien:mallorn_nectar`, bloom back to 0. Owner clarification 2026-10-11: only shears collect one bloom; native explosion decay follows the count. Worldgen: `nectar_bloom_scatter_feature`
+  full bloom -> `lothlorien:mallorn_nectar`, bloom back to 0. Owner clarification 2026-10-11: shears or Silk Touch collect one bloom; native explosion decay follows the count. Worldgen: `nectar_bloom_scatter_feature`
   (8 tries, y +2..18, gaussian x/z +-4) places `nectar_bloom_full_feature` (stage 3, `may_attach_to.top` = leaves) at the end of
   `select_mallorn_tree_with_litter_feature`, after blossoms and litter. Sapling-grown trees get 0-2 dry blooms (`trees.js`, `treeBloomCount`).
 - **Morning dew** (`scripts/dew.js`, `dew_rules.js`): bool state `lothlorien:dew` on leaf litter and blossoms, component `lothlorien:dew_cover`

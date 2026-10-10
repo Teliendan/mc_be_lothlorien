@@ -5,7 +5,7 @@ import { repeatedUse } from "./use_guard.js";
 import { noteDeed } from "./deeds.js";
 
 // Phase 14b: the nectar bloom hangs under Mallorn leaves. `lothlorien:nectar` 0-3 fills by random tick while Mallorn
-// leaves are directly above; a glass bottle on a full bloom gives Mallorn nectar and empties it. Only shears
+// leaves are directly above; a glass bottle on a full bloom gives Mallorn nectar and empties it. Shears or Silk Touch
 // collect the bloom through native loot (owner 2026-10-11). Rules: nectar_rules.js.
 export const BLOOM = "lothlorien:nectar_bloom";
 const NECTAR = "lothlorien:nectar";
