@@ -12,7 +12,7 @@ other four groups); `minecraft:entity_spawned` picks one at random when no profe
 
 - Hit by a player: panic; flee monsters within 6 blocks. Wardens defend elves: the hitter carries tag `lothlorien_elf_foe` for 60 s (after the LAST hit); wardens target the tag and warden arrows stop being shielded from that player.
 - Harmony: 1 per fight (first hit after 60 s without one) + 6 per kill, like a warden. Night: no change. No fall damage, and avoid the rope cells.
-- Names lang-only (no name tag), one random spawn egg, `/summon` with the `as_<profession>` events.
+- Names lang-only (no name tag), one random spawn egg, `/summon lothlorien:elf ~ ~ ~ ~ ~ lothlorien:as_<profession>` (the rotation `~ ~` is required before an event).
 - Population: every new village gets all five professions: the Loremaster on the central tree, healer / gardener / woodwright / lamplighter each on an outer tree of their own
   (warden trees allowed, post at least 3 cells from the warden). Fallback F1: with fewer than 4 outer trees the leftover professions stand on reserve posts on the central tree.
   Homes (buildings) are a later milestone; M1 only records which tree belongs to which profession. Existing villages get no elves.

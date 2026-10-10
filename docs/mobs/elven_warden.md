@@ -153,7 +153,7 @@ risk]**. Fallback: village piece marker or `structure`-saved entity (persistent,
   figure is still marked `?` in TECHNICAL_NOTES (Phase 2); run `/scriptevent lothlorien:depth` once and record it before shipping. Expected a few spawns per minute at most.
 - Deck test uses the spawn point's own column, so a warden on a deck at the edge is kept by either rule; one on a deck deep in the forest is kept by the deck rule.
   Removing 90 % of ground spawns wastes attempts (that cycle spawns nothing else there) but caps count live mobs only, so nothing lingers.
-- `/summon` and eggs never carry the flag, they always stay. Test hook: `/summon lothlorien:elven_warden ~ ~ ~ lothlorien:spawn_natural`.
+- `/summon` and eggs never carry the flag, they always stay. Test hook: `/summon lothlorien:elven_warden ~ ~ ~ ~ ~ lothlorien:spawn_natural`.
 - Alternatives considered: (a) pure spawn-rule edge detection, impossible (no biome-distance filter; TECHNICAL_NOTES Phase 2); (b) script-driven spawning at
   watchposts (design doc "first version"), full control but bypasses caps, later; (c) chosen: data spawn + script filter.
 - Tuning home: constants `SPAWN_KEEP_EDGE`, `SPAWN_KEEP_DECK`, `SPAWN_KEEP_INNER`, `SPAWN_WEIGHT_GROUND/DECK` in `elven_warden_rules.js`, with a test that keeps weights equal to the rule file (as for the white deer).

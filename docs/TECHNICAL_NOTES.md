@@ -857,7 +857,7 @@ cube: renders nothing but passes the verifier's "geometry has no cubes" check), 
   (c) **chosen**: data-driven spawn + script filter, cheap (runs only when a white deer spawns) and safe: `/summon` and the spawn egg do not
   fire the herd event, so they are never filtered, and if the herd event does not reach the entity the filter simply never fires (base rate
   everywhere: fails open). The herd `event` was preferred over `minecraft:permute_type` with `<event>` because vanilla relies on it for
-  natural spawns (fox babies, horse colours). Test hook: `/summon lothlorien:white_deer ~ ~ ~ lothlorien:spawn_natural` goes through the filter.
+  natural spawns (fox babies, horse colours). Test hook: `/summon lothlorien:white_deer ~ ~ ~ ~ ~ lothlorien:spawn_natural` goes through the filter.
   Residual effects: a removed spawn was a spawn attempt used up (that cycle spawns nothing else there); the pool and density limit count
   live entities, so the cap is free again at once; `remove()` drops no loot, gives no XP and is not a death (no Harmony cost, no alarm). The
   deer exists for one tick at 24-44 blocks (not normally seen). Assumptions: that the herd event replaces or runs along with
@@ -957,7 +957,7 @@ Leave and re-enter the world to load the entity and script changes. `/summon` wo
    **Lead**: a lead attaches and it follows on the lead; while leashed, offer an acorn: "will not lead while it is held on a lead", acorn kept.
 2. NEW world, natural spawns: walk the biome; white deer appear alone, never in herds; noticeably more in the heart than near the edges
    (`/scriptevent lothlorien:debug` shows the depth). Count deer and white deer per depth level over a while and note the numbers here.
-   Filter check in any world: `/summon lothlorien:white_deer ~ ~ ~ lothlorien:spawn_natural` at the edge should vanish about 85 times in
+   Filter check in any world: `/summon lothlorien:white_deer ~ ~ ~ ~ ~ lothlorien:spawn_natural` at the edge should vanish about 85 times in
    100 (heart: never; outside the biome: always); plain `/summon` and the egg always stay.
 3. `/give @s lothlorien:mallorn_acorn 16`; as a Guest or Friend (Harmony 0 or more) hold it: a calm white deer comes to you (tempt), an apple or corn does not lure it.
    Ordinary deer: only Western Corn grain lures them (acorn, apple and seeds do not); two deer fed corn grain breed.
