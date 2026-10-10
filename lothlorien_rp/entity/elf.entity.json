@@ -1,0 +1,50 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "lothlorien:elf",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "gardener": "textures/entity/elf/gardener",
+        "healer": "textures/entity/elf/healer",
+        "woodwright": "textures/entity/elf/woodwright",
+        "lamplighter": "textures/entity/elf/lamplighter",
+        "loremaster": "textures/entity/elf/loremaster"
+      },
+      "geometry": {
+        "gardener": "geometry.lothlorien.elf_gardener",
+        "healer": "geometry.lothlorien.elf_healer",
+        "woodwright": "geometry.lothlorien.elf_woodwright",
+        "lamplighter": "geometry.lothlorien.elf_lamplighter",
+        "loremaster": "geometry.lothlorien.elf_loremaster"
+      },
+      "animations": {
+        "look_at_target": "animation.humanoid.look_at_target.default",
+        "move": "animation.humanoid.move",
+        "walk_sway": "animation.lothlorien.elf.walk_sway",
+        "idle_sway": "animation.lothlorien.elf.idle_sway"
+      },
+      "scripts": {
+        "pre_animation": [
+          "variable.tcos0 = (Math.cos(query.modified_distance_moved * 38.17) * query.modified_move_speed / variable.gliding_speed_value) * 57.3;"
+        ],
+        "animate": [
+          "look_at_target",
+          "move",
+          "walk_sway",
+          "idle_sway"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.lothlorien.elf"
+      ],
+      "enable_attachables": true,
+      "spawn_egg": {
+        "base_color": "#5f7640",
+        "overlay_color": "#f0e6a8"
+      }
+    }
+  }
+}

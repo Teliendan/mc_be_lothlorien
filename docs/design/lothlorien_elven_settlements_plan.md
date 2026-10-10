@@ -130,6 +130,8 @@ Professions should be readable without looking like bright vanilla villager unif
 
 ## Initial professions
 
+> **Superseded 2026-10-10** by `elven_inhabitants.md` (roster, Renown, shops, gifts, healer). Kept for history.
+
 ### Gardener
 
 Buys:
@@ -206,6 +208,8 @@ Potential later role for:
 It could teach the Lothlorien mechanics - Harmony, morning dew, syrup, flowers, acrons for deer and squirel, hints on unicorn, lembas baking...
 
 ## Harmony-aware trading
+
+> Stock and band rules: see `elven_inhabitants.md` (2026-10-10). The technical architecture below still holds.
 
 This should be **player-specific**, driven by the player's Harmony band (`docs/design/harmony_rework_plan.md`; bands Friend +10, Guest 0..+9,
 Uneasy -1..-14, Shunned -15..-29, Hated -30..-60).

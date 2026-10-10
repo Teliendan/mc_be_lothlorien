@@ -78,6 +78,8 @@ Consumers to switch from `levelFor`/`isFriend` to `bandOf(harmony)`:
 
 ## 5. Trades and Loremaster (later phases; elf traders do not exist yet)
 
+Stock, Renown and the Loremaster (who never trades) are now designed in `elven_inhabitants.md` (2026-10-10); the architecture below stays.
+
 - Native trade screen with per-player tables: one `economy_trade_table` component group per band (Friend, Guest, Uneasy), `persist_trades: false`.
 - Script **pre-swaps** the trader's table to the band of the player near it / looking at it (every ~10 ticks), so one click opens the right table.
   Script cannot open a trade screen itself (no trade API in 2.8.0), so "cancel, then open later" is not possible.

@@ -1,0 +1,57 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.lothlorien.elf.walk_sway": {
+      "loop": true,
+      "bones": {
+        "robe": {
+          "rotation": [
+            "math.min(query.modified_move_speed, 1.0) * 5.0 + math.cos(query.modified_distance_moved * 38.17) * query.modified_move_speed * 1.5",
+            0.0,
+            "math.sin(query.modified_distance_moved * 38.17) * 0.8 * query.modified_move_speed"
+          ]
+        },
+        "hair": {
+          "rotation": [
+            "math.min(query.modified_move_speed, 1.0) * 6.0 + math.cos(query.modified_distance_moved * 38.17) * query.modified_move_speed * 2.0",
+            0.0,
+            "math.sin(query.modified_distance_moved * 38.17) * 1.5 * query.modified_move_speed"
+          ]
+        },
+        "lantern": {
+          "rotation": [
+            "math.cos(query.modified_distance_moved * 38.17) * query.modified_move_speed * -6.0",
+            0.0,
+            "math.sin(query.modified_distance_moved * 38.17) * 10.0 * query.modified_move_speed"
+          ]
+        }
+      }
+    },
+    "animation.lothlorien.elf.idle_sway": {
+      "loop": true,
+      "bones": {
+        "robe": {
+          "rotation": [
+            "math.sin(query.life_time * 90.0) * 0.5",
+            0.0,
+            0.0
+          ]
+        },
+        "hair": {
+          "rotation": [
+            "math.sin(query.life_time * 80.0) * 0.8",
+            0.0,
+            0.0
+          ]
+        },
+        "lantern": {
+          "rotation": [
+            0.0,
+            0.0,
+            "math.sin(query.life_time * 110.0) * 3.0"
+          ]
+        }
+      }
+    }
+  }
+}

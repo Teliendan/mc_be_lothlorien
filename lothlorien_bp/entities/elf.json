@@ -1,0 +1,226 @@
+{
+  "format_version": "1.26.50",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "lothlorien:elf",
+      "spawn_category": "creature",
+      "is_spawnable": true,
+      "is_summonable": true
+    },
+    "component_groups": {
+      "lothlorien:gardener": {
+        "minecraft:variant": {
+          "value": 0
+        }
+      },
+      "lothlorien:healer": {
+        "minecraft:variant": {
+          "value": 1
+        }
+      },
+      "lothlorien:woodwright": {
+        "minecraft:variant": {
+          "value": 2
+        }
+      },
+      "lothlorien:lamplighter": {
+        "minecraft:variant": {
+          "value": 3
+        }
+      },
+      "lothlorien:loremaster": {
+        "minecraft:variant": {
+          "value": 4
+        }
+      }
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": [
+          "lothlorien_elf",
+          "mob"
+        ]
+      },
+      "minecraft:collision_box": {
+        "width": 0.6,
+        "height": 1.95
+      },
+      "minecraft:health": {
+        "value": 20,
+        "max": 20
+      },
+      "minecraft:movement": {
+        "value": 0.22
+      },
+      "minecraft:navigation.walk": {
+        "can_path_over_water": false,
+        "avoid_water": true,
+        "avoid_damage_blocks": true
+      },
+      "minecraft:movement.basic": {},
+      "minecraft:jump.static": {},
+      "minecraft:physics": {},
+      "minecraft:breathable": {
+        "total_supply": 15,
+        "suffocate_time": 0
+      },
+      "minecraft:hurt_on_condition": {
+        "damage_conditions": [
+          {
+            "filters": {
+              "test": "in_lava",
+              "subject": "self"
+            },
+            "cause": "lava",
+            "damage_per_tick": 4
+          }
+        ]
+      },
+      "minecraft:nameable": {},
+      "minecraft:persistent": {},
+      "minecraft:behavior.float": {
+        "priority": 0
+      },
+      "minecraft:behavior.random_stroll": {
+        "priority": 5,
+        "speed_multiplier": 0.6
+      },
+      "minecraft:behavior.look_at_player": {
+        "priority": 7,
+        "look_distance": 8,
+        "probability": 0.02
+      },
+      "minecraft:behavior.random_look_around": {
+        "priority": 8
+      },
+      "minecraft:pushable_by_entity": {},
+      "minecraft:pushable_by_block": {}
+    },
+    "events": {
+      "lothlorien:as_gardener": {
+        "remove": {
+          "component_groups": [
+            "lothlorien:healer",
+            "lothlorien:woodwright",
+            "lothlorien:lamplighter",
+            "lothlorien:loremaster"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "lothlorien:gardener"
+          ]
+        }
+      },
+      "lothlorien:as_healer": {
+        "remove": {
+          "component_groups": [
+            "lothlorien:gardener",
+            "lothlorien:woodwright",
+            "lothlorien:lamplighter",
+            "lothlorien:loremaster"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "lothlorien:healer"
+          ]
+        }
+      },
+      "lothlorien:as_woodwright": {
+        "remove": {
+          "component_groups": [
+            "lothlorien:gardener",
+            "lothlorien:healer",
+            "lothlorien:lamplighter",
+            "lothlorien:loremaster"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "lothlorien:woodwright"
+          ]
+        }
+      },
+      "lothlorien:as_lamplighter": {
+        "remove": {
+          "component_groups": [
+            "lothlorien:gardener",
+            "lothlorien:healer",
+            "lothlorien:woodwright",
+            "lothlorien:loremaster"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "lothlorien:lamplighter"
+          ]
+        }
+      },
+      "lothlorien:as_loremaster": {
+        "remove": {
+          "component_groups": [
+            "lothlorien:gardener",
+            "lothlorien:healer",
+            "lothlorien:woodwright",
+            "lothlorien:lamplighter"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "lothlorien:loremaster"
+          ]
+        }
+      },
+      "minecraft:entity_spawned": {
+        "randomize": [
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "lothlorien:gardener"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "lothlorien:healer"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "lothlorien:woodwright"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "lothlorien:lamplighter"
+              ]
+            }
+          },
+          {
+            "weight": 1,
+            "add": {
+              "component_groups": [
+                "lothlorien:loremaster"
+              ]
+            }
+          }
+        ],
+        "filters": {
+          "test": "has_component",
+          "operator": "!=",
+          "value": "minecraft:variant"
+        }
+      }
+    }
+  }
+}
