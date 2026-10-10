@@ -35,7 +35,8 @@ def leaf_loot():
     """Bedrock 26.50 tool predicates; golden decorative leaves keep their own table.
 
     Negate positive enchantment tests: a missing enchantment need not match level zero.
-    Ordinary acorns retain the owner's custom 2% chance; Fortune awaits sourced parity.
+    Acorns retain the owner's 2% base with oak-sapling relative Fortune boosts.
+    Wiki table/revisions and current-engine confidence: docs/LEAF_HARVEST.md.
     """
     shears = {"condition": "match_tool", "item": "minecraft:shears"}
     silk = {"condition": "match_tool", "enchantments": [
@@ -50,14 +51,27 @@ def leaf_loot():
             "functions": [*functions, {"function": "explosion_decay"}],
         }], "conditions": conditions}
 
+    def auxiliary(name, chances, functions=()):
+        result = []
+        for level, chance in enumerate(chances):
+            bounds = {"range_min": level or 1}
+            if level and level < len(chances) - 1:
+                bounds["range_max"] = level
+            gate = {"condition": "match_tool", "enchantments": [
+                {"enchantment": "fortune", "levels": bounds}
+            ]}
+            if level == 0:
+                gate["operator"] = "not"  # Includes no tool and no Fortune.
+            result.append(pool(name, [not_shears, not_silk, gate,
+                {"condition": "random_chance", "chance": chance}], functions))
+        return result
+
     return {"pools": [
         pool("lothlorien:mallorn_leaves", [shears]),
         pool("lothlorien:mallorn_leaves", [silk, not_shears]),
-        pool("minecraft:stick", [not_shears, not_silk,
-             {"condition": "random_chance", "chance": 0.02}],
-             [{"function": "set_count", "count": {"min": 1, "max": 2}}]),
-        pool("lothlorien:mallorn_acorn", [not_shears, not_silk,
-             {"condition": "random_chance", "chance": 0.02}]),
+        *auxiliary("minecraft:stick", (1/50, 1/45, 1/40, 1/30, 1/10),
+            [{"function": "set_count", "count": {"min": 1, "max": 2}}]),
+        *auxiliary("lothlorien:mallorn_acorn", (1/50, 1/40, 1/30, 1/25)),
     ]}
 
 N = 16

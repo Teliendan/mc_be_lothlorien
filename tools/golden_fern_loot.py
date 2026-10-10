@@ -14,25 +14,41 @@ LOOT_PATH = Path(__file__).resolve().parent.parent / "lothlorien_bp/loot_tables/
 
 def fern_loot():
     """Return a fresh table; shears and ordinary-removal pools are exclusive."""
-    def entry(name):
+    def entry(name, count=1):
         return {"type": "item", "name": name, "functions": [
-            {"function": "set_count", "count": 1},
+            {"function": "set_count", "count": count},
             {"function": "explosion_decay"},
         ]}
     return {"pools": [
         {"rolls": 1, "entries": [entry("lothlorien:golden_fern")], "conditions": [
             {"condition": "match_tool", "item": "minecraft:shears"},
         ]},
-        {"rolls": 1, "entries": [entry("minecraft:wheat_seeds")], "conditions": [
-            {"condition": "match_tool", "item": "minecraft:shears", "operator": "not"},
-            {"condition": "random_chance", "chance": 0.125},
-        ]},
+        *seed_pools(entry),
     ]}
+
+
+def seed_pools(entry):
+    """Wiki fern recipe: 1/8 event, then 1..(2*Fortune+1) seeds at I-III."""
+    pools = []
+    for level in range(4):
+        bounds = {"range_min": level or 1}
+        if level in (1, 2):
+            bounds["range_max"] = level
+        gate = {"condition": "match_tool", "enchantments": [
+            {"enchantment": "fortune", "levels": bounds}]}
+        if level == 0:
+            gate["operator"] = "not"
+        count = 1 if level == 0 else {"min": 1, "max": 2 * level + 1}
+        pools.append({"rolls": 1, "entries": [entry("minecraft:wheat_seeds", count)], "conditions": [
+            {"condition": "match_tool", "item": "minecraft:shears", "operator": "not"},
+            gate, {"condition": "random_chance", "chance": 0.125},
+        ]})
+    return pools
 
 
 def write_loot(path=LOOT_PATH):
     """Regenerate only the reviewed harvest table; safe for support postpass."""
-    Path(path).write_text(json.dumps(fern_loot(), indent=2) + "\n", encoding="utf8")
+    Path(path).write_text(json.dumps(fern_loot(), indent=2) + "\n", encoding="utf8", newline="\n")
 
 
 def main():

@@ -1,5 +1,5 @@
 // Project loot semantics only: native condition evaluation and explosion decay
-// need target-game acceptance. Fortune/Silk Touch native parity is unresolved.
+// need target-game acceptance. Wiki-documented standard Fortune I-III is covered.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -19,16 +19,21 @@ function expectations(loot, tool) {
       if (condition.condition === "random_chance") probability *= condition.chance;
       else {
         assert.equal(condition.condition, "match_tool");
-        assert.equal(condition.item, "minecraft:shears");
-        assert.equal(condition.enchantments, undefined, "no guessed enchantment policy");
         assert.ok([undefined, "not"].includes(condition.operator));
-        const matches = tool?.item === condition.item;
+        let matches = tool !== undefined;
+        if (condition.item) matches &&= tool?.item === condition.item;
+        for (const enchantment of condition.enchantments ?? []) {
+          const level = tool?.enchantments?.[enchantment.enchantment];
+          matches &&= level !== undefined && level >= (enchantment.levels?.range_min ?? 0)
+            && level <= (enchantment.levels?.range_max ?? Infinity);
+        }
         probability *= Number(condition.operator === "not" ? !matches : matches);
       }
     }
     for (const fn of entry.functions ?? []) {
       assert.ok(["set_count", "explosion_decay"].includes(fn.function));
-      if (fn.function === "set_count") count = fn.count;
+      if (fn.function === "set_count") count = typeof fn.count === "number"
+        ? fn.count : (fn.count.min + fn.count.max) / 2;
     }
     if (probability) result[entry.name] = (result[entry.name] ?? 0) + probability * count;
   }
@@ -40,12 +45,15 @@ function assertHarvest(loot) {
     { item: "minecraft:shears", enchantments: { silk_touch: 1, fortune: 3 } }])
     assert.deepEqual(expectations(loot, tool), { [fern]: 1 }, "shears collect one fern and no seeds");
   // undefined covers native tool-less support/water/piston removal contexts.
-  // Enchanted-tool assertions protect the current limited implementation; they
-  // do not establish that native Bedrock fern behaves identically.
+  // Source-based expectations do not establish the engine's execution.
   for (const tool of [undefined, {}, { item: "minecraft:stick" },
-    { item: "minecraft:diamond_hoe" }, { item: "minecraft:diamond_axe", enchantments: { silk_touch: 1 } },
-    ...[1, 2, 3].map((fortune) => ({ item: "minecraft:diamond_pickaxe", enchantments: { fortune } }))])
+    { item: "minecraft:diamond_hoe" }, { item: "minecraft:diamond_axe", enchantments: { silk_touch: 1 } }])
     assert.deepEqual(expectations(loot, tool), { [seed]: 0.125 }, "non-shears use the baseline seed pool; no fern self-drop");
+  for (const fortune of [1, 2, 3])
+    assert.deepEqual(expectations(loot, { item: "minecraft:diamond_hoe", enchantments: { fortune } }),
+      { [seed]: 0.125 * (fortune + 1) }, "one-in-eight event, uniform 1..(2*Fortune+1) seed count");
+  assert.deepEqual(loot.pools.map((p) => p.entries[0].functions[0].count),
+    [1, 1, { min: 1, max: 3 }, { min: 1, max: 5 }, { min: 1, max: 7 }]);
 }
 
 function assertDecay(loot) {
@@ -53,7 +61,7 @@ function assertDecay(loot) {
     const functions = pool.entries[0].functions;
     assert.equal(functions.filter((fn) => fn.function === "explosion_decay").length, 1);
     assert.equal(functions.at(-1).function, "explosion_decay", "native decay must process the final count");
-    assert.deepEqual(functions[0], { function: "set_count", count: 1 });
+    assert.equal(functions[0].function, "set_count");
   }
 }
 
@@ -71,7 +79,7 @@ broken = structuredClone(table);
 delete broken.pools[1].conditions[0].operator;
 assert.throws(() => assertHarvest(broken), "ordinary and tool-less routes must reach seed pool");
 broken = structuredClone(table);
-broken.pools[1].conditions[1].chance = 0.25;
+broken.pools[1].conditions.find((condition) => condition.condition === "random_chance").chance = 0.25;
 assert.throws(() => assertHarvest(broken), "seed chance is one in eight");
 broken = structuredClone(table);
 broken.pools[1].entries[0].name = "lothlorien:western_corn_seeds";
@@ -83,7 +91,13 @@ broken = structuredClone(table);
 broken.pools[1].entries[0].functions.reverse();
 assert.throws(() => assertDecay(broken));
 broken = structuredClone(table);
+delete broken.pools[2].conditions.find((condition) => condition.enchantments).enchantments[0].levels.range_max;
+assert.throws(() => assertHarvest(broken), "Fortune I pool cannot overlap II and III");
+broken = structuredClone(table);
+broken.pools[4].entries[0].functions[0].count = { min: 1, max: 5 };
+assert.throws(() => assertHarvest(broken), "Fortune III must use 1..7 seeds");
+broken = structuredClone(table);
 broken.pools[0].entries[0].functions.pop();
 assert.throws(() => assertDecay(broken));
 
-console.log("ok   golden fern harvest: shears exclusivity, baseline wheat seed chance, tool-less routes, decay order and generator");
+console.log("ok   golden fern harvest: shears exclusivity, baseline and Fortune I-III seed counts, tool-less routes, decay order and generator");

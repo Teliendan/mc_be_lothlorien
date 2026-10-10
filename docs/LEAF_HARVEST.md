@@ -7,8 +7,8 @@ Ordinary Mallorn leaves use oak leaves as the harvest counterpart. Shears or any
 Silk Touch tool collect exactly one ordinary leaf block and suppress both
 auxiliary pools. Shears enchanted with Silk Touch still produce one leaf. A hand,
 ordinary tool, or the existing command-driven decay path cannot collect leaf
-blocks; these contexts independently have a 2% chance of 1–2 sticks and the
-existing custom 2% chance of one Mallorn acorn. Both auxiliaries can drop together.
+blocks; without Fortune these contexts independently have a 2% chance of 1–2
+sticks and the custom 2% chance of one Mallorn acorn. Both auxiliaries can drop together.
 No apple or vanilla sapling is added: the acorn is part of this mod's planting,
 food and white-deer loop.
 
@@ -60,19 +60,34 @@ not the game's execution of loot predicates.
   for PocketMine, not proof of Mojang's current engine. The owner authorized
   this limited, corroborated base correction from our previous 5% rate.
 
-## Remaining owner questions and acceptance
+## Approved rarity and Fortune
 
-Fortune is still unresolved. Current leaf drops intentionally retain base
-chances at every Fortune level until a defensible Bedrock table is selected.
-PocketMine's current formula gives Fortune III sticks 1/35; the commonly cited
-vanilla table gives 1/30. Agreement at levels I/II does not justify mixing sources
-into a partially implemented Fortune policy. This remains unfinished parity,
-not an approved permanent exception.
+Owner 2026-10-10: keep custom acorn rarity and add Fortune; use Minecraft Wiki
+as a research source. The [Fortune table, revision 3821973](https://minecraft.wiki/w/Fortune?oldid=3821973#Tabulated_probabilities)
+and [Leaves table, revision 3810011](https://minecraft.wiki/w/Leaves?oldid=3810011#Breaking)
+were retrieved and read in full on 2026-10-10. Their leaf rows have no separate
+Bedrock alternative. These are wiki-documented values, not new engine measurements.
+They replace the conflicting PocketMine Fortune formula as the selected gameplay
+reference; engine predicate/probability acceptance remains pending.
 
-Should Mallorn acorns keep their custom 2% chance, or adopt vanilla sapling
-rates and Fortune behavior because they plant Mallorn saplings? This changes
-the existing food/growth loop and needs the owner's choice; no apple analogy is
-assumed. Exact vanilla Fortune rates also require Bedrock evidence/acceptance.
+| Event | No Fortune | I | II | III |
+| --- | ---: | ---: | ---: | ---: |
+| Oak sapling reference | 5% | 6.25% | 8.333...% | 10% |
+| One custom acorn | 2% | 2.5% | 3.333...% | 4% |
+| 1–2 sticks | 2% | 2.222...% | 2.5% | 3.333...% |
+
+Acorns use 2/5 of each oak-sapling chance: the same relative Fortune boosts,
+remaining 60% rarer per leaf at each standard level. This is the mod's explicit
+balance recipe, not a native acorn drop table. It keeps the planting/food/deer
+loop intact. Fortune increases event probability, not the acorn count.
+Fortune IV+ sticks follow the Wiki's command-only 10% column; acorns plateau at
+4% from III upward. Disjoint enchantment ranges prevent stacking pools.
+No-tool and missing/zero Fortune use the base through a negated positive test.
+Shears/Silk Touch still suppress all auxiliaries, including enchanted shears.
+
+Raw retrieved HTML stays in `temp/acorn-fortune/`; SHA256:
+Fortune `2612e8183ab4468035f6101104d69b6ef933399b6d79c4920f519d620d4d38af`,
+Leaves `3778567483d958f3b56b7c53b54e46d290d08a67ae42b5f28f51a4e055e14d3f`.
 
 In game: compare hand, ordinary hoe, shears, Silk Touch hoe, Fortune hoes and
 natural decay against oak leaves; confirm exactly one leaf and zero auxiliaries

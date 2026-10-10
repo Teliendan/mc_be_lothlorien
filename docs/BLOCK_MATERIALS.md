@@ -63,16 +63,23 @@ mining 0 / blast 1200 for its protected scripted growth lifecycle.
 Harvest remains separate from speed: normal leaves collect exactly one leaf item
 with shears or Silk Touch, suppressing auxiliary drops. Other tools and decay use
 independent 2% stick (1–2 items) and custom 2% acorn pools. Native explosion decay
-processes these item entries. Full Fortune numeric parity and the acorn's
-sapling-equivalent rate remain pending; see [LEAF_HARVEST.md](LEAF_HARVEST.md).
+processes these item entries. Owner retains custom acorn rarity with Fortune:
+2/2.5/3.333.../4%; sticks use Wiki rates 2/2.222.../2.5/3.333...% at standard
+levels. See [LEAF_HARVEST.md](LEAF_HARVEST.md); engine acceptance is pending.
 Golden decorative leaves
 intentionally always self-drop and do not decay. Nectar bloom's existing shears
 loot gate remains. Golden fern now follows the native baseline: shears collect
-one fern, otherwise a1/8wheat-seed chance, with native decay. Enchantment parity
-is still pending; see [GOLDEN_FERN_HARVEST.md](GOLDEN_FERN_HARVEST.md).
+one fern, otherwise a 1/8 wheat-seed chance, with native decay. Fortune I/II/III
+yields 1–3/1–5/1–7 seeds per successful event, following the Wiki. See
+[GOLDEN_FERN_HARVEST.md](GOLDEN_FERN_HARVEST.md) for source/engine limits.
 Both double slabs use set_count2 followed by native explosion_decay, matching
 the installed data-driven double-slab recipe. Other tool gates remain audited
 but unresolved; see workspace `docs/block-loot-particles-questions.md`.
+
+Owner 2026-10-10: firefly jar is reusable and deer antler is an any-tool collectible.
+Their existing native default self-drops already satisfy this; no collection gate
+is added from the separate glass/bone material or efficient-tool profile.
+Regression checks protect their ungated base/permutation loot route.
 
 Generators for lamps, nectar bloom and star canopy now keep these material
 numbers. Run the shared verifier after regeneration; it reports policy drift.

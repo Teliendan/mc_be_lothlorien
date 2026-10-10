@@ -48,15 +48,23 @@ function dropExpectations(table, tool) {
 
 function assertHarvest(table) {
   for (const tool of [shears, silkHoe, { item: "minecraft:stick", enchantments: { silk_touch: 1 } },
-    { ...shears, enchantments: { silk_touch: 1, fortune: 3 } }]) {
+    { ...shears, enchantments: { silk_touch: 1, fortune: 3 } },
+    ...[1, 2, 3, 4].map((fortune) => ({ ...shears, enchantments: { fortune } })),
+    { ...silkHoe, enchantments: { silk_touch: 1, fortune: 3 } }]) {
     assert.deepEqual(dropExpectations(table, tool), { [leaf]: 1 }, "shears/Silk Touch collect exactly one leaf, with no auxiliaries");
   }
+  const stickChances = [1/50, 1/45, 1/40, 1/30, 1/10];
+  const acornChances = [1/50, 1/40, 1/30, 1/25];
   for (const tool of [undefined, {}, { item: "minecraft:iron_sword" }, { item: "minecraft:diamond_hoe" },
-    ...[0, 1, 2, 3].map((fortune) => ({ item: "minecraft:diamond_hoe", enchantments: { fortune } }))]) {
+    ...[0, 1, 2, 3, 4, 7].map((fortune) => ({ item: "minecraft:diamond_hoe", enchantments: { fortune } })),
+    { item: "minecraft:diamond_axe", enchantments: { fortune: 2 } }]) {
     const drops = dropExpectations(table, tool);
+    const level = tool?.enchantments?.fortune ?? 0;
     assert.equal(drops[leaf], undefined, "hand/ordinary tool/decay cannot collect the leaf block");
-    assert.equal(drops[stick], 0.03, "2% chance of uniformly 1..2 sticks; Fortune policy remains deferred");
-    assert.equal(drops[acorn], 0.02, "approved custom acorn rate is retained");
+    assert.ok(Math.abs(drops[stick] - 1.5 * stickChances[Math.min(level, 4)]) < 1e-12,
+      "Wiki stick chance times uniform 1..2 count, exactly one Fortune branch");
+    assert.ok(Math.abs(drops[acorn] - acornChances[Math.min(level, 3)]) < 1e-12,
+      "custom 2% acorn base scaled by oak-sapling Fortune boosts, exactly one branch");
   }
 }
 
@@ -66,8 +74,8 @@ function assertExplosionFunctions(table) {
     assert.equal(functions.filter((fn) => fn.function === "explosion_decay").length, 1);
     assert.equal(functions.at(-1).function, "explosion_decay", "decay processes the final set_count stack");
   }
-  const functions = table.pools.find((pool) => pool.entries[0].name === stick).entries[0].functions;
-  assert.deepEqual(functions[0], { function: "set_count", count: { min: 1, max: 2 } });
+  for (const pool of table.pools.filter((pool) => pool.entries[0].name === stick))
+    assert.deepEqual(pool.entries[0].functions[0], { function: "set_count", count: { min: 1, max: 2 } });
 }
 
 const table = readLoot("mallorn_leaves");
@@ -102,8 +110,21 @@ broken = structuredClone(table);
 broken.pools[2].entries[0].functions.reverse();
 assert.throws(() => assertExplosionFunctions(broken));
 broken = structuredClone(table);
-broken.pools[3].entries[0].functions = [];
+broken.pools.find((pool) => pool.entries[0].name === acorn).entries[0].functions = [];
 assert.throws(() => assertExplosionFunctions(broken));
+broken = structuredClone(table);
+const acornPools = broken.pools.filter((pool) => pool.entries[0].name === acorn);
+acornPools[1].conditions.find((condition) => condition.enchantments?.[0].enchantment === "fortune")
+  .enchantments[0].levels.range_min = 2;
+assert.throws(() => assertHarvest(broken), "Fortune I cannot disappear or overlap Fortune II");
+broken = structuredClone(table);
+const fortuneThree = broken.pools.filter((pool) => pool.entries[0].name === acorn).at(-1);
+fortuneThree.conditions.at(-1).chance = 0.10;
+assert.throws(() => assertHarvest(broken), "custom acorns must stay rarer than oak saplings at Fortune III");
+broken = structuredClone(table);
+const extraBase = structuredClone(broken.pools.find((pool) => pool.entries[0].name === acorn));
+broken.pools.push(extraBase);
+assert.throws(() => assertHarvest(broken), "duplicate auxiliary pools must not stack");
 
 // Owner exceptions are part of the contract, not collateral vanilla changes.
 const golden = readLoot("mallorn_golden_leaves"), nectar = readLoot("nectar_bloom");
@@ -111,4 +132,12 @@ for (const tool of [undefined, {}, shears, silkHoe])
   assert.deepEqual(dropExpectations(golden, tool), { "lothlorien:mallorn_golden_leaves": 1 });
 assert.deepEqual(dropExpectations(nectar, shears), { "lothlorien:nectar_bloom": 1 });
 for (const tool of [undefined, {}, silkHoe]) assert.deepEqual(dropExpectations(nectar, tool), {});
-console.log("ok   leaf harvest: shears/Silk exclusivity, auxiliary chances, decay context, generator and owner exceptions");
+// Owner 2026-10-10: reusable jar and mounted antler collect with any tool.
+// Native custom-block default self-drop has no loot-table tool predicate.
+for (const name of ["firefly_jar", "deer_antler"]) {
+  const block = JSON.parse(readFileSync(new URL(`../lothlorien_bp/blocks/${name}.json`, import.meta.url)))["minecraft:block"];
+  assert.equal(block.components["minecraft:loot"], undefined, `${name}: keep native collectible self-drop`);
+  for (const permutation of block.permutations ?? [])
+    assert.equal(permutation.components?.["minecraft:loot"], undefined, `${name}: no state-dependent harvest gate`);
+}
+console.log("ok   leaf harvest: shears/Silk exclusivity, custom acorn and native stick Fortune branches, decay context, generator and owner exceptions");

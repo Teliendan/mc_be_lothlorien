@@ -7,7 +7,8 @@
     },
     "lothlorien:deer_antler": {
       "profile": "bone",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Owner 2026-10-10: mounted collectible, collected with any tool or by hand through native default self-drop; pickaxe remains efficient only.",
+      "reason": "Owner approved any-tool collectible harvesting, 2026-10-10; material hardness/blast/fire and efficient tools remain separate."
     },
     "lothlorien:elanor": {
       "profile": "flower",
@@ -101,11 +102,12 @@
     },
     "lothlorien:firefly_jar": {
       "profile": "glass",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Owner 2026-10-10: reusable jar, collected with any tool or by hand through native default self-drop; not glass-shatter harvesting.",
+      "reason": "Owner approved any-tool collectible harvesting, 2026-10-10; material hardness/blast/fire and efficient tools remain separate."
     },
     "lothlorien:golden_fern": {
       "profile": "fern",
-      "harvest": "Fern baseline: shears collect one fern; other removal has 1/8 wheat-seed chance. Native explosion decay; exact Bedrock Silk Touch/Fortune remains unresolved.",
+      "harvest": "Shears collect one fern. Otherwise 1/8 wheat-seed event, quantity1 without Fortune or1-3/1-5/1-7 at I/II/III. Native decay; Wiki-documented standard enchantment policy, game acceptance pending.",
       "property_checks": {
         "minecraft:replaceable": {
           "counterpart": "minecraft:fern",
@@ -118,7 +120,7 @@
         "loot_tables/blocks/golden_fern.json": {
           "counterpart": "minecraft:fern",
           "explosion_decay": true,
-          "source": "Mojang Taking Inventory: Fern (2025-09-05); docs/GOLDEN_FERN_HARVEST.md; native explosion_decay recipe."
+          "source": "Mojang Taking Inventory: Fern; Minecraft Wiki Fern revision3810026 (see docs/GOLDEN_FERN_HARVEST.md); native explosion_decay recipe."
         }
       }
     },
@@ -348,7 +350,7 @@
     },
     "lothlorien:mallorn_leaves": {
       "profile": "leaves",
-      "harvest": "Shears or Silk Touch collect exactly one leaf without auxiliary items. Otherwise 2% for 1-2 sticks and existing custom 2% acorn; full Fortune parity remains unresolved. Native per-item explosion decay.",
+      "harvest": "Shears/Silk Touch give exactly one leaf and suppress auxiliary pools. Sticks use Wiki Fortune chances 1/50,1/45,1/40,1/30 (IV+:1/10), count1-2; custom acorns use 2%,2.5%,10/3%,4% through Fortune III. Native explosion decay.",
       "property_checks": {
         "minecraft:movable": {
           "counterpart": "minecraft:oak_leaves",
@@ -361,7 +363,7 @@
       "loot_checks": {
         "loot_tables/blocks/mallorn_leaves.json": {
           "counterpart": "minecraft:oak_leaves",
-          "source": "references/harvest-explosion-loot.md; docs/LEAF_HARVEST.md; documented tool predicates and native per-item explosion processing.",
+          "source": "references/harvest-explosion-loot.md; docs/LEAF_HARVEST.md; owner custom acorn base plus relative sapling Fortune curve; Minecraft Wiki Fortune revision3821973/Leaves3810011.",
           "explosion_decay": true
         }
       }

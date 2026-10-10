@@ -14,10 +14,12 @@ The explicit `loot_tables/blocks/golden_fern.json` now requests:
 * Shears: exactly one `lothlorien:golden_fern`, no wheat seeds.
 * Ordinary tool, hand or tool-less removal: 1/8 chance of one
   `minecraft:wheat_seeds`, otherwise nothing; no fern self-drop.
+* Fortune I/II/III: the same 1/8 event, yielding uniformly 1–3/1–5/1–7 seeds.
+  Shears still collect only the fern, even with Fortune.
 * Each final count is passed through native `explosion_decay`; no scripted
   manual blast drops or guessed explosion probability.
 
-The pools are mutually exclusive through a positive/inverted shears condition.
+The pools are mutually exclusive through shears and disjoint Fortune conditions.
 Support loss, piston pop and water pop reach the same native tool-less table;
 the motion script must continue to avoid adding duplicate items. Native loot
 condition behavior and explosion gamerules still need engine acceptance.
@@ -34,11 +36,15 @@ fixtures and generator parity, then the normal `mods verify lothlorien` after
 integration. The test evaluator computes requested baseline loot expectations;
 it is not a Bedrock engine emulator.
 
-Still unresolved: exact native **Bedrock** fern Silk Touch and Fortune semantics.
-No extra Silk Touch self-drop or Fortune multiplier is invented here. Enchanted
-non-shears currently follow the baseline pool. Therefore this is **not yet full
-native harvest parity**. The Mojang fern article establishes the basic shears
-and ordinary-drop behavior, but does not settle those enchantments. Compare
+Fortune source follow-up: [Minecraft Wiki Fern, revision 3810026](https://minecraft.wiki/w/Fern?oldid=3810026#Breaking),
+retrieved 2026-10-10, documents the 1/8 event and 1–3/1–5/1–7 Fortune quantities;
+there is no separate edition-specific drop alternative in that section. Shears
+are the collection tool; Silk Touch alone keeps the ordinary seed route. This
+resolves the selected standard I–III recipe but does not prove target-engine
+execution. Higher command-only Fortune levels currently use III's range and
+are outside this standard-level acceptance scope. Raw HTML SHA256:
+`3b23f53e57a4fb95c1aca1cb19fd3d89c2ff89cde1315e6b6591933941dd3948`.
+Compare
 vanilla fern and golden fern using shears, hand, ordinary hoe, Silk Touch
 axe/pickaxe and Fortune I–III; record deterministic collection separately from
 a large sample of random seed drops. Also compare support/water/piston loss
