@@ -15,11 +15,11 @@ import { deflateSync } from "node:zlib";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const bp = join(root, "lothlorien_bp");
-import { RAIL, SLAB, lightField } from "./village_mallorn.mjs";
+import { RAIL, SLAB, ROOTS, lightField } from "./village_mallorn.mjs";
 import { protectedCells, checkWalk } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs"; // shared walkability checker (cells a piece owns)
 import { MARKER_ID, finalBlocks } from "../lothlorien_bp/scripts/village_loop.js";
 import { PLAN, planVillage, discoverSync, boundedReader, chunksIn, inRect } from "../lothlorien_bp/scripts/village_planner.js";
-import { POST_ID, PROFESSIONS, HOME_MIN, RESERVE_POSTS, homeSite, assignHomes } from "../lothlorien_bp/scripts/elf_rules.js";
+import { POST_ID, PROFESSIONS, HOME_MIN, HEALER2_MIN_TREES, RESERVE_POSTS, homeSite, assignHomes } from "../lothlorien_bp/scripts/elf_rules.js";
 export const PLANKS = "lothlorien:mallorn_planks", FENCE = RAIL, LANTERN_ID = "lothlorien:elven_lantern";
 const EMPTY = "minecraft:empty", AIR = "minecraft:air", JIGSAW = "minecraft:jigsaw";
 const FACING_VEC = { 2: [0, -1], 3: [0, 1], 4: [-1, 0], 5: [1, 0] };
@@ -545,9 +545,16 @@ export function discoveryCoverage(res, opts = {}) {
   return out;
 }
 export function planLoops(res, world, states, opts = {}) {
-  let ground = 1e9;
-  for (const [k, n] of world) if (LOG_IDS.has(n)) ground = Math.min(ground, wdecode(k)[1]);
-  const rawAt = (x, y, z) => world.get(wkey(x, y, z)) ?? (y < ground ? "minecraft:stone" : AIR);
+  // Terrain (Bedrock rule, verified in the flat world "ET" 2026-10-10): the structure's start jigsaw is placed `start_height` from the TOP SOLID block, and
+  // it sits at world y 0 here (the start piece is placed with its anchor at the origin), so the top block is at ROOTS - 1 (start_height -(ROOTS - 1)): tree y 0 = first air cell.
+  // Piece blocks win; structure void keeps the terrain. opts.terrain(x, z) -> top block y overrides it (tests: slopes).
+  const topAt = (x, z) => opts.terrain ? opts.terrain(x, z) : ROOTS - 1;
+  const rawAt = (x, y, z) => {
+    const w = world.get(wkey(x, y, z));
+    if (w !== undefined) return w;
+    const t = topAt(x, z);
+    return y > t ? AIR : y === t ? "minecraft:grass_block" : y >= t - 3 ? "minecraft:dirt" : "minecraft:stone";
+  };
   const all = [...new Map(res.placed.flatMap(markerCells).map((c) => [c.join(","), c])).values()].sort((a, b) => a[0] - b[0] || a[2] - b[2]);
   const out = { merges: 0, mergeCells: [], markers: all.length, found: 0, complete: false, rounds: 0, sizes: [], chunks: 0, stable: false, error: null, nRaw: 0, loops: 0, byKind: {}, landings: 0, lengths: [], offsets: [], picks: [], log: [], bad: [] };
   if (!all.length) return out;
@@ -581,7 +588,26 @@ export function planLoops(res, world, states, opts = {}) {
     if (p.plan.landing) out.landings++;
     out.lengths.push(p.plan.length); out.offsets.push(Math.abs(p.plan.offset)); out.picks.push({ ...p, plan: undefined, planRef: p.plan });
   }
+  // repairs (rope fit): written like links
+  out.repairs = r.repairs.map((p) => ({ x: p.x, z: p.z, buried: p.buried, hung: p.hung }));
+  for (const p of r.repairs) applyPlan(world, states, p);
+  out.ropeFeet = ropeFeet(world, states, rawAt, rect);
   out.at = rawAt;
+  return out;
+}
+
+// After the repairs: for every rope column (a rope piece with no rope above it... the top piece), where does the bottom piece stand? -> [{ x, z, ground: bool }]
+// ground = the cell under the bottom piece is solid terrain/log (the rope reaches the ground) and the bottom piece is not inside the terrain (the cell in front is not ground).
+export function ropeFeet(world, states, rawAt, rect) {
+  const out = [], ROPE = "lothlorien:elven_rope_hanging";
+  for (const [k, n] of world) {
+    if (n !== ROPE) continue;
+    const [x, y, z] = wdecode(k);
+    if (world.get(wkey(x, y - 1, z)) === ROPE) continue; // not the bottom piece
+    const st = states.get(k) ?? {}, d = { north: [0, -1], south: [0, 1], east: [1, 0], west: [-1, 0] }[st["minecraft:cardinal_direction"]] ?? [0, 0];
+    const below = rawAt(x, y - 1, z), front = rawAt(x + d[0], y, z + d[1]);
+    out.push({ x, y, z, onGround: below !== AIR && !/water|lava/.test(below), buried: !(front === AIR || /leaves|fence|planks/.test(front)) });
+  }
   return out;
 }
 
@@ -594,9 +620,10 @@ export function populateElves(res, at, rect) {
   const lore = posts.filter((q) => q.kind === "loremaster").sort((a, b) => a.x - b.x || a.z - b.z)[0] ?? null;
   const assigned = assignHomes(posts.filter((q) => q.kind !== "loremaster"), lore ? [lore.x, lore.y, lore.z] : null);
   const profs = [...assigned.map((a) => a.p), ...(lore ? ["loremaster"] : [])], fail = [];
-  for (const p of PROFESSIONS) { const n = profs.filter((q) => q === p).length; if (n !== 1) fail.push(`${p} assigned ${n} times`); }
+  const outerTrees = posts.filter((q) => q.kind === "home").length, healer2 = outerTrees >= HEALER2_MIN_TREES ? 1 : 0;
+  for (const p of PROFESSIONS) { const n = profs.filter((q) => q === p).length, want = p === "healer" ? 1 + healer2 : 1; if (n !== want) fail.push(`${p} assigned ${n} times (expected ${want})`); }
   const own = assigned.filter((a) => a.post.kind !== "reserve");
-  return { posts: posts.length, outer: posts.filter((q) => q.kind === "home").length, elves: profs.length, ownTree: own.length, onReserve: assigned.length - own.length,
+  return { posts: posts.length, outer: outerTrees, healer2, elves: profs.length, ownTree: own.length, onReserve: assigned.length - own.length,
     homeRoom: own.filter((a) => a.post.site && a.post.site.k >= HOME_MIN).length, reservePosts: posts.filter((q) => q.kind === "reserve").length, fail };
 }
 
@@ -666,7 +693,7 @@ function main() {
   let bad = 0;
   const pad = (v, n) => String(v).padStart(n);
   for (const { seed, res, ck } of rows) {
-    const ok = ck.fail.length === 0 && ck.info.ropeWrong === 0 && ck.info.decay === 0 && rows.find((r) => r.seed === seed).lpUnreach === 0 && rows.find((r) => r.seed === seed).lp.bad.length === 0 && rows.find((r) => r.seed === seed).el.fail.length === 0; if (!ok) bad++;
+    const ok = ck.fail.length === 0 && ck.info.ropeWrong === 0 && ck.info.decay === 0 && rows.find((r) => r.seed === seed).lpUnreach === 0 && rows.find((r) => r.seed === seed).lp.bad.length === 0 && rows.find((r) => r.seed === seed).el.fail.length === 0 && rows.find((r) => r.seed === seed).lp.ropeFeet.every((f) => f.onGround && !f.buried); if (!ok) bad++;
     const k = ck.kinds;
     console.log(`${pad(seed, 4)} ${pad(res.placed.length, 6)} ${pad(`${k.trees}(${k.tower})`, 10)} ${pad(ck.levels, 3)} ${pad(k.straight, 8)} ${pad(k.balcony, 4)} ${pad(k.lookout, 4)} ${pad(k.plug, 4)} ${pad(ck.open, 4)} ${pad(`${k.crown}(${k.crownSmall})`, 10)} ${pad(ck.unreachable, 7)} ${pad(ck.overlaps, 5)} ${pad(ck.info.ropeWrong, 5)} ${pad(ck.info.decay, 5)} ${pad(ck.info.fenceOneWay, 9)} ${pad(ck.kinds.bridgesNoDest, 6)} ${ok ? "ok" : "FAIL"}`);
     for (const f of [...new Set(ck.fail)].slice(0, 6)) console.log(`       ! ${f}`);
@@ -686,8 +713,10 @@ function main() {
   console.log(`  markers per village ${mm((r) => r.lp.markers)}; start-marker run found all of them in ${rows.filter((r) => r.lp.complete).length}/${rows.length} villages; area rounds ${mm((r) => r.lp.rounds)}, biggest area ${mm((r) => r.lp.chunks)} chunks; errors ${rows.filter((r) => r.lp.error).length}; ` +
     `every marker as the first one: ${rows.reduce((a, r) => a + r.cov.complete, 0)}/${rows.reduce((a, r) => a + r.cov.starts, 0)} starts find the whole village (worst miss ${Math.max(...rows.map((r) => r.cov.worst))} markers), most chunks ${Math.max(...rows.map((r) => r.cov.maxChunks))}, most rounds ${Math.max(...rows.map((r) => r.cov.rounds))}`);
   console.log(`  unreachable walk cells after the links ${rows.reduce((a, r) => a + r.lpUnreach, 0)}; links failing the walk / light checks ${lsum((l) => l.bad.length)}; candidates per village ${avg((r) => r.lp.nRaw)}`);
-  const nEl = rows.filter((r) => r.el.elves === PROFESSIONS.length).length, hp = (f) => rows.reduce((a, r) => a + f(r.el), 0);
-  console.log(`  elves: all five in ${nEl}/${rows.length} villages | own tree 4 in ${pct(rows.filter((r) => r.el.ownTree === 4).length, rows.length)} | outer trees ${mm((r) => r.el.outer)} | reserves used mean/max ${(hp((e) => e.onReserve) / rows.length).toFixed(2)}/${Math.max(...rows.map((r) => r.el.onReserve))} | homes with room >= ${HOME_MIN}x${HOME_MIN}: ${pct(hp((e) => e.homeRoom), hp((e) => e.ownTree))}`);
+  const nEl = rows.filter((r) => r.el.elves === PROFESSIONS.length + r.el.healer2).length, hp = (f) => rows.reduce((a, r) => a + f(r.el), 0);
+  console.log(`  elves: all five in ${nEl}/${rows.length} villages | own tree 4+ in ${pct(rows.filter((r) => r.el.ownTree >= 4).length, rows.length)} | second healer in ${rows.filter((r) => r.el.healer2).length}/${rows.length} | outer trees ${mm((r) => r.el.outer)} | reserves used mean/max ${(hp((e) => e.onReserve) / rows.length).toFixed(2)}/${Math.max(...rows.map((r) => r.el.onReserve))} | homes with room >= ${HOME_MIN}x${HOME_MIN}: ${pct(hp((e) => e.homeRoom), hp((e) => e.ownTree))}`);
+  const feet = rows.flatMap((r) => r.lp.ropeFeet);
+  console.log(`  repairs (rope fit): ${rows.reduce((a, r) => a + r.lp.repairs.length, 0)} villages fitted (buried ${rows.reduce((a, r) => a + r.lp.repairs.reduce((b, p) => b + p.buried, 0), 0)}, hung ${rows.reduce((a, r) => a + r.lp.repairs.reduce((b, p) => b + p.hung, 0), 0)} pieces); rope bottoms ${feet.length}, not on the ground ${feet.filter((f) => !f.onGround).length}, buried in terrain ${feet.filter((f) => f.buried).length}`);
   const sum = (f) => rows.reduce((a, r) => a + f(r.ck.info), 0);
   console.log(`  totals: unreachable walk cells ${rows.reduce((a, r) => a + r.ck.unreachable, 0)}, overlaps ${rows.reduce((a, r) => a + r.ck.overlaps, 0)}, wrong ropes ${sum((i) => i.ropeWrong)}/${sum((i) => i.ropes)}, ` +
     `decaying leaves ${sum((i) => i.decay)}/${sum((i) => i.leaves)}, one-way fence links (open ends only) ${sum((i) => i.fenceOneWay)} (dangling stub ends ${sum((i) => i.fenceDangling)}), near-miss ends ${sum((i) => i.nearMiss)}`);

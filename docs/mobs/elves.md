@@ -1,12 +1,29 @@
 # Civilian Elves (M1: built, NOT seen in game)
 
 Status 2026-10-10: milestone M1 of `docs/design/elven_inhabitants.md` is built and passes `.\mods verify lothlorien` (verifier, `tests/run.mjs` incl. glue tests,
-`node tools/village_sim.mjs 300 1`). **Nothing here has been seen in game and it is not deployed.** Owner checklist: `temp/elven_inhabitants/m1_plan.md`, section "In-game checklist for the owner".
+`node tools/village_sim.mjs 300 1`). **Nothing here has been seen in game** (M1 and the 2026-10-10 fix round below are deployed). Owner checklist: `temp/elven_inhabitants/m1_plan.md`, section "In-game checklist for the owner".
 Plan and rationale: `temp/elven_inhabitants/m1_plan.md` (rev. 2). Art generator: `tools/make_elves.py` (`--sheet` writes review sheets to `temp/elves/`).
 
 One entity `lothlorien:elf`, profession = `minecraft:variant` = `query.variant`: 0 gardener, 1 healer, 2 woodwright, 3 lamplighter, 4 loremaster
 (`PROFESSIONS` in `scripts/elf_rules.js`, a test keeps it equal to `make_elves.py`). Profession events `lothlorien:as_<profession>` (idempotent: each removes the
 other four groups); `minecraft:entity_spawned` picks one at random when no profession is set yet (the egg).
+
+## Fix round after the owner test of 30e1eb1 (2026-10-10, built, NOT seen in game, deployed)
+
+- **Models:** z-fighting accessory cubes (woodwright belt; healer cuffs and sash; lamplighter epaulets and collar; loremaster cuffs, mantle, cord) got `inflate` 0.25 in `tools/make_elves.py` (UV layout and textures unchanged, only `elf.geo.json`).
+  A test (`elf geometry: no visible coplanar same-facing faces`) finds same-plane overlapping faces at rest; the only exemption is the hair cap's bottom face, which is transparent by design.
+- **Leads:** every elf is leashable (`presets` soft 4 / hard 6 / max 10). Base components hold `minecraft:home {}` (no restriction); the radius lives in the radius groups `home_near` 10, `home_lore` 6, `healer_day` 64, `healer_night` 10
+  (`elf_rules.js` `HOME_RADIUS`, `RADIUS_GROUPS`). `lothlorien:leashed` removes all radius groups, so the lead pulls freely and `move_towards_home_restriction` has nothing to enforce. `on_unleash` (any release: untie, cut, break by distance) fires
+  `lothlorien:rehome`: `set_home_position` (first and last in the sequence) + the radius group of the profession. `elf.js` records the move on `dataDrivenEntityTrigger`: entity property `lothlorien:home` = the floored feet cell, `lothlorien:moved` = true.
+  The village record `lothlorien:village_homes` is NOT rewritten; **a home step (M7) must treat an elf with `lothlorien:moved` as living at its own `lothlorien:home`.**
+  [U] whether `set_home_position` works for a custom entity, whether a group swap keeps the anchor, whether `on_unleash` reaches `dataDrivenEntityTrigger`.
+  Fallback if `set_home_position` does nothing: an invisible per-elf anchor entity with `follow_target_leader` (white deer beacon pattern), only on the owner's request.
+- **Debug:** `/scriptevent lothlorien:elf home` (nearest elf within 16 blocks: profession, recorded home, distance, on a lead or not), `/scriptevent lothlorien:elf rehome` (re-homes it where it stands, without a lead). Messages in the catalog, nine locales.
+- **Healer (owner: own tree, 64 by day, 10 from dusk; a healer moved by a lead also roams 64 by day wherever its new home is):** `healer_day` (radius 64, `environment_sensor` `is_daytime` false -> `lothlorien:healer_dusk`) and `healer_night` (radius 10, `is_daytime`
+  true -> `lothlorien:healer_dawn`); each sensor only lives in its own group. One home position per entity, so the "village by day" is a 64 radius around the own tree (the healer's tree is the one nearest the Loremaster). [U] whether the dusk swap keeps the anchor.
+- **Second healer:** a village with at least `HEALER2_MIN_TREES` 6 outer trees gets a second healer on a leftover home post (room first, then farthest from healer 1, then x, z), never on a reserve; sim 241/300 villages, all five professions in 300/300, `loremaster + 5 on own trees` in the log.
+- **Harmony everywhere:** `elf_fight`, `elf_kill`, `warden_fight`, `warden_kill` count anywhere in the world (`harmony.js` `EVERYWHERE_DEEDS`, `deedCounts`); all other deeds keep the inside-the-forest rule. Band-change chat lines and the deed hint also appear outside.
+- **Planner speed:** see `docs/TECHNICAL_NOTES.md` "Elven village", loop planner (timing log, `START_DELAY_TICKS` 5, time-boxed job driver, numeric memo keys).
 
 ## Owner decisions (2026-10-10)
 
@@ -16,7 +33,7 @@ other four groups); `minecraft:entity_spawned` picks one at random when no profe
 - Population: every new village gets all five professions: the Loremaster on the central tree, healer / gardener / woodwright / lamplighter each on an outer tree of their own
   (warden trees allowed, post at least 3 cells from the warden). Fallback F1: with fewer than 4 outer trees the leftover professions stand on reserve posts on the central tree.
   Homes (buildings) are a later milestone; M1 only records which tree belongs to which profession. Existing villages get no elves.
-- Using an elf does nothing yet (no trade, interact, inventory, lead, breeding, riding, egg interaction, loot, XP).
+- Using an elf does nothing yet (no trade, interact, inventory, breeding, riding, egg interaction, loot, XP). Exception (fix round): a lead can be put on an elf and the released elf takes a new home where it was released.
 
 ## Placement (how a village gets its elves)
 
@@ -41,12 +58,14 @@ Closest vanilla analogues: `villager_v2` (1.26.20) and `wandering_trader`, witho
 | A Identity | `lothlorien:elf`, family `lothlorien_elf` + `mob`, name "Elf" (one name for all professions; profession titles `lothlorien.elf.profession.<p>` are in the catalog for M2). Egg "Elf Spawn Egg", one random profession, colours in the client entity. 0.6 x 1.95, health 20, movement 0.3 (below the template-mob threshold 0.5). Summonable and spawnable. |
 | B Spawning | No spawn rule (`[..]`): only the village planner, egg, `/summon`. Persistent, no `minecraft:despawn`, no `spawn_rules/elf.json` (a test checks both). |
 | C Body | Walk navigation, avoid water and damage blocks, passes doors, does not open them, avoids the two rope blocks (`blocks_to_avoid` with `name`; vanilla goat uses `name` for powder snow, not yet seen working with custom blocks). Floats, jumps, breathes, lava hurts. `damage_sensor`: fall damage off. Pushable. |
-| D Behaviour | float 0, panic 1 (x1.25), avoid monsters except endermen within 6 (x1.0 / x1.25), move towards home 5, stroll 6 (x0.6, 8 / 3), look at player 7, look around 8. Home radius per profession group: Loremaster 6, others 10. |
-| E Interaction | None. No tempt (`[--]`), lead (`[--]`), breeding, baby, taming, riding, interact (`[..]`). Name tags work (`nameable`). Trades, dialogs, Renown come with M2. |
+| D Behaviour | float 0, panic 1 (x1.25), avoid monsters except endermen within 6 (x1.0 / x1.25), move towards home 5, stroll 6 (x0.6, 8 / 3), look at player 7, look around 8. Home radius per radius group: Loremaster 6, others 10, healer 64 by day / 10 from dusk. |
+| E Interaction | Lead only (leashable, a release re-homes the elf). No tempt (`[--]`), breeding, baby, taming, riding, interact (`[..]`). Name tags work (`nameable`). Trades, dialogs, Renown come with M2. |
 | F Rewards | No loot, no XP (`[..]`, `[--]` experience_reward). Killing costs Harmony 6. |
 | G Look and sound | Model, texture, animations, render controller from `make_elves.py` (never seen in game). **No sounds** (`[--]`): no `entity_sounds` entry, so the engine defaults play (player hurt / death, silent ambient), the same as the warden. Sounds are a later polish item. |
 
 ## Open / to verify in game
+
+- Fix round: no flicker on the five models (also from above); lead, release and re-home (see the checklist in the fix plan `temp/elven_inhabitants/m1_fix_plan.md`); healer day/night; second healer; Harmony outside the forest.
 
 - Everything: content log (schema errors for `lothlorien:elf` / `elf_post`), the spawn events, whether `entity_spawned` also runs after a `spawnEvent` (the events are idempotent), whether `minecraft:home` from a group is set at the spawn point.
 - `blocks_to_avoid` with `{ "name": ... }` on custom blocks; walking speed 0.3 x 0.6 (measure with `/scriptevent lothlorien:speed`).

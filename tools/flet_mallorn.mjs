@@ -190,7 +190,8 @@ export function buildFletMallorn(random, { woven = false, lush = false, flet = t
     blocks.set(key(4, floorY + 1, 1), { name: B.chest, states: { "minecraft:cardinal_direction": "east" }, loot: FLET_LOOT });
   }
 
-  return { height: height + top, floorY, radius, blocks, trimmed: trimFarLeaves(blocks) };
+  const tufted = tuftBareEnds(blocks, (x, y, z) => flet && y > floorY && y <= floorY + 3 && fromCentre(x, z) <= radius + 4);
+  return { height: height + top, floorY, radius, blocks, tufted, trimmed: trimFarLeaves(blocks) };
 }
 
 // The foot of a round trunk (cells 0..3, centre 1.5, 1.5): the trunk is every cell within 1.9 of the centre (the 12-cell
@@ -246,7 +247,7 @@ export function roundFoot(b, rng, ladder, o = {}) {
 
 // A branch that rises with chance `rise` per step and may turn 45 degrees once or twice on the way (never
 // back towards the trunk); leaves grow along its top and a leaf blob sits on its tip.
-export function bentBranch(b, random, sx, sz, dx, dz, y0, len, rise, blobR) {
+export function bentBranch(b, random, sx, sz, dx, dz, y0, len, rise, blobR, maxY = Infinity) {
   const RING = [[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]]; // 45 degrees apart
   const r0 = RING.findIndex(([ex, ez]) => ex === dx && ez === dz);
   let x = sx, z = sz, y = y0, r = r0;
@@ -258,13 +259,50 @@ export function bentBranch(b, random, sx, sz, dx, dz, y0, len, rise, blobR) {
     const [cx, cz] = RING[r];
     const stepX = cx !== 0 && (cz === 0 || i % 2 === 1);
     if (stepX) x += cx; else z += cz;
-    if (random() < rise) y += 1;
+    if (random() < rise && y < maxY) y += 1; // random() is always drawn, so callers without maxY keep their output
     b.addLog(x, y, z, stepX ? "east" : "south");
     // leaves along the top of the branch: a leaf on most steps, now and then a small tuft
     if (i > 1 && random() < 0.7) b.addLeaf(x, y + 1, z);
     if (i > 2 && random() < 0.25) b.blob(x, y + 1, z, 1.4, 1.2, y + 1, 0.5);
   }
   b.blob(x, y + 1, z, blobR, blobR * 0.8, y - 2, 0.8);
+}
+
+// Generator check (defect 3, owner screenshot bare_branch.png): a branch end (a horizontal mallorn log with at most one log or wood among its 26
+// neighbours) must carry at least `min` leaves within Chebyshev distance 2, or it looks bare. blocks: Map "x,y,z" -> { name, states }.
+// Returns [{ x, y, z, leaves }] of the failing ends.
+export function bareBranchEnds(blocks, min = 6) {
+  const bad = [], isWood = (v) => v && (v.name === B.log || v.name === B.wood);
+  for (const [k, v] of blocks) {
+    if (v.name !== B.log || v.states?.["minecraft:block_face"] === "up") continue;
+    const [x, y, z] = k.split(",").map(Number);
+    let woods = 0, leaves = 0;
+    for (let dx = -2; dx <= 2; dx++) for (let dy = -2; dy <= 2; dy++) for (let dz = -2; dz <= 2; dz++) {
+      if (!dx && !dy && !dz) continue;
+      const n = blocks.get(`${x + dx},${y + dy},${z + dz}`);
+      if (!n) continue;
+      if (n.name === B.leaves) leaves++;
+      else if (isWood(n) && Math.abs(dx) <= 1 && Math.abs(dy) <= 1 && Math.abs(dz) <= 1) woods++;
+    }
+    if (woods <= 1 && leaves < min) bad.push({ x, y, z, leaves });
+  }
+  return bad;
+}
+
+// Gives every bare branch end (bareBranchEnds) a small leaf tuft above and beside its last log, without touching the random stream: the trees
+// that have no bare end stay byte-identical. `skip(x, y, z)` says a cell must stay clear. Returns the number of leaves added.
+export function tuftBareEnds(blocks, skip = () => false, min = 6) {
+  let added = 0;
+  for (const e of bareBranchEnds(blocks, min)) {
+    const cells = [];
+    for (let dx = -1; dx <= 1; dx++) for (let dy = 0; dy <= 2; dy++) for (let dz = -1; dz <= 1; dz++) {
+      if (dx * dx + (dy - 1) * (dy - 1) + dz * dz > 2) continue; // a small ball centred one above the log
+      const k = key(e.x + dx, e.y + dy, e.z + dz);
+      if (!blocks.has(k) && !skip(e.x + dx, e.y + dy, e.z + dz)) cells.push(k);
+    }
+    for (const k of cells) { blocks.set(k, { name: B.leaves, states: { [`${NS}:persistent`]: false } }); added++; }
+  }
+  return added;
 }
 
 // Drops leaves more than LEAF_KEEP steps (through leaves) from a log; returns how many went.

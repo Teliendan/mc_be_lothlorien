@@ -8,6 +8,7 @@
 //   2 candidates  every exit-exit / exit-side / side-side / plaza / L target in reach (geometry only)
 //   3 score       value = shortcut gained (walking distance through the existing deck network) - cost of the new link
 //   4 greedy      take the best, build its real plan, apply it to an overlay world, enumerate and score again; stop at the budget
+import { repairGen } from "./village_repair.js";
 import { PLANKS, SLAB, FENCE, LOOP, exitAt, sideTarget, sideStarts, scanAhead, findPlazaPartners, findLs, planSpan, planPlaza, planL, blockedCells, clutter, planPier, finalBlocks, isNewKind, MERGE, findMerges, planMerge } from "./village_loop.js";
 
 // budget: extra links per village (owner 2026-10-09: up to 3). minNet/minRatio: a link must save at least 30 cells of walking and be 2.5 times shorter
@@ -140,14 +141,25 @@ export function* scoreGen(at, cands, opts) {
 }
 
 // overlay world: writes of chosen plans on top of the snapshot
+// Over a boundedReader (at.nkey / at.rect) the lookups use numeric keys (no string building per read); `over` keeps the string keys for tools.
 export function overlay(at) {
-  const over = new Map(), f = (x, y, z) => { const v = over.get(key(x, y, z)); return v !== undefined ? v : at(x, y, z); };
-  f.apply = (plan) => { for (const [k, b] of finalBlocks(plan)) over.set(k, b.id); };
+  const over = new Map(), fast = new Map(), nkey = at.nkey, rect = at.rect;
+  const f = (x, y, z) => {
+    const v = nkey && inRect(rect, x, z) ? fast.get(nkey(x, y, z)) : over.get(key(x, y, z));
+    return v !== undefined ? v : at(x, y, z);
+  };
+  f.apply = (plan) => {
+    for (const [k, b] of finalBlocks(plan)) {
+      over.set(k, b.id);
+      if (nkey) { const [x, y, z] = k.split(",").map(Number); if (inRect(rect, x, z)) fast.set(nkey(x, y, z), b.id); }
+    }
+  };
   f.over = over;
+  f.rect = rect; f.nkey = nkey; f.size = at.size;
   return f;
 }
 
-// planVillage(at0, markers, opts) -> { merges: [{ kind: "merge", A, B, plan, len, gap }], picks: [{ kind, A, B, plan, dnet, len, value }], nRaw, log, at }
+// planVillage(at0, markers, opts) -> { merges: [{ kind: "merge", A, B, plan, len, gap }], picks: [{ kind, A, B, plan, dnet, len, value }], repairs: [plan], nRaw, log, at }
 //   markers: [[x, y, z]] deck cells under the loop markers. opts: PLAN overrides (budget ...).
 export const planVillage = (at0, markers, opts = {}) => drive(planGen(at0, markers, opts));
 export function* planGen(at0, markers, opts = {}) {
@@ -192,7 +204,9 @@ export function* planGen(at0, markers, opts = {}) {
     yield;
     cands = enumerate(at, startsOf()); // the network and the rims changed
   }
-  return { picks, merges, nRaw, log, at };
+  // repairs last, on the finished network (village_repair.js: the rope fit); opts.repairs === false turns them off
+  const repairs = yield* repairGen(at, markers, { ...o, log });
+  return { picks, merges, repairs, nRaw, log, at };
 }
 
 // ---- ticking area discovery ---------------------------------------------------------------------------------------------------------
@@ -251,14 +265,19 @@ export async function discoverVillage(env, first, baseId) {
 export const discoverSync = (env, first, baseId) => drive(discoverGen(env, first, baseId));
 
 // a block reader that sees only what the ticking area holds: `get(x, y, z)` for cells inside the rect, undefined outside (and memoised)
+// Numeric memo keys (a village rect is a few hundred blocks wide; y within -256..767): about a fifth of the time of string keys in node.
+// `.size()` = distinct reads so far (the planner's timing log), `.rect` / `.nkey` are used by overlay().
 export function boundedReader(get, rect) {
-  const cache = new Map();
-  return (x, y, z) => {
+  const cache = new Map(), nkey = (x, y, z) => ((x - rect.x0) * 4096 + (z - rect.z0)) * 1024 + (y + 256);
+  const reader = (x, y, z) => {
     if (!inRect(rect, x, z)) return undefined;
-    const k = key(x, y, z);
-    if (!cache.has(k)) cache.set(k, get(x, y, z));
-    return cache.get(k);
+    const k = nkey(x, y, z);
+    let v = cache.get(k);
+    if (v === undefined && !cache.has(k)) { v = get(x, y, z); cache.set(k, v); }
+    return v;
   };
+  reader.size = () => cache.size; reader.rect = rect; reader.nkey = nkey;
+  return reader;
 }
 
 // one-line description of a pick for logs / chat

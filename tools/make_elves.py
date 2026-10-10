@@ -119,6 +119,8 @@ def geometry_entry(p, cubes, uvs, height, extra_bones):
         cube = {"origin": c["o"], "size": c["s"], "uv": list(uvs[c["name"]])}
         if "uv_from" in c:
             cube["mirror"] = True
+        if "inflate" in c:
+            cube["inflate"] = c["inflate"]  # accessory cubes sharing a face plane with the body would z-fight
         bones[c["bone"]].setdefault("cubes", []).append(cube)
     used = {c["bone"] for c in cubes}
     keep = [b for n, b in bones.items() if n in used or n in ("waist", "body", "head", "hat", "rightItem", "leftItem")
@@ -630,9 +632,9 @@ def build_healer():
         return ramp(G, 3 if j < 1 else 2 if j < 3 else 1) if face != "bottom" else ramp(G, 0)
     P["details"] = dict(skirt_hip=hip, skirt_hem=hem, cuff=cuff, sash=sash, tail=tail, strap=strap, bag=bag, leaf=leaf)
     cubes = common_cubes() + robe_cubes(P) + [
-        K("cuff_r", "rightArm", [-7.5, 15, -2], [4, 4, 4], "solid", r="robe", detail="cuff"),
-        K("cuff_l", "leftArm", [3.5, 15, -2], [4, 4, 4], "solid", r="robe", detail="cuff", uv_from="cuff_r"),
-        K("sash", "robe", [-5, 10, -3], [10, 2, 6], "solid", r="sash", detail="sash"),
+        K("cuff_r", "rightArm", [-7.5, 15, -2], [4, 4, 4], "solid", r="robe", detail="cuff", inflate=0.25),
+        K("cuff_l", "leftArm", [3.5, 15, -2], [4, 4, 4], "solid", r="robe", detail="cuff", uv_from="cuff_r", inflate=0.25),
+        K("sash", "robe", [-5, 10, -3], [10, 2, 6], "solid", r="sash", detail="sash", inflate=0.25),
         K("tail", "robe", [0, 3, -3.5], [2, 7, 1], "solid", r="sash", detail="tail"),
         K("strap", "strap", [-1, 12, -2.5], [2, 12, 5], "solid", r="leather", detail="strap"),
         K("bag", "body", [5, 4, -2], [3, 5, 4], "solid", r="leather", detail="bag"),
@@ -770,7 +772,7 @@ def build_woodwright():
         K("apron_bib", "body", [-2, 16, -3], [4, 5, 1], "solid", r="leather", detail="apron"),
         K("strap_r", "body", [-3, 21, -2.5], [1, 3, 5], "solid", r="leather", detail="strapc"),
         K("strap_l", "body", [2, 21, -2.5], [1, 3, 5], "solid", r="leather", detail="strapc", uv_from="strap_r"),
-        K("belt", "body", [-5, 10, -3], [10, 2, 6], "solid", r="leather", detail="belt"),
+        K("belt", "body", [-5, 10, -3], [10, 2, 6], "solid", r="leather", detail="belt", inflate=0.25),
         K("mallet_h", "body", [-5.5, 5, -0.5], [1, 5, 1], "solid", r="wood", detail="handle"),
         K("mallet_head", "body", [-6.5, 9, -1], [3, 2, 2], "solid", r="steel", detail="mhead"),
         K("chisel", "body", [5, 6, -0.5], [1, 5, 1], "solid", r="steel", detail="chisel"),
@@ -885,9 +887,9 @@ def build_lamplighter():
     cubes = common_cubes() + [
         K("coat_hip", "robe", [-4.5, 9, -2.5], [9, 3, 5], "solid", r="coat", detail="skirt_hip"),
         K("coat_low", "robe", [-5, 4, -3], [10, 5, 6], "solid", r="coat", detail="coat"),
-        K("epaulet_r", "rightArm", [-7.5, 22, -2], [4, 2, 4], "solid", r="coat", detail="epaulet"),
-        K("epaulet_l", "leftArm", [3.5, 22, -2], [4, 2, 4], "solid", r="coat", detail="epaulet", uv_from="epaulet_r"),
-        K("collar", "body", [-4.5, 23, -2.5], [9, 2, 5], "solid", r="coat", detail="collar"),
+        K("epaulet_r", "rightArm", [-7.5, 22, -2], [4, 2, 4], "solid", r="coat", detail="epaulet", inflate=0.25),
+        K("epaulet_l", "leftArm", [3.5, 22, -2], [4, 2, 4], "solid", r="coat", detail="epaulet", uv_from="epaulet_r", inflate=0.25),
+        K("collar", "body", [-4.5, 23, -2.5], [9, 2, 5], "solid", r="coat", detail="collar", inflate=0.25),
         K("chain", "lantern", [6, 9, -0.5], [1, 3, 1], "solid", r="silver", detail="chain"),
         K("lcap", "lantern", [5.5, 8, -1], [2, 1, 2], "solid", r="silver", detail="lcap"),
         K("lbody", "lantern", [5, 4, -1.5], [3, 4, 3], "solid", r="glass", detail="lbody"),
@@ -1000,12 +1002,12 @@ def build_loremaster():
         return ramp(GEM, {3: 3, 2: 3, 1: 1}[m]) if (face == "north" and (i, j) == (1, 1)) else ramp(SILVER, m)
     P["details"] = dict(skirt_hip=hip, skirt_hem=hem, mantle=mantle, stole=stole, cord=cord, scroll=scroll, brooch=brooch)
     cubes = common_cubes() + robe_cubes(P) + [
-        K("cuff_r", "rightArm", [-7.5, 15, -2], [4, 4, 4], "solid", r="robe", detail="skirt_hem"),
-        K("cuff_l", "leftArm", [3.5, 15, -2], [4, 4, 4], "solid", r="robe", detail="skirt_hem", uv_from="cuff_r"),
-        K("mantle", "body", [-5, 18, -3], [10, 6, 6], "solid", r="mantle", detail="mantle"),
+        K("cuff_r", "rightArm", [-7.5, 15, -2], [4, 4, 4], "solid", r="robe", detail="skirt_hem", inflate=0.25),
+        K("cuff_l", "leftArm", [3.5, 15, -2], [4, 4, 4], "solid", r="robe", detail="skirt_hem", uv_from="cuff_r", inflate=0.25),
+        K("mantle", "body", [-5, 18, -3], [10, 6, 6], "solid", r="mantle", detail="mantle", inflate=0.25),
         K("stole_r", "robe", [-3.5, 2, -3.5], [2, 22, 1], "solid", r="mantle", detail="stole"),
         K("stole_l", "robe", [1.5, 2, -3.5], [2, 22, 1], "solid", r="mantle", detail="stole", uv_from="stole_r"),
-        K("cord", "robe", [-5, 11, -3], [10, 1, 6], "solid", r="gold", detail="cord"),
+        K("cord", "robe", [-5, 11, -3], [10, 1, 6], "solid", r="gold", detail="cord", inflate=0.25),
         K("scroll", "body", [5, 4, -1], [2, 7, 2], "solid", r="leather", detail="scroll"),
         K("brooch", "hat", [-1.5, 29, -5], [3, 3, 1], "solid", r="silver", detail="brooch"),
         K("hair_long", "hair", [-4, 5, 2], [8, 19, 2], "hair_long", taper=3),

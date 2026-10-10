@@ -12,8 +12,8 @@ import { readFileSync } from "node:fs";
 import { MAX_GROWTH, growChance, bonemealSteps, advanceGrowth } from "../lothlorien_bp/scripts/crop_rules.js";
 import { estimateDepth, probeCount, ringOffsets, DEPTH_NAMES, DEPTH_RADII } from "../lothlorien_bp/scripts/depth.js";
 import * as H from "../lothlorien_bp/scripts/harmony.js";
-import { makeRandom } from "../lothlorien_bp/scripts/mallorn_tree.js";
-import { buildFletMallorn, LADDER, ROUND_LADDER, LEAF_KEEP, ROOT_DEPTH, B } from "../tools/flet_mallorn.mjs";
+import { makeRandom, makeBuilder } from "../lothlorien_bp/scripts/mallorn_tree.js";
+import { buildFletMallorn, LADDER, ROUND_LADDER, LEAF_KEEP, ROOT_DEPTH, B, bentBranch, bareBranchEnds } from "../tools/flet_mallorn.mjs";
 import { SIZE, SIZE_Y, TRUNK_AT, CHOSEN, TRUNK_ANCHOR } from "../tools/build_structures.mjs";
 import { existsSync, readdirSync } from "node:fs";
 import * as WR from "../lothlorien_bp/scripts/warden_replace_rules.js";
@@ -331,6 +331,12 @@ test("harmony: victims are classified into deed kinds (inanimate counts nothing,
   assert.equal(k("minecraft:cow"), "animal");
   assert.equal(k("lothlorien:elf", ["lothlorien_elf", "mob"]), "elf_kill", "a civilian elf is its own kind (was a plain animal, 3)");
   assert.equal(k("lothlorien:elf_post", ["lothlorien_elf_post", "elf_post_home", "inanimate"]), undefined, "a post counts nothing");
+});
+test("harmony: deedCounts - elf and warden deeds count anywhere, every other kind only inside the forest, no kind never", () => {
+  for (const kind of ["warden_fight", "warden_kill", "elf_fight", "elf_kill"]) { assert.equal(H.deedCounts(kind, false), true, kind); assert.equal(H.deedCounts(kind, true), true, kind); }
+  for (const kind of ["animal", "monster", "white_deer", "unicorn", "player"]) { assert.equal(H.deedCounts(kind, false), false, `${kind} outside`); assert.equal(H.deedCounts(kind, true), true, `${kind} inside`); }
+  assert.equal(H.deedCounts(undefined, true), false); assert.equal(H.deedCounts(undefined, false), false);
+  assert.deepEqual([...H.EVERYWHERE_DEEDS].sort(), ["elf_fight", "elf_kill", "warden_fight", "warden_kill"]);
 });
 test("harmony: death changes nothing, except inside the forest while Hated (-> -29)", () => {
   const cases = [[-30, true, -29], [-60, true, -29], [-30, false, -30], [-29, true, -29], [-20, true, -20], [-20, false, -20], [5, true, 5], [10, true, 10]];
@@ -1667,6 +1673,81 @@ test("village: 30 simulated villages connect, never overlap, terminate, are full
   assert.ok(rows.reduce((s, r) => s + r.ck.open, 0) / rows.length <= 1.5, "too many open connectors");
   assert.ok(Date.now() - t0 < 20000, `simulation took ${Date.now() - t0} ms`);
 });
+test("village: every branch end of every shipped village piece carries leaves (>= 6 within 2); fixtures: a bare branch is flagged, a tufted one passes", () => {
+  for (const p of villagePieces()) {
+    const m = new Map(p.blocks.map((b) => [`${b.x},${b.y},${b.z}`, { name: b.name, states: b.states }]));
+    assert.deepEqual(bareBranchEnds(m), [], `${p.name}: bare branch end`);
+  }
+  const log = (face) => ({ name: B.log, states: { "minecraft:block_face": face } });
+  const branch = new Map([["0,0,0", log("up")], ["0,1,0", log("up")], ["1,1,0", log("east")], ["2,1,0", log("east")], ["3,1,0", log("east")], ["4,1,0", log("east")]]);
+  assert.deepEqual(bareBranchEnds(branch).map((q) => [q.x, q.y, q.z]), [[4, 1, 0]], "4 logs and no leaves: the end is bare");
+  for (let x = 3; x <= 5; x++) for (let y = 1; y <= 3; y++) for (let z = -1; z <= 1; z++) if (!branch.has(`${x},${y},${z}`)) branch.set(`${x},${y},${z}`, { name: B.leaves, states: {} });
+  assert.deepEqual(bareBranchEnds(branch), [], "a 3x3x3 leaf blob on the tip passes");
+});
+test("giant mallorn generator: the chosen trees have no bare branch end, and bentBranch without maxY keeps its output", () => {
+  const draw = (maxY) => { const b = makeBuilder(makeRandom(5)); const r = makeRandom(9); bentBranch(b, r, 0, 0, 1, 0, 3, 12, 0.9, 2, maxY); return b.result(30).logs.map((c) => c.y); };
+  assert.deepEqual(draw(), draw(Infinity));
+  assert.ok(Math.max(...draw(8)) <= 8 && Math.max(...draw()) > 8, "maxY caps the rise (and without it the branch does climb past 8)");
+});
+// --- Elven village: rope fit (village_repair.js) ---
+const HROPE = RP.ROPE_ID, WALLS = { north: [0, 1], south: [0, -1], east: [-1, 0], west: [1, 0] }; // rope face -> offset piece -> wall
+function ropeWorld(face, { top = -1, ropeBottom = 0, deckY = 16, extra = {}, wallFrom = -20 } = {}) {
+  const w = new Map(), [wx, wz] = WALLS[face], [fx, fz] = [-wx, -wz], px = 5, pz = 5;
+  const terrain = (x, y, z) => (y > top ? "minecraft:air" : y === top ? "minecraft:grass_block" : "minecraft:dirt");
+  const cells = new Map();
+  for (let y = wallFrom; y <= deckY + 3; y++) cells.set(`${px + wx},${y},${pz + wz}`, "lothlorien:mallorn_log");
+  for (let y = ropeBottom; y <= deckY; y++) cells.set(`${px},${y},${pz}`, HROPE);
+  for (const [k, v] of Object.entries(extra)) cells.set(k.replace("X", px).replace("Z", pz), v);
+  const at = (x, y, z) => { const v = cells.get(`${x},${y},${z}`); return v !== undefined ? (v === "UNLOADED" ? undefined : v) : terrain(x, y, z); };
+  return { at, top: { x: px, y: deckY, z: pz }, face, front: [fx, fz] };
+}
+test("rope fit: flat ground with the lowest piece in the top block (the old start height) - the piece becomes grass, the rope ends on the grass", () => {
+  const w = ropeWorld("north", { top: -1, ropeBottom: -1 }), r = RP.planRopeFit(w.at, w.top);
+  assert.equal(r.buried, 1); assert.equal(r.hung, 0);
+  assert.deepEqual(r.blocks.map((b) => [b.y, b.id]), [[-1, "minecraft:grass_block"]]);
+});
+test("rope fit: nothing to do when the rope stands on the first air cell (the new start height); ground 4 below hangs 4 pieces with the face of the wall", () => {
+  const flat = ropeWorld("north", { top: -1, ropeBottom: 0 });
+  assert.deepEqual(RP.planRopeFit(flat.at, flat.top).blocks, []);
+  const low = ropeWorld("north", { top: -5, ropeBottom: 0 }), r = RP.planRopeFit(low.at, low.top);
+  assert.equal(r.hung, 4); assert.deepEqual(r.blocks.map((b) => b.y), [-1, -2, -3, -4]);
+  assert.ok(r.blocks.every((b) => b.id === HROPE && b.states["minecraft:cardinal_direction"] === "north"));
+});
+test("rope fit: ground 3 above (slope) replaces 3 pieces with the blocks in front of them; a short plant under the rope is replaced, water stops it; unloaded errors", () => {
+  const hill = ropeWorld("north", { top: 2, ropeBottom: 0 }), r = RP.planRopeFit(hill.at, hill.top);
+  assert.equal(r.buried, 3); assert.deepEqual(r.blocks.map((b) => [b.y, b.id]), [[0, "minecraft:dirt"], [1, "minecraft:dirt"], [2, "minecraft:grass_block"]]);
+  const grass = ropeWorld("north", { top: -3, ropeBottom: 0, extra: { "X,-1,Z": "minecraft:short_grass" } });
+  assert.equal(RP.planRopeFit(grass.at, grass.top).hung, 2, "the grass cell and the air under it, then the ground");
+  const wet = ropeWorld("north", { top: -5, ropeBottom: 0, extra: { "X,-1,Z": "minecraft:water" } });
+  assert.deepEqual(RP.planRopeFit(wet.at, wet.top).blocks, [], "rope stops above water");
+  const gone = ropeWorld("north", { top: -5, ropeBottom: 0, extra: { "X,-1,Z": "UNLOADED" } });
+  assert.match(RP.planRopeFit(gone.at, gone.top).error, /unloaded/);
+  const noWall = ropeWorld("north", { top: -5, ropeBottom: 0, wallFrom: -1 });
+  assert.equal(RP.planRopeFit(noWall.at, noWall.top).hung, 1, "the wall stops ending at -1: hangs only one piece");
+});
+test("rope fit in the simulator: the terrain top follows the Bedrock rule (first air at tree y 0 on flat ground, nothing to fix); lower ground hangs, higher ground buries - every rope ends on the ground", () => {
+  const row = villages()[0], sim = (terrain) => {
+    const world = new Map(row.ck.world), states = new Map(row.ck.states);
+    return planLoops(row.res, world, states, { terrain, start: 0 });
+  };
+  const flat = sim(undefined);
+  assert.deepEqual(flat.repairs, [], "start height -(ROOTS-1): the rope stands on the first air cell, nothing to repair");
+  assert.ok(flat.ropeFeet.length >= 1 && flat.ropeFeet.every((f) => f.onGround && !f.buried));
+  const low = sim(() => 14), high = sim(() => 20);
+  assert.ok(low.repairs[0].hung === 3 && low.ropeFeet.every((f) => f.onGround && !f.buried), JSON.stringify(low.repairs));
+  assert.ok(high.repairs[0].buried === 3 && high.ropeFeet.every((f) => f.onGround && !f.buried), JSON.stringify(high.repairs));
+});
+test("rope fit: all four rotations derive the face from the wall; repairGen finds the rope in the deck layer and applies it to the overlay", () => {
+  for (const face of ["north", "south", "east", "west"]) {
+    const w = ropeWorld(face, { top: -4, ropeBottom: 0 }), r = RP.planRopeFit(w.at, w.top);
+    assert.equal(r.hung, 3, face); assert.ok(r.blocks.every((b) => b.states["minecraft:cardinal_direction"] === face), `${face}: face from the wall`);
+    const reader = PL.boundedReader(w.at, { x0: -30, x1: 30, z0: -30, z1: 30 }), ov = PL.overlay(reader), log = [];
+    const reps = PL.drive(RP.repairGen(ov, [[5, 16, 5]], { rect: { x0: -30, x1: 30, z0: -30, z1: 30 }, log }));
+    assert.equal(reps.length, 1); assert.equal(reps[0].hung, 3); assert.equal(ov(5, -3, 5), HROPE, "the overlay sees the new piece");
+    assert.deepEqual(PL.drive(RP.repairGen(ov, [[5, 16, 5]], { rect: { x0: -30, x1: 30, z0: -30, z1: 30 } })), [], "idempotent: a second run changes nothing");
+    assert.equal(PL.drive(RP.repairGen(ov, [[5, 16, 5]], { rect: { x0: -30, x1: 30, z0: -30, z1: 30 }, repairs: false })).length, 0, "repairs: false turns them off");
+  }
+});
 // --- Elven village: engine-state fixes (leaf decay, fence links, rope side under rotation) ---
 const shippedStructures = () => ["../lothlorien_bp/structures/lothlorien", VILLAGE].flatMap((d) =>
   readdirSync(new URL(`${d}/`, import.meta.url)).filter((f) => f.endsWith(".mcstructure")).map((f) =>
@@ -2046,6 +2127,7 @@ test("rail mender: script is imported by main.js and removes the marker only aft
 import * as LOOP from "../lothlorien_bp/scripts/village_loop.js";
 import { blockLight as sharedLight } from "../../../.claude/skills/bedrock-modding/scripts/structure_light.mjs";
 import * as PL from "../lothlorien_bp/scripts/village_planner.js";
+import * as RP from "../lothlorien_bp/scripts/village_repair.js";
 import { planLoops, discoveryCoverage, buildWorld, wkey, markerCell, markerCells, walkability } from "../tools/village_sim.mjs";
 const SLAB_NAME = "lothlorien:mallorn_slab";
 // synthetic village: a platform connector row (deck, rails at +-2, 3 air cells walk + headroom) and the railing_end row beyond it
@@ -2938,6 +3020,7 @@ test("warden replace: only engine-default movement is replaced", () => {
 // --- civilian elves (M1) ---
 const elfEntity = () => readJson("../lothlorien_bp/entities/elf.json")["minecraft:entity"];
 const GROUP = (p) => `lothlorien:${p}`;
+const GROUP_NAMES = (g) => Object.keys(g);
 test("elf: entity values come from elf_rules STATS / HOME_RADIUS; persistent, no despawn, no spawn rule, exact families", () => {
   const e = elfEntity(), c = e.components;
   assert.equal(e.description.identifier, EL.ELF_ID);
@@ -2957,33 +3040,97 @@ test("elf: entity values come from elf_rules STATS / HOME_RADIUS; persistent, no
   assert.equal(c["minecraft:behavior.move_towards_home_restriction"].speed_multiplier, EL.STATS.home);
   assert.equal(c["minecraft:behavior.random_stroll"].speed_multiplier, EL.STATS.stroll);
   assert.equal(c["minecraft:behavior.look_at_player"].look_distance, EL.STATS.lookDistance);
-  assert.ok(!("minecraft:home" in c), "home only through the profession groups");
+  assert.deepEqual(c["minecraft:home"], {}, "base home is empty (restriction none); the radius comes from the radius groups, so a lead can take it away");
+  assert.ok(!Object.values(e.component_groups).some((g) => GROUP_NAMES(g).includes("minecraft:variant") && "minecraft:home" in g), "a profession group carries no home radius");
   const nav = c["minecraft:navigation.walk"];
   assert.deepEqual(nav.blocks_to_avoid.map((b) => b.name), ["lothlorien:elven_rope", "lothlorien:elven_rope_hanging"], "avoids the rope cells");
   assert.deepEqual(c["minecraft:damage_sensor"].triggers, [{ cause: "fall", deals_damage: "no" }], "no fall damage");
 });
 test("elf: using an elf does nothing - no trade, interact, inventory, lead, breeding, riding, egg interaction, loot or xp anywhere", () => {
   const text = JSON.stringify(elfEntity());
-  const found = [...text.matchAll(/"minecraft:(economy_trade_table|trade_table|interact|inventory|leashable|breedable|rideable|spawn_egg_interaction|loot|experience_reward|equippable|behavior\.(?:breed|trade_with_player|tempt|follow_parent|ranged_attack|melee_attack))"/g)].map((m) => m[1]);
+  const found = [...text.matchAll(/"minecraft:(economy_trade_table|trade_table|interact|inventory|breedable|rideable|spawn_egg_interaction|loot|experience_reward|equippable|behavior\.(?:breed|trade_with_player|tempt|follow_parent|ranged_attack|melee_attack))"/g)].map((m) => m[1]);
   assert.deepEqual(found, []);
 });
-test("elf: every profession group has its variant index and home radius; each as_<p> event swaps exactly the other four groups", () => {
+test("elf: every profession group has its variant index only; radius groups carry the home radius; each as_<p> event swaps professions and radius", () => {
   const e = elfEntity();
-  assert.deepEqual(Object.keys(e.component_groups), EL.PROFESSIONS.map(GROUP));
+  assert.deepEqual(Object.keys(e.component_groups), [...EL.PROFESSIONS.map(GROUP), ...EL.RADIUS_GROUPS]);
   EL.PROFESSIONS.forEach((p, i) => {
     const g = e.component_groups[GROUP(p)];
-    assert.deepEqual(Object.keys(g).sort(), ["minecraft:home", "minecraft:variant"]);
+    assert.deepEqual(Object.keys(g), ["minecraft:variant"]);
     assert.equal(g["minecraft:variant"].value, i, `${p}: variant index`);
-    assert.deepEqual(g["minecraft:home"], { restriction_type: "random_movement", restriction_radius: EL.HOME_RADIUS[p] }, `${p}: home radius`);
-    const ev = e.events[EL.spawnEventOf(p)];
-    assert.deepEqual(ev.add.component_groups, [GROUP(p)]);
-    assert.deepEqual([...ev.remove.component_groups].sort(), EL.PROFESSIONS.filter((q) => q !== p).map(GROUP).sort(), `${p}: removes the other four`);
+    const ev = e.events[EL.spawnEventOf(p)], own = EL.radiusGroupOf(p);
+    assert.deepEqual(ev.add.component_groups, [GROUP(p), own], `${p}: adds the profession and its radius group`);
+    assert.deepEqual([...ev.remove.component_groups].sort(), [...EL.PROFESSIONS.filter((q) => q !== p).map(GROUP), ...EL.RADIUS_GROUPS.filter((r) => r !== own)].sort(), `${p}: removes the other four professions and the other radius groups`);
   });
+  const home = (r) => ({ restriction_type: "random_movement", restriction_radius: r });
+  assert.deepEqual(e.component_groups[EL.HOME_NEAR_GROUP], { "minecraft:home": home(EL.HOME_RADIUS.near) });
+  assert.deepEqual(e.component_groups[EL.HOME_LORE_GROUP], { "minecraft:home": home(EL.HOME_RADIUS.loremaster) });
   const sp = e.events["minecraft:entity_spawned"];
   assert.equal(sp.randomize.length, EL.PROFESSIONS.length);
-  assert.deepEqual(sp.randomize.map((r) => r.add.component_groups[0]), EL.PROFESSIONS.map(GROUP), "one egg: random profession");
+  assert.deepEqual(sp.randomize.map((r) => r.add.component_groups), EL.PROFESSIONS.map((p) => [GROUP(p), EL.radiusGroupOf(p)]), "one egg: random profession with its radius group");
   assert.deepEqual(sp.filters, { test: "has_component", operator: "!=", value: "minecraft:variant" }, "a spawn event that set the profession is not overridden");
-  assert.ok(Math.max(...Object.values(EL.HOME_RADIUS)) <= 10 && EL.HOME_RADIUS.loremaster < EL.HOME_RADIUS.healer, "radius stays around the own tree (bridges are 7..15 long)");
+  const radii = Object.values(EL.HOME_RADIUS).filter((r) => r !== EL.HOME_RADIUS.healerDay);
+  assert.ok(Math.max(...radii) <= 10 && EL.HOME_RADIUS.loremaster < EL.HOME_RADIUS.near, "every radius but the healer's day roam stays around the own tree (bridges are 7..15 long)");
+  assert.equal(EL.HOME_RADIUS.healerDay, 64);
+});
+test("elf healer: day group roams HOME_RADIUS.healerDay and flips to night at dusk, night group stays near and flips back at dawn; sensors only in their own group", () => {
+  const e = elfEntity(), day = e.component_groups[EL.HEALER_DAY_GROUP], night = e.component_groups[EL.HEALER_NIGHT_GROUP];
+  assert.equal(day["minecraft:home"].restriction_radius, EL.HOME_RADIUS.healerDay); assert.equal(night["minecraft:home"].restriction_radius, EL.HOME_RADIUS.healerNight);
+  const trig = (g) => g["minecraft:environment_sensor"].triggers;
+  assert.equal(trig(day).length, 1); assert.equal(trig(day)[0].event, EL.HEALER_DUSK_EVENT); assert.equal(trig(day)[0].filters.test, "is_daytime"); assert.equal(trig(day)[0].filters.value, false);
+  assert.equal(trig(night).length, 1); assert.equal(trig(night)[0].event, EL.HEALER_DAWN_EVENT); assert.equal(trig(night)[0].filters.value, true);
+  assert.ok(!("minecraft:environment_sensor" in e.components), "no sensor in the base components: it would fire every tick for every profession");
+  assert.deepEqual(e.events[EL.HEALER_DUSK_EVENT], { remove: { component_groups: [EL.HEALER_DAY_GROUP] }, add: { component_groups: [EL.HEALER_NIGHT_GROUP] } });
+  assert.deepEqual(e.events[EL.HEALER_DAWN_EVENT], { remove: { component_groups: [EL.HEALER_NIGHT_GROUP] }, add: { component_groups: [EL.HEALER_DAY_GROUP] } });
+  assert.equal(EL.radiusGroupOf("healer"), EL.HEALER_DAY_GROUP);
+});
+test("elf lead: leashable fields come from LEASH; a lead takes the radius away; any release sets the home where the elf stands and gives the radius back per profession", () => {
+  const e = elfEntity(), l = e.components["minecraft:leashable"];
+  assert.deepEqual(l.presets, [{ soft_distance: EL.LEASH.soft, hard_distance: EL.LEASH.hard, max_distance: EL.LEASH.max }]);
+  assert.deepEqual(l.on_leash, { event: EL.LEASHED_EVENT, target: "self" }); assert.deepEqual(l.on_unleash, { event: EL.REHOME_EVENT, target: "self" });
+  assert.equal(l.on_unleash_interact_only, undefined, "default false: untie, cut and break by distance all re-home");
+  assert.equal(l.can_be_stolen, false);
+  assert.deepEqual(e.events[EL.LEASHED_EVENT], { remove: { component_groups: EL.RADIUS_GROUPS } }, "leashed: no radius at all, move_towards_home has nothing to enforce");
+  const seq = e.events[EL.REHOME_EVENT].sequence;
+  assert.ok(seq[0].set_home_position && seq.at(-1).set_home_position, "set_home_position first and again last");
+  assert.deepEqual(seq[0].remove.component_groups, EL.RADIUS_GROUPS, "a rehome without a lead starts clean");
+  // walk the sequence for each variant: which radius groups end up added
+  const passes = (f, v) => (f.all_of ? f.all_of.every((x) => passes(x, v)) : f.operator === "!=" ? v !== f.value : v === f.value);
+  EL.PROFESSIONS.forEach((p, v) => {
+    const added = seq.filter((s) => s.add && (!s.filters || passes(s.filters, v))).flatMap((s) => s.add.component_groups);
+    assert.deepEqual(added, [EL.radiusGroupOf(p)], `${p}: re-homed with its own radius group`);
+  });
+});
+test("elf geometry: no visible coplanar same-facing faces (accessory cubes are inflated off the body)", () => {
+  const geo = readJson("../lothlorien_rp/models/entity/elf.geo.json")["minecraft:geometry"];
+  assert.equal(geo.length, EL.PROFESSIONS.length);
+  for (const g of geo) {
+    const bones = Object.fromEntries(g.bones.map((b) => [b.name, b]));
+    const rotated = (n) => { for (; n; n = bones[n].parent) if ((bones[n].rotation ?? [0, 0, 0]).some(Boolean)) return true; return false; };
+    const boxes = [];
+    for (const b of g.bones) b.cubes?.forEach((c, i) => {
+      if (rotated(b.name) || (c.rotation ?? [0, 0, 0]).some(Boolean)) return;
+      const f = c.inflate ?? 0;
+      boxes.push({ n: `${b.name}#${i}`, lo: c.origin.map((v) => v - f), hi: c.origin.map((v, k) => v + c.size[k] + f) });
+    });
+    const inside = (pt, a, b) => boxes.some((q) => q !== a && q !== b && [0, 1, 2].every((k) => q.lo[k] < pt[k] && pt[k] < q.hi[k]));
+    const hits = [];
+    for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) for (let ax = 0; ax < 3; ax++) for (const side of [0, 1]) {
+      const A = boxes[i], B = boxes[j], pa = (side ? A.hi : A.lo)[ax], pb = (side ? B.hi : B.lo)[ax];
+      if (Math.abs(pa - pb) > 1e-6) continue;
+      const ks = [0, 1, 2].filter((k) => k !== ax), o = ks.map((k) => [Math.max(A.lo[k], B.lo[k]), Math.min(A.hi[k], B.hi[k])]);
+      if (o.some(([a, b]) => b - a <= 1e-6)) continue;
+      let vis = 0;
+      for (let u = 0; u < 8; u++) for (let v = 0; v < 8; v++) {
+        const pt = [0, 0, 0]; pt[ax] = pa + (side ? 0.01 : -0.01);
+        pt[ks[0]] = o[0][0] + (u + 0.5) * (o[0][1] - o[0][0]) / 8; pt[ks[1]] = o[1][0] + (v + 0.5) * (o[1][1] - o[1][0]) / 8;
+        if (!inside(pt, A, B)) vis++;
+      }
+      // head / hat bottom (y- at 24) is exempt: make_elves.py paint_cap leaves the cap's bottom face transparent on purpose, so it never draws
+      if (vis && !(ax === 1 && side === 0 && [A.n, B.n].sort().join() === "hat#0,head#0")) hits.push(`${"xyz"[ax]}${side ? "+" : "-"} ${A.n}/${B.n}`);
+    }
+    assert.deepEqual(hits, [], `${g.description.identifier}: z-fighting faces`);
+  }
 });
 test("elf: client entity and render controller are in step with the professions (index = minecraft:variant); post entities are registered on both sides", () => {
   const d = readJson("../lothlorien_rp/entity/elf.entity.json")["minecraft:client_entity"].description;
@@ -3041,12 +3188,12 @@ test("elf homeSite: open 5x5 gives 5, a fence shrinks it, a single cell gives nu
 });
 test("elf assignHomes: four trees in HOME_ORDER (room first, then nearest to the Loremaster); reserves only for the leftovers; order of input does not matter", () => {
   const home = (x, k) => ({ kind: "home", x, y: 70, z: 0, site: k ? { x0: 0, z0: 0, k } : null });
-  const homes = [home(30, 5), home(3, 3), home(10, 7), home(8, 5), home(5, 6), home(20, 5)], lore = [0, 70, 0];
+  const homes = [home(3, 3), home(10, 7), home(8, 5), home(5, 6), home(20, 5)], lore = [0, 70, 0];
   const names = (r) => r.map((a) => `${a.p}@${a.post.x}`);
   assert.deepEqual(names(EL.assignHomes(homes, lore)), ["healer@5", "gardener@8", "woodwright@10", "lamplighter@20"], "room first (x 3 has none), then by distance");
   const reserves = [20, 4, 12, 28].map((x) => ({ kind: "reserve", x, y: 70, z: 0, site: null }));
   assert.deepEqual(names(EL.assignHomes([...homes, ...reserves], lore)), names(EL.assignHomes(homes, lore)), "no reserve is used with four trees");
-  const three = EL.assignHomes([...homes.slice(0, 3), ...reserves], lore);
+  const three = EL.assignHomes([home(30, 5), home(3, 3), home(10, 7), ...reserves], lore);
   assert.deepEqual(names(three), ["healer@10", "gardener@30", "woodwright@3", "lamplighter@4"], "3 trees: the leftover stands on the nearest reserve");
   assert.deepEqual(three.map((a) => a.p), EL.HOME_ORDER);
   assert.deepEqual(names(EL.assignHomes(reserves, lore)), ["healer@4", "gardener@12", "woodwright@20", "lamplighter@28"], "0 trees: all four on reserves, nearest first");
@@ -3057,6 +3204,24 @@ test("elf assignHomes: four trees in HOME_ORDER (room first, then nearest to the
     assert.equal(new Set(a.map((q) => q.p)).size, a.length, "no profession twice"); assert.equal(new Set(a.map((q) => q.post)).size, a.length, "no post twice");
   }
   assert.deepEqual(EL.assignHomes([], lore), []); assert.equal(EL.assignHomes(homes, null).length, 4, "a rect without the central tree still assigns homes");
+});
+test("elf assignHomes: 6+ home posts give a second healer on a roomy tree farthest from the first; never on a reserve; fewer trees never do", () => {
+  const home = (x, z, k) => ({ kind: "home", x, y: 70, z, site: k ? { x0: 0, z0: 0, k } : null });
+  const lore = [0, 70, 0], names = (r) => r.map((a) => `${a.p}@${a.post.x},${a.post.z}`);
+  const five = [home(5, 0, 6), home(8, 0, 5), home(10, 0, 7), home(20, 0, 5), home(3, 0, 3)];
+  assert.equal(EL.assignHomes(five, lore).length, 4, "5 trees: no second healer");
+  const r = EL.assignHomes([home(5, 0, 6), home(8, 0, 5), home(10, 0, 7), home(20, 0, 5), home(3, 0, 3), home(0, 40, 5)], lore);
+  assert.deepEqual(names(r), ["healer@5,0", "gardener@8,0", "woodwright@10,0", "lamplighter@20,0", "healer@0,40"], "6 trees: the spare roomy tree gets the 2nd healer");
+  const seven = [...five, home(0, 40, 5), home(0, 12, 5)];
+  assert.equal(names(EL.assignHomes(seven, lore))[4], "healer@0,40", "farthest from the first healer among the roomy leftovers");
+  const noRoom = [home(5, 0, 6), home(8, 0, 5), home(10, 0, 7), home(20, 0, 5), home(3, 0, 3), home(0, 60, 0)];
+  assert.equal(names(EL.assignHomes(noRoom, lore))[4], "healer@0,60", "no leftover has room: farthest from the first healer");
+  const reserves = [4, 12].map((x) => ({ kind: "reserve", x, y: 70, z: 0, site: null }));
+  assert.equal(EL.assignHomes([...five, ...reserves], lore).length, 4, "reserves never give a second healer");
+  assert.ok(EL.assignHomes([...five, home(0, 40, 5), ...reserves], lore).every((a) => a.post.kind === "home"));
+  const fwd = names(r), back = names(EL.assignHomes([home(0, 40, 5), home(3, 0, 3), home(20, 0, 5), home(10, 0, 7), home(8, 0, 5), home(5, 0, 6)], lore));
+  assert.deepEqual(fwd, back, "input order does not matter");
+  assert.equal(EL.HEALER2_MIN_TREES, 6);
 });
 test("elf homes record: parse tolerates damage and the list is capped", () => {
   assert.deepEqual(EL.parseHomes(undefined), []); assert.deepEqual(EL.parseHomes("{"), []); assert.deepEqual(EL.parseHomes('{"a":1}'), []);
@@ -3111,14 +3276,14 @@ test("elf posts stand on deck: planks underneath, three cells of air, open deck 
     }
   }
 });
-test("elf population over villages: all five professions exactly once, four on their own trees when there are four, reserves only for the missing ones", () => {
+test("elf population over villages: all five professions (the healer twice with 6+ outer trees), four on their own trees when there are four, reserves only for the missing ones", () => {
   let withReserve = 0;
   for (const r of villages()) {
     const at = (x, y, z) => r.ck.world.get(wkey(x, y, z)) ?? "minecraft:air", el = populateElves(r.res, at);
     assert.deepEqual(el.fail, [], `seed ${r.seed}`);
-    assert.equal(el.elves, EL.PROFESSIONS.length, `seed ${r.seed}: all five`);
+    assert.equal(el.elves, EL.PROFESSIONS.length + (el.outer >= EL.HEALER2_MIN_TREES ? 1 : 0), `seed ${r.seed}: all five, the healer twice with ${EL.HEALER2_MIN_TREES}+ outer trees`);
     assert.equal(el.reservePosts, EL.RESERVE_POSTS);
-    assert.equal(el.ownTree, Math.min(4, el.outer), `seed ${r.seed}: ${el.outer} outer trees`);
+    assert.equal(el.ownTree, Math.min(4, el.outer) + (el.outer >= EL.HEALER2_MIN_TREES ? 1 : 0), `seed ${r.seed}: ${el.outer} outer trees`);
     assert.equal(el.onReserve, Math.max(0, 4 - el.outer), `seed ${r.seed}: reserves for the missing trees only`);
     if (el.onReserve) withReserve++;
   }

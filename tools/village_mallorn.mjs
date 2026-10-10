@@ -5,9 +5,10 @@
 // Tree-piece coordinates: trunk centre (0,0), y 0 = the first block above the nominal ground, roots down to -ROOTS.
 // The box is (2*hx+1) x (2*hz+1), so toMcstructure offset = [hx, ROOTS, hz].
 import { makeBuilder, makeRandom, DIRS8 } from "../lothlorien_bp/scripts/mallorn_tree.js";
-import { B, trimFarLeaves, roundFoot, bentBranch } from "./flet_mallorn.mjs"; // the giant Mallorns' foot and bent branch (Phase 5, accepted in game)
+import { B, trimFarLeaves, roundFoot, bentBranch, bareBranchEnds } from "./flet_mallorn.mjs"; // the giant Mallorns' foot and bent branch (Phase 5, accepted in game)
 import { blockLight } from "../../../.claude/skills/bedrock-modding/scripts/structure_light.mjs"; // shared skill script (one implementation of the light model)
 
+export { bareBranchEnds }; // the generator check lives in flet_mallorn.mjs (the giants use it too)
 export const ROOTS = 18; // trunks and pillars reach this far below the nominal ground (levels up to +16 still reach the ground)
 export const FLOOR_H = 16; // lower deck above the nominal ground
 export const LEVEL_H = 8; // upper deck of a two-level node above its lower deck
@@ -336,7 +337,9 @@ export function buildTree({ levels, trunk = "plus", seed, pool, upPool, rope = f
     cells: lv.clip ? new Set([...shapeCells(lv.rows)].filter((c) => !lv.clip(...c.split(",").map(Number)))) : null,
   }));
   levels.forEach((lv, i) => lv.conn.forEach((c) => deckObjs[i].connect(c.facing, c.off, pool, c.hi ? DECK_HI_NAME : DECK_NAME)));
-  if (ropeAt) for (let y = 0; y <= D + 3; y++) for (const z of [ropeAt.z, ropeAt.z - 1]) blocks.delete(key(ropeAt.x, y, z));
+  // the rope column and the column in front of it are free from -ROOTS up (structure void keeps the terrain): the flare's underground logs there
+  // would leave the rope ending on an exposed log on lower ground (the runtime rope fit, village_repair.js, then hangs or buries the rope to the real ground)
+  if (ropeAt) for (let y = -ROOTS; y <= D + 3; y++) for (const z of [ropeAt.z, ropeAt.z - 1]) blocks.delete(key(ropeAt.x, y, z));
   const rails = new Set(), forced = new Map();
   for (const dk of deckObjs) { const r = dk.build(); r.rails.forEach((k) => rails.add(k)); r.forced.forEach((v, k) => forced.set(k, v)); }
 
@@ -442,7 +445,8 @@ export function buildCrown({ h, H, seed, branches, blob, central = false }) {
     const r0 = radiusAt(y0);
     const room = h - r0 - Math.ceil(blobR); // cells of branch the box allows along an axis
     const len = Math.max(3, Math.floor((diag ? room * 1.5 : room) - random() * 2));
-    bentBranch(b, random, dx !== 0 ? dx * r0 : 0, dx !== 0 ? 0 : dz * r0, dx, dz, y0, len, 0.45, blobR);
+    // a branch that climbs above the box would lose its tip blob to the box clip and end bare: cap the rise so the blob fits under the top
+    bentBranch(b, random, dx !== 0 ? dx * r0 : 0, dx !== 0 ? 0 : dz * r0, dx, dz, y0, len, 0.45, blobR, H - 2 - Math.ceil(blobR * 0.8));
   }
   b.blob(0, H - 6, 0, Math.min(h - 0.5, blob + 2.6), Math.min(4, H / 4), 3, 1.0);
   b.blob(0, H - 3, 0, Math.min(h - 2, blob + 1.4), 2.6, H - 5, 0.8);

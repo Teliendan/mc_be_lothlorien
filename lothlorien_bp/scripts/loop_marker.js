@@ -14,12 +14,15 @@
 // most AREA.maxTries times per marker. `/scriptevent lothlorien:village plan` re-runs it by hand for the nearest marker (see planNearest).
 import { BlockPermutation, system, world } from "@minecraft/server";
 import { MARKER_ID, finalBlocks } from "./village_loop.js";
-import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, describePick, describeMerge } from "./village_planner.js";
+import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, chunksIn, describePick, describeMerge } from "./village_planner.js";
+import { describeRepair } from "./village_repair.js";
 import { missingLinks } from "./rail_mender_rules.js";
 import { message } from "./messages.js";
 import { populateVillage } from "./elf_village.js";
 
-const START_DELAY_TICKS = 20, SETTLE_TICKS = 40, AREA_TIMEOUT_TICKS = 600, WRITES_PER_TICK = 400;
+// START_DELAY_TICKS 5 (was 20, owner 2026-10-10: the village looked empty for a long time). JOB_SLICE_MS: one engine job step runs the planner's inner steps
+// until this many ms are used, then yields once; without it the job may advance only ONE inner step per tick (about 200 steps = 10 s).
+const START_DELAY_TICKS = 5, SETTLE_TICKS = 40, AREA_TIMEOUT_TICKS = 600, WRITES_PER_TICK = 400, JOB_SLICE_MS = 8;
 const TRIES = "lothlorien:loop_tries", DONE = "lothlorien:village_plans";
 const seen = new Set(), queue = [], failed = [];
 let claim = null, running = false, loggedQuota = false, debug = false;
@@ -44,13 +47,28 @@ function removeMarkers(dimension, r) {
   return n;
 }
 
+// Time-boxed job driver: runs `gen` step by step until `ms` milliseconds are used, yields once, and goes on; returns the generator's value.
+// stats (optional) collects { steps, cpu } (inner steps and ms spent inside them) for the timing log. `now` is injectable for tests.
+export function* sliced(gen, ms, stats, now = Date.now) {
+  for (;;) {
+    const t0 = now();
+    let r;
+    do { r = gen.next(); if (stats) stats.steps++; } while (!r.done && now() - t0 < ms);
+    if (stats) stats.cpu += now() - t0;
+    if (r.done) return r.value;
+    yield;
+  }
+}
+
 // one job: plan on the loaded blocks, then write every pick (fence links as rail_mender_rules wants them)
-function* planAndBuild(dimension, found, budget) {
+function* planAndBuild(dimension, found, budget, stats) {
   const get = (x, y, z) => { try { return dimension.getBlock({ x, y, z })?.typeId; } catch { return undefined; } };
   const at = boundedReader(get, found.rect);
+  if (stats) stats.reads = at.size;
   const res = yield* planGen(at, found.known, { budget, rect: found.rect });
   const writes = new Map();
-  for (const p of [...res.merges, ...res.picks]) for (const [k, b] of finalBlocks(p.plan)) writes.set(k, b);
+  for (const p of [...res.merges, ...res.picks, ...res.repairs]) for (const [k, b] of finalBlocks(p.plan ?? p)) writes.set(k, b); // a repair is itself the plan
+  if (stats) stats.writeCells = writes.size;
   let n = 0, failedWrites = 0, count = 0;
   for (const [k, b] of writes) {
     const [x, y, z] = k.split(",").map(Number), cur = at(x, y, z);
@@ -80,24 +98,38 @@ async function planVillageAt(entity, force, trigger) {
   const env = {
     claim: (r) => { claim = r; },
     hasCapacity: (r) => { try { return tam.hasCapacity(opts(r)); } catch { return false; } },
-    create: async (id, r) => { areas.add(id); await withTimeout(Promise.resolve().then(() => tam.createTickingArea(id, opts(r))), AREA_TIMEOUT_TICKS, `ticking area ${id}`); },
+    create: async (id, r) => {
+      const t = Date.now();
+      areas.add(id);
+      await withTimeout(Promise.resolve().then(() => tam.createTickingArea(id, opts(r))), AREA_TIMEOUT_TICKS, `ticking area ${id}`);
+      dlog(`discovery ${id}: ${chunksIn(r)} chunks in ${ms(t)} ms`);
+    },
     remove: (id) => { areas.delete(id); try { tam.removeTickingArea(id); } catch { /* already gone */ } },
     markersIn: (r) => dimension.getEntities(boxQuery(r)).map(cellOf),
   };
+  const t0 = Date.now(), ms = (since) => Date.now() - since;
   log(`start for village near ${first[0]},${first[2]}, trigger ${trigger}`);
   if (!loggedQuota) { loggedQuota = true; log(`ticking area quota maxChunkCount=${tam.maxChunkCount}`); }
   let found = null;
   try {
     found = await discoverVillage(env, first, base);
+    dlog(`discovery done: ${found.rounds} round(s) in ${ms(t0)} ms since the start`);
+    const tSettle = Date.now();
     await sleep(SETTLE_TICKS); // neighbouring chunks of a fresh village finish their decoration
-    const result = await runJobAsync(planAndBuild(dimension, found, PLAN.budget));
+    dlog(`settle ${ms(tSettle)} ms`);
+    const tPlan = Date.now(), tick0 = system.currentTick, stats = { steps: 0, cpu: 0, reads: () => 0, writeCells: 0 };
+    const result = await runJobAsync(sliced(planAndBuild(dimension, found, PLAN.budget, stats), JOB_SLICE_MS, stats));
+    dlog(`plan+build ${ms(tPlan)} ms wall, ${system.currentTick - tick0} ticks, ${stats.steps} inner steps, ${stats.cpu} ms inside them, ${stats.reads()} distinct reads, ${stats.writeCells} cells written (${result.blocks} changed)`);
     // the civilians move in while the village is loaded (own try: a population error never fails the planner; unspawned posts stay for a later run)
+    const tPop = Date.now();
     try { populateVillage(dimension, found.rect, [first[0], first[2]]); } catch (e) { log(`elves: ${e?.message ?? e}`); }
+    dlog(`populate ${ms(tPop)} ms`);
     const removed = removeMarkers(dimension, found.rect);
     if (!force) world.setDynamicProperty(DONE, JSON.stringify(addDone(parseDone(world.getDynamicProperty(DONE)), found.rect)));
-    console.warn(`[lothlorien] planner: village at ${first[0]},${first[2]}: ${found.known.length} markers (${removed} removed), ${found.rounds} area round(s) of ${found.sizes.join("+")} chunks${found.stable ? "" : ", NOT stable"}, ${result.nRaw} candidates, ${result.merges.length} merge(s), ${result.picks.length} link(s), ${result.blocks} blocks${result.failedWrites ? `, ${result.failedWrites} write(s) failed` : ""}`);
+    console.warn(`[lothlorien] planner: village at ${first[0]},${first[2]}: ${found.known.length} markers (${removed} removed), ${found.rounds} area round(s) of ${found.sizes.join("+")} chunks${found.stable ? "" : ", NOT stable"}, ${result.nRaw} candidates, ${result.merges.length} merge(s), ${result.picks.length} link(s), ${result.repairs.length} repair(s), ${result.blocks} blocks${result.failedWrites ? `, ${result.failedWrites} write(s) failed` : ""} in ${(ms(t0) / 1000).toFixed(1)} s`);
     for (const m of result.merges) console.warn(`[lothlorien] planner:   ${describeMerge(m)}`);
     for (const p of result.picks) console.warn(`[lothlorien] planner:   ${describePick(p)}`);
+    for (const p of result.repairs) console.warn(`[lothlorien] planner:   ${describeRepair(p)}`);
     for (const l of result.log) console.warn(`[lothlorien] planner:   rejected ${l}`);
     return result;
   } catch (e) {

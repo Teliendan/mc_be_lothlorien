@@ -17,7 +17,7 @@ import { writeFileSync, mkdirSync, readdirSync, unlinkSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { makeRandom } from "../lothlorien_bp/scripts/mallorn_tree.js";
-import { buildFletMallorn, ROOT_DEPTH } from "./flet_mallorn.mjs";
+import { buildFletMallorn, ROOT_DEPTH, bareBranchEnds } from "./flet_mallorn.mjs";
 
 export const SIZE = 40, SIZE_Y = 54, TRUNK_AT = 18;
 const BLOCK_VERSION = 18168865; // as in the vanilla 1.26.30 structures
@@ -165,6 +165,8 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     });
     const { buffer, clipped } = toMcstructure(tree.blocks);
     const name = treeName(variant, n);
+    const bare = bareBranchEnds(tree.blocks); // every branch end carries >= 6 leaves within 2 (tuftBareEnds fixes the rest)
+    if (bare.length) throw new Error(`${name}: bare branch end at ${bare.map((q) => `${q.x},${q.y},${q.z}`).join(" ")}`);
     writeFileSync(join(out, `${name}.mcstructure`), buffer);
     const tally = (t) => [...tree.blocks.values()].filter((b) => b.name.endsWith(t)).length;
     console.log(`${name}: height ${tree.height}, floor ${tree.floorY}, radius ${tree.radius.toFixed(1)}, ` +

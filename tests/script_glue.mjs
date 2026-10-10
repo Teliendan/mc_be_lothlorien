@@ -53,6 +53,10 @@ await scenario("an automatic entityLoad plans the village once, removes the mark
   assert.equal(done.length, 1, "done-list holds the village"); assert.equal(mock.propWrites.filter((k) => k === "lothlorien:village_plans").length, 1);
   assert.ok(mock.areaLog.created.length >= 2 && mock.areaLog.created.length === mock.areaLog.removed.length && mock.tickingAreas.areas.size === 0, "ticking areas created round by round and all removed again");
   assert.match(grep(/planner: village at/)[0], new RegExp(`${direct.picks.length} link\\(s\\)`), "the same number of links as the pure planner picks on the fixture");
+  assert.equal(direct.repairs.length, 1, "V2 is the owner's old-offset village: its rope is buried by one piece"); assert.equal(direct.repairs[0].buried, 1);
+  assert.match(grep(/planner: village at/)[0], /1 repair\(s\)/); assert.equal(grep(/planner:   rope at \d+,\d+: -1 buried, \+0 hung/).length, 1, "one repair line");
+  for (const b of direct.repairs[0].blocks) assert.equal(mock.dimension().overrides.get(`${b.x},${b.y},${b.z}`)?.id, b.id, "the buried rope piece was turned back into terrain in the world");
+  assert.match(grep(/planner: village at/)[0], / in \d+\.\d s$/, "the summary ends with the elapsed time");
   assert.equal(direct.picks.length, 2, "V2 with the L cap: plaza + side-side (the old third pick was an L join longer than 16)");
   assert.ok(mock.dimension().overrides.size > 50, "the links were written into the world");
   const kinds = grep(/planner:   (plaza|sideside|exit|side|L) /).map((l) => l.match(/planner:   (\w+) /)[1]);
@@ -206,6 +210,23 @@ await scenario("elves: the planner run turns the posts into the five professions
   assert.equal(grep(/elves: village at/).length, 1, "and no second elves line");
 });
 
+await scenario("elves: with 6 home posts the healer exists twice - the second on a roomy leftover tree farthest from the first; the record lists five homes", async () => {
+  const markers = setupV2(), { lore, home } = addPosts(6);
+  await loadScript("loop_marker.js");
+  mock.fire("entityLoad", { entity: markers[0] });
+  await mock.settle();
+  const elves = elvesSpawned();
+  assert.equal(elves.length, 6, "six elves");
+  assert.deepEqual(elves.map((s) => s.opts.spawnEvent), [EL.spawnEventOf("loremaster"), ...EL.HOME_ORDER.map(EL.spawnEventOf), EL.spawnEventOf("healer")], "the second healer comes last");
+  const used = new Set(elves.slice(1).map((s) => cellKey(s.entity.location))), left = home.filter((h) => !used.has(cellKey(h.location)));
+  assert.equal(left.length, 1, "one home post stays unused");
+  assert.equal(elves.slice(1).filter((s) => !home.some((h) => cellKey(h.location) === cellKey(s.entity.location))).length, 0, "all on home posts, none on a reserve");
+  assert.equal(new Set(elves.map((s) => cellKey(s.entity.location))).size, 6, "no post twice");
+  assert.equal(homeRecords()[0].homes.length, 5); assert.deepEqual(homeRecords()[0].homes.map((h) => h.p), [...EL.HOME_ORDER, "healer"]);
+  assert.match(grep(/elves: village at/)[0], /loremaster \+ 5 on own trees \(0 on reserves\)/);
+  assert.ok(lore);
+});
+
 await scenario("elves: with only 2 home posts the other 2 professions stand on the nearest reserve posts - still five elves", async () => {
   const markers = setupV2(), { reserves } = addPosts(2);
   await loadScript("loop_marker.js");
@@ -263,4 +284,57 @@ await scenario("elf.js: a hit on an elf charges a fight per 60 s window and tags
     await mock.settle(); // the pending timer of a player who left does nothing and throws nothing
   } finally { Date.now = realNow; }
 });
+await scenario("elf.js: a release (rehome event) records the new home and the moved flag; other events, other mobs and a missing entity change nothing; the debug hook reports", async () => {
+  const mod = await loadScript("elf.js");
+  mod.startElves({ recordFight: () => {} });
+  assert.equal(mock.subscribers("after", "dataDrivenEntityTrigger"), 1);
+  const elf = mock.addEntity(ELF, { x: 10.5, y: 70, z: 10.5 }), deer = mock.addEntity("lothlorien:deer", { x: 11, y: 70, z: 11 });
+  elf.setDynamicProperty(EL.HOME_OF_ELF, "0,70,0");
+  mock.fire("dataDrivenEntityTrigger", { entity: elf, eventId: "lothlorien:leashed" });
+  mock.fire("dataDrivenEntityTrigger", { entity: deer, eventId: EL.REHOME_EVENT });
+  assert.equal(elf.getDynamicProperty(EL.HOME_OF_ELF), "0,70,0"); assert.equal(elf.getDynamicProperty(EL.MOVED_PROPERTY), undefined); assert.equal(deer.getDynamicProperty(EL.HOME_OF_ELF), undefined);
+  elf.location = { x: -3.2, y: 64, z: 40.9 };
+  mock.fire("dataDrivenEntityTrigger", { entity: elf, eventId: EL.REHOME_EVENT });
+  assert.equal(elf.getDynamicProperty(EL.HOME_OF_ELF), "-4,64,40", "floored feet cell"); assert.equal(elf.getDynamicProperty(EL.MOVED_PROPERTY), true);
+  mock.fire("dataDrivenEntityTrigger", { entity: { typeId: ELF, get location() { throw new Error("gone"); }, setDynamicProperty() {} }, eventId: EL.REHOME_EVENT }); // an unloaded entity throws: swallowed
+  const sent = [], player = { dimension: mock.dimension(), location: { x: -3, y: 64, z: 40 }, sendMessage: (m) => sent.push(m) };
+  mod.elfDebug(player, "home");
+  assert.equal(sent.length, 1); assert.match(sent[0].translate, /elf\.debug\.home_(free|led)$/);
+  mod.elfDebug({ ...player, location: { x: 500, y: 64, z: 500 } }, "home");
+  assert.match(sent[1].translate, /elf\.debug\.none$/);
+});
+
+await scenario("harmony: elf and warden deeds count outside the forest, a deer outside costs nothing", async () => {
+  const H = await import(`${SRC}harmony.js`), HG = await import(`${SRC}harmony_game.js`);
+  const player = mock.addEntity("minecraft:player", { x: 0, y: 70, z: 0 }), elf = mock.addEntity(ELF, { x: 1, y: 70, z: 1 }, { components: { "minecraft:type_family": { getTypeFamilies: () => [EL.ELF_FAMILY, "mob"] } } }), deer = mock.addEntity("lothlorien:deer", { x: 2, y: 70, z: 2 });
+  mock.players.push(player); const said = []; player.sendMessage = (m) => said.push(m); player.onScreenDisplay = { setActionBar() {} };
+  assert.equal(H.deedKindOf("lothlorien:deer", []), "animal", "sanity: a deer would be charged inside the forest");
+  HG.startHarmony(() => false, "dbg");
+  const harmony = () => H.parse(player.getDynamicProperty("lothlorien:harmony")).harmony;
+  const base = harmony();
+  mock.fire("entityDie", { deadEntity: deer, damageSource: { damagingEntity: player } });
+  assert.equal(harmony(), base, "a deer outside the forest: unchanged");
+  mock.fire("entityDie", { deadEntity: elf, damageSource: { damagingEntity: player } });
+  assert.equal(harmony(), base - H.deedCost("elf_kill"), "an elf killed outside the forest still costs the elf-kill penalty");
+  HG.recordElfFight(player, elf); HG.recordWardenFight(player, elf);
+  assert.equal(harmony(), base - H.deedCost("elf_kill") - H.deedCost("elf_fight") - H.deedCost("warden_fight"), "fights count outside too");
+});
+
+// ---- planner speed: the time-boxed job driver and the timing log ----
+await scenario("loop_marker.js: sliced() runs many inner steps per engine step, returns the same value, counts steps; the timing log lines appear in debug mode", async () => {
+  const mod = await loadScript("loop_marker.js");
+  const steps = 300, mk = function* () { for (let i = 0; i < steps; i++) yield i; return "done"; };
+  let t = 0; const now = () => (t += 1); // every clock read is 1 ms
+  const stats = { steps: 0, cpu: 0 }, g = mod.sliced(mk(), 8, stats, now);
+  let engineSteps = 0, r;
+  while (!(r = g.next()).done) engineSteps++;
+  assert.equal(r.value, "done"); assert.equal(stats.steps, steps + 1, "every inner step counted (plus the finishing one)");
+  assert.ok(engineSteps < steps / 2 && engineSteps > 10, `${engineSteps} engine steps for ${steps} inner steps`);
+  const markers = setupV2();
+  const m2 = await loadScript("loop_marker.js"); m2.toggleDebug();
+  mock.fire("entityLoad", { entity: markers[0] });
+  await mock.settle();
+  for (const re of [/\(debug\) discovery lothlorien_village_-?\d+_-?\d+_1: \d+ chunks in \d+ ms/, /\(debug\) settle \d+ ms/, /\(debug\) plan\+build \d+ ms wall, \d+ ticks, \d+ inner steps, \d+ ms inside them, \d+ distinct reads, \d+ cells written/, /\(debug\) populate \d+ ms/]) assert.equal(grep(re).length, 1, String(re));
+});
+
 console.warn = realWarn;

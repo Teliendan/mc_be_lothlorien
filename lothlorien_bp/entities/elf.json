@@ -11,46 +11,78 @@
       "lothlorien:gardener": {
         "minecraft:variant": {
           "value": 0
-        },
-        "minecraft:home": {
-          "restriction_type": "random_movement",
-          "restriction_radius": 10
         }
       },
       "lothlorien:healer": {
         "minecraft:variant": {
           "value": 1
-        },
-        "minecraft:home": {
-          "restriction_type": "random_movement",
-          "restriction_radius": 10
         }
       },
       "lothlorien:woodwright": {
         "minecraft:variant": {
           "value": 2
-        },
-        "minecraft:home": {
-          "restriction_type": "random_movement",
-          "restriction_radius": 10
         }
       },
       "lothlorien:lamplighter": {
         "minecraft:variant": {
           "value": 3
-        },
-        "minecraft:home": {
-          "restriction_type": "random_movement",
-          "restriction_radius": 10
         }
       },
       "lothlorien:loremaster": {
         "minecraft:variant": {
           "value": 4
-        },
+        }
+      },
+      "lothlorien:home_near": {
+        "minecraft:home": {
+          "restriction_type": "random_movement",
+          "restriction_radius": 10
+        }
+      },
+      "lothlorien:home_lore": {
         "minecraft:home": {
           "restriction_type": "random_movement",
           "restriction_radius": 6
+        }
+      },
+      "lothlorien:healer_day": {
+        "minecraft:home": {
+          "restriction_type": "random_movement",
+          "restriction_radius": 64
+        },
+        "minecraft:environment_sensor": {
+          "triggers": [
+            {
+              "filters": {
+                "test": "is_daytime",
+                "subject": "self",
+                "operator": "==",
+                "value": false
+              },
+              "event": "lothlorien:healer_dusk",
+              "target": "self"
+            }
+          ]
+        }
+      },
+      "lothlorien:healer_night": {
+        "minecraft:home": {
+          "restriction_type": "random_movement",
+          "restriction_radius": 10
+        },
+        "minecraft:environment_sensor": {
+          "triggers": [
+            {
+              "filters": {
+                "test": "is_daytime",
+                "subject": "self",
+                "operator": "==",
+                "value": true
+              },
+              "event": "lothlorien:healer_dawn",
+              "target": "self"
+            }
+          ]
         }
       }
     },
@@ -118,6 +150,26 @@
       },
       "minecraft:nameable": {},
       "minecraft:persistent": {},
+      "minecraft:home": {},
+      "minecraft:leashable": {
+        "can_be_stolen": false,
+        "can_be_cut": true,
+        "on_leash": {
+          "event": "lothlorien:leashed",
+          "target": "self"
+        },
+        "on_unleash": {
+          "event": "lothlorien:rehome",
+          "target": "self"
+        },
+        "presets": [
+          {
+            "soft_distance": 4,
+            "hard_distance": 6,
+            "max_distance": 10
+          }
+        ]
+      },
       "minecraft:is_hidden_when_invisible": {},
       "minecraft:conditional_bandwidth_optimization": {},
       "minecraft:behavior.float": {
@@ -178,12 +230,16 @@
             "lothlorien:healer",
             "lothlorien:woodwright",
             "lothlorien:lamplighter",
-            "lothlorien:loremaster"
+            "lothlorien:loremaster",
+            "lothlorien:home_lore",
+            "lothlorien:healer_day",
+            "lothlorien:healer_night"
           ]
         },
         "add": {
           "component_groups": [
-            "lothlorien:gardener"
+            "lothlorien:gardener",
+            "lothlorien:home_near"
           ]
         }
       },
@@ -193,12 +249,16 @@
             "lothlorien:gardener",
             "lothlorien:woodwright",
             "lothlorien:lamplighter",
-            "lothlorien:loremaster"
+            "lothlorien:loremaster",
+            "lothlorien:home_near",
+            "lothlorien:home_lore",
+            "lothlorien:healer_night"
           ]
         },
         "add": {
           "component_groups": [
-            "lothlorien:healer"
+            "lothlorien:healer",
+            "lothlorien:healer_day"
           ]
         }
       },
@@ -208,12 +268,16 @@
             "lothlorien:gardener",
             "lothlorien:healer",
             "lothlorien:lamplighter",
-            "lothlorien:loremaster"
+            "lothlorien:loremaster",
+            "lothlorien:home_lore",
+            "lothlorien:healer_day",
+            "lothlorien:healer_night"
           ]
         },
         "add": {
           "component_groups": [
-            "lothlorien:woodwright"
+            "lothlorien:woodwright",
+            "lothlorien:home_near"
           ]
         }
       },
@@ -223,12 +287,16 @@
             "lothlorien:gardener",
             "lothlorien:healer",
             "lothlorien:woodwright",
-            "lothlorien:loremaster"
+            "lothlorien:loremaster",
+            "lothlorien:home_lore",
+            "lothlorien:healer_day",
+            "lothlorien:healer_night"
           ]
         },
         "add": {
           "component_groups": [
-            "lothlorien:lamplighter"
+            "lothlorien:lamplighter",
+            "lothlorien:home_near"
           ]
         }
       },
@@ -238,12 +306,117 @@
             "lothlorien:gardener",
             "lothlorien:healer",
             "lothlorien:woodwright",
-            "lothlorien:lamplighter"
+            "lothlorien:lamplighter",
+            "lothlorien:home_near",
+            "lothlorien:healer_day",
+            "lothlorien:healer_night"
           ]
         },
         "add": {
           "component_groups": [
-            "lothlorien:loremaster"
+            "lothlorien:loremaster",
+            "lothlorien:home_lore"
+          ]
+        }
+      },
+      "lothlorien:leashed": {
+        "remove": {
+          "component_groups": [
+            "lothlorien:home_near",
+            "lothlorien:home_lore",
+            "lothlorien:healer_day",
+            "lothlorien:healer_night"
+          ]
+        }
+      },
+      "lothlorien:rehome": {
+        "sequence": [
+          {
+            "remove": {
+              "component_groups": [
+                "lothlorien:home_near",
+                "lothlorien:home_lore",
+                "lothlorien:healer_day",
+                "lothlorien:healer_night"
+              ]
+            },
+            "set_home_position": {}
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 4
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:home_lore"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "all_of": [
+                {
+                  "test": "is_variant",
+                  "subject": "self",
+                  "operator": "!=",
+                  "value": 4
+                },
+                {
+                  "test": "is_variant",
+                  "subject": "self",
+                  "operator": "!=",
+                  "value": 1
+                }
+              ]
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:home_near"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 1
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:healer_day"
+              ]
+            }
+          },
+          {
+            "set_home_position": {}
+          }
+        ]
+      },
+      "lothlorien:healer_dusk": {
+        "remove": {
+          "component_groups": [
+            "lothlorien:healer_day"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "lothlorien:healer_night"
+          ]
+        }
+      },
+      "lothlorien:healer_dawn": {
+        "remove": {
+          "component_groups": [
+            "lothlorien:healer_night"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "lothlorien:healer_day"
           ]
         }
       },
@@ -253,7 +426,8 @@
             "weight": 1,
             "add": {
               "component_groups": [
-                "lothlorien:gardener"
+                "lothlorien:gardener",
+                "lothlorien:home_near"
               ]
             }
           },
@@ -261,7 +435,8 @@
             "weight": 1,
             "add": {
               "component_groups": [
-                "lothlorien:healer"
+                "lothlorien:healer",
+                "lothlorien:healer_day"
               ]
             }
           },
@@ -269,7 +444,8 @@
             "weight": 1,
             "add": {
               "component_groups": [
-                "lothlorien:woodwright"
+                "lothlorien:woodwright",
+                "lothlorien:home_near"
               ]
             }
           },
@@ -277,7 +453,8 @@
             "weight": 1,
             "add": {
               "component_groups": [
-                "lothlorien:lamplighter"
+                "lothlorien:lamplighter",
+                "lothlorien:home_near"
               ]
             }
           },
@@ -285,7 +462,8 @@
             "weight": 1,
             "add": {
               "component_groups": [
-                "lothlorien:loremaster"
+                "lothlorien:loremaster",
+                "lothlorien:home_lore"
               ]
             }
           }

@@ -413,3 +413,11 @@ lothlorien.elf.profession.woodwright=Carpintero
 lothlorien.elf.profession.lamplighter=Farolero
 ## Context: Profession title of the wise elf who keeps the lore and tales of the forest.
 lothlorien.elf.profession.loremaster=Maestro del saber
+## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] elf %s: home %s, %s blocks away, not on a lead. Translate labels; keep technical tokens and coordinates.
+lothlorien.message.elf.debug.home_free=[lothlorien] elfo %s: hogar %s, a %s bloques, sin cuerda
+## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] elf %s: home %s, %s blocks away, on a lead. Translate labels; keep technical tokens and coordinates.
+lothlorien.message.elf.debug.home_led=[lothlorien] elfo %s: hogar %s, a %s bloques, con cuerda
+## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] elf %s: new home set here (%s). Translate labels; keep technical tokens and coordinates.
+lothlorien.message.elf.debug.rehomed=[lothlorien] elfo %s: nuevo hogar fijado aquí (%s)
+## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] no elf within 16 blocks. Translate labels; keep technical tokens and coordinates.
+lothlorien.message.elf.debug.none=[lothlorien] ningún elfo a menos de 16 bloques

@@ -2,7 +2,7 @@ import { message } from "./messages.js";
 // Harmony in the running game: deeds and deaths feed the rules in harmony.js, state is kept per player in a dynamic
 // property (survives relogging, independent between players) and written only when harmony changes.
 import { world, system } from "@minecraft/server";
-import { MAX_HARMONY, MIN_HARMONY, bandOf, changeMessages, deedKindOf, hintDue, isHated, parse, recordDeath, recordDeed, serialize, statusText, tick } from "./harmony.js";
+import { EVERYWHERE_DEEDS, MAX_HARMONY, MIN_HARMONY, bandOf, changeMessages, deedCounts, deedKindOf, hintDue, isHated, parse, recordDeath, recordDeed, serialize, statusText, tick } from "./harmony.js";
 
 const PROPERTY = "lothlorien:harmony";
 export const HATED_TAG = "lothlorien_hated"; // read by entities/elven_warden.json (wardens attack tagged players on sight)
@@ -53,9 +53,10 @@ function hint(player) {
   player.sendMessage(message("harmony.hint"));
 }
 
-// A deed of `player` against `victim` (an entity): counts when either stands inside the forest.
+// A deed of `player` against `victim` (an entity): counts when either stands inside the forest; elf and warden deeds count everywhere.
 function deed(player, victim, kind) {
-  if (!kind || !(isInside(player.dimension, player.location) || isInside(victim.dimension, victim.location))) return;
+  if (!kind) return;
+  if (!EVERYWHERE_DEEDS.has(kind) && !deedCounts(kind, isInside(player.dimension, player.location) || isInside(victim.dimension, victim.location))) return;
   const state = harmonyOf(player);
   const before = state.harmony;
   const said = update(player, state, () => recordDeed(state, kind));

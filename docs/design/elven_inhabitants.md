@@ -85,11 +85,16 @@ Dropped: Box of Lórien earth (not unique enough), Elessar (Aragorn's alone; bec
 - ~~Silver trail~~ **dropped** (owner 2026-10-10): invisible behind the vanilla arrow's own flight particles [V].
 - **Recovery 100 %** (owner): the arrow item drops at the hit spot by script (`projectileHitEntity`, works [V]); ground-stuck arrows are picked up as the custom item [V].
 - Fired **only from the Bow of the Galadhrim** (owner): a vanilla bow in survival cannot draw with only custom arrows [V] (engine-side, accepted). The Galadhrim bow fires both kinds; the earliest inventory slot is used first [V].
+- **Leads (owner 2026-10-10, built, not seen in game):** every elf is leashable; a released elf takes a new home where it was released, anywhere (`set_home_position` on the unleash event; the record `lothlorien:village_homes`
+  stays as the planner's tree assignment, the elf's own `lothlorien:home` and `lothlorien:moved` track the move). While on a lead there is no home radius. Harmony: elf and warden deeds count everywhere, not only inside the forest.
 - Flight: the custom arrow entity (copy of vanilla `arrow`) flies identically to a vanilla arrow [V].
 - Not craftable: woodwright (Trusted) and **Great Mallorn loot chests** (section 9).
 
 ## 7. Healer
 
+- **Owner decisions 2026-10-10 (built, not seen in game):** the healer's home is its own tree (nearest the Loremaster); it roams the whole village by day (home radius 64) and from dusk the radius is 10, so it walks back to its tree
+  (`healer_day` / `healer_night` groups swapped by an `environment_sensor` on `is_daytime`). One entity has one home position, so the day roam is a large radius around the own tree, not a village-centre anchor. A healer moved by a lead
+  also roams 64 by day wherever its new home is. Villages with 6+ outer trees (80 % in the sim) get a **second healer** on a spare roomy tree farthest from the first.
 - Wanders the village. Injured elves and wardens within about 8 blocks (line of sight) get **Regeneration II**; the healer heals himself too.
 - **Friend** players hurt within about 6 blocks get **Regeneration I** for a few seconds, renewed while they stay hurt and near. No cooldown
   (owner: regeneration instead of a 2-minute limit); slow enough not to trivialise a fight.
@@ -131,10 +136,10 @@ Rule (owner decisions 2026-10-10, details `docs/mobs/elves.md`, plan `temp/elven
   `x,y,z` is the post's feet cell, `site` = `{ x0, z0, k }` is the free k x k deck square (corner x0, z0) containing the post cell, or `null` on a reserve. Each elf also keeps the entity property `lothlorien:home` = `"x,y,z"`.
   `homeSite(at, x, y, z)` (`elf_rules.js`) recomputes the square from live blocks (deck cell y = post y - 1; open deck = planks, 3 air above), so the home step never needs the generator.
   Sites are 3..7 wide (`HOME_MAX` 7); `node_e` has only a 3x3 square, `node_a`, `node_d`, `tower_c` 4x4, the rest 5x5 or more.
-- **Numbers** (simulator, 300 seeds): all five professions in 300/300 villages; four on trees of their own in 94 %; reserves used 0.11 per village on average; 88 % of the assigned trees have a 5x5 square.
+- **Numbers** (simulator, 300 seeds): all five professions in 300/300 villages; four on trees of their own in 94 %; reserves used 0.11 per village on average; 84 % of the assigned trees have a 5x5 square; a second healer in 241/300 villages (6+ outer trees, 2026-10-10 fix round).
 
 - **M1 as built.** Loremaster on the central tree; healer, gardener, woodwright, lamplighter each on their own outer tree (warden trees allowed), assigned by the loop planner with a fixed ranking (free deck room, then distance to the Loremaster; healer nearest). Fewer than 4 outer trees: leftovers stand on the central tree. Elves are non-renewable; only villages generated after M1 get elves.
-- **Homes (later milestone M7, owner 2026-10-10: "I like the hybrid homes approach with planner picking professions and decorations from a pool").** Homes are prefabricated jigsaw pieces (generic elven homes, each carrying one elf post). The planner assigns the professions to homes (it guarantees all five per village, which jigsaw alone cannot) and furnishes each home by placing a profession-specific decoration structure picked from a pool. Bare tree posts remain the fallback when a village has too few homes.
+- **Homes and village look (later milestone M7, owner 2026-10-10: "I like the hybrid homes approach with planner picking professions and decorations from a pool").** M7 = homes + village look (buildings, lighting, furniture; the crown stubs and a lower fallback element where a tree's crown does not fit, details in `lothlorien_jigsaw_settlement.md` section 6 "Next: village look (M7)"). Homes are prefabricated jigsaw pieces (generic elven homes, each carrying one elf post). The planner assigns the professions to homes (it guarantees all five per village, which jigsaw alone cannot) and furnishes each home by placing a profession-specific decoration structure picked from a pool. Bare tree posts remain the fallback when a village has too few homes. Decks may change shape when buildings are added, so site and post selection must be derived from the actual pieces and re-checked by the simulator after any deck change. An elf with `lothlorien:moved` (led away) lives at its own `lothlorien:home`, not at the planner's tree. Healer: second healer from 6 outer trees.
 
 ## 11. Open
 

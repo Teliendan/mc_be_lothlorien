@@ -178,6 +178,7 @@ export function finalBlocks(plan) {
   for (const b of plan.pier ?? []) out.set(k(b), { id: b.id, states: b.states });
   for (const r of plan.rails) out.set(k(r), { id: FENCE, states: r.states });
   for (const l of plan.lanterns) out.set(k(l), { id: LANTERN, states: { "minecraft:block_face": "up" } });
+  for (const b of plan.blocks ?? []) out.set(k(b), { id: b.id, states: b.states }); // repairs (village_repair.js): free-form blocks
   return out;
 }
 

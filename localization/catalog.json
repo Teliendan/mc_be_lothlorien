@@ -11737,6 +11737,277 @@
               "status": "ai-draft"
             }
           }
+        },
+        "lothlorien.message.elf.debug.home_free": {
+          "source": "[lothlorien] elf %s: home %s, %s blocks away, not on a lead",
+          "context": {
+            "meaning": "Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] elf %s: home %s, %s blocks away, not on a lead. Translate labels; keep technical tokens and coordinates.",
+            "location": "lothlorien_rp: chat",
+            "trigger": "Player runs /scriptevent lothlorien:elf home or rehome within 16 blocks of an elf.",
+            "tone": "Technical and concise",
+            "grammar": "Short diagnostic line; no assumed player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes and placeholder order.",
+            "source_paths": [
+              "lothlorien_bp/scripts/elf.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "profession",
+              "type": "RawMessage",
+              "meaning": "profession: nested translated profession name"
+            },
+            {
+              "name": "home",
+              "type": "string",
+              "meaning": "home: recorded home cell x,y,z (the village tree or where the elf was released)"
+            },
+            {
+              "name": "distance",
+              "type": "string",
+              "meaning": "distance: distance from the home in blocks, one decimal"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "[lothlorien] elf %s: domov %s, %s bloků daleko, není na vodítku",
+              "based_on": "2ea635fd57a0c2da021ced4e43633fc4a5a85c00af0845e134e84424d37e7746",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "[lothlorien] elfo %s: hogar %s, a %s bloques, sin correa",
+              "based_on": "2ea635fd57a0c2da021ced4e43633fc4a5a85c00af0845e134e84424d37e7746",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "[lothlorien] elfo %s: hogar %s, a %s bloques, sin cuerda",
+              "based_on": "2ea635fd57a0c2da021ced4e43633fc4a5a85c00af0845e134e84424d37e7746",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "[lothlorien] elfo %s: casa %s, a %s blocos, sem trela",
+              "based_on": "2ea635fd57a0c2da021ced4e43633fc4a5a85c00af0845e134e84424d37e7746",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "[lothlorien] elfo %s: casa %s, a %s blocos, sem guia",
+              "based_on": "2ea635fd57a0c2da021ced4e43633fc4a5a85c00af0845e134e84424d37e7746",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "[lothlorien] Elb %s: Heim %s, %s Blöcke entfernt, nicht angeleint",
+              "based_on": "2ea635fd57a0c2da021ced4e43633fc4a5a85c00af0845e134e84424d37e7746",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "[lothlorien] elfe %s : foyer %s, à %s blocs, sans laisse",
+              "based_on": "2ea635fd57a0c2da021ced4e43633fc4a5a85c00af0845e134e84424d37e7746",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "[lothlorien] elf %s: dom %s, %s bloków stąd, bez smyczy",
+              "based_on": "2ea635fd57a0c2da021ced4e43633fc4a5a85c00af0845e134e84424d37e7746",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.elf.debug.home_led": {
+          "source": "[lothlorien] elf %s: home %s, %s blocks away, on a lead",
+          "context": {
+            "meaning": "Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] elf %s: home %s, %s blocks away, on a lead. Translate labels; keep technical tokens and coordinates.",
+            "location": "lothlorien_rp: chat",
+            "trigger": "Player runs /scriptevent lothlorien:elf home or rehome within 16 blocks of an elf.",
+            "tone": "Technical and concise",
+            "grammar": "Short diagnostic line; no assumed player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes and placeholder order.",
+            "source_paths": [
+              "lothlorien_bp/scripts/elf.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "profession",
+              "type": "RawMessage",
+              "meaning": "profession: nested translated profession name"
+            },
+            {
+              "name": "home",
+              "type": "string",
+              "meaning": "home: recorded home cell x,y,z"
+            },
+            {
+              "name": "distance",
+              "type": "string",
+              "meaning": "distance: distance from the home in blocks, one decimal"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "[lothlorien] elf %s: domov %s, %s bloků daleko, na vodítku",
+              "based_on": "1fc6a1c9ec27a9afb54f87fda7884b3d413e8a1f66da07d4fa61a5100601e336",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "[lothlorien] elfo %s: hogar %s, a %s bloques, con correa",
+              "based_on": "1fc6a1c9ec27a9afb54f87fda7884b3d413e8a1f66da07d4fa61a5100601e336",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "[lothlorien] elfo %s: hogar %s, a %s bloques, con cuerda",
+              "based_on": "1fc6a1c9ec27a9afb54f87fda7884b3d413e8a1f66da07d4fa61a5100601e336",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "[lothlorien] elfo %s: casa %s, a %s blocos, com trela",
+              "based_on": "1fc6a1c9ec27a9afb54f87fda7884b3d413e8a1f66da07d4fa61a5100601e336",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "[lothlorien] elfo %s: casa %s, a %s blocos, com guia",
+              "based_on": "1fc6a1c9ec27a9afb54f87fda7884b3d413e8a1f66da07d4fa61a5100601e336",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "[lothlorien] Elb %s: Heim %s, %s Blöcke entfernt, angeleint",
+              "based_on": "1fc6a1c9ec27a9afb54f87fda7884b3d413e8a1f66da07d4fa61a5100601e336",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "[lothlorien] elfe %s : foyer %s, à %s blocs, en laisse",
+              "based_on": "1fc6a1c9ec27a9afb54f87fda7884b3d413e8a1f66da07d4fa61a5100601e336",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "[lothlorien] elf %s: dom %s, %s bloków stąd, na smyczy",
+              "based_on": "1fc6a1c9ec27a9afb54f87fda7884b3d413e8a1f66da07d4fa61a5100601e336",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.elf.debug.rehomed": {
+          "source": "[lothlorien] elf %s: new home set here (%s)",
+          "context": {
+            "meaning": "Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] elf %s: new home set here (%s). Translate labels; keep technical tokens and coordinates.",
+            "location": "lothlorien_rp: chat",
+            "trigger": "Player runs /scriptevent lothlorien:elf home or rehome within 16 blocks of an elf.",
+            "tone": "Technical and concise",
+            "grammar": "Short diagnostic line; no assumed player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes and placeholder order.",
+            "source_paths": [
+              "lothlorien_bp/scripts/elf.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "profession",
+              "type": "RawMessage",
+              "meaning": "profession: nested translated profession name"
+            },
+            {
+              "name": "home",
+              "type": "string",
+              "meaning": "home: new home cell x,y,z"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "[lothlorien] elf %s: nový domov nastaven zde (%s)",
+              "based_on": "cdd28df714d6745e092726d796b0f61a40b9209e7182bf7c3dd4de9946dd224f",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "[lothlorien] elfo %s: nuevo hogar fijado aquí (%s)",
+              "based_on": "cdd28df714d6745e092726d796b0f61a40b9209e7182bf7c3dd4de9946dd224f",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "[lothlorien] elfo %s: nuevo hogar fijado aquí (%s)",
+              "based_on": "cdd28df714d6745e092726d796b0f61a40b9209e7182bf7c3dd4de9946dd224f",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "[lothlorien] elfo %s: nova casa definida aqui (%s)",
+              "based_on": "cdd28df714d6745e092726d796b0f61a40b9209e7182bf7c3dd4de9946dd224f",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "[lothlorien] elfo %s: nova casa definida aqui (%s)",
+              "based_on": "cdd28df714d6745e092726d796b0f61a40b9209e7182bf7c3dd4de9946dd224f",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "[lothlorien] Elb %s: neues Heim hier festgelegt (%s)",
+              "based_on": "cdd28df714d6745e092726d796b0f61a40b9209e7182bf7c3dd4de9946dd224f",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "[lothlorien] elfe %s : nouveau foyer défini ici (%s)",
+              "based_on": "cdd28df714d6745e092726d796b0f61a40b9209e7182bf7c3dd4de9946dd224f",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "[lothlorien] elf %s: nowy dom ustawiony tutaj (%s)",
+              "based_on": "cdd28df714d6745e092726d796b0f61a40b9209e7182bf7c3dd4de9946dd224f",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.elf.debug.none": {
+          "source": "[lothlorien] no elf within 16 blocks",
+          "context": {
+            "meaning": "Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] no elf within 16 blocks. Translate labels; keep technical tokens and coordinates.",
+            "location": "lothlorien_rp: chat",
+            "trigger": "Player runs /scriptevent lothlorien:elf home or rehome within 16 blocks of an elf.",
+            "tone": "Technical and concise",
+            "grammar": "Short diagnostic line; no assumed player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes and placeholder order.",
+            "source_paths": [
+              "lothlorien_bp/scripts/elf.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "[lothlorien] žádný elf do 16 bloků",
+              "based_on": "eba772a4d91cccb5739f7b22d9ac04f2476ede950243d23adf6e19fcc5cbc499",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "[lothlorien] ningún elfo a menos de 16 bloques",
+              "based_on": "eba772a4d91cccb5739f7b22d9ac04f2476ede950243d23adf6e19fcc5cbc499",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "[lothlorien] ningún elfo a menos de 16 bloques",
+              "based_on": "eba772a4d91cccb5739f7b22d9ac04f2476ede950243d23adf6e19fcc5cbc499",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "[lothlorien] nenhum elfo a menos de 16 blocos",
+              "based_on": "eba772a4d91cccb5739f7b22d9ac04f2476ede950243d23adf6e19fcc5cbc499",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "[lothlorien] nenhum elfo a menos de 16 blocos",
+              "based_on": "eba772a4d91cccb5739f7b22d9ac04f2476ede950243d23adf6e19fcc5cbc499",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "[lothlorien] kein Elb im Umkreis von 16 Blöcken",
+              "based_on": "eba772a4d91cccb5739f7b22d9ac04f2476ede950243d23adf6e19fcc5cbc499",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "[lothlorien] aucun elfe à moins de 16 blocs",
+              "based_on": "eba772a4d91cccb5739f7b22d9ac04f2476ede950243d23adf6e19fcc5cbc499",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "[lothlorien] żadnego elfa w promieniu 16 bloków",
+              "based_on": "eba772a4d91cccb5739f7b22d9ac04f2476ede950243d23adf6e19fcc5cbc499",
+              "status": "ai-draft"
+            }
+          }
         }
       }
     }

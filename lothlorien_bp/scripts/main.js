@@ -22,7 +22,7 @@ import { handleHarmonyEvent, recordElfFight, startHarmony } from "./harmony_game
 import { startDeer } from "./deer.js";
 import { startWhiteDeer } from "./white_deer.js";
 import { startElvenWardens } from "./elven_warden.js";
-import { startElves } from "./elf.js";
+import { elfDebug, startElves } from "./elf.js";
 import { startSwans } from "./swan.js";
 import { startSquirrels } from "./squirrel.js";
 import { startUnicorns } from "./unicorn.js";
@@ -146,6 +146,10 @@ function onScriptEvent(event) {
     const arg = event.message.trim();
     if (arg === "plan") planNearest(player);
     else if (arg === "debug") player.sendMessage(message(toggleDebug() ? "debug.on" : "debug.off")); // planner stage logging (loop_marker.js)
+    return;
+  }
+  if (event.id === "lothlorien:elf") { // debug: `home` shows the nearest elf's recorded home, `rehome` re-homes it where it stands (see elf.js)
+    elfDebug(player, event.message.trim());
     return;
   }
   if (event.id === "lothlorien:depth") {

@@ -36,6 +36,9 @@ export const DEED_COSTS = {
   player: 3,
 };
 export const deedCost = (kind) => DEED_COSTS[kind] ?? 0;
+// Elf and warden deeds count anywhere in the world ("word travels"); every other deed counts only when the player or the victim is in the forest.
+export const EVERYWHERE_DEEDS = new Set(["warden_fight", "warden_kill", "elf_fight", "elf_kill"]);
+export const deedCounts = (kind, inside) => !!kind && (inside || EVERYWHERE_DEEDS.has(kind));
 
 const WHITE_DEER = "lothlorien:white_deer";
 const UNICORN = "lothlorien:unicorn";

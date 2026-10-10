@@ -413,3 +413,11 @@ lothlorien.elf.profession.woodwright=Cieśla
 lothlorien.elf.profession.lamplighter=Latarnik
 ## Context: Profession title of the wise elf who keeps the lore and tales of the forest.
 lothlorien.elf.profession.loremaster=Mistrz wiedzy
+## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] elf %s: home %s, %s blocks away, not on a lead. Translate labels; keep technical tokens and coordinates.
+lothlorien.message.elf.debug.home_free=[lothlorien] elf %s: dom %s, %s bloków stąd, bez smyczy
+## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] elf %s: home %s, %s blocks away, on a lead. Translate labels; keep technical tokens and coordinates.
+lothlorien.message.elf.debug.home_led=[lothlorien] elf %s: dom %s, %s bloków stąd, na smyczy
+## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] elf %s: new home set here (%s). Translate labels; keep technical tokens and coordinates.
+lothlorien.message.elf.debug.rehomed=[lothlorien] elf %s: nowy dom ustawiony tutaj (%s)
+## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] no elf within 16 blocks. Translate labels; keep technical tokens and coordinates.
+lothlorien.message.elf.debug.none=[lothlorien] żadnego elfa w promieniu 16 bloków

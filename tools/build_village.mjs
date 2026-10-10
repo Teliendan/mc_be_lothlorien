@@ -19,7 +19,7 @@ import { sideTarget } from "../lothlorien_bp/scripts/village_loop.js"; // the ru
 import { POST_ID, POST_GROUP_PREFIX, POST_SPACING, ROPE_CLEARANCE, RESERVE_POSTS, homeSite } from "../lothlorien_bp/scripts/elf_rules.js"; // civilian elf posts (tunables live there)
 import {
   ROOTS, FLOOR_H, LEVEL_H, FACING, SHAPES, key, AIR, planks, slab, Deck, buildTree, buildCrown, deckJigsaw, lantern, lonelyRail,
-  writeRails, RAIL, shapeCells, addLanterns,
+  writeRails, RAIL, shapeCells, addLanterns, bareBranchEnds,
 } from "./village_mallorn.mjs";
 
 export const MAX_DEPTH = 2; // hops from the central tree (a combo = one hop; its crown is a sibling, not a deeper level)
@@ -202,6 +202,8 @@ export function sideMarkerCells(blocks, origin, inRegion = () => true) {
 // (default: postCells)
 function writePiece(name, blocks, size, origin, connectors, extra = {}) {
   checkConnectors(name, blocks, connectors);
+  const bare = bareBranchEnds(blocks);
+  if (bare.length) throw new Error(`${name}: bare branch end at ${bare.map((q) => `${q.x},${q.y},${q.z}`).join(" ")}`);
   if (!name.startsWith("crown_")) assertWalk(name, blocks, { connectors });
   const [sx, sy, sz] = size;
   // rail mender markers (scripts/rail_mender.js, scan radius 17): one at the box centre, two for a combo (bridge middle and tree axis,
@@ -373,7 +375,9 @@ writeFileSync(join(bp, "worldgen", "structures", "elven_village.json"), JSON.str
     start_pool: POOL("start"),
     start_jigsaw_name: "lothlorien:village_anchor",
     max_depth: MAX_DEPTH,
-    start_height: { type: "constant", value: { absolute: -ROOTS } },
+    // Bedrock's world_surface is the TOP SOLID block (Java: the first free cell above it), so absolute N puts the start N blocks from the top solid block.
+    // -(ROOTS - 1) puts tree y 0 on the first air cell: verified in the owner's flat world "ET" 2026-10-10 (grass at y -1, -ROOTS buried the rope's lowest piece).
+    start_height: { type: "constant", value: { absolute: -(ROOTS - 1) } },
     heightmap_projection: "world_surface",
     max_distance_from_center: { horizontal: 116, vertical: 116 },
   },
