@@ -6,6 +6,7 @@ The native placement filters remain authoritative for eligibility.
 import json
 import importlib.util
 import subprocess
+import runpy
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -53,12 +54,13 @@ def configure(block):
     b = block["minecraft:block"]
     name = b["description"]["identifier"].split(":")[1]
     c = b["components"]
-    # Owner 2026-10-10: native/default full-cube particles, native single-shape48.
-    # Other partial-family recipes retain48 pending actual native engine comparison.
+    # Owner 2026-10-10 requests vanilla: retain custom default100/full,48/partial
+    # candidates until native oak counts are measured (particle-parity.md).
     if name in FULL_WOOD | SINGLE_WOOD_SHAPES:
         c.setdefault("minecraft:destruction_particles", {})["particle_count"] = 100 if name in FULL_WOOD else 48
     if name == "golden_fern":
         c.pop("minecraft:replaceable", None)  # Owner: break it before replacement.
+        c["minecraft:loot"] = "loot_tables/blocks/golden_fern.json"
     configure_water(block)
     # Counterpart parity, also for blocks without a support-survival dependency.
     # These four shapes are single slabs/stairs; double slabs remain solid cubes.
@@ -112,6 +114,8 @@ def main():
             (BP / f"loot_tables/blocks/{name}{suffix}.json").write_text(json.dumps(loot, indent=2) + "\n", encoding="utf8")
     (BP / "loot_tables/blocks/elven_rope.json").write_text(json.dumps({"pools": [{"rolls": 1,
         "entries": [{"type": "item", "name": "lothlorien:elven_rope"}]}]}, indent=2) + "\n", encoding="utf8")
+    fern_loot = runpy.run_path(str(ROOT / "tools/golden_fern_loot.py"))["fern_loot"]
+    (BP / "loot_tables/blocks/golden_fern.json").write_text(json.dumps(fern_loot(), indent=2) + "\n", encoding="utf8")
     print(f"Configured piston support for {len(policies)} block definitions.")
 
 

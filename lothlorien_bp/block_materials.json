@@ -105,13 +105,20 @@
     },
     "lothlorien:golden_fern": {
       "profile": "fern",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",
+      "harvest": "Fern baseline: shears collect one fern; other removal has 1/8 wheat-seed chance. Native explosion decay; exact Bedrock Silk Touch/Fortune remains unresolved.",
       "property_checks": {
         "minecraft:replaceable": {
           "counterpart": "minecraft:fern",
           "absent": true,
           "reason": "Owner rejects replacement; fern must be broken first, 2026-10-10.",
           "source": "Owner decision docs/block-property-questions.md; omitted replaceable is nonreplaceable."
+        }
+      },
+      "loot_checks": {
+        "loot_tables/blocks/golden_fern.json": {
+          "counterpart": "minecraft:fern",
+          "explosion_decay": true,
+          "source": "Mojang Taking Inventory: Fern (2025-09-05); docs/GOLDEN_FERN_HARVEST.md; native explosion_decay recipe."
         }
       }
     },
@@ -154,7 +161,14 @@
           "expected": {
             "particle_count": 100
           },
-          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Documented default100; installed vanilla white_concrete_double_slab omits this override; actual native oak count not measured."
+          "source": "references/particle-parity.md: configured candidate only; custom default100 / data-driven wool-concrete48 do not establish hardcoded oak counts. Owner requests vanilla; native measurement pending."
+        }
+      },
+      "loot_checks": {
+        "loot_tables/blocks/mallorn_double_slab.json": {
+          "counterpart": "minecraft:oak_slab",
+          "source": "Installed 1.26.50 wool/concrete double-slab loot: set_count 2 then explosion_decay; references/harvest-explosion-loot.md.",
+          "explosion_decay": true
         }
       }
     },
@@ -196,7 +210,14 @@
           "expected": {
             "particle_count": 100
           },
-          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Documented default100; installed vanilla white_concrete_double_slab omits this override; actual native oak count not measured."
+          "source": "references/particle-parity.md: configured candidate only; custom default100 / data-driven wool-concrete48 do not establish hardcoded oak counts. Owner requests vanilla; native measurement pending."
+        }
+      },
+      "loot_checks": {
+        "loot_tables/blocks/mallorn_heartwood_double_slab.json": {
+          "counterpart": "minecraft:oak_slab",
+          "source": "Installed 1.26.50 wool/concrete double-slab loot: set_count 2 then explosion_decay; references/harvest-explosion-loot.md.",
+          "explosion_decay": true
         }
       }
     },
@@ -217,7 +238,7 @@
           "expected": {
             "particle_count": 100
           },
-          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Documented default100; installed vanilla white_concrete_double_slab omits this override; actual native oak count not measured."
+          "source": "references/particle-parity.md: configured candidate only; custom default100 / data-driven wool-concrete48 do not establish hardcoded oak counts. Owner requests vanilla; native measurement pending."
         }
       }
     },
@@ -246,7 +267,7 @@
           "expected": {
             "particle_count": 48
           },
-          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Installed vanilla white_concrete_slab.block.json particle_count48; material-independent shape counterpart."
+          "source": "references/particle-parity.md: configured candidate only; custom default100 / data-driven wool-concrete48 do not establish hardcoded oak counts. Owner requests vanilla; native measurement pending."
         }
       }
     },
@@ -271,7 +292,7 @@
           "expected": {
             "particle_count": 48
           },
-          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Installed vanilla white_concrete_stairs.block.json particle_count48; material-independent shape counterpart."
+          "source": "references/particle-parity.md: configured candidate only; custom default100 / data-driven wool-concrete48 do not establish hardcoded oak counts. Owner requests vanilla; native measurement pending."
         }
       }
     },
@@ -327,7 +348,7 @@
     },
     "lothlorien:mallorn_leaves": {
       "profile": "leaves",
-      "harvest": "Normal leaves: shears collect leaves; existing random stick/acorn pools remain, Silk Touch not yet implemented. Golden decorative leaves intentionally always self-drop; no decay.",
+      "harvest": "Shears or Silk Touch collect exactly one leaf without auxiliary items. Otherwise 2% for 1-2 sticks and existing custom 2% acorn; full Fortune parity remains unresolved. Native per-item explosion decay.",
       "property_checks": {
         "minecraft:movable": {
           "counterpart": "minecraft:oak_leaves",
@@ -335,6 +356,13 @@
             "movement_type": "popped"
           },
           "source": "https://feedback.minecraft.net/hc/en-us/articles/36757734170125-Minecraft-Beta-Preview-1-21-90-26"
+        }
+      },
+      "loot_checks": {
+        "loot_tables/blocks/mallorn_leaves.json": {
+          "counterpart": "minecraft:oak_leaves",
+          "source": "references/harvest-explosion-loot.md; docs/LEAF_HARVEST.md; documented tool predicates and native per-item explosion processing.",
+          "explosion_decay": true
         }
       }
     },
@@ -347,7 +375,7 @@
           "expected": {
             "particle_count": 100
           },
-          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Documented default100; installed vanilla white_concrete_double_slab omits this override; actual native oak count not measured."
+          "source": "references/particle-parity.md: configured candidate only; custom default100 / data-driven wool-concrete48 do not establish hardcoded oak counts. Owner requests vanilla; native measurement pending."
         }
       }
     },
@@ -360,7 +388,7 @@
           "expected": {
             "particle_count": 100
           },
-          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Documented default100; installed vanilla white_concrete_double_slab omits this override; actual native oak count not measured."
+          "source": "references/particle-parity.md: configured candidate only; custom default100 / data-driven wool-concrete48 do not establish hardcoded oak counts. Owner requests vanilla; native measurement pending."
         }
       }
     },
@@ -393,7 +421,7 @@
           "expected": {
             "particle_count": 48
           },
-          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Installed vanilla white_concrete_slab.block.json particle_count48; material-independent shape counterpart."
+          "source": "references/particle-parity.md: configured candidate only; custom default100 / data-driven wool-concrete48 do not establish hardcoded oak counts. Owner requests vanilla; native measurement pending."
         }
       }
     },
@@ -418,7 +446,7 @@
           "expected": {
             "particle_count": 48
           },
-          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Installed vanilla white_concrete_stairs.block.json particle_count48; material-independent shape counterpart."
+          "source": "references/particle-parity.md: configured candidate only; custom default100 / data-driven wool-concrete48 do not establish hardcoded oak counts. Owner requests vanilla; native measurement pending."
         }
       }
     },
@@ -431,7 +459,7 @@
           "expected": {
             "particle_count": 100
           },
-          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Documented default100; installed vanilla white_concrete_double_slab omits this override; actual native oak count not measured."
+          "source": "references/particle-parity.md: configured candidate only; custom default100 / data-driven wool-concrete48 do not establish hardcoded oak counts. Owner requests vanilla; native measurement pending."
         }
       }
     },
@@ -444,7 +472,7 @@
           "expected": {
             "particle_count": 100
           },
-          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Documented default100; installed vanilla white_concrete_double_slab omits this override; actual native oak count not measured."
+          "source": "references/particle-parity.md: configured candidate only; custom default100 / data-driven wool-concrete48 do not establish hardcoded oak counts. Owner requests vanilla; native measurement pending."
         }
       }
     },
@@ -495,7 +523,7 @@
           "expected": {
             "particle_count": 100
           },
-          "source": "Owner: vanilla particles, 2026-10-10; references/remaining-block-properties.md. Documented default100; installed vanilla white_concrete_double_slab omits this override; actual native oak count not measured."
+          "source": "references/particle-parity.md: configured candidate only; custom default100 / data-driven wool-concrete48 do not establish hardcoded oak counts. Owner requests vanilla; native measurement pending."
         }
       }
     },

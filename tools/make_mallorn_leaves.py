@@ -12,13 +12,53 @@ face) for the crafted golden block, and mallorn_leaf_carpet (the litter: loose g
 Colours are never biome-tinted. Deterministic; the leaf layout is data (LEAVES).
 
   python -B tools/make_mallorn_leaves.py [OUT_DIR]     (default lothlorien_rp/textures/blocks)
+  python -B tools/make_mallorn_leaves.py --loot-only  (ordinary leaf harvest table only)
+  python -B tools/make_mallorn_leaves.py --print-loot (print table without writing files)
+
+Harvest rules and unresolved Fortune/acorn choices: docs/LEAF_HARVEST.md.
+Art generation never rewrites loot; the explicit loot mode preserves the reviewed rules.
 """
+import json
 import math
 import os
 import random
 import shutil
 import sys
-from PIL import Image
+
+# Loot-only commands need just the standard library; normal imports and art
+# commands retain the existing Pillow API used by the rendering helpers.
+if not (__name__ == "__main__" and sys.argv[1:2] and sys.argv[1] in ("--loot-only", "--print-loot")):
+    from PIL import Image
+
+
+def leaf_loot():
+    """Bedrock 26.50 tool predicates; golden decorative leaves keep their own table.
+
+    Negate positive enchantment tests: a missing enchantment need not match level zero.
+    Ordinary acorns retain the owner's custom 2% chance; Fortune awaits sourced parity.
+    """
+    shears = {"condition": "match_tool", "item": "minecraft:shears"}
+    silk = {"condition": "match_tool", "enchantments": [
+        {"enchantment": "silk_touch", "levels": {"range_min": 1}}
+    ]}
+    not_shears = {**shears, "operator": "not"}
+    not_silk = {**silk, "operator": "not"}
+
+    def pool(name, conditions, functions=()):
+        return {"rolls": 1, "entries": [{
+            "type": "item", "name": name,
+            "functions": [*functions, {"function": "explosion_decay"}],
+        }], "conditions": conditions}
+
+    return {"pools": [
+        pool("lothlorien:mallorn_leaves", [shears]),
+        pool("lothlorien:mallorn_leaves", [silk, not_shears]),
+        pool("minecraft:stick", [not_shears, not_silk,
+             {"condition": "random_chance", "chance": 0.02}],
+             [{"function": "set_count", "count": {"min": 1, "max": 2}}]),
+        pool("lothlorien:mallorn_acorn", [not_shears, not_silk,
+             {"condition": "random_chance", "chance": 0.02}]),
+    ]}
 
 N = 16
 # shade index 0 (darkest) .. 4 (lightest) per colour; ramps shift hue (cool shadows, warm lights)
@@ -221,6 +261,15 @@ def shade_hidden(img):
 
 def main():
     here = os.path.dirname(os.path.abspath(__file__))
+    if len(sys.argv) > 1 and sys.argv[1] in ("--loot-only", "--print-loot"):
+        content = json.dumps(leaf_loot(), indent=2) + "\n"
+        if sys.argv[1] == "--print-loot":
+            print(content, end="")
+        else:
+            target = os.path.join(here, "..", "lothlorien_bp", "loot_tables", "blocks", "mallorn_leaves.json")
+            with open(target, "w", encoding="utf-8", newline="\n") as f:
+                f.write(content)
+        return
     out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(here, "..", "lothlorien_rp", "textures", "blocks")
     os.makedirs(out, exist_ok=True)
     shade = build_shade()

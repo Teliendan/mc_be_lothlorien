@@ -30,14 +30,14 @@ do not substitute3units from a generic/Java trapdoor assumption. Mesh/selection
 native parity is not independently measured; collision source and limits are
 in the shared support reference. Exact base boxes are recorded against drift.
 
-Vanilla/default particle choice: eight full wood cubes/double slabs now use100;
-four single slabs/stairs retain48 from installed native shape definitions.
-Other12partial wood blocks retain48 in the existing family recipes, with exact
-hardcoded native particle counts still awaiting engine comparison. This is not
-an approved aesthetic exception; owner requests vanilla where evidence exists.
+Vanilla particle choice: eight full wood cubes/double slabs currently use100;
+four single slabs/stairs and12other partials use48. Evidence correction:100 is
+the custom component default and48 comes from wool/concrete shapes; neither
+proves native oak counts. All are candidates awaiting engine measurement.
+Owner requests vanilla; no aesthetic exception is approved.
 The support post-pass restores reviewed counts after regeneration. The normal
 shared verifier enforces recorded matched values and approved exceptions.
-No design questions remain; slab/stair lighting, leaf pistons, particles and
+Earlier five design questions are resolved; slab/stair lighting, leaf pistons, particles and
 other current behavior need game acceptance after reloading the deployed pack.
 
 | Family | Counterpart | Mining parameter / blast | Efficient tools |
@@ -60,11 +60,19 @@ sapling/crop profiles. Rope and segmented cover deliberately retain 60/100
 organic fire as documented custom exceptions. The great-tree sprout remains
 mining 0 / blast 1200 for its protected scripted growth lifecycle.
 
-Harvest remains separate from speed: normal leaves collect leaf items with
-shears; existing random stick/acorn pools remain (including alongside shearing).
-Normal leaf Silk Touch/Fortune parity is still pending. Golden decorative leaves
+Harvest remains separate from speed: normal leaves collect exactly one leaf item
+with shears or Silk Touch, suppressing auxiliary drops. Other tools and decay use
+independent 2% stick (1–2 items) and custom 2% acorn pools. Native explosion decay
+processes these item entries. Full Fortune numeric parity and the acorn's
+sapling-equivalent rate remain pending; see [LEAF_HARVEST.md](LEAF_HARVEST.md).
+Golden decorative leaves
 intentionally always self-drop and do not decay. Nectar bloom's existing shears
-loot gate remains. No new tool requirements are imposed on other loot tables.
+loot gate remains. Golden fern now follows the native baseline: shears collect
+one fern, otherwise a1/8wheat-seed chance, with native decay. Enchantment parity
+is still pending; see [GOLDEN_FERN_HARVEST.md](GOLDEN_FERN_HARVEST.md).
+Both double slabs use set_count2 followed by native explosion_decay, matching
+the installed data-driven double-slab recipe. Other tool gates remain audited
+but unresolved; see workspace `docs/block-loot-particles-questions.md`.
 
 Generators for lamps, nectar bloom and star canopy now keep these material
 numbers. Run the shared verifier after regeneration; it reports policy drift.

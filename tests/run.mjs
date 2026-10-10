@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import "./support_motion.mjs";
 import "./rope_lifecycle.mjs";
 import "./stair_water.mjs";
+import "./leaf_harvest.mjs";
+import "./golden_fern_harvest.mjs";
 import "./script_glue.mjs";
 import { leafUndersideY } from "../lothlorien_bp/scripts/leaf_fall.js";
 import { BONEMEAL_TABLE, SPREAD_TRIES, COVERS, pickWeighted } from "../lothlorien_bp/scripts/flora_table.js";

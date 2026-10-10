@@ -11,6 +11,7 @@
       }
     },
     "components": {
+      "minecraft:loot": "loot_tables/blocks/golden_fern.json",
       "minecraft:tags": ["minecraft:is_shears_item_destructible"],
       "minecraft:collision_box": false,
       "minecraft:light_dampening": 0,
