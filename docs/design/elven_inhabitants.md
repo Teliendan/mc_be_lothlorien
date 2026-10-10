@@ -1,10 +1,29 @@
 # Elven inhabitants: professions, Renown, trades, gifts (design)
 
-Status: **concept agreed with the owner 2026-10-10 (discussion, nothing built).** Target Bedrock 1.26.52 / Script API 2.8.0.
+Status: **M0 and M1 done and accepted by the owner in game 2026-10-10; next is M2** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
 Supersedes the profession stock lists and trade-state details in `lothlorien_elven_settlements_plan.md` ("Initial professions",
 "Harmony-aware trading", "Proposed reputation trade states") and the stock part of `harmony_rework_plan.md` section 5. The trade
 **architecture** of that section 5 (native trade screen, per-band tables pre-swapped by script, refusal in `beforeEvents.playerInteractWithEntity`) stays.
 Looks: `docs/mobs/elves.md` (`tools/make_elves.py`, review sheets in `temp/elves/`). Warden: `docs/mobs/elven_warden.md`.
+
+## 0. Milestones
+
+| M | Scope | State |
+|---|---|---|
+| M0 | Spikes: custom bow, arrows, belt (section 8) | done, owner-tested 2026-10-10. Spike files kept in `temp/elven_inhabitants/spike_files/` as the M5 starting point |
+| M1 | Civilian elves placed in villages, Harmony, wardens defend, leads, healer roaming (sections 1, 7, 10) + village polish (rope foot, crowns fit their box, bare branches, living pillars with planner root flares) | done, accepted in game 2026-10-10 (commits 30e1eb1, 5631c22, 6f79109, 7b57536, 6b97311; the ivy start of 6b97311 not yet seen) |
+| M2 | Renown + Loremaster dialog: lessons and requests (sections 2, 3) | **next** |
+| M3 | Shops: trade-table generator (band x rank), table swapping by script, refusal (section 4) | |
+| M4 | Healer heals elves and Friends (section 7) | |
+| M5 | Final items (Galadriel's gifts) + Galadhrim arrows (sections 5, 6); then the bow template for `bedrock-items` | |
+| M6 | Great Mallorn upgrade (section 9) | |
+| M7 | Homes + village look (section 10; `lothlorien_jigsaw_settlement.md` section 6) | |
+
+**Working agreement (owner, 2026-10-10).** Stop after each milestone for the owner's in-game test. Before a milestone starts, show the owner one batch
+of proposed values (table with reasons; all values in one tunable rules file); escalate design decisions as options with a recommendation. Commit per
+milestone once verify and tests pass, before the in-game test; deploy before handing anything over. For M2 the batch covers: Renown thresholds (first
+guess 3 / 8 / 15), points per lesson and per request, the lesson list and order, the request list per profession (every request checkable by script),
+one-request-at-a-time and the repeat cooldown, and the dialog texts' tone.
 
 ## 1. Roster
 
@@ -123,9 +142,9 @@ The flet giants (`lothlorien:giant_mallorn`, lookout variant `round`, loot `loot
   night); custom bedrolls/pillows would be decoration.
 - **More loot diversity**: Galadhrim arrows, dew bottle, bottled fireflies, nectar, rope, salve, beside today's Miruvor, Lembas, herbs, corn, acorns, emeralds, antler.
 
-## 10. Population (M1 built 2026-10-10, not seen in game)
+## 10. Population (M1, accepted in game 2026-10-10)
 
-Rule (owner decisions 2026-10-10, details `docs/mobs/elves.md`, plan `temp/elven_inhabitants/m1_plan.md`): every new village gets all five professions. The Loremaster stands on the central tree
+Rule (owner decisions 2026-10-10, details `docs/mobs/elves.md`, implementation commit 30e1eb1): every new village gets all five professions. The Loremaster stands on the central tree
 (post nearest the rope top, at least 2 cells from it); healer, gardener, woodwright and lamplighter each stand on an outer tree (`combo_*` piece, warden trees included) of their own.
 - **Posts.** Tree pieces carry invisible `lothlorien:elf_post` entities: `central_mallorn_01` 1 `loremaster` + 4 `reserve`, each `combo_*` 1 `home` post inside the largest free deck square, 3 cells from wardens and other posts.
   A new tree piece without a `home` post is never a profession tree.
