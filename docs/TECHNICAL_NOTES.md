@@ -523,7 +523,7 @@ tested), `scripts/lembas.js`, items `western_corn_seeds`, `western_corn_grain`, 
 recipes `lembas_dough`, `lembas_wrapped`, `furnace_/smoker_lembas_cake`, loot tables `western_corn(.json|_mature.json)`, features
 `western_corn_*` + two feature rules. All art is placeholder (`GRAPHICS_TASKS.md` step 7).
 
-**The loop:** find wild corn in Lothlorien -> harvest (mature: 1-2 grain + 1-3 seeds; young: 1 seed) -> plant seeds on farmland
+**The loop:** find wild corn in Lothlorien -> harvest (2026-10-10 wheat-counterpart update: mature one grain plus Binomial(3+Fortune, 8/15) seeds at standard I–III; young one seed; see `WESTERN_CORN_HARVEST.md`) -> plant seeds on farmland
 anywhere -> grow -> craft **dough** (2x2 shaped: 3 grain + 1 sugar -> 2 dough) -> smelt in furnace or smoker -> **Lembas cake**
 (6 nutrition, "good" saturation, 1.6 s, a bit better than bread) -> craft with one Mallorn leaves block (leaf above cake) ->
 **wrapped Lembas** (8 nutrition, "supernatural" saturation = 19.2, eaten in 1.0 s, lifts the Hunger effect through the item

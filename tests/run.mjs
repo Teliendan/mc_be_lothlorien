@@ -5,6 +5,9 @@ import "./rope_lifecycle.mjs";
 import "./stair_water.mjs";
 import "./leaf_harvest.mjs";
 import "./golden_fern_harvest.mjs";
+import "./western_corn_harvest.mjs";
+import "./star_canopy_harvest.mjs";
+import "./harvest_wear.mjs";
 import "./script_glue.mjs";
 import { leafUndersideY } from "../lothlorien_bp/scripts/leaf_fall.js";
 import { BONEMEAL_TABLE, SPREAD_TRIES, COVERS, pickWeighted } from "../lothlorien_bp/scripts/flora_table.js";
@@ -131,7 +134,7 @@ test("corn: block states, stage textures and loot agree with the script", () => 
   assert.ok(b.components["minecraft:placement_filter"].conditions[0].block_filter.includes("minecraft:farmland"));
   const mature = bp("loot_tables/blocks/western_corn_mature.json");
   const names = mature.pools.flatMap((p) => p.entries.map((e) => e.name));
-  assert.deepEqual(names.sort(), ["lothlorien:western_corn_grain", "lothlorien:western_corn_seeds"]);
+  assert.deepEqual([...new Set(names)].sort(), ["lothlorien:western_corn_grain", "lothlorien:western_corn_seeds"]);
   assert.equal(bp("features/western_corn_feature.json")["minecraft:single_block_feature"].places_block.states["lothlorien:growth"], MAX_GROWTH);
 });
 test("seeds only plant on farmland; Lembas chain is dough -> cake -> wrapped", () => {

@@ -74,12 +74,29 @@ yields 1–3/1–5/1–7 seeds per successful event, following the Wiki. See
 [GOLDEN_FERN_HARVEST.md](GOLDEN_FERN_HARVEST.md) for source/engine limits.
 Both double slabs use set_count2 followed by native explosion_decay, matching
 the installed data-driven double-slab recipe. Other tool gates remain audited
-but unresolved; see workspace `docs/block-loot-particles-questions.md`.
+but unresolved outside the star-canopy repair; see workspace
+`docs/block-loot-particles-questions.md`.
+
+Star canopy now requires any pickaxe for player collection, like deepslate tiles.
+Allowed mining/environmental drops remain native, with explosion decay. The
+wrong-tool gate uses guarded deferred removal; exact wrong-tool break effects,
+statistics and tool wear remain pending engine acceptance. See
+[STAR_CANOPY_HARVEST.md](STAR_CANOPY_HARVEST.md).
 
 Owner 2026-10-10: firefly jar is reusable and deer antler is an any-tool collectible.
 Their existing native default self-drops already satisfy this; no collection gate
 is added from the separate glass/bone material or efficient-tool profile.
 Regression checks protect their ungated base/permutation loot route.
+
+Western corn harvest now follows Bedrock wheat: young crop one seed; mature
+crop one grain and Binomial(3+Fortune, 8/15) seeds at standard levels I–III.
+Custom grain/seed identities and growth remain. This is Wiki-documented and
+regression-tested, pending native engine acceptance. See
+[WESTERN_CORN_HARVEST.md](WESTERN_CORN_HARVEST.md).
+
+Owner 2026-10-10 reports that potted plants were tested and worked. Exact tested
+plants, pot contents and removal scenarios were not specified, so this records
+the owner's successful report without claiming every pot/state route was tested.
 
 Generators for lamps, nectar bloom and star canopy now keep these material
 numbers. Run the shared verifier after regeneration; it reports policy drift.

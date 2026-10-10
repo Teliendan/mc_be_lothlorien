@@ -539,11 +539,11 @@
     },
     "lothlorien:star_canopy": {
       "profile": "stone_tiles",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Deepslate tiles counterpart: any pickaxe collects one tile. Bounded before-player-break gate suppresses wrong-tool loot; allowed mining and environmental removal retain native table and explosion_decay. Wrong-tool events, stats and break effects require engine acceptance; see docs/STAR_CANOPY_HARVEST.md."
     },
     "lothlorien:western_corn": {
       "profile": "crop",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Wheat counterpart: young crop one custom seed; mature crop one custom grain and Binomial(3+Fortune, 8/15) custom seeds at standard Fortune I-III. Native explosion_decay follows each count. Custom identity and growth unchanged; Wiki-documented recipe, engine acceptance pending."
     }
   }
 }

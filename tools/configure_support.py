@@ -61,6 +61,8 @@ def configure(block):
     if name == "golden_fern":
         c.pop("minecraft:replaceable", None)  # Owner: break it before replacement.
         c["minecraft:loot"] = "loot_tables/blocks/golden_fern.json"
+    if name == "star_canopy":
+        c["minecraft:loot"] = "loot_tables/blocks/star_canopy.json"
     configure_water(block)
     # Counterpart parity, also for blocks without a support-survival dependency.
     # These four shapes are single slabs/stairs; double slabs remain solid cubes.
@@ -116,6 +118,9 @@ def main():
         "entries": [{"type": "item", "name": "lothlorien:elven_rope"}]}]}, indent=2) + "\n", encoding="utf8")
     fern_loot = runpy.run_path(str(ROOT / "tools/golden_fern_loot.py"))["fern_loot"]
     (BP / "loot_tables/blocks/golden_fern.json").write_text(json.dumps(fern_loot(), indent=2) + "\n", encoding="utf8")
+    corn_loot = runpy.run_path(str(ROOT / "tools/western_corn_loot.py"))["corn_loot"]
+    for mature, name in [(False, "western_corn"), (True, "western_corn_mature")]:
+        (BP / f"loot_tables/blocks/{name}.json").write_text(json.dumps(corn_loot(mature), indent=2) + "\n", encoding="utf8")
     print(f"Configured piston support for {len(policies)} block definitions.")
 
 

@@ -1,0 +1,17 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "lothlorien:star_canopy",
+          "functions": [
+            { "function": "set_count", "count": 1 },
+            { "function": "explosion_decay" }
+          ]
+        }
+      ]
+    }
+  ]
+}

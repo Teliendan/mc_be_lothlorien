@@ -81,6 +81,7 @@ def main():
     dump(BP / "blocks/star_canopy.json", {"format_version": "1.26.50", "minecraft:block": {
         "description": {"identifier": f"{NS}:star_canopy"},
         "components": {
+            "minecraft:loot": "loot_tables/blocks/star_canopy.json",
             "minecraft:tags": ["minecraft:is_pickaxe_item_destructible"],
             "minecraft:destructible_by_mining": {"seconds_to_destroy": 3.5},
             "minecraft:destructible_by_explosion": {"explosion_resistance": 6},

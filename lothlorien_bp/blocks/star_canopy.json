@@ -5,6 +5,7 @@
       "identifier": "lothlorien:star_canopy"
     },
     "components": {
+      "minecraft:loot": "loot_tables/blocks/star_canopy.json",
       "minecraft:tags": ["minecraft:is_pickaxe_item_destructible"],
       "minecraft:flammable": false,
       "minecraft:destructible_by_mining": {
