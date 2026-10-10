@@ -74,29 +74,42 @@ def elanor():
 
 
 # ---------------------------------------------------------------- NIPHREDIL
-# Niphredil (owner round 4): every plant is TWO planes crossing on the centre line of the block, so anything drawn off-centre
-# shows twice (two stems crossing, a double head). Niphredil is therefore symmetric about the centre: a two-texel stem on
-# columns 7-8, the nodding bell seen from the side hanging in FRONT of the stem top (the stem shows only below it),
-# and leaves in mirrored pairs.
-BELL = ["..WWVV..",
-        ".WWWVVU.",
-        "WWWVVVUT",
-        "WWVVVVUT",
-        "WV.pp.UT",
-        ".W.pp.T."]
+# Niphredil (owner decision 2026-10-11, variant E2): every plant is TWO planes crossing on the centre line of the block, so
+# the texture is mirror-symmetric about the centre and has ONE small nodding bell per side: two on the texture = four bells
+# in the world. A shared 2px stem rises from the leaves to row 9 (~55 % of the height), then forks into two thin stalks that
+# arch out and hook down into the bells.
+BELL4 = [".WV.",
+         "WWVU",
+         "WVVU",
+         "W.pU"]
+FORK_ROW = 9
+
+
+def _line(img, x0, y0, x1, y1, ch):
+    n = max(abs(x1 - x0), abs(y1 - y0)) or 1
+    for k in range(n + 1):
+        px(img, round(x0 + (x1 - x0) * k / n), round(y0 + (y1 - y0) * k / n), ch)
 
 
 def niphredil():
-    """single tall snowdrop, centred: stem, nodding bell with three petal tips and a pale-green mark, mirrored leaves"""
+    """shared 2px stem forking at row 9 into two arching stalks, one 4x4 nodding bell per side, mirrored leaf pair"""
+    half = blank()
+    _line(half, 7, FORK_ROW, 5, 4, "g")      # left arm from the stem top up to the stalk end
+    px(half, 4, 4, "g")                       # hook over the bell
+    blit(half, BELL4, 2, 5)                   # bell hangs under the hook (the arm passes behind its inner edge)
     i = blank()
-    for y in range(3, 16):        # the stem starts under the bell: nothing sticks out above the head (owner round 5)
+    for y in range(N):
+        for x in range(8):
+            c = half.getpixel((x, y))
+            if c[3]:
+                i.putpixel((x, y), c)
+                i.putpixel((15 - x, y), c)
+    for y in range(FORK_ROW, N):              # shared stem, lit left / dark right
         px(i, 7, y, "g")
         px(i, 8, y, "G")
-    # mirrored leaves (the plant is crossed with itself, so the pair is what a player sees from every side)
-    for (tx, ty, w, bend) in [(1.5, 8.5, 0.95, -0.7), (3.5, 11.0, 0.8, -0.4)]:
+    for (tx, ty, w, bend) in [(2.0, 11.0, 0.85, -0.5)]:
         leaf(i, 7.0, 15.5, tx, ty, w, bend, lit="H", mid="h", dark="g")
         leaf(i, 9.0, 15.5, 16 - tx, ty, w, -bend, lit="H", mid="h", dark="g")
-    blit(i, BELL, 4, 3)
     return i
 
 
