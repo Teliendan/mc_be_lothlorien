@@ -9,6 +9,7 @@ import "./western_corn_harvest.mjs";
 import "./star_canopy_harvest.mjs";
 import "./ordinary_harvest.mjs";
 import "./script_glue.mjs";
+import "./renown.mjs";
 import { leafUndersideY } from "../lothlorien_bp/scripts/leaf_fall.js";
 import { BONEMEAL_TABLE, SPREAD_TRIES, COVERS, pickWeighted } from "../lothlorien_bp/scripts/flora_table.js";
 import { readFileSync } from "node:fs";
@@ -3140,17 +3141,25 @@ test("elf: entity values come from elf_rules STATS / HOME_RADIUS; persistent, no
   assert.deepEqual(nav.blocks_to_avoid.map((b) => b.name), ["lothlorien:elven_rope", "lothlorien:elven_rope_hanging"], "avoids the rope cells");
   assert.deepEqual(c["minecraft:damage_sensor"].triggers, [{ cause: "fall", deals_damage: "no" }], "no fall damage");
 });
-test("elf: using an elf does nothing - no trade, interact, inventory, lead, breeding, riding, egg interaction, loot or xp anywhere", () => {
+test("elf: using an elf does nothing except the Loremaster's Speak entry - no trade, inventory, breeding, riding, egg interaction, loot or xp anywhere", () => {
   const text = JSON.stringify(elfEntity());
   const found = [...text.matchAll(/"minecraft:(economy_trade_table|trade_table|interact|inventory|breedable|rideable|spawn_egg_interaction|loot|experience_reward|equippable|behavior\.(?:breed|trade_with_player|tempt|follow_parent|ranged_attack|melee_attack))"/g)].map((m) => m[1]);
-  assert.deepEqual(found, []);
+  assert.deepEqual(found, ["interact"], "minecraft:interact appears exactly once");
+  const e = elfEntity();
+  assert.deepEqual(Object.keys(e.component_groups["lothlorien:loremaster"]), ["minecraft:variant", "minecraft:interact"], "only in the Loremaster group");
+  const inter = e.component_groups["lothlorien:loremaster"]["minecraft:interact"].interactions;
+  assert.equal(inter.length, 1);
+  assert.equal(inter[0].use_item, false); assert.equal(inter[0].swing, true); assert.equal(inter[0].interact_text, "action.interact.lothlorien.speak");
+  assert.equal(inter[0].on_interact.event, undefined, "no event: the dialog is script (loremaster.js)");
+  const none = JSON.stringify(inter[0].on_interact.filters.all_of.find((f) => f.none_of));
+  assert.ok(none.includes("minecraft:lead") && none.includes("minecraft:name_tag"), "leads and name tags keep working on him");
 });
 test("elf: every profession group has its variant index only; radius groups carry the home radius; each as_<p> event swaps professions and radius", () => {
   const e = elfEntity();
   assert.deepEqual(Object.keys(e.component_groups), [...EL.PROFESSIONS.map(GROUP), ...EL.RADIUS_GROUPS]);
   EL.PROFESSIONS.forEach((p, i) => {
     const g = e.component_groups[GROUP(p)];
-    assert.deepEqual(Object.keys(g), ["minecraft:variant"]);
+    assert.deepEqual(Object.keys(g), p === "loremaster" ? ["minecraft:variant", "minecraft:interact"] : ["minecraft:variant"], `${p}: only the Loremaster also speaks (interact)`);
     assert.equal(g["minecraft:variant"].value, i, `${p}: variant index`);
     const ev = e.events[EL.spawnEventOf(p)], own = EL.radiusGroupOf(p);
     assert.deepEqual(ev.add.component_groups, [GROUP(p), own], `${p}: adds the profession and its radius group`);

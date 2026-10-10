@@ -11,6 +11,7 @@ import { system, world } from "@minecraft/server";
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { repeatedUse } from "./use_guard.js";
+import { noteDeed } from "./deeds.js";
 import { addBeaconSource, consumeAcorn, stand } from "./white_deer.js";
 import { ACORN_ID, BEACON_ID } from "./white_deer_rules.js";
 import {
@@ -59,6 +60,7 @@ function offer(player, squirrel) {
     consumeAcorn(player); // only now: the errand really starts
     sessions.set(squirrel.id, { playerId: player.id, beaconId, away, born: system.currentTick, phase: "away", phaseStart: system.currentTick, digFor: 0 });
     say(player, message("squirrel.accept"));
+    noteDeed(player, "squirrel"); // Renown lesson "gifts"
   } catch {
     sessions.delete(squirrel.id);
     removeBeacon(beaconId);

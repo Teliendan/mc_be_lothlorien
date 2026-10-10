@@ -1,6 +1,6 @@
 # Elven inhabitants: professions, Renown, trades, gifts (design)
 
-Status: **M0 and M1 done and accepted by the owner in game 2026-10-10; next is M2** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
+Status: **M0 and M1 done and accepted by the owner in game 2026-10-10; M2 built, not yet seen in game** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
 Supersedes the profession stock lists and trade-state details in `lothlorien_elven_settlements_plan.md` ("Initial professions",
 "Harmony-aware trading", "Proposed reputation trade states") and the stock part of `harmony_rework_plan.md` section 5. The trade
 **architecture** of that section 5 (native trade screen, per-band tables pre-swapped by script, refusal in `beforeEvents.playerInteractWithEntity`) stays.
@@ -12,7 +12,7 @@ Looks: `docs/mobs/elves.md` (`tools/make_elves.py`, review sheets in `temp/elves
 |---|---|---|
 | M0 | Spikes: custom bow, arrows, belt (section 8) | done, owner-tested 2026-10-10. Spike files kept in `temp/elven_inhabitants/spike_files/` as the M5 starting point |
 | M1 | Civilian elves placed in villages, Harmony, wardens defend, leads, healer roaming (sections 1, 7, 10) + village polish (rope foot, crowns fit their box, bare branches, living pillars with planner root flares) | done, accepted in game 2026-10-10 (commits 30e1eb1, 5631c22, 6f79109, 7b57536, 6b97311; the ivy start of 6b97311 not yet seen) |
-| M2 | Renown + Loremaster dialog: lessons and requests (sections 2, 3) | **next** |
+| M2 | Renown + Loremaster dialog: lessons and requests (sections 2, 3) | built 2026-10-10, **not yet seen in game**, not committed or deployed (tests + verify pass). In-game check list: `docs/TECHNICAL_NOTES.md` "Renown and the Loremaster (M2)" |
 | M3 | Shops: trade-table generator (band x rank), table swapping by script, refusal (section 4) | |
 | M4 | Healer heals elves and Friends (section 7) | |
 | M5 | Final items (Galadriel's gifts) + Galadhrim arrows (sections 5, 6); then the bow template for `bedrock-items` | |
@@ -44,7 +44,8 @@ forest edge keep spawning. Healers exist to prevent accidental deaths. Killing a
 - **Harmony** (built, `harmony_rework_plan.md`): how the forest sees you now, volatile. Controls **access and prices**.
 - **Renown** (new): what you did for the elves. **One value for the whole elven society** (owner: keep it simple; "word travels among
   the Galadhrim", so every village knows you), per player, stored on the player, **never lost**. Controls **stock depth**.
-  Ranks: **Stranger (0) -> Welcome (1) -> Trusted (2) -> Elf-friend (3)**. Thresholds: open (first guess 3 / 8 / 15 points).
+  Ranks: **Stranger (0) -> Welcome (1) -> Trusted (2) -> Elf-friend (3)**. Thresholds **3 / 8 / 15 points** (owner 2026-10-10; all values in `renown_rules.js`).
+  Points: a deed lesson 1, a lore lesson 0, a request 2, an optional tale 1. Uncapped, the rank stops at Elf-friend. Stored in the player dynamic property `lothlorien:renown` (JSON, `v: 1`).
 - **Final trade of a shop** needs **Elf-friend and the Friend band**.
 - Script cannot see trades (no trade event or trade component in 2.8.0, `.claude/skills/bedrock-modding/references/08-trading.md`), so
   Renown comes only from the Loremaster (section 3), never from trading. No engine trader levelling.
@@ -59,16 +60,37 @@ forest edge keep spawning. Healers exist to prevent accidental deaths. Killing a
 | Shunned -15...-29 | refused | one hint: "Learn to live in peace with the forest, then return." |
 | Hated -30 and below | refused | turns away silently (wardens shoot on sight) |
 
-## 3. Loremaster: lessons and requests
+## 3. Loremaster: lessons and requests (M2, owner decisions 2026-10-10, built)
 
-Use on the Loremaster opens a dialog (`@minecraft/server-ui` form); he never trades. Use on any other elf opens the trade screen.
+Use on the Loremaster opens a dialog (`@minecraft/server-ui` forms, `loremaster.js`); he never trades. A lead or a name tag in hand still works on him (the
+`minecraft:interact` "Speak" entry exists only in the `lothlorien:loremaster` group and excludes those two items; the script skips them too). Other elves do nothing on use until M3.
 
-- **Lessons** (tutorial as quest line, each explains one mechanic and asks you to do it, Renown on completion): Harmony; morning dew;
-  nectar; flowers / salve / Miruvor; Lembas; acorns for deer and squirrels; reach Friend; later hints at the white deer and the unicorn.
-- **Requests** on behalf of the others ("The gardener asks you to..."), delivered to the Loremaster, Renown on completion. Examples:
-  gardener: plant 5 acorns in the forest, bring 2 bottles of morning dew; healer: bring 4 Athelas or nectar; woodwright: 32 birch/cherry
-  logs, string and feathers; lamplighter: bottles of fireflies, amethyst, glass. Every request must be checkable by script.
-- Open: one request at a time per player; repeat cooldown. Risk: a village whose Loremaster died has no quests (other villages still work, Renown is global).
+**Lessons are chapters.** All unfinished lessons of the open chapter are listed; chapter N+1 opens when every lesson of chapter N is complete. **Lore** lessons complete
+with "I understand" (0 points); **deed** lessons pay 1 point. A deed counts **only while its lesson is active** (the player opened its screen); earlier deeds are lost.
+Finished lessons stay readable under "Remind me" (no points twice). The Harmony lesson completes with "It is done" when Harmony >= +3.
+
+| Ch | Lesson | Kind | Completion |
+|---|---|---|---|
+| I | harmony | deed (talk check) | Harmony >= +3 when pressing "It is done" |
+| I | elves, renown | lore | read |
+| I | dew, nectar | deed | fill a Bottle of morning dew (`dew.js`); bottle nectar (`nectar.js`) |
+| II | depth | lore | read (edge / inner / heart; real effects only: fewer border wardens off decks deeper in, rare creatures more often deeper) |
+| II | lembas, rope | deed | eat wrapped Lembas (`lembas.js`); hang an elven rope (`elven_rope.js`) |
+| II | fireflies | deed | catch a firefly (no script path, see TECHNICAL_NOTES) |
+| III | gifts | deed | send a squirrel off with an acorn (`squirrel.js`, needs Friend) |
+| III | white_animals, trades | lore | read; reading white_animals enables two optional +1 tales (white deer gift, unicorn bond), each once |
+
+Pacing (tested): chapter I = 3 points (Welcome); chapter II = 6 points in all (Trusted at 8 needs 1 request); chapter III deeds = 7 (Elf-friend at 15 needs 4 requests).
+The rank-up shows a chat line, `random.levelup`, a particle burst, and a rank line in the form ("Next rank: ... Deeds still needed: N").
+
+**Requests** open with chapter III (chapters I and II complete), from Friend and Guest only. One active request at a time, **no cooldown**. Twelve requests, each completable **once ever**:
+gardener (5 saplings planted inside the forest, 2 morning dew, 16 bone meal), healer (4 Athelas, 2 nectar, 2 Elanor + 2 Niphredil), woodwright (32 birch/cherry logs in any mix,
+8 string + 8 feathers, 6 iron ingots), lamplighter (3 bottles of fireflies, 16 coal/charcoal in any mix, 16 glass). Each round is a random permutation of the four professions;
+the offered request is a random not-yet-done one of the next profession. "Not now" keeps the offer; abandoning gives nothing, does not complete it, and the rotation moves on.
+Delivery counts the main inventory and removes the items all-or-nothing; saplings are remembered cells (distinct; a cell must still hold a sapling or a Mallorn log).
+
+Bands: Friend and Guest get everything; **Uneasy** only the Harmony lesson text (active request kept, paused); **Shunned** one chat line; **Hated** silence.
+Risk: a village whose Loremaster died has no dialog (other villages still work; Renown is global).
 
 ## 4. Shops
 
@@ -162,7 +184,8 @@ Rule (owner decisions 2026-10-10, details `docs/mobs/elves.md`, implementation c
 
 ## 11. Open
 
-- Renown thresholds and points per lesson / request; request cooldown.
+- A reward or purpose for requests after full Renown (all 12 requests done; Elf-friend reached). Not part of M2.
+- Rank names are gender-marked in some locales (titles such as Přítel elfů, Amigo de los elfos); a neutral wording needs a native reviewer.
 - Exact prices and price modifiers (balance pass).
 - Final-item numbers (bow damage/draw speed, cloak armour, belt regen level, phial light radius and spider range).
 - What elves do at night (gathering, lamplighter at dusk); M1 decided: no change at night.

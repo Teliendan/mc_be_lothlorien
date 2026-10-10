@@ -10,6 +10,7 @@
 import { BlockPermutation, EquipmentSlot, GameMode, ItemStack, system, world } from "@minecraft/server";
 import { brakes, CLIMB, columnBounds, dropStacks, isUnsupported, levitationStep, pieceOffset, planRope, wallOffset } from "./elven_rope_rules.js";
 import { repeatedUse } from "./use_guard.js";
+import { noteDeed } from "./deeds.js";
 
 const ROPE_ID = "lothlorien:elven_rope";
 const FACE_STATE = "lothlorien:face";
@@ -62,6 +63,7 @@ function useRope(player, block, blockFace) {
     if (plan.length >= count) slot.setItem(undefined);
     else slot.amount = count - plan.length;
   }
+  noteDeed(player, "rope"); // Renown lesson (renown_rules.js)
   try {
     dimension.playSound("dig.grass", { x: x + 0.5, y: plan[0], z: z + 0.5 });
   } catch {

@@ -26,6 +26,8 @@ import { elfDebug, startElves } from "./elf.js";
 import { startSwans } from "./swan.js";
 import { startSquirrels } from "./squirrel.js";
 import { startUnicorns } from "./unicorn.js";
+import { handleRenownEvent, startRenown } from "./renown_game.js";
+import { startLoremaster } from "./loremaster.js";
 import { DEPTH_NAMES, estimateDepth, probeCount } from "./depth.js";
 import { startSpeedProbe } from "./speed_probe.js";
 
@@ -142,6 +144,7 @@ function onScriptEvent(event) {
   const player = event.sourceEntity;
   if (!player || player.typeId !== "minecraft:player") return;
   if (handleHarmonyEvent(event, player)) return;
+  if (handleRenownEvent(event, player)) return; // debug: /scriptevent lothlorien:renown [points N | reset | deed <id> | chapter N | offer <request id>]
   if (event.id === "lothlorien:village") { // debug: plan the loop links of the nearest village now (see loop_marker.js)
     const arg = event.message.trim();
     if (arg === "plan") planNearest(player);
@@ -212,6 +215,8 @@ world.afterEvents.worldLoad.subscribe(() => {
   startSwans({ id: BIOME_ID, at: (dimension, x, z) => surfaceSampler(dimension, { x, z })(0, 0) });
   startSquirrels();
   startUnicorns();
+  startRenown(inBiome);
+  startLoremaster();
   startAntlerSupport();
   startRopeClimbing();
 });

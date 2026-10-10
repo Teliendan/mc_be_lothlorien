@@ -3,6 +3,7 @@ import { MALLORN_LEAVES } from "./nectar_rules.js";
 import { DEW_CHANCE, NEW_DEW_BOTTLE_DAMAGE, addDrop, dewAfterTick, leavesAbove } from "./dew_rules.js";
 import { GLASS_BOTTLE, mainhandSlot, swapHeldBottle, newItem } from "./bottles.js";
 import { repeatedUse } from "./use_guard.js";
+import { noteDeed } from "./deeds.js";
 
 // Phase 14b: morning dew on the Mallorn ground covers (leaf litter, blossoms). The bool state `lothlorien:dew` is set
 // by random tick in the morning window under Mallorn leaves and cleared outside it. A glass bottle on dewy cover
@@ -35,7 +36,10 @@ function collect(player, block) {
     const durability = held.getComponent("minecraft:durability");
     const result = addDrop(durability.damage);
     const slot = mainhandSlot(player);
-    if (result.full) slot.setItem(newItem(MORNING_DEW));
+    if (result.full) {
+      slot.setItem(newItem(MORNING_DEW));
+      noteDeed(player, "dew");
+    }
     else {
       durability.damage = result.damage;
       slot.setItem(held);

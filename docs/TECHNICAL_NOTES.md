@@ -1220,3 +1220,20 @@ monsters hunt it), natural spawns (spawn rule + one-time depth / deck judge in `
 `world.beforeEvents.entityHurt`. Event-driven only, no `runInterval`. Despawn: standard `despawn_from_distance`, no filters (Phase 10 trap);
 only the village group adds `minecraft:persistent`. Harmony: fight -1, kill -6, Hated players shot on sight (see Harmony). Open: template entities in jigsaw pieces, home point,
 bow from the equipment table. Depth-estimate cost per natural spawn still unmeasured (`/scriptevent lothlorien:depth`).
+
+## Renown and the Loremaster (M2, 2026-10-10, built; static checks, unit tests only, NOT yet seen in game, not deployed)
+Design: `design/elven_inhabitants.md` sections 2-3. Files: `renown_rules.js` (pure: every value, chapters, requests, rotation, delivery plan, parse/serialize),
+`deeds.js` (hook bus, no imports), `renown_game.js` (state in the player dynamic property `lothlorien:renown`, deed listener, sapling count, firefly detection, inventory, rank-up feedback, debug),
+`loremaster.js` (interception + `ActionFormData` forms; every text through `message()`, keys `lothlorien.message.lore.*`), tests `tests/renown.mjs`. Manifest now lists `@minecraft/server-ui` 2.1.0.
+- **Debug:** `/scriptevent lothlorien:renown` shows state; `points N`, `reset`, `deed <id>` (dew, nectar, lembas, rope, fireflies, squirrel, white_deer, unicorn; honours the "lesson active" rule),
+  `chapter N` (marks chapters < N done and sets matching points), `offer <request id>`. Bands: `/scriptevent lothlorien:harmony <value>`.
+- **Interaction:** `beforeEvents.playerInteractWithEntity` on a `lothlorien:elf` with variant 4: cancel, then `system.run` opens the form (not allowed in read-only mode). Lead and name tag return early (not cancelled).
+  `entities/elf.json`: `minecraft:interact` (Speak, no event, `use_item: false`) in the `lothlorien:loremaster` group only, `none_of` lead / name tag in hand.
+- **Forms:** the form body, title and buttons are RawMessage `{ translate }`. Typings for `@minecraft/server-ui` 2.1.0 are not in the workspace; that titles, bodies and buttons accept RawMessage is documented (Microsoft Learn), UNVERIFIED here.
+  `UserBusy` is retried 10 times every 10 ticks; answers are applied only if the player and the Loremaster are valid and within 8 blocks.
+- **Firefly detection (UNVERIFIED):** the catch is entity JSON only (`transform_to_item`). `beforeEvents.playerInteractWithEntity` (target `lothlorien:firefly`, glass bottle in hand) snapshots the firefly bottles in the pack,
+  5 ticks later more bottles mean a catch -> deed `fireflies`. An `afterEvents` listener was not used because the firefly despawns at once (`instant_despawn`), so `target` may already be invalid.
+- **Sapling request:** `afterEvents.playerPlaceBlock` with `lothlorien:mallorn_sapling` inside the biome while the request is active; distinct cells; checked at delivery.
+- **In-game checks:** (1) does using the Loremaster open the form (interact fires, no vanilla reaction)? (2) `UserBusy` seen? (3) does a held lead still leash him, a name tag still name him? (4) firefly deed fires after catching with a bottle?
+  (5) do forms render RawMessage titles, bodies, buttons (and the `\n` inside a rawtext body)? (6) delivery removes exactly the asked items (any-of logs, coal), nothing else, and refuses when short? (7) rank-up chat, sound and particles at 3 / 8 / 15 points?
+  (8) do Uneasy / Shunned / Hated behave as designed (use `lothlorien:harmony`)? (9) deeds before a lesson is opened are ignored; the sapling request counts and drops broken saplings? (10) do the texts fit the form and read well in Czech?

@@ -423,3 +423,239 @@ lothlorien.message.elf.debug.rehomed=[lothlorien] elfo %s: nova casa definida aq
 lothlorien.message.elf.debug.none=[lothlorien] nenhum elfo a menos de 16 blocos
 ## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf home next to a civilian elf, after the home line: [lothlorien] elf %s: radius group %s (%s blocks). Names the home-radius component group the elf has right now (how far it may wander from its home). Translate labels; keep technical tokens and coordinates.
 lothlorien.message.elf.debug.roam=[lothlorien] elfo %s: grupo de raio %s (%s blocos)
+## Context: Title of the Loremaster dialog forms when the elf has no name tag. The Loremaster is the elf who teaches the player and passes on the requests of the other elves.
+lothlorien.message.lore.title=Mestre do saber
+## Context: Greeting at the top of the main Loremaster form for a player in the Friend band (Harmony +10). Mae govannen is Sindarin for well met.
+lothlorien.message.lore.greet.friend=Mae govannen. As árvores falam bem de ti.
+## Context: Greeting at the top of the main Loremaster form for a player in the Guest band (Harmony 0 to +9). Mae govannen is Sindarin for well met.
+lothlorien.message.lore.greet.guest=Mae govannen, caminhante. As árvores falaram de ti, um pouco.
+## Context: Greeting in the Loremaster form for a player in the Uneasy band (Harmony -1 to -14): the forest is troubled by them, so only the Harmony lesson is offered.
+lothlorien.message.lore.greet.uneasy=A floresta está inquieta contigo. Caminha com suavidade e falaremos de outras coisas.
+## Context: Line in the main Loremaster form showing the player's Renown rank. Renown is what the player has done for the elves, not Harmony. %s is the rank name.
+lothlorien.message.lore.rank.line=Renome entre os Galadhrim: %s
+## Context: Line in the main Loremaster form telling how far the next Renown rank is. First %s is the next rank name; second %s is how many more points of renown (lessons done, tasks completed) are still needed, a plain number.
+lothlorien.message.lore.rank.next=Próximo posto: %s. Feitos em falta: %s.
+## Context: Line in the main Loremaster form once the highest Renown rank (Elf-friend) is reached.
+lothlorien.message.lore.rank.max=O teu renome alcançou o ponto mais alto.
+## Context: Renown rank 0, the start: someone the elves do not know yet. Shown after the label 'Renown among the Galadhrim:'.
+lothlorien.message.lore.rank.stranger=Forasteiro
+## Context: Renown rank 1: the elves welcome the player. Shown after the label 'Renown among the Galadhrim:'.
+lothlorien.message.lore.rank.welcome=Bem-vindo
+## Context: Renown rank 2: the elves trust the player. Shown after the label 'Renown among the Galadhrim:'.
+lothlorien.message.lore.rank.trusted=De confiança
+## Context: Renown rank 3, the highest: Elf-friend, a title of great honour among the Galadhrim. Shown after the label 'Renown among the Galadhrim:'.
+lothlorien.message.lore.rank.elf_friend=Amigo dos elfos
+## Context: Chat line when the player's Renown reaches the first rank, Welcome. The § code colours the line green.
+lothlorien.message.lore.rankup.welcome=§aOs Galadhrim ouviram o teu nome. A tua presença é bem-vinda entre eles.
+## Context: Chat line when the player's Renown reaches the rank Trusted. The § code colours the line green.
+lothlorien.message.lore.rankup.trusted=§aO teu nome é agora pronunciado sob os mallorn. Os Galadhrim confiam em ti.
+## Context: Chat line when the player's Renown reaches the highest rank, Elf-friend. The § code colours the line green.
+lothlorien.message.lore.rankup.elf_friend=§aÉs nomeado Amigo dos elfos. Os Galadhrim lembrar-se-ão disso para sempre.
+## Context: Line in the main Loremaster form while chapters I and II of his teaching are not complete: the other elves cannot yet ask the player for help.
+lothlorien.message.lore.requests.locked=Termina os dois primeiros capítulos do meu ensino e os meus poderão pedir-te ajuda.
+## Context: Line in the main Loremaster form when every one of the twelve requests of the other elves has been completed.
+lothlorien.message.lore.requests.none=Todas as tarefas dos meus estão cumpridas. Agradecem-te.
+## Context: Line in the Loremaster form shown to a player in the Uneasy band who has an active task: the task is kept but waits.
+lothlorien.message.lore.requests.paused=A tua tarefa espera até que a floresta volte a confiar em ti.
+## Context: Button for one available lesson of the open chapter in the main Loremaster form. %s is the lesson name.
+lothlorien.message.lore.btn.lesson=Lição: %s
+## Context: Button in the main Loremaster form that opens the list of completed lessons to read again; no points are earned twice.
+lothlorien.message.lore.btn.remind=Lembra-me
+## Context: Button in the main Loremaster form that opens a new task asked by one of the other elves.
+lothlorien.message.lore.btn.request_new=Uma tarefa dos meus
+## Context: Button in the main Loremaster form that opens the task the player has already accepted.
+lothlorien.message.lore.btn.request_active=A tua tarefa
+## Context: Button that closes the Loremaster dialog.
+lothlorien.message.lore.btn.farewell=Até breve
+## Context: Button on a lore lesson screen: the player has read it and completes the lesson.
+lothlorien.message.lore.btn.understand=Compreendo
+## Context: Button on the Harmony lesson screen: the player claims to be at peace with the forest now.
+lothlorien.message.lore.btn.done=Está feito
+## Context: Button that returns to the previous Loremaster screen.
+lothlorien.message.lore.btn.back=Voltar
+## Context: Button on a task offer: the player accepts the task.
+lothlorien.message.lore.btn.accept=Fá-lo-ei
+## Context: Button on a task offer: the player declines for now; the same task is offered next time.
+lothlorien.message.lore.btn.notnow=Agora não
+## Context: Button on the active task screen: hand over the asked items (or confirm the planted saplings).
+lothlorien.message.lore.btn.deliver=Entregar
+## Context: Button on the active task screen: set the task aside.
+lothlorien.message.lore.btn.abandon=Abandonar a tarefa
+## Context: Confirmation button: really set the task aside.
+lothlorien.message.lore.btn.abandon_yes=Sim, abandonar
+## Context: Confirmation button: keep the task after all.
+lothlorien.message.lore.btn.keep=Manter
+## Context: Body of the list of completed lessons in the Loremaster dialog.
+lothlorien.message.lore.remind.body=Que lição te conto de novo?
+## Context: Line in the Loremaster form when the player presses 'It is done' on the Harmony lesson but their Harmony is below +3. Grey.
+lothlorien.message.lore.harmony.not_yet=§7Ainda não estás em paz com a floresta.
+## Context: Body of the confirmation screen when the player wants to abandon the active task.
+lothlorien.message.lore.abandon.ask=Pôr esta tarefa de lado? Nada se perde, e pode ser pedida de novo.
+## Context: Line in the Loremaster form after the player abandoned the task. Grey.
+lothlorien.message.lore.abandon.done=§7A tarefa foi posta de lado.
+## Context: Chat line when the player completed a task of the other elves and earned Renown. Green.
+lothlorien.message.lore.deliver.ok=§aA tarefa está cumprida. Os Galadhrim estão gratos.
+## Context: Line in the Loremaster form when the player pressed Deliver but does not carry all the asked items. Grey.
+lothlorien.message.lore.deliver.missing=§7Não trazes o que é pedido.
+## Context: Progress of the task 'plant five Mallorn acorns': how many saplings stand, of how many asked. Shown in chat after planting and in the task form. Both %s are plain numbers. Grey.
+lothlorien.message.lore.saplings.counted=§7Rebentos plantados na floresta: %s de %s.
+## Context: Line in the Loremaster form when the player pressed Deliver on the sapling task but fewer saplings still stand than were asked. Grey.
+lothlorien.message.lore.saplings.missing=§7Nem todos os rebentos ainda estão de pé.
+## Context: Progress line of an item task: how many of the asked items the player carries. Both %s are plain numbers.
+lothlorien.message.lore.req.have=Na tua mochila: %s de %s objetos.
+## Context: Chat line when a lesson of the Loremaster is completed. %s is the lesson name. Green.
+lothlorien.message.lore.done.lesson=§aLição concluída: %s
+## Context: Chat line when all lessons of a chapter are complete and the next chapter of the Loremaster's teaching opens.
+lothlorien.message.lore.chapter.opened=§fO Mestre do saber tem mais para te ensinar.
+## Context: Chat line when the player earned a Renown point for a rare deed (a white animal's gift or bond). Green.
+lothlorien.message.lore.tale=§aOs Galadhrim recordarão este feito.
+## Context: Chat line when a player in the Shunned band (Harmony -15 to -29) uses the Loremaster: he refuses to speak, only this hint.
+lothlorien.message.lore.shunned=§7Aprende a viver em paz com a floresta e depois regressa.
+## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:renown. Translate labels; keep technical tokens and the command.
+lothlorien.message.lore.debug.state=[lothlorien] renome %s (%s), capítulo %s, lições ativas: %s, tarefa: %s, harmonia %s
+## Context: Name of the Loremaster lesson "harmony". Lesson 1 (chapter I, a deed lesson): Harmony, the standing with the forest from Hated to Friend. Peaceful time inside the forest raises it; harming the forest's creatures lowers it; the leaf icon on the action bar shows the band; Friend is exactly +10 and any wrong deed loses it. The task: reach Harmony +3 or more and press 'It is done'.
+lothlorien.message.lore.lesson.harmony.name=A harmonia da floresta
+## Context: Lesson 1 (chapter I, a deed lesson): Harmony, the standing with the forest from Hated to Friend. Peaceful time inside the forest raises it; harming the forest's creatures lowers it; the leaf icon on the action bar shows the band; Friend is exactly +10 and any wrong deed loses it. The task: reach Harmony +3 or more and press 'It is done'.
+lothlorien.message.lore.lesson.harmony.text=A floresta pesa a forma como nela caminhas. O tempo em paz entre as árvores cura a tua harmonia, enquanto ferir as suas criaturas a fere; o ícone de folha mostra onde estás. Com +10 tens a Amizade de Lothlórien, e qualquer ato mau a perde de novo. Caminha em paz até a tua harmonia ser pelo menos +3 e diz-me que está feito.
+## Context: Name of the Loremaster lesson "elves". Lesson 2 (chapter I, lore): the elves are few. No new elves are born; only the border wardens return over time; healers keep the others alive; killing an elf costs dearly in Harmony.
+lothlorien.message.lore.lesson.elves.name=O nosso povo
+## Context: Lesson 2 (chapter I, lore): the elves are few. No new elves are born; only the border wardens return over time; healers keep the others alive; killing an elf costs dearly in Harmony.
+lothlorien.message.lore.lesson.elves.text=O nosso povo é pouco, e não nascem novos elfos. Só os guardas da fronteira regressam, e os curandeiros mantêm vivos os restantes. Levanta a mão contra um de nós e o preço será alto.
+## Context: Name of the Loremaster lesson "renown". Lesson 3 (chapter I, lore): Renown is what the player does for the elves (separate from Harmony); ranks Stranger, Welcome, Trusted, Elf-friend; it grows with deeds and tasks, is never lost, is known in every village, and opens deeper stock with the elven traders.
+lothlorien.message.lore.lesson.renown.name=Renome
+## Context: Lesson 3 (chapter I, lore): Renown is what the player does for the elves (separate from Harmony); ranks Stranger, Welcome, Trusted, Elf-friend; it grows with deeds and tasks, is never lost, is known in every village, and opens deeper stock with the elven traders.
+lothlorien.message.lore.lesson.renown.text=O renome é o que fazes pelos elfos, e não é a harmonia. Cresce com cada feito e cada tarefa para os meus, e nunca se perde. Os seus postos são Forasteiro, Bem-vindo, De confiança e Amigo dos elfos, e a notícia viaja até cada aldeia. Quanto mais alto estiveres, mais fundo será o stock que os elfos te oferecerão.
+## Context: Name of the Loremaster lesson "dew". Lesson 4 (chapter I, deed): morning dew. At dawn dew gathers on leaf litter and blossoms lying under Mallorn leaves; using a glass bottle on a dewy patch gives one drop and the patch dries; eight drops fill the bottle. Deed: fill a Bottle of morning dew.
+lothlorien.message.lore.lesson.dew.name=O orvalho da manhã
+## Context: Lesson 4 (chapter I, deed): morning dew. At dawn dew gathers on leaf litter and blossoms lying under Mallorn leaves; using a glass bottle on a dewy patch gives one drop and the patch dries; eight drops fill the bottle. Deed: fill a Bottle of morning dew.
+lothlorien.message.lore.lesson.dew.text=Ao primeiro raio de luz as folhas choram prata. De manhã o orvalho pousa na folhada e nas flores que jazem sob as folhas de mallorn. Usa uma garrafa de vidro em cada local com orvalho: cada um dá uma gota e oito enchem a garrafa. Enche uma garrafa de orvalho da manhã.
+## Context: Name of the Loremaster lesson "nectar". Lesson 5 (chapter I, deed): nectar blooms hang beneath Mallorn leaves and fill in four stages; a glass bottle on a full bloom gives Mallorn nectar and empties the bloom. Deed: bottle Mallorn nectar.
+lothlorien.message.lore.lesson.nectar.name=O néctar de mallorn
+## Context: Lesson 5 (chapter I, deed): nectar blooms hang beneath Mallorn leaves and fill in four stages; a glass bottle on a full bloom gives Mallorn nectar and empties the bloom. Deed: bottle Mallorn nectar.
+lothlorien.message.lore.lesson.nectar.text=As flores de néctar pendem sob as folhas de mallorn e enchem-se em quatro etapas. Usa uma garrafa de vidro numa flor cheia e a flor começa a encher-se de novo. Enche uma garrafa de néctar de mallorn.
+## Context: Name of the Loremaster lesson "depth". Lesson 6 (chapter II, lore): the forest has three depths measured from the border: the edge (border within about 16 blocks), the inner wood (within about 40), and the heart (farther). Real effects: border wardens off the villages' wooden decks are fewer the deeper you go; the rarest creatures are met more often deeper in.
+lothlorien.message.lore.lesson.depth.name=A profundidade da floresta
+## Context: Lesson 6 (chapter II, lore): the forest has three depths measured from the border: the edge (border within about 16 blocks), the inner wood (within about 40), and the heart (farther). Real effects: border wardens off the villages' wooden decks are fewer the deeper you go; the rarest creatures are met more often deeper in.
+lothlorien.message.lore.lesson.depth.text=A floresta tem três profundidades: a orla, junto à fronteira; a floresta interior, mais adentro; e o coração. Perto da orla os guardas da fronteira andam em número, mas mais adentro são menos, exceto nas plataformas de madeira das nossas aldeias. As criaturas mais raras da floresta encontram-se com mais frequência quanto mais fundo caminhas.
+## Context: Name of the Loremaster lesson "lembas". Lesson 7 (chapter II, deed): Lembas. Plant Western Corn and gather its grain; three grains and a sugar make two doughs; bake the dough in a furnace or smoker to a cake; a cake plus a Mallorn leaf makes wrapped Lembas, which lifts the Hunger effect when eaten. Deed: eat wrapped Lembas.
+lothlorien.message.lore.lesson.lembas.name=Lembas
+## Context: Lesson 7 (chapter II, deed): Lembas. Plant Western Corn and gather its grain; three grains and a sugar make two doughs; bake the dough in a furnace or smoker to a cake; a cake plus a Mallorn leaf makes wrapped Lembas, which lifts the Hunger effect when eaten. Deed: eat wrapped Lembas.
+lothlorien.message.lore.lesson.lembas.text=Planta cereal do Oeste e colhe o seu grão. Três grãos e um açúcar fazem massa; coze a massa e embrulha o bolo numa folha de mallorn. O lembas embrulhado alimenta bem e tira a Fome: a comida para um longo caminho. Come um lembas embrulhado.
+## Context: Name of the Loremaster lesson "fireflies". Lesson 8 (chapter II, deed): fireflies appear at night (low light) above the grass of the forest; using a glass bottle on one catches it and gives a Bottle of Fireflies. Deed: catch a firefly in a bottle.
+lothlorien.message.lore.lesson.fireflies.name=Os pirilampos
+## Context: Lesson 8 (chapter II, deed): fireflies appear at night (low light) above the grass of the forest; using a glass bottle on one catches it and gives a Bottle of Fireflies. Deed: catch a firefly in a bottle.
+lothlorien.message.lore.lesson.fireflies.text=Depois do anoitecer, os pirilampos flutuam sobre a erva da floresta. Usa uma garrafa de vidro com um e fica apanhado: uma pequena luz para levar ou para dar ao acendedor de lampiões. Apanha um pirilampo numa garrafa.
+## Context: Name of the Loremaster lesson "rope". Lesson 9 (chapter II, deed): Elven rope is crafted from one Bottle of morning dew and a golden fern (the dew takes a whole dawn to gather). Used on the side of a block it hangs down; used on a piece it lengthens the rope up or down; it can be climbed. Deed: hang an elven rope.
+lothlorien.message.lore.lesson.rope.name=A corda élfica
+## Context: Lesson 9 (chapter II, deed): Elven rope is crafted from one Bottle of morning dew and a golden fern (the dew takes a whole dawn to gather). Used on the side of a block it hangs down; used on a piece it lengthens the rope up or down; it can be climbed. Deed: hang an elven rope.
+lothlorien.message.lore.lesson.rope.text=A corda élfica faz-se com orvalho da manhã e um feto dourado, e numa cabe todo um amanhecer de recolha. Usa-a no lado de um bloco e ela pende para baixo; usa-a num troço e ela cresce para cima ou para baixo. Pode ser escalada. Pendura uma corda élfica.
+## Context: Name of the Loremaster lesson "gifts". Lesson 10 (chapter III, deed): gifts of the forest. Deer love Western Corn and a deer fed with it trusts the player; a Friend of Lothlórien (Harmony +10) may offer a Mallorn acorn to a squirrel, which runs on an errand and brings back a gift. Deed: send a squirrel off with an acorn (needs Friend).
+lothlorien.message.lore.lesson.gifts.name=As dádivas da floresta
+## Context: Lesson 10 (chapter III, deed): gifts of the forest. Deer love Western Corn and a deer fed with it trusts the player; a Friend of Lothlórien (Harmony +10) may offer a Mallorn acorn to a squirrel, which runs on an errand and brings back a gift. Deed: send a squirrel off with an acorn (needs Friend).
+lothlorien.message.lore.lesson.gifts.text=Os veados adoram o cereal do Oeste, e um veado alimentado confiará em ti. Um amigo de Lothlórien pode oferecer uma bolota de mallorn a um esquilo; ele sai a correr numa missão e traz uma dádiva. Envia um esquilo numa missão com uma bolota.
+## Context: Name of the Loremaster lesson "white_animals". Lesson 11 (chapter III, lore): a hint only. Rare white animals (the white deer and the unicorn) walk the deepest wood; to a friend of the forest they may give a gift or allow a bond. Do not name the animals plainly. Reading it enables two optional +1 Renown deeds.
+lothlorien.message.lore.lesson.white_animals.name=Os brancos
+## Context: Lesson 11 (chapter III, lore): a hint only. Rare white animals (the white deer and the unicorn) walk the deepest wood; to a friend of the forest they may give a gift or allow a bond. Do not name the animals plainly. Reading it enables two optional +1 Renown deeds.
+lothlorien.message.lore.lesson.white_animals.text=Raras criaturas brancas caminham pelo mais fundo da floresta. A um amigo da floresta podem dar, ou podem levar. Mantém alta a tua harmonia e tem paciência.
+## Context: Name of the Loremaster lesson "trades". Lesson 12 (chapter III, lore): the finest goods of the elven traders go only to an Elf-friend who is also, at that moment, a Friend of Lothlórien (Harmony +10). Renown is never lost; Harmony can be.
+lothlorien.message.lore.lesson.trades.name=Os melhores bens
+## Context: Lesson 12 (chapter III, lore): the finest goods of the elven traders go only to an Elf-friend who is also, at that moment, a Friend of Lothlórien (Harmony +10). Renown is never lost; Harmony can be.
+lothlorien.message.lore.lesson.trades.text=Os melhores bens dos meus vão apenas para um Amigo dos elfos que, nesse momento, seja também amigo de Lothlórien. O renome nunca se perde, mas a harmonia sim. Guarda ambos.
+## Context: Request of the gardener: plant five Mallorn acorns (they become saplings) inside the forest and let them stand; the count is kept and checked on delivery.
+lothlorien.message.lore.req.g_acorns.text=O jardineiro pede um favor: cinco bolotas de mallorn plantadas na terra sob os beirais da floresta. Planta-as dentro da floresta e deixa-as ficar de pé.
+## Context: Request of the gardener: bring two Bottles of morning dew.
+lothlorien.message.lore.req.g_dew.text=O jardineiro pede dois frascos de orvalho da manhã para despertar as árvores jovens.
+## Context: Request of the gardener: bring sixteen bone meal.
+lothlorien.message.lore.req.g_bonemeal.text=O jardineiro pede dezasseis farinhas de osso para alimentar as árvores jovens.
+## Context: Request of the healer: bring four Athelas.
+lothlorien.message.lore.req.h_athelas.text=O curandeiro pede quatro athelas, a folha-do-rei que cura os feridos.
+## Context: Request of the healer: bring two Mallorn nectar.
+lothlorien.message.lore.req.h_nectar.text=O curandeiro pede duas garrafas de néctar de mallorn para os doentes.
+## Context: Request of the healer: bring two Elanor and two Niphredil (flowers).
+lothlorien.message.lore.req.h_flowers.text=O curandeiro pede dois elanor e dois niphredil, flores da floresta profunda.
+## Context: Request of the woodwright: bring 32 birch or cherry logs in any mix.
+lothlorien.message.lore.req.w_logs.text=O carpinteiro pede trinta e dois troncos de bétula ou cerejeira, em qualquer mistura.
+## Context: Request of the woodwright: bring eight string and eight feathers.
+lothlorien.message.lore.req.w_fletching.text=O carpinteiro pede oito fios e oito penas para emplumar flechas.
+## Context: Request of the woodwright: bring six iron ingots.
+lothlorien.message.lore.req.w_iron.text=O carpinteiro pede seis barras de ferro para ferramentas.
+## Context: Request of the lamplighter: bring three Bottles of Fireflies.
+lothlorien.message.lore.req.l_fireflies.text=O acendedor de lampiões pede três frascos de pirilampos para acender as lanternas.
+## Context: Request of the lamplighter: bring sixteen coal or charcoal in any mix.
+lothlorien.message.lore.req.l_coal.text=O acendedor de lampiões pede dezasseis carvões ou carvões vegetais, em qualquer mistura, para as lâmpadas.
+## Context: Request of the lamplighter: bring sixteen glass.
+lothlorien.message.lore.req.l_glass.text=O acendedor de lampiões pede dezasseis vidros para as lanternas.
+## Context: Interaction prompt for speaking with the Loremaster elf (opens his dialog).
+action.interact.lothlorien.speak=Falar
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species.
+item.globe_banner_pattern.name=Padrão de Estandarte: Dossel de Mallorn
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species.
+item.banner_pattern.globe=Dossel de mallorn
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed black.
+item.banner.globe.black=Dossel de mallorn Negro
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed blue.
+item.banner.globe.blue=Dossel de mallorn Azul
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed brown.
+item.banner.globe.brown=Dossel de mallorn Castanho
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed cyan.
+item.banner.globe.cyan=Dossel de mallorn Ciano
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed gray.
+item.banner.globe.gray=Dossel de mallorn Cinzento
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed green.
+item.banner.globe.green=Dossel de mallorn Verde
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed light blue.
+item.banner.globe.lightBlue=Dossel de mallorn Azul-Claro
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed lime.
+item.banner.globe.lime=Dossel de mallorn Verde-Lima
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed magenta.
+item.banner.globe.magenta=Dossel de mallorn Magenta
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed orange.
+item.banner.globe.orange=Dossel de mallorn Laranja
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed pink.
+item.banner.globe.pink=Dossel de mallorn Rosa
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed purple.
+item.banner.globe.purple=Dossel de mallorn Roxo
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed red.
+item.banner.globe.red=Dossel de mallorn Vermelho
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed light gray.
+item.banner.globe.silver=Dossel de mallorn Cinzento-Claro
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed white.
+item.banner.globe.white=Dossel de mallorn Branco
+## Context: Lothlorien repaints the vanilla Globe banner pattern as the golden leafy crown of a mallorn tree with two small elanor stars, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed yellow.
+item.banner.globe.yellow=Dossel de mallorn Amarelo
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species.
+item.piglin_banner_pattern.name=Padrão de Estandarte: Tronco de Mallorn
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species.
+item.banner_pattern.piglin=Tronco de mallorn
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed black.
+item.banner.piglin.black=Tronco de mallorn Negro
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed blue.
+item.banner.piglin.blue=Tronco de mallorn Azul
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed brown.
+item.banner.piglin.brown=Tronco de mallorn Castanho
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed cyan.
+item.banner.piglin.cyan=Tronco de mallorn Ciano
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed gray.
+item.banner.piglin.gray=Tronco de mallorn Cinzento
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed green.
+item.banner.piglin.green=Tronco de mallorn Verde
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed light blue.
+item.banner.piglin.lightBlue=Tronco de mallorn Azul-Claro
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed lime.
+item.banner.piglin.lime=Tronco de mallorn Verde-Lima
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed magenta.
+item.banner.piglin.magenta=Tronco de mallorn Magenta
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed orange.
+item.banner.piglin.orange=Tronco de mallorn Laranja
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed pink.
+item.banner.piglin.pink=Tronco de mallorn Rosa
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed purple.
+item.banner.piglin.purple=Tronco de mallorn Roxo
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed red.
+item.banner.piglin.red=Tronco de mallorn Vermelho
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed light gray.
+item.banner.piglin.silver=Tronco de mallorn Cinzento-Claro
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed white.
+item.banner.piglin.white=Tronco de mallorn Branco
+## Context: Lothlorien repaints the vanilla Snout banner pattern as the silver trunk, branches and roots of a mallorn tree, as a heraldic charge on a banner. This key overrides the vanilla name while the pack is active. Mallorn is a fictional tree species. Layer dyed yellow.
+item.banner.piglin.yellow=Tronco de mallorn Amarelo

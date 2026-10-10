@@ -2,6 +2,7 @@ import { world, system } from "@minecraft/server";
 import { MALLORN_LEAVES, nectarAfterTick, MAX_NECTAR } from "./nectar_rules.js";
 import { GLASS_BOTTLE, swapHeldBottle, newItem } from "./bottles.js";
 import { repeatedUse } from "./use_guard.js";
+import { noteDeed } from "./deeds.js";
 
 // Phase 14b: the nectar bloom hangs under Mallorn leaves. `lothlorien:nectar` 0-3 fills by random tick while Mallorn
 // leaves are directly above; a glass bottle on a full bloom gives Mallorn nectar and empties it. Any tool or hand
@@ -40,6 +41,7 @@ world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
     if (b?.typeId !== BLOOM || b.permutation.getState(NECTAR) !== MAX_NECTAR) return;
     b.setPermutation(b.permutation.withState(NECTAR, 0));
     swapHeldBottle(player, newItem("lothlorien:mallorn_nectar"));
+    noteDeed(player, "nectar");
     dimension.playSound("bucket.fill_water", b.center(), { pitch: 1.5 });
   });
 });

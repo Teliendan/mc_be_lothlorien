@@ -31,6 +31,42 @@
       "lothlorien:loremaster": {
         "minecraft:variant": {
           "value": 4
+        },
+        "minecraft:interact": {
+          "interactions": [
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "player"
+                    },
+                    {
+                      "none_of": [
+                        {
+                          "test": "has_equipment",
+                          "domain": "hand",
+                          "subject": "other",
+                          "value": "minecraft:lead"
+                        },
+                        {
+                          "test": "has_equipment",
+                          "domain": "hand",
+                          "subject": "other",
+                          "value": "minecraft:name_tag"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "use_item": false,
+              "swing": true,
+              "interact_text": "action.interact.lothlorien.speak"
+            }
+          ]
         }
       },
       "lothlorien:home_near": {
