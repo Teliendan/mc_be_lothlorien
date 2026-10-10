@@ -18,10 +18,11 @@ import "./rail_mender.js";
 import { planNearest, toggleDebug } from "./loop_marker.js";
 import "./warden_replace.js";
 import { leafUndersideY } from "./leaf_fall.js";
-import { handleHarmonyEvent, startHarmony } from "./harmony_game.js";
+import { handleHarmonyEvent, recordElfFight, startHarmony } from "./harmony_game.js";
 import { startDeer } from "./deer.js";
 import { startWhiteDeer } from "./white_deer.js";
 import { startElvenWardens } from "./elven_warden.js";
+import { startElves } from "./elf.js";
 import { startSwans } from "./swan.js";
 import { startSquirrels } from "./squirrel.js";
 import { startUnicorns } from "./unicorn.js";
@@ -203,6 +204,7 @@ world.afterEvents.worldLoad.subscribe(() => {
     at: (dimension, x, z) => surfaceSampler(dimension, { x, z })(0, 0),
   });
   startElvenWardens(depthAt);
+  startElves({ recordFight: recordElfFight });
   startSwans({ id: BIOME_ID, at: (dimension, x, z) => surfaceSampler(dimension, { x, z })(0, 0) });
   startSquirrels();
   startUnicorns();

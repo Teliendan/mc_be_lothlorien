@@ -11359,6 +11359,384 @@
               "status": "ai-draft"
             }
           }
+        },
+        "entity.lothlorien:elf.name": {
+          "source": "Elf",
+          "context": {
+            "meaning": "Elf: a civilian elf, an inhabitant of the Elven tree villages of Lothlorien. One name for all professions.",
+            "location": "lothlorien_rp: inventory/block tooltip, entity name or spawn egg",
+            "trigger": "Viewed in inventory, Creative inventory, block targeting or entity UI, as appropriate to this key.",
+            "tone": "Clear Minecraft UI",
+            "grammar": "Standalone noun phrase, no sentence punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Elf",
+              "based_on": "8529b7c2f7d1b1c4a9990dd830bf982c773d53fdf37e6a869bc655e06a8be51e",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Elfo",
+              "based_on": "8529b7c2f7d1b1c4a9990dd830bf982c773d53fdf37e6a869bc655e06a8be51e",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Elfo",
+              "based_on": "8529b7c2f7d1b1c4a9990dd830bf982c773d53fdf37e6a869bc655e06a8be51e",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Elfo",
+              "based_on": "8529b7c2f7d1b1c4a9990dd830bf982c773d53fdf37e6a869bc655e06a8be51e",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Elfo",
+              "based_on": "8529b7c2f7d1b1c4a9990dd830bf982c773d53fdf37e6a869bc655e06a8be51e",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Elb",
+              "based_on": "8529b7c2f7d1b1c4a9990dd830bf982c773d53fdf37e6a869bc655e06a8be51e",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Elfe",
+              "based_on": "8529b7c2f7d1b1c4a9990dd830bf982c773d53fdf37e6a869bc655e06a8be51e",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Elf",
+              "based_on": "8529b7c2f7d1b1c4a9990dd830bf982c773d53fdf37e6a869bc655e06a8be51e",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "item.spawn_egg.entity.lothlorien:elf.name": {
+          "source": "Elf Spawn Egg",
+          "context": {
+            "meaning": "Creative spawn egg for Elf. Spawn Egg is the Minecraft item type; do not translate as an animal-laid egg.",
+            "location": "lothlorien_rp: inventory/block tooltip, entity name or spawn egg",
+            "trigger": "Viewed in inventory, Creative inventory, block targeting or entity UI, as appropriate to this key.",
+            "tone": "Clear Minecraft UI",
+            "grammar": "Standalone noun phrase, no sentence punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Vajíčko tvora: Elf",
+              "based_on": "f5bc0d63e34f8493fe98b8b9bd4615cea987630cd14f98c8f5026fb959bbfa60",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Huevo generador: Elfo",
+              "based_on": "f5bc0d63e34f8493fe98b8b9bd4615cea987630cd14f98c8f5026fb959bbfa60",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Huevo generador: Elfo",
+              "based_on": "f5bc0d63e34f8493fe98b8b9bd4615cea987630cd14f98c8f5026fb959bbfa60",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Ovo de invocação: Elfo",
+              "based_on": "f5bc0d63e34f8493fe98b8b9bd4615cea987630cd14f98c8f5026fb959bbfa60",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Ovo gerador: Elfo",
+              "based_on": "f5bc0d63e34f8493fe98b8b9bd4615cea987630cd14f98c8f5026fb959bbfa60",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Spawn-Ei: Elb",
+              "based_on": "f5bc0d63e34f8493fe98b8b9bd4615cea987630cd14f98c8f5026fb959bbfa60",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Œuf d’apparition : Elfe",
+              "based_on": "f5bc0d63e34f8493fe98b8b9bd4615cea987630cd14f98c8f5026fb959bbfa60",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Jajo przyzywające: Elf",
+              "based_on": "f5bc0d63e34f8493fe98b8b9bd4615cea987630cd14f98c8f5026fb959bbfa60",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.elf.profession.gardener": {
+          "source": "Gardener",
+          "context": {
+            "meaning": "Profession title of a civilian elf who tends the plants of the tree village.",
+            "location": "lothlorien_rp: title of future trade and dialog screens of the elf (not shown in game yet)",
+            "trigger": "Shown as the title of the screen when the player talks to or trades with an elf of this profession.",
+            "tone": "Clear Minecraft UI",
+            "grammar": "Standalone noun phrase naming a role, no sentence punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Zahradník",
+              "based_on": "ef6245518d82d5eb6a75a3e376a42b1444151d742aeac80a42832353caeb3c77",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Jardinero",
+              "based_on": "ef6245518d82d5eb6a75a3e376a42b1444151d742aeac80a42832353caeb3c77",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Jardinero",
+              "based_on": "ef6245518d82d5eb6a75a3e376a42b1444151d742aeac80a42832353caeb3c77",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Jardineiro",
+              "based_on": "ef6245518d82d5eb6a75a3e376a42b1444151d742aeac80a42832353caeb3c77",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Jardineiro",
+              "based_on": "ef6245518d82d5eb6a75a3e376a42b1444151d742aeac80a42832353caeb3c77",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Gärtner",
+              "based_on": "ef6245518d82d5eb6a75a3e376a42b1444151d742aeac80a42832353caeb3c77",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Jardinier",
+              "based_on": "ef6245518d82d5eb6a75a3e376a42b1444151d742aeac80a42832353caeb3c77",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Ogrodnik",
+              "based_on": "ef6245518d82d5eb6a75a3e376a42b1444151d742aeac80a42832353caeb3c77",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.elf.profession.healer": {
+          "source": "Healer",
+          "context": {
+            "meaning": "Profession title of a civilian elf who heals the villagers and visitors.",
+            "location": "lothlorien_rp: title of future trade and dialog screens of the elf (not shown in game yet)",
+            "trigger": "Shown as the title of the screen when the player talks to or trades with an elf of this profession.",
+            "tone": "Clear Minecraft UI",
+            "grammar": "Standalone noun phrase naming a role, no sentence punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Léčitel",
+              "based_on": "b106f7f0558c9fd50547c132dabb34aa5369b6896b426427656368a22eca6968",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Sanador",
+              "based_on": "b106f7f0558c9fd50547c132dabb34aa5369b6896b426427656368a22eca6968",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Sanador",
+              "based_on": "b106f7f0558c9fd50547c132dabb34aa5369b6896b426427656368a22eca6968",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Curandeiro",
+              "based_on": "b106f7f0558c9fd50547c132dabb34aa5369b6896b426427656368a22eca6968",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Curandeiro",
+              "based_on": "b106f7f0558c9fd50547c132dabb34aa5369b6896b426427656368a22eca6968",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Heiler",
+              "based_on": "b106f7f0558c9fd50547c132dabb34aa5369b6896b426427656368a22eca6968",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Guérisseur",
+              "based_on": "b106f7f0558c9fd50547c132dabb34aa5369b6896b426427656368a22eca6968",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Uzdrowiciel",
+              "based_on": "b106f7f0558c9fd50547c132dabb34aa5369b6896b426427656368a22eca6968",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.elf.profession.woodwright": {
+          "source": "Woodwright",
+          "context": {
+            "meaning": "Profession title of a civilian elf who builds and mends things from wood, a carpenter.",
+            "location": "lothlorien_rp: title of future trade and dialog screens of the elf (not shown in game yet)",
+            "trigger": "Shown as the title of the screen when the player talks to or trades with an elf of this profession.",
+            "tone": "Clear Minecraft UI",
+            "grammar": "Standalone noun phrase naming a role, no sentence punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Tesař",
+              "based_on": "ec4dba78f4d4fd6915ac9cb57b5d6ac9e57c1391f8a3094f5bb0a7d68fbae746",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Carpintero",
+              "based_on": "ec4dba78f4d4fd6915ac9cb57b5d6ac9e57c1391f8a3094f5bb0a7d68fbae746",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Carpintero",
+              "based_on": "ec4dba78f4d4fd6915ac9cb57b5d6ac9e57c1391f8a3094f5bb0a7d68fbae746",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Carpinteiro",
+              "based_on": "ec4dba78f4d4fd6915ac9cb57b5d6ac9e57c1391f8a3094f5bb0a7d68fbae746",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Carpinteiro",
+              "based_on": "ec4dba78f4d4fd6915ac9cb57b5d6ac9e57c1391f8a3094f5bb0a7d68fbae746",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Zimmermann",
+              "based_on": "ec4dba78f4d4fd6915ac9cb57b5d6ac9e57c1391f8a3094f5bb0a7d68fbae746",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Charpentier",
+              "based_on": "ec4dba78f4d4fd6915ac9cb57b5d6ac9e57c1391f8a3094f5bb0a7d68fbae746",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Cieśla",
+              "based_on": "ec4dba78f4d4fd6915ac9cb57b5d6ac9e57c1391f8a3094f5bb0a7d68fbae746",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.elf.profession.lamplighter": {
+          "source": "Lamplighter",
+          "context": {
+            "meaning": "Profession title of a civilian elf who lights and tends the lanterns of the tree village.",
+            "location": "lothlorien_rp: title of future trade and dialog screens of the elf (not shown in game yet)",
+            "trigger": "Shown as the title of the screen when the player talks to or trades with an elf of this profession.",
+            "tone": "Clear Minecraft UI",
+            "grammar": "Standalone noun phrase naming a role, no sentence punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Lampář",
+              "based_on": "40b0f211232689f7308145993f170f064099e01edc6d88f3a123c6a1a48e9c97",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Farolero",
+              "based_on": "40b0f211232689f7308145993f170f064099e01edc6d88f3a123c6a1a48e9c97",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Farolero",
+              "based_on": "40b0f211232689f7308145993f170f064099e01edc6d88f3a123c6a1a48e9c97",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Acendedor de lampiões",
+              "based_on": "40b0f211232689f7308145993f170f064099e01edc6d88f3a123c6a1a48e9c97",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Acendedor de lampiões",
+              "based_on": "40b0f211232689f7308145993f170f064099e01edc6d88f3a123c6a1a48e9c97",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Laternenanzünder",
+              "based_on": "40b0f211232689f7308145993f170f064099e01edc6d88f3a123c6a1a48e9c97",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Allumeur de lanternes",
+              "based_on": "40b0f211232689f7308145993f170f064099e01edc6d88f3a123c6a1a48e9c97",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Latarnik",
+              "based_on": "40b0f211232689f7308145993f170f064099e01edc6d88f3a123c6a1a48e9c97",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.elf.profession.loremaster": {
+          "source": "Loremaster",
+          "context": {
+            "meaning": "Profession title of the wise elf who keeps the lore and tales of the forest.",
+            "location": "lothlorien_rp: title of future trade and dialog screens of the elf (not shown in game yet)",
+            "trigger": "Shown as the title of the screen when the player talks to or trades with an elf of this profession.",
+            "tone": "Clear Minecraft UI",
+            "grammar": "Standalone noun phrase naming a role, no sentence punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Znalec tradic",
+              "based_on": "bbdcb6c0f7845910b77f51b30e88718188191d2b0988a2aa5e0b7a5e4f9bc138",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Maestro del saber",
+              "based_on": "bbdcb6c0f7845910b77f51b30e88718188191d2b0988a2aa5e0b7a5e4f9bc138",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Maestro del saber",
+              "based_on": "bbdcb6c0f7845910b77f51b30e88718188191d2b0988a2aa5e0b7a5e4f9bc138",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Mestre do saber",
+              "based_on": "bbdcb6c0f7845910b77f51b30e88718188191d2b0988a2aa5e0b7a5e4f9bc138",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Mestre do saber",
+              "based_on": "bbdcb6c0f7845910b77f51b30e88718188191d2b0988a2aa5e0b7a5e4f9bc138",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Wissensmeister",
+              "based_on": "bbdcb6c0f7845910b77f51b30e88718188191d2b0988a2aa5e0b7a5e4f9bc138",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Maître du savoir",
+              "based_on": "bbdcb6c0f7845910b77f51b30e88718188191d2b0988a2aa5e0b7a5e4f9bc138",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Mistrz wiedzy",
+              "based_on": "bbdcb6c0f7845910b77f51b30e88718188191d2b0988a2aa5e0b7a5e4f9bc138",
+              "status": "ai-draft"
+            }
+          }
         }
       }
     }

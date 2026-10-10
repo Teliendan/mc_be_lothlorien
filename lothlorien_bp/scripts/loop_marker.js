@@ -9,6 +9,7 @@
 //                (discoverVillage), so the planner never depends on where the player stands. The areas are removed again in `finally`.
 //   3 plan       planGen on the blocks of that area (budget 3 extra links), run as a job (yields, no long tick).
 //   4 build      all picks are written in the same job (a few hundred blocks per tick), then every marker in the area is removed.
+//   5 populate   civilian elves: the tree pieces' `lothlorien:elf_post` entities are read, assigned and replaced by elves (elf_village.js).
 // The planner is one-shot: no polling, no retry loop. A failed run (quota, timeout, error) keeps the markers; they try again on a later load, at
 // most AREA.maxTries times per marker. `/scriptevent lothlorien:village plan` re-runs it by hand for the nearest marker (see planNearest).
 import { BlockPermutation, system, world } from "@minecraft/server";
@@ -16,6 +17,7 @@ import { MARKER_ID, finalBlocks } from "./village_loop.js";
 import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, describePick, describeMerge } from "./village_planner.js";
 import { missingLinks } from "./rail_mender_rules.js";
 import { message } from "./messages.js";
+import { populateVillage } from "./elf_village.js";
 
 const START_DELAY_TICKS = 20, SETTLE_TICKS = 40, AREA_TIMEOUT_TICKS = 600, WRITES_PER_TICK = 400;
 const TRIES = "lothlorien:loop_tries", DONE = "lothlorien:village_plans";
@@ -89,6 +91,8 @@ async function planVillageAt(entity, force, trigger) {
     found = await discoverVillage(env, first, base);
     await sleep(SETTLE_TICKS); // neighbouring chunks of a fresh village finish their decoration
     const result = await runJobAsync(planAndBuild(dimension, found, PLAN.budget));
+    // the civilians move in while the village is loaded (own try: a population error never fails the planner; unspawned posts stay for a later run)
+    try { populateVillage(dimension, found.rect, [first[0], first[2]]); } catch (e) { log(`elves: ${e?.message ?? e}`); }
     const removed = removeMarkers(dimension, found.rect);
     if (!force) world.setDynamicProperty(DONE, JSON.stringify(addDone(parseDone(world.getDynamicProperty(DONE)), found.rect)));
     console.warn(`[lothlorien] planner: village at ${first[0]},${first[2]}: ${found.known.length} markers (${removed} removed), ${found.rounds} area round(s) of ${found.sizes.join("+")} chunks${found.stable ? "" : ", NOT stable"}, ${result.nRaw} candidates, ${result.merges.length} merge(s), ${result.picks.length} link(s), ${result.blocks} blocks${result.failedWrites ? `, ${result.failedWrites} write(s) failed` : ""}`);

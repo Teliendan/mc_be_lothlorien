@@ -160,4 +160,107 @@ await scenario("warden_replace: a template warden with engine movement is replac
   assert.equal(mock.spawned.length, 1, "exactly one replacement (idempotent for the second event, and the fresh one is not replaced again)");
   assert.equal(mock.spawned[0].entity.nameTag, "Haldir"); assert.equal(mock.spawned[0].opts.spawnEvent, "lothlorien:village_warden");
 });
+// ---- civilian elves (M1): elf_village.js inside the planner run, elf.js hurt handling ----
+const EL = await import(`${SRC}elf_rules.js`);
+const POST = EL.POST_ID, ELF = EL.ELF_ID;
+const postsLeft = () => mock.dimension().getEntities({ type: POST }).length;
+const elvesSpawned = () => mock.spawned.filter((s) => s.entity.typeId === ELF);
+const cellKey = (loc) => `${Math.floor(loc.x)},${Math.floor(loc.y)},${Math.floor(loc.z)}`;
+// synthetic posts at real deck cells of V2: the Loremaster and the reserves beside one marker, a home post beside each of `homes` other markers
+function addPosts(homes) {
+  const n = f.markers.length, at = (i) => { const m = f.markers[Math.floor(i * n / 7)]; return { x: Math.floor(m[0]) + 0.5, y: Math.floor(m[1]), z: Math.floor(m[2]) + 0.5 }; };
+  const post = (kind, l) => mock.addEntity(POST, l, { components: { "minecraft:type_family": { getTypeFamilies: () => ["lothlorien_elf_post", `elf_post_${kind}`, "inanimate"] } } });
+  const l0 = at(0), lore = post("loremaster", l0);
+  const reserves = [1, 2, 3, 4].map((d) => post("reserve", { ...l0, x: l0.x + d }));
+  const home = Array.from({ length: homes }, (_, i) => post("home", at(i + 1)));
+  return { lore, reserves, home };
+}
+const homeRecords = () => EL.parseHomes(world.getDynamicProperty(EL.HOMES_PROPERTY));
+
+await scenario("elves: the planner run turns the posts into the five professions, records the homes, removes the posts; a later re-plan spawns nothing", async () => {
+  const markers = setupV2(), { lore, reserves, home } = addPosts(5);
+  await loadScript("loop_marker.js");
+  mock.fire("entityLoad", { entity: markers[0] });
+  await mock.settle();
+  const elves = elvesSpawned(), events = elves.map((s) => s.opts.spawnEvent);
+  assert.equal(elves.length, 5, "exactly five elves");
+  assert.deepEqual(events, [EL.spawnEventOf("loremaster"), ...EL.HOME_ORDER.map(EL.spawnEventOf)], "Loremaster first, then the four professions in HOME_ORDER");
+  assert.equal(cellKey(elves[0].entity.location), cellKey(lore.location), "the Loremaster stands on its post");
+  const site = (e) => EL.homeSite(v2At, Math.floor(e.location.x), Math.floor(e.location.y) - 1, Math.floor(e.location.z));
+  const dist = (e) => Math.hypot(e.location.x - lore.location.x, e.location.z - lore.location.z);
+  const want = home.map((e) => ({ e, room: site(e)?.k >= EL.HOME_MIN ? 0 : 1 })).sort((a, b) => a.room - b.room || dist(a.e) - dist(b.e) || a.e.location.x - b.e.location.x || a.e.location.z - b.e.location.z).slice(0, 4);
+  want.forEach((w, i) => assert.equal(cellKey(elves[i + 1].entity.location), cellKey(w.e.location), `${EL.HOME_ORDER[i]} on the ${i + 1}. tree (room first, then nearest to the Loremaster)`));
+  for (const s of elves) assert.equal(s.entity.getDynamicProperty(EL.HOME_OF_ELF), cellKey(s.entity.location), "the home note is the post cell");
+  assert.equal(mock.propWrites.filter((k) => k === EL.HOMES_PROPERTY).length, 1, "the record is written once");
+  const rec = homeRecords();
+  assert.equal(rec.length, 1); assert.equal(rec[0].homes.length, 4); assert.deepEqual(rec[0].homes.map((h) => h.p), EL.HOME_ORDER);
+  assert.deepEqual(rec[0].loremaster, [Math.floor(lore.location.x), Math.floor(lore.location.y), Math.floor(lore.location.z)]);
+  assert.equal(postsLeft(), 0, "every post is removed, the unused fifth home post too"); assert.ok(reserves.every((r) => !r.isValid));
+  assert.equal(grep(/elves: village at/).length, 1, "one elves line"); assert.match(grep(/elves: village at/)[0], /loremaster \+ 4 on own trees \(0 on reserves\)/);
+  // a manual re-plan finds no posts: it spawns nothing and writes no record
+  const marker = mock.addEntity(MARKER, { x: f.markers[3][0], y: f.markers[3][1], z: f.markers[3][2] });
+  const mod = await loadScript("loop_marker.js"), sent = [];
+  mod.planNearest({ dimension: mock.dimension(), location: { ...marker.location }, sendMessage: (m) => sent.push(m) });
+  await mock.settle();
+  assert.equal(sent.length, 1, "the re-plan ran"); assert.equal(elvesSpawned().length, 5, "no new elves"); assert.equal(homeRecords().length, 1, "no second record");
+  assert.equal(grep(/elves: village at/).length, 1, "and no second elves line");
+});
+
+await scenario("elves: with only 2 home posts the other 2 professions stand on the nearest reserve posts - still five elves", async () => {
+  const markers = setupV2(), { reserves } = addPosts(2);
+  await loadScript("loop_marker.js");
+  mock.fire("entityLoad", { entity: markers[0] });
+  await mock.settle();
+  const elves = elvesSpawned();
+  assert.equal(elves.length, 5);
+  assert.deepEqual(elves.map((s) => s.opts.spawnEvent), [EL.spawnEventOf("loremaster"), ...EL.HOME_ORDER.map(EL.spawnEventOf)]);
+  assert.equal(cellKey(elves[3].entity.location), cellKey(reserves[0].location), "woodwright on the nearest reserve");
+  assert.equal(cellKey(elves[4].entity.location), cellKey(reserves[1].location), "lamplighter on the next one");
+  assert.equal(homeRecords()[0].homes.filter((h) => h.site === null).length >= 2, true, "reserve homes have no site");
+  assert.match(grep(/elves: village at/)[0], /loremaster \+ 2 on own trees \(2 on reserves\)/);
+  assert.equal(postsLeft(), 0);
+});
+
+await scenario("elves: a spawn error for one elf keeps its post, the planner still finishes, nothing throws", async () => {
+  const markers = setupV2(), { home } = addPosts(5);
+  mock.onSpawn = (e, opts) => { if (opts.spawnEvent === EL.spawnEventOf("gardener")) throw new Error("boom"); };
+  await loadScript("loop_marker.js");
+  mock.fire("entityLoad", { entity: markers[0] });
+  await mock.settle();
+  assert.equal(grep(/planner: village at/).length, 1, "the planner summary line still comes");
+  assert.equal(markersLeft(), 0, "markers removed as always");
+  assert.equal(grep(/could not spawn the gardener/).length, 1); assert.match(grep(/elves: village at/)[0], /1 failed/);
+  assert.equal(postsLeft(), 1, "only the failed post is kept");
+  assert.equal(homeRecords()[0].homes.length, 3, "the record lists the three elves that exist");
+  assert.ok(home.some((h) => h.isValid), "the kept post is one of the home posts");
+});
+
+await scenario("elf.js: a hit on an elf charges a fight per 60 s window and tags the player as foe for 60 s after the LAST hit; other mobs and stale tags", async () => {
+  const realNow = Date.now; let now = 1_000_000;
+  Date.now = () => now;
+  try {
+    const player = mock.addEntity("minecraft:player", { x: 0, y: 70, z: 0 }), elf = mock.addEntity(ELF, { x: 1, y: 70, z: 1 }), deer = mock.addEntity("lothlorien:deer", { x: 2, y: 70, z: 2 });
+    mock.players.push(player);
+    const fights = [];
+    const mod = await loadScript("elf.js");
+    mod.startElves({ recordFight: (p, e) => fights.push([p, e]) });
+    const hit = (target, by = player) => mock.fire("entityHurt", { hurtEntity: target, damageSource: { damagingEntity: by } });
+    hit(deer); hit(elf, elf);
+    assert.equal(fights.length, 0); assert.equal(player.hasTag(EL.FOE_TAG), false, "other mobs and non-player hitters do nothing");
+    hit(elf);
+    assert.equal(fights.length, 1); assert.equal(fights[0][1], elf); assert.ok(player.hasTag(EL.FOE_TAG));
+    await mock.advance(200); now += 10_000; hit(elf); // 10 s later: the same fight, the tag timer starts over
+    assert.equal(fights.length, 1, "no second fight within 60 s");
+    await mock.advance(1100); now += 55_000; // 55 s after the second hit, 65 s after the first
+    assert.ok(player.hasTag(EL.FOE_TAG), "the first hit's timer must not remove the tag early");
+    await mock.advance(150); now += 7_500;
+    assert.equal(player.hasTag(EL.FOE_TAG), false, "60 s after the last hit the tag is gone");
+    now += 61_000; hit(elf);
+    assert.equal(fights.length, 2, "a hit more than 60 s after the previous one is a new fight"); assert.ok(player.hasTag(EL.FOE_TAG));
+    mock.fire("playerSpawn", { player, initialSpawn: false }); assert.ok(player.hasTag(EL.FOE_TAG), "a respawn keeps the tag");
+    mock.fire("playerSpawn", { player, initialSpawn: true }); assert.equal(player.hasTag(EL.FOE_TAG), false, "a stale tag is dropped on joining");
+    hit(elf); mock.fire("playerLeave", { playerId: player.id });
+    await mock.settle(); // the pending timer of a player who left does nothing and throws nothing
+  } finally { Date.now = realNow; }
+});
 console.warn = realWarn;

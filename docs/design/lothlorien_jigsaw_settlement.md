@@ -66,9 +66,12 @@ weights (`EXIT_WEIGHTS`, `EARLY_END`, `WARDENS`), pools, structure. Runtime shap
    walkability via `structure_walk.mjs`; everything supported or visibly braced to the ground (pillar down to ROOTS), no floating parts; rails are `RAIL` posts with `minecraft:connection_*` states and win over
    leaves (clear leaves in rail/walk/headroom cells; the orphan-leaf trim is the last step); only vanilla-namespace states turn with the piece (`minecraft:block_face`, `minecraft:connection_*`),
    `lothlorien:*` states do not.
-4. Template-entity trap: mobs saved in a `.mcstructure` load with engine-default attributes, so they need replacement on load (see `warden_replace.js`); markers (`rail_mender`, `loop_marker`) are
+4. **Elf posts (M1, 2026-10-10):** a new TREE piece (anything that becomes a profession tree) needs exactly one `lothlorien:elf_post` with kind `home` (`postCells` in `build_village.mjs` does it for every `NODES` entry and so for every combo;
+   central trees: 1 `loremaster` + `RESERVE_POSTS` `reserve`), or the elves never stand there: the planner run (`elf_village.js`) assigns professions only to posts it finds. Pieces that are not trees (crowns, ends) carry none.
+   Post rules and tunables live in `scripts/elf_rules.js`; tests check count, standing cells and spacing for every shipped piece. A piece that cannot fit a post makes the generator throw.
+5. Template-entity trap: mobs saved in a `.mcstructure` load with engine-default attributes, so they need replacement on load (see `warden_replace.js`); markers (`rail_mender`, `loop_marker`) are
    placed via `extra.markers` / `extra.loopMarkers` of `writePiece`. A new platform needs `loop_marker`s on its rim runs (`sideMarkerCells`) or the planner cannot see it.
-5. Add tests in `tests/run.mjs` (connector standard, no orphan leaves, light and walk sweeps run over every shipped piece automatically) and run `node tools/village_sim.mjs 300 1` (must stay at 0 failures).
+6. Add tests in `tests/run.mjs` (connector standard, no orphan leaves, light and walk sweeps run over every shipped piece automatically) and run `node tools/village_sim.mjs 300 1` (must stay at 0 failures).
 
 **Preview tools** (run from `mods/lothlorien`; PNGs go to `temp/village_render/` and `temp/village_sim/`):
 - `node tools/village_render.mjs piece <name> [rot] [--leaves]` isometric + top view of one piece; `side <piece>`; `sim <seed> [--links] [--iso x0 x1 z0 z1]` simulated village (+ planner links);

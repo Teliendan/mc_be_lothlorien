@@ -82,8 +82,10 @@ Dropped: Box of Lórien earth (not unique enough), Elessar (Aragorn's alone; bec
 
 - **Same trajectory and flight as a vanilla arrow** (owner: players learn where to aim; a new trajectory would be a penalty, not a reward).
 - **Survive the hit**: on hitting a mob they usually drop as an item to pick up again (chance tunable). Helpful, not overpowered.
-- **Faint silver trail** (particles), to be tried.
-- Fired only by the Bow of the Galadhrim (a vanilla bow fires only vanilla arrows, **[U] verify in the spike**); the Elven bow fires both.
+- ~~Silver trail~~ **dropped** (owner 2026-10-10): invisible behind the vanilla arrow's own flight particles [V].
+- **Recovery 100 %** (owner): the arrow item drops at the hit spot by script (`projectileHitEntity`, works [V]); ground-stuck arrows are picked up as the custom item [V].
+- Fired **only from the Bow of the Galadhrim** (owner): a vanilla bow in survival cannot draw with only custom arrows [V] (engine-side, accepted). The Galadhrim bow fires both kinds; the earliest inventory slot is used first [V].
+- Flight: the custom arrow entity (copy of vanilla `arrow`) flies identically to a vanilla arrow [V].
 - Not craftable: woodwright (Trusted) and **Great Mallorn loot chests** (section 9).
 
 ## 7. Healer
@@ -94,13 +96,16 @@ Dropped: Box of Lórien earth (not unique enough), Elessar (Aragorn's alone; bec
 - Shown as a blessing (arm raise, particles). There is no stable "walk to that entity" script call in 2.8.0 as far as known, so v1 does not
   walk to the patient; an AI-goal trick is a later experiment.
 
-## 8. Engine facts and spikes (do first)
+## 8. Engine facts (M0 spike, owner-tested in game 2026-10-10, Bedrock 1.26.52, [V])
 
-1. **Custom bow**: does the engine apply Power / Punch / Flame / Infinity to a custom `minecraft:shooter` item? If not, script reads the bow's
-   enchantments when it shoots and applies them (damage, knockback, fire, arrow refund). Also: does a vanilla bow refuse custom arrows? Pull animation via attachable.
-2. **Belt on the waist**: off-hand attachable bound to the body bone instead of the arm.
-3. **Arrow survival**: drop an arrow item on `projectileHitEntity` (or the projectile's own on-hit), the native arrow removed.
-4. Known: civilian elves placed as structure template entities get engine default attributes (movement 0.7, etc.), like the village wardens
+Details and recipes: `.claude/skills/bedrock-items/references/bows-and-arrows.md` and `attachables.md`. The spike files were removed from the mod; templates stay in `temp/elven_inhabitants/spike_files/`.
+
+1. **Custom bow** (`minecraft:shooter` + `minecraft:enchantable` slot bow): enchanting table and anvil work; **Power, Punch, Flame, Infinity are applied natively** (no script fallback). Launch speed and charge scaling equal vanilla (full draw about 2.96 b/t, damage 8.6-10.6 with crits; tap 0.4-1.1 b/t, 1-3 damage).
+   - Owner decisions: **bow edge = faster draw (about 0.8 s), same damage**; item id **`lothlorien:bow`** (display name "Bow of the Galadhrim") because the vanilla two-arm draw pose keys on the item name `bow`. Its attachable still needs lowering and pull frames (the spike's pointed the bow down / sat too high). **Zoom** while drawing via `camera.setFov` in script (vanilla zooms, a custom shooter does not; API 2.8.0 `Camera.setFov(CameraFovOptions)`, untested).
+2. **Belt on the waist**: off-hand attachable bound to the body bone (`"binding": "'body'"`) renders at the waist correctly.
+3. **Arrow survival**: drop the arrow item on `projectileHitEntity` (projectile already invalid but `typeId` readable); works.
+4. A vanilla bow in survival cannot draw with only custom arrows; arrow trail dropped (see section 6).
+5. Known: civilian elves placed as structure template entities get engine default attributes (movement 0.7, etc.), like the village wardens
    ([V] 2026-10-08); reuse the `warden_replace.js` pattern.
 
 ## 9. Great Mallorn upgrade (owner 2026-10-10, planned)
@@ -112,13 +117,27 @@ The flet giants (`lothlorien:giant_mallorn`, lookout variant `round`, loot `loot
   night); custom bedrolls/pillows would be decoration.
 - **More loot diversity**: Galadhrim arrows, dew bottle, bottled fireflies, nectar, rope, salve, beside today's Miruvor, Lembas, herbs, corn, acorns, emeralds, antler.
 
-## 10. Population (open)
+## 10. Population (M1 built 2026-10-10, not seen in game)
 
-Per village: one Loremaster at the central tree, one healer, at least one of each trading profession; numbers and placement cells open.
+Rule (owner decisions 2026-10-10, details `docs/mobs/elves.md`, plan `temp/elven_inhabitants/m1_plan.md`): every new village gets all five professions. The Loremaster stands on the central tree
+(post nearest the rope top, at least 2 cells from it); healer, gardener, woodwright and lamplighter each stand on an outer tree (`combo_*` piece, warden trees included) of their own.
+- **Posts.** Tree pieces carry invisible `lothlorien:elf_post` entities: `central_mallorn_01` 1 `loremaster` + 4 `reserve`, each `combo_*` 1 `home` post inside the largest free deck square, 3 cells from wardens and other posts.
+  A new tree piece without a `home` post is never a profession tree.
+- **Assignment** (once per village, in the loop planner run, `scripts/elf_village.js` + pure `assignHomes` in `scripts/elf_rules.js`): home posts ordered by room first (free square >= 5x5), then straight-line distance to the Loremaster, then x, z;
+  professions in the fixed order healer, gardener, woodwright, lamplighter. With fewer than 4 outer trees (6 % of villages) the leftover professions stand on the reserve posts (F1), nearest to the Loremaster first, so all five are always present.
+  The posts are removed afterwards; a second run finds none.
+- **Record for the home milestone.** World dynamic property `lothlorien:village_homes`: JSON list (64 max) of `{ rect: {x0,x1,z0,z1}, loremaster: [x,y,z] | null, homes: [{ p, x, y, z, site }] }`;
+  `x,y,z` is the post's feet cell, `site` = `{ x0, z0, k }` is the free k x k deck square (corner x0, z0) containing the post cell, or `null` on a reserve. Each elf also keeps the entity property `lothlorien:home` = `"x,y,z"`.
+  `homeSite(at, x, y, z)` (`elf_rules.js`) recomputes the square from live blocks (deck cell y = post y - 1; open deck = planks, 3 air above), so the home step never needs the generator.
+  Sites are 3..7 wide (`HOME_MAX` 7); `node_e` has only a 3x3 square, `node_a`, `node_d`, `tower_c` 4x4, the rest 5x5 or more.
+- **Numbers** (simulator, 300 seeds): all five professions in 300/300 villages; four on trees of their own in 94 %; reserves used 0.11 per village on average; 88 % of the assigned trees have a 5x5 square.
+
+- **M1 as built.** Loremaster on the central tree; healer, gardener, woodwright, lamplighter each on their own outer tree (warden trees allowed), assigned by the loop planner with a fixed ranking (free deck room, then distance to the Loremaster; healer nearest). Fewer than 4 outer trees: leftovers stand on the central tree. Elves are non-renewable; only villages generated after M1 get elves.
+- **Homes (later milestone M7, owner 2026-10-10: "I like the hybrid homes approach with planner picking professions and decorations from a pool").** Homes are prefabricated jigsaw pieces (generic elven homes, each carrying one elf post). The planner assigns the professions to homes (it guarantees all five per village, which jigsaw alone cannot) and furnishes each home by placing a profession-specific decoration structure picked from a pool. Bare tree posts remain the fallback when a village has too few homes.
 
 ## 11. Open
 
 - Renown thresholds and points per lesson / request; request cooldown.
 - Exact prices and price modifiers (balance pass).
 - Final-item numbers (bow damage/draw speed, cloak armour, belt regen level, phial light radius and spider range).
-- Where each civilian stands in the village pieces; what elves do at night (gathering, lamplighter at dusk).
+- What elves do at night (gathering, lamplighter at dusk); M1 decided: no change at night.

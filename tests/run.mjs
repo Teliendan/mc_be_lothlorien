@@ -17,7 +17,8 @@ import { buildFletMallorn, LADDER, ROUND_LADDER, LEAF_KEEP, ROOT_DEPTH, B } from
 import { SIZE, SIZE_Y, TRUNK_AT, CHOSEN, TRUNK_ANCHOR } from "../tools/build_structures.mjs";
 import { existsSync, readdirSync } from "node:fs";
 import * as WR from "../lothlorien_bp/scripts/warden_replace_rules.js";
-import { loadVillageData, parseMcstructure, runSeeds, rotated, PLANKS, FENCE, LANTERN_ID } from "../tools/village_sim.mjs";
+import { loadVillageData, parseMcstructure, runSeeds, rotated, PLANKS, FENCE, LANTERN_ID, populateElves } from "../tools/village_sim.mjs";
+import * as EL from "../lothlorien_bp/scripts/elf_rules.js";
 
 const L = "lothlorien:lothlorien", RIVER = "minecraft:river", FOREST = "minecraft:forest";
 const T = new Set([RIVER]);
@@ -310,7 +311,7 @@ test("harmony: floor at -60", () => {
   const s = hs(-60); H.recordDeed(s, "unicorn"); assert.equal(s.harmony, -60);
 });
 test("harmony: every deed cost", () => {
-  assert.deepEqual(H.DEED_COSTS, { animal: 3, monster: 1, white_deer: 6, unicorn: 10, warden_fight: 1, warden_kill: 6, player: 3 });
+  assert.deepEqual(H.DEED_COSTS, { animal: 3, monster: 1, white_deer: 6, unicorn: 10, warden_fight: 1, warden_kill: 6, elf_fight: 1, elf_kill: 6, player: 3 });
   for (const [kind, cost] of Object.entries(H.DEED_COSTS)) { const s = hs(0); H.recordDeed(s, kind); assert.equal(s.harmony, -cost, kind); }
   const s = hs(10); H.recordDeed(s, "monster"); assert.equal(s.harmony, 8);
   const u = hs(10); H.recordDeed(u, "unicorn"); assert.equal(u.harmony, -5, "8, 6, 4, 2, 0, then five at 1 each");
@@ -328,6 +329,8 @@ test("harmony: victims are classified into deed kinds (inanimate counts nothing,
   assert.equal(k(EW.WARDEN_ID, ["lothlorien_warden", "irongolem", "mob"]), "warden_kill");
   assert.equal(k("minecraft:player", ["player"]), "player");
   assert.equal(k("minecraft:cow"), "animal");
+  assert.equal(k("lothlorien:elf", ["lothlorien_elf", "mob"]), "elf_kill", "a civilian elf is its own kind (was a plain animal, 3)");
+  assert.equal(k("lothlorien:elf_post", ["lothlorien_elf_post", "elf_post_home", "inanimate"]), undefined, "a post counts nothing");
 });
 test("harmony: death changes nothing, except inside the forest while Hated (-> -29)", () => {
   const cases = [[-30, true, -29], [-60, true, -29], [-30, false, -30], [-29, true, -29], [-20, true, -20], [-20, false, -20], [5, true, 5], [10, true, 10]];
@@ -916,6 +919,7 @@ test("harmony: a white deer kill costs 6 (two animals), a unicorn 10, a warden 6
   assert.equal(cost("white_deer"), 2 * cost("animal"));
   assert.equal(H.bandOf(-cost("white_deer")), "uneasy");
   assert.equal(cost(H.deedKindOf(EW.WARDEN_ID)) + cost("warden_fight"), 7);
+  assert.equal(cost(H.deedKindOf("lothlorien:elf")) + cost("elf_fight"), 7, "an elf is charged like a warden: 1 per fight + 6 per kill");
 });
 test("white deer: client entity uses the white texture on the antlered deer model only; no unused fawn texture", () => {
   const c = readJson("../lothlorien_rp/entity/white_deer.entity.json")["minecraft:client_entity"].description;
@@ -2003,7 +2007,7 @@ test("rail mender: markers inside the box, and every rail of every village piece
   for (const p of villagePieces()) {
     const rails = p.blocks.filter((b) => b.name === FENCE);
     const m = p.entities.filter((e) => e.id === MEND.MENDER_ID);
-    assert.equal(p.entities.length - p.entities.filter((e) => e.id === "lothlorien:elven_warden" || e.id === "lothlorien:loop_marker").length, m.length, `${p.name}: only markers (and village wardens, loop markers)`);
+    assert.equal(p.entities.length - p.entities.filter((e) => e.id === "lothlorien:elven_warden" || e.id === "lothlorien:loop_marker" || e.id === EL.POST_ID).length, m.length, `${p.name}: only markers (and village wardens, loop markers, elf posts)`);
     assert.equal(m.length, !rails.length ? 0 : p.name.startsWith("combo_") ? 2 : 1, `${p.name}: ${rails.length} rails, ${m.length} markers`);
     for (const e of m) {
       const [x, y, z] = e.pos;
@@ -2668,9 +2672,9 @@ test("elven warden: shoots monsters (spiders and creepers included), never playe
   assert.deepEqual(excluded, ["aquatic", "creaking", "enderman", "piglin", "shulker", "wither", "warden", "zombie_pigman"].sort());
   for (const keep of ["creeper", "spider", "cave_spider"]) assert.ok(!excluded.includes(keep), `${keep} stays a target`);
   const targets = c["minecraft:behavior.nearest_attackable_target"].entity_types;
-  assert.equal(targets.length, 2, "monsters, and Hated players");
-  assert.ok(!JSON.stringify(targets[0]).includes('"player"'), "players are only targets through the hated tag entry");
-  assert.ok(JSON.stringify(targets[1]).includes('"has_tag"'));
+  assert.equal(targets.length, 3, "monsters, Hated players, and players who hurt an elf (foe tag)");
+  assert.ok(!JSON.stringify(targets[0]).includes('"player"'), "players are only targets through the tag entries");
+  assert.ok(JSON.stringify(targets[1]).includes('"has_tag"') && JSON.stringify(targets[2]).includes('"has_tag"'));
   const hurt = c["minecraft:behavior.hurt_by_target"];
   assert.ok(!("alert_same_type" in hurt) && hurt.entity_types.max_dist >= 64, "alert_same_type fails to load at format 1.26.50 (content log, 1.26.52)");
   // nearby wardens join through the wolf / zombie pigman pattern: target acquired -> angry group -> broadcast_anger
@@ -2929,6 +2933,196 @@ test("warden replace: only engine-default movement is replaced", () => {
   const groups = json["minecraft:entity"].component_groups;
   assert.equal(json["minecraft:entity"].components["minecraft:movement"].value, WR.JSON_MOVEMENT);
   assert.ok(groups["lothlorien:village_warden"], "spawn event group exists");
+});
+
+// --- civilian elves (M1) ---
+const elfEntity = () => readJson("../lothlorien_bp/entities/elf.json")["minecraft:entity"];
+const GROUP = (p) => `lothlorien:${p}`;
+test("elf: entity values come from elf_rules STATS / HOME_RADIUS; persistent, no despawn, no spawn rule, exact families", () => {
+  const e = elfEntity(), c = e.components;
+  assert.equal(e.description.identifier, EL.ELF_ID);
+  assert.equal(e.description.is_spawnable, true); assert.equal(e.description.is_summonable, true);
+  assert.deepEqual(c["minecraft:type_family"].family, [EL.ELF_FAMILY, "mob"]);
+  assert.deepEqual(c["minecraft:health"], { value: EL.STATS.health, max: EL.STATS.health });
+  assert.equal(c["minecraft:movement"].value, EL.STATS.movement);
+  assert.ok(EL.STATS.movement < WR.WRONG_MOVEMENT_ABOVE, "the elf is never mistaken for a template mob with engine-default attributes");
+  assert.deepEqual(c["minecraft:collision_box"], { width: 0.6, height: 1.95 });
+  assert.ok(c["minecraft:persistent"] && c["minecraft:nameable"], "persistent and nameable");
+  assert.ok(!("minecraft:despawn" in c) && !Object.values(e.component_groups).some((g) => "minecraft:despawn" in g), "never despawns");
+  assert.equal(existsSync(new URL("../lothlorien_bp/spawn_rules/elf.json", import.meta.url)), false, "no natural spawn");
+  assert.deepEqual(c["minecraft:behavior.panic"], { priority: 1, speed_multiplier: EL.STATS.panic });
+  const avoid = c["minecraft:behavior.avoid_mob_type"].entity_types[0];
+  assert.deepEqual([avoid.max_dist, avoid.walk_speed_multiplier, avoid.sprint_speed_multiplier], [EL.STATS.avoidDist, EL.STATS.avoidWalk, EL.STATS.avoidSprint]);
+  assert.deepEqual(avoid.filters.all_of.map((f) => [f.test, f.value, f.operator ?? "="]), [["is_family", "monster", "="], ["is_family", "enderman", "!="]]);
+  assert.equal(c["minecraft:behavior.move_towards_home_restriction"].speed_multiplier, EL.STATS.home);
+  assert.equal(c["minecraft:behavior.random_stroll"].speed_multiplier, EL.STATS.stroll);
+  assert.equal(c["minecraft:behavior.look_at_player"].look_distance, EL.STATS.lookDistance);
+  assert.ok(!("minecraft:home" in c), "home only through the profession groups");
+  const nav = c["minecraft:navigation.walk"];
+  assert.deepEqual(nav.blocks_to_avoid.map((b) => b.name), ["lothlorien:elven_rope", "lothlorien:elven_rope_hanging"], "avoids the rope cells");
+  assert.deepEqual(c["minecraft:damage_sensor"].triggers, [{ cause: "fall", deals_damage: "no" }], "no fall damage");
+});
+test("elf: using an elf does nothing - no trade, interact, inventory, lead, breeding, riding, egg interaction, loot or xp anywhere", () => {
+  const text = JSON.stringify(elfEntity());
+  const found = [...text.matchAll(/"minecraft:(economy_trade_table|trade_table|interact|inventory|leashable|breedable|rideable|spawn_egg_interaction|loot|experience_reward|equippable|behavior\.(?:breed|trade_with_player|tempt|follow_parent|ranged_attack|melee_attack))"/g)].map((m) => m[1]);
+  assert.deepEqual(found, []);
+});
+test("elf: every profession group has its variant index and home radius; each as_<p> event swaps exactly the other four groups", () => {
+  const e = elfEntity();
+  assert.deepEqual(Object.keys(e.component_groups), EL.PROFESSIONS.map(GROUP));
+  EL.PROFESSIONS.forEach((p, i) => {
+    const g = e.component_groups[GROUP(p)];
+    assert.deepEqual(Object.keys(g).sort(), ["minecraft:home", "minecraft:variant"]);
+    assert.equal(g["minecraft:variant"].value, i, `${p}: variant index`);
+    assert.deepEqual(g["minecraft:home"], { restriction_type: "random_movement", restriction_radius: EL.HOME_RADIUS[p] }, `${p}: home radius`);
+    const ev = e.events[EL.spawnEventOf(p)];
+    assert.deepEqual(ev.add.component_groups, [GROUP(p)]);
+    assert.deepEqual([...ev.remove.component_groups].sort(), EL.PROFESSIONS.filter((q) => q !== p).map(GROUP).sort(), `${p}: removes the other four`);
+  });
+  const sp = e.events["minecraft:entity_spawned"];
+  assert.equal(sp.randomize.length, EL.PROFESSIONS.length);
+  assert.deepEqual(sp.randomize.map((r) => r.add.component_groups[0]), EL.PROFESSIONS.map(GROUP), "one egg: random profession");
+  assert.deepEqual(sp.filters, { test: "has_component", operator: "!=", value: "minecraft:variant" }, "a spawn event that set the profession is not overridden");
+  assert.ok(Math.max(...Object.values(EL.HOME_RADIUS)) <= 10 && EL.HOME_RADIUS.loremaster < EL.HOME_RADIUS.healer, "radius stays around the own tree (bridges are 7..15 long)");
+});
+test("elf: client entity and render controller are in step with the professions (index = minecraft:variant); post entities are registered on both sides", () => {
+  const d = readJson("../lothlorien_rp/entity/elf.entity.json")["minecraft:client_entity"].description;
+  assert.deepEqual(Object.keys(d.geometry), EL.PROFESSIONS); assert.deepEqual(Object.keys(d.textures), EL.PROFESSIONS);
+  const rc = readJson("../lothlorien_rp/render_controllers/elf.render_controllers.json").render_controllers["controller.render.lothlorien.elf"];
+  assert.deepEqual(rc.arrays.geometries["Array.geos"], EL.PROFESSIONS.map((p) => `Geometry.${p}`));
+  assert.deepEqual(rc.arrays.textures["Array.skins"], EL.PROFESSIONS.map((p) => `Texture.${p}`));
+  const py = readFileSync(new URL("../tools/make_elves.py", import.meta.url), "utf8").match(/^PROFESSIONS = (\[.*?\])/m)[1];
+  assert.deepEqual(JSON.parse(py), EL.PROFESSIONS, "tools/make_elves.py PROFESSIONS");
+  const post = readJson("../lothlorien_bp/entities/elf_post.json")["minecraft:entity"];
+  assert.equal(post.description.identifier, EL.POST_ID); assert.equal(post.description.is_spawnable, false);
+  assert.ok(!("minecraft:type_family" in post.components), "the family comes with the kind group");
+  assert.deepEqual(Object.keys(post.component_groups), EL.POST_KINDS.map((k) => `${EL.POST_GROUP_PREFIX}${k}`));
+  for (const k of EL.POST_KINDS) assert.deepEqual(post.component_groups[`${EL.POST_GROUP_PREFIX}${k}`]["minecraft:type_family"].family, ["lothlorien_elf_post", `elf_post_${k}`, "inanimate"]);
+  assert.equal(readJson("../lothlorien_rp/entity/elf_post.entity.json")["minecraft:client_entity"].description.identifier, EL.POST_ID);
+});
+test("elf: names are lang-only (no name tag), entity and egg names exist in every locale", () => {
+  const entries = catalogEntries();
+  for (const k of ["entity.lothlorien:elf.name", "item.spawn_egg.entity.lothlorien:elf.name", ...EL.PROFESSIONS.map((p) => `lothlorien.elf.profession.${p}`)]) {
+    assert.ok(entries[k], k); assert.equal(Object.keys(entries[k].translations).length, 8, `${k}: eight target locales`);
+  }
+  const lang = readFileSync(new URL("../lothlorien_rp/texts/en_US.lang", import.meta.url), "utf8");
+  assert.ok(/entity\.lothlorien:elf\.name=Elf\r?\n/.test(lang)); assert.ok(/item\.spawn_egg\.entity\.lothlorien:elf\.name=Elf Spawn Egg\r?\n/.test(lang));
+  assert.ok(!/nameTag/.test(readFileSync(new URL("../lothlorien_bp/scripts/elf_village.js", import.meta.url), "utf8")), "the village spawns no name tags");
+});
+test("elf: wardens defend elves - the foe tag is a target and is not shielded from arrows, a victim elf never is", () => {
+  const goal = readJson("../lothlorien_bp/entities/elven_warden.json")["minecraft:entity"].components["minecraft:behavior.nearest_attackable_target"];
+  const foeEntry = goal.entity_types.find((t) => JSON.stringify(t.filters).includes(EL.FOE_TAG));
+  assert.ok(foeEntry, "the warden targets players carrying the foe tag");
+  assert.deepEqual(foeEntry.filters.all_of.map((f) => [f.test, f.subject, f.value]), [["is_family", "other", "player"], ["has_tag", "other", EL.FOE_TAG]]);
+  const player = { typeId: EW.PLAYER_ID, families: ["player"] }, shot = (o) => EW.isFriendlyFire({ shooterId: EW.WARDEN_ID, victim: player, ...o });
+  assert.equal(shot({}), true, "an innocent player is shielded");
+  assert.equal(shot({ foe: true }), false, "a foe is not");
+  assert.equal(shot({ hated: true }), false); assert.equal(shot({ sinceProvokedMs: 1000 }), false);
+  assert.equal(EW.isFriendlyFire({ shooterId: EW.WARDEN_ID, victim: { typeId: EL.ELF_ID, families: [EL.ELF_FAMILY, "mob"] } }), true, "warden arrows never hurt elves");
+  assert.equal(EL.FOE_MS, EW.PROVOKE_MS, "a foe is shot for as long as a provoked player");
+  const src = readFileSync(new URL("../lothlorien_bp/scripts/elven_warden.js", import.meta.url), "utf8");
+  assert.ok(src.includes("hasTag(FOE_TAG)") && src.includes("foe:"), "friendly fire reads the foe tag");
+});
+
+const deck = (w, d, extra = {}) => (x, y, z) => { // a hand-made deck: planks at y 0, air at y 1..3, anything else unloaded
+  if (x < 0 || z < 0 || x >= w || z >= d) return undefined;
+  if (extra[`${x},${y},${z}`]) return extra[`${x},${y},${z}`];
+  return y === 0 ? PLANKS : y >= 1 && y <= 3 ? "minecraft:air" : undefined;
+};
+test("elf homeSite: open 5x5 gives 5, a fence shrinks it, a single cell gives null, the square always contains the cell", () => {
+  assert.deepEqual(EL.homeSite(deck(5, 5), 2, 0, 2), { x0: 0, z0: 0, k: 5 });
+  const fenced = EL.homeSite(deck(5, 5, { "4,1,4": FENCE }), 2, 0, 2);
+  assert.equal(fenced.k, 4); assert.ok(fenced.x0 + 3 < 4 || fenced.z0 + 3 < 4, "the fenced corner is outside the square");
+  assert.equal(EL.homeSite(deck(1, 1), 0, 0, 0), null);
+  assert.equal(EL.homeSite(deck(2, 9), 0, 0, 4), null, "a strip is no square");
+  assert.equal(EL.homeSite(deck(20, 20), 10, 0, 10).k, EL.HOME_MAX, "capped at HOME_MAX");
+  assert.equal(EL.homeSite(deck(5, 5, { "2,3,2": "minecraft:oak_leaves" }), 0, 0, 0), null, "a block in the headroom closes the middle cell: no 3x3 square is left");
+  const s = EL.homeSite(deck(9, 9), 8, 0, 8); assert.ok(s.x0 <= 8 && s.x0 + s.k > 8 && s.z0 <= 8 && s.z0 + s.k > 8);
+});
+test("elf assignHomes: four trees in HOME_ORDER (room first, then nearest to the Loremaster); reserves only for the leftovers; order of input does not matter", () => {
+  const home = (x, k) => ({ kind: "home", x, y: 70, z: 0, site: k ? { x0: 0, z0: 0, k } : null });
+  const homes = [home(30, 5), home(3, 3), home(10, 7), home(8, 5), home(5, 6), home(20, 5)], lore = [0, 70, 0];
+  const names = (r) => r.map((a) => `${a.p}@${a.post.x}`);
+  assert.deepEqual(names(EL.assignHomes(homes, lore)), ["healer@5", "gardener@8", "woodwright@10", "lamplighter@20"], "room first (x 3 has none), then by distance");
+  const reserves = [20, 4, 12, 28].map((x) => ({ kind: "reserve", x, y: 70, z: 0, site: null }));
+  assert.deepEqual(names(EL.assignHomes([...homes, ...reserves], lore)), names(EL.assignHomes(homes, lore)), "no reserve is used with four trees");
+  const three = EL.assignHomes([...homes.slice(0, 3), ...reserves], lore);
+  assert.deepEqual(names(three), ["healer@10", "gardener@30", "woodwright@3", "lamplighter@4"], "3 trees: the leftover stands on the nearest reserve");
+  assert.deepEqual(three.map((a) => a.p), EL.HOME_ORDER);
+  assert.deepEqual(names(EL.assignHomes(reserves, lore)), ["healer@4", "gardener@12", "woodwright@20", "lamplighter@28"], "0 trees: all four on reserves, nearest first");
+  const all = [...homes, ...reserves];
+  for (const m of [1, 2, 3, 4, 5, 7, 100]) {
+    const part = all.filter((_, i) => i % m !== 0), a = EL.assignHomes(part, lore), b = EL.assignHomes([...part].reverse(), lore);
+    assert.deepEqual(names(a), names(b), `input order (${m})`);
+    assert.equal(new Set(a.map((q) => q.p)).size, a.length, "no profession twice"); assert.equal(new Set(a.map((q) => q.post)).size, a.length, "no post twice");
+  }
+  assert.deepEqual(EL.assignHomes([], lore), []); assert.equal(EL.assignHomes(homes, null).length, 4, "a rect without the central tree still assigns homes");
+});
+test("elf homes record: parse tolerates damage and the list is capped", () => {
+  assert.deepEqual(EL.parseHomes(undefined), []); assert.deepEqual(EL.parseHomes("{"), []); assert.deepEqual(EL.parseHomes('{"a":1}'), []);
+  let list = []; for (let i = 0; i < EL.MAX_HOME_RECORDS + 5; i++) list = EL.addHomes(list, { n: i });
+  assert.equal(list.length, EL.MAX_HOME_RECORDS); assert.equal(list.at(-1).n, EL.MAX_HOME_RECORDS + 4);
+});
+
+const isAirName = (n) => n === null || n === undefined || n === "minecraft:air";
+const postsOf = (p) => p.entities.filter((e) => e.id === EL.POST_ID).map((e) => ({ e, x: Math.floor(e.pos[0]), y: Math.floor(e.pos[1]), z: Math.floor(e.pos[2]), kind: e.defs[1].slice(`+${EL.POST_GROUP_PREFIX}`.length) }));
+const cheb = (a, b) => Math.max(Math.abs(a.x - b.x), Math.abs(a.z - b.z));
+test("elf posts in pieces: central tree 1 loremaster + RESERVE_POSTS reserves, every combo one home post, nothing else; groups via the definitions list", () => {
+  const counts = {};
+  for (const p of villagePieces()) {
+    const posts = postsOf(p), kinds = posts.map((q) => q.kind).sort();
+    counts[p.name] = posts.length;
+    if (p.name === "central_mallorn_01") assert.deepEqual(kinds, ["loremaster", ...Array(EL.RESERVE_POSTS).fill("reserve")].sort(), "central posts");
+    else if (p.name.startsWith("combo_")) assert.deepEqual(kinds, ["home"], `${p.name}: exactly one home post`);
+    else assert.deepEqual(kinds, [], `${p.name}: no posts`);
+    for (const q of posts) {
+      assert.deepEqual(q.e.defs, [`+${EL.POST_ID}`, `+${EL.POST_GROUP_PREFIX}${q.kind}`], `${p.name}: definitions`);
+      assert.ok(q.x > 0 && q.x < p.size[0] && q.z > 0 && q.z < p.size[2] && q.y > 0 && q.y < p.size[1], `${p.name}: inside the box`);
+      assert.equal(q.e.invulnerable, true, `${p.name}: posts cannot be hurt`);
+    }
+  }
+  assert.ok(Object.values(counts).filter((n) => n === 1).length >= 20, "about 23 combo pieces carry a post");
+});
+test("elf posts stand on deck: planks underneath, three cells of air, open deck around (central), POST_SPACING from wardens and other posts, Loremaster by the rope", () => {
+  for (const p of villagePieces()) {
+    const posts = postsOf(p), wardens = p.entities.filter((e) => e.id === EW.WARDEN_ID).map((e) => ({ x: Math.floor(e.pos[0]), z: Math.floor(e.pos[2]) }));
+    for (const q of posts) {
+      assert.equal(p.at(q.x, q.y - 1, q.z), PLANKS, `${p.name}: deck under the post`);
+      for (const h of [0, 1, 2]) assert.ok(isAirName(p.at(q.x, q.y + h, q.z)), `${p.name}: headroom ${h}`);
+      for (const w of wardens) assert.ok(cheb(q, w) >= EL.POST_SPACING, `${p.name}: ${cheb(q, w)} cells from a warden`);
+      for (const o of posts) if (o !== q) assert.ok(cheb(q, o) >= EL.POST_SPACING, `${p.name}: posts ${cheb(q, o)} apart`);
+      if (q.kind !== "home") for (let dx = -2; dx <= 2; dx++) for (let dz = -2; dz <= 2; dz++) { // full warden margins on the big central deck
+        assert.notEqual(p.at(q.x + dx, q.y, q.z + dz), FENCE, `${p.name}: away from rails`);
+        if (Math.abs(dx) <= 1 && Math.abs(dz) <= 1) assert.equal(p.at(q.x + dx, q.y - 1, q.z + dz), PLANKS, `${p.name}: open deck around`);
+      }
+      if (q.kind === "loremaster") {
+        const rope = p.blocks.filter((b) => b.name === B.ropeHanging && b.y === q.y - 1);
+        assert.ok(rope.length >= 1, "rope on the deck layer");
+        for (const r of rope) assert.ok(cheb(q, r) >= EL.ROPE_CLEARANCE, `${p.name}: Loremaster ${cheb(q, r)} from the rope`);
+        assert.ok(Math.hypot(q.x - rope[0].x, q.z - rope[0].z) <= 6, "the Loremaster stands by the rope top");
+      }
+      if (q.kind === "home") { // inside the biggest free square of the lower deck
+        const at = (x, y, z) => p.at(x, y, z) ?? "minecraft:air", mine = EL.homeSite(at, q.x, q.y - 1, q.z);
+        assert.ok(mine && mine.k >= EL.HOME_MIN_SQUARE, `${p.name}: a free square round the home post`);
+        let best = 0;
+        for (const b of p.blocks) if (b.name === PLANKS && b.y === q.y - 1 && !wardens.some((w) => cheb(b, w) < EL.POST_SPACING)) best = Math.max(best, EL.homeSite(at, b.x, b.y, b.z)?.k ?? 0);
+        assert.equal(mine.k, best, `${p.name}: the post stands in the biggest free square (${best})`);
+      }
+    }
+  }
+});
+test("elf population over villages: all five professions exactly once, four on their own trees when there are four, reserves only for the missing ones", () => {
+  let withReserve = 0;
+  for (const r of villages()) {
+    const at = (x, y, z) => r.ck.world.get(wkey(x, y, z)) ?? "minecraft:air", el = populateElves(r.res, at);
+    assert.deepEqual(el.fail, [], `seed ${r.seed}`);
+    assert.equal(el.elves, EL.PROFESSIONS.length, `seed ${r.seed}: all five`);
+    assert.equal(el.reservePosts, EL.RESERVE_POSTS);
+    assert.equal(el.ownTree, Math.min(4, el.outer), `seed ${r.seed}: ${el.outer} outer trees`);
+    assert.equal(el.onReserve, Math.max(0, 4 - el.outer), `seed ${r.seed}: reserves for the missing trees only`);
+    if (el.onReserve) withReserve++;
+  }
+  assert.ok(withReserve <= 6, `${withReserve} of 30 villages needed reserve posts (about 6 % expected)`);
 });
 
 if (failed) { console.log(`${failed} test(s) failed`); process.exit(1); }

@@ -19,6 +19,7 @@ import { RAIL, SLAB, lightField } from "./village_mallorn.mjs";
 import { protectedCells, checkWalk } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs"; // shared walkability checker (cells a piece owns)
 import { MARKER_ID, finalBlocks } from "../lothlorien_bp/scripts/village_loop.js";
 import { PLAN, planVillage, discoverSync, boundedReader, chunksIn, inRect } from "../lothlorien_bp/scripts/village_planner.js";
+import { POST_ID, PROFESSIONS, HOME_MIN, RESERVE_POSTS, homeSite, assignHomes } from "../lothlorien_bp/scripts/elf_rules.js";
 export const PLANKS = "lothlorien:mallorn_planks", FENCE = RAIL, LANTERN_ID = "lothlorien:elven_lantern";
 const EMPTY = "minecraft:empty", AIR = "minecraft:air", JIGSAW = "minecraft:jigsaw";
 const FACING_VEC = { 2: [0, -1], 3: [0, 1], 4: [-1, 0], 5: [1, 0] };
@@ -461,15 +462,19 @@ export function nearMisses(res, max = 8) {
 }
 
 // ---- loop planner (owner 2026-10-09): the same pure functions as scripts/loop_marker.js, run on the simulated village ------------------------
-// Marker cells of a placed piece (railing_end, balcony_braced, lookout_01 carry loop markers): the template entity positions turned with the
-// piece (continuous quarter turns, x' = sz - z, z' = x). -> [[x, y, z]] deck cells under the markers
-export function markerCells(p) {
-  return p.piece.entities.filter((q) => q.id === MARKER_ID).map((e) => {
+// Cells of the template entities `id` of a placed piece (railing_end, balcony_braced, lookout_01 carry loop markers; tree pieces carry elf posts):
+// the entity positions turned with the piece (continuous quarter turns, x' = sz - z, z' = x). -> [{ cell: [x, y, z], kind }] deck cells under the
+// entities; kind = the `lothlorien:post_<kind>` group of the definitions list (posts), else undefined
+export function entityCells(p, id) {
+  return p.piece.entities.filter((q) => q.id === id).map((e) => {
     let [x, y, z] = e.pos, [sx, , sz] = p.piece.size;
     for (let i = 0; i < p.rot; i++) { [x, z] = [sz - z, x]; [sx, sz] = [sz, sx]; }
-    return [p.o[0] + Math.floor(x), p.o[1] + Math.floor(y) - 1, p.o[2] + Math.floor(z)];
+    const def = (e.defs ?? []).find((d) => d.startsWith("+lothlorien:post_"));
+    return { cell: [p.o[0] + Math.floor(x), p.o[1] + Math.floor(y) - 1, p.o[2] + Math.floor(z)], kind: def ? def.slice("+lothlorien:post_".length) : undefined };
   });
 }
+// deck cells under the loop markers of a placed piece -> [[x, y, z]]
+export const markerCells = (p) => entityCells(p, MARKER_ID).map((c) => c.cell);
 export const markerCell = (p) => markerCells(p)[0] ?? null;
 const LOG_IDS = new Set(["lothlorien:mallorn_log", "lothlorien:mallorn_wood"]);
 const LINK_SIDES = { north: [0, -1], south: [0, 1], west: [-1, 0], east: [1, 0] };
@@ -555,6 +560,7 @@ export function planLoops(res, world, states, opts = {}) {
   let found;
   try { found = discoverSync(env, game(all[(opts.start ?? 0) % all.length]), "sim"); } catch (e) { out.error = e.message; return out; }
   const known = found.known.map(back), rect = { x0: found.rect.x0 - sx, x1: found.rect.x1 - sx, z0: found.rect.z0 - sz, z1: found.rect.z1 - sz };
+  out.rect = rect;
   Object.assign(out, { found: known.length, complete: known.length === all.length, rounds: found.rounds, sizes: found.sizes, chunks: Math.max(...found.sizes), stable: found.stable });
   const at = boundedReader(rawAt, rect), r = planVillage(at, known, { budget: opts.budget ?? PLAN.budget, rect: opts.noRect ? undefined : rect, ...(opts.plan ?? {}) });
   out.nRaw = r.nRaw; out.log = r.log;
@@ -577,6 +583,21 @@ export function planLoops(res, world, states, opts = {}) {
   }
   out.at = rawAt;
   return out;
+}
+
+// ---- civilian elves (M1): the very same pure functions as scripts/elf_village.js, run on the finished simulated village --------------------------
+// `at` = block reader after the links (planLoops .at), `rect` = the rectangle the planner discovered (posts outside it would never be seen).
+// -> { posts, outer, elves, ownTree, onReserve, homeRoom, fail: [string] }
+export function populateElves(res, at, rect) {
+  const posts = res.placed.flatMap((p) => entityCells(p, POST_ID)).filter((c) => !rect || inRect(rect, c.cell[0], c.cell[2]))
+    .map(({ cell: [x, y, z], kind }) => ({ kind: kind ?? "home", x, y: y + 1, z, site: homeSite(at, x, y, z) }));
+  const lore = posts.filter((q) => q.kind === "loremaster").sort((a, b) => a.x - b.x || a.z - b.z)[0] ?? null;
+  const assigned = assignHomes(posts.filter((q) => q.kind !== "loremaster"), lore ? [lore.x, lore.y, lore.z] : null);
+  const profs = [...assigned.map((a) => a.p), ...(lore ? ["loremaster"] : [])], fail = [];
+  for (const p of PROFESSIONS) { const n = profs.filter((q) => q === p).length; if (n !== 1) fail.push(`${p} assigned ${n} times`); }
+  const own = assigned.filter((a) => a.post.kind !== "reserve");
+  return { posts: posts.length, outer: posts.filter((q) => q.kind === "home").length, elves: profs.length, ownTree: own.length, onReserve: assigned.length - own.length,
+    homeRoom: own.filter((a) => a.post.site && a.post.site.k >= HOME_MIN).length, reservePosts: posts.filter((q) => q.kind === "reserve").length, fail };
 }
 
 // ---- rendering: deck map with height shading, and a side view ------------------------------------------------------------
@@ -638,16 +659,18 @@ function main() {
     row.lp = planLoops(row.res, row.ck.world, row.ck.states, { verify: true, start: (row.seed * 13) % n, shift });
     row.cov = discoveryCoverage(row.res, { shift });
     row.lpUnreach = walkability(row.res, row.ck.world, row.ck.states).unreachable.length;
+    row.el = populateElves(row.res, row.lp.at, row.lp.rect);
   }
   console.log(`max_depth ${data.structure.max_depth}`);
   console.log("seed pieces trees(tow) lvl straight balc look plug open crowns(sm) unreach overl ropeW decay oneWay noDest result");
   let bad = 0;
   const pad = (v, n) => String(v).padStart(n);
   for (const { seed, res, ck } of rows) {
-    const ok = ck.fail.length === 0 && ck.info.ropeWrong === 0 && ck.info.decay === 0 && rows.find((r) => r.seed === seed).lpUnreach === 0 && rows.find((r) => r.seed === seed).lp.bad.length === 0; if (!ok) bad++;
+    const ok = ck.fail.length === 0 && ck.info.ropeWrong === 0 && ck.info.decay === 0 && rows.find((r) => r.seed === seed).lpUnreach === 0 && rows.find((r) => r.seed === seed).lp.bad.length === 0 && rows.find((r) => r.seed === seed).el.fail.length === 0; if (!ok) bad++;
     const k = ck.kinds;
     console.log(`${pad(seed, 4)} ${pad(res.placed.length, 6)} ${pad(`${k.trees}(${k.tower})`, 10)} ${pad(ck.levels, 3)} ${pad(k.straight, 8)} ${pad(k.balcony, 4)} ${pad(k.lookout, 4)} ${pad(k.plug, 4)} ${pad(ck.open, 4)} ${pad(`${k.crown}(${k.crownSmall})`, 10)} ${pad(ck.unreachable, 7)} ${pad(ck.overlaps, 5)} ${pad(ck.info.ropeWrong, 5)} ${pad(ck.info.decay, 5)} ${pad(ck.info.fenceOneWay, 9)} ${pad(ck.kinds.bridgesNoDest, 6)} ${ok ? "ok" : "FAIL"}`);
     for (const f of [...new Set(ck.fail)].slice(0, 6)) console.log(`       ! ${f}`);
+    for (const f of rows.find((r) => r.seed === seed).el.fail) console.log(`       ! elves: ${f}`);
   }
   const avg = (f) => (rows.reduce((a, r) => a + f(r), 0) / rows.length).toFixed(1);
   const mm = (f) => `${Math.min(...rows.map(f))}/${avg(f)}/${Math.max(...rows.map(f))}`;
@@ -663,6 +686,8 @@ function main() {
   console.log(`  markers per village ${mm((r) => r.lp.markers)}; start-marker run found all of them in ${rows.filter((r) => r.lp.complete).length}/${rows.length} villages; area rounds ${mm((r) => r.lp.rounds)}, biggest area ${mm((r) => r.lp.chunks)} chunks; errors ${rows.filter((r) => r.lp.error).length}; ` +
     `every marker as the first one: ${rows.reduce((a, r) => a + r.cov.complete, 0)}/${rows.reduce((a, r) => a + r.cov.starts, 0)} starts find the whole village (worst miss ${Math.max(...rows.map((r) => r.cov.worst))} markers), most chunks ${Math.max(...rows.map((r) => r.cov.maxChunks))}, most rounds ${Math.max(...rows.map((r) => r.cov.rounds))}`);
   console.log(`  unreachable walk cells after the links ${rows.reduce((a, r) => a + r.lpUnreach, 0)}; links failing the walk / light checks ${lsum((l) => l.bad.length)}; candidates per village ${avg((r) => r.lp.nRaw)}`);
+  const nEl = rows.filter((r) => r.el.elves === PROFESSIONS.length).length, hp = (f) => rows.reduce((a, r) => a + f(r.el), 0);
+  console.log(`  elves: all five in ${nEl}/${rows.length} villages | own tree 4 in ${pct(rows.filter((r) => r.el.ownTree === 4).length, rows.length)} | outer trees ${mm((r) => r.el.outer)} | reserves used mean/max ${(hp((e) => e.onReserve) / rows.length).toFixed(2)}/${Math.max(...rows.map((r) => r.el.onReserve))} | homes with room >= ${HOME_MIN}x${HOME_MIN}: ${pct(hp((e) => e.homeRoom), hp((e) => e.ownTree))}`);
   const sum = (f) => rows.reduce((a, r) => a + f(r.ck.info), 0);
   console.log(`  totals: unreachable walk cells ${rows.reduce((a, r) => a + r.ck.unreachable, 0)}, overlaps ${rows.reduce((a, r) => a + r.ck.overlaps, 0)}, wrong ropes ${sum((i) => i.ropeWrong)}/${sum((i) => i.ropes)}, ` +
     `decaying leaves ${sum((i) => i.decay)}/${sum((i) => i.leaves)}, one-way fence links (open ends only) ${sum((i) => i.fenceOneWay)} (dangling stub ends ${sum((i) => i.fenceDangling)}), near-miss ends ${sum((i) => i.nearMiss)}`);

@@ -583,8 +583,8 @@ Replaces Disharmony (the Phase 9 section below is superseded). Spec, numbers and
 - **Storage.** Dynamic property `lothlorien:harmony` = `{harmony, timer}`, **written only when the value changes** (the old code wrote every second). No
   migration: the old `lothlorien:disharmony` property is ignored. Debug: `/scriptevent lothlorien:harmony [value]` shows or sets it.
 - **Deed classification** (`entityDie`, only `damageSource.damagingEntity` = player, projectiles included; counts when the player **or** the victim is inside
-  the forest): `inanimate` family nothing; `lothlorien:unicorn` 10; `lothlorien:white_deer` 6; `lothlorien:elven_warden` kill 6; player 3; `monster` family 1; any other mob (animal) 3.
-  A warden *fight* costs 1 (first player hit after 60 s, `recordWardenFight` in `harmony_game.js`, called by `elven_warden.js`). Dying changes nothing except
+  the forest): `inanimate` family nothing; `lothlorien:unicorn` 10; `lothlorien:white_deer` 6; `lothlorien:elven_warden` kill 6; `lothlorien:elf` kill 6; player 3; `monster` family 1; any other mob (animal) 3.
+  A warden *fight* costs 1 (first player hit after 60 s, `recordWardenFight` in `harmony_game.js`, called by `elven_warden.js`); an elf fight costs 1 the same way (`recordElfFight`, called by `elf.js`, M1, not seen in game). Dying changes nothing except
   dying inside the forest while Hated: set to -29.
 - **Hated tag.** The script keeps the player tag `lothlorien_hated` in step with the band (set on entering Hated, removed on leaving, checked on join);
   `entities/elven_warden.json` `nearest_attackable_target` has an entry for players with `has_tag lothlorien_hated`. Not yet seen in game.
@@ -1170,9 +1170,27 @@ distance. Owner: "Yes, build the planner", up to 3 extra links, "trigger it at t
   (half slab / 1 block) are skipped. Merges run first in the planner, on the overlay, so links are scored on the merged network; skipped when an open walk < 10 steps already joins the decks; lanterns are added until
   light >= 8; they do not count in the budget, cap 6 (`PLAN.mergeCap`); sim: 26/300 villages. Next: widen the door (see the design doc, open wishes).
 
+**Elf posts and the population step (M1, 2026-10-10, not seen in game).** Tree pieces carry invisible `lothlorien:elf_post` entities (written by `writePiece` from `postCells` in `build_village.mjs`, kind through the
+definitions group `lothlorien:post_<kind>`): `central_mallorn_01` 1 `loremaster` + 4 `reserve`, every `combo_*` piece 1 `home` post. The loop planner run calls `elf_village.js` `populateVillage` after the links and before it removes
+the markers (own `try`): it assigns the professions (`elf_rules.js` `assignHomes`), spawns the elves and removes the posts. A post whose elf could not be spawned stays. Crowns and ends carry no posts, so they stayed
+byte-identical when the pieces were regenerated. Details, record format and numbers: `docs/mobs/elves.md`.
+
 **In-game test checklist (new village):** (1) `/place structure lothlorien:elven_village` places without an error; (2) central tree with rope to the deck, crowns on every tree, continuous trunks; (3) bridges meet
 platforms in all 4 rotations and walk without jumping; towers: stair walkable, 2 blocks headroom; (4) rails continuous, lanterns on decks (no dark spot); (5) after a few seconds the planner log lines appear and links /
 merges show up, no `loop_marker` left (`/testfor @e[type=lothlorien:loop_marker]`); (6) walk the new links: rails, light, headroom; (7) wardens present (template entities).
+
+## Civilian elves (M1, 2026-10-10, built; static checks, unit and glue tests only, NOT yet seen in game, not deployed)
+
+Design sheet, owner decisions, placement rule, record format and the open game checks: `docs/mobs/elves.md`; population rule for the home milestone: `docs/design/elven_inhabitants.md` section 10.
+- **Files.** `scripts/elf_rules.js` (pure: ids, `PROFESSIONS`, `STATS`, `HOME_RADIUS`, generator tunables `POST_SPACING` 3 / `ROPE_CLEARANCE` 2 / `RESERVE_POSTS` 4 / `HOME_MIN` 5 / `HOME_MAX` 7, `FOE_TAG`, `FOE_MS`,
+  `homeSite`, `assignHomes`, record helpers), `scripts/elf_village.js` (population inside the planner run), `scripts/elf.js` (hurt-by-player: fight cost, foe tag), `entities/elf.json`, `entities/elf_post.json` + RP `entity/elf_post.entity.json`.
+  `build_village.mjs`, `village_sim.mjs` and the tests import the same rules file.
+- **Entity.** Persistent, no despawn, no spawn rule; panic 1.25 and flee monsters within 6; fall damage off; `blocks_to_avoid` the two rope blocks (`name` descriptors: goat uses `name` for powder snow, [U] for custom blocks);
+  `minecraft:home` only through the profession groups (Loremaster 6, others 10). Movement 0.3 stays under `WRONG_MOVEMENT_ABOVE` of `warden_replace_rules.js`. Nothing to use: no trade, interact, inventory, lead, loot, XP.
+- **Home post cells.** Warden-like margins (planks under the cell and its 8 neighbours, 3x3x3 air, no rail within 2) on the central tree; on nodes a home post needs only its own cell open (small nodes such as `node_e` have no cell with the full margin)
+  and prefers the cell with the biggest free square, then open margins, then nearest the trunk.
+- **Tests.** `tests/run.mjs` section "civilian elves (M1)" (entity invariants, client in step, wardens defend, `homeSite`, `assignHomes`, posts in pieces, 30 villages), `tests/script_glue.mjs` (planner run with posts, 2 home posts + reserves,
+  spawn error, `elf.js` hits and timers). `node tools/village_sim.mjs 300 1` prints the `elves:` line.
 
 ## Elven Warden (2026-10-07, built; static checks and unit tests only, NOT yet seen in game)
 

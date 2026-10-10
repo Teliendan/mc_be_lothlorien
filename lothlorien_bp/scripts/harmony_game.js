@@ -71,6 +71,15 @@ export function recordWardenFight(player, warden) {
   }
 }
 
+// A new fight with a civilian elf (elf.js decides what a fight is): the same small cost as a warden fight.
+export function recordElfFight(player, elf) {
+  try {
+    deed(player, elf, "elf_fight");
+  } catch {
+    // entity gone
+  }
+}
+
 function familiesOf(entity) {
   try {
     return entity.getComponent("minecraft:type_family")?.getTypeFamilies?.() ?? [];

@@ -31,6 +31,8 @@ export const DEED_COSTS = {
   unicorn: 10, // the forest's most sacred creature
   warden_fight: 1, // per fight (first hit after PROVOKE_MS without one), see elven_warden.js
   warden_kill: 6, // on top of the fight cost
+  elf_fight: 1, // per fight (first hit on a civilian elf after PROVOKE_MS without one), see elf.js
+  elf_kill: 6, // on top of the fight cost, like a warden
   player: 3,
 };
 export const deedCost = (kind) => DEED_COSTS[kind] ?? 0;
@@ -38,6 +40,7 @@ export const deedCost = (kind) => DEED_COSTS[kind] ?? 0;
 const WHITE_DEER = "lothlorien:white_deer";
 const UNICORN = "lothlorien:unicorn";
 const WARDEN = "lothlorien:elven_warden";
+const ELF = "lothlorien:elf";
 const PLAYER = "minecraft:player";
 
 // Deed kind of a victim, or undefined when it counts nothing (armor stands and the like: family `inanimate`).
@@ -47,6 +50,7 @@ export function deedKindOf(typeId, families = []) {
   if (typeId === WHITE_DEER) return "white_deer";
   if (typeId === UNICORN) return "unicorn";
   if (typeId === WARDEN) return "warden_kill";
+  if (typeId === ELF) return "elf_kill";
   if (typeId === PLAYER) return "player";
   return families.includes("monster") ? "monster" : "animal";
 }

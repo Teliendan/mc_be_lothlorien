@@ -399,3 +399,17 @@ lothlorien.message.village.plan.none=[lothlorien] plánovač vesnice: v okolí n
 lothlorien.message.village.plan.done=[lothlorien] plánovač vesnice: postaveno propojení: %s (%s).
 ## Context: Developer diagnostic: the village planner run started by /scriptevent lothlorien:village plan failed, for example the ticking area quota was too small or loading timed out.
 lothlorien.message.village.plan.failed=[lothlorien] plánovač vesnice: tuto vesnici se nepodařilo naplánovat (viz obsahový log).
+## Context: Elf: a civilian elf, an inhabitant of the Elven tree villages of Lothlorien. One name for all professions.
+entity.lothlorien:elf.name=Elf
+## Context: Creative spawn egg for Elf. Spawn Egg is the Minecraft item type; do not translate as an animal-laid egg.
+item.spawn_egg.entity.lothlorien:elf.name=Vajíčko tvora: Elf
+## Context: Profession title of a civilian elf who tends the plants of the tree village.
+lothlorien.elf.profession.gardener=Zahradník
+## Context: Profession title of a civilian elf who heals the villagers and visitors.
+lothlorien.elf.profession.healer=Léčitel
+## Context: Profession title of a civilian elf who builds and mends things from wood, a carpenter.
+lothlorien.elf.profession.woodwright=Tesař
+## Context: Profession title of a civilian elf who lights and tends the lanterns of the tree village.
+lothlorien.elf.profession.lamplighter=Lampář
+## Context: Profession title of the wise elf who keeps the lore and tales of the forest.
+lothlorien.elf.profession.loremaster=Znalec tradic

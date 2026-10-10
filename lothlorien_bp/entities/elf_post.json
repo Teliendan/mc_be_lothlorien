@@ -1,0 +1,84 @@
+{
+  "format_version": "1.26.50",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "lothlorien:elf_post",
+      "is_spawnable": false,
+      "is_summonable": true
+    },
+    "component_groups": {
+      "lothlorien:post_loremaster": {
+        "minecraft:type_family": {
+          "family": [
+            "lothlorien_elf_post",
+            "elf_post_loremaster",
+            "inanimate"
+          ]
+        }
+      },
+      "lothlorien:post_reserve": {
+        "minecraft:type_family": {
+          "family": [
+            "lothlorien_elf_post",
+            "elf_post_reserve",
+            "inanimate"
+          ]
+        }
+      },
+      "lothlorien:post_home": {
+        "minecraft:type_family": {
+          "family": [
+            "lothlorien_elf_post",
+            "elf_post_home",
+            "inanimate"
+          ]
+        }
+      }
+    },
+    "components": {
+      "minecraft:collision_box": {
+        "width": 0.1,
+        "height": 0.1
+      },
+      "minecraft:physics": {
+        "has_gravity": false,
+        "has_collision": false
+      },
+      "minecraft:knockback_resistance": {
+        "value": 1.0
+      },
+      "minecraft:damage_sensor": {
+        "triggers": {
+          "cause": "all",
+          "deals_damage": "no"
+        }
+      },
+      "minecraft:fire_immune": {},
+      "minecraft:persistent": {},
+      "minecraft:conditional_bandwidth_optimization": {}
+    },
+    "events": {
+      "lothlorien:post_loremaster": {
+        "add": {
+          "component_groups": [
+            "lothlorien:post_loremaster"
+          ]
+        }
+      },
+      "lothlorien:post_reserve": {
+        "add": {
+          "component_groups": [
+            "lothlorien:post_reserve"
+          ]
+        }
+      },
+      "lothlorien:post_home": {
+        "add": {
+          "component_groups": [
+            "lothlorien:post_home"
+          ]
+        }
+      }
+    }
+  }
+}

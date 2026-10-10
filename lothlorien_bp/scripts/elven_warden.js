@@ -8,6 +8,7 @@
 import { EntityInitializationCause, EquipmentSlot, ItemStack, system, world } from "@minecraft/server";
 import { BOW_ID, DECK_BLOCKS, WARDEN_ID, isFriendlyFire, isNewFight, keepNaturalSpawn, PLAYER_ID } from "./elven_warden_rules.js";
 import { HATED_TAG, recordWardenFight } from "./harmony_game.js";
+import { FOE_TAG } from "./elf_rules.js";
 
 const provoked = new Map(); // player id -> Date.now() of the last hit on a warden (Date: readable in restricted mode)
 
@@ -83,7 +84,7 @@ export function startElvenWardens(depthAt) {
       if (shooter?.typeId !== WARDEN_ID) return;
       const victim = event.hurtEntity;
       const at = provoked.get(victim.id);
-      if (isFriendlyFire({ shooterId: shooter.typeId, victim: { typeId: victim.typeId, families: families(victim) }, hated: victim.typeId === PLAYER_ID && victim.hasTag(HATED_TAG), sinceProvokedMs: at === undefined ? undefined : Date.now() - at })) {
+      if (isFriendlyFire({ shooterId: shooter.typeId, victim: { typeId: victim.typeId, families: families(victim) }, hated: victim.typeId === PLAYER_ID && victim.hasTag(HATED_TAG), foe: victim.typeId === PLAYER_ID && victim.hasTag(FOE_TAG), sinceProvokedMs: at === undefined ? undefined : Date.now() - at })) {
         event.cancel = true;
       }
     } catch {

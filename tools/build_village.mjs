@@ -16,6 +16,7 @@ import { B } from "./flet_mallorn.mjs";
 import { checkWalk } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs"; // shared walkability checker (headroom, steps, edges, rings, rail links)
 import { makeCombo, buildBalcony, STRAIGHT } from "./village_combo.mjs";
 import { sideTarget } from "../lothlorien_bp/scripts/village_loop.js"; // the runtime's own rim test decides where a side marker may stand
+import { POST_ID, POST_GROUP_PREFIX, POST_SPACING, ROPE_CLEARANCE, RESERVE_POSTS, homeSite } from "../lothlorien_bp/scripts/elf_rules.js"; // civilian elf posts (tunables live there)
 import {
   ROOTS, FLOOR_H, LEVEL_H, FACING, SHAPES, key, AIR, planks, slab, Deck, buildTree, buildCrown, deckJigsaw, lantern, lonelyRail,
   writeRails, RAIL, shapeCells, addLanterns,
@@ -75,12 +76,10 @@ function checkConnectors(name, blocks, connectors) {
     }
   }
 }
-// Standing cells for `count` wardens on the deck layer y = FLOOR_H (tree coordinates): planks under the cell and its 8
-// neighbours, 3 x 3 x 3 explicit air above, no rail within 2 cells, so nothing but open deck around (not at a connector, the
-// trunk, the rope hole, a stair or a lantern). The first warden stands near ring `want`, the next ones as far from the earlier
-// ones as possible. Deterministic. Returns [{ x, z }] (tree coordinates); throws when there is no room.
-export function wardenCells(name, blocks, count, want) {
-  if (!count) return [];
+// Open deck cells on the deck layer y = FLOOR_H (tree coordinates): planks under the cell and its 8 neighbours, 3 x 3 x 3 explicit air
+// above, no rail within 2 cells, so nothing but open deck around (not at a connector, the trunk, the rope hole, a stair or a lantern).
+// Shared by the warden and the elf post cells. -> [{ x, z, d }] (d = distance to the trunk axis), in block order.
+export function openDeckCells(blocks) {
   const at = (x, y, z) => blocks.get(key(x, y, z))?.name;
   const ok = [];
   for (const k of blocks.keys()) {
@@ -96,6 +95,13 @@ export function wardenCells(name, blocks, count, want) {
     }
     if (good) ok.push({ x, z, d: Math.hypot(x, z) });
   }
+  return ok;
+}
+// Standing cells for `count` wardens on the deck layer (see openDeckCells). The first warden stands near ring `want`, the next ones as far
+// from the earlier ones as possible. Deterministic. Returns [{ x, z }] (tree coordinates); throws when there is no room.
+export function wardenCells(name, blocks, count, want) {
+  if (!count) return [];
+  const ok = openDeckCells(blocks);
   const near = ok.filter((c) => Math.abs(c.d - want) <= 2.5);
   const pool = (near.length >= count ? near : ok).sort((a, b) => Math.abs(a.d - want) - Math.abs(b.d - want) || a.x - b.x || a.z - b.z);
   if (pool.length < count) throw new Error(`${name}: no room for ${count} wardens`);
@@ -106,6 +112,50 @@ export function wardenCells(name, blocks, count, want) {
     picked.push(next);
   }
   return picked.map(({ x, z }) => ({ x, z }));
+}
+// Civilian elf posts (invisible `lothlorien:elf_post` entities, rules and tunables in scripts/elf_rules.js; the village planner assigns the
+// professions at runtime, see elf_village.js): on the deck layer y = FLOOR_H, tree coordinates. `taken` = the piece's warden cells [{ x, z }].
+// Every post stands on an open deck cell (openDeckCells) at least POST_SPACING (Chebyshev) from the wardens and the earlier posts.
+//   central tree: one `loremaster` post on the open cell nearest the rope hole (at least ROPE_CLEARANCE from the rope cell), then RESERVE_POSTS
+//                 `reserve` posts spread out as far from each other as possible (leftover professions of a village with few trees stand there);
+//   tree node:    one `home` post inside the biggest free square of the lower deck (homeSite), preferably on an open deck cell, nearest the trunk.
+//                 (Small nodes have no cell with the full open-deck margin of a warden, node_e only a 3 x 3 square, so a post there only needs its own
+//                 cell to be open deck: planks underneath, 3 cells of air above.)
+// Other pieces (crowns, ends) carry none. Deterministic (ties by x, then z). -> [{ x, z, kind }]; throws when there is no room.
+export function postCells(name, blocks, taken = []) {
+  const central = name.startsWith("central"), isNode = name in NODES;
+  if (!central && !isNode) return [];
+  const apart = (c, list) => list.every((t) => Math.max(Math.abs(c.x - t.x), Math.abs(c.z - t.z)) >= POST_SPACING);
+  const ok = openDeckCells(blocks);
+  const ground = (x, y, z) => blocks.get(key(x, y, z))?.name ?? AIR.name;
+  if (isNode) {
+    const strict = new Set(ok.map((c) => `${c.x},${c.z}`));
+    let best = null;
+    for (const k of blocks.keys()) {
+      const [x, y, z] = k.split(",").map(Number), c = { x, z, d: Math.hypot(x, z) };
+      if (y !== FLOOR_H || !apart(c, taken)) continue;
+      const size = homeSite(ground, x, FLOOR_H, z)?.k ?? 0, margin = strict.has(`${x},${z}`) ? 1 : 0;
+      const better = !best || size > best.k || (size === best.k && (margin > best.margin || (margin === best.margin && (c.d < best.c.d || (c.d === best.c.d && (x < best.c.x || (x === best.c.x && z < best.c.z)))))));
+      if (better) best = { c, k: size, margin };
+    }
+    if (!best || !best.k) throw new Error(`${name}: no room for an elf home post`);
+    return [{ x: best.c.x, z: best.c.z, kind: "home" }];
+  }
+  let rope = null;
+  for (const [k, b] of blocks) if (b.name === B.ropeHanging && k.split(",")[1] === String(FLOOR_H)) { const [x, , z] = k.split(",").map(Number); rope = { x, z }; break; }
+  if (!rope) throw new Error(`${name}: no rope cell on the deck layer`);
+  const cheb = (c, t) => Math.max(Math.abs(c.x - t.x), Math.abs(c.z - t.z));
+  const lore = ok.filter((c) => cheb(c, rope) >= ROPE_CLEARANCE && apart(c, taken))
+    .sort((a, b) => Math.hypot(a.x - rope.x, a.z - rope.z) - Math.hypot(b.x - rope.x, b.z - rope.z) || a.x - b.x || a.z - b.z)[0];
+  if (!lore) throw new Error(`${name}: no room for the Loremaster post`);
+  const picked = [{ x: lore.x, z: lore.z, kind: "loremaster" }];
+  for (let i = 0; i < RESERVE_POSTS; i++) {
+    const have = [...taken, ...picked], gap = (c) => Math.min(...have.map((p) => Math.hypot(c.x - p.x, c.z - p.z)));
+    const next = ok.filter((c) => apart(c, have)).sort((a, b) => gap(b) - gap(a) || a.x - b.x || a.z - b.z)[0];
+    if (!next) throw new Error(`${name}: no room for ${RESERVE_POSTS} reserve posts`);
+    picked.push({ x: next.x, z: next.z, kind: "reserve" });
+  }
+  return picked;
 }
 // Where a platform's plain rim sides can start a bridge (F1): one marker per straight rim run, on the run's middle cell, where the runtime's
 // sideTarget holds for a bridge heading into the platform (5-run of rail on 5 planks, two plain deck rows behind with open air; a stair opening,
@@ -148,7 +198,8 @@ export function sideMarkerCells(blocks, origin, inRegion = () => true) {
   return res.sort((a, b) => a[2] - b[2] || a[0] - b[0] || a[1] - b[1]).map(([x, z, y]) => [x + origin[0] + 0.5, z + origin[2] + 0.5, y]);
 }
 // extra.markers: [[x, z]] rail mender marker positions in box coordinates (default: the box centre); extra.wardens: standing cells
-// [{ x, z }] in block coordinates (default: computed here for WARDENS[name])
+// [{ x, z }] in block coordinates (default: computed here for WARDENS[name]); extra.posts: elf post cells [{ x, z, kind }] in block coordinates
+// (default: postCells)
 function writePiece(name, blocks, size, origin, connectors, extra = {}) {
   checkConnectors(name, blocks, connectors);
   if (!name.startsWith("crown_")) assertWalk(name, blocks, { connectors });
@@ -164,17 +215,21 @@ function writePiece(name, blocks, size, origin, connectors, extra = {}) {
   // Side markers (round 2, F1): [x, z, deckY] in box coordinates + block key y of the deck; a platform rim run of its own is a bridge START too.
   for (const m of name === "railing_end" ? [[sx / 2, sz / 2]] : extra.loopMarkers ?? []) markers.push({ id: LOOP_MARKER, x: m[0], y: m[2] === undefined ? Math.min(...railYs) + origin[1] + 0.5 : m[2] + 1 + origin[1] + 0.5, z: m[1] });
   const cells = extra.wardens ?? wardenCells(name, blocks, WARDENS[name] ?? 0, name.startsWith("central") ? 7 : 5);
+  const posts = (extra.posts ?? postCells(name, blocks, cells)).map((c) => ({
+    id: POST_ID, x: c.x + origin[0] + 0.5, y: FLOOR_H + 1 + origin[1], z: c.z + origin[2] + 0.5,
+    definitions: [`+${POST_ID}`, `+${POST_GROUP_PREFIX}${c.kind}`],
+  }));
   const wardens = cells.map((c) => ({
     id: WARDEN, x: c.x + origin[0] + 0.5, y: FLOOR_H + 1 + origin[1], z: c.z + origin[2] + 0.5,
     definitions: [`+${WARDEN}`, "+lothlorien:village_warden"], mainhand: "minecraft:bow", invulnerable: false,
   }));
-  const { buffer, clipped } = toMcstructure(blocks, size, origin, [...markers, ...wardens]);
+  const { buffer, clipped } = toMcstructure(blocks, size, origin, [...markers, ...wardens, ...posts]);
   if (clipped) throw new Error(`${name}: ${clipped} blocks outside the box`);
   writeFileSync(join(out, `${name}.mcstructure`), buffer);
   const tally = (f) => [...blocks.values()].filter(f).length;
   const conn = connectors.map((c) => `${c.facing}@y${c.y + origin[1]}`).join(" ");
   summary.push(`${name}: ${sx}x${sy}x${sz}, connectors ${conn || "none"}; ` +
-    `${wardens.length} wardens, ${tally((b) => b.name.endsWith("_log") || b.name.endsWith("_wood"))} logs, ${tally((b) => b.name === B.leaves)} leaves, ` +
+    `${wardens.length} wardens, ${posts.length} elf posts, ${tally((b) => b.name.endsWith("_log") || b.name.endsWith("_wood"))} logs, ${tally((b) => b.name === B.leaves)} leaves, ` +
     `${tally((b) => b.name === B.planks)} planks, ${tally((b) => b.name.includes("slab"))} slabs, ${tally((b) => b.name === RAIL)} rails, ${buffer.length} bytes`);
 }
 
@@ -228,9 +283,11 @@ const comboList = [];
         const cb = makeCombo(tree, ei, spec, POOL("combos"));
         if (cb.why) continue; // this bridge sticks out of this node's width: next one
         const name = `combo_${node}_${facing}_${spec.name}`;
-        const nodeWardens = wardenCells(node, tree.blocks, WARDENS[node] ?? 0, 5).map(cb.wardenMap);
+        const wardenCellsOfNode = wardenCells(node, tree.blocks, WARDENS[node] ?? 0, 5);
+        const nodeWardens = wardenCellsOfNode.map(cb.wardenMap);
+        const nodePosts = postCells(node, tree.blocks, wardenCellsOfNode).map((c) => ({ ...cb.wardenMap(c), kind: c.kind }));
         writePiece(name, cb.blocks, cb.size, cb.origin, cb.connectors, {
-          markers: [[cb.bridgeMid[0], cb.bridgeMid[1]], [cb.axis[0] + 0.5, cb.axis[1] + 0.5]], wardens: nodeWardens,
+          markers: [[cb.bridgeMid[0], cb.bridgeMid[1]], [cb.axis[0] + 0.5, cb.axis[1] + 0.5]], wardens: nodeWardens, posts: nodePosts,
           loopMarkers: sideMarkerCells(cb.blocks, cb.origin, (x, z) => z >= cb.bridgeLen), // the node's rims; the bridge half has none
         });
         comboList.push({ name, node });
