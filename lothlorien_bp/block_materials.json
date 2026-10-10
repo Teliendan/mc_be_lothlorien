@@ -531,7 +531,7 @@
     },
     "lothlorien:nectar_bloom": {
       "profile": "flower",
-      "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
+      "harvest": "Owner policy 2026-10-10: any tool or hand collects one bloom at every nectar stage; native self loot with explosion_decay, no shears collection gate. Nectar filling/bottle interaction and approved material settings unchanged."
     },
     "lothlorien:niphredil": {
       "profile": "flower",
@@ -539,7 +539,7 @@
     },
     "lothlorien:star_canopy": {
       "profile": "stone_tiles",
-      "harvest": "Deepslate tiles counterpart: any pickaxe collects one tile. Bounded before-player-break gate suppresses wrong-tool loot; allowed mining and environmental removal retain native table and explosion_decay. Wrong-tool events, stats and break effects require engine acceptance; see docs/STAR_CANOPY_HARVEST.md."
+      "harvest": "Owner policy 2026-10-10: any tool or hand collects one tile; pickaxe is the efficient mining tool, not a collection requirement. Native self loot and explosion_decay remain authoritative; no scripted harvest gate. See docs/STAR_CANOPY_HARVEST.md."
     },
     "lothlorien:western_corn": {
       "profile": "crop",

@@ -127,11 +127,9 @@ broken.pools.push(extraBase);
 assert.throws(() => assertHarvest(broken), "duplicate auxiliary pools must not stack");
 
 // Owner exceptions are part of the contract, not collateral vanilla changes.
-const golden = readLoot("mallorn_golden_leaves"), nectar = readLoot("nectar_bloom");
+const golden = readLoot("mallorn_golden_leaves");
 for (const tool of [undefined, {}, shears, silkHoe])
   assert.deepEqual(dropExpectations(golden, tool), { "lothlorien:mallorn_golden_leaves": 1 });
-assert.deepEqual(dropExpectations(nectar, shears), { "lothlorien:nectar_bloom": 1 });
-for (const tool of [undefined, {}, silkHoe]) assert.deepEqual(dropExpectations(nectar, tool), {});
 // Owner 2026-10-10: reusable jar and mounted antler collect with any tool.
 // Native custom-block default self-drop has no loot-table tool predicate.
 for (const name of ["firefly_jar", "deer_antler"]) {

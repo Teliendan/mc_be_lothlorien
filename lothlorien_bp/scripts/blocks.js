@@ -1,5 +1,4 @@
 import { world, system, BlockPermutation, EquipmentSlot, GameMode } from "@minecraft/server";
-import "./star_canopy_harvest.js";
 
 // Phase 3 custom block components for the Mallorn wood set.
 // Stripping logs and merging slabs are world events (see bottom), not block components: a block

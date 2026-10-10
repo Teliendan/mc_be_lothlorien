@@ -105,9 +105,10 @@ def item():
 
 
 def loot():
-    """Shears take the bloom as an item; broken by hand it drops nothing (vanilla vines)."""
-    return {"pools": [{"rolls": 1, "entries": [{"type": "item", "name": f"{NS}:nectar_bloom"}],
-                       "conditions": [{"condition": "match_tool", "item": "minecraft:shears"}]}]}
+    """Owner 2026-10-10: any tool or hand collects the bloom; native blast decay."""
+    return {"pools": [{"rolls": 1, "entries": [{"type": "item", "name": f"{NS}:nectar_bloom",
+                       "functions": [{"function": "set_count", "count": 1},
+                                     {"function": "explosion_decay"}]}]}]}
 
 
 def main():

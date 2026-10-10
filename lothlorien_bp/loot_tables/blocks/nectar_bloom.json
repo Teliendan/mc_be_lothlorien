@@ -5,13 +5,11 @@
       "entries": [
         {
           "type": "item",
-          "name": "lothlorien:nectar_bloom"
-        }
-      ],
-      "conditions": [
-        {
-          "condition": "match_tool",
-          "item": "minecraft:shears"
+          "name": "lothlorien:nectar_bloom",
+          "functions": [
+            { "function": "set_count", "count": 1 },
+            { "function": "explosion_decay" }
+          ]
         }
       ]
     }

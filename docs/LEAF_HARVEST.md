@@ -20,8 +20,9 @@ explosion processing to native `explosion_decay`; for sticks it follows
 `set_count`. Its numerical runtime behavior is not simulated by our tests.
 
 Golden decorative leaves retain the owner's unconditional self-drop and no
-decay. Nectar bloom retains the owner's shears-only collection gate, including
-no Silk Touch substitution. Player persistence, the custom 10-step leaf reach,
+decay. Owner correction 2026-10-10: nectar bloom collects with any tool or hand,
+with native blast decay; its previous shears-only gate was removed. Player
+persistence, the custom 10-step leaf reach,
 tree generation and decay scheduling are unchanged.
 
 `tools/make_mallorn_leaves.py` keeps art generation separate from harvesting:

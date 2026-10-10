@@ -4,8 +4,8 @@ import { GLASS_BOTTLE, swapHeldBottle, newItem } from "./bottles.js";
 import { repeatedUse } from "./use_guard.js";
 
 // Phase 14b: the nectar bloom hangs under Mallorn leaves. `lothlorien:nectar` 0-3 fills by random tick while Mallorn
-// leaves are directly above; a glass bottle on a full bloom gives Mallorn nectar and empties it. Shears take the bloom
-// as an item (loot table); breaking it by hand drops nothing. Rules: nectar_rules.js.
+// leaves are directly above; a glass bottle on a full bloom gives Mallorn nectar and empties it. Any tool or hand
+// collects the bloom through native loot (owner 2026-10-10). Rules: nectar_rules.js.
 export const BLOOM = "lothlorien:nectar_bloom";
 const NECTAR = "lothlorien:nectar";
 

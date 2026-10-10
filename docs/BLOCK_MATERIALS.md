@@ -67,21 +67,24 @@ processes these item entries. Owner retains custom acorn rarity with Fortune:
 2/2.5/3.333.../4%; sticks use Wiki rates 2/2.222.../2.5/3.333...% at standard
 levels. See [LEAF_HARVEST.md](LEAF_HARVEST.md); engine acceptance is pending.
 Golden decorative leaves
-intentionally always self-drop and do not decay. Nectar bloom's existing shears
-loot gate remains. Golden fern now follows the native baseline: shears collect
+intentionally always self-drop and do not decay. Nectar bloom collects with
+any tool or hand under the corrected owner policy, with native blast decay.
+Golden fern now follows the native baseline: shears collect
 one fern, otherwise a 1/8 wheat-seed chance, with native decay. Fortune I/II/III
 yields 1–3/1–5/1–7 seeds per successful event, following the Wiki. See
 [GOLDEN_FERN_HARVEST.md](GOLDEN_FERN_HARVEST.md) for source/engine limits.
 Both double slabs use set_count2 followed by native explosion_decay, matching
-the installed data-driven double-slab recipe. Other tool gates remain audited
-but unresolved outside the star-canopy repair; see workspace
-`docs/block-loot-particles-questions.md`.
+the installed data-driven double-slab recipe.
 
-Star canopy now requires any pickaxe for player collection, like deepslate tiles.
-Allowed mining/environmental drops remain native, with explosion decay. The
-wrong-tool gate uses guarded deferred removal; exact wrong-tool break effects,
-statistics and tool wear remain pending engine acceptance. See
+Owner policy corrected 2026-10-10: the efficient tool generally changes mining
+time rather than restricting collection. Star canopy collects with any tool or
+hand; pickaxe remains its efficient tool. Native self loot and explosion decay
+remain authoritative. The added scripted collection gate and its private tool
+wear helper were removed. The explicit fern collection restriction and separate
+Starstone ore gate remain governed by their recorded policies. See
 [STAR_CANOPY_HARVEST.md](STAR_CANOPY_HARVEST.md).
+The ordinary-block loot audit and nectar-bloom repair are recorded in
+[ORDINARY_HARVEST.md](ORDINARY_HARVEST.md).
 
 Owner 2026-10-10: firefly jar is reusable and deer antler is an any-tool collectible.
 Their existing native default self-drops already satisfy this; no collection gate
