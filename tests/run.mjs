@@ -1734,11 +1734,11 @@ test("rope fit in the simulator: the terrain top follows the Bedrock rule (first
     return planLoops(row.res, world, states, { terrain, start: 0 });
   };
   const flat = sim(undefined);
-  assert.deepEqual(flat.repairs, [], "start height -(ROOTS-1): the rope stands on the first air cell, nothing to repair");
+  assert.deepEqual(flat.repairs.filter((p) => p.kind === "rope"), [], "start height -(ROOTS-1): the rope stands on the first air cell, nothing to repair");
   assert.ok(flat.ropeFeet.length >= 1 && flat.ropeFeet.every((f) => f.onGround && !f.buried));
   const low = sim(() => 14), high = sim(() => 20);
-  assert.ok(low.repairs[0].hung === 3 && low.ropeFeet.every((f) => f.onGround && !f.buried), JSON.stringify(low.repairs));
-  assert.ok(high.repairs[0].buried === 3 && high.ropeFeet.every((f) => f.onGround && !f.buried), JSON.stringify(high.repairs));
+  assert.ok(low.repairs.find((p) => p.kind === "rope").hung === 3 && low.ropeFeet.every((f) => f.onGround && !f.buried), JSON.stringify(low.repairs));
+  assert.ok(high.repairs.find((p) => p.kind === "rope").buried === 3 && high.ropeFeet.every((f) => f.onGround && !f.buried), JSON.stringify(high.repairs));
 });
 test("rope fit: all four rotations derive the face from the wall; repairGen finds the rope in the deck layer and applies it to the overlay", () => {
   for (const face of ["north", "south", "east", "west"]) {
@@ -1750,6 +1750,69 @@ test("rope fit: all four rotations derive the face from the wall; repairGen find
     assert.deepEqual(PL.drive(RP.repairGen(ov, [[5, 16, 5]], { rect: { x0: -30, x1: 30, z0: -30, z1: 30 } })), [], "idempotent: a second run changes nothing");
     assert.equal(PL.drive(RP.repairGen(ov, [[5, 16, 5]], { rect: { x0: -30, x1: 30, z0: -30, z1: 30 }, repairs: false })).length, 0, "repairs: false turns them off");
   }
+});
+// --- Elven village: root flare at the pillars of balconies and lookouts (village_repair.js planFlare / findPillar) ---
+const PILLAR_LOG = "lothlorien:mallorn_log";
+function pillarWorld({ ground = () => -1, bottom = -12, deck = 16, extra = {} } = {}) { // plus-shaped pillar at 5,5 from `bottom` up to deck - 1; terrain: grass at ground(x, z), dirt below, air above
+  const cells = new Map(), cx = 5, cz = 5;
+  for (let y = bottom; y < deck; y++) for (const [a, b] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) cells.set(`${cx + a},${y},${cz + b}`, PILLAR_LOG);
+  for (const [k, v] of Object.entries(extra)) cells.set(k, v);
+  const at = (x, y, z) => { const v = cells.get(`${x},${y},${z}`); if (v !== undefined) return v === "UNLOADED" ? undefined : v; const g = ground(x, z); return y > g ? "minecraft:air" : y === g ? "minecraft:grass_block" : "minecraft:dirt"; };
+  return { at, marker: [cx + 3, deck, cz], pillar: { x: cx, z: cz, y: deck } };
+}
+const woodNeighbours = (blocks, x, y, z, pillar) => { // wood cells among the 26 neighbours, the pillar plus not counted
+  const set = new Set(blocks.map((b) => `${b.x},${b.y},${b.z}`)); let n = 0;
+  for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) for (let c = -1; c <= 1; c++) {
+    if ((a || b || c) && set.has(`${x + a},${y + b},${z + c}`) && !(pillar.x === x + a && Math.abs(pillar.z - (z + c)) <= 1) && !(pillar.z === z + c && Math.abs(pillar.x - (x + a)) <= 1)) n++;
+  }
+  return n;
+};
+test("root flare: findPillar finds the plus-shaped pillar 3 or 4 cells from a marker, and not a 3x3 trunk", () => {
+  const w = pillarWorld();
+  assert.deepEqual(RP.findPillar(w.at, w.marker), w.pillar);
+  assert.deepEqual(RP.findPillar(w.at, [5, 16, 9]), w.pillar, "4 cells away (lookout), another axis");
+  assert.equal(RP.findPillar(w.at, [5, 16, 12]), null);
+  const trunk = pillarWorld({ extra: Object.fromEntries([[6, 6], [4, 4], [6, 4], [4, 6]].map(([x, z]) => [`${x},15,${z}`, PILLAR_LOG])) });
+  assert.equal(RP.findPillar(trunk.at, trunk.marker), null, "diagonal logs = a trunk, not a pillar");
+});
+test("root flare: flat ground gives 2-4 thin roots lying on the ground, sideways logs, no wood mass; a second run adds nothing", () => {
+  const w = pillarWorld(), f = RP.planFlare(w.at, w.pillar);
+  assert.ok(f.roots >= 2 && f.roots <= 4, `roots ${f.roots}`);
+  for (const b of f.blocks) {
+    assert.equal(b.id, PILLAR_LOG); assert.match(b.states["minecraft:block_face"], /^(east|south)$/);
+    assert.equal(b.y, 0, "first cell above the grass at -1");
+    assert.ok(woodNeighbours(f.blocks, b.x, b.y, b.z, w.pillar) <= 2, `wood mass at ${b.x},${b.y},${b.z}`);
+    assert.ok(Math.abs(b.x - 5) + Math.abs(b.z - 5) <= 3 && Math.abs(b.x - 5) + Math.abs(b.z - 5) >= 2, "1-2 cells out from the arm");
+  }
+  const reader = PL.boundedReader(w.at, { x0: -30, x1: 30, z0: -30, z1: 30 }), ov = PL.overlay(reader);
+  const first = PL.drive(RP.repairGen(ov, [w.marker], { rect: { x0: -30, x1: 30, z0: -30, z1: 30 } }));
+  assert.equal(first.filter((p) => p.kind === "flare").length, 1);
+  assert.deepEqual(PL.drive(RP.repairGen(ov, [w.marker], { rect: { x0: -30, x1: 30, z0: -30, z1: 30 } })), [], "idempotent");
+  assert.deepEqual(RP.planFlare(w.at, w.pillar).blocks, f.blocks, "deterministic");
+});
+test("root flare: on a slope every root lies on the ground of its own column; plants are replaced, water and solid cells are not; a far pit gets no root", () => {
+  const slope = pillarWorld({ ground: (x) => -1 + Math.floor((x - 5) / 2) }), f = RP.planFlare(slope.at, slope.pillar);
+  assert.ok(f.blocks.length >= 2);
+  for (const b of f.blocks) assert.equal(b.y, -1 + Math.floor((b.x - 5) / 2) + 1, `root at ${b.x} on the ground of its column`);
+  const grass = pillarWorld({ extra: { "7,0,5": "minecraft:short_grass", "3,0,5": "minecraft:stone", "5,0,7": "minecraft:short_grass", "5,0,3": "minecraft:short_grass" } }), g = RP.planFlare(grass.at, grass.pillar);
+  assert.ok(!g.blocks.some((b) => b.x === 3 && b.z === 5), "no root into a solid cell");
+  const wet = pillarWorld({ ground: (x, z) => (z > 5 ? -1 : -1), extra: { "5,-1,7": "minecraft:water", "5,-1,3": "minecraft:water" } }), w2 = RP.planFlare(wet.at, wet.pillar);
+  assert.ok(!w2.blocks.some((b) => b.x === 5), "no root over water");
+});
+test("root flare: a pillar that ends above the ground, unloaded cells and missing ground are skipped, not guessed", () => {
+  const short = pillarWorld({ bottom: 6 }), s = RP.planFlare(short.at, short.pillar);
+  assert.match(s.skip, /ends above the ground/);
+  assert.match(RP.planFlare(pillarWorld({ extra: { "7,-1,5": "UNLOADED" } }).at, pillarWorld().pillar).error ?? "", /unloaded/);
+  assert.match(RP.planFlare(pillarWorld({ ground: () => -90 }).at, pillarWorld().pillar).skip, /no ground/);
+  const log = [];
+  PL.drive(RP.repairGen(PL.overlay(PL.boundedReader(short.at, { x0: -30, x1: 30, z0: -30, z1: 30 })), [short.marker], { rect: { x0: -30, x1: 30, z0: -30, z1: 30 }, log }));
+  assert.ok(log.some((l) => /^flare 5,5: skipped/.test(l)), log.join("|"));
+});
+test("root flare in the simulator: every pillar of the villages gets roots without wood mass; skips are rare", () => {
+  const row = villages()[0], world = new Map(row.ck.world), states = new Map(row.ck.states), r = planLoops(row.res, world, states, { terrain: undefined, start: 0 });
+  const flares = r.repairs.filter((p) => p.kind === "flare");
+  assert.ok(flares.length >= 1 && flares.every((p) => p.roots >= 1 && p.roots <= 4), JSON.stringify(flares));
+  assert.ok(r.flareLog.length <= flares.length / 4 + 1, r.flareLog.join("|"));
 });
 // --- Elven village: engine-state fixes (leaf decay, fence links, rope side under rotation) ---
 const shippedStructures = () => ["../lothlorien_bp/structures/lothlorien", VILLAGE].flatMap((d) =>

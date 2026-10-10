@@ -53,9 +53,12 @@ await scenario("an automatic entityLoad plans the village once, removes the mark
   assert.equal(done.length, 1, "done-list holds the village"); assert.equal(mock.propWrites.filter((k) => k === "lothlorien:village_plans").length, 1);
   assert.ok(mock.areaLog.created.length >= 2 && mock.areaLog.created.length === mock.areaLog.removed.length && mock.tickingAreas.areas.size === 0, "ticking areas created round by round and all removed again");
   assert.match(grep(/planner: village at/)[0], new RegExp(`${direct.picks.length} link\\(s\\)`), "the same number of links as the pure planner picks on the fixture");
-  assert.equal(direct.repairs.length, 1, "V2 is the owner's old-offset village: its rope is buried by one piece"); assert.equal(direct.repairs[0].buried, 1);
-  assert.match(grep(/planner: village at/)[0], /1 repair\(s\)/); assert.equal(grep(/planner:   rope at \d+,\d+: -1 buried, \+0 hung/).length, 1, "one repair line");
-  for (const b of direct.repairs[0].blocks) assert.equal(mock.dimension().overrides.get(`${b.x},${b.y},${b.z}`)?.id, b.id, "the buried rope piece was turned back into terrain in the world");
+  const ropeFix = direct.repairs.filter((p) => p.kind === "rope"), flares = direct.repairs.filter((p) => p.kind === "flare");
+  assert.equal(ropeFix.length, 1, "V2 is the owner's old-offset village: its rope is buried by one piece"); assert.equal(ropeFix[0].buried, 1);
+  assert.ok(flares.length >= 1, "the pillars of its balconies / lookouts get root flares at the real ground");
+  assert.match(grep(/planner: village at/)[0], new RegExp(`${direct.repairs.length} repair\\(s\\)`)); assert.equal(grep(/planner:   rope at \d+,\d+: -1 buried, \+0 hung/).length, 1, "one rope repair line");
+  assert.equal(grep(/planner:   pillar at \d+,\d+: \d roots/).length, flares.length, "one line per flare");
+  for (const b of direct.repairs.flatMap((p) => p.blocks)) assert.equal(mock.dimension().overrides.get(`${b.x},${b.y},${b.z}`)?.id, b.id, "the repairs (buried rope piece back to terrain, root logs) were written into the world");
   assert.match(grep(/planner: village at/)[0], / in \d+\.\d s$/, "the summary ends with the elapsed time");
   assert.equal(direct.picks.length, 2, "V2 with the L cap: plaza + side-side (the old third pick was an L join longer than 16)");
   assert.ok(mock.dimension().overrides.size > 50, "the links were written into the world");

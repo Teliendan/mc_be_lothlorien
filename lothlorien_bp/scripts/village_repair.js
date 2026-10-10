@@ -6,10 +6,15 @@
 // ground (a hole in the grass), and on uneven ground the rope is buried or ends in the air: the rope is 3 blocks from the trunk axis where the
 // height was sampled. The fit reads the real ground and (a) turns buried rope pieces back into the terrain block in front of them, (b) hangs
 // more pieces down to the ground. The face of the rope is derived from the wall it hangs on, never hard-coded (a piece can be rotated).
+//
+// Root flare (owner 2026-10-10): the balcony and lookout pillars are plus-shaped log columns that run down into the terrain. Where a pillar meets the
+// REAL ground it gets 2-4 thin roots: from the first cell beside an arm of the pillar, 1-2 cells out, each a single mallorn log lying on the ground
+// (block_face sideways), only into air or plants. No wood mass: no root cell has more than 2 wood neighbours (the pillar not counted). The pillars are
+// found from the loop markers (a balcony / lookout marker stands 3 / 4 cells from its pillar axis), no layer scan. Not verified in game.
 import { hullOf, growRect } from "./village_planner.js";
 
 export const ROPE_ID = "lothlorien:elven_rope_hanging";
-export const REPAIR = { maxHang: 24, minAbove: 2, scanChunk: 512 };
+export const REPAIR = { maxHang: 24, minAbove: 2, scanChunk: 512, flareScan: 48, flareStep: 1 };
 const LOGS = new Set(["lothlorien:mallorn_log", "lothlorien:mallorn_wood"]);
 const FACE_OF = { "1,0": "west", "-1,0": "east", "0,1": "north", "0,-1": "south" }; // wall offset from the piece -> rope face (the wall lies opposite)
 const OFFSETS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
@@ -67,6 +72,77 @@ export function planRopeFit(at, top) {
   return { blocks, buried, hung, face, bottom };
 }
 
+// ---- root flare -----------------------------------------------------------------------------------------------------------------------
+const isLog = (n) => LOGS.has(n);
+const freeForRoot = (n) => isAir(n) || SOFT.test(n ?? "");
+// The pillar a loop marker belongs to: a plus of mallorn logs (centre + 4 arms, no diagonals: the village trunks are 3x3 or round) just under the deck,
+// 3 (balcony) or 4 (lookout) cells from the marker along an axis. m = [x, y, z] deck cell. -> { x, z, y } (y = the deck cell) or null.
+export function findPillar(at, m) {
+  const [mx, my, mz] = m, y = my - 1;
+  for (const dist of [3, 4]) for (const [dx, dz] of OFFSETS) {
+    const x = mx + dx * dist, z = mz + dz * dist;
+    if (!isLog(at(x, y, z)) || !OFFSETS.every(([a, b]) => isLog(at(x + a, y, z + b)))) continue;
+    if ([[1, 1], [1, -1], [-1, 1], [-1, -1]].some(([a, b]) => isLog(at(x + a, y, z + b)))) continue;
+    return { x, z, y: my };
+  }
+  return null;
+}
+// The first terrain surface cell (isGround) of a column, scanning down from y0: -> { y } | { error } (unloaded) | { none: true } (no ground within reach)
+function surfaceBelow(at, x, z, y0) {
+  for (let y = y0; y > y0 - REPAIR.flareScan; y--) {
+    const n = at(x, y, z);
+    if (n === undefined) return { error: `unloaded cell at ${x},${y},${z}` };
+    if (isGround(n) || WET(n)) return { y, wet: WET(n) };
+  }
+  return { none: true };
+}
+// A tiny deterministic hash for the choice of sides and lengths (the same village always gets the same roots)
+const hash = (x, z, i) => { let h = (Math.imul(x, 73856093) ^ Math.imul(z, 19349663) ^ Math.imul(i + 1, 83492791)) >>> 0; h = Math.imul(h ^ (h >>> 13), 0x5bd1e995) >>> 0; return (h ^ (h >>> 15)) >>> 0; };
+
+// The roots of one pillar. -> { blocks: [{ x, y, z, id, states }], roots, x, z } | { error } | { skip: reason }
+export function planFlare(at, pillar) {
+  const { x: cx, z: cz, y: deck } = pillar;
+  const sides = [];
+  for (let i = 0; i < 4; i++) {
+    const [dx, dz] = OFFSETS[i], sx = cx + dx * 2, sz = cz + dz * 2;
+    const g = surfaceBelow(at, sx, sz, deck - 2);
+    if (g.error) return { error: g.error };
+    if (g.none) return { skip: "no ground under the pillar within reach" };
+    if (g.wet) { sides.push(null); continue; }
+    sides.push({ dx, dz, sx, sz, ground: g.y });
+  }
+  // a side whose ground is far from the others (a pit, a cliff, a carved cell) gets no root; the median ground height is the pillar's
+  const sorted = sides.filter(Boolean).map((q) => q.ground).sort((a, b) => a - b);
+  if (!sorted.length) return { skip: "water all round" };
+  const med = sorted[Math.floor(sorted.length / 2)];
+  sides.forEach((q, i) => { if (q && Math.abs(q.ground - med) > 2) sides[i] = null; });
+  // the pillar must reach the ground: its centre column is a log from the ground height of the arms down (else it ends above the ground: skip)
+  const ys = sides.filter(Boolean).map((q) => q.ground);
+  const gMin = Math.min(...ys), gMax = Math.max(...ys);
+  for (let y = gMax; y >= gMin - 1; y--) if (!isLog(at(cx, y, cz))) return { skip: `pillar ends above the ground (no log at ${cx},${y},${cz})` };
+  // 2-4 sides, by hash; roots lie on the ground of their own column (first cell above it), 1 or 2 cells out
+  const want = 2 + (hash(cx, cz, 0) % 3), order = [0, 1, 2, 3].sort((a, b) => hash(cx, cz, 1 + a) - hash(cx, cz, 1 + b));
+  const blocks = [];
+  let roots = 0;
+  for (const i of order) {
+    if (roots >= want) break;
+    const s = sides[i];
+    if (!s) continue;
+    const y1 = s.ground + 1, c1 = at(s.sx, y1, s.sz);
+    if (c1 === undefined) return { error: `unloaded cell at ${s.sx},${y1},${s.sz}` };
+    if (isLog(c1)) { roots++; continue; } // already there (a second run)
+    if (!freeForRoot(c1) || !isGround(at(s.sx, s.ground, s.sz))) continue;
+    const face = s.dx ? "east" : "south", put = (x, y, z) => blocks.push({ x, y, z, id: "lothlorien:mallorn_log", states: { "minecraft:block_face": face } });
+    put(s.sx, y1, s.sz);
+    if (hash(cx, cz, 9 + i) % 2) { // a second cell further out, on the ground of its own column when that is within a step of the first
+      const tx = s.sx + s.dx, tz = s.sz + s.dz, g2 = surfaceBelow(at, tx, tz, y1 + REPAIR.flareStep + 1);
+      if (!g2.error && !g2.none && !g2.wet && Math.abs(g2.y + 1 - y1) <= REPAIR.flareStep && freeForRoot(at(tx, g2.y + 1, tz))) put(tx, g2.y + 1, tz);
+    }
+    roots++;
+  }
+  return { blocks, roots, x: cx, z: cz };
+}
+
 // All repairs of a village (the planner calls this after the links): -> [{ kind: "rope", x, z, buried, hung, cells: [], rails: [], lanterns: [], blocks }]
 export function* repairGen(at, markers, o = {}) {
   if (o.repairs === false || !markers.length) return [];
@@ -82,7 +158,22 @@ export function* repairGen(at, markers, o = {}) {
     at.apply(plan);
     out.push(plan);
   }
+  // root flares: every pillar of a balcony / lookout (found once from the markers), at the real ground
+  const seen = new Set();
+  for (const m of markers) {
+    yield;
+    const pillar = findPillar(at, m);
+    if (!pillar || seen.has(`${pillar.x},${pillar.z}`)) continue;
+    seen.add(`${pillar.x},${pillar.z}`);
+    const fl = planFlare(at, pillar);
+    if (fl.error) { o.log?.push(`flare ${pillar.x},${pillar.z}: ${fl.error}`); continue; }
+    if (fl.skip) { o.log?.push(`flare ${pillar.x},${pillar.z}: skipped, ${fl.skip}`); continue; }
+    if (!fl.blocks.length) continue;
+    const plan = { kind: "flare", x: pillar.x, z: pillar.z, roots: fl.roots, buried: 0, hung: 0, cells: [], rails: [], lanterns: [], blocks: fl.blocks };
+    at.apply(plan);
+    out.push(plan);
+  }
   return out;
 }
 
-export const describeRepair = (p) => `rope at ${p.x},${p.z}: -${p.buried} buried, +${p.hung} hung`;
+export const describeRepair = (p) => p.kind === "flare" ? `pillar at ${p.x},${p.z}: ${p.roots} roots (${p.blocks.length} logs)` : `rope at ${p.x},${p.z}: -${p.buried} buried, +${p.hung} hung`;

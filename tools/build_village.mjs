@@ -12,7 +12,7 @@ import { writeFileSync, mkdirSync, readdirSync, unlinkSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { toMcstructure } from "./build_structures.mjs";
-import { B } from "./flet_mallorn.mjs";
+import { B, decoratePillar } from "./flet_mallorn.mjs";
 import { checkWalk } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs"; // shared walkability checker (headroom, steps, edges, rings, rail links)
 import { makeCombo, buildBalcony, STRAIGHT } from "./village_combo.mjs";
 import { sideTarget } from "../lothlorien_bp/scripts/village_loop.js"; // the runtime's own rim test decides where a side marker may stand
@@ -35,10 +35,17 @@ const LOOP_MARKER = "lothlorien:loop_marker";
 // (same as the rail mender), to be seen in game.
 const WARDENS = { central_mallorn_01: 2, node_b: 1, node_c: 1, node_f: 1, tower_a: 1, tower_c: 1 };
 const bp = join(dirname(fileURLToPath(import.meta.url)), "..", "lothlorien_bp");
-const out = join(bp, "structures", "lothlorien", "village");
+// Pillar decoration (owner 2026-10-10): the balcony pillar gets the light, the lookout pillar the full foliage (decoratePillar); the root flare is placed
+// at the real ground by the planner (scripts/village_repair.js). Preview (nothing shipped is touched): PILLAR_PREVIEW=<dir> writes the pieces, pools and
+// structure under <dir> instead of the pack; PILLARS=bare|light|full forces one amount for both pillars; CROWN_FIT=0 builds the old, clipped crowns.
+const PREVIEW = process.env.PILLAR_PREVIEW ? process.env.PILLAR_PREVIEW : null;
+const AMOUNTS = { bare: 0, light: 0.7, full: 1.4 };
+const pillarAmount = (dflt) => (process.env.PILLARS ? AMOUNTS[process.env.PILLARS] ?? dflt : dflt);
+const bpOut = PREVIEW ? join(PREVIEW, "bp") : bp;
+const out = join(bpOut, "structures", "lothlorien", "village");
 mkdirSync(out, { recursive: true });
-mkdirSync(join(bp, "worldgen", "template_pools"), { recursive: true });
-mkdirSync(join(bp, "worldgen", "structures"), { recursive: true });
+mkdirSync(join(bpOut, "worldgen", "template_pools"), { recursive: true });
+mkdirSync(join(bpOut, "worldgen", "structures"), { recursive: true });
 for (const f of readdirSync(out)) unlinkSync(join(out, f)); // pieces of earlier layouts must not linger
 
 const POOL = (n) => `lothlorien:village/${n}`;
@@ -301,7 +308,19 @@ const comboList = [];
 }
 
 // --- crown pieces ------------------------------------------------------------------------------------------------
-const crown = (name, o) => { const c = buildCrown(o); writePiece(name, c.blocks, c.size, c.origin, []); };
+// Crown fit (owner 2026-10-10: the crowns were clipped flat at the box faces): crowns are rebuilt smaller until nothing lies in the outermost cell layer of the box (sides and top), asserted here for every crown piece
+const CROWN_FIT = process.env.CROWN_FIT !== "0";
+const crown = (name, o) => {
+  const c = buildCrown({ ...o, fit: CROWN_FIT });
+  if (CROWN_FIT) {
+    const [sx, sy, sz] = c.size;
+    for (const k of c.blocks.keys()) {
+      const [x, y, z] = k.split(",").map(Number), px = x + c.origin[0], pz = z + c.origin[2];
+      if (y > 0 && (px < 1 || px > sx - 2 || pz < 1 || pz > sz - 2 || y > sy - 2)) throw new Error(`${name}: ${k} lies in the outermost layer of the box`);
+    }
+  }
+  writePiece(name, c.blocks, c.size, c.origin, []);
+};
 crown("crown_small", { h: 7, H: 16, seed: 4004, branches: 8, blob: 2.1 });
 crown("crown_medium", { h: 8, H: 20, seed: 6006, branches: 9, blob: 2.6 });
 crown("crown_large", { h: 10, H: 24, seed: 8008, branches: 11, blob: 2.9 });
@@ -312,6 +331,7 @@ crown("crown_central_b", { h: 13, H: 30, seed: 10010, branches: 12, blob: 3.3, c
 // balcony_braced: half-round rim balcony on a log pillar to the ground, braced under the deck; one connector, 7 x 7
 {
   const b = buildBalcony();
+  if (pillarAmount(AMOUNTS.light)) decoratePillar(b.blocks, { x0: -b.origin[0], x1: b.size[0] - 1 - b.origin[0], y0: -b.origin[1], y1: b.size[1] - 1 - b.origin[1], z0: -b.origin[2], z1: b.size[2] - 1 - b.origin[2] }, { amount: pillarAmount(AMOUNTS.light), seed: 4141 });
   writePiece("balcony_braced", b.blocks, b.size, b.origin, b.connectors, { loopMarkers: [[b.origin[0] + 0.5, b.size[2] - 0.5]] }); // centre of the far rim row
 }
 // lookout_01: square-ish platform on a log pillar down to ROOTS, one connector
@@ -325,6 +345,7 @@ crown("crown_central_b", { h: 13, H: 30, seed: 10010, branches: 12, blob: 3.3, c
   blocks.set(key(0, FLOOR_H + 2, 4), lantern()); // on the rail post at the far end
   addLanterns(blocks, { x0: -4, x1: 4, y0: -ROOTS, y1: FLOOR_H + 3, z0: -4, z1: 4 }, (x, y, z) => z === -4);
   // the three free sides (south, east, west) are 5-wide rim rows: loop markers on their centres
+  if (pillarAmount(AMOUNTS.full)) decoratePillar(blocks, { x0: -4, x1: 4, y0: -ROOTS, y1: FLOOR_H + 3, z0: -4, z1: 4 }, { amount: pillarAmount(AMOUNTS.full), seed: 5252 });
   writePiece("lookout_01", blocks, [9, ROOTS + FLOOR_H + 4, 9], [4, ROOTS, 4], deck.connectors.map((c) => ({ ...c, y: FLOOR_H })), { loopMarkers: [[4.5, 8.5], [8.5, 4.5], [0.5, 4.5]] });
 }
 // railing_end (plug): deck row of 5 + 5 rails; connector at the middle deck cell facing the parent
@@ -349,7 +370,7 @@ const pool = (name, elements, fallback) => {
   };
   if (fallback) node.fallback = fallback;
   poolFiles.add(`village_${name}.json`);
-  writeFileSync(join(bp, "worldgen", "template_pools", `village_${name}.json`),
+  writeFileSync(join(bpOut, "worldgen", "template_pools", `village_${name}.json`),
     JSON.stringify({ format_version: "1.21.100", "minecraft:template_pool": node }, null, 2) + "\n");
 };
 pool("start", [["central_mallorn_01", 1]]);
@@ -363,9 +384,9 @@ pool("crowns", [["crown_large", 3], ["crown_medium", 2]], POOL("crowns_fallback"
 pool("crowns_fallback", [["crown_large", 12], ["crown_medium", 8], ["crown_small", 1]]);
 pool("crowns_small", [["crown_small", 1]]);
 pool("crowns_central", [["crown_central_a", 2], ["crown_central_b", 1]], POOL("crowns_small"));
-for (const f of readdirSync(join(bp, "worldgen", "template_pools"))) if (f.startsWith("village_") && !poolFiles.has(f)) unlinkSync(join(bp, "worldgen", "template_pools", f));
+for (const f of readdirSync(join(bpOut, "worldgen", "template_pools"))) if (f.startsWith("village_") && !poolFiles.has(f)) unlinkSync(join(bpOut, "worldgen", "template_pools", f));
 
-writeFileSync(join(bp, "worldgen", "structures", "elven_village.json"), JSON.stringify({
+writeFileSync(join(bpOut, "worldgen", "structures", "elven_village.json"), JSON.stringify({
   format_version: "1.21.100",
   "minecraft:jigsaw": {
     description: { identifier: "lothlorien:elven_village" },

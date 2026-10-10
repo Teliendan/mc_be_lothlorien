@@ -426,7 +426,17 @@ export function buildTree({ levels, trunk = "plus", seed, pool, upPool, rope = f
 
 // ---- crown piece: trunk continues from the jigsaw upward, branches, leaves, all inside the box ------------------------
 // local coords: jigsaw at (0,0,0) = box layer 0 centre. opts: h (half width), H (height), seed, branches, blob
-export function buildCrown({ h, H, seed, branches, blob, central = false }) {
+// fit (owner 2026-10-10, crowns were clipped flat at the box faces): with fit true nothing may lie in the outermost cell layer of the box (the four
+// sides and the top); the same crown is rebuilt a little smaller (branch reach and blob radii x scale, scale 1 -> 0.5) until it fits. fit false = the shipped crowns.
+export function buildCrown(opts) {
+  if (!opts.fit) return buildCrownScaled({ ...opts, scale: 1 });
+  for (let scale = 1; scale >= 0.5; scale -= 0.02) {
+    const c = buildCrownScaled({ ...opts, scale });
+    if (!c.overflow) return c;
+  }
+  throw new Error(`crown seed ${opts.seed}: does not fit with a margin`);
+}
+function buildCrownScaled({ h, H, seed, branches, blob, central = false, fit = false, scale = 1 }) {
   const random = makeRandom(seed), b = makeBuilder(random);
   // the trunk keeps the platform's section well up into the crown and tapers gradually, thin only in the top third:
   // village 3x3 -> plus (from 40 %) -> 1x1 (from 67 %); central round 5x5 -> 3x3 (30 %) -> plus (50 %) -> 1x1 (67 %)
@@ -440,26 +450,28 @@ export function buildCrown({ h, H, seed, branches, blob, central = false }) {
   const dirs = b.shuffled();
   for (let i = 0; i < branches; i++) {
     const [dx, dz] = dirs[i % 8], diag = dx !== 0 && dz !== 0;
-    const blobR = blob + random() * 0.6;
+    const blobR = (blob + random() * 0.6) * scale;
     const y0 = b.between([2, Math.max(3, H - 10)]);
     const r0 = radiusAt(y0);
     const room = h - r0 - Math.ceil(blobR); // cells of branch the box allows along an axis
-    const len = Math.max(3, Math.floor((diag ? room * 1.5 : room) - random() * 2));
+    const len = Math.max(3, Math.floor((diag ? room * (fit ? 1.25 : 1.5) : room) - random() * 2));
     // a branch that climbs above the box would lose its tip blob to the box clip and end bare: cap the rise so the blob fits under the top
     bentBranch(b, random, dx !== 0 ? dx * r0 : 0, dx !== 0 ? 0 : dz * r0, dx, dz, y0, len, 0.45, blobR, H - 2 - Math.ceil(blobR * 0.8));
   }
-  b.blob(0, H - 6, 0, Math.min(h - 0.5, blob + 2.6), Math.min(4, H / 4), 3, 1.0);
-  b.blob(0, H - 3, 0, Math.min(h - 2, blob + 1.4), 2.6, H - 5, 0.8);
+  b.blob(0, H - 6, 0, Math.min(h - 0.5, (blob + 2.6) * scale), Math.min(4, H / 4), 3, 1.0);
+  b.blob(0, H - (fit ? 4 : 3), 0, Math.min(h - 2, (blob + 1.4) * scale), fit ? 2.1 : 2.6, H - 5, 0.8);
   const tree = b.result(H);
   const blocks = new Map();
   for (const c of tree.leaves) blocks.set(key(c.x, c.y, c.z), leafBlock());
   for (const c of tree.logs) blocks.set(key(c.x, c.y, c.z), logBlock(c.face));
+  let overflow = false;
   for (const [k, v] of [...blocks]) {
     const [x, y, z] = k.split(",").map(Number);
+    if (fit && (Math.abs(x) >= h || Math.abs(z) >= h || y >= H - 1)) overflow = true; // something in the outermost layer
     if (Math.abs(x) > h || Math.abs(z) > h || y < 1 || y > H - 1) blocks.delete(k);
   }
   trimFarLeaves(blocks);
   for (const [x, z] of central ? ROUND5 : SQUARE3) blocks.set(key(x, 0, z), logBlock("up")); // the full trunk section starts at the jigsaw layer
   blocks.set(key(0, 0, 0), crownDownJigsaw());
-  return { blocks, size: [2 * h + 1, H, 2 * h + 1], origin: [h, 0, h] };
+  return { blocks, size: [2 * h + 1, H, 2 * h + 1], origin: [h, 0, h], overflow };
 }

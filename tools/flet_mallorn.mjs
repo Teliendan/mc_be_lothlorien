@@ -327,3 +327,131 @@ export function trimFarLeaves(blocks) {
   for (const [k, v] of blocks) if (v.name === B.leaves && !dist.has(k)) { blocks.delete(k); trimmed++; }
   return trimmed;
 }
+
+// Village support pillars (balcony_braced, lookout_01): bare log pillars under a deck get a living look in the same box: leaves that hug
+// the pillar like ivy (patches climbing the faces, 1 deep, sometimes 2, uneven per side), a canopy under the deck with leaf strands hanging
+// from it, a few thin branches (out, diagonal, up) with a leaf tuft at the tip. Everything is derived from the
+// piece (the deck is the lowest planks layer, the pillar the lowest layer of logs), stays inside `box` ({ x0, x1, y0, y1, z0, z1 }, piece
+// coordinates, inclusive) and below the deck, so deck, headroom and walk cells are never touched. `amount` scales the foliage (0.7 lighter,
+// 1.4 fuller).
+// The result keeps the leaf-decay reach (trimFarLeaves) and the bare-branch-end rule. Returns counts of what was added.
+export function decoratePillar(blocks, box, { amount = 1, seed = 1 } = {}) {
+  let deckY = Infinity, baseY = Infinity;
+  for (const [k, v] of blocks) {
+    const y = Number(k.split(",")[1]);
+    if (v.name === B.planks) deckY = Math.min(deckY, y);
+    if (v.name === B.log) baseY = Math.min(baseY, y);
+  }
+  if (!Number.isFinite(deckY) || !Number.isFinite(baseY) || baseY >= deckY) return { logs: 0, leaves: 0, twigs: 0 };
+  const base = [...blocks].filter(([k, v]) => v.name === B.log && Number(k.split(",")[1]) === baseY).map(([k]) => k.split(",").map(Number));
+  const cell = base.find(([x, , z]) => [[1, 0], [-1, 0], [0, 1], [0, -1]].every(([dx, dz]) => base.some(([bx, , bz]) => bx === x + dx && bz === z + dz)));
+  if (!cell) return { logs: 0, leaves: 0, twigs: 0 };
+  const [cx, , cz] = cell;
+  const rng = makeRandom(seed);
+  const inBox = (x, y, z) => x >= box.x0 && x <= box.x1 && z >= box.z0 && z <= box.z1 && y >= box.y0;
+  const free = (x, y, z) => inBox(x, y, z) && y < deckY && !blocks.has(key(x, y, z));
+  const leaf = { name: B.leaves, states: { [`${NS}:persistent`]: false } };
+  const added = new Set();
+  const put = (x, y, z, v) => { blocks.set(key(x, y, z), v); added.add(key(x, y, z)); };
+  const putLeaf = (x, y, z) => { if (!free(x, y, z)) return false; put(x, y, z, leaf); return true; };
+  const isPillar = (x, z) => (x === cx && Math.abs(z - cz) <= 1) || (z === cz && Math.abs(x - cx) <= 1);
+  const at = (x, y, z) => blocks.get(key(x, y, z));
+  
+  // 1. ivy: the 8 cells touching the plus-shaped pillar, in ring order; a strand climbs one ring column, runs 2-8 cells (a few much longer,
+  // reaching well down), may shift to the next column, has gaps, and sometimes a second leaf outside the first. Each side has its own weight.
+  const RING = [[2, 0], [1, 1], [0, 2], [-1, 1], [-2, 0], [-1, -1], [0, -2], [1, -1]];
+  const OUT = [[1, 0], [0, 1], [0, 1], [-1, 0], [-1, 0], [0, -1], [0, -1], [1, 0]]; // direction of the second leaf of each ring cell
+  const weight = RING.map(() => 0.25 + rng() * 1.1);
+  const lowest = Math.max(baseY + 1, deckY - 34);
+  for (let i = 0; i < 8; i++) {
+    let col = i, run = 0;
+    for (let y = deckY - 1; y >= lowest; y--) {
+      const d = deckY - y;
+      if (run <= 0) {
+        const near = d <= 4 ? 1.7 : Math.exp(-(d - 4) / 14);
+        if (rng() < weight[i] * amount * 0.34 * near * (d <= 4 ? 1 : 0.55)) {
+          const long = rng() < 0.1 * amount;
+          run = 2 + Math.floor(rng() * (5 + 2 * amount)) + (long ? 8 + Math.floor(rng() * 12) : 0);
+        } else continue;
+      }
+      run--;
+      if (rng() < 0.2) col = (col + (rng() < 0.5 ? 1 : 7)) % 8;
+      if (rng() < 0.14) continue; // a gap
+      const [rx, rz] = RING[col];
+      if (!putLeaf(cx + rx, y, cz + rz)) continue;
+      if (rng() < (d <= 8 ? 0.4 : 0.2) * (0.6 + 0.4 * amount)) putLeaf(cx + rx + OUT[col][0], y, cz + rz + OUT[col][1]);
+    }
+  }
+
+  // 2. canopy under the deck (thick round the pillar, ragged outwards) and strands hanging from it, longer towards the rim
+  const canopy = [];
+  for (let x = box.x0; x <= box.x1; x++) for (let z = box.z0; z <= box.z1; z++) {
+    if (at(x, deckY, z)?.name !== B.planks || isPillar(x, z)) continue;
+    const r = Math.hypot(x - cx, z - cz);
+    if (rng() < Math.max(0.12, 1.05 - r * 0.2) * (0.55 + 0.35 * amount) && putLeaf(x, deckY - 1, z)) canopy.push([x, z, r]);
+  }
+  for (const [x, z, r] of canopy) {
+    if (r < 1.5 || rng() > (0.22 + 0.1 * r) * amount) continue;
+    const len = 1 + Math.floor(rng() * (3 + Math.min(2, amount)));
+    for (let k = 1; k <= len; k++) if (!putLeaf(x, deckY - 1 - k, z)) break;
+  }
+  for (const [x, z, r] of canopy) if (r <= 2.3 && rng() < 0.4 * amount) putLeaf(x, deckY - 2, z); // a second layer near the pillar
+
+  // 3. branches: thin one-block paths only (no wood masses): out from a pillar arm (sideways log), then usually one diagonal step out-and-up,
+  // then 1-3 logs straight up, ending in a small ragged leaf tuft. Variants: out + up, out + diagonal + up, out + up + diagonal + up. Branches are spread
+  // over the height and never touch each other (a cell next to another branch is refused).
+  const nBranches = Math.max(2, Math.round(2 * amount + 1));
+  const isNewWood = (x, y, z) => added.has(key(x, y, z)) && at(x, y, z)?.name === B.log;
+  let twigs = 0;
+  for (let n = 0; n < nBranches * 6 && twigs < nBranches; n++) {
+    const d = 5 + Math.floor((twigs + rng()) * (20 / nBranches)), y = deckY - d;
+    if (y < baseY + 4) continue;
+    const [dx, dz] = [[1, 0], [-1, 0], [0, 1], [0, -1]][Math.floor(rng() * 4)];
+    const sideFace = dx ? "east" : "south", variant = Math.floor(rng() * 3);
+    const path = []; // [x, y, z, face]
+    let x = cx + dx, z = cz + dz, yy = y;
+    const out = () => { x += dx; z += dz; path.push([x, yy, z, sideFace]); };
+    out();
+    if (variant === 2) { yy += 1; path.push([x, yy, z, "up"]); x += dx; z += dz; yy += 1; path.push([x, yy, z, sideFace]); } // out, up, then diagonal
+    if (variant === 1) { x += dx; z += dz; yy += 1; path.push([x, yy, z, sideFace]); } // diagonal: one out and one up at once
+    for (let k = 1 + Math.floor(rng() * 3); k > 0; k--) { yy += 1; path.push([x, yy, z, "up"]); }
+    const mine = new Set(path.map(([px, py, pz]) => key(px, py, pz)));
+    const crowded = path.some(([px, py, pz]) => {
+      for (let ax = -1; ax <= 1; ax++) for (let ay = -1; ay <= 1; ay++) for (let az = -1; az <= 1; az++) {
+        const nk = key(px + ax, py + ay, pz + az);
+        if (!mine.has(nk) && blocks.get(nk)?.name === B.log && !isPillar(px + ax, pz + az)) return true;
+      }
+      return false;
+    });
+    if (crowded || !path.every(([px, py, pz]) => free(px, py, pz) && py < deckY - 1)) continue;
+    for (const [px, py, pz, face] of path) put(px, py, pz, { name: B.log, states: { "minecraft:block_face": face } });
+    const [tx, ty, tz] = path[path.length - 1];
+    const tb = makeBuilder(rng);
+    tb.blob(tx, ty + 1, tz, 1.4 + rng() * 0.4, 1.2 + rng() * 0.3, ty, 1.5);
+    for (const c of tb.result(0).leaves) if (rng() < 0.85) putLeaf(c.x, c.y, c.z);
+    putLeaf(tx, ty + 1, tz);
+    twigs++;
+  }
+
+  // 5. rules: every new horizontal log end carries >= 6 leaves within 2 (tuft, else cut the stub back); nothing out of reach of wood
+  for (let guard = 0; guard < 20; guard++) {
+    tuftBareEnds(blocks, (x, y, z) => !free(x, y, z));
+    const bad = bareBranchEnds(blocks).filter((e) => added.has(key(e.x, e.y, e.z)));
+    if (!bad.length) break;
+    for (const e of bad) { blocks.delete(key(e.x, e.y, e.z)); added.delete(key(e.x, e.y, e.z)); }
+  }
+  // generator assertion: every wood cell added here has at most 2 wood neighbours (26-neighbourhood, the pillar itself not counted): thin paths only
+  for (const k of added) {
+    if (blocks.get(k)?.name !== B.log) continue;
+    const [x, y, z] = k.split(",").map(Number);
+    let woods = 0;
+    for (let ax = -1; ax <= 1; ax++) for (let ay = -1; ay <= 1; ay++) for (let az = -1; az <= 1; az++) {
+      if ((ax || ay || az) && [B.log, B.wood].includes(blocks.get(key(x + ax, y + ay, z + az))?.name) && !isPillar(x + ax, z + az)) woods++;
+    }
+    if (woods > 2) throw new Error(`pillar branch wood mass at ${k} (${woods} wood neighbours)`);
+  }
+  trimFarLeaves(blocks);
+  let logs = 0, leaves = 0;
+  for (const k of added) { const v = blocks.get(k); if (v?.name === B.leaves) leaves++; else if (v) logs++; }
+  return { logs, leaves, twigs };
+}

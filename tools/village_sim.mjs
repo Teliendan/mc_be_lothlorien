@@ -589,7 +589,8 @@ export function planLoops(res, world, states, opts = {}) {
     out.lengths.push(p.plan.length); out.offsets.push(Math.abs(p.plan.offset)); out.picks.push({ ...p, plan: undefined, planRef: p.plan });
   }
   // repairs (rope fit): written like links
-  out.repairs = r.repairs.map((p) => ({ x: p.x, z: p.z, buried: p.buried, hung: p.hung }));
+  out.repairs = r.repairs.map((p) => ({ kind: p.kind, x: p.x, z: p.z, buried: p.buried, hung: p.hung, roots: p.roots, logs: p.kind === "flare" ? p.blocks.length : undefined }));
+  out.flareLog = (r.log ?? []).filter((l) => l.startsWith("flare"));
   for (const p of r.repairs) applyPlan(world, states, p);
   out.ropeFeet = ropeFeet(world, states, rawAt, rect);
   out.at = rawAt;
@@ -716,7 +717,10 @@ function main() {
   const nEl = rows.filter((r) => r.el.elves === PROFESSIONS.length + r.el.healer2).length, hp = (f) => rows.reduce((a, r) => a + f(r.el), 0);
   console.log(`  elves: all five in ${nEl}/${rows.length} villages | own tree 4+ in ${pct(rows.filter((r) => r.el.ownTree >= 4).length, rows.length)} | second healer in ${rows.filter((r) => r.el.healer2).length}/${rows.length} | outer trees ${mm((r) => r.el.outer)} | reserves used mean/max ${(hp((e) => e.onReserve) / rows.length).toFixed(2)}/${Math.max(...rows.map((r) => r.el.onReserve))} | homes with room >= ${HOME_MIN}x${HOME_MIN}: ${pct(hp((e) => e.homeRoom), hp((e) => e.ownTree))}`);
   const feet = rows.flatMap((r) => r.lp.ropeFeet);
-  console.log(`  repairs (rope fit): ${rows.reduce((a, r) => a + r.lp.repairs.length, 0)} villages fitted (buried ${rows.reduce((a, r) => a + r.lp.repairs.reduce((b, p) => b + p.buried, 0), 0)}, hung ${rows.reduce((a, r) => a + r.lp.repairs.reduce((b, p) => b + p.hung, 0), 0)} pieces); rope bottoms ${feet.length}, not on the ground ${feet.filter((f) => !f.onGround).length}, buried in terrain ${feet.filter((f) => f.buried).length}`);
+  const ropeFits = (r) => r.lp.repairs.filter((p) => p.kind === "rope"), flares = rows.flatMap((r) => r.lp.repairs.filter((p) => p.kind === "flare"));
+  console.log(`  repairs (rope fit): ${rows.reduce((a, r) => a + ropeFits(r).length, 0)} ropes fitted (buried ${rows.reduce((a, r) => a + ropeFits(r).reduce((b, p) => b + p.buried, 0), 0)}, hung ${rows.reduce((a, r) => a + ropeFits(r).reduce((b, p) => b + p.hung, 0), 0)} pieces); rope bottoms ${feet.length}, not on the ground ${feet.filter((f) => !f.onGround).length}, buried in terrain ${feet.filter((f) => f.buried).length}`);
+  if (process.env.FLARE_LOG) console.log(rows.flatMap((r) => r.lp.flareLog).slice(0, 12).join("\n"));
+  console.log(`  repairs (root flares at the pillars): ${flares.length} pillars fitted in ${rows.length} villages (${(flares.length / rows.length).toFixed(2)} per village), roots ${flares.reduce((a, p) => a + p.roots, 0)} (${flares.reduce((a, p) => a + p.logs, 0)} logs), skipped/errors ${rows.reduce((a, r) => a + r.lp.flareLog.length, 0)}`);
   const sum = (f) => rows.reduce((a, r) => a + f(r.ck.info), 0);
   console.log(`  totals: unreachable walk cells ${rows.reduce((a, r) => a + r.ck.unreachable, 0)}, overlaps ${rows.reduce((a, r) => a + r.ck.overlaps, 0)}, wrong ropes ${sum((i) => i.ropeWrong)}/${sum((i) => i.ropes)}, ` +
     `decaying leaves ${sum((i) => i.decay)}/${sum((i) => i.leaves)}, one-way fence links (open ends only) ${sum((i) => i.fenceOneWay)} (dangling stub ends ${sum((i) => i.fenceDangling)}), near-miss ends ${sum((i) => i.nearMiss)}`);
