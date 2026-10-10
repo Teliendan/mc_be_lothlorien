@@ -3042,6 +3042,7 @@ test("elf: entity values come from elf_rules STATS / HOME_RADIUS; persistent, no
   assert.deepEqual(avoid.filters.all_of.map((f) => [f.test, f.value, f.operator ?? "="]), [["is_family", "monster", "="], ["is_family", "enderman", "!="]]);
   assert.equal(c["minecraft:behavior.move_towards_home_restriction"].speed_multiplier, EL.STATS.home);
   assert.equal(c["minecraft:behavior.random_stroll"].speed_multiplier, EL.STATS.stroll);
+  assert.deepEqual([c["minecraft:behavior.random_stroll"].xz_dist, c["minecraft:behavior.random_stroll"].y_dist], [EL.STROLL.xz, EL.STROLL.y], "base stroll from STROLL");
   assert.equal(c["minecraft:behavior.look_at_player"].look_distance, EL.STATS.lookDistance);
   assert.deepEqual(c["minecraft:home"], {}, "base home is empty (restriction none); the radius comes from the radius groups, so a lead can take it away");
   assert.ok(!Object.values(e.component_groups).some((g) => GROUP_NAMES(g).includes("minecraft:variant") && "minecraft:home" in g), "a profession group carries no home radius");
@@ -3066,8 +3067,9 @@ test("elf: every profession group has its variant index only; radius groups carr
     assert.deepEqual([...ev.remove.component_groups].sort(), [...EL.PROFESSIONS.filter((q) => q !== p).map(GROUP), ...EL.RADIUS_GROUPS.filter((r) => r !== own)].sort(), `${p}: removes the other four professions and the other radius groups`);
   });
   const home = (r) => ({ restriction_type: "random_movement", restriction_radius: r });
-  assert.deepEqual(e.component_groups[EL.HOME_NEAR_GROUP], { "minecraft:home": home(EL.HOME_RADIUS.near) });
-  assert.deepEqual(e.component_groups[EL.HOME_LORE_GROUP], { "minecraft:home": home(EL.HOME_RADIUS.loremaster) });
+  const mark = (g) => ({ "minecraft:mark_variant": { value: EL.RADIUS_MARK[g] } });
+  assert.deepEqual(e.component_groups[EL.HOME_NEAR_GROUP], { "minecraft:home": home(EL.HOME_RADIUS.near), ...mark(EL.HOME_NEAR_GROUP) }, "home_near: radius + debug marker, the stroll stays the base one");
+  assert.deepEqual(e.component_groups[EL.HOME_LORE_GROUP], { "minecraft:home": home(EL.HOME_RADIUS.loremaster), ...mark(EL.HOME_LORE_GROUP) });
   const sp = e.events["minecraft:entity_spawned"];
   assert.equal(sp.randomize.length, EL.PROFESSIONS.length);
   assert.deepEqual(sp.randomize.map((r) => r.add.component_groups), EL.PROFESSIONS.map((p) => [GROUP(p), EL.radiusGroupOf(p)]), "one egg: random profession with its radius group");
@@ -3086,6 +3088,29 @@ test("elf healer: day group roams HOME_RADIUS.healerDay and flips to night at du
   assert.deepEqual(e.events[EL.HEALER_DUSK_EVENT], { remove: { component_groups: [EL.HEALER_DAY_GROUP] }, add: { component_groups: [EL.HEALER_NIGHT_GROUP] } });
   assert.deepEqual(e.events[EL.HEALER_DAWN_EVENT], { remove: { component_groups: [EL.HEALER_NIGHT_GROUP] }, add: { component_groups: [EL.HEALER_DAY_GROUP] } });
   assert.equal(EL.radiusGroupOf("healer"), EL.HEALER_DAY_GROUP);
+});
+test("elf healer roam: by day a far stroll and a long path reach cross bridges; from dusk the base stroll, the reach stays for the walk home; radius markers", () => {
+  // owner 2026-10-10: "healers seem to stay on their platform" with radius 64 and the base 8 / 3 stroll (the radius is a fence, the stroll the drive)
+  const e = elfEntity(), base = e.components["minecraft:behavior.random_stroll"], day = e.component_groups[EL.HEALER_DAY_GROUP], night = e.component_groups[EL.HEALER_NIGHT_GROUP];
+  const stroll = (xz, y) => ({ ...base, xz_dist: xz, y_dist: y });
+  assert.deepEqual(day["minecraft:behavior.random_stroll"], stroll(EL.HEALER_ROAM.xz, EL.HEALER_ROAM.y), "day: same priority and speed as the base stroll, far targets");
+  assert.deepEqual(night["minecraft:behavior.random_stroll"], stroll(EL.STROLL.xz, EL.STROLL.y), "night: the base stroll, explicit (whether a removed group gives the base one back is not relied on)");
+  for (const g of [day, night]) assert.deepEqual(g["minecraft:follow_range"], { value: EL.HEALER_ROAM.followRange, max: EL.HEALER_ROAM.followRange });
+  assert.ok(EL.HEALER_ROAM.xz >= 2 * 15 && EL.HEALER_ROAM.xz <= EL.HOME_RADIUS.healerDay, "one day stroll can reach past the longest bridge (15), inside the day radius");
+  assert.ok(EL.HEALER_ROAM.y >= 3 && EL.HEALER_ROAM.y < 6, "y covers a rise-2 arch, stays below the crowns (6 above the deck) and far above nothing (decks 16 up)");
+  assert.ok(EL.HEALER_ROAM.followRange >= EL.HOME_RADIUS.healerDay, "the dusk walk home starts up to the day radius away");
+  for (const [name, g] of Object.entries(e.component_groups)) {
+    if (name === EL.HEALER_DAY_GROUP || name === EL.HEALER_NIGHT_GROUP) continue;
+    assert.ok(!("minecraft:behavior.random_stroll" in g) && !("minecraft:follow_range" in g), `${name}: other professions keep the base stroll and reach`);
+  }
+  assert.ok(!("minecraft:follow_range" in e.components), "base reach is the engine default");
+  // debug marker: every radius group, unique values, nothing else carries one; script maps it back
+  const marks = EL.RADIUS_GROUPS.map((g) => e.component_groups[g]["minecraft:mark_variant"]?.value);
+  assert.deepEqual(marks, EL.RADIUS_GROUPS.map((g) => EL.RADIUS_MARK[g])); assert.equal(new Set(marks).size, marks.length);
+  assert.ok(!("minecraft:mark_variant" in e.components) && EL.PROFESSIONS.every((p) => !("minecraft:mark_variant" in e.component_groups[GROUP(p)])));
+  assert.deepEqual(EL.radiusGroupOfMark(3), { group: "healer_day", radius: 64 }); assert.deepEqual(EL.radiusGroupOfMark(4), { group: "healer_night", radius: EL.HOME_RADIUS.healerNight });
+  assert.equal(EL.radiusGroupOfMark(undefined), null); assert.equal(EL.radiusGroupOfMark(0), null);
+  for (const f of ["entity/elf.entity.json", "render_controllers/elf.render_controllers.json"]) assert.ok(!/mark_variant/.test(readFileSync(new URL(`../lothlorien_rp/${f}`, import.meta.url), "utf8")), `${f}: the client does not use the marker`);
 });
 test("elf lead: leashable fields come from LEASH; a lead takes the radius away; any release sets the home where the elf stands and gives the radius back per profession", () => {
   const e = elfEntity(), l = e.components["minecraft:leashable"];

@@ -3,7 +3,7 @@
 // carries the tag lothlorien_elf_foe for FOE_MS, which the village wardens read (entities/elven_warden.json target entry, and
 // elven_warden.js stops shielding that player from warden arrows). Kills are charged by harmony_game.js (entityDie).
 import { system, world } from "@minecraft/server";
-import { ELF_ID, FOE_MS, FOE_TAG, HOME_OF_ELF, MOVED_PROPERTY, PROFESSIONS, REHOME_EVENT, homeCell } from "./elf_rules.js";
+import { ELF_ID, FOE_MS, FOE_TAG, HOME_OF_ELF, MOVED_PROPERTY, PROFESSIONS, REHOME_EVENT, homeCell, radiusGroupOfMark } from "./elf_rules.js";
 import { message } from "./messages.js";
 import { PLAYER_ID, isNewFight } from "./elven_warden_rules.js";
 
@@ -29,7 +29,8 @@ const professionLabel = (elf) => {
 const parseCell = (s) => (typeof s === "string" ? s.split(",").map(Number) : undefined);
 
 // `/scriptevent lothlorien:elf home | rehome`: the nearest elf within DEBUG_RADIUS. The engine home itself cannot be read by script, so `home`
-// shows the recorded cell (HOME_OF_ELF: the village tree, or where the elf was released) and whether the elf is on a lead.
+// shows the recorded cell (HOME_OF_ELF: the village tree, or where the elf was released) and whether the elf is on a lead, then the radius group the
+// engine has on the elf right now (its minecraft:mark_variant marker, elf_rules.js RADIUS_MARK; "none" = no radius, on a lead).
 export function elfDebug(player, arg) {
   try {
     const [elf] = player.dimension.getEntities({ type: ELF_ID, location: player.location, maxDistance: DEBUG_RADIUS, closest: 1 });
@@ -43,6 +44,9 @@ export function elfDebug(player, arg) {
     const dist = c && c.every(Number.isFinite) ? Math.hypot(l.x - (c[0] + 0.5), l.y - c[1], l.z - (c[2] + 0.5)).toFixed(1) : "?";
     const led = elf.getComponent("minecraft:leashable")?.isLeashed === true;
     player.sendMessage(message(led ? "elf.debug.home_led" : "elf.debug.home_free", professionLabel(elf), home ?? "?", dist));
+    let mark; try { mark = elf.getComponent("minecraft:mark_variant")?.value; } catch { /* no marker */ }
+    const roam = radiusGroupOfMark(mark);
+    player.sendMessage(message("elf.debug.roam", professionLabel(elf), roam?.group ?? "none", roam ? String(roam.radius) : "-"));
   } catch {
     // entity gone or chunk unloaded
   }

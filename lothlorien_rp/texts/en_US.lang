@@ -421,3 +421,5 @@ lothlorien.message.elf.debug.home_led=[lothlorien] elf %s: home %s, %s blocks aw
 lothlorien.message.elf.debug.rehomed=[lothlorien] elf %s: new home set here (%s)
 ## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] no elf within 16 blocks. Translate labels; keep technical tokens and coordinates.
 lothlorien.message.elf.debug.none=[lothlorien] no elf within 16 blocks
+## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf home next to a civilian elf, after the home line: [lothlorien] elf %s: radius group %s (%s blocks). Names the home-radius component group the elf has right now (how far it may wander from its home). Translate labels; keep technical tokens and coordinates.
+lothlorien.message.elf.debug.roam=[lothlorien] elf %s: radius group %s (%s blocks)

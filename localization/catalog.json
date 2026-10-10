@@ -12008,6 +12008,79 @@
               "status": "ai-draft"
             }
           }
+        },
+        "lothlorien.message.elf.debug.roam": {
+          "source": "[lothlorien] elf %s: radius group %s (%s blocks)",
+          "context": {
+            "meaning": "Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf home next to a civilian elf, after the home line: [lothlorien] elf %s: radius group %s (%s blocks). Names the home-radius component group the elf has right now (how far it may wander from its home). Translate labels; keep technical tokens and coordinates.",
+            "location": "lothlorien_rp: chat",
+            "trigger": "Player runs /scriptevent lothlorien:elf home within 16 blocks of an elf.",
+            "tone": "Technical and concise",
+            "grammar": "Short diagnostic line; no assumed player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes and placeholder order. The group name is a technical token (home_near, home_lore, healer_day, healer_night or none) and stays untranslated.",
+            "source_paths": [
+              "lothlorien_bp/scripts/elf.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "profession",
+              "type": "RawMessage",
+              "meaning": "profession: nested translated profession name"
+            },
+            {
+              "name": "group",
+              "type": "string",
+              "meaning": "group: technical radius group id (home_near, home_lore, healer_day, healer_night) or none when the elf has no radius (on a lead)"
+            },
+            {
+              "name": "radius",
+              "type": "string",
+              "meaning": "radius: home restriction radius in blocks, or - when there is none"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "[lothlorien] elf %s: skupina okruhu %s (%s bloků)",
+              "based_on": "7aaf7de7e729d0118e0b2ba47a5a63aa929ff9af677a402e01ab14875c6f5b15",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "[lothlorien] elfo %s: grupo de radio %s (%s bloques)",
+              "based_on": "7aaf7de7e729d0118e0b2ba47a5a63aa929ff9af677a402e01ab14875c6f5b15",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "[lothlorien] elfo %s: grupo de radio %s (%s bloques)",
+              "based_on": "7aaf7de7e729d0118e0b2ba47a5a63aa929ff9af677a402e01ab14875c6f5b15",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "[lothlorien] elfo %s: grupo de raio %s (%s blocos)",
+              "based_on": "7aaf7de7e729d0118e0b2ba47a5a63aa929ff9af677a402e01ab14875c6f5b15",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "[lothlorien] elfo %s: grupo de raio %s (%s blocos)",
+              "based_on": "7aaf7de7e729d0118e0b2ba47a5a63aa929ff9af677a402e01ab14875c6f5b15",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "[lothlorien] Elb %s: Radiusgruppe %s (%s Blöcke)",
+              "based_on": "7aaf7de7e729d0118e0b2ba47a5a63aa929ff9af677a402e01ab14875c6f5b15",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "[lothlorien] elfe %s : groupe de rayon %s (%s blocs)",
+              "based_on": "7aaf7de7e729d0118e0b2ba47a5a63aa929ff9af677a402e01ab14875c6f5b15",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "[lothlorien] elf %s: grupa promienia %s (%s bloków)",
+              "based_on": "7aaf7de7e729d0118e0b2ba47a5a63aa929ff9af677a402e01ab14875c6f5b15",
+              "status": "ai-draft"
+            }
+          }
         }
       }
     }

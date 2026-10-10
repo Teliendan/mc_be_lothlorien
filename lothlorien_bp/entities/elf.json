@@ -37,18 +37,37 @@
         "minecraft:home": {
           "restriction_type": "random_movement",
           "restriction_radius": 10
+        },
+        "minecraft:mark_variant": {
+          "value": 1
         }
       },
       "lothlorien:home_lore": {
         "minecraft:home": {
           "restriction_type": "random_movement",
           "restriction_radius": 6
+        },
+        "minecraft:mark_variant": {
+          "value": 2
         }
       },
       "lothlorien:healer_day": {
         "minecraft:home": {
           "restriction_type": "random_movement",
           "restriction_radius": 64
+        },
+        "minecraft:mark_variant": {
+          "value": 3
+        },
+        "minecraft:behavior.random_stroll": {
+          "priority": 6,
+          "speed_multiplier": 0.6,
+          "xz_dist": 32,
+          "y_dist": 4
+        },
+        "minecraft:follow_range": {
+          "value": 64,
+          "max": 64
         },
         "minecraft:environment_sensor": {
           "triggers": [
@@ -69,6 +88,19 @@
         "minecraft:home": {
           "restriction_type": "random_movement",
           "restriction_radius": 10
+        },
+        "minecraft:mark_variant": {
+          "value": 4
+        },
+        "minecraft:behavior.random_stroll": {
+          "priority": 6,
+          "speed_multiplier": 0.6,
+          "xz_dist": 8,
+          "y_dist": 3
+        },
+        "minecraft:follow_range": {
+          "value": 64,
+          "max": 64
         },
         "minecraft:environment_sensor": {
           "triggers": [

@@ -25,6 +25,33 @@ other four groups); `minecraft:entity_spawned` picks one at random when no profe
 - **Harmony everywhere:** `elf_fight`, `elf_kill`, `warden_fight`, `warden_kill` count anywhere in the world (`harmony.js` `EVERYWHERE_DEEDS`, `deedCounts`); all other deeds keep the inside-the-forest rule. Band-change chat lines and the deed hint also appear outside.
 - **Planner speed:** see `docs/TECHNICAL_NOTES.md` "Elven village", loop planner (timing log, `START_DELAY_TICKS` 5, time-boxed job driver, numeric memo keys).
 
+## Healer roam fix (owner test of 5631c22, 2026-10-10: "healers seem to stay on their platform"; built, NOT seen in game, deployed)
+
+- **Cause [C, sim + data; no in-game proof]:** the radius is a fence, not a drive. The healer had the base `random_stroll` (xz 8, y 3) like every elf, so
+  `healer_day`'s radius 64 only allowed far roaming; nothing walked it far. A deck is left only through a 3-wide bridge mouth and a 7..15 bridge, and a
+  stroll of a few blocks is a slow random walk that mostly turns back. Roam sim on the real pieces (`temp/elf_roam/roam_sim.mjs`, scratch; 40 villages x 6 runs;
+  S = only standable targets, A = any target with a partial path, which one Bedrock uses is [U]):
+
+  | stroll (xz / y / follow_range) | radius | another tree in the first 40 strolls | trees visited per day (90 strolls) | median farthest distance |
+  |---|---|---|---|---|
+  | 8 / 3 / 16 (was) | 10 | 0 % | 0.0 | 9 |
+  | 8 / 3 / 16 (was) | 64 | 36 % (S) / 80 % (A) | 0.8 / 1.6 | 28 / 36 |
+  | 32 / 4 / 16 | 64 | 16 % (S) | 0.3 | 14 |
+  | **32 / 4 / 64 (now)** | 64 | **89 % (S) / 100 % (A)** | **2.9 / 6.1** | **54 / 62** |
+
+  The row 32 / 4 / 16 shows why the reach matters too: `minecraft:follow_range` bounds the path search (engine default 16 [D]); a far target needs a
+  long path. Ruled out from the data: the dusk/dawn swap (sensor + events are vanilla bee pattern, a test pins them), goal priorities (stroll 6 is above
+  look 7/8; panic/avoid only fire on a hit or a monster), rope avoidance (rope only on the central tree), slabs (0.5 steps, no jump). Not ruled out [U]:
+  whether the healer was in `healer_day` at all (now visible with the debug line below).
+- **Fix (data):** `healer_day` adds its own `random_stroll` (priority 6, speed 0.6, **xz 32, y 4**: one stroll can reach past the longest bridge; y covers a
+  rise-2 arch and stays below the crowns, 6 above the deck) and `follow_range` 64 (iron golem pattern: xz 16 + 64; villager 128). `healer_night` repeats the
+  base stroll (8 / 3) explicitly (not relying on a removed group giving the base component back) and keeps `follow_range` 64 for the dusk walk home from
+  up to 64 away. Values in `elf_rules.js` `STROLL`, `HEALER_ROAM`; other professions unchanged (a test checks no other group has a stroll or reach).
+- **Debug:** every radius group carries `minecraft:mark_variant` (home_near 1, home_lore 2, healer_day 3, healer_night 4; `RADIUS_MARK`, no client use).
+  `/scriptevent lothlorien:elf home` now prints a second line: `radius group healer_day (64 blocks)`, or `none (-)` without a radius (on a lead).
+- **Re-test:** by day follow a healer 3-5 minutes: it should cross bridges to other trees (`home` line: distance > 15, group `healer_day`); `/time set 13000`:
+  group turns `healer_night` and it walks back to its tree within about a minute. Elves spawned before this change get the new values on reload (same groups).
+
 ## Owner decisions (2026-10-10)
 
 - Hit by a player: panic; flee monsters within 6 blocks. Wardens defend elves: the hitter carries tag `lothlorien_elf_foe` for 60 s (after the LAST hit); wardens target the tag and warden arrows stop being shielded from that player.
@@ -58,14 +85,15 @@ Closest vanilla analogues: `villager_v2` (1.26.20) and `wandering_trader`, witho
 | A Identity | `lothlorien:elf`, family `lothlorien_elf` + `mob`, name "Elf" (one name for all professions; profession titles `lothlorien.elf.profession.<p>` are in the catalog for M2). Egg "Elf Spawn Egg", one random profession, colours in the client entity. 0.6 x 1.95, health 20, movement 0.3 (below the template-mob threshold 0.5). Summonable and spawnable. |
 | B Spawning | No spawn rule (`[..]`): only the village planner, egg, `/summon`. Persistent, no `minecraft:despawn`, no `spawn_rules/elf.json` (a test checks both). |
 | C Body | Walk navigation, avoid water and damage blocks, passes doors, does not open them, avoids the two rope blocks (`blocks_to_avoid` with `name`; vanilla goat uses `name` for powder snow, not yet seen working with custom blocks). Floats, jumps, breathes, lava hurts. `damage_sensor`: fall damage off. Pushable. |
-| D Behaviour | float 0, panic 1 (x1.25), avoid monsters except endermen within 6 (x1.0 / x1.25), move towards home 5, stroll 6 (x0.6, 8 / 3), look at player 7, look around 8. Home radius per radius group: Loremaster 6, others 10, healer 64 by day / 10 from dusk. |
+| D Behaviour | float 0, panic 1 (x1.25), avoid monsters except endermen within 6 (x1.0 / x1.25), move towards home 5, stroll 6 (x0.6, 8 / 3), look at player 7, look around 8. Home radius per radius group: Loremaster 6, others 10, healer 64 by day / 10 from dusk. Healer by day: stroll 32 / 4 and follow_range 64 (night: stroll 8 / 3, follow_range 64). |
 | E Interaction | Lead only (leashable, a release re-homes the elf). No tempt (`[--]`), breeding, baby, taming, riding, interact (`[..]`). Name tags work (`nameable`). Trades, dialogs, Renown come with M2. |
 | F Rewards | No loot, no XP (`[..]`, `[--]` experience_reward). Killing costs Harmony 6. |
 | G Look and sound | Model, texture, animations, render controller from `make_elves.py` (never seen in game). **No sounds** (`[--]`): no `entity_sounds` entry, so the engine defaults play (player hurt / death, silent ambient), the same as the warden. Sounds are a later polish item. |
 
 ## Open / to verify in game
 
-- Fix round: no flicker on the five models (also from above); lead, release and re-home (see the checklist in the fix plan `temp/elven_inhabitants/m1_fix_plan.md`); healer day/night; second healer; Harmony outside the forest.
+- Fix round: no flicker on the five models (also from above); lead, release and re-home (see the checklist in the fix plan `temp/elven_inhabitants/m1_fix_plan.md`); second healer; Harmony outside the forest.
+- Healer roam fix: crosses bridges by day, walks home from dusk (re-test above); whether Bedrock's stroll picks only standable targets (sim S) or any (sim A); whether a far stroll looks natural or makes the healer hug rails.
 
 - Everything: content log (schema errors for `lothlorien:elf` / `elf_post`), the spawn events, whether `entity_spawned` also runs after a `spawnEvent` (the events are idempotent), whether `minecraft:home` from a group is set at the spawn point.
 - `blocks_to_avoid` with `{ "name": ... }` on custom blocks; walking speed 0.3 x 0.6 (measure with `/scriptevent lothlorien:speed`).

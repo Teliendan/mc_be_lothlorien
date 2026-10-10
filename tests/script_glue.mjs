@@ -299,9 +299,14 @@ await scenario("elf.js: a release (rehome event) records the new home and the mo
   mock.fire("dataDrivenEntityTrigger", { entity: { typeId: ELF, get location() { throw new Error("gone"); }, setDynamicProperty() {} }, eventId: EL.REHOME_EVENT }); // an unloaded entity throws: swallowed
   const sent = [], player = { dimension: mock.dimension(), location: { x: -3, y: 64, z: 40 }, sendMessage: (m) => sent.push(m) };
   mod.elfDebug(player, "home");
-  assert.equal(sent.length, 1); assert.match(sent[0].translate, /elf\.debug\.home_(free|led)$/);
+  assert.equal(sent.length, 2); assert.match(sent[0].translate, /elf\.debug\.home_(free|led)$/);
+  const args = (m) => m.with.rawtext.slice(1).map((a) => a.text);
+  assert.match(sent[1].translate, /elf\.debug\.roam$/); assert.deepEqual(args(sent[1]), ["none", "-"], "no radius marker: no radius group (on a lead)");
   mod.elfDebug({ ...player, location: { x: 500, y: 64, z: 500 } }, "home");
-  assert.match(sent[1].translate, /elf\.debug\.none$/);
+  assert.match(sent[2].translate, /elf\.debug\.none$/);
+  mock.addEntity(ELF, { x: 800.5, y: 64, z: 800.5 }, { components: { "minecraft:mark_variant": { value: EL.RADIUS_MARK[EL.HEALER_DAY_GROUP] } } });
+  mod.elfDebug({ ...player, location: { x: 800, y: 64, z: 800 } }, "home");
+  assert.deepEqual(args(sent.at(-1)), ["healer_day", String(EL.HOME_RADIUS.healerDay)], "the radius marker names the group the engine has on the elf");
 });
 
 await scenario("harmony: elf and warden deeds count outside the forest, a deer outside costs nothing", async () => {
