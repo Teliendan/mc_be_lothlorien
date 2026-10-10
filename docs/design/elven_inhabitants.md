@@ -104,6 +104,7 @@ Details and recipes: `.claude/skills/bedrock-items/references/bows-and-arrows.md
    - Owner decisions: **bow edge = faster draw (about 0.8 s), same damage**; item id **`lothlorien:bow`** (display name "Bow of the Galadhrim") because the vanilla two-arm draw pose keys on the item name `bow`. Its attachable still needs lowering and pull frames (the spike's pointed the bow down / sat too high). **Zoom** while drawing via `camera.setFov` in script (vanilla zooms, a custom shooter does not; API 2.8.0 `Camera.setFov(CameraFovOptions)`, untested).
 2. **Belt on the waist**: off-hand attachable bound to the body bone (`"binding": "'body'"`) renders at the waist correctly.
 3. **Arrow survival**: drop the arrow item on `projectileHitEntity` (projectile already invalid but `typeId` readable); works.
+- **Follow-up (owner-approved 2026-10-10):** after M5 (final Bow of the Galadhrim: pose, pull frames, zoom), extract a clean reusable custom bow + custom arrow + arrow-return template into `.claude/skills/bedrock-items/` (references + template files) and record the then-verified pose fix and `setFov` zoom result in `bows-and-arrows.md`.
 4. A vanilla bow in survival cannot draw with only custom arrows; arrow trail dropped (see section 6).
 5. Known: civilian elves placed as structure template entities get engine default attributes (movement 0.7, etc.), like the village wardens
    ([V] 2026-10-08); reuse the `warden_replace.js` pattern.
