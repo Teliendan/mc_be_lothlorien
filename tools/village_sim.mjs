@@ -589,7 +589,7 @@ export function planLoops(res, world, states, opts = {}) {
     out.lengths.push(p.plan.length); out.offsets.push(Math.abs(p.plan.offset)); out.picks.push({ ...p, plan: undefined, planRef: p.plan });
   }
   // repairs (rope fit): written like links
-  out.repairs = r.repairs.map((p) => ({ kind: p.kind, x: p.x, z: p.z, buried: p.buried, hung: p.hung, roots: p.roots, logs: p.kind === "flare" ? p.blocks.length : undefined }));
+  out.repairs = r.repairs.map((p) => ({ kind: p.kind, x: p.x, z: p.z, buried: p.buried, hung: p.hung, roots: p.roots, leaves: p.leaves, twigs: p.twigs, logs: p.kind === "flare" ? p.blocks.length : undefined }));
   out.flareLog = (r.log ?? []).filter((l) => l.startsWith("flare"));
   for (const p of r.repairs) applyPlan(world, states, p);
   out.ropeFeet = ropeFeet(world, states, rawAt, rect);
@@ -721,6 +721,8 @@ function main() {
   console.log(`  repairs (rope fit): ${rows.reduce((a, r) => a + ropeFits(r).length, 0)} ropes fitted (buried ${rows.reduce((a, r) => a + ropeFits(r).reduce((b, p) => b + p.buried, 0), 0)}, hung ${rows.reduce((a, r) => a + ropeFits(r).reduce((b, p) => b + p.hung, 0), 0)} pieces); rope bottoms ${feet.length}, not on the ground ${feet.filter((f) => !f.onGround).length}, buried in terrain ${feet.filter((f) => f.buried).length}`);
   if (process.env.FLARE_LOG) console.log(rows.flatMap((r) => r.lp.flareLog).slice(0, 12).join("\n"));
   console.log(`  repairs (root flares at the pillars): ${flares.length} pillars fitted in ${rows.length} villages (${(flares.length / rows.length).toFixed(2)} per village), roots ${flares.reduce((a, p) => a + p.roots, 0)} (${flares.reduce((a, p) => a + p.logs, 0)} logs), skipped/errors ${rows.reduce((a, r) => a + r.lp.flareLog.length, 0)}`);
+  const clears = rows.flatMap((r) => r.lp.repairs.filter((p) => p.kind === "pillarclear"));
+  console.log(`  repairs (bare pillar feet): ${clears.length} pillars cleared, leaves ${clears.reduce((a, p) => a + p.leaves, 0)}, twigs ${clears.reduce((a, p) => a + p.twigs, 0)}`);
   const sum = (f) => rows.reduce((a, r) => a + f(r.ck.info), 0);
   console.log(`  totals: unreachable walk cells ${rows.reduce((a, r) => a + r.ck.unreachable, 0)}, overlaps ${rows.reduce((a, r) => a + r.ck.overlaps, 0)}, wrong ropes ${sum((i) => i.ropeWrong)}/${sum((i) => i.ropes)}, ` +
     `decaying leaves ${sum((i) => i.decay)}/${sum((i) => i.leaves)}, one-way fence links (open ends only) ${sum((i) => i.fenceOneWay)} (dangling stub ends ${sum((i) => i.fenceDangling)}), near-miss ends ${sum((i) => i.nearMiss)}`);

@@ -14,7 +14,8 @@
 import { hullOf, growRect } from "./village_planner.js";
 
 export const ROPE_ID = "lothlorien:elven_rope_hanging";
-export const REPAIR = { maxHang: 24, minAbove: 2, scanChunk: 512, flareScan: 48, flareStep: 1 };
+export const REPAIR = { maxHang: 24, minAbove: 2, scanChunk: 512, flareScan: 48, flareStep: 1, PILLAR_LEAF_CLEAR: 4 };
+const LEAF_ID = "lothlorien:mallorn_leaves";
 const LOGS = new Set(["lothlorien:mallorn_log", "lothlorien:mallorn_wood"]);
 const FACE_OF = { "1,0": "west", "-1,0": "east", "0,1": "north", "0,-1": "south" }; // wall offset from the piece -> rope face (the wall lies opposite)
 const OFFSETS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
@@ -119,7 +120,7 @@ export function planFlare(at, pillar) {
   // the pillar must reach the ground: its centre column is a log from the ground height of the arms down (else it ends above the ground: skip)
   const ys = sides.filter(Boolean).map((q) => q.ground);
   const gMin = Math.min(...ys), gMax = Math.max(...ys);
-  for (let y = gMax; y >= gMin - 1; y--) if (!isLog(at(cx, y, cz))) return { skip: `pillar ends above the ground (no log at ${cx},${y},${cz})` };
+  for (let y = gMax; y >= gMin - 1; y--) if (!isLog(at(cx, y, cz))) return { skip: `pillar ends above the ground (no log at ${cx},${y},${cz})`, ground: med };
   // 2-4 sides, by hash; roots lie on the ground of their own column (first cell above it), 1 or 2 cells out
   const want = 2 + (hash(cx, cz, 0) % 3), order = [0, 1, 2, 3].sort((a, b) => hash(cx, cz, 1 + a) - hash(cx, cz, 1 + b));
   const blocks = [];
@@ -140,7 +141,52 @@ export function planFlare(at, pillar) {
     }
     roots++;
   }
-  return { blocks, roots, x: cx, z: cz };
+  return { blocks, roots, x: cx, z: cz, ground: med };
+}
+
+// Bare pillar foot (owner 2026-10-10: "the leaves shouldn't start at the ground level, like trees, 4 blocks or such"): the ivy is baked into the piece, which does
+// not know the real ground, so the leaves of the pillar's own ring (cells within 3 of the pillar axis, i.e. 2 of its outer faces) from ground + 1 to ground +
+// REPAIR.PILLAR_LEAF_CLEAR become air. A twig (a log component of the ring with more than one level, no root: roots lie on one level) whose top is within one
+// block above the band loses its tuft, so it is removed whole, with the leaves within 2 of it (in the band). -> { blocks, leaves, twigs } | { error }
+export function planPillarClear(at, pillar, ground) {
+  const { x: cx, z: cz } = pillar, top = ground + REPAIR.PILLAR_LEAF_CLEAR, blocks = [], k = (x, y, z) => `${x},${y},${z}`;
+  const cleared = new Set(), air = (x, y, z) => { if (cleared.has(k(x, y, z))) return; cleared.add(k(x, y, z)); blocks.push({ x, y, z, id: "minecraft:air", states: {} }); };
+  const logs = new Map();
+  let leaves = 0, twigs = 0;
+  for (let x = cx - 3; x <= cx + 3; x++) for (let z = cz - 3; z <= cz + 3; z++) {
+    if ((x === cx && Math.abs(z - cz) <= 1) || (z === cz && Math.abs(x - cx) <= 1)) continue;
+    for (let y = ground + 1; y <= top + 2; y++) {
+      const n = at(x, y, z);
+      if (n === undefined) return { error: `unloaded cell at ${x},${y},${z}` };
+      if (n === LEAF_ID && y <= top) { air(x, y, z); leaves++; } else if (isLog(n)) logs.set(k(x, y, z), [x, y, z]);
+    }
+  }
+  const seen = new Set();
+  for (const [key0, start] of logs) {
+    if (seen.has(key0)) continue;
+    const comp = [], todo = [start];
+    seen.add(key0);
+    while (todo.length) {
+      const [x, y, z] = todo.pop();
+      comp.push([x, y, z]);
+      for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) for (let c = -1; c <= 1; c++) {
+        const q = k(x + a, y + b, z + c);
+        if ((a || b || c) && logs.has(q) && !seen.has(q)) { seen.add(q); todo.push(logs.get(q)); }
+      }
+    }
+    const ys = comp.map((c) => c[1]);
+    if (Math.max(...ys) > top + 1 || Math.min(...ys) === Math.max(...ys)) continue; // a tip above the band keeps its tuft; one level = a root
+    twigs++;
+    for (const [x, y, z] of comp) {
+      air(x, y, z);
+      for (let a = -2; a <= 2; a++) for (let b = -2; b <= 2; b++) for (let c = -2; c <= 2; c++) {
+        const ly = y + c;
+        if (ly < ground + 1 || ly > top + 1 || (a === 0 && b === 0 && c === 0)) continue;
+        if (at(x + a, ly, z + b) === LEAF_ID && !cleared.has(k(x + a, ly, z + b))) { air(x + a, ly, z + b); leaves++; }
+      }
+    }
+  }
+  return { blocks, leaves, twigs };
 }
 
 // All repairs of a village (the planner calls this after the links): -> [{ kind: "rope", x, z, buried, hung, cells: [], rails: [], lanterns: [], blocks }]
@@ -165,7 +211,17 @@ export function* repairGen(at, markers, o = {}) {
     const pillar = findPillar(at, m);
     if (!pillar || seen.has(`${pillar.x},${pillar.z}`)) continue;
     seen.add(`${pillar.x},${pillar.z}`);
-    const fl = planFlare(at, pillar);
+    let fl = planFlare(at, pillar);
+    if (fl.ground !== undefined) { // bare foot first (the leaves would block the roots), then the roots on the cleared ground
+      const cl = planPillarClear(at, pillar, fl.ground);
+      if (cl.error) o.log?.push(`pillar clear ${pillar.x},${pillar.z}: ${cl.error}`);
+      else if (cl.blocks.length) {
+        const cp = { kind: "pillarclear", x: pillar.x, z: pillar.z, leaves: cl.leaves, twigs: cl.twigs, roots: 0, buried: 0, hung: 0, cells: [], rails: [], lanterns: [], blocks: cl.blocks };
+        at.apply(cp);
+        out.push(cp);
+        fl = planFlare(at, pillar);
+      }
+    }
     if (fl.error) { o.log?.push(`flare ${pillar.x},${pillar.z}: ${fl.error}`); continue; }
     if (fl.skip) { o.log?.push(`flare ${pillar.x},${pillar.z}: skipped, ${fl.skip}`); continue; }
     if (!fl.blocks.length) continue;
@@ -176,4 +232,4 @@ export function* repairGen(at, markers, o = {}) {
   return out;
 }
 
-export const describeRepair = (p) => p.kind === "flare" ? `pillar at ${p.x},${p.z}: ${p.roots} roots (${p.blocks.length} logs)` : `rope at ${p.x},${p.z}: -${p.buried} buried, +${p.hung} hung`;
+export const describeRepair = (p) => p.kind === "pillarclear" ? `pillar at ${p.x},${p.z}: ${p.leaves} leaves, ${p.twigs} twigs cleared at the foot` : p.kind === "flare" ? `pillar at ${p.x},${p.z}: ${p.roots} roots (${p.blocks.length} logs)` : `rope at ${p.x},${p.z}: -${p.buried} buried, +${p.hung} hung`;

@@ -1808,6 +1808,33 @@ test("root flare: a pillar that ends above the ground, unloaded cells and missin
   PL.drive(RP.repairGen(PL.overlay(PL.boundedReader(short.at, { x0: -30, x1: 30, z0: -30, z1: 30 })), [short.marker], { rect: { x0: -30, x1: 30, z0: -30, z1: 30 }, log }));
   assert.ok(log.some((l) => /^flare 5,5: skipped/.test(l)), log.join("|"));
 });
+test("pillar foot: no decoration leaves from the ground up to ground + 4 round the pillar; leaves above, buried leaves and foreign blocks stay; a twig whose tip is in the band goes", () => {
+  const LEAF = "lothlorien:mallorn_leaves", extra = {};
+  for (const y of [-1, 0, 1, 2, 3, 4, 5, 6, 9]) { extra[`7,${y},6`] = LEAF; extra[`3,${y},4`] = LEAF; extra[`5,${y},8`] = LEAF; } // ivy beside the arms (ground block at -1)
+  extra["8,2,5"] = "minecraft:stone"; extra["6,2,6"] = "minecraft:oak_leaves"; extra["15,2,5"] = LEAF; // a foreign block, a vanilla leaf, a leaf far outside the ring
+  // a low twig: out from the +x arm at y 1, up to y 3, its tuft round it; a high twig: out at y 8, up to 10
+  extra["7,1,5"] = PILLAR_LOG; extra["7,2,5"] = PILLAR_LOG; extra["7,3,5"] = PILLAR_LOG; extra["9,3,6"] = LEAF; extra["7,4,4"] = LEAF;
+  extra["3,8,5"] = PILLAR_LOG; extra["3,9,5"] = PILLAR_LOG; extra["3,10,5"] = PILLAR_LOG; extra["3,11,5"] = LEAF;
+  const w = pillarWorld({ extra }), c = RP.planPillarClear(w.at, w.pillar, -1);
+  assert.ok(c.blocks.every((b) => b.id === "minecraft:air"));
+  const gone = new Set(c.blocks.map((b) => `${b.x},${b.y},${b.z}`));
+  for (const x of [7, 3, 5]) for (const y of [0, 1, 2, 3]) { const z = x === 7 ? 6 : x === 3 ? 4 : 8; assert.ok(gone.has(`${x},${y},${z}`), `leaf ${x},${y},${z} cleared`); }
+  for (const k of ["7,-1,6", "7,5,6", "7,6,6", "7,9,6", "3,4,4", "5,4,8", "3,5,4", "5,9,8", "8,2,5", "6,2,6", "15,2,5", "3,8,5", "3,9,5", "3,11,5"]) assert.ok(!gone.has(k), `${k} stays`);
+  for (const k of ["7,1,5", "7,2,5", "7,3,5", "9,3,6", "7,4,4"]) assert.ok(gone.has(k), `${k} (low twig and its tuft) removed`);
+  assert.equal(c.twigs, 1);
+  const ov = PL.overlay(PL.boundedReader(w.at, { x0: -30, x1: 30, z0: -30, z1: 30 })), rect = { x0: -30, x1: 30, z0: -30, z1: 30 };
+  const first = PL.drive(RP.repairGen(ov, [w.marker], { rect }));
+  assert.equal(first.filter((p) => p.kind === "pillarclear").length, 1);
+  assert.equal(first.filter((p) => p.kind === "flare").length, 1, "the roots still come");
+  for (const [dx, dz] of [[2, 0], [-2, 0], [0, 2], [0, -2]]) assert.ok(ov(5 + dx, 0, 5 + dz) !== LEAF);
+  assert.deepEqual(PL.drive(RP.repairGen(ov, [w.marker], { rect })), [], "idempotent: the roots are not taken for twigs");
+  assert.equal(RP.planPillarClear(pillarWorld().at, w.pillar, -1).blocks.length, 0, "a bare pillar: nothing to do");
+});
+test("pillar foot: unloaded cells error; a pillar without ground is left alone", () => {
+  assert.match(RP.planPillarClear(pillarWorld({ extra: { "7,2,5": "UNLOADED" } }).at, { x: 5, z: 5, y: 16 }, -1).error ?? "", /unloaded/);
+  const w = pillarWorld({ ground: () => -90, extra: { "7,2,6": "lothlorien:mallorn_leaves" } }), rect = { x0: -30, x1: 30, z0: -30, z1: 30 };
+  assert.deepEqual(PL.drive(RP.repairGen(PL.overlay(PL.boundedReader(w.at, rect)), [w.marker], { rect })), []);
+});
 test("root flare in the simulator: every pillar of the villages gets roots without wood mass; skips are rare", () => {
   const row = villages()[0], world = new Map(row.ck.world), states = new Map(row.ck.states), r = planLoops(row.res, world, states, { terrain: undefined, start: 0 });
   const flares = r.repairs.filter((p) => p.kind === "flare");
