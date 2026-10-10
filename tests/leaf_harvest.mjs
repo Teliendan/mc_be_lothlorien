@@ -128,6 +128,9 @@ assert.throws(() => assertHarvest(broken), "duplicate auxiliary pools must not s
 
 // Owner exceptions are part of the contract, not collateral vanilla changes.
 const golden = readLoot("mallorn_golden_leaves");
+const nectar = readLoot("nectar_bloom");
+assert.deepEqual(dropExpectations(nectar, shears), { "lothlorien:nectar_bloom": 1 });
+for (const tool of [undefined, {}, silkHoe]) assert.deepEqual(dropExpectations(nectar, tool), {});
 for (const tool of [undefined, {}, shears, silkHoe])
   assert.deepEqual(dropExpectations(golden, tool), { "lothlorien:mallorn_golden_leaves": 1 });
 // Owner 2026-10-10: reusable jar and mounted antler collect with any tool.

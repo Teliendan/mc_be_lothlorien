@@ -67,8 +67,8 @@ processes these item entries. Owner retains custom acorn rarity with Fortune:
 2/2.5/3.333.../4%; sticks use Wiki rates 2/2.222.../2.5/3.333...% at standard
 levels. See [LEAF_HARVEST.md](LEAF_HARVEST.md); engine acceptance is pending.
 Golden decorative leaves
-intentionally always self-drop and do not decay. Nectar bloom collects with
-any tool or hand under the corrected owner policy, with native blast decay.
+intentionally always self-drop and do not decay. Nectar bloom is explicitly
+shears-only (owner 2026-10-11), with native blast decay. Silk Touch alone does not collect it.
 Golden fern now follows the native baseline: shears collect
 one fern, otherwise a 1/8 wheat-seed chance, with native decay. Fortune I/II/III
 yields 1–3/1–5/1–7 seeds per successful event, following the Wiki. See

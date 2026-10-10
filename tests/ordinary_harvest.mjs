@@ -1,12 +1,12 @@
 // Owner collection policy: ordinary blocks do not acquire tool/tier loot gates.
-// The approved fern/leaf/crop rules have their own stronger behavior tests.
+// Approved fern/leaf/crop rules have dedicated tests; nectar's shears exception is checked here.
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 
 const bp = new URL("../lothlorien_bp/", import.meta.url);
 const read = (path) => JSON.parse(readFileSync(new URL(path, bp)));
-const exceptions = new Set(["lothlorien:golden_fern", "lothlorien:mallorn_leaves", "lothlorien:western_corn"]);
+const exceptions = new Set(["lothlorien:golden_fern", "lothlorien:mallorn_leaves", "lothlorien:western_corn", "lothlorien:nectar_bloom"]);
 function assertUngated(value) {
   if (Array.isArray(value)) return value.forEach(assertUngated);
   if (!value || typeof value !== "object") return;
@@ -35,17 +35,23 @@ for (const filename of readdirSync(new URL("blocks/", bp)).filter((name) => name
   for (const component of components) if (component?.["minecraft:loot"]) auditTable(component["minecraft:loot"]);
   reviewed.push(id);
 }
-assert.ok(reviewed.includes("lothlorien:nectar_bloom") && reviewed.includes("lothlorien:star_canopy"));
+assert.ok(!reviewed.includes("lothlorien:nectar_bloom") && reviewed.includes("lothlorien:star_canopy"));
 
 const nectar = read("loot_tables/blocks/nectar_bloom.json");
-assert.deepEqual(nectar, { pools: [{ rolls: 1, entries: [{ type: "item", name: "lothlorien:nectar_bloom",
+const expectedNectar = { pools: [{ rolls: 1,
+  conditions: [{ condition: "match_tool", item: "minecraft:shears" }],
+  entries: [{ type: "item", name: "lothlorien:nectar_bloom",
   functions: [{ function: "set_count", count: 1 }, { function: "explosion_decay" }],
-}] }] }, "nectar bloom collects one with any tool/hand; final native blast decay");
+}] }] };
+assert.deepEqual(nectar, expectedNectar, "owner exception: shears only, one bloom with final native decay");
+for (const tool of [undefined, "minecraft:iron_axe", "minecraft:iron_pickaxe", "minecraft:shears"])
+  assert.equal(nectar.pools[0].conditions.every((condition) => condition.item === tool),
+    tool === "minecraft:shears", "hand and ordinary tools cannot satisfy the shears predicate");
 const bloom = read("blocks/nectar_bloom.json")["minecraft:block"];
 assert.deepEqual(bloom.description.states["lothlorien:nectar"], [0, 1, 2, 3]);
 assert.equal(bloom.components["minecraft:loot"], "loot_tables/blocks/nectar_bloom.json");
 for (const permutation of bloom.permutations)
-  assert.equal(permutation.components["minecraft:loot"], undefined, "every nectar stage inherits ungated collection");
+  assert.equal(permutation.components["minecraft:loot"], undefined, "every nectar stage inherits shears-only collection");
 const generated = JSON.parse(execFileSync("python", ["-B", "-c",
   "import json,runpy; print(json.dumps(runpy.run_path('tools/make_nectar_bloom.py')['loot']()))"], {
   cwd: new URL("../", import.meta.url), encoding: "utf8",
@@ -56,4 +62,4 @@ for (const broken of [{ pools: [{ conditions: [{ condition: "match_tool", item: 
   { pools: [{ entries: [{ conditions: [{ condition: "match_tool", "minecraft:match_tool_filter_all": ["minecraft:is_pickaxe"] }] }] }] },
   { pools: [{ conditions: [{ condition: "killed_by_player" }] }] }])
   assert.throws(() => assertUngated(broken), "both pool/entry predicates and player-only conditions restrict ordinary collection");
-console.log(`ok   ordinary harvest: ${reviewed.length} block base/permutation routes have no tool gates; all nectar stages, native decay and generator`);
+console.log(`ok   ordinary harvest: ${reviewed.length} ordinary block routes ungated; explicit shears-only nectar exception, all stages, decay and generator`);

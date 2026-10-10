@@ -12379,9 +12379,9 @@
           }
         },
         "lothlorien.message.lore.rank.next": {
-          "source": "Next rank: %s. Deeds still needed: %s.",
+          "source": "Progress to %s: %s / %s",
           "context": {
-            "meaning": "Line in the main Loremaster form telling how far the next Renown rank is. First %s is the next rank name; second %s is how many more points of renown (lessons done, tasks completed) are still needed, a plain number.",
+            "meaning": "Line in the main Loremaster form showing progress toward the next Renown rank. First %s is the next rank name; second %s is the player's current Renown points, a plain number; third %s is the points from which the next rank holds, a plain number.",
             "location": "lothlorien_rp: body text of a Loremaster dialog form",
             "trigger": "Player talks to the Loremaster elf.",
             "tone": "Formal, elven, short; a little Sindarin only in greetings",
@@ -12399,50 +12399,55 @@
               "meaning": "rank: nested translated name of the next rank"
             },
             {
-              "name": "needed",
+              "name": "points",
               "type": "string",
-              "meaning": "needed: number of points still needed, plain number"
+              "meaning": "points: current Renown points of the player, plain number"
+            },
+            {
+              "name": "threshold",
+              "type": "string",
+              "meaning": "threshold: Renown points at which the next rank is reached, plain number"
             }
           ],
           "translations": {
             "cs_CZ": {
-              "text": "Další hodnost: %s. Zbývající činy: %s.",
-              "based_on": "1882017e736958d541d994826a6740cda138591b5991886600e9d97b06c270f9",
+              "text": "Postup k hodnosti %s: %s / %s",
+              "based_on": "a69f5fbd09c03d27999e5d8d5b69c00758ffc14265b8aff496bac06d30a3a4f4",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "Siguiente rango: %s. Hazañas que faltan: %s.",
-              "based_on": "1882017e736958d541d994826a6740cda138591b5991886600e9d97b06c270f9",
+              "text": "Progreso hacia %s: %s / %s",
+              "based_on": "a69f5fbd09c03d27999e5d8d5b69c00758ffc14265b8aff496bac06d30a3a4f4",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "Siguiente rango: %s. Hazañas que faltan: %s.",
-              "based_on": "1882017e736958d541d994826a6740cda138591b5991886600e9d97b06c270f9",
+              "text": "Progreso hacia %s: %s / %s",
+              "based_on": "a69f5fbd09c03d27999e5d8d5b69c00758ffc14265b8aff496bac06d30a3a4f4",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Próximo posto: %s. Feitos em falta: %s.",
-              "based_on": "1882017e736958d541d994826a6740cda138591b5991886600e9d97b06c270f9",
+              "text": "Progresso para %s: %s / %s",
+              "based_on": "a69f5fbd09c03d27999e5d8d5b69c00758ffc14265b8aff496bac06d30a3a4f4",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Próximo posto: %s. Feitos que faltam: %s.",
-              "based_on": "1882017e736958d541d994826a6740cda138591b5991886600e9d97b06c270f9",
+              "text": "Progresso para %s: %s / %s",
+              "based_on": "a69f5fbd09c03d27999e5d8d5b69c00758ffc14265b8aff496bac06d30a3a4f4",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Nächster Rang: %s. Noch nötige Taten: %s.",
-              "based_on": "1882017e736958d541d994826a6740cda138591b5991886600e9d97b06c270f9",
+              "text": "Fortschritt zu %s: %s / %s",
+              "based_on": "a69f5fbd09c03d27999e5d8d5b69c00758ffc14265b8aff496bac06d30a3a4f4",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Rang suivant : %s. Actes encore nécessaires : %s.",
-              "based_on": "1882017e736958d541d994826a6740cda138591b5991886600e9d97b06c270f9",
+              "text": "Progression vers %s : %s / %s",
+              "based_on": "a69f5fbd09c03d27999e5d8d5b69c00758ffc14265b8aff496bac06d30a3a4f4",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Następna ranga: %s. Brakujące czyny: %s.",
-              "based_on": "1882017e736958d541d994826a6740cda138591b5991886600e9d97b06c270f9",
+              "text": "Postęp do rangi %s: %s / %s",
+              "based_on": "a69f5fbd09c03d27999e5d8d5b69c00758ffc14265b8aff496bac06d30a3a4f4",
               "status": "ai-draft"
             }
           }
@@ -12928,7 +12933,7 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Dokončete první dvě kapitoly mého učení a mí příbuzní vás mohou požádat o pomoc.",
+              "text": "Dokončete první dvě kapitoly mého učení a můj lid vás může požádat o pomoc.",
               "based_on": "0c67ff43b52b9de9923ecfc76fbd8071fff4f75e9804f04140464f87e3a94fb5",
               "status": "ai-draft"
             },
@@ -12986,7 +12991,7 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Všechny úkoly mých příbuzných jsou splněny. Děkují vám.",
+              "text": "Všechny úkoly mého lidu jsou splněny. Děkujeme vám.",
               "based_on": "5de54526c9e21471ebb67c3727993013164c1e47040e220a35cd34e8476bacc3",
               "status": "ai-draft"
             },
@@ -13224,7 +13229,7 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Úkol od mých příbuzných",
+              "text": "Úkol od mého lidu",
               "based_on": "8c9b5a13c3b9a47e3c81b9d61d7311c093680b88b1c9ac04b9115447a121b554",
               "status": "ai-draft"
             },
@@ -14569,64 +14574,6 @@
             }
           }
         },
-        "lothlorien.message.lore.tale": {
-          "source": "§aThe Galadhrim will remember this deed.",
-          "context": {
-            "meaning": "Chat line when the player earned a Renown point for a rare deed (a white animal's gift or bond). Green.",
-            "location": "lothlorien_rp: chat message",
-            "trigger": "Shown in chat or at the top of a Loremaster form after the described event.",
-            "tone": "Formal, elven, short",
-            "grammar": "Complete sentence; address the player without assuming gender.",
-            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
-            "source_paths": [
-              "lothlorien_bp/scripts/loremaster.js",
-              "lothlorien_bp/scripts/renown_game.js"
-            ]
-          },
-          "placeholders": [],
-          "translations": {
-            "cs_CZ": {
-              "text": "§aGaladhrim si tento čin zapamatují.",
-              "based_on": "089dc10583b850703bdfb7fe333b2f35579bfd043e2b67df142b56db2e6fee87",
-              "status": "ai-draft"
-            },
-            "es_ES": {
-              "text": "§aLos Galadhrim recordarán esta hazaña.",
-              "based_on": "089dc10583b850703bdfb7fe333b2f35579bfd043e2b67df142b56db2e6fee87",
-              "status": "ai-draft"
-            },
-            "es_MX": {
-              "text": "§aLos Galadhrim recordarán esta hazaña.",
-              "based_on": "089dc10583b850703bdfb7fe333b2f35579bfd043e2b67df142b56db2e6fee87",
-              "status": "ai-draft"
-            },
-            "pt_PT": {
-              "text": "§aOs Galadhrim recordarão este feito.",
-              "based_on": "089dc10583b850703bdfb7fe333b2f35579bfd043e2b67df142b56db2e6fee87",
-              "status": "ai-draft"
-            },
-            "pt_BR": {
-              "text": "§aOs Galadhrim recordarão este feito.",
-              "based_on": "089dc10583b850703bdfb7fe333b2f35579bfd043e2b67df142b56db2e6fee87",
-              "status": "ai-draft"
-            },
-            "de_DE": {
-              "text": "§aDie Galadhrim werden sich an diese Tat erinnern.",
-              "based_on": "089dc10583b850703bdfb7fe333b2f35579bfd043e2b67df142b56db2e6fee87",
-              "status": "ai-draft"
-            },
-            "fr_FR": {
-              "text": "§aLes Galadhrim se souviendront de cet acte.",
-              "based_on": "089dc10583b850703bdfb7fe333b2f35579bfd043e2b67df142b56db2e6fee87",
-              "status": "ai-draft"
-            },
-            "pl_PL": {
-              "text": "§aGaladhrim zapamiętają ten czyn.",
-              "based_on": "089dc10583b850703bdfb7fe333b2f35579bfd043e2b67df142b56db2e6fee87",
-              "status": "ai-draft"
-            }
-          }
-        },
         "lothlorien.message.lore.shunned": {
           "source": "§7Learn to live in peace with the forest, then return.",
           "context": {
@@ -14832,9 +14779,9 @@
           }
         },
         "lothlorien.message.lore.lesson.harmony.text": {
-          "source": "The forest weighs how you walk in it. Peaceful time among the trees mends your Harmony, while harming its creatures wounds it; the leaf icon shows where you stand. At +10 you are a Friend of Lothlórien, and any wrong deed loses it again. Walk in peace until your Harmony is at least +3, then tell me it is done.",
+          "source": "The forest weighs how you walk in it. Peaceful time among the trees mends your Harmony, while harming its creatures wounds it; the leaf shows where you stand. Those who keep the peace long become Friends of Lothlórien, and one wrong deed loses it again. Walk in peace in Lothlórien for several minutes, then tell me it is done.",
           "context": {
-            "meaning": "Lesson 1 (chapter I, a deed lesson): Harmony, the standing with the forest from Hated to Friend. Peaceful time inside the forest raises it; harming the forest's creatures lowers it; the leaf icon on the action bar shows the band; Friend is exactly +10 and any wrong deed loses it. The task: reach Harmony +3 or more and press 'It is done'.",
+            "meaning": "Lesson 1 (chapter I, a deed lesson): Harmony, the standing with the forest from Hated to Friend. Peaceful time inside the forest raises it; harming the forest's creatures lowers it; the leaf icon on the action bar shows the band; a long peace makes the player a Friend of Lothlórien and any wrong deed loses it. No numbers: the player never sees Harmony numbers. The task: walk in peace in the forest for several minutes (Harmony reaches the required level) and press 'It is done'.",
             "location": "lothlorien_rp: body of a lesson screen in the Loremaster dialog",
             "trigger": "Player opens a lesson in the Loremaster dialog.",
             "tone": "Formal, elven, Tolkien-flavoured but factual about the mod mechanics",
@@ -14847,43 +14794,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Les váží, jak v něm kráčíte. Pokojný čas mezi stromy hojí váš soulad, zatímco ubližování jeho tvorům jej raní; ikona listu ukazuje, kde stojíte. Při +10 jste Přízní Lothlórienu a každý zlý čin ji znovu zruší. Kráčejte v pokoji, dokud váš soulad nedosáhne alespoň +3, a pak mi řekněte, že je hotovo.",
-              "based_on": "be3a796b16edad59e4981efeca9573cc48bd28d3a4c1613d882a12a2ca6bfeb9",
+              "text": "Les váží, jak v něm kráčíte. Pokojný čas mezi stromy hojí váš soulad, zatímco ubližování jeho tvorům jej raní; list ukazuje, kde stojíte. Kdo dlouho zachovává pokoj, získá Přízeň Lothlórienu a jediný zlý čin vás o ni připraví. Kráčejte v Lothlórienu několik minut v pokoji a pak mi řekněte, že je hotovo.",
+              "based_on": "09066481ddb782064a0efaf0c60a35fd7bdaaf6e6b1edd0caf6623c0950e2881",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "El bosque pesa cómo caminas por él. El tiempo en paz entre los árboles sana tu armonía, mientras que dañar a sus criaturas la hiere; el icono de hoja muestra dónde estás. Con +10 gozas de la Amistad de Lothlórien, y cualquier mala acción la pierde de nuevo. Camina en paz hasta que tu armonía sea al menos +3 y dime que está hecho.",
-              "based_on": "be3a796b16edad59e4981efeca9573cc48bd28d3a4c1613d882a12a2ca6bfeb9",
+              "text": "El bosque pesa cómo caminas por él. El tiempo en paz entre los árboles sana tu armonía, mientras que dañar a sus criaturas la hiere; la hoja muestra dónde estás. Quien guarda la paz mucho tiempo gana la Amistad de Lothlórien, y una sola mala acción la pierde de nuevo. Camina en paz por Lothlórien durante varios minutos y dime que está hecho.",
+              "based_on": "09066481ddb782064a0efaf0c60a35fd7bdaaf6e6b1edd0caf6623c0950e2881",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "El bosque pesa cómo caminas por él. El tiempo en paz entre los árboles sana tu armonía, mientras que dañar a sus criaturas la hiere; el icono de hoja muestra dónde estás. Con +10 gozas de la Amistad de Lothlórien, y cualquier mala acción la pierde de nuevo. Camina en paz hasta que tu armonía sea al menos +3 y dime que está hecho.",
-              "based_on": "be3a796b16edad59e4981efeca9573cc48bd28d3a4c1613d882a12a2ca6bfeb9",
+              "text": "El bosque pesa cómo caminas por él. El tiempo en paz entre los árboles sana tu armonía, mientras que dañar a sus criaturas la hiere; la hoja muestra dónde estás. Quien guarda la paz mucho tiempo gana la Amistad de Lothlórien, y una sola mala acción la pierde de nuevo. Camina en paz por Lothlórien durante varios minutos y dime que está hecho.",
+              "based_on": "09066481ddb782064a0efaf0c60a35fd7bdaaf6e6b1edd0caf6623c0950e2881",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "A floresta pesa a forma como nela caminhas. O tempo em paz entre as árvores cura a tua harmonia, enquanto ferir as suas criaturas a fere; o ícone de folha mostra onde estás. Com +10 tens a Amizade de Lothlórien, e qualquer ato mau a perde de novo. Caminha em paz até a tua harmonia ser pelo menos +3 e diz-me que está feito.",
-              "based_on": "be3a796b16edad59e4981efeca9573cc48bd28d3a4c1613d882a12a2ca6bfeb9",
+              "text": "A floresta pesa a forma como nela caminhas. O tempo em paz entre as árvores cura a tua harmonia, enquanto ferir as suas criaturas a fere; a folha mostra onde estás. Quem mantém a paz durante muito tempo ganha a Amizade de Lothlórien, e um único ato mau perde-a de novo. Caminha em paz por Lothlórien durante vários minutos e diz-me que está feito.",
+              "based_on": "09066481ddb782064a0efaf0c60a35fd7bdaaf6e6b1edd0caf6623c0950e2881",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "A floresta pesa a forma como você caminha nela. O tempo em paz entre as árvores cura a sua harmonia, enquanto ferir as criaturas dela a fere; o ícone de folha mostra onde você está. Com +10 você tem a Amizade de Lothlórien, e qualquer ato mau a perde de novo. Caminhe em paz até a sua harmonia ser pelo menos +3 e me diga que está feito.",
-              "based_on": "be3a796b16edad59e4981efeca9573cc48bd28d3a4c1613d882a12a2ca6bfeb9",
+              "text": "A floresta pesa a forma como você caminha nela. O tempo em paz entre as árvores cura a sua harmonia, enquanto ferir as criaturas dela a fere; a folha mostra onde você está. Quem mantém a paz por muito tempo ganha a Amizade de Lothlórien, e um único ato mau a perde de novo. Caminhe em paz por Lothlórien por vários minutos e me diga que está feito.",
+              "based_on": "09066481ddb782064a0efaf0c60a35fd7bdaaf6e6b1edd0caf6623c0950e2881",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Der Wald wägt, wie du in ihm gehst. Friedliche Zeit unter den Bäumen heilt deine Harmonie, während das Verletzen seiner Geschöpfe sie verwundet; das Blattsymbol zeigt, wo du stehst. Bei +10 hast du die Freundschaft mit Lothlórien, und jede üble Tat verliert sie wieder. Wandle in Frieden, bis deine Harmonie mindestens +3 beträgt, und sag mir dann, es sei getan.",
-              "based_on": "be3a796b16edad59e4981efeca9573cc48bd28d3a4c1613d882a12a2ca6bfeb9",
+              "text": "Der Wald wägt, wie du in ihm gehst. Friedliche Zeit unter den Bäumen heilt deine Harmonie, während das Verletzen seiner Geschöpfe sie verwundet; das Blatt zeigt, wo du stehst. Wer lange den Frieden wahrt, erlangt die Freundschaft mit Lothlórien, und eine einzige üble Tat verliert sie wieder. Wandle einige Minuten in Frieden durch Lothlórien und sag mir dann, es sei getan.",
+              "based_on": "09066481ddb782064a0efaf0c60a35fd7bdaaf6e6b1edd0caf6623c0950e2881",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "La forêt pèse la manière dont tu y marches. Le temps paisible parmi les arbres soigne ton harmonie, tandis que blesser ses créatures la meurtrit ; l’icône de feuille montre où tu en es. À +10, tu as l’Amitié de Lothlórien, et tout mauvais acte la perd de nouveau. Marche en paix jusqu’à ce que ton harmonie atteigne au moins +3, puis dis-moi que c’est fait.",
-              "based_on": "be3a796b16edad59e4981efeca9573cc48bd28d3a4c1613d882a12a2ca6bfeb9",
+              "text": "La forêt pèse la manière dont tu y marches. Le temps paisible parmi les arbres soigne ton harmonie, tandis que blesser ses créatures la meurtrit ; la feuille montre où tu en es. Qui garde longtemps la paix gagne l’Amitié de Lothlórien, et un seul mauvais acte la perd de nouveau. Marche en paix dans Lothlórien pendant plusieurs minutes, puis dis-moi que c’est fait.",
+              "based_on": "09066481ddb782064a0efaf0c60a35fd7bdaaf6e6b1edd0caf6623c0950e2881",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Las waży, jak w nim stąpasz. Spokojny czas wśród drzew leczy twoją harmonię, a krzywdzenie jego stworzeń ją rani; ikona liścia pokazuje, gdzie stoisz. Przy +10 masz Przyjaźń Lothlórien, a każdy zły czyn znów ją odbiera. Idź w pokoju, aż twoja harmonia osiągnie co najmniej +3, i powiedz mi, że gotowe.",
-              "based_on": "be3a796b16edad59e4981efeca9573cc48bd28d3a4c1613d882a12a2ca6bfeb9",
+              "text": "Las waży, jak w nim stąpasz. Spokojny czas wśród drzew leczy twoją harmonię, a krzywdzenie jego stworzeń ją rani; liść pokazuje, gdzie stoisz. Kto długo zachowuje pokój, zyskuje Przyjaźń Lothlórien, a jeden zły czyn znów ją odbiera. Idź w pokoju przez Lothlórien kilka minut i powiedz mi, że gotowe.",
+              "based_on": "09066481ddb782064a0efaf0c60a35fd7bdaaf6e6b1edd0caf6623c0950e2881",
               "status": "ai-draft"
             }
           }
@@ -15060,9 +15007,9 @@
           }
         },
         "lothlorien.message.lore.lesson.renown.text": {
-          "source": "Renown is what you do for the elves, and it is not Harmony. It grows with every deed and every task for my kin, and it is never lost. Its ranks are Stranger, Welcome, Trusted and Elf-friend, and word of it travels to every village. The higher you stand, the deeper the stock the elves will offer.",
+          "source": "As you do deeds and tasks for my kin, your Renown among us grows. It is never lost, and word of it travels to every village. The higher it stands, the more the elves will offer you.",
           "context": {
-            "meaning": "Lesson 3 (chapter I, lore): Renown is what the player does for the elves (separate from Harmony); ranks Stranger, Welcome, Trusted, Elf-friend; it grows with deeds and tasks, is never lost, is known in every village, and opens deeper stock with the elven traders.",
+            "meaning": "Lesson 3 (chapter I, lore): Renown is what the player does for the elves (separate from Harmony); it grows with deeds and tasks, is never lost, is known in every village, and opens more stock with the elven traders. The rank names are not listed in this text.",
             "location": "lothlorien_rp: body of a lesson screen in the Loremaster dialog",
             "trigger": "Player opens a lesson in the Loremaster dialog.",
             "tone": "Formal, elven, Tolkien-flavoured but factual about the mod mechanics",
@@ -15075,43 +15022,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Pověst je to, co děláte pro elfy, a není to soulad. Roste s každým činem a každým úkolem pro mé příbuzné a nikdy se neztrácí. Její hodnosti jsou Cizinec, Vítaný, Důvěryhodný a Přítel elfů a zpráva o ní se roznese do každé vesnice. Čím výše stojíte, tím hlubší zásoby vám elfové nabídnou.",
-              "based_on": "470f4aeb4e97652c1f82d561d42552b1393183eca4ac846ae136df919db09d79",
+              "text": "Když konáte činy a úkoly pro můj lid, roste mezi námi vaše pověst. Nikdy se neztrácí a zpráva o ní se roznese do každé vesnice. Čím výše stojí, tím více vám elfové nabídnou.",
+              "based_on": "6200a4e3d50f947a9d12e61ce2f72315185cd822abd8c1424bbd665940d04e51",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "El renombre es lo que haces por los elfos, y no es la armonía. Crece con cada hazaña y cada tarea para los míos, y nunca se pierde. Sus rangos son Forastero, Bienvenido, De confianza y Amigo de los elfos, y la noticia viaja a cada aldea. Cuanto más alto estés, más profundas serán las existencias que los elfos te ofrezcan.",
-              "based_on": "470f4aeb4e97652c1f82d561d42552b1393183eca4ac846ae136df919db09d79",
+              "text": "Mientras haces hazañas y tareas para los míos, tu renombre entre nosotros crece. Nunca se pierde, y la noticia viaja a cada aldea. Cuanto más alto está, más te ofrecerán los elfos.",
+              "based_on": "6200a4e3d50f947a9d12e61ce2f72315185cd822abd8c1424bbd665940d04e51",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "El renombre es lo que haces por los elfos, y no es la armonía. Crece con cada hazaña y cada tarea para los míos, y nunca se pierde. Sus rangos son Forastero, Bienvenido, De confianza y Amigo de los elfos, y la noticia viaja a cada aldea. Cuanto más alto estés, más profundas serán las existencias que los elfos te ofrezcan.",
-              "based_on": "470f4aeb4e97652c1f82d561d42552b1393183eca4ac846ae136df919db09d79",
+              "text": "Mientras haces hazañas y tareas para los míos, tu renombre entre nosotros crece. Nunca se pierde, y la noticia viaja a cada aldea. Cuanto más alto está, más te ofrecerán los elfos.",
+              "based_on": "6200a4e3d50f947a9d12e61ce2f72315185cd822abd8c1424bbd665940d04e51",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "O renome é o que fazes pelos elfos, e não é a harmonia. Cresce com cada feito e cada tarefa para os meus, e nunca se perde. Os seus postos são Forasteiro, Bem-vindo, De confiança e Amigo dos elfos, e a notícia viaja até cada aldeia. Quanto mais alto estiveres, mais fundo será o stock que os elfos te oferecerão.",
-              "based_on": "470f4aeb4e97652c1f82d561d42552b1393183eca4ac846ae136df919db09d79",
+              "text": "Enquanto fazes feitos e tarefas para os meus, o teu renome entre nós cresce. Nunca se perde, e a notícia viaja até cada aldeia. Quanto mais alto estiver, mais os elfos te oferecerão.",
+              "based_on": "6200a4e3d50f947a9d12e61ce2f72315185cd822abd8c1424bbd665940d04e51",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "O renome é o que você faz pelos elfos, e não é a harmonia. Cresce com cada feito e cada tarefa para os meus, e nunca se perde. Os seus postos são Forasteiro, Bem-vindo, De confiança e Amigo dos elfos, e a notícia viaja até cada aldeia. Quanto mais alto você estiver, mais fundo será o estoque que os elfos lhe oferecerão.",
-              "based_on": "470f4aeb4e97652c1f82d561d42552b1393183eca4ac846ae136df919db09d79",
+              "text": "Enquanto você faz feitos e tarefas para os meus, o seu renome entre nós cresce. Nunca se perde, e a notícia viaja até cada aldeia. Quanto mais alto estiver, mais os elfos lhe oferecerão.",
+              "based_on": "6200a4e3d50f947a9d12e61ce2f72315185cd822abd8c1424bbd665940d04e51",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Ansehen ist, was du für die Elben tust, und es ist nicht die Harmonie. Es wächst mit jeder Tat und jeder Aufgabe für mein Volk und geht nie verloren. Seine Ränge sind Fremder, Willkommen, Vertraut und Elbenfreund, und die Kunde davon reist in jedes Dorf. Je höher du stehst, desto reicher ist der Vorrat, den die Elben dir bieten.",
-              "based_on": "470f4aeb4e97652c1f82d561d42552b1393183eca4ac846ae136df919db09d79",
+              "text": "Wenn du Taten und Aufgaben für mein Volk vollbringst, wächst dein Ansehen unter uns. Es geht nie verloren, und die Kunde davon reist in jedes Dorf. Je höher es steht, desto mehr werden dir die Elben bieten.",
+              "based_on": "6200a4e3d50f947a9d12e61ce2f72315185cd822abd8c1424bbd665940d04e51",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "La renommée est ce que tu fais pour les elfes, et ce n’est pas l’harmonie. Elle grandit avec chaque acte et chaque tâche pour les miens, et elle ne se perd jamais. Ses rangs sont Étranger, Bienvenu, De confiance et Ami des elfes, et la nouvelle en parvient à chaque village. Plus tu es haut, plus les elfes t’offriront un stock fourni.",
-              "based_on": "470f4aeb4e97652c1f82d561d42552b1393183eca4ac846ae136df919db09d79",
+              "text": "Quand tu accomplis des actes et des tâches pour les miens, ta renommée parmi nous grandit. Elle ne se perd jamais, et la nouvelle en parvient à chaque village. Plus elle est haute, plus les elfes t’offriront.",
+              "based_on": "6200a4e3d50f947a9d12e61ce2f72315185cd822abd8c1424bbd665940d04e51",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Sława to to, co czynisz dla elfów, i nie jest harmonią. Rośnie z każdym czynem i każdym zadaniem dla moich i nigdy nie przepada. Jej rangi to Obcy, Mile widziany, Zaufany i Przyjaciel elfów, a wieść o niej dociera do każdej wioski. Im wyżej stoisz, tym bogatsze zapasy ofiarują ci elfy.",
-              "based_on": "470f4aeb4e97652c1f82d561d42552b1393183eca4ac846ae136df919db09d79",
+              "text": "Gdy czynisz dla moich dzieła i zadania, twoja sława wśród nas rośnie. Nigdy nie przepada, a wieść o niej dociera do każdej wioski. Im wyżej stoi, tym więcej ofiarują ci elfy.",
+              "based_on": "6200a4e3d50f947a9d12e61ce2f72315185cd822abd8c1424bbd665940d04e51",
               "status": "ai-draft"
             }
           }
@@ -15402,9 +15349,9 @@
           }
         },
         "lothlorien.message.lore.lesson.depth.text": {
-          "source": "The wood has three depths: the edge, near the border; the inner wood, farther in; and the heart. Near the edge the border wardens walk in numbers, but deeper in they grow fewer, except on the wooden decks of our villages. The rarest creatures of the wood are met more often the deeper you walk.",
+          "source": "Near the edge of Lothlórien the border wardens walk in numbers; deeper in they grow fewer, except on the wooden decks of our villages. The deeper you walk, the more often you meet the rarest creatures of the wood.",
           "context": {
-            "meaning": "Lesson 6 (chapter II, lore): the forest has three depths measured from the border: the edge (border within about 16 blocks), the inner wood (within about 40), and the heart (farther). Real effects: border wardens off the villages' wooden decks are fewer the deeper you go; the rarest creatures are met more often deeper in.",
+            "meaning": "Lesson 6 (chapter II, lore): the further into the forest, the fewer border wardens (except on the villages' wooden decks) and the more often the rarest creatures are met. No depth stage names or distances in the text.",
             "location": "lothlorien_rp: body of a lesson screen in the Loremaster dialog",
             "trigger": "Player opens a lesson in the Loremaster dialog.",
             "tone": "Formal, elven, Tolkien-flavoured but factual about the mod mechanics",
@@ -15417,43 +15364,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Les má tři hloubky: okraj u hranice, vnitřní les dále uvnitř a srdce. U okraje chodí hraniční strážci v hojném počtu, hlouběji jich ubývá, kromě dřevěných plošin našich vesnic. Nejvzácnější tvorové lesa se potkávají tím častěji, čím hlouběji jdete.",
-              "based_on": "b280ca8f72948e7f4c51ca0a85ec965c76c9e02f793663dfef88da09d5eeb53a",
+              "text": "U okraje Lothlórienu chodí hraniční strážci v hojném počtu; hlouběji jich ubývá, kromě dřevěných plošin našich vesnic. Čím hlouběji jdete, tím častěji potkáte nejvzácnější tvory lesa.",
+              "based_on": "f0020d2ee5777cb1b53fe9a6de2f8572bc8a85d41166f930356f5fd64f0f0db0",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "El bosque tiene tres profundidades: el borde, cerca de la frontera; el bosque interior, más adentro; y el corazón. Cerca del borde los guardianes fronterizos son numerosos, pero más adentro son menos, salvo en las plataformas de madera de nuestras aldeas. Las criaturas más raras del bosque se encuentran con más frecuencia cuanto más hondo caminas.",
-              "based_on": "b280ca8f72948e7f4c51ca0a85ec965c76c9e02f793663dfef88da09d5eeb53a",
+              "text": "Cerca del borde de Lothlórien los guardianes fronterizos caminan en número; más adentro son menos, salvo en las plataformas de madera de nuestras aldeas. Cuanto más hondo caminas, con más frecuencia encuentras a las criaturas más raras del bosque.",
+              "based_on": "f0020d2ee5777cb1b53fe9a6de2f8572bc8a85d41166f930356f5fd64f0f0db0",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "El bosque tiene tres profundidades: el borde, cerca de la frontera; el bosque interior, más adentro; y el corazón. Cerca del borde los guardianes fronterizos son numerosos, pero más adentro son menos, salvo en las plataformas de madera de nuestras aldeas. Las criaturas más raras del bosque se encuentran con más frecuencia cuanto más hondo caminas.",
-              "based_on": "b280ca8f72948e7f4c51ca0a85ec965c76c9e02f793663dfef88da09d5eeb53a",
+              "text": "Cerca del borde de Lothlórien los guardianes fronterizos caminan en número; más adentro son menos, salvo en las plataformas de madera de nuestras aldeas. Cuanto más hondo caminas, con más frecuencia encuentras a las criaturas más raras del bosque.",
+              "based_on": "f0020d2ee5777cb1b53fe9a6de2f8572bc8a85d41166f930356f5fd64f0f0db0",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "A floresta tem três profundidades: a orla, junto à fronteira; a floresta interior, mais adentro; e o coração. Perto da orla os guardas da fronteira andam em número, mas mais adentro são menos, exceto nas plataformas de madeira das nossas aldeias. As criaturas mais raras da floresta encontram-se com mais frequência quanto mais fundo caminhas.",
-              "based_on": "b280ca8f72948e7f4c51ca0a85ec965c76c9e02f793663dfef88da09d5eeb53a",
+              "text": "Perto da orla de Lothlórien os guardas da fronteira andam em número; mais adentro são menos, exceto nas plataformas de madeira das nossas aldeias. Quanto mais fundo caminhas, mais vezes encontras as criaturas mais raras da floresta.",
+              "based_on": "f0020d2ee5777cb1b53fe9a6de2f8572bc8a85d41166f930356f5fd64f0f0db0",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "A floresta tem três profundidades: a orla, junto à fronteira; a floresta interior, mais adentro; e o coração. Perto da orla os guardas da fronteira andam em número, mas mais adentro são menos, exceto nas plataformas de madeira das nossas aldeias. As criaturas mais raras da floresta são encontradas com mais frequência quanto mais fundo você caminha.",
-              "based_on": "b280ca8f72948e7f4c51ca0a85ec965c76c9e02f793663dfef88da09d5eeb53a",
+              "text": "Perto da orla de Lothlórien os guardas da fronteira andam em número; mais adentro são menos, exceto nas plataformas de madeira das nossas aldeias. Quanto mais fundo você caminha, mais vezes encontra as criaturas mais raras da floresta.",
+              "based_on": "f0020d2ee5777cb1b53fe9a6de2f8572bc8a85d41166f930356f5fd64f0f0db0",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Der Wald hat drei Tiefen: den Rand nahe der Grenze, den inneren Wald weiter drinnen und das Herz. Am Rand gehen die Grenzwächter in großer Zahl, doch tiefer drinnen werden sie weniger, außer auf den Holzdecks unserer Dörfer. Die seltensten Geschöpfe des Waldes trifft man umso öfter, je tiefer du gehst.",
-              "based_on": "b280ca8f72948e7f4c51ca0a85ec965c76c9e02f793663dfef88da09d5eeb53a",
+              "text": "Nahe dem Rand von Lothlórien gehen die Grenzwächter in großer Zahl; tiefer drinnen werden sie weniger, außer auf den Holzdecks unserer Dörfer. Je tiefer du gehst, desto öfter triffst du die seltensten Geschöpfe des Waldes.",
+              "based_on": "f0020d2ee5777cb1b53fe9a6de2f8572bc8a85d41166f930356f5fd64f0f0db0",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "La forêt a trois profondeurs : la lisière, près de la frontière ; la forêt intérieure, plus loin ; et le cœur. Près de la lisière, les gardes-frontières sont nombreux, mais plus loin ils se font rares, sauf sur les plates-formes de bois de nos villages. Les créatures les plus rares de la forêt se rencontrent d’autant plus souvent que tu marches profond.",
-              "based_on": "b280ca8f72948e7f4c51ca0a85ec965c76c9e02f793663dfef88da09d5eeb53a",
+              "text": "Près de la lisière de Lothlórien, les gardes-frontières sont nombreux ; plus loin ils se font rares, sauf sur les plates-formes de bois de nos villages. Plus tu marches profond, plus souvent tu rencontres les créatures les plus rares de la forêt.",
+              "based_on": "f0020d2ee5777cb1b53fe9a6de2f8572bc8a85d41166f930356f5fd64f0f0db0",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Las ma trzy głębie: skraj, przy granicy; wnętrze lasu, dalej w głąb; i serce. Przy skraju strażnicy granicy chodzą licznie, lecz głębiej jest ich mniej, z wyjątkiem drewnianych pomostów naszych wiosek. Najrzadsze stworzenia lasu spotyka się tym częściej, im głębiej idziesz.",
-              "based_on": "b280ca8f72948e7f4c51ca0a85ec965c76c9e02f793663dfef88da09d5eeb53a",
+              "text": "Przy skraju Lothlórien strażnicy granicy chodzą licznie, lecz głębiej jest ich mniej, z wyjątkiem drewnianych pomostów naszych wiosek. Im głębiej idziesz, tym częściej spotykasz najrzadsze stworzenia lasu.",
+              "based_on": "f0020d2ee5777cb1b53fe9a6de2f8572bc8a85d41166f930356f5fd64f0f0db0",
               "status": "ai-draft"
             }
           }
@@ -15516,9 +15463,9 @@
           }
         },
         "lothlorien.message.lore.lesson.lembas.text": {
-          "source": "Plant Western Corn and gather its grain. Three grains and a sugar make dough; bake the dough, then wrap the cake in a Mallorn leaf. Wrapped Lembas feeds well and lifts Hunger, the food for a long road. Eat a wrapped Lembas.",
+          "source": "Plant Western Corn and gather its grain. Mix the grain with sugar to make dough; bake the dough, then wrap the cake in a Mallorn leaf. Wrapped Lembas feeds well and lifts Hunger, the food for a long road. Eat a wrapped Lembas.",
           "context": {
-            "meaning": "Lesson 7 (chapter II, deed): Lembas. Plant Western Corn and gather its grain; three grains and a sugar make two doughs; bake the dough in a furnace or smoker to a cake; a cake plus a Mallorn leaf makes wrapped Lembas, which lifts the Hunger effect when eaten. Deed: eat wrapped Lembas.",
+            "meaning": "Lesson 7 (chapter II, deed): Lembas. Plant Western Corn and gather its grain; mix the grain with sugar to make dough; bake the dough to a cake; wrap the cake in a Mallorn leaf to make wrapped Lembas, which lifts the Hunger effect when eaten. No item counts in the text. Deed: eat wrapped Lembas.",
             "location": "lothlorien_rp: body of a lesson screen in the Loremaster dialog",
             "trigger": "Player opens a lesson in the Loremaster dialog.",
             "tone": "Formal, elven, Tolkien-flavoured but factual about the mod mechanics",
@@ -15531,43 +15478,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Zasaďte západní obilí a sklízejte jeho zrní. Tři zrna a cukr dají těsto; těsto upečte a pak koláč zabalte do listu mallornu. Zabalený lembas dobře sytí a zahání Hlad, je to pokrm na dlouhou cestu. Snězte zabalený lembas.",
-              "based_on": "e549521bff909d8e80f573df14e30e27d9be37677bf58b52b1571cb717607d73",
+              "text": "Zasaďte západní obilí a sklízejte jeho zrní. Smíchejte zrní s cukrem na těsto; těsto upečte a pak koláč zabalte do listu mallornu. Zabalený lembas dobře sytí a zahání Hlad, je to pokrm na dlouhou cestu. Snězte zabalený lembas.",
+              "based_on": "82e3b945d919120f90f31bef6a4cb61a50d4877efcfb7b7d654cbe0052e6f80e",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "Planta cereal del Oeste y recoge su grano. Tres granos y un azúcar hacen masa; hornea la masa y envuelve el pastel en una hoja de mallorn. El lembas envuelto alimenta bien y quita el Hambre: la comida para un largo camino. Come un lembas envuelto.",
-              "based_on": "e549521bff909d8e80f573df14e30e27d9be37677bf58b52b1571cb717607d73",
+              "text": "Planta cereal del Oeste y recoge su grano. Mezcla el grano con azúcar para hacer masa; hornea la masa y envuelve el pastel en una hoja de mallorn. El lembas envuelto alimenta bien y quita el Hambre: la comida para un largo camino. Come un lembas envuelto.",
+              "based_on": "82e3b945d919120f90f31bef6a4cb61a50d4877efcfb7b7d654cbe0052e6f80e",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "Planta cereal del Oeste y recoge su grano. Tres granos y un azúcar hacen masa; hornea la masa y envuelve el pastel en una hoja de mallorn. El lembas envuelto alimenta bien y quita el Hambre: la comida para un largo camino. Come un lembas envuelto.",
-              "based_on": "e549521bff909d8e80f573df14e30e27d9be37677bf58b52b1571cb717607d73",
+              "text": "Planta cereal del Oeste y recoge su grano. Mezcla el grano con azúcar para hacer masa; hornea la masa y envuelve el pastel en una hoja de mallorn. El lembas envuelto alimenta bien y quita el Hambre: la comida para un largo camino. Come un lembas envuelto.",
+              "based_on": "82e3b945d919120f90f31bef6a4cb61a50d4877efcfb7b7d654cbe0052e6f80e",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Planta cereal do Oeste e colhe o seu grão. Três grãos e um açúcar fazem massa; coze a massa e embrulha o bolo numa folha de mallorn. O lembas embrulhado alimenta bem e tira a Fome: a comida para um longo caminho. Come um lembas embrulhado.",
-              "based_on": "e549521bff909d8e80f573df14e30e27d9be37677bf58b52b1571cb717607d73",
+              "text": "Planta cereal do Oeste e colhe o seu grão. Mistura o grão com açúcar para fazer massa; coze a massa e embrulha o bolo numa folha de mallorn. O lembas embrulhado alimenta bem e tira a Fome: a comida para um longo caminho. Come um lembas embrulhado.",
+              "based_on": "82e3b945d919120f90f31bef6a4cb61a50d4877efcfb7b7d654cbe0052e6f80e",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Plante cereal do Oeste e colha o seu grão. Três grãos e um açúcar fazem massa; asse a massa e embrulhe o bolo numa folha de mallorn. O lembas embrulhado alimenta bem e tira a Fome: a comida para um longo caminho. Coma um lembas embrulhado.",
-              "based_on": "e549521bff909d8e80f573df14e30e27d9be37677bf58b52b1571cb717607d73",
+              "text": "Plante cereal do Oeste e colha o seu grão. Misture o grão com açúcar para fazer massa; asse a massa e embrulhe o bolo numa folha de mallorn. O lembas embrulhado alimenta bem e tira a Fome: a comida para um longo caminho. Coma um lembas embrulhado.",
+              "based_on": "82e3b945d919120f90f31bef6a4cb61a50d4877efcfb7b7d654cbe0052e6f80e",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Pflanze das westliche Getreide und sammle seine Körner. Drei Körner und ein Zucker ergeben Teig; backe den Teig und wickle den Kuchen dann in ein Mallornblatt. Eingewickeltes Lembas sättigt gut und nimmt den Hunger, die Speise für einen langen Weg. Iss ein eingewickeltes Lembas.",
-              "based_on": "e549521bff909d8e80f573df14e30e27d9be37677bf58b52b1571cb717607d73",
+              "text": "Pflanze das westliche Getreide und sammle seine Körner. Mische die Körner mit Zucker zu Teig; backe den Teig und wickle den Kuchen dann in ein Mallornblatt. Eingewickeltes Lembas sättigt gut und nimmt den Hunger, die Speise für einen langen Weg. Iss ein eingewickeltes Lembas.",
+              "based_on": "82e3b945d919120f90f31bef6a4cb61a50d4877efcfb7b7d654cbe0052e6f80e",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Plante le céréale de l’Ouest et récolte ses grains. Trois grains et un sucre font de la pâte ; cuis la pâte, puis enveloppe le gâteau dans une feuille de mallorn. Le lembas enveloppé nourrit bien et lève la Faim : la nourriture d’une longue route. Mange un lembas enveloppé.",
-              "based_on": "e549521bff909d8e80f573df14e30e27d9be37677bf58b52b1571cb717607d73",
+              "text": "Plante la céréale de l’Ouest et récolte ses grains. Mélange les grains avec du sucre pour faire de la pâte ; cuis la pâte, puis enveloppe le gâteau dans une feuille de mallorn. Le lembas enveloppé nourrit bien et lève la Faim : la nourriture d’une longue route. Mange un lembas enveloppé.",
+              "based_on": "82e3b945d919120f90f31bef6a4cb61a50d4877efcfb7b7d654cbe0052e6f80e",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Zasadź zboże Zachodu i zbieraj jego ziarno. Trzy ziarna i cukier dają ciasto; upiecz je, a potem owiń placek w liść mallornu. Owinięty lembas syci i usuwa Głód, to strawa na długą drogę. Zjedz owinięty lembas.",
-              "based_on": "e549521bff909d8e80f573df14e30e27d9be37677bf58b52b1571cb717607d73",
+              "text": "Zasadź zboże Zachodu i zbieraj jego ziarno. Wymieszaj ziarno z cukrem na ciasto; upiecz je, a potem owiń placek w liść mallornu. Owinięty lembas syci i usuwa Głód, to strawa na długą drogę. Zjedz owinięty lembas.",
+              "based_on": "82e3b945d919120f90f31bef6a4cb61a50d4877efcfb7b7d654cbe0052e6f80e",
               "status": "ai-draft"
             }
           }
@@ -15630,7 +15577,7 @@
           }
         },
         "lothlorien.message.lore.lesson.fireflies.text": {
-          "source": "After dusk, fireflies drift above the grass of the wood. Use a glass bottle on one, and it is caught: a small light to carry or to give to the lamplighter. Catch a firefly in a bottle.",
+          "source": "After dusk, fireflies drift above the grass of the wood. Catch one with a glass bottle: a small light to carry, or to give to the lamplighter. Catch a firefly in a bottle.",
           "context": {
             "meaning": "Lesson 8 (chapter II, deed): fireflies appear at night (low light) above the grass of the forest; using a glass bottle on one catches it and gives a Bottle of Fireflies. Deed: catch a firefly in a bottle.",
             "location": "lothlorien_rp: body of a lesson screen in the Loremaster dialog",
@@ -15645,43 +15592,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Po soumraku se nad lesní trávou vznášejí světlušky. Použijte na jednu skleněnou láhev a je chycena: malé světlo k nošení nebo k předání lampáři. Chyťte světlušku do láhve.",
-              "based_on": "df2e4275ed8a8e299ae8595363f52e96f4d695d67c5e6e07698477502c94b9c9",
+              "text": "Po soumraku se nad lesní trávou vznášejí světlušky. Chyťte jednu do skleněné láhve: malé světlo k nošení nebo k předání lampáři. Chyťte světlušku do láhve.",
+              "based_on": "dafe9886b4268f5f014d57ec56342e9e7aeb0a1e4a1b966e87f4684520e6ffb5",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "Tras el anochecer, las luciérnagas flotan sobre la hierba del bosque. Usa una botella de cristal con una y queda atrapada: una pequeña luz para llevar o para dar al farolero. Atrapa una luciérnaga en una botella.",
-              "based_on": "df2e4275ed8a8e299ae8595363f52e96f4d695d67c5e6e07698477502c94b9c9",
+              "text": "Tras el anochecer, las luciérnagas flotan sobre la hierba del bosque. Atrapa una con una botella de cristal: una pequeña luz para llevar o para dar al farolero. Atrapa una luciérnaga en una botella.",
+              "based_on": "dafe9886b4268f5f014d57ec56342e9e7aeb0a1e4a1b966e87f4684520e6ffb5",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "Tras el anochecer, las luciérnagas flotan sobre la hierba del bosque. Usa una botella de cristal con una y queda atrapada: una pequeña luz para llevar o para dar al farolero. Atrapa una luciérnaga en una botella.",
-              "based_on": "df2e4275ed8a8e299ae8595363f52e96f4d695d67c5e6e07698477502c94b9c9",
+              "text": "Tras el anochecer, las luciérnagas flotan sobre la hierba del bosque. Atrapa una con una botella de cristal: una pequeña luz para llevar o para dar al farolero. Atrapa una luciérnaga en una botella.",
+              "based_on": "dafe9886b4268f5f014d57ec56342e9e7aeb0a1e4a1b966e87f4684520e6ffb5",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Depois do anoitecer, os pirilampos flutuam sobre a erva da floresta. Usa uma garrafa de vidro com um e fica apanhado: uma pequena luz para levar ou para dar ao acendedor de lampiões. Apanha um pirilampo numa garrafa.",
-              "based_on": "df2e4275ed8a8e299ae8595363f52e96f4d695d67c5e6e07698477502c94b9c9",
+              "text": "Depois do anoitecer, os pirilampos flutuam sobre a erva da floresta. Apanha um com uma garrafa de vidro: uma pequena luz para levar ou para dar ao acendedor de lampiões. Apanha um pirilampo numa garrafa.",
+              "based_on": "dafe9886b4268f5f014d57ec56342e9e7aeb0a1e4a1b966e87f4684520e6ffb5",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Depois do anoitecer, os vaga-lumes flutuam sobre a grama da floresta. Use uma garrafa de vidro em um, e ele é capturado: uma pequena luz para levar ou para dar ao acendedor de lampiões. Capture um vaga-lume numa garrafa.",
-              "based_on": "df2e4275ed8a8e299ae8595363f52e96f4d695d67c5e6e07698477502c94b9c9",
+              "text": "Depois do anoitecer, os vaga-lumes flutuam sobre a grama da floresta. Capture um com uma garrafa de vidro: uma pequena luz para levar ou para dar ao acendedor de lampiões. Capture um vaga-lume numa garrafa.",
+              "based_on": "dafe9886b4268f5f014d57ec56342e9e7aeb0a1e4a1b966e87f4684520e6ffb5",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Nach der Dämmerung schweben Glühwürmchen über dem Gras des Waldes. Benutze eine Glasflasche an einem, und es ist gefangen: ein kleines Licht zum Tragen oder für den Laternenanzünder. Fange ein Glühwürmchen in einer Flasche.",
-              "based_on": "df2e4275ed8a8e299ae8595363f52e96f4d695d67c5e6e07698477502c94b9c9",
+              "text": "Nach der Dämmerung schweben Glühwürmchen über dem Gras des Waldes. Fange eines mit einer Glasflasche: ein kleines Licht zum Tragen oder für den Laternenanzünder. Fange ein Glühwürmchen in einer Flasche.",
+              "based_on": "dafe9886b4268f5f014d57ec56342e9e7aeb0a1e4a1b966e87f4684520e6ffb5",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Après le crépuscule, les lucioles flottent au-dessus de l’herbe de la forêt. Utilise une bouteille en verre sur l’une d’elles, et elle est prise : une petite lumière à porter ou à donner à l’allumeur de lanternes. Attrape une luciole dans une bouteille.",
-              "based_on": "df2e4275ed8a8e299ae8595363f52e96f4d695d67c5e6e07698477502c94b9c9",
+              "text": "Après le crépuscule, les lucioles flottent au-dessus de l’herbe de la forêt. Attrape-en une avec une bouteille en verre : une petite lumière à porter ou à donner à l’allumeur de lanternes. Attrape une luciole dans une bouteille.",
+              "based_on": "dafe9886b4268f5f014d57ec56342e9e7aeb0a1e4a1b966e87f4684520e6ffb5",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Po zmroku świetliki unoszą się nad trawą lasu. Użyj szklanej butelki na jednym, a będzie złapany: małe światło do noszenia lub dla latarnika. Złap świetlika do butelki.",
-              "based_on": "df2e4275ed8a8e299ae8595363f52e96f4d695d67c5e6e07698477502c94b9c9",
+              "text": "Po zmroku świetliki unoszą się nad trawą lasu. Złap jednego szklaną butelką: małe światło do noszenia lub dla latarnika. Złap świetlika do butelki.",
+              "based_on": "dafe9886b4268f5f014d57ec56342e9e7aeb0a1e4a1b966e87f4684520e6ffb5",
               "status": "ai-draft"
             }
           }
@@ -15744,9 +15691,9 @@
           }
         },
         "lothlorien.message.lore.lesson.rope.text": {
-          "source": "Elven rope is made of morning dew and a golden fern, and a whole dawn of gathering goes into one. Use it on the side of a block, and it hangs down; use it on a piece, and it grows up or down. It can be climbed. Hang an elven rope.",
+          "source": "Elven rope is made of morning dew and a golden fern, and a whole dawn of gathering goes into one. Use it on the side of a block, and it runs the whole way down or up if you have enough of it; if not, it can be lengthened later. It can be climbed. Hang an elven rope.",
           "context": {
-            "meaning": "Lesson 9 (chapter II, deed): Elven rope is crafted from one Bottle of morning dew and a golden fern (the dew takes a whole dawn to gather). Used on the side of a block it hangs down; used on a piece it lengthens the rope up or down; it can be climbed. Deed: hang an elven rope.",
+            "meaning": "Lesson 9 (chapter II, deed): Elven rope is crafted from one Bottle of morning dew and a golden fern (the dew takes a whole dawn to gather). Used on the side of a block it runs all the way down or up when the player has enough rope, otherwise it can be lengthened later; it can be climbed. Deed: hang an elven rope.",
             "location": "lothlorien_rp: body of a lesson screen in the Loremaster dialog",
             "trigger": "Player opens a lesson in the Loremaster dialog.",
             "tone": "Formal, elven, Tolkien-flavoured but factual about the mod mechanics",
@@ -15759,43 +15706,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Elfí lano se dělá z ranní rosy a zlatého kapradí a do jednoho jde celé jitro sbírání. Použijte je na stranu bloku a spustí se dolů; použijte je na kus lana a prodlouží se nahoru či dolů. Dá se po něm šplhat. Zavěste elfí lano.",
-              "based_on": "63ffecc4256509c8afbd09dc16062165653a75d70e96847c60b52080fc62b8d4",
+              "text": "Elfí lano se dělá z ranní rosy a zlatého kapradí a do jednoho jde celé jitro sbírání. Použijte je na stranu bloku a rozvine se celou cestu dolů či nahoru, máte-li ho dost; pokud ne, lze ho později prodloužit. Dá se po něm šplhat. Zavěste elfí lano.",
+              "based_on": "23ac390652f724b76f0dd4c14a3d4d3720f6c8be50f6a053738b6b6844d92aaf",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "La cuerda élfica se hace con rocío matinal y un helecho dorado, y en una cabe todo un amanecer de recolección. Úsala en el lado de un bloque y cuelga hacia abajo; úsala en un tramo y crece hacia arriba o hacia abajo. Se puede trepar. Cuelga una cuerda élfica.",
-              "based_on": "63ffecc4256509c8afbd09dc16062165653a75d70e96847c60b52080fc62b8d4",
+              "text": "La cuerda élfica se hace con rocío matinal y un helecho dorado, y en una cabe todo un amanecer de recolección. Úsala en el lado de un bloque y se extiende hasta el final hacia abajo o hacia arriba si tienes bastante; si no, se puede alargar después. Se puede trepar. Cuelga una cuerda élfica.",
+              "based_on": "23ac390652f724b76f0dd4c14a3d4d3720f6c8be50f6a053738b6b6844d92aaf",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "La cuerda élfica se hace con rocío matinal y un helecho dorado, y en una cabe todo un amanecer de recolección. Úsala en el lado de un bloque y cuelga hacia abajo; úsala en un tramo y crece hacia arriba o hacia abajo. Se puede trepar. Cuelga una cuerda élfica.",
-              "based_on": "63ffecc4256509c8afbd09dc16062165653a75d70e96847c60b52080fc62b8d4",
+              "text": "La cuerda élfica se hace con rocío matinal y un helecho dorado, y en una cabe todo un amanecer de recolección. Úsala en el lado de un bloque y se extiende hasta el final hacia abajo o hacia arriba si tienes bastante; si no, se puede alargar después. Se puede trepar. Cuelga una cuerda élfica.",
+              "based_on": "23ac390652f724b76f0dd4c14a3d4d3720f6c8be50f6a053738b6b6844d92aaf",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "A corda élfica faz-se com orvalho da manhã e um feto dourado, e numa cabe todo um amanhecer de recolha. Usa-a no lado de um bloco e ela pende para baixo; usa-a num troço e ela cresce para cima ou para baixo. Pode ser escalada. Pendura uma corda élfica.",
-              "based_on": "63ffecc4256509c8afbd09dc16062165653a75d70e96847c60b52080fc62b8d4",
+              "text": "A corda élfica faz-se com orvalho da manhã e um feto dourado, e numa cabe todo um amanhecer de recolha. Usa-a no lado de um bloco e ela estende-se por todo o caminho, para baixo ou para cima, se tiveres o suficiente; se não, pode ser alongada depois. Pode ser escalada. Pendura uma corda élfica.",
+              "based_on": "23ac390652f724b76f0dd4c14a3d4d3720f6c8be50f6a053738b6b6844d92aaf",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "A corda élfica é feita de orvalho da manhã e uma samambaia dourada, e numa cabe todo um amanhecer de coleta. Use-a no lado de um bloco e ela pende para baixo; use-a num trecho e ela cresce para cima ou para baixo. Pode ser escalada. Pendure uma corda élfica.",
-              "based_on": "63ffecc4256509c8afbd09dc16062165653a75d70e96847c60b52080fc62b8d4",
+              "text": "A corda élfica é feita de orvalho da manhã e uma samambaia dourada, e numa cabe todo um amanhecer de coleta. Use-a no lado de um bloco e ela se estende por todo o caminho, para baixo ou para cima, se você tiver o suficiente; se não, ela pode ser alongada depois. Pode ser escalada. Pendure uma corda élfica.",
+              "based_on": "23ac390652f724b76f0dd4c14a3d4d3720f6c8be50f6a053738b6b6844d92aaf",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Das Elbenseil wird aus Morgentau und einem Goldenen Farn gemacht, und in eines geht ein ganzer Morgen des Sammelns. Benutze es an der Seite eines Blocks, und es hängt herab; benutze es an einem Stück, und es wächst nach oben oder unten. Man kann daran klettern. Hänge ein Elbenseil auf.",
-              "based_on": "63ffecc4256509c8afbd09dc16062165653a75d70e96847c60b52080fc62b8d4",
+              "text": "Das Elbenseil wird aus Morgentau und einem Goldenen Farn gemacht, und in eines geht ein ganzer Morgen des Sammelns. Benutze es an der Seite eines Blocks, und es reicht ganz hinab oder hinauf, wenn du genug davon hast; wenn nicht, lässt es sich später verlängern. Man kann daran klettern. Hänge ein Elbenseil auf.",
+              "based_on": "23ac390652f724b76f0dd4c14a3d4d3720f6c8be50f6a053738b6b6844d92aaf",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "La corde elfique se fait avec de la rosée matinale et une fougère dorée, et une seule demande toute une aube de récolte. Utilise-la sur le côté d’un bloc, et elle pend vers le bas ; utilise-la sur un morceau, et elle s’allonge vers le haut ou le bas. On peut y grimper. Accroche une corde elfique.",
-              "based_on": "63ffecc4256509c8afbd09dc16062165653a75d70e96847c60b52080fc62b8d4",
+              "text": "La corde elfique se fait avec de la rosée matinale et une fougère dorée, et une seule demande toute une aube de récolte. Utilise-la sur le côté d’un bloc, et elle court jusqu’au bout vers le bas ou le haut si tu en as assez ; sinon, on peut l’allonger plus tard. On peut y grimper. Accroche une corde elfique.",
+              "based_on": "23ac390652f724b76f0dd4c14a3d4d3720f6c8be50f6a053738b6b6844d92aaf",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Elficka lina powstaje z porannej rosy i złotej paproci, a na jedną idzie cały świt zbierania. Użyj jej na boku bloku, a zwisa w dół; użyj na kawałku, a wydłuża się w górę lub w dół. Można się po niej wspinać. Zawieś elficką linę.",
-              "based_on": "63ffecc4256509c8afbd09dc16062165653a75d70e96847c60b52080fc62b8d4",
+              "text": "Elficka lina powstaje z porannej rosy i złotej paproci, a na jedną idzie cały świt zbierania. Użyj jej na boku bloku, a rozwinie się całą drogę w dół lub w górę, jeśli masz jej dość; jeśli nie, można ją później wydłużyć. Można się po niej wspinać. Zawieś elficką linę.",
+              "based_on": "23ac390652f724b76f0dd4c14a3d4d3720f6c8be50f6a053738b6b6844d92aaf",
               "status": "ai-draft"
             }
           }
@@ -15858,9 +15805,9 @@
           }
         },
         "lothlorien.message.lore.lesson.gifts.text": {
-          "source": "Deer love Western Corn, and a deer that is fed will trust you. A Friend of Lothlórien may offer a Mallorn acorn to a squirrel; it runs off on an errand and brings back a gift. Send a squirrel on its errand with an acorn.",
+          "source": "Deer love Western Corn, and a deer that is fed will trust you. A Friend of Lothlórien may offer a Mallorn acorn to a squirrel, and it may bring you a gift in return. Try it: win the trust of a squirrel.",
           "context": {
-            "meaning": "Lesson 10 (chapter III, deed): gifts of the forest. Deer love Western Corn and a deer fed with it trusts the player; a Friend of Lothlórien (Harmony +10) may offer a Mallorn acorn to a squirrel, which runs on an errand and brings back a gift. Deed: send a squirrel off with an acorn (needs Friend).",
+            "meaning": "Lesson 10 (chapter III, deed): gifts of the forest. Deer love Western Corn and a deer fed with it trusts the player; a Friend of Lothlórien (Harmony +10) may offer a Mallorn acorn to a squirrel, which may bring a gift in return. Deed: win a squirrel's trust by offering it an acorn (needs Friend).",
             "location": "lothlorien_rp: body of a lesson screen in the Loremaster dialog",
             "trigger": "Player opens a lesson in the Loremaster dialog.",
             "tone": "Formal, elven, Tolkien-flavoured but factual about the mod mechanics",
@@ -15873,43 +15820,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Jeleni milují západní obilí a nakrmený jelen vám bude důvěřovat. Přítel Lothlórienu může nabídnout veverce žalud mallornu; ta se rozběhne na pochůzku a přinese dar. Pošlete veverku s žaludem na pochůzku.",
-              "based_on": "a485ce1111d6b8df5bc5078fedca593d056e2a4e5cbd2b90a4dc5bd26335200e",
+              "text": "Jeleni milují západní obilí a nakrmený jelen vám bude důvěřovat. Přítel Lothlórienu může nabídnout veverce žalud mallornu a ta vám může na oplátku přinést dar. Zkuste to: získejte důvěru veverky.",
+              "based_on": "495e1fdf92c38666fc90d0aefa0fdee51c81f151e779d3c62740a4f6fd5b7cf3",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "A los ciervos les encanta el cereal del Oeste, y un ciervo alimentado confiará en ti. Un amigo de Lothlórien puede ofrecer una bellota de mallorn a una ardilla; sale corriendo en un encargo y trae un regalo. Envía a una ardilla a su encargo con una bellota.",
-              "based_on": "a485ce1111d6b8df5bc5078fedca593d056e2a4e5cbd2b90a4dc5bd26335200e",
+              "text": "A los ciervos les encanta el cereal del Oeste, y un ciervo alimentado confiará en ti. Un amigo de Lothlórien puede ofrecer una bellota de mallorn a una ardilla, y esta puede traerte un regalo a cambio. Pruébalo: gánate la confianza de una ardilla.",
+              "based_on": "495e1fdf92c38666fc90d0aefa0fdee51c81f151e779d3c62740a4f6fd5b7cf3",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "A los ciervos les encanta el cereal del Oeste, y un ciervo alimentado confiará en ti. Un amigo de Lothlórien puede ofrecer una bellota de mallorn a una ardilla; sale corriendo en un encargo y trae un regalo. Envía a una ardilla a su encargo con una bellota.",
-              "based_on": "a485ce1111d6b8df5bc5078fedca593d056e2a4e5cbd2b90a4dc5bd26335200e",
+              "text": "A los ciervos les encanta el cereal del Oeste, y un ciervo alimentado confiará en ti. Un amigo de Lothlórien puede ofrecer una bellota de mallorn a una ardilla, y esta puede traerte un regalo a cambio. Pruébalo: gánate la confianza de una ardilla.",
+              "based_on": "495e1fdf92c38666fc90d0aefa0fdee51c81f151e779d3c62740a4f6fd5b7cf3",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Os veados adoram o cereal do Oeste, e um veado alimentado confiará em ti. Um amigo de Lothlórien pode oferecer uma bolota de mallorn a um esquilo; ele sai a correr numa missão e traz uma dádiva. Envia um esquilo numa missão com uma bolota.",
-              "based_on": "a485ce1111d6b8df5bc5078fedca593d056e2a4e5cbd2b90a4dc5bd26335200e",
+              "text": "Os veados adoram o cereal do Oeste, e um veado alimentado confiará em ti. Um amigo de Lothlórien pode oferecer uma bolota de mallorn a um esquilo, e este pode trazer-te uma dádiva em troca. Experimenta: ganha a confiança de um esquilo.",
+              "based_on": "495e1fdf92c38666fc90d0aefa0fdee51c81f151e779d3c62740a4f6fd5b7cf3",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Os veados adoram o cereal do Oeste, e um veado alimentado confiará em você. Um amigo de Lothlórien pode oferecer uma bolota de mallorn a um esquilo; ele sai correndo numa missão e traz uma dádiva. Envie um esquilo numa missão com uma bolota.",
-              "based_on": "a485ce1111d6b8df5bc5078fedca593d056e2a4e5cbd2b90a4dc5bd26335200e",
+              "text": "Os veados adoram o cereal do Oeste, e um veado alimentado confiará em você. Um amigo de Lothlórien pode oferecer uma bolota de mallorn a um esquilo, e ele pode trazer uma dádiva a você em troca. Experimente: ganhe a confiança de um esquilo.",
+              "based_on": "495e1fdf92c38666fc90d0aefa0fdee51c81f151e779d3c62740a4f6fd5b7cf3",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Hirsche lieben das westliche Getreide, und ein gefütterter Hirsch wird dir vertrauen. Ein Freund Lothlóriens darf einem Eichhörnchen eine Mallorneichel anbieten; es läuft auf einen Botengang und bringt eine Gabe zurück. Schicke ein Eichhörnchen mit einer Eichel auf seinen Botengang.",
-              "based_on": "a485ce1111d6b8df5bc5078fedca593d056e2a4e5cbd2b90a4dc5bd26335200e",
+              "text": "Hirsche lieben das westliche Getreide, und ein gefütterter Hirsch wird dir vertrauen. Ein Freund Lothlóriens darf einem Eichhörnchen eine Mallorneichel anbieten, und es bringt dir vielleicht zum Dank eine Gabe. Versuche es: Gewinne das Vertrauen eines Eichhörnchens.",
+              "based_on": "495e1fdf92c38666fc90d0aefa0fdee51c81f151e779d3c62740a4f6fd5b7cf3",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Les cerfs aiment le céréale de l’Ouest, et un cerf nourri te fera confiance. Un ami de Lothlórien peut offrir un gland de mallorn à un écureuil ; il part en course et rapporte un présent. Envoie un écureuil en course avec un gland.",
-              "based_on": "a485ce1111d6b8df5bc5078fedca593d056e2a4e5cbd2b90a4dc5bd26335200e",
+              "text": "Les cerfs aiment la céréale de l’Ouest, et un cerf nourri te fera confiance. Un ami de Lothlórien peut offrir un gland de mallorn à un écureuil, et celui-ci peut te rapporter un présent en retour. Essaie : gagne la confiance d’un écureuil.",
+              "based_on": "495e1fdf92c38666fc90d0aefa0fdee51c81f151e779d3c62740a4f6fd5b7cf3",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Jelenie kochają zboże Zachodu, a nakarmiony jeleń ci zaufa. Przyjaciel Lothlórien może ofiarować żołądź mallornu wiewiórce; ta biegnie z poleceniem i przynosi dar. Wyślij wiewiórkę z żołędziem na jej wyprawę.",
-              "based_on": "a485ce1111d6b8df5bc5078fedca593d056e2a4e5cbd2b90a4dc5bd26335200e",
+              "text": "Jelenie kochają zboże Zachodu, a nakarmiony jeleń ci zaufa. Przyjaciel Lothlórien może ofiarować żołądź mallornu wiewiórce, a ta może przynieść ci dar w zamian. Spróbuj: zdobądź zaufanie wiewiórki.",
+              "based_on": "495e1fdf92c38666fc90d0aefa0fdee51c81f151e779d3c62740a4f6fd5b7cf3",
               "status": "ai-draft"
             }
           }
@@ -16086,9 +16033,9 @@
           }
         },
         "lothlorien.message.lore.lesson.trades.text": {
-          "source": "The finest goods of my kin go only to an Elf-friend who is also a Friend of Lothlórien at that moment. Renown is never lost, but Harmony can be. Guard them both.",
+          "source": "To one who is an Elf-friend and also a Friend of Lothlórien, my kin may offer our finest goods. They cannot be found anywhere else.",
           "context": {
-            "meaning": "Lesson 12 (chapter III, lore): the finest goods of the elven traders go only to an Elf-friend who is also, at that moment, a Friend of Lothlórien (Harmony +10). Renown is never lost; Harmony can be.",
+            "meaning": "Lesson 12 (chapter III, lore): the finest goods of the elven traders may be offered only to one who is an Elf-friend and at that moment also a Friend of Lothlórien; they cannot be found anywhere else. No remark about what is lost or kept.",
             "location": "lothlorien_rp: body of a lesson screen in the Loremaster dialog",
             "trigger": "Player opens a lesson in the Loremaster dialog.",
             "tone": "Formal, elven, Tolkien-flavoured but factual about the mod mechanics",
@@ -16101,43 +16048,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Nejvzácnější zboží mých příbuzných připadne jen Příteli elfů, který je v tu chvíli také Přítelem Lothlórienu. Pověst se neztrácí, soulad ano. Střežte obojí.",
-              "based_on": "8bae5b55aa66d669fb3cc5ee3780e3e2cae4beae953f589096735c9f4071f0d1",
+              "text": "Tomu, kdo je Přítelem elfů a zároveň má Přízeň Lothlórienu, může můj lid nabídnout své nejlepší zboží. Nikde jinde je nenajdete.",
+              "based_on": "33463f25af8de7adcd367c07e7d60e2548f6dc41b2d029526992fac787d8df33",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "Los mejores bienes de los míos van solo a un Amigo de los elfos que en ese momento sea también amigo de Lothlórien. El renombre nunca se pierde, pero la armonía sí. Cuida ambos.",
-              "based_on": "8bae5b55aa66d669fb3cc5ee3780e3e2cae4beae953f589096735c9f4071f0d1",
+              "text": "A quien es Amigo de los elfos y también goza de la Amistad de Lothlórien, los míos pueden ofrecerle sus mejores bienes. No se encuentran en ningún otro lugar.",
+              "based_on": "33463f25af8de7adcd367c07e7d60e2548f6dc41b2d029526992fac787d8df33",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "Los mejores bienes de los míos van solo a un Amigo de los elfos que en ese momento sea también amigo de Lothlórien. El renombre nunca se pierde, pero la armonía sí. Cuida ambos.",
-              "based_on": "8bae5b55aa66d669fb3cc5ee3780e3e2cae4beae953f589096735c9f4071f0d1",
+              "text": "A quien es Amigo de los elfos y también goza de la Amistad de Lothlórien, los míos pueden ofrecerle sus mejores bienes. No se encuentran en ningún otro lugar.",
+              "based_on": "33463f25af8de7adcd367c07e7d60e2548f6dc41b2d029526992fac787d8df33",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Os melhores bens dos meus vão apenas para um Amigo dos elfos que, nesse momento, seja também amigo de Lothlórien. O renome nunca se perde, mas a harmonia sim. Guarda ambos.",
-              "based_on": "8bae5b55aa66d669fb3cc5ee3780e3e2cae4beae953f589096735c9f4071f0d1",
+              "text": "A quem é Amigo dos elfos e também goza da Amizade de Lothlórien, os meus podem oferecer os seus melhores bens. Não se encontram em mais lado nenhum.",
+              "based_on": "33463f25af8de7adcd367c07e7d60e2548f6dc41b2d029526992fac787d8df33",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Os melhores bens dos meus vão apenas para um Amigo dos elfos que, nesse momento, seja também amigo de Lothlórien. O renome nunca se perde, mas a harmonia sim. Guarde ambos.",
-              "based_on": "8bae5b55aa66d669fb3cc5ee3780e3e2cae4beae953f589096735c9f4071f0d1",
+              "text": "A quem é Amigo dos elfos e também goza da Amizade de Lothlórien, os meus podem oferecer os seus melhores bens. Não se encontram em nenhum outro lugar.",
+              "based_on": "33463f25af8de7adcd367c07e7d60e2548f6dc41b2d029526992fac787d8df33",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Die edelsten Waren meines Volkes gehen nur an einen Elbenfreund, der in diesem Augenblick auch ein Freund Lothlóriens ist. Ansehen geht nie verloren, Harmonie jedoch schon. Hüte beides.",
-              "based_on": "8bae5b55aa66d669fb3cc5ee3780e3e2cae4beae953f589096735c9f4071f0d1",
+              "text": "Wer ein Elbenfreund ist und zugleich die Freundschaft mit Lothlórien besitzt, dem können die Meinen ihre edelsten Waren anbieten. Anderswo sind sie nicht zu finden.",
+              "based_on": "33463f25af8de7adcd367c07e7d60e2548f6dc41b2d029526992fac787d8df33",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Les plus beaux biens des miens ne vont qu’à un Ami des elfes qui est aussi, à cet instant, un ami de Lothlórien. La renommée ne se perd jamais, l’harmonie si. Veille sur les deux.",
-              "based_on": "8bae5b55aa66d669fb3cc5ee3780e3e2cae4beae953f589096735c9f4071f0d1",
+              "text": "À qui est Ami des elfes et jouit aussi de l’Amitié de Lothlórien, les miens peuvent offrir leurs plus beaux biens. On ne les trouve nulle part ailleurs.",
+              "based_on": "33463f25af8de7adcd367c07e7d60e2548f6dc41b2d029526992fac787d8df33",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Najlepsze towary moich trafiają tylko do Przyjaciela elfów, który w danej chwili jest też przyjacielem Lothlórien. Sława nigdy nie przepada, harmonia owszem. Strzeż obu.",
-              "based_on": "8bae5b55aa66d669fb3cc5ee3780e3e2cae4beae953f589096735c9f4071f0d1",
+              "text": "Temu, kto jest Przyjacielem elfów i zarazem ma Przyjaźń Lothlórien, moi mogą zaoferować swoje najlepsze towary. Nie znajdzie się ich nigdzie indziej.",
+              "based_on": "33463f25af8de7adcd367c07e7d60e2548f6dc41b2d029526992fac787d8df33",
               "status": "ai-draft"
             }
           }
@@ -16428,9 +16375,9 @@
           }
         },
         "lothlorien.message.lore.req.h_flowers.text": {
-          "source": "The healer asks for two Elanor and two Niphredil, flowers of the deep wood.",
+          "source": "The healer asks for four Elanor and four Niphredil, flowers of the deep wood.",
           "context": {
-            "meaning": "Request of the healer: bring two Elanor and two Niphredil (flowers).",
+            "meaning": "Request of the healer: bring four Elanor and four Niphredil (flowers).",
             "location": "lothlorien_rp: body of a task screen in the Loremaster dialog",
             "trigger": "Player opens a task offered on behalf of another elf.",
             "tone": "Formal, elven, short",
@@ -16443,43 +16390,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Léčitel žádá dva elanory a dva niphredily, květy hlubokého lesa.",
-              "based_on": "fa83dd27bcfd0e84f4bb8c3c1eb5e3f3db4b3f0087b7f67c71a015cbb09b342d",
+              "text": "Léčitel žádá čtyři elanory a čtyři niphredily, květy hlubokého lesa.",
+              "based_on": "7e8283712bb23b8b54c16d6913cffe03bdf9a1647d11ffb2c5f5741056b93602",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "El sanador pide dos elanor y dos niphredil, flores del bosque profundo.",
-              "based_on": "fa83dd27bcfd0e84f4bb8c3c1eb5e3f3db4b3f0087b7f67c71a015cbb09b342d",
+              "text": "El sanador pide cuatro elanor y cuatro niphredil, flores del bosque profundo.",
+              "based_on": "7e8283712bb23b8b54c16d6913cffe03bdf9a1647d11ffb2c5f5741056b93602",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "El sanador pide dos elanor y dos niphredil, flores del bosque profundo.",
-              "based_on": "fa83dd27bcfd0e84f4bb8c3c1eb5e3f3db4b3f0087b7f67c71a015cbb09b342d",
+              "text": "El sanador pide cuatro elanor y cuatro niphredil, flores del bosque profundo.",
+              "based_on": "7e8283712bb23b8b54c16d6913cffe03bdf9a1647d11ffb2c5f5741056b93602",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "O curandeiro pede dois elanor e dois niphredil, flores da floresta profunda.",
-              "based_on": "fa83dd27bcfd0e84f4bb8c3c1eb5e3f3db4b3f0087b7f67c71a015cbb09b342d",
+              "text": "O curandeiro pede quatro elanor e quatro niphredil, flores da floresta profunda.",
+              "based_on": "7e8283712bb23b8b54c16d6913cffe03bdf9a1647d11ffb2c5f5741056b93602",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "O curandeiro pede dois elanor e dois niphredil, flores da floresta profunda.",
-              "based_on": "fa83dd27bcfd0e84f4bb8c3c1eb5e3f3db4b3f0087b7f67c71a015cbb09b342d",
+              "text": "O curandeiro pede quatro elanor e quatro niphredil, flores da floresta profunda.",
+              "based_on": "7e8283712bb23b8b54c16d6913cffe03bdf9a1647d11ffb2c5f5741056b93602",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Der Heiler bittet um zwei Elanor und zwei Niphredil, Blumen des tiefen Waldes.",
-              "based_on": "fa83dd27bcfd0e84f4bb8c3c1eb5e3f3db4b3f0087b7f67c71a015cbb09b342d",
+              "text": "Der Heiler bittet um vier Elanor und vier Niphredil, Blumen des tiefen Waldes.",
+              "based_on": "7e8283712bb23b8b54c16d6913cffe03bdf9a1647d11ffb2c5f5741056b93602",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Le guérisseur demande deux elanor et deux niphredil, fleurs de la forêt profonde.",
-              "based_on": "fa83dd27bcfd0e84f4bb8c3c1eb5e3f3db4b3f0087b7f67c71a015cbb09b342d",
+              "text": "Le guérisseur demande quatre elanor et quatre niphredil, fleurs de la forêt profonde.",
+              "based_on": "7e8283712bb23b8b54c16d6913cffe03bdf9a1647d11ffb2c5f5741056b93602",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Uzdrowiciel prosi o dwa elanory i dwa niphredile, kwiaty głębokiego lasu.",
-              "based_on": "fa83dd27bcfd0e84f4bb8c3c1eb5e3f3db4b3f0087b7f67c71a015cbb09b342d",
+              "text": "Uzdrowiciel prosi o cztery elanory i cztery niphredile, kwiaty głębokiego lasu.",
+              "based_on": "7e8283712bb23b8b54c16d6913cffe03bdf9a1647d11ffb2c5f5741056b93602",
               "status": "ai-draft"
             }
           }

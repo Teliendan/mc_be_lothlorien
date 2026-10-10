@@ -531,7 +531,7 @@
     },
     "lothlorien:nectar_bloom": {
       "profile": "flower",
-      "harvest": "Owner policy 2026-10-10: any tool or hand collects one bloom at every nectar stage; native self loot with explosion_decay, no shears collection gate. Nectar filling/bottle interaction and approved material settings unchanged."
+      "harvest": "Owner exception 2026-10-11: only shears collect one bloom at every nectar stage; Silk Touch alone does not collect it. Native self loot with explosion_decay; nectar filling/bottle interaction and material settings unchanged."
     },
     "lothlorien:niphredil": {
       "profile": "flower",

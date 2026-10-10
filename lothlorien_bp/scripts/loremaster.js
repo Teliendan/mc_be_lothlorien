@@ -158,7 +158,7 @@ function mainBody(ctx, band, menu, state) {
   if (menu.renown) {
     parts.push("\n\n", t("lore.rank.line", t(`lore.rank.${rankOf(state.points)}`)));
     const next = nextRank(state.points);
-    parts.push("\n", next ? t("lore.rank.next", t(`lore.rank.${next.next}`), next.needed) : t("lore.rank.max"));
+    parts.push("\n", next ? t("lore.rank.next", t(`lore.rank.${next.next}`), state.points, next.threshold) : t("lore.rank.max"));
     if (!menu.requests) parts.push("\n\n", t("lore.requests.locked"));
     else if (!state.request && requestsLeft(state) === 0) parts.push("\n\n", t("lore.requests.none"));
   } else if (state.request) parts.push("\n\n", t("lore.requests.paused"));

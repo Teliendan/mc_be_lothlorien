@@ -433,8 +433,8 @@ lothlorien.message.lore.greet.guest=Mae govannen. Stromy už o vás něco řekly
 lothlorien.message.lore.greet.uneasy=Les je vámi znepokojen. Choďte jemně a promluvíme si o jiných věcech.
 ## Context: Line in the main Loremaster form showing the player's Renown rank. Renown is what the player has done for the elves, not Harmony. %s is the rank name.
 lothlorien.message.lore.rank.line=Pověst mezi Galadhrim: %s
-## Context: Line in the main Loremaster form telling how far the next Renown rank is. First %s is the next rank name; second %s is how many more points of renown (lessons done, tasks completed) are still needed, a plain number.
-lothlorien.message.lore.rank.next=Další hodnost: %s. Zbývající činy: %s.
+## Context: Line in the main Loremaster form showing progress toward the next Renown rank. First %s is the next rank name; second %s is the player's current Renown points, a plain number; third %s is the points from which the next rank holds, a plain number.
+lothlorien.message.lore.rank.next=Postup k hodnosti %s: %s / %s
 ## Context: Line in the main Loremaster form once the highest Renown rank (Elf-friend) is reached.
 lothlorien.message.lore.rank.max=Vaše pověst dosáhla nejvyššího stupně.
 ## Context: Renown rank 0, the start: someone the elves do not know yet. Shown after the label 'Renown among the Galadhrim:'.
@@ -452,9 +452,9 @@ lothlorien.message.lore.rankup.trusted=§aVaše jméno zaznívá nyní pod mallo
 ## Context: Chat line when the player's Renown reaches the highest rank, Elf-friend. The § code colours the line green.
 lothlorien.message.lore.rankup.elf_friend=§aNesete jméno Přítel elfů. Galadhrim si to budou pamatovat navždy.
 ## Context: Line in the main Loremaster form while chapters I and II of his teaching are not complete: the other elves cannot yet ask the player for help.
-lothlorien.message.lore.requests.locked=Dokončete první dvě kapitoly mého učení a mí příbuzní vás mohou požádat o pomoc.
+lothlorien.message.lore.requests.locked=Dokončete první dvě kapitoly mého učení a můj lid vás může požádat o pomoc.
 ## Context: Line in the main Loremaster form when every one of the twelve requests of the other elves has been completed.
-lothlorien.message.lore.requests.none=Všechny úkoly mých příbuzných jsou splněny. Děkují vám.
+lothlorien.message.lore.requests.none=Všechny úkoly mého lidu jsou splněny. Děkujeme vám.
 ## Context: Line in the Loremaster form shown to a player in the Uneasy band who has an active task: the task is kept but waits.
 lothlorien.message.lore.requests.paused=Váš úkol počká, dokud vám les znovu nezačne důvěřovat.
 ## Context: Button for one available lesson of the open chapter in the main Loremaster form. %s is the lesson name.
@@ -462,7 +462,7 @@ lothlorien.message.lore.btn.lesson=Lekce: %s
 ## Context: Button in the main Loremaster form that opens the list of completed lessons to read again; no points are earned twice.
 lothlorien.message.lore.btn.remind=Připomeňte mi
 ## Context: Button in the main Loremaster form that opens a new task asked by one of the other elves.
-lothlorien.message.lore.btn.request_new=Úkol od mých příbuzných
+lothlorien.message.lore.btn.request_new=Úkol od mého lidu
 ## Context: Button in the main Loremaster form that opens the task the player has already accepted.
 lothlorien.message.lore.btn.request_active=Váš úkol
 ## Context: Button that closes the Loremaster dialog.
@@ -507,24 +507,22 @@ lothlorien.message.lore.req.have=V batohu máte: %s z %s kusů.
 lothlorien.message.lore.done.lesson=§aLekce dokončena: %s
 ## Context: Chat line when all lessons of a chapter are complete and the next chapter of the Loremaster's teaching opens.
 lothlorien.message.lore.chapter.opened=§fZnalec tradic vás má naučit ještě víc.
-## Context: Chat line when the player earned a Renown point for a rare deed (a white animal's gift or bond). Green.
-lothlorien.message.lore.tale=§aGaladhrim si tento čin zapamatují.
 ## Context: Chat line when a player in the Shunned band (Harmony -15 to -29) uses the Loremaster: he refuses to speak, only this hint.
 lothlorien.message.lore.shunned=§7Naučte se žít v míru s lesem a pak se vraťte.
 ## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:renown. Translate labels; keep technical tokens and the command.
 lothlorien.message.lore.debug.state=[lothlorien] pověst %s (%s), kapitola %s, aktivní lekce: %s, úkol: %s, soulad %s
 ## Context: Name of the Loremaster lesson "harmony". Lesson 1 (chapter I, a deed lesson): Harmony, the standing with the forest from Hated to Friend. Peaceful time inside the forest raises it; harming the forest's creatures lowers it; the leaf icon on the action bar shows the band; Friend is exactly +10 and any wrong deed loses it. The task: reach Harmony +3 or more and press 'It is done'.
 lothlorien.message.lore.lesson.harmony.name=Soulad lesa
-## Context: Lesson 1 (chapter I, a deed lesson): Harmony, the standing with the forest from Hated to Friend. Peaceful time inside the forest raises it; harming the forest's creatures lowers it; the leaf icon on the action bar shows the band; Friend is exactly +10 and any wrong deed loses it. The task: reach Harmony +3 or more and press 'It is done'.
-lothlorien.message.lore.lesson.harmony.text=Les váží, jak v něm kráčíte. Pokojný čas mezi stromy hojí váš soulad, zatímco ubližování jeho tvorům jej raní; ikona listu ukazuje, kde stojíte. Při +10 jste Přízní Lothlórienu a každý zlý čin ji znovu zruší. Kráčejte v pokoji, dokud váš soulad nedosáhne alespoň +3, a pak mi řekněte, že je hotovo.
+## Context: Lesson 1 (chapter I, a deed lesson): Harmony, the standing with the forest from Hated to Friend. Peaceful time inside the forest raises it; harming the forest's creatures lowers it; the leaf icon on the action bar shows the band; a long peace makes the player a Friend of Lothlórien and any wrong deed loses it. No numbers: the player never sees Harmony numbers. The task: walk in peace in the forest for several minutes (Harmony reaches the required level) and press 'It is done'.
+lothlorien.message.lore.lesson.harmony.text=Les váží, jak v něm kráčíte. Pokojný čas mezi stromy hojí váš soulad, zatímco ubližování jeho tvorům jej raní; list ukazuje, kde stojíte. Kdo dlouho zachovává pokoj, získá Přízeň Lothlórienu a jediný zlý čin vás o ni připraví. Kráčejte v Lothlórienu několik minut v pokoji a pak mi řekněte, že je hotovo.
 ## Context: Name of the Loremaster lesson "elves". Lesson 2 (chapter I, lore): the elves are few. No new elves are born; only the border wardens return over time; healers keep the others alive; killing an elf costs dearly in Harmony.
 lothlorien.message.lore.lesson.elves.name=Náš lid
 ## Context: Lesson 2 (chapter I, lore): the elves are few. No new elves are born; only the border wardens return over time; healers keep the others alive; killing an elf costs dearly in Harmony.
 lothlorien.message.lore.lesson.elves.text=Náš lid je nečetný a noví elfové se nerodí. Vracejí se jen strážci na hranici a léčitelé drží při životě ostatní. Zvedněte ruku proti jednomu z nás a cena bude vysoká.
 ## Context: Name of the Loremaster lesson "renown". Lesson 3 (chapter I, lore): Renown is what the player does for the elves (separate from Harmony); ranks Stranger, Welcome, Trusted, Elf-friend; it grows with deeds and tasks, is never lost, is known in every village, and opens deeper stock with the elven traders.
 lothlorien.message.lore.lesson.renown.name=Pověst
-## Context: Lesson 3 (chapter I, lore): Renown is what the player does for the elves (separate from Harmony); ranks Stranger, Welcome, Trusted, Elf-friend; it grows with deeds and tasks, is never lost, is known in every village, and opens deeper stock with the elven traders.
-lothlorien.message.lore.lesson.renown.text=Pověst je to, co děláte pro elfy, a není to soulad. Roste s každým činem a každým úkolem pro mé příbuzné a nikdy se neztrácí. Její hodnosti jsou Cizinec, Vítaný, Důvěryhodný a Přítel elfů a zpráva o ní se roznese do každé vesnice. Čím výše stojíte, tím hlubší zásoby vám elfové nabídnou.
+## Context: Lesson 3 (chapter I, lore): Renown is what the player does for the elves (separate from Harmony); it grows with deeds and tasks, is never lost, is known in every village, and opens more stock with the elven traders. The rank names are not listed in this text.
+lothlorien.message.lore.lesson.renown.text=Když konáte činy a úkoly pro můj lid, roste mezi námi vaše pověst. Nikdy se neztrácí a zpráva o ní se roznese do každé vesnice. Čím výše stojí, tím více vám elfové nabídnou.
 ## Context: Name of the Loremaster lesson "dew". Lesson 4 (chapter I, deed): morning dew. At dawn dew gathers on leaf litter and blossoms lying under Mallorn leaves; using a glass bottle on a dewy patch gives one drop and the patch dries; eight drops fill the bottle. Deed: fill a Bottle of morning dew.
 lothlorien.message.lore.lesson.dew.name=Ranní rosa
 ## Context: Lesson 4 (chapter I, deed): morning dew. At dawn dew gathers on leaf litter and blossoms lying under Mallorn leaves; using a glass bottle on a dewy patch gives one drop and the patch dries; eight drops fill the bottle. Deed: fill a Bottle of morning dew.
@@ -535,32 +533,32 @@ lothlorien.message.lore.lesson.nectar.name=Nektar mallornu
 lothlorien.message.lore.lesson.nectar.text=Nektarové květy visí pod listím mallornu a plní se ve čtyřech stupních. Použijte skleněnou láhev na plný květ a ten se začne plnit znovu. Naplňte láhev nektarem mallornu.
 ## Context: Name of the Loremaster lesson "depth". Lesson 6 (chapter II, lore): the forest has three depths measured from the border: the edge (border within about 16 blocks), the inner wood (within about 40), and the heart (farther). Real effects: border wardens off the villages' wooden decks are fewer the deeper you go; the rarest creatures are met more often deeper in.
 lothlorien.message.lore.lesson.depth.name=Hloubka lesa
-## Context: Lesson 6 (chapter II, lore): the forest has three depths measured from the border: the edge (border within about 16 blocks), the inner wood (within about 40), and the heart (farther). Real effects: border wardens off the villages' wooden decks are fewer the deeper you go; the rarest creatures are met more often deeper in.
-lothlorien.message.lore.lesson.depth.text=Les má tři hloubky: okraj u hranice, vnitřní les dále uvnitř a srdce. U okraje chodí hraniční strážci v hojném počtu, hlouběji jich ubývá, kromě dřevěných plošin našich vesnic. Nejvzácnější tvorové lesa se potkávají tím častěji, čím hlouběji jdete.
+## Context: Lesson 6 (chapter II, lore): the further into the forest, the fewer border wardens (except on the villages' wooden decks) and the more often the rarest creatures are met. No depth stage names or distances in the text.
+lothlorien.message.lore.lesson.depth.text=U okraje Lothlórienu chodí hraniční strážci v hojném počtu; hlouběji jich ubývá, kromě dřevěných plošin našich vesnic. Čím hlouběji jdete, tím častěji potkáte nejvzácnější tvory lesa.
 ## Context: Name of the Loremaster lesson "lembas". Lesson 7 (chapter II, deed): Lembas. Plant Western Corn and gather its grain; three grains and a sugar make two doughs; bake the dough in a furnace or smoker to a cake; a cake plus a Mallorn leaf makes wrapped Lembas, which lifts the Hunger effect when eaten. Deed: eat wrapped Lembas.
 lothlorien.message.lore.lesson.lembas.name=Lembas
-## Context: Lesson 7 (chapter II, deed): Lembas. Plant Western Corn and gather its grain; three grains and a sugar make two doughs; bake the dough in a furnace or smoker to a cake; a cake plus a Mallorn leaf makes wrapped Lembas, which lifts the Hunger effect when eaten. Deed: eat wrapped Lembas.
-lothlorien.message.lore.lesson.lembas.text=Zasaďte západní obilí a sklízejte jeho zrní. Tři zrna a cukr dají těsto; těsto upečte a pak koláč zabalte do listu mallornu. Zabalený lembas dobře sytí a zahání Hlad, je to pokrm na dlouhou cestu. Snězte zabalený lembas.
+## Context: Lesson 7 (chapter II, deed): Lembas. Plant Western Corn and gather its grain; mix the grain with sugar to make dough; bake the dough to a cake; wrap the cake in a Mallorn leaf to make wrapped Lembas, which lifts the Hunger effect when eaten. No item counts in the text. Deed: eat wrapped Lembas.
+lothlorien.message.lore.lesson.lembas.text=Zasaďte západní obilí a sklízejte jeho zrní. Smíchejte zrní s cukrem na těsto; těsto upečte a pak koláč zabalte do listu mallornu. Zabalený lembas dobře sytí a zahání Hlad, je to pokrm na dlouhou cestu. Snězte zabalený lembas.
 ## Context: Name of the Loremaster lesson "fireflies". Lesson 8 (chapter II, deed): fireflies appear at night (low light) above the grass of the forest; using a glass bottle on one catches it and gives a Bottle of Fireflies. Deed: catch a firefly in a bottle.
 lothlorien.message.lore.lesson.fireflies.name=Světlušky
 ## Context: Lesson 8 (chapter II, deed): fireflies appear at night (low light) above the grass of the forest; using a glass bottle on one catches it and gives a Bottle of Fireflies. Deed: catch a firefly in a bottle.
-lothlorien.message.lore.lesson.fireflies.text=Po soumraku se nad lesní trávou vznášejí světlušky. Použijte na jednu skleněnou láhev a je chycena: malé světlo k nošení nebo k předání lampáři. Chyťte světlušku do láhve.
+lothlorien.message.lore.lesson.fireflies.text=Po soumraku se nad lesní trávou vznášejí světlušky. Chyťte jednu do skleněné láhve: malé světlo k nošení nebo k předání lampáři. Chyťte světlušku do láhve.
 ## Context: Name of the Loremaster lesson "rope". Lesson 9 (chapter II, deed): Elven rope is crafted from one Bottle of morning dew and a golden fern (the dew takes a whole dawn to gather). Used on the side of a block it hangs down; used on a piece it lengthens the rope up or down; it can be climbed. Deed: hang an elven rope.
 lothlorien.message.lore.lesson.rope.name=Elfí lano
-## Context: Lesson 9 (chapter II, deed): Elven rope is crafted from one Bottle of morning dew and a golden fern (the dew takes a whole dawn to gather). Used on the side of a block it hangs down; used on a piece it lengthens the rope up or down; it can be climbed. Deed: hang an elven rope.
-lothlorien.message.lore.lesson.rope.text=Elfí lano se dělá z ranní rosy a zlatého kapradí a do jednoho jde celé jitro sbírání. Použijte je na stranu bloku a spustí se dolů; použijte je na kus lana a prodlouží se nahoru či dolů. Dá se po něm šplhat. Zavěste elfí lano.
+## Context: Lesson 9 (chapter II, deed): Elven rope is crafted from one Bottle of morning dew and a golden fern (the dew takes a whole dawn to gather). Used on the side of a block it runs all the way down or up when the player has enough rope, otherwise it can be lengthened later; it can be climbed. Deed: hang an elven rope.
+lothlorien.message.lore.lesson.rope.text=Elfí lano se dělá z ranní rosy a zlatého kapradí a do jednoho jde celé jitro sbírání. Použijte je na stranu bloku a rozvine se celou cestu dolů či nahoru, máte-li ho dost; pokud ne, lze ho později prodloužit. Dá se po něm šplhat. Zavěste elfí lano.
 ## Context: Name of the Loremaster lesson "gifts". Lesson 10 (chapter III, deed): gifts of the forest. Deer love Western Corn and a deer fed with it trusts the player; a Friend of Lothlórien (Harmony +10) may offer a Mallorn acorn to a squirrel, which runs on an errand and brings back a gift. Deed: send a squirrel off with an acorn (needs Friend).
 lothlorien.message.lore.lesson.gifts.name=Dary lesa
-## Context: Lesson 10 (chapter III, deed): gifts of the forest. Deer love Western Corn and a deer fed with it trusts the player; a Friend of Lothlórien (Harmony +10) may offer a Mallorn acorn to a squirrel, which runs on an errand and brings back a gift. Deed: send a squirrel off with an acorn (needs Friend).
-lothlorien.message.lore.lesson.gifts.text=Jeleni milují západní obilí a nakrmený jelen vám bude důvěřovat. Přítel Lothlórienu může nabídnout veverce žalud mallornu; ta se rozběhne na pochůzku a přinese dar. Pošlete veverku s žaludem na pochůzku.
+## Context: Lesson 10 (chapter III, deed): gifts of the forest. Deer love Western Corn and a deer fed with it trusts the player; a Friend of Lothlórien (Harmony +10) may offer a Mallorn acorn to a squirrel, which may bring a gift in return. Deed: win a squirrel's trust by offering it an acorn (needs Friend).
+lothlorien.message.lore.lesson.gifts.text=Jeleni milují západní obilí a nakrmený jelen vám bude důvěřovat. Přítel Lothlórienu může nabídnout veverce žalud mallornu a ta vám může na oplátku přinést dar. Zkuste to: získejte důvěru veverky.
 ## Context: Name of the Loremaster lesson "white_animals". Lesson 11 (chapter III, lore): a hint only. Rare white animals (the white deer and the unicorn) walk the deepest wood; to a friend of the forest they may give a gift or allow a bond. Do not name the animals plainly. Reading it enables two optional +1 Renown deeds.
 lothlorien.message.lore.lesson.white_animals.name=Bílí
 ## Context: Lesson 11 (chapter III, lore): a hint only. Rare white animals (the white deer and the unicorn) walk the deepest wood; to a friend of the forest they may give a gift or allow a bond. Do not name the animals plainly. Reading it enables two optional +1 Renown deeds.
 lothlorien.message.lore.lesson.white_animals.text=Nejhlubším lesem kráčejí vzácné bílé bytosti. Příteli lesa mohou dát, nebo ho unést. Udržujte svůj soulad vysoko a buďte trpěliví.
 ## Context: Name of the Loremaster lesson "trades". Lesson 12 (chapter III, lore): the finest goods of the elven traders go only to an Elf-friend who is also, at that moment, a Friend of Lothlórien (Harmony +10). Renown is never lost; Harmony can be.
 lothlorien.message.lore.lesson.trades.name=Nejvzácnější zboží
-## Context: Lesson 12 (chapter III, lore): the finest goods of the elven traders go only to an Elf-friend who is also, at that moment, a Friend of Lothlórien (Harmony +10). Renown is never lost; Harmony can be.
-lothlorien.message.lore.lesson.trades.text=Nejvzácnější zboží mých příbuzných připadne jen Příteli elfů, který je v tu chvíli také Přítelem Lothlórienu. Pověst se neztrácí, soulad ano. Střežte obojí.
+## Context: Lesson 12 (chapter III, lore): the finest goods of the elven traders may be offered only to one who is an Elf-friend and at that moment also a Friend of Lothlórien; they cannot be found anywhere else. No remark about what is lost or kept.
+lothlorien.message.lore.lesson.trades.text=Tomu, kdo je Přítelem elfů a zároveň má Přízeň Lothlórienu, může můj lid nabídnout své nejlepší zboží. Nikde jinde je nenajdete.
 ## Context: Request of the gardener: plant five Mallorn acorns (they become saplings) inside the forest and let them stand; the count is kept and checked on delivery.
 lothlorien.message.lore.req.g_acorns.text=Zahradník prosí o laskavost: pět žaludů mallornu zasazených do země pod okrajem lesa. Zasaďte je uvnitř lesa a nechte je stát.
 ## Context: Request of the gardener: bring two Bottles of morning dew.
@@ -571,8 +569,8 @@ lothlorien.message.lore.req.g_bonemeal.text=Zahradník žádá šestnáct kostn�
 lothlorien.message.lore.req.h_athelas.text=Léčitel žádá čtyři athelasy, královský list, který hojí raněné.
 ## Context: Request of the healer: bring two Mallorn nectar.
 lothlorien.message.lore.req.h_nectar.text=Léčitel žádá dvě láhve nektaru mallornu pro nemocné.
-## Context: Request of the healer: bring two Elanor and two Niphredil (flowers).
-lothlorien.message.lore.req.h_flowers.text=Léčitel žádá dva elanory a dva niphredily, květy hlubokého lesa.
+## Context: Request of the healer: bring four Elanor and four Niphredil (flowers).
+lothlorien.message.lore.req.h_flowers.text=Léčitel žádá čtyři elanory a čtyři niphredily, květy hlubokého lesa.
 ## Context: Request of the woodwright: bring 32 birch or cherry logs in any mix.
 lothlorien.message.lore.req.w_logs.text=Tesař žádá třicet dva kmenů břízy nebo třešně v libovolné směsi.
 ## Context: Request of the woodwright: bring eight string and eight feathers.

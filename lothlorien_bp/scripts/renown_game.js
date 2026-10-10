@@ -7,7 +7,7 @@ import { message } from "./messages.js";
 import { system, world } from "@minecraft/server";
 import { onDeed, noteDeed } from "./deeds.js";
 import {
-  LESSONS, POINTS, REQUESTS, SAPLING_BLOCK, SAPLING_GROWN, TALES,
+  LESSONS, POINTS, REQUESTS, SAPLING_BLOCK, SAPLING_GROWN,
   addSaplingSpot, noteDeed as rulesNoteDeed, openChapter, parse, rankOf, requestById, saplingProgress, serialize, newState,
 } from "./renown_rules.js";
 import { harmonyOf } from "./harmony_game.js";
@@ -48,15 +48,14 @@ const say = (player, text) => {
   }
 };
 
-// Chat line, sound and particles for results of the rules (finish results, tale results, a request delivery).
+// Chat line, sound and particles for results of the rules (finish results, a request delivery).
 // `at` = the Loremaster entity when the player stands at him (particles there), else the particles circle the player.
 export function celebrate(player, results, at) {
   for (const r of results) {
     if (r.lesson) {
       say(player, message("lore.done.lesson", message(`lore.lesson.${r.lesson}.name`)));
       if (r.chapterOpened) say(player, message("lore.chapter.opened"));
-    } else if (r.tale) say(player, message("lore.tale"));
-    else if (r.request) say(player, message("lore.deliver.ok"));
+    } else if (r.request) say(player, message("lore.deliver.ok"));
     if (r.rank?.rankedUp) {
       say(player, message(`lore.rankup.${r.rank.after}`));
       try {
@@ -187,11 +186,10 @@ function describe(player, state) {
   say(player, message("lore.debug.state", state.points, message(`lore.rank.${rankOf(state.points)}`), openChapter(state), active, request, harmonyOf(player).harmony));
 }
 
-// Points for what is marked done (lessons that pay, tales, requests): used by the debug `chapter N` so state and points agree.
+// Points for what is marked done (lessons that pay, requests): used by the debug `chapter N` so state and points agree.
 function pointsOfDone(state) {
   let pts = 0;
   for (const l of LESSONS) if (state.done[l.id]) pts += l.kind === "lore" ? POINTS.lore_lesson : POINTS.deed_lesson;
-  for (const t of Object.values(TALES)) if (state.done[t]) pts += POINTS.tale;
   for (const r of REQUESTS) if (state.done[r.id]) pts += POINTS.request;
   return pts;
 }

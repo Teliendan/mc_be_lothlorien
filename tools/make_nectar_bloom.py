@@ -105,8 +105,10 @@ def item():
 
 
 def loot():
-    """Owner 2026-10-10: any tool or hand collects the bloom; native blast decay."""
-    return {"pools": [{"rolls": 1, "entries": [{"type": "item", "name": f"{NS}:nectar_bloom",
+    """Owner 2026-10-11: shears-only bloom collection; native blast decay."""
+    return {"pools": [{"rolls": 1,
+                       "conditions": [{"condition": "match_tool", "item": "minecraft:shears"}],
+                       "entries": [{"type": "item", "name": f"{NS}:nectar_bloom",
                        "functions": [{"function": "set_count", "count": 1},
                                      {"function": "explosion_decay"}]}]}]}
 

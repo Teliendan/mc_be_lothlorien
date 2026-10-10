@@ -990,7 +990,7 @@ Leave and re-enter the world to load the entity and script changes. `/summon` wo
 - **Nectar bloom** `lothlorien:nectar_bloom` (`scripts/nectar.js`, rules `nectar_rules.js`): state `lothlorien:nectar` 0-3, four crossed-plane
   textures (`tools/make_nectar_bloom.py` writes block, item, loot and art). Hangs under a block via `placement_filter` (`allowed_faces: ["down"]`,
   filter = Mallorn leaves, logs, planks). Random tick, 1/7 per stage, only with Mallorn leaves (green or golden) directly above. Glass bottle on a
-  full bloom -> `lothlorien:mallorn_nectar`, bloom back to 0. Owner correction 2026-10-10: any tool or hand collects one bloom; native explosion decay follows the count. Worldgen: `nectar_bloom_scatter_feature`
+  full bloom -> `lothlorien:mallorn_nectar`, bloom back to 0. Owner clarification 2026-10-11: only shears collect one bloom; native explosion decay follows the count. Worldgen: `nectar_bloom_scatter_feature`
   (8 tries, y +2..18, gaussian x/z +-4) places `nectar_bloom_full_feature` (stage 3, `may_attach_to.top` = leaves) at the end of
   `select_mallorn_tree_with_litter_feature`, after blossoms and litter. Sapling-grown trees get 0-2 dry blooms (`trees.js`, `treeBloomCount`).
 - **Morning dew** (`scripts/dew.js`, `dew_rules.js`): bool state `lothlorien:dew` on leaf litter and blossoms, component `lothlorien:dew_cover`
@@ -1225,7 +1225,8 @@ bow from the equipment table. Depth-estimate cost per natural spawn still unmeas
 Design: `design/elven_inhabitants.md` sections 2-3. Files: `renown_rules.js` (pure: every value, chapters, requests, rotation, delivery plan, parse/serialize),
 `deeds.js` (hook bus, no imports), `renown_game.js` (state in the player dynamic property `lothlorien:renown`, deed listener, sapling count, firefly detection, inventory, rank-up feedback, debug),
 `loremaster.js` (interception + `ActionFormData` forms; every text through `message()`, keys `lothlorien.message.lore.*`), tests `tests/renown.mjs`. Manifest now lists `@minecraft/server-ui` 2.1.0.
-- **Debug:** `/scriptevent lothlorien:renown` shows state; `points N`, `reset`, `deed <id>` (dew, nectar, lembas, rope, fireflies, squirrel, white_deer, unicorn; honours the "lesson active" rule),
+- **Debug:** `/scriptevent lothlorien:renown` shows state; `points N`, `reset`, `deed <id>` (dew, nectar, lembas, rope, fireflies, squirrel; honours the "lesson active" rule),
+- **Tales dropped (owner 2026-10-11):** no deferred +1 for the white deer / unicorn; those two scripts have no Renown hook. `white_animals` stays a lore lesson. Rank line in the form: "Progress to <rank>: <points> / <threshold>" (`nextRank` returns `threshold`).
   `chapter N` (marks chapters < N done and sets matching points), `offer <request id>`. Bands: `/scriptevent lothlorien:harmony <value>`.
 - **Interaction:** `beforeEvents.playerInteractWithEntity` on a `lothlorien:elf` with variant 4: cancel, then `system.run` opens the form (not allowed in read-only mode). Lead and name tag return early (not cancelled).
   `entities/elf.json`: `minecraft:interact` (Speak, no event, `use_item: false`) in the `lothlorien:loremaster` group only, `none_of` lead / name tag in hand.

@@ -7,7 +7,6 @@ import { EquipmentSlot, GameMode, system, world } from "@minecraft/server";
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { repeatedUse } from "./use_guard.js";
-import { noteDeed } from "./deeds.js";
 import { setEventFor } from "./deer_rules.js";
 import { ELANOR_ID, UNICORN_ID, mayRide, nextTrust, offerRefusal, ticksSince } from "./unicorn_rules.js";
 
@@ -78,10 +77,7 @@ function offer(player, unicorn) {
   unicorn.setProperty("lothlorien:trust", trust);
   unicorn.setDynamicProperty(LAST_OFFER, now);
   say(player, MESSAGES[trust - 1]);
-  if (bonded) {
-    bond(unicorn, player);
-    noteDeed(player, "unicorn"); // optional Renown tale
-  }
+  if (bonded) bond(unicorn, player);
   else {
     try {
       unicorn.dimension.spawnParticle("minecraft:heart_particle", { x: unicorn.location.x, y: unicorn.location.y + 1.8, z: unicorn.location.z });

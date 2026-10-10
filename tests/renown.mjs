@@ -25,12 +25,12 @@ const finishRequest = (s, rng) => { R.currentOffer(s, rng); R.accept(s); return 
 test("thresholds 3 / 8 / 15 with their edges", () => {
   assert.deepEqual(R.THRESHOLDS, [0, 3, 8, 15]);
   for (const [pts, rank] of [[0, "stranger"], [2, "stranger"], [3, "welcome"], [7, "welcome"], [8, "trusted"], [14, "trusted"], [15, "elf_friend"], [99, "elf_friend"]]) assert.equal(R.rankOf(pts), rank, `${pts}`);
-  assert.deepEqual(R.nextRank(14), { next: "elf_friend", needed: 1 });
+  assert.deepEqual(R.nextRank(14), { next: "elf_friend", needed: 1, threshold: 15 });
   assert.equal(R.nextRank(15), undefined);
 });
 
-test("points: deed lesson 1, lore lesson 0, request 2, tale 1", () => {
-  assert.deepEqual(R.POINTS, { deed_lesson: 1, lore_lesson: 0, request: 2, tale: 1 });
+test("points: deed lesson 1, lore lesson 0, request 2", () => {
+  assert.deepEqual(R.POINTS, { deed_lesson: 1, lore_lesson: 0, request: 2 });
   assert.equal(R.REQUESTS.length, 12);
 });
 
@@ -57,7 +57,7 @@ test("pacing: chapter I = 3 (Welcome), chapter II = 6 (Trusted needs 1 request),
   finishRequest(s, rng);
   assert.equal(s.points, 8); assert.equal(R.rankOf(s.points), "trusted");
   doChapter(s);
-  assert.equal(s.points, 9, "chapter III deeds pay 1 (the gifts lesson); tales are optional");
+  assert.equal(s.points, 9, "chapter III deeds pay 1 (the gifts lesson)");
   assert.equal(R.openChapter(s), 4, "the teaching is complete");
   for (let i = 0; i < 3; i++) finishRequest(s, rng);
   assert.equal(s.points, 15); assert.equal(R.rankOf(s.points), "elf_friend");
@@ -93,16 +93,6 @@ test("rank-up result is reported on the point that crosses a threshold", () => {
   R.noteDeed(s, "dew"); R.noteDeed(s, "nectar");
   const r = R.completeHarmony(s, 3);
   assert.deepEqual(r.rank, { before: "stranger", after: "welcome", rankedUp: true });
-});
-
-test("tales (white deer, unicorn) count once, +1 each, only after the lesson white_animals was read", () => {
-  const s = R.newState();
-  assert.deepEqual(R.noteDeed(s, "white_deer"), [], "chapter not even reached");
-  s.done.white_animals = true;
-  const r = R.noteDeed(s, "white_deer");
-  assert.equal(r.length, 1); assert.equal(r[0].points, 1); assert.equal(s.points, 1);
-  assert.deepEqual(R.noteDeed(s, "white_deer"), []);
-  assert.equal(R.noteDeed(s, "unicorn").length, 1); assert.equal(s.points, 2);
 });
 
 test("gating by band: friend and guest full; uneasy only the Harmony lesson; shunned and hated nothing", () => {
@@ -187,8 +177,8 @@ test("delivery: any-of log count (birch + cherry), all or nothing", () => {
   assert.equal(short.ok, false); assert.deepEqual(short.take, [], "nothing is taken when short");
   assert.equal(short.have, 31); assert.equal(short.need, 32);
   const flowers = R.requestById("h_flowers");
-  assert.equal(R.deliveryPlan(flowers, { "lothlorien:elanor": 2 }).ok, false, "both entries are needed");
-  assert.equal(R.deliveryPlan(flowers, { "lothlorien:elanor": 5, "lothlorien:niphredil": 2 }).ok, true);
+  assert.equal(R.deliveryPlan(flowers, { "lothlorien:elanor": 4 }).ok, false, "both entries are needed");
+  assert.equal(R.deliveryPlan(flowers, { "lothlorien:elanor": 5, "lothlorien:niphredil": 4 }).ok, true);
   const coal = R.requestById("l_coal");
   assert.deepEqual(R.deliveryPlan(coal, { "minecraft:charcoal": 10, "minecraft:coal": 10 }).take, [{ id: "minecraft:coal", count: 10 }, { id: "minecraft:charcoal", count: 6 }]);
 });
@@ -238,7 +228,7 @@ test("every translation key the dialog uses exists in the resource catalog", () 
     ...["title", "greet.friend", "greet.guest", "greet.uneasy", "rank.line", "rank.next", "rank.max", "requests.locked", "requests.none", "requests.paused",
       "btn.lesson", "btn.remind", "btn.request_new", "btn.request_active", "btn.farewell", "btn.understand", "btn.done", "btn.back", "btn.accept", "btn.notnow",
       "btn.deliver", "btn.abandon", "btn.abandon_yes", "btn.keep", "remind.body", "harmony.not_yet", "abandon.ask", "abandon.done", "deliver.ok", "deliver.missing",
-      "saplings.counted", "saplings.missing", "req.have", "done.lesson", "chapter.opened", "tale", "shunned", "debug.state"].map((k) => `lore.${k}`),
+      "saplings.counted", "saplings.missing", "req.have", "done.lesson", "chapter.opened", "shunned", "debug.state"].map((k) => `lore.${k}`),
   ];
   for (const k of need) assert.ok(keys.has(`lothlorien.message.${k}`), `catalog has lothlorien.message.${k}`);
   assert.ok(keys.has("action.interact.lothlorien.speak"));

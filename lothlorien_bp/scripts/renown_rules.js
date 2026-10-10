@@ -7,7 +7,7 @@
 // ---- Ranks ----
 export const RANKS = ["stranger", "welcome", "trusted", "elf_friend"];
 export const THRESHOLDS = [0, 3, 8, 15]; // points from which each rank holds
-export const POINTS = { deed_lesson: 1, lore_lesson: 0, request: 2, tale: 1 };
+export const POINTS = { deed_lesson: 1, lore_lesson: 0, request: 2 };
 
 export function rankIndexOf(points) {
   let rank = 0;
@@ -15,10 +15,10 @@ export function rankIndexOf(points) {
   return rank;
 }
 export const rankOf = (points) => RANKS[rankIndexOf(points)];
-// { next, needed } for the next rank, or undefined at the highest one.
+// { next, needed, threshold } for the next rank (threshold = points from which it holds), or undefined at the highest one.
 export function nextRank(points) {
   const i = rankIndexOf(points);
-  return i + 1 < RANKS.length ? { next: RANKS[i + 1], needed: THRESHOLDS[i + 1] - points } : undefined;
+  return i + 1 < RANKS.length ? { next: RANKS[i + 1], needed: THRESHOLDS[i + 1] - points, threshold: THRESHOLDS[i + 1] } : undefined;
 }
 
 // ---- Lessons, in chapters ----
@@ -44,10 +44,6 @@ export const lessonById = (id) => LESSONS.find((l) => l.id === id);
 export const lessonPoints = (lesson) => (lesson.kind === "lore" ? POINTS.lore_lesson : POINTS.deed_lesson);
 export const lessonsOfChapter = (n) => LESSONS.filter((l) => l.chapter === n);
 
-// Optional deeds after the lesson "white_animals" was read: each once, +POINTS.tale.
-export const TALE_LESSON = "white_animals";
-export const TALES = { white_deer: "tale_white_deer", unicorn: "tale_unicorn" }; // deed id -> state.done key
-
 // ---- Requests ----
 export const PROFESSIONS = ["gardener", "healer", "woodwright", "lamplighter"];
 export const SAPLING_BLOCK = "lothlorien:mallorn_sapling";
@@ -58,7 +54,7 @@ export const REQUESTS = [
   { id: "g_bonemeal", profession: "gardener", items: [{ ids: ["minecraft:bone_meal"], count: 16 }] },
   { id: "h_athelas", profession: "healer", items: [{ ids: ["lothlorien:athelas"], count: 4 }] },
   { id: "h_nectar", profession: "healer", items: [{ ids: ["lothlorien:mallorn_nectar"], count: 2 }] },
-  { id: "h_flowers", profession: "healer", items: [{ ids: ["lothlorien:elanor"], count: 2 }, { ids: ["lothlorien:niphredil"], count: 2 }] },
+  { id: "h_flowers", profession: "healer", items: [{ ids: ["lothlorien:elanor"], count: 4 }, { ids: ["lothlorien:niphredil"], count: 4 }] },
   { id: "w_logs", profession: "woodwright", items: [{ ids: ["minecraft:birch_log", "minecraft:cherry_log"], count: 32 }] },
   { id: "w_fletching", profession: "woodwright", items: [{ ids: ["minecraft:string"], count: 8 }, { ids: ["minecraft:feather"], count: 8 }] },
   { id: "w_iron", profession: "woodwright", items: [{ ids: ["minecraft:iron_ingot"], count: 6 }] },
@@ -150,17 +146,11 @@ export function completeHarmony(state, harmony) {
   return finish(state, lesson);
 }
 
-// A deed hook fired. Completes the matching lesson only while it is active (given and not done); tale deeds count once after
-// TALE_LESSON was read. Returns a list of results (finish results, or { tale, points, rank }).
+// A deed hook fired. Completes the matching lesson only while it is active (given and not done). Returns a list of finish results.
 export function noteDeed(state, deedId) {
   const results = [];
   for (const lesson of LESSONS) {
     if (lesson.kind === "deed" && lesson.deed === deedId && lessonActive(state, lesson.id)) results.push(finish(state, lesson));
-  }
-  const tale = TALES[deedId];
-  if (tale && lessonDone(state, TALE_LESSON) && !state.done[tale]) {
-    state.done[tale] = true;
-    results.push({ tale, points: POINTS.tale, rank: award(state, POINTS.tale) });
   }
   return results;
 }

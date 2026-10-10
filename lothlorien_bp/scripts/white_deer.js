@@ -14,7 +14,6 @@ import { EntityInitializationCause, EquipmentSlot, GameMode, ItemStack, system, 
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { repeatedUse } from "./use_guard.js";
-import { noteDeed } from "./deeds.js";
 import {
   ACORN_ID, BEACON_ID, GUIDE_TICKS, WHITE_DEER_ID, canBeGuided, hopStatus, horizontal, keepNaturalSpawn,
   newHop, offerRefusal, phase, pickWaypoint, trackProgress,
@@ -261,7 +260,6 @@ function end(deerId, deer, player, text) {
 function arrive(deerId, deer, player, s) {
   giveGift(deer, s);
   end(deerId, deer, player, message("deer.gift"));
-  noteDeed(player, "white_deer"); // optional Renown tale
 }
 
 const moveBeacon = (beacon, to) => beacon.teleport({ x: to.x, y: to.y, z: to.z });

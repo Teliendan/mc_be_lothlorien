@@ -45,7 +45,7 @@ forest edge keep spawning. Healers exist to prevent accidental deaths. Killing a
 - **Renown** (new): what you did for the elves. **One value for the whole elven society** (owner: keep it simple; "word travels among
   the Galadhrim", so every village knows you), per player, stored on the player, **never lost**. Controls **stock depth**.
   Ranks: **Stranger (0) -> Welcome (1) -> Trusted (2) -> Elf-friend (3)**. Thresholds **3 / 8 / 15 points** (owner 2026-10-10; all values in `renown_rules.js`).
-  Points: a deed lesson 1, a lore lesson 0, a request 2, an optional tale 1. Uncapped, the rank stops at Elf-friend. Stored in the player dynamic property `lothlorien:renown` (JSON, `v: 1`).
+  Points: a deed lesson 1, a lore lesson 0, a request 2. (Optional "tales" for the white deer and unicorn were dropped, owner 2026-10-11: no deferred +1.) Uncapped, the rank stops at Elf-friend. Stored in the player dynamic property `lothlorien:renown` (JSON, `v: 1`).
 - **Final trade of a shop** needs **Elf-friend and the Friend band**.
 - Script cannot see trades (no trade event or trade component in 2.8.0, `.claude/skills/bedrock-modding/references/08-trading.md`), so
   Renown comes only from the Loremaster (section 3), never from trading. No engine trader levelling.
@@ -67,7 +67,7 @@ Use on the Loremaster opens a dialog (`@minecraft/server-ui` forms, `loremaster.
 
 **Lessons are chapters.** All unfinished lessons of the open chapter are listed; chapter N+1 opens when every lesson of chapter N is complete. **Lore** lessons complete
 with "I understand" (0 points); **deed** lessons pay 1 point. A deed counts **only while its lesson is active** (the player opened its screen); earlier deeds are lost.
-Finished lessons stay readable under "Remind me" (no points twice). The Harmony lesson completes with "It is done" when Harmony >= +3.
+Finished lessons stay readable under "Remind me" (no points twice). The Harmony lesson completes with "It is done" when Harmony >= +3 (the text shows no numbers; the player never sees Harmony numbers). Lesson texts name no ranks, depth stages or item counts.
 
 | Ch | Lesson | Kind | Completion |
 |---|---|---|---|
@@ -78,13 +78,13 @@ Finished lessons stay readable under "Remind me" (no points twice). The Harmony 
 | II | lembas, rope | deed | eat wrapped Lembas (`lembas.js`); hang an elven rope (`elven_rope.js`) |
 | II | fireflies | deed | catch a firefly (no script path, see TECHNICAL_NOTES) |
 | III | gifts | deed | send a squirrel off with an acorn (`squirrel.js`, needs Friend) |
-| III | white_animals, trades | lore | read; reading white_animals enables two optional +1 tales (white deer gift, unicorn bond), each once |
+| III | white_animals, trades | lore | read (white_animals is lore only, no points; trades) |
 
 Pacing (tested): chapter I = 3 points (Welcome); chapter II = 6 points in all (Trusted at 8 needs 1 request); chapter III deeds = 7 (Elf-friend at 15 needs 4 requests).
-The rank-up shows a chat line, `random.levelup`, a particle burst, and a rank line in the form ("Next rank: ... Deeds still needed: N").
+The rank-up shows a chat line, `random.levelup`, a particle burst, and a rank line in the form plus a progress line ("Progress to <rank>: <points> / <threshold>").
 
 **Requests** open with chapter III (chapters I and II complete), from Friend and Guest only. One active request at a time, **no cooldown**. Twelve requests, each completable **once ever**:
-gardener (5 saplings planted inside the forest, 2 morning dew, 16 bone meal), healer (4 Athelas, 2 nectar, 2 Elanor + 2 Niphredil), woodwright (32 birch/cherry logs in any mix,
+gardener (5 saplings planted inside the forest, 2 morning dew, 16 bone meal), healer (4 Athelas, 2 nectar, 4 Elanor + 4 Niphredil), woodwright (32 birch/cherry logs in any mix,
 8 string + 8 feathers, 6 iron ingots), lamplighter (3 bottles of fireflies, 16 coal/charcoal in any mix, 16 glass). Each round is a random permutation of the four professions;
 the offered request is a random not-yet-done one of the next profession. "Not now" keeps the offer; abandoning gives nothing, does not complete it, and the rotation moves on.
 Delivery counts the main inventory and removes the items all-or-nothing; saplings are remembered cells (distinct; a cell must still hold a sapling or a Mallorn log).
