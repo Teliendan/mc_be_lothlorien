@@ -337,7 +337,6 @@ the final in-game rendering has not been separately reported.
 | Piece | State |
 | --- | --- |
 | Elven chandelier (model, textures) | **final** (owner, round 2) |
-| Mallorn banner + shield emblem (repainted Globe/Snout patterns, `docs/BANNER.md`) | **to check** in game, 2026-10-10 |
 | Elven lantern: silver arch canopy, open four-sided glow chamber, one-layer foot | **Final**; owner accepted the arch design and requested lowest narrow foot removed 2026-10-03. |
 | Golden Elven Lantern: stripped Mallorn heartwood palette | **Accepted** with the icon and lantern set 2026-10-03; uses the shared silver-to-gold map. |
 | Firefly jar: 7 high, blend glass, moss bed, wandering flies | **accepted** (owner: beautiful, round 2) |
