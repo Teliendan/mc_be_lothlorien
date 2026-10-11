@@ -377,3 +377,18 @@ labels are superseded by this acceptance. No graphics redraw remains requested.
 This verdict does not separately establish whether the recorded leaf flicker engine issue is fixed.
 Older placeholder paragraphs and the 2026-09-30 icon findings are historical, superseded by
 later dated entries and accepted artwork.
+
+## Galadriel gifts review (2026-10-11)
+
+M5 introduced new artwork after the earlier acceptance. Owner: belt works but
+should sit higher and look better from the front; keep it offhand. Phial works
+perfectly and its current appearance is liked, with alternatives requested.
+Cloak needs a clearer, prettier silhouette. Bow was too small/thick, had no
+nocked arrow and no zoom. Default bow is now slender, longer and has arrows in
+all pull frames; belt is raised two model units. Cloak renewal and zoom fixes
+are covered by offline regressions and still need an owner game retest.
+
+Review scratch: workspace `temp/elven_inhabitants/m5_polish/` contains four bow,
+four phial, belt/cloak alternatives and three arrow icon choices. Alternatives
+are cosmetic review assets, not extra production item IDs. Keep until the owner
+selects final art, then remove rejected variants and condense these notes.

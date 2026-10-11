@@ -61,7 +61,52 @@ await scenario("cloak needs a full still crouch, and correct equipment slots", a
   });
   assert.equal(held.grants.length, 0); assert.equal(standing.grants.length, 0);
   await mock.advance(CLOAK.effectTicks * 2);
-  assert.equal(grants(p, CLOAK.effect).length, 3, "continuous crouch grants only on expiry");
+  assert.equal(grants(p, CLOAK.effect).length, 5, "continuous crouch renews before expiry");
+});
+
+await scenario("continuous invisibility has no native expiry boundary for a full minute", async () => {
+  const p = player(); crouch(p);
+  const gaps = [], { system } = await import("@minecraft/server");
+  // Run BEFORE the service at every tick. A check after the poll would hide the
+  // old expiry-then-reapply bug because both happen inside the same script tick.
+  system.runInterval(() => {
+    if (mock.tick > CLOAK.stillTicks && !p.getEffect(CLOAK.effect)) gaps.push(mock.tick);
+  }, 1);
+  await start(); await mock.advance(CLOAK.stillTicks + 1200);
+  assert.deepEqual(gaps, [], "native AI/render phases must never reach an expired effect");
+  const applied = grants(p, CLOAK.effect);
+  for (let i = 1; i < applied.length; i++) {
+    assert.ok(applied[i].at < applied[i - 1].at + CLOAK.effectTicks, "renew while previous grant is active");
+  }
+  p.isSneaking = false;
+  const lastGrant = applied.at(-1).at;
+  await mock.advance(CLOAK.effectTicks + STEP);
+  assert.equal(grants(p, CLOAK.effect).length, applied.length);
+  assert.equal(p.getEffect(CLOAK.effect), undefined);
+  assert.ok(lastGrant + CLOAK.effectTicks <= mock.tick, "short exit tail is unchanged");
+  assert.deepEqual(p.removals, []);
+});
+
+await scenario("a potion hands over before expiry; replacing a cloak grant never shortens a potion", async () => {
+  const p = player(); crouch(p);
+  const until = CLOAK.stillTicks + 103;
+  p.effects.set(CLOAK.effect, { amplifier: CLOAK.amplifier, until });
+  await start(); await mock.advance(until - STEP - 1);
+  assert.equal(p.grants.length, 0, "leave a longer potion untouched");
+  assert.equal(p.getEffect(CLOAK.effect).duration, until - mock.tick);
+  const gaps = [], { system } = await import("@minecraft/server");
+  system.runInterval(() => { if (!p.getEffect(CLOAK.effect)) gaps.push(mock.tick); }, 1);
+  await mock.advance(STEP * 6);
+  assert.ok(p.grants[0].at < until, "same-strength potion hands over before its final native tick");
+  assert.deepEqual(gaps, []);
+  const before = p.grants.length, externalEnd = mock.tick + 1000;
+  p.effects.set(CLOAK.effect, { amplifier: CLOAK.amplifier, until: externalEnd });
+  await mock.advance(STEP * 10);
+  assert.equal(p.grants.length, before);
+  assert.equal(p.getEffect(CLOAK.effect).duration, externalEnd - mock.tick);
+  delete p.slots.Chest; await mock.advance(STEP * 2);
+  assert.equal(p.getEffect(CLOAK.effect).duration, externalEnd - mock.tick);
+  assert.deepEqual(p.removals, []);
 });
 
 await scenario("movement, slow drift, velocity, dimensions and standing restart the wait", async () => {
@@ -173,12 +218,28 @@ assert.equal(cloakItem["minecraft:durability"].max_durability, CLOAK.durability)
 const beltItem = json("../lothlorien_bp/items/silver_belt.json")["minecraft:item"].components;
 assert.equal(beltItem["minecraft:allow_off_hand"], true);
 assert.equal(beltItem["minecraft:wearable"].slot, "slot.weapon.offhand");
+const wornBoneNames = new Set();
 for (const name of ["elven_cloak", "silver_belt"]) {
   const geometry = json(`../lothlorien_rp/models/entity/${name}.geo.json`)["minecraft:geometry"][0];
-  assert.equal(geometry.bones[0].binding, "'body'"); assert.ok(geometry.bones[0].cubes.length);
+  const [anchor, mesh] = geometry.bones;
+  assert.equal(anchor.binding, "'body'"); assert.equal(anchor.cubes, undefined);
+  assert.equal(mesh.parent, anchor.name); assert.ok(mesh.cubes.length);
+  for (const bone of geometry.bones) {
+    assert.ok(!wornBoneNames.has(bone.name), "worn attachables never share animated bone names");
+    wornBoneNames.add(bone.name);
+  }
   const attachable = json(`../lothlorien_rp/attachables/${name}.json`)["minecraft:attachable"].description;
   assert.equal(attachable.identifier, `lothlorien:${name}`);
   assert.equal(attachable.geometry.default, geometry.description.identifier);
+  const animations = json(`../lothlorien_rp/animations/${name}.animation.json`).animations;
+  const hide = animations[attachable.animations.hide_first_person];
+  assert.deepEqual(Object.keys(hide.bones), [mesh.name], "visibility animates only the local mesh child");
+  assert.equal(hide.bones[mesh.name].scale, 0);
   if (name === "elven_cloak") assert.match(attachable.scripts.animate[0].hide_first_person, /query\.is_invisible/);
+  else {
+    assert.equal(attachable.scripts.animate[0].hide_first_person, "c.is_first_person");
+    assert.equal(mesh.cubes[0].origin[1], 13.5, "band raised two model units above the accepted M5 baseline");
+    assert.equal(mesh.cubes[1].origin[1], 12.7, "buckle follows the band");
+  }
 }
 console.log("ok   worn gifts: native item protection/durability and body-bound asset bindings");

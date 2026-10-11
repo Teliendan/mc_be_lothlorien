@@ -21,7 +21,15 @@ function cloak(player, equipment, now) {
     still.set(id, { location: { ...location }, dimension, since: now });
     return;
   }
-  if (now - previous.since < CLOAK.stillTicks || player.getEffect(CLOAK.effect)) return;
+  if (now - previous.since < CLOAK.stillTicks) return;
+  const effect = player.getEffect(CLOAK.effect);
+  // Renew before the next equipment poll can observe expiry. The old existence-only
+  // gate let native invisibility expire before reapplying it, exposing a render/AI gap.
+  // Invisibility has no source token: renew only a same-strength, finite effect in
+  // its last poll window. This also hands a potion over to the cloak without ever
+  // shortening it. Infinite and stronger effects remain entirely untouched.
+  if (effect && (effect.amplifier !== CLOAK.amplifier || effect.duration < 0
+    || effect.duration > WORN_CHECK_TICKS)) return;
   player.addEffect(CLOAK.effect, CLOAK.effectTicks, { amplifier: CLOAK.amplifier, showParticles: false });
   // Never remove an effect on exit: another source may have replaced ours. This short grant
   // expires naturally within half a second; external invisibility is neither shortened nor erased.

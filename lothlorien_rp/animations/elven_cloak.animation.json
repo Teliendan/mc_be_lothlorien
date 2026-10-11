@@ -4,7 +4,7 @@
     "animation.lothlorien.elven_cloak.hide_first_person": {
       "loop": true,
       "bones": {
-        "elven_cloak_body": {
+        "elven_cloak_mesh": {
           "scale": 0
         }
       }

@@ -1,6 +1,6 @@
 # Elven inhabitants: professions, Renown, trades, gifts (design)
 
-Status: **M0-M4 accepted; M5 implemented, awaiting the owner's in-game test** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
+Status: **M0-M4 accepted; M5 belt/phial work, cloak/bow polish awaiting retest and art selection** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
 Supersedes the profession stock lists and trade-state details in `lothlorien_elven_settlements_plan.md` ("Initial professions",
 "Harmony-aware trading", "Proposed reputation trade states") and the stock part of `harmony_rework_plan.md` section 5. The trade
 **architecture** of that section 5 (native trade screen, per-band tables pre-swapped by script, refusal in `beforeEvents.playerInteractWithEntity`) stays.
@@ -15,7 +15,7 @@ Looks: `docs/mobs/elves.md` (`tools/make_elves.py`, review sheets in `temp/elves
 | M2 | Renown + Loremaster dialog: lessons and requests (sections 2, 3) | done, accepted in game 2026-10-11 (commits 88dbbe2, 6019c88, f854117, ff61ae2, eb1cc5e dew, a10653f niphredil). Notes: `docs/TECHNICAL_NOTES.md` "Renown and the Loremaster (M2)" |
 | M3 | Shops: trade-table generator (band x rank), table swapping by script, refusal (section 4) | complete, accepted in game 2026-10-11: shops 7f86c87 ("It all works"), Trade hover guidance 9cdd1a0 confirmed on deployed 405d482 ("It works"); [regression checklist](../M3_TRADES_TEST.md) |
 | M4 | Healer heals elves and Friends (section 7) | complete, owner accepted 2026-10-11 (bc1da69); [regression checklist](../M4_HEALER_TEST.md) |
-| M5 | Final items (Galadriel's gifts) + Galadhrim arrows (sections 5, 6); then the bow template for `bedrock-items` | implemented 2026-10-11; offline checks pass, owner game acceptance pending; [checklist](../M5_GIFTS_TEST.md). Shared template staged in workspace `docs/templates/custom_archery/` because `.claude/` is blocked |
+| M5 | Final items (Galadriel's gifts) + Galadhrim arrows (sections 5, 6); then the bow template for `bedrock-items` | implemented 2026-10-11; owner confirmed belt/phial work, cloak/bow corrections await retest and art selection; [checklist](../M5_GIFTS_TEST.md). Shared template maintained in `.claude/skills/bedrock-items/templates/custom_archery/` |
 | M6 | Great Mallorn upgrade (section 9) | |
 | M7 | Homes + village look (section 10; `lothlorien_jigsaw_settlement.md` section 6) | |
 
@@ -152,14 +152,19 @@ All tunable values are in `scripts/gift_rules.js`: bow draw 0.8s, vanilla flight
 384 durability, zoom FOV 60; cloak armour 3/durability 80, one second still crouch
 before short invisibility; offhand belt Regeneration I strictly below half health;
 offhand phial level-14 air-only light and 8-block native spider repulsion. Existing
-equal/stronger effects finish untouched. Effects expire naturally after leaving
+longer/stronger potions stay untouched; same-strength invisibility hands over to
+the cloak in its final polling window. Effects expire naturally after leaving
 their gates (cloak at most 0.5s; belt at most 3s). Final gifts require Friend and
 Elf-friend. Trusted woodwright arrows cost 1 emerald for 8 (Guest) or 10 (Friend);
 Great Mallorn chests also gain 4-8 arrows, weight 2 in the existing resource pool.
 Generated original assets and all nine locale names ship together. Runtime/mock
 tests cover effect gates, native projectile parity, recovery, camera cleanup and
 persistent shared light cleanup. Final rendering, FOV and native behavior await
-the owner test; details in [M5_GIFTS_TEST.md](../M5_GIFTS_TEST.md). M6 has not started.
+the owner retest; details in [M5_GIFTS_TEST.md](../M5_GIFTS_TEST.md). Belt remains
+offhand and sits two model units higher. Cloak renews before expiry; bow zoom uses
+`EasingType.Linear`, draw frames include an arrow, and the default bow is longer
+and slimmer. Visual alternatives for all gifts stay in workspace review scratch
+pending selection. Phial gameplay is accepted. M6 has not started.
 
 Dropped: Box of Lórien earth (not unique enough), Elessar (Aragorn's alone; became the belt), Mirror of Galadriel, Circlet of Elanor (cloak is better).
 

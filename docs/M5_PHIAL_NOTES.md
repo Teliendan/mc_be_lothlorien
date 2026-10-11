@@ -1,7 +1,11 @@
 # Phial of Galadriel
 
 Implemented 2026-10-11 for Bedrock 1.26.52 / stable Script API 2.8.0.
-Source/API reviewed and production mock-tested; owner engine acceptance pending.
+Source/API reviewed and production mock-tested. Owner reported "working perfectly"
+on 2026-10-11; this records overall acceptance, not individual fluid/piston or
+multiplayer observations. Gameplay and current default art are unchanged.
+Three cosmetic alternatives plus the current phial are available in workspace
+`temp/elven_inhabitants/m5_polish/phial/phial_choices.png` (P1–P4), pending selection.
 
 The offhand phial creates one hidden level-14 helper block near the holder's
 head, falling back to feet or overhead air. All three choices are air-only: no

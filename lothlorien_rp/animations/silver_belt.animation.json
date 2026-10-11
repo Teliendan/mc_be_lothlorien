@@ -4,7 +4,7 @@
     "animation.lothlorien.silver_belt.hide_first_person": {
       "loop": true,
       "bones": {
-        "silver_belt_body": {
+        "silver_belt_mesh": {
           "scale": 0
         }
       }

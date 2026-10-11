@@ -1,6 +1,6 @@
 // Native shooter handles aim, damage, ammunition, durability and enchantments.
 // M5 adds only drawing FOV and recovery after a custom arrow is destroyed on a mob.
-import { ItemStack, system, world } from "@minecraft/server";
+import { EasingType, ItemStack, system, world } from "@minecraft/server";
 import { BOW_ID, ARROW_ID, BOW, ARROW } from "./gift_rules.js";
 
 const ZOOM_PROPERTY = "lothlorien:bow_zoom";
@@ -8,6 +8,14 @@ const drawing = new Map();
 const recovered = new Set();
 let timer;
 let started = false;
+const reportedCameraFailures = new Set();
+
+function reportCameraFailure(action, error) {
+  // One Content Log warning per action per script load; no repeated chat/tick spam.
+  if (reportedCameraFailures.has(action)) return;
+  reportedCameraFailures.add(action);
+  console.warn(`[Lothlorien archery] Camera ${action} failed: ${String(error)}`);
+}
 
 function stopIfEmpty() {
   if (!drawing.size && timer !== undefined) {
@@ -24,7 +32,10 @@ function clearZoom(player) {
       player.camera.setFov();
       player.setDynamicProperty(ZOOM_PROPERTY, undefined);
     }
-  } catch { /* dead/unloaded camera: the persistent marker is retried at spawn/reload */ }
+  } catch (error) {
+    // Dead/unloaded cameras retain the marker for spawn/reload cleanup.
+    if (player.isValid) reportCameraFailure("cleanup", error);
+  }
   stopIfEmpty();
 }
 
@@ -46,11 +57,17 @@ function begin({ source: player, itemStack }) {
   if (drawing.has(player.id)) return;
   try {
     player.setDynamicProperty(ZOOM_PROPERTY, true);
-    player.camera.setFov({ fov: BOW.zoomFov, easeOptions: { easeTime: BOW.zoomEaseSeconds, easeType: "linear" } });
+    // Script enums are capitalized (EasingType.Linear); command syntax uses "linear".
+    // Ease across the native draw, rather than snapping to full zoom immediately.
+    player.camera.setFov({ fov: BOW.zoomFov,
+      easeOptions: { easeTime: BOW.zoomEaseSeconds, easeType: EasingType.Linear } });
     drawing.set(player.id, { player, dimension: player.dimension.id, slot: player.selectedSlotIndex,
       until: system.currentTick + BOW.useSeconds * 20 });
     if (timer === undefined) timer = system.runInterval(checkDrawing, BOW.watchTicks);
-  } catch { clearZoom(player); } // cosmetic failure cannot prevent the native shot
+  } catch (error) {
+    reportCameraFailure("zoom", error);
+    clearZoom(player); // cosmetic failure cannot prevent the native shot
+  }
 }
 
 function returnArrow(event) {

@@ -16,8 +16,17 @@
       },
       "bones": [
         {
-          "name": "silver_belt_body",
+          "name": "silver_belt_anchor",
           "binding": "'body'",
+          "pivot": [
+            0,
+            24,
+            0
+          ]
+        },
+        {
+          "name": "silver_belt_mesh",
+          "parent": "silver_belt_anchor",
           "pivot": [
             0,
             24,
@@ -27,7 +36,7 @@
             {
               "origin": [
                 -4,
-                11.5,
+                13.5,
                 -2
               ],
               "size": [
@@ -44,7 +53,7 @@
             {
               "origin": [
                 -1.2,
-                10.7,
+                12.7,
                 -3.25
               ],
               "size": [

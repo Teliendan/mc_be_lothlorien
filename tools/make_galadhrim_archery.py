@@ -3,6 +3,7 @@
 Run python -B mods/lothlorien/tools/make_galadhrim_archery.py. Balance comes from
 gift_rules.js; the vanilla arrow definition is the M0 owner-tested starting point.
 The bow reuses vanilla texture meshes; pull frames and a grip animation are local.
+The nocked arrow is painted into all three pull textures, as in the vanilla bow.
 """
 import json
 import subprocess
@@ -70,25 +71,51 @@ write(RP, "render_controllers/bow.render_controllers.json", {"format_version": "
     "materials": [{"*": "variable.is_enchanted ? material.enchanted : material.default"}],
     "textures": ["array.bow_textures[variable.bow_tex_idx]", "texture.enchanted"]}}})
 # Keep vanilla first-person pose, lower the third-person grip from the M0 spike.
+# 15-pixel limbs at 1.12 scale make this a modestly longer bow than vanilla.
 write(RP, "animations/bow.animation.json", {"format_version": "1.10.0", "animations": {"animation.lothlorien.bow.grip": {
-    "loop": True, "bones": {"rightitem": {"position": [0, "c.is_first_person ? 0.0 : -3.0", 0]}}}}})
+    "loop": True, "bones": {"rightitem": {"position": [0, "c.is_first_person ? 0.0 : -3.0", 0], "scale": 1.12}}}}})
 
-# Warm mallorn wood, silver leaf tips, dark green grip and pale hithlain string.
+WOOD = {"shadow": "#645239", "mid": "#b18d4d", "light": "#ddbe76"}
+STRING = "#a9b5ad"
+SILVER = "#e2ead7"
+
+
+def bow_frame(frame):
+    """Original slender mallorn longbow; frame 0 is idle, 1..3 are drawing."""
+    im = Image.new("RGBA", (16, 16))
+    d = ImageDraw.Draw(im)
+    top, bottom = (14, 1 + max(0, frame - 1)), (1 + max(0, frame - 1), 14)
+    limbs = [top, (11, 2 + bool(frame)), (8, 3), (6, 4),
+             (4, 6), (3, 8), (2 + bool(frame), 11), bottom]
+    # Two-pixel limbs, with single-pixel silver caps and a narrow green grip.
+    d.line(limbs, fill=WOOD["shadow"], width=2)
+    d.line(limbs, fill=WOOD["mid"], width=1)
+    d.point([(11, 2 + bool(frame)), (8, 3), (3, 8)], fill=WOOD["light"])
+    d.line([(6, 4), (4, 6)], fill="#294c3b", width=2)
+    d.point([(6, 4), (4, 6)], fill="#789176")
+    nock = (9 + frame, 9 + frame)
+    d.line([top, nock, bottom] if frame else [top, bottom], fill=STRING)
+    d.point([top, bottom], fill=SILVER)
+    if frame:
+        # Vanilla meshes extrude the texture: an explicit arrow is essential.
+        # Keep the shaft diagonal through the grip and the nock on the string.
+        tip = (nock[0] - 9, nock[1] - 9)
+        d.line([tip, nock], fill="#d6c590")
+        d.point((tip[0] + 1, tip[1]), fill="#8faaa1")
+        d.point(tip, fill="#eef1e0")
+        d.point((tip[0], tip[1] + 1), fill="#b9ccbd")
+    # Full-draw tip is unambiguously present and idle carries no loaded arrow.
+    assert im.getbbox() is not None
+    if frame:
+        assert im.getpixel(tip)[3] == 255
+        assert im.getpixel(nock)[3] == 255
+    return im
+
+
 for i, name in enumerate(textures):
-    im = Image.new("RGBA", (16, 16)); d = ImageDraw.Draw(im)
-    ends = [(12, 2), (9, 2), (7, 3), (5, 5), (3, 7), (2, 10), (2, 13)]
-    if i:
-        ends = [(12, 2), (10, 3), (8, 4), (6, 6), (4, 8), (3, 10), (2, 13)]
-    d.line(ends, fill="#554d38", width=3)
-    d.line(ends, fill="#c5ab69", width=1)
-    pull = 7 + i
-    d.line([ends[0], (pull, pull), ends[-1]], fill="#d7dfd0", width=1)
-    d.line([(5 + bool(i), 5 + bool(i)), (3 + bool(i), 7 + bool(i))], fill="#2e5040", width=3)
-    d.point([(5 + bool(i), 5 + bool(i)), (4 + bool(i), 6 + bool(i)), (3 + bool(i), 7 + bool(i))], fill="#78917b")
-    for x, y in (ends[0], ends[-1]):
-        d.point((x, y), fill="#f1f0d3")
-        d.point((x + 1, y), fill="#a6b7aa")
-    path = RP / f"textures/items/{name}.png"; path.parent.mkdir(parents=True, exist_ok=True); im.save(path)
+    path = RP / f"textures/items/{name}.png"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    bow_frame(i).save(path)
 im = Image.new("RGBA", (16, 16)); d = ImageDraw.Draw(im)
 d.line([(3, 12), (12, 3)], fill="#574e38", width=2)
 d.line([(3, 12), (12, 3)], fill="#c5b17a")

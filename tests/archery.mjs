@@ -7,7 +7,7 @@ const source = readFileSync(new URL("../lothlorien_bp/scripts/archery.js", impor
   .replace(/^import \{([^}]+)\} from "[^"]+";/gm, "const {$1} = globalThis.__archery;");
 let serial = 0;
 async function scenario(name, body) {
-  const handlers = new Map(), timers = new Map(), players = [], drops = [];
+  const handlers = new Map(), timers = new Map(), players = [], drops = [], warnings = [];
   let tick = 0, next = 0;
   const system = { get currentTick() { return tick; },
     runInterval(fn, ticks) { const id = ++next; timers.set(id, { fn, ticks, at: tick + ticks }); return id; },
@@ -16,7 +16,7 @@ async function scenario(name, body) {
     subscribe(fn) { if (!handlers.has(name)) handlers.set(name, []); handlers.get(name).push(fn); }
   }) }) };
   const dimension = { id: "overworld", spawnItem: (item, location) => drops.push({ item, location }) };
-  globalThis.__archery = { ...rules, system, world,
+  globalThis.__archery = { ...rules, system, world, EasingType: { Linear: "Linear" },
     ItemStack: class { constructor(typeId, amount) { Object.assign(this, { typeId, amount }); } } };
   const { startArchery } = await import(`data:text/javascript;base64,${Buffer.from(source).toString("base64")}#${++serial}`);
   delete globalThis.__archery;
@@ -31,14 +31,22 @@ async function scenario(name, body) {
       selectedSlotIndex: 0, hand, hp, cameraCalls,
       getDynamicProperty: key => props.get(key),
       setDynamicProperty(key, value) { if (value === undefined) props.delete(key); else props.set(key, value); },
-      camera: { setFov(options) { if (p.cameraBroken) throw Error("camera unavailable"); cameraCalls.push(options); } },
+      camera: { setFov(options) {
+        if (options?.easeOptions?.easeType !== undefined && options.easeOptions.easeType !== "Linear") {
+          throw new TypeError("Invalid EasingType; Script API requires 'Linear', not command syntax 'linear'");
+        }
+        if (p.cameraBroken) throw Error("camera unavailable"); cameraCalls.push(options);
+      } },
       getComponent(key) { return key === "minecraft:health" ? hp : key === "minecraft:equippable" ? {
         getEquipmentSlot(slot) { assert.equal(slot, "Mainhand"); return hand; }
       } : undefined; } };
     players.push(p); return p;
   }
   const begin = p => fire("itemStartUse", { source: p, itemStack: { typeId: rules.BOW_ID } });
-  await body({ startArchery, fire, advance, player, begin, timers, drops, dimension, handlers });
+  const originalWarn = console.warn;
+  console.warn = message => warnings.push(message);
+  try { await body({ startArchery, fire, advance, player, begin, timers, drops, dimension, handlers, warnings }); }
+  finally { console.warn = originalWarn; }
   console.log(`ok   archery: ${name}`);
 }
 
@@ -51,7 +59,8 @@ await scenario("only bow draws zoom; release/stop restore defaults; no idle time
   e.begin(p); e.begin(p);
   assert.equal(e.timers.size, 1); assert.equal(p.cameraCalls.length, 1);
   assert.deepEqual(p.cameraCalls[0], { fov: rules.BOW.zoomFov,
-    easeOptions: { easeTime: rules.BOW.zoomEaseSeconds, easeType: "linear" } });
+    easeOptions: { easeTime: rules.BOW.zoomEaseSeconds, easeType: "Linear" } });
+  assert.equal(rules.BOW.zoomEaseSeconds, rules.BOW.drawSeconds, "zoom progresses across the native draw");
   e.advance(rules.BOW.watchTicks); assert.equal(p.cameraCalls.length, 1);
   e.fire("itemReleaseUse", { source: p }); assert.equal(p.cameraCalls.at(-1), undefined);
   assert.equal(e.timers.size, 0);
@@ -80,10 +89,22 @@ await scenario("reload marker is cleared; unavailable camera is retried on spawn
   const p = e.player(); p.setDynamicProperty("lothlorien:bow_zoom", true);
   e.startArchery(); assert.deepEqual(p.cameraCalls, [undefined]);
   p.cameraBroken = true; e.begin(p); assert.equal(e.timers.size, 0);
+  assert.equal(e.warnings.length, 2, "zoom and failed cleanup each warn once");
+  e.begin(p); e.begin(p);
+  assert.equal(e.warnings.length, 2, "repeated failures do not spam Content Log");
   assert.equal(p.getDynamicProperty("lothlorien:bow_zoom"), true);
   p.cameraBroken = false; e.fire("playerSpawn", { player: p });
   assert.equal(p.getDynamicProperty("lothlorien:bow_zoom"), undefined);
   e.begin(p); p.isValid = false; e.advance(rules.BOW.watchTicks); assert.equal(e.timers.size, 0);
+});
+
+await scenario("camera mock rejects command-style lowercase easing so the original bug cannot pass", async e => {
+  const p = e.player(); e.startArchery();
+  assert.throws(() => p.camera.setFov({ fov: 60, easeOptions: { easeType: "linear" } }), /Invalid EasingType/);
+  e.begin(p);
+  assert.equal(p.cameraCalls.length, 1);
+  assert.equal(p.getDynamicProperty("lothlorien:bow_zoom"), true);
+  assert.equal(e.warnings.length, 0, "supported enum successfully applies camera FOV");
 });
 
 await scenario("a missing native stop event cannot hold zoom past the item use duration", async e => {

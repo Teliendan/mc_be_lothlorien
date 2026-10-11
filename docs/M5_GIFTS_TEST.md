@@ -2,8 +2,21 @@
 
 2026-10-11; Bedrock 1.26.52 / stable Script API 2.8.0.
 Implementation commit: `Implement M5 Galadriel gifts and Galadhrim arrows`.
-Status: implemented, offline regression/verification complete; owner engine
-acceptance pending. Stop here before M6.
+Status: implemented; owner confirmed belt mechanics and the phial, then requested
+cloak/bow fixes and visual alternatives. Follow-up corrections need engine
+acceptance. Stop here before M6.
+
+2026-10-11 feedback: keep the belt offhand and raise its worn position. Cloak
+invisibility briefly expired and the belt/cloak appeared to flicker together.
+Renew before expiry and isolate visible mesh transforms from bound anchors.
+Bow pull sprites now include a nocked arrow; a capitalized Script API easing
+enum corrects the failed zoom, eased over its 0.8-second draw. Default bow is
+slimmer and larger. Phial gameplay and its default art remain as accepted.
+Review-only alternatives live in workspace `temp/elven_inhabitants/m5_polish/`.
+Follow-up commit: `Polish M5 gift visibility and native bow drawing`.
+Validation: shared verify 0 errors / 15 warnings; full project regressions passed.
+Bow/worn generators rerun with zero pack-byte drift. Shared verifier fixture
+suite passes 1493 assertions. These checks do not establish native rendering.
 
 Leave and re-enter the world after deployment. Existing elves gain the new stock;
 no new world is required. Already-filled chests retain their contents; arrow loot
@@ -15,10 +28,10 @@ Harmony Friend (+10) and Renown Elf-friend (15 points). Balance source of truth:
 
 | Gift / ammunition | Mechanics |
 | --- | --- |
-| Bow of the Galadhrim | Main hand; 0.8s draw, 384 durability, native damage, flight and bow enchantments. Four pull sprites, native meshes and lowered third-person grip. Zoom FOV 60 while drawing, 0.15s ease. |
+| Bow of the Galadhrim | Main hand; 0.8s draw, 384 durability, native damage, flight and bow enchantments. Four pull sprites with nocked arrows, native meshes and lowered third-person grip. Zoom FOV 60 while drawing, 0.8s ease. |
 | Galadhrim arrows | Native vanilla trajectory; 100% item recovery after a destroyed entity hit, native ground pickup. No trail or crafting. Only the Galadhrim bow fires them in Survival; it also fires vanilla arrows. |
 | Elven cloak | Chest slot, 3 armour, 80 durability. Sneak without moving for 20 ticks to receive invisibility; movement/unsneak/unequip stops renewal. Short grants expire within 10 ticks. Cloak mesh hides while invisible; other equipped gear follows native visibility. |
-| Silver belt | Off-hand, visible at the waist. Regeneration I while living health is strictly below half effective maximum; 60-tick grants finish before renewal. Residual regeneration can last 3s after unequip/recovery. |
+| Silver belt | Off-hand, visible at the waist, raised two model units after owner feedback. Regeneration I while living health is strictly below half effective maximum; 60-tick grants finish before renewal. Residual regeneration can last 3s after unequip/recovery. |
 | Phial of Galadriel | Off-hand. One invisible light-14 helper in available head/feet/overhead air; never replaces plants, solids or liquids. Repels both spider types within 8 blocks with native horizontal impulses, at most 24 spiders per holder each 5 ticks. |
 
 Arrows unlock at Trusted: 8 per emerald for Guests, 10 for Friends. Great Mallorn
@@ -85,4 +98,5 @@ then `mods deploy lothlorien` and confirm `mods status` is in sync.
 Detailed evidence/limits: [ARCHERY.md](ARCHERY.md),
 [M5_WORN_GIFTS_NOTES.md](M5_WORN_GIFTS_NOTES.md),
 [M5_PHIAL_NOTES.md](M5_PHIAL_NOTES.md). Reusable archery template is staged in
-workspace `docs/templates/custom_archery/` because `.claude/` is blocked here.
+workspace `docs/templates/custom_archery/`; supporting shared skill notes are in
+`.claude/skills/bedrock-items/references/`.

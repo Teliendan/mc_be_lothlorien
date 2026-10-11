@@ -75,12 +75,17 @@ def textures():
 
 
 def mesh(name, cubes):
-    bone = f'{name}_body'
+    anchor, bone = f'{name}_anchor', f'{name}_mesh'
     write(RP / f'models/entity/{name}.geo.json', {
         'format_version': '1.16.0', 'minecraft:geometry': [{
             'description': {'identifier': f'geometry.lothlorien.{name}', 'texture_width': 64, 'texture_height': 64,
                             'visible_bounds_width': 2, 'visible_bounds_height': 3, 'visible_bounds_offset': [0, 1, 0]},
-            'bones': [{'name': bone, 'binding': "'body'", 'pivot': [0, 24, 0], 'cubes': cubes}],
+            # Scale only the visible child, never the owner-bound anchor. Each
+            # attachable has its own names so independent hide gates stay local.
+            'bones': [
+                {'name': anchor, 'binding': "'body'", 'pivot': [0, 24, 0]},
+                {'name': bone, 'parent': anchor, 'pivot': [0, 24, 0], 'cubes': cubes},
+            ],
         }],
     })
     hide = f'animation.lothlorien.{name}.hide_first_person'
@@ -119,8 +124,8 @@ def main():
         {'origin': [3.8, 7, 2.4], 'size': [1, 14, 0.9], 'uv': [28, 16]},
     ])
     mesh('silver_belt', [
-        {'origin': [-4, 11.5, -2], 'size': [8, 2, 4], 'inflate': 1.1, 'uv': [16, 16]},
-        {'origin': [-1.2, 10.7, -3.25], 'size': [2.4, 3.6, 0.5], 'uv': [0, 32]},
+        {'origin': [-4, 13.5, -2], 'size': [8, 2, 4], 'inflate': 1.1, 'uv': [16, 16]},
+        {'origin': [-1.2, 12.7, -3.25], 'size': [2.4, 3.6, 0.5], 'uv': [0, 32]},
     ])
     print('Generated cloak and silver belt items, icons, textures and attachables.')
 

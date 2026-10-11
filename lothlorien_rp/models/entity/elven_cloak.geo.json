@@ -16,8 +16,17 @@
       },
       "bones": [
         {
-          "name": "elven_cloak_body",
+          "name": "elven_cloak_anchor",
           "binding": "'body'",
+          "pivot": [
+            0,
+            24,
+            0
+          ]
+        },
+        {
+          "name": "elven_cloak_mesh",
+          "parent": "elven_cloak_anchor",
           "pivot": [
             0,
             24,
