@@ -1,6 +1,6 @@
 # Elven inhabitants: professions, Renown, trades, gifts (design)
 
-Status: **M0 and M1 done and accepted by the owner in game 2026-10-10; M2 built, not yet seen in game** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
+Status: **M0 and M1 done and accepted by the owner in game 2026-10-10; M2 (dialog redesigned 2026-10-11) built, not yet seen in game** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
 Supersedes the profession stock lists and trade-state details in `lothlorien_elven_settlements_plan.md` ("Initial professions",
 "Harmony-aware trading", "Proposed reputation trade states") and the stock part of `harmony_rework_plan.md` section 5. The trade
 **architecture** of that section 5 (native trade screen, per-band tables pre-swapped by script, refusal in `beforeEvents.playerInteractWithEntity`) stays.
@@ -60,30 +60,39 @@ forest edge keep spawning. Healers exist to prevent accidental deaths. Killing a
 | Shunned -15...-29 | refused | one hint: "Learn to live in peace with the forest, then return." |
 | Hated -30 and below | refused | turns away silently (wardens shoot on sight) |
 
-## 3. Loremaster: lessons and requests (M2, owner decisions 2026-10-10, built)
+## 3. Loremaster: lessons and requests (M2; owner decisions 2026-10-10, dialog redesigned 2026-10-11, built, NOT yet seen in game)
 
 Use on the Loremaster opens a dialog (`@minecraft/server-ui` forms, `loremaster.js`); he never trades. A lead or a name tag in hand still works on him (the
 `minecraft:interact` "Speak" entry exists only in the `lothlorien:loremaster` group and excludes those two items; the script skips them too). Other elves do nothing on use until M3.
 
 **Lessons are chapters.** All unfinished lessons of the open chapter are listed; chapter N+1 opens when every lesson of chapter N is complete. **Lore** lessons complete
-with "I understand" (0 points); **deed** lessons pay 1 point. A deed counts **only while its lesson is active** (the player opened its screen); earlier deeds are lost.
-Finished lessons stay readable under "Remind me" (no points twice). The Harmony lesson completes with "It is done" when Harmony >= +3 (the text shows no numbers; the player never sees Harmony numbers). Lesson texts name no ranks, depth stages or item counts.
+with "I understand" at any time (0 points, no task slot; the Teaching screen shows "You have learned: X" on top, no result screen). **Deed** lessons (and Harmony) pay 1 point.
+Each deed lesson text has a separate one-sentence **goal line** ("Your task: ..."); lesson texts name no ranks, depth stages or item counts.
+
+**One current-task slot** is shared by deed lessons, the Harmony lesson and requests. "Take this task" fills it; while it is full the deed lessons are hidden in Teaching and
+"A task from my kin" is hidden on Main (lore stays readable). A deed makes the task only **ready** (chat line + soft sound: "<lesson>: done. Return to the Loremaster."); Renown is paid at
+**turn-in** ("It is done" on the Task screen, then a Result screen with the renown line, progress to the next rank, chapter-opened and rank-up lines). Deeds done while their lesson is not the task are **lost**.
+The Harmony lesson is ready when Harmony >= +3 **at talk time** (re-checked at turn-in; a chat nudge fires once when Harmony crosses the level while it is the task). A request is ready when the items are in the
+pack / the saplings stand (computed). The dialog opens straight on the Task screen when the task is ready. **Set this aside** (confirm): nothing paid, a lesson goes back to offered (its deed must be done again),
+a request is not done and the rotation moves on. Uneasy: the task is kept and paused (Main shows "waits until the forest trusts you again"; only the Harmony text can be read).
+Screens: Main (greeting, rank lines, current-task button with item icon and status, Teaching with chapter + waiting count, kin offer, Farewell), Teaching, Lesson, Task, Kin offer, Set-aside confirm, Earlier lessons, Result.
+The dialog ends with a chat line (not silently) when the player walked more than 12 blocks away or the `UserBusy` retries ran out.
 
 | Ch | Lesson | Kind | Completion |
 |---|---|---|---|
-| I | harmony | deed (talk check) | Harmony >= +3 when pressing "It is done" |
+| I | harmony | task (talk check) | Harmony >= +3 when talking / turning in |
 | I | elves, renown | lore | read |
-| I | dew, nectar | deed | fill a Bottle of morning dew (`dew.js`); bottle nectar (`nectar.js`) |
+| I | dew, nectar | deed | fill a Bottle of morning dew (`dew.js`); bottle nectar (`nectar.js`); both from "Fill a glass bottle from ..." wording |
 | II | depth | lore | read (edge / inner / heart; real effects only: fewer border wardens off decks deeper in, rare creatures more often deeper) |
 | II | lembas, rope | deed | eat wrapped Lembas (`lembas.js`); hang an elven rope (`elven_rope.js`) |
-| II | fireflies | deed | catch a firefly (no script path, see TECHNICAL_NOTES) |
+| II | fireflies | deed | catch a firefly (script-owned catch, `fireflies.js`) |
 | III | gifts | deed | send a squirrel off with an acorn (`squirrel.js`, needs Friend) |
 | III | white_animals, trades | lore | read (white_animals is lore only, no points; trades) |
 
-Pacing (tested): chapter I = 3 points (Welcome); chapter II = 6 points in all (Trusted at 8 needs 1 request); chapter III deeds = 7 (Elf-friend at 15 needs 4 requests).
+Pacing (tested; unchanged by the redesign): chapter I = 3 points (Welcome); chapter II = 6 points in all (Trusted at 8 needs 1 request); chapter III deeds = 7 (Elf-friend at 15 needs 4 requests).
 The rank-up shows a chat line, `random.levelup`, a particle burst, and a rank line in the form plus a progress line ("Progress to <rank>: <points> / <threshold>").
 
-**Requests** open with chapter III (chapters I and II complete), from Friend and Guest only. One active request at a time, **no cooldown**. Twelve requests, each completable **once ever**:
+**Requests** open with chapter III (chapters I and II complete), from Friend and Guest only. One current task at a time (the shared slot), **no cooldown**. Twelve requests, each completable **once ever**:
 gardener (5 saplings planted inside the forest, 2 morning dew, 16 bone meal), healer (4 Athelas, 2 nectar, 4 Elanor + 4 Niphredil), woodwright (32 birch/cherry logs in any mix,
 8 string + 8 feathers, 6 iron ingots), lamplighter (3 bottles of fireflies, 16 coal/charcoal in any mix, 16 glass). Each round is a random permutation of the four professions;
 the offered request is a random not-yet-done one of the next profession. "Not now" keeps the offer; abandoning gives nothing, does not complete it, and the rotation moves on.
@@ -100,7 +109,7 @@ Exceptions agreed: the elven lanterns and the final items. Currency: **emeralds*
 | Elf | Buys (player earns emeralds) | Sells, by rank | Final (Elf-friend + Friend) |
 |---|---|---|---|
 | Gardener | bone meal, seeds, vanilla flowers | 0: acorns, Elanor, Niphredil, Athelas, golden fern; 1: blossoms, Western Corn seed; 2: **nectar blooms** (worldgen-only otherwise) | **Elven cloak** |
-| Woodwright | other woods, string, feathers, iron | 0: **Mallorn logs** 1 emerald = 6 (Friend 8; a stack about 10 emeralds); 2: **Galadhrim arrows** about 1 emerald = 8; 2: **Elven rope** 6 emeralds (Friend 5; expensive on purpose: crafting needs a whole dawn of dew) | **Bow of the Galadhrim** |
+| Woodwright | other woods, string, feathers, iron | 0: **Mallorn logs** 1 emerald = 6 (Friend 8; a stack about 10 emeralds); 2: **Galadhrim arrows** about 1 emerald = 8; 2: **Elven rope** 6 emeralds (Friend 5; expensive on purpose: crafting needs a bottle of dew) | **Bow of the Galadhrim** |
 | Healer | Athelas, Elanor, Niphredil, nectar, glistering melon | potions: Healing, Regeneration, Slow Falling (flets); 3: Miruvor | **Silver belt** |
 | Lamplighter | glass, amethyst, glowstone | 0: **both elven lanterns** (silver, heartwood); **deer antlers** (no killing deer for the chandelier), bottled fireflies, morning dew | **Phial of Galadriel** |
 

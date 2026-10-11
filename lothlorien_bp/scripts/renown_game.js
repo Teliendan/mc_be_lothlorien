@@ -1,25 +1,24 @@
 import { message } from "./messages.js";
 // Renown in the running game (rules and every tunable value: renown_rules.js). State is kept per player in the dynamic property
-// `lothlorien:renown` (one JSON, v: 1), cached, and written only when it changed. This file also owns:
-//  - the deed listener (deeds.js hooks) and the sapling count of the "plant acorns" request,
-//  - the firefly catch detection (the catch happens in entities/firefly.json, there is no script path: see watchFireflies),
+// `lothlorien:renown` (one JSON, v: 2), cached, and written only when it changed. This file also owns:
+//  - the deed listener (deeds.js hooks; a deed only makes the current task ready) and the sapling count of the "plant acorns" request,
+//  - the Harmony nudge (chat line when Harmony reaches the level while the Harmony lesson is the task),
 //  - inventory counting and removal for deliveries, the rank-up feedback, and the debug command `/scriptevent lothlorien:renown`.
+// The firefly catch is script-owned in fireflies.js (it calls noteDeed like the other hooks).
 import { system, world } from "@minecraft/server";
 import { onDeed, noteDeed } from "./deeds.js";
 import {
-  LESSONS, POINTS, REQUESTS, SAPLING_BLOCK, SAPLING_GROWN,
-  addSaplingSpot, noteDeed as rulesNoteDeed, openChapter, parse, rankOf, requestById, saplingProgress, serialize, newState,
+  HARMONY_NEEDED, LESSONS, POINTS, REQUESTS, SAPLING_BLOCK, SAPLING_GROWN,
+  addSaplingSpot, lessonTask, noteDeed as rulesNoteDeed, openChapter, parse, rankOf, requestById, requestTask, saplingProgress, serialize, newState, takeLesson,
 } from "./renown_rules.js";
 import { harmonyOf } from "./harmony_game.js";
 
 const PROPERTY = "lothlorien:renown";
 const PLAYER_ID = "minecraft:player";
-const FIREFLY_ID = "lothlorien:firefly";
-const GLASS_BOTTLE = "minecraft:glass_bottle";
-const FIREFLY_BOTTLE = "lothlorien:bottle_of_fireflies";
-const FIREFLY_CHECK_TICKS = 5; // the engine swaps the bottle within a tick or two of the interaction
+const NUDGE_INTERVAL_TICKS = 40;
 
 const states = new Map();
+const harmonyReady = new Map(); // player id -> was Harmony at the level at the last check (for the one-time nudge)
 let isInside = () => false;
 
 // State of a player (parsed from the dynamic property on first use).
@@ -48,14 +47,11 @@ const say = (player, text) => {
   }
 };
 
-// Chat line, sound and particles for results of the rules (finish results, a request delivery).
+// Sound, particles and the rank-up chat line for results of the rules (finish results, a request delivery); the texts of the
+// turn-in itself are on the Loremaster's result screen (loremaster.js), where chat would be hidden behind the form.
 // `at` = the Loremaster entity when the player stands at him (particles there), else the particles circle the player.
 export function celebrate(player, results, at) {
   for (const r of results) {
-    if (r.lesson) {
-      say(player, message("lore.done.lesson", message(`lore.lesson.${r.lesson}.name`)));
-      if (r.chapterOpened) say(player, message("lore.chapter.opened"));
-    } else if (r.request) say(player, message("lore.deliver.ok"));
     if (r.rank?.rankedUp) {
       say(player, message(`lore.rankup.${r.rank.after}`));
       try {
@@ -79,33 +75,37 @@ function onPlayerDeed(player, id) {
       const results = rulesNoteDeed(state, id);
       if (results.length === 0) return;
       saveRenown(player);
-      celebrate(player, results);
+      for (const r of results) {
+        say(player, message("lore.ready.chat", message(`lore.lesson.${r.lesson}.name`)));
+        try {
+          player.playSound("random.orb");
+        } catch {
+          // decoration
+        }
+      }
     } catch {
       // player left
     }
   });
 }
 
-// ---- Firefly catch ----
-// Catching a firefly is pure entity JSON (the glass bottle becomes lothlorien:bottle_of_fireflies through transform_to_item), so there is
-// no script path to hook. UNVERIFIED in game: the before event of an interaction with a firefly while holding a glass bottle snapshots
-// the number of firefly bottles in the pack; a few ticks later more bottles mean the catch worked.
-const pendingCatch = new Set();
-function watchFireflies() {
-  world.beforeEvents.playerInteractWithEntity.subscribe((event) => {
-    const { player, target, itemStack } = event;
-    if (target.typeId !== FIREFLY_ID || itemStack?.typeId !== GLASS_BOTTLE || pendingCatch.has(player.id)) return;
-    pendingCatch.add(player.id);
-    const before = inventoryCounts(player)[FIREFLY_BOTTLE] ?? 0;
-    system.run(() => system.runTimeout(() => {
-      pendingCatch.delete(player.id);
-      try {
-        if (player.isValid && (inventoryCounts(player)[FIREFLY_BOTTLE] ?? 0) > before) noteDeed(player, "fireflies");
-      } catch {
-        // player left
+// ---- Harmony nudge ----
+// The Harmony lesson is ready by a computed condition, not by a deed hook: a light check tells the player once when Harmony crosses the level.
+function checkHarmonyNudges() {
+  for (const player of world.getAllPlayers()) {
+    try {
+      const task = lessonTask(renownOf(player));
+      if (task?.id !== "harmony") {
+        harmonyReady.delete(player.id);
+        continue;
       }
-    }, FIREFLY_CHECK_TICKS));
-  });
+      const ready = harmonyOf(player).harmony >= HARMONY_NEEDED;
+      if (ready && harmonyReady.get(player.id) === false) say(player, message("lore.harmony.ready_chat"));
+      harmonyReady.set(player.id, ready);
+    } catch {
+      // player left
+    }
+  }
 }
 
 // ---- Inventory ----
@@ -171,7 +171,7 @@ function watchSaplings() {
       const state = renownOf(player);
       if (!addSaplingSpot(state, cellOf(block))) return;
       saveRenown(player);
-      const need = requestById(state.request.id).deed.count;
+      const need = requestById(requestTask(state).id).deed.count;
       say(player, message("lore.saplings.counted", Math.min(need, saplingsPlanted(player)), need));
     } catch {
       // player or block gone
@@ -179,10 +179,11 @@ function watchSaplings() {
   });
 }
 
-// ---- Debug: /scriptevent lothlorien:renown [points N | reset | deed <id> | chapter N | offer <request id>] ----
+// ---- Debug: /scriptevent lothlorien:renown [points N | reset | deed <id> | take <lesson id> | chapter N | offer <request id>] ----
 function describe(player, state) {
-  const active = Object.keys(state.active).join(",") || "-";
-  const request = state.request ? `${state.request.id} (${state.request.spots.length} sapling cells)` : state.offer ? `offer ${state.offer}` : "-";
+  const lesson = lessonTask(state);
+  const active = lesson ? `${lesson.id}${lesson.ready ? " (ready)" : ""}` : "-";
+  const request = requestTask(state) ? `${state.task.id} (${state.task.spots.length} sapling cells)` : state.offer ? `offer ${state.offer}` : "-";
   say(player, message("lore.debug.state", state.points, message(`lore.rank.${rankOf(state.points)}`), openChapter(state), active, request, harmonyOf(player).harmony));
 }
 
@@ -209,11 +210,14 @@ export function handleRenownEvent(event, player) {
   } else if (cmd === "chapter" && Number.isFinite(Number(arg))) {
     const n = Math.trunc(Number(arg));
     state.done = {};
-    state.active = {};
+    state.task = null;
     for (const l of LESSONS) if (l.chapter < n) state.done[l.id] = true;
     state.points = pointsOfDone(state);
+  } else if (cmd === "take" && arg) {
+    state.task = null;
+    takeLesson(state, arg, system.currentTick);
   } else if (cmd === "offer" && requestById(arg)) {
-    state.request = null;
+    state.task = null;
     state.offer = arg;
   }
   saveRenown(player);
@@ -224,10 +228,10 @@ export function handleRenownEvent(event, player) {
 export function startRenown(inside) {
   isInside = inside;
   onDeed(onPlayerDeed);
-  watchFireflies();
   watchSaplings();
+  system.runInterval(checkHarmonyNudges, NUDGE_INTERVAL_TICKS);
   world.afterEvents.playerLeave.subscribe(({ playerId }) => {
     states.delete(playerId);
-    pendingCatch.delete(playerId);
+    harmonyReady.delete(playerId);
   });
 }

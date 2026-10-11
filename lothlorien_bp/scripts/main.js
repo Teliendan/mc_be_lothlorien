@@ -7,6 +7,7 @@ import "./grass_overlay.js";
 import "./bonemeal.js";
 import "./crop.js";
 import "./nectar.js";
+import "./fireflies.js";
 import "./dew.js";
 import "./lembas.js";
 import { startAntlerSupport } from "./antler.js";

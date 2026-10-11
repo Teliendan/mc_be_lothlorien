@@ -13429,128 +13429,6 @@
             }
           }
         },
-        "lothlorien.message.lore.btn.lesson": {
-          "source": "Lesson: %s",
-          "context": {
-            "meaning": "Button for one available lesson of the open chapter in the main Loremaster form. %s is the lesson name.",
-            "location": "lothlorien_rp: button of a Loremaster dialog form",
-            "trigger": "Player talks to the Loremaster elf.",
-            "tone": "Concise Minecraft UI",
-            "grammar": "Short imperative or first-person phrase, no final punctuation.",
-            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
-            "source_paths": [
-              "lothlorien_bp/scripts/loremaster.js",
-              "lothlorien_bp/scripts/renown_game.js"
-            ]
-          },
-          "placeholders": [
-            {
-              "name": "lesson",
-              "type": "RawMessage",
-              "meaning": "lesson: nested translated lesson name"
-            }
-          ],
-          "translations": {
-            "cs_CZ": {
-              "text": "Lekce: %s",
-              "based_on": "4de10d44086b8906dde365c4f067c2eb0a8924d19b3cc36764f9f7adfe23740a",
-              "status": "ai-draft"
-            },
-            "es_ES": {
-              "text": "Lección: %s",
-              "based_on": "4de10d44086b8906dde365c4f067c2eb0a8924d19b3cc36764f9f7adfe23740a",
-              "status": "ai-draft"
-            },
-            "es_MX": {
-              "text": "Lección: %s",
-              "based_on": "4de10d44086b8906dde365c4f067c2eb0a8924d19b3cc36764f9f7adfe23740a",
-              "status": "ai-draft"
-            },
-            "pt_PT": {
-              "text": "Lição: %s",
-              "based_on": "4de10d44086b8906dde365c4f067c2eb0a8924d19b3cc36764f9f7adfe23740a",
-              "status": "ai-draft"
-            },
-            "pt_BR": {
-              "text": "Lição: %s",
-              "based_on": "4de10d44086b8906dde365c4f067c2eb0a8924d19b3cc36764f9f7adfe23740a",
-              "status": "ai-draft"
-            },
-            "de_DE": {
-              "text": "Lektion: %s",
-              "based_on": "4de10d44086b8906dde365c4f067c2eb0a8924d19b3cc36764f9f7adfe23740a",
-              "status": "ai-draft"
-            },
-            "fr_FR": {
-              "text": "Leçon : %s",
-              "based_on": "4de10d44086b8906dde365c4f067c2eb0a8924d19b3cc36764f9f7adfe23740a",
-              "status": "ai-draft"
-            },
-            "pl_PL": {
-              "text": "Lekcja: %s",
-              "based_on": "4de10d44086b8906dde365c4f067c2eb0a8924d19b3cc36764f9f7adfe23740a",
-              "status": "ai-draft"
-            }
-          }
-        },
-        "lothlorien.message.lore.btn.remind": {
-          "source": "Remind me",
-          "context": {
-            "meaning": "Button in the main Loremaster form that opens the list of completed lessons to read again; no points are earned twice.",
-            "location": "lothlorien_rp: button of a Loremaster dialog form",
-            "trigger": "Player talks to the Loremaster elf.",
-            "tone": "Concise Minecraft UI",
-            "grammar": "Short imperative or first-person phrase, no final punctuation.",
-            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
-            "source_paths": [
-              "lothlorien_bp/scripts/loremaster.js",
-              "lothlorien_bp/scripts/renown_game.js"
-            ]
-          },
-          "placeholders": [],
-          "translations": {
-            "cs_CZ": {
-              "text": "Připomeňte mi",
-              "based_on": "b42f91062f09eb06e603cd9a4e6323edb5410984b5b7cf91a9a0932b35613e65",
-              "status": "ai-draft"
-            },
-            "es_ES": {
-              "text": "Recuérdame",
-              "based_on": "b42f91062f09eb06e603cd9a4e6323edb5410984b5b7cf91a9a0932b35613e65",
-              "status": "ai-draft"
-            },
-            "es_MX": {
-              "text": "Recuérdame",
-              "based_on": "b42f91062f09eb06e603cd9a4e6323edb5410984b5b7cf91a9a0932b35613e65",
-              "status": "ai-draft"
-            },
-            "pt_PT": {
-              "text": "Lembra-me",
-              "based_on": "b42f91062f09eb06e603cd9a4e6323edb5410984b5b7cf91a9a0932b35613e65",
-              "status": "ai-draft"
-            },
-            "pt_BR": {
-              "text": "Lembre-me",
-              "based_on": "b42f91062f09eb06e603cd9a4e6323edb5410984b5b7cf91a9a0932b35613e65",
-              "status": "ai-draft"
-            },
-            "de_DE": {
-              "text": "Erinnere mich",
-              "based_on": "b42f91062f09eb06e603cd9a4e6323edb5410984b5b7cf91a9a0932b35613e65",
-              "status": "ai-draft"
-            },
-            "fr_FR": {
-              "text": "Rappelle-moi",
-              "based_on": "b42f91062f09eb06e603cd9a4e6323edb5410984b5b7cf91a9a0932b35613e65",
-              "status": "ai-draft"
-            },
-            "pl_PL": {
-              "text": "Przypomnij mi",
-              "based_on": "b42f91062f09eb06e603cd9a4e6323edb5410984b5b7cf91a9a0932b35613e65",
-              "status": "ai-draft"
-            }
-          }
-        },
         "lothlorien.message.lore.btn.request_new": {
           "source": "A task from my kin",
           "context": {
@@ -13605,64 +13483,6 @@
             "pl_PL": {
               "text": "Zadanie od moich współplemieńców",
               "based_on": "8c9b5a13c3b9a47e3c81b9d61d7311c093680b88b1c9ac04b9115447a121b554",
-              "status": "ai-draft"
-            }
-          }
-        },
-        "lothlorien.message.lore.btn.request_active": {
-          "source": "Your task",
-          "context": {
-            "meaning": "Button in the main Loremaster form that opens the task the player has already accepted.",
-            "location": "lothlorien_rp: button of a Loremaster dialog form",
-            "trigger": "Player talks to the Loremaster elf.",
-            "tone": "Concise Minecraft UI",
-            "grammar": "Short imperative or first-person phrase, no final punctuation.",
-            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
-            "source_paths": [
-              "lothlorien_bp/scripts/loremaster.js",
-              "lothlorien_bp/scripts/renown_game.js"
-            ]
-          },
-          "placeholders": [],
-          "translations": {
-            "cs_CZ": {
-              "text": "Váš úkol",
-              "based_on": "4251235d5d2b73f55c4c45cfd1e11c3d567ce5585a8faec935314b2972909d89",
-              "status": "ai-draft"
-            },
-            "es_ES": {
-              "text": "Tu tarea",
-              "based_on": "4251235d5d2b73f55c4c45cfd1e11c3d567ce5585a8faec935314b2972909d89",
-              "status": "ai-draft"
-            },
-            "es_MX": {
-              "text": "Tu tarea",
-              "based_on": "4251235d5d2b73f55c4c45cfd1e11c3d567ce5585a8faec935314b2972909d89",
-              "status": "ai-draft"
-            },
-            "pt_PT": {
-              "text": "A tua tarefa",
-              "based_on": "4251235d5d2b73f55c4c45cfd1e11c3d567ce5585a8faec935314b2972909d89",
-              "status": "ai-draft"
-            },
-            "pt_BR": {
-              "text": "A tua tarefa",
-              "based_on": "4251235d5d2b73f55c4c45cfd1e11c3d567ce5585a8faec935314b2972909d89",
-              "status": "ai-draft"
-            },
-            "de_DE": {
-              "text": "Deine Aufgabe",
-              "based_on": "4251235d5d2b73f55c4c45cfd1e11c3d567ce5585a8faec935314b2972909d89",
-              "status": "ai-draft"
-            },
-            "fr_FR": {
-              "text": "Ta tâche",
-              "based_on": "4251235d5d2b73f55c4c45cfd1e11c3d567ce5585a8faec935314b2972909d89",
-              "status": "ai-draft"
-            },
-            "pl_PL": {
-              "text": "Twoje zadanie",
-              "based_on": "4251235d5d2b73f55c4c45cfd1e11c3d567ce5585a8faec935314b2972909d89",
               "status": "ai-draft"
             }
           }
@@ -14011,180 +13831,6 @@
             "pl_PL": {
               "text": "Nie teraz",
               "based_on": "5d97ef6d1845c39ad2bd4d11a4514fe766b95b20c8b044743e1a61c9d6c12fe3",
-              "status": "ai-draft"
-            }
-          }
-        },
-        "lothlorien.message.lore.btn.deliver": {
-          "source": "Deliver",
-          "context": {
-            "meaning": "Button on the active task screen: hand over the asked items (or confirm the planted saplings).",
-            "location": "lothlorien_rp: button of a Loremaster dialog form",
-            "trigger": "Player talks to the Loremaster elf.",
-            "tone": "Concise Minecraft UI",
-            "grammar": "Short imperative or first-person phrase, no final punctuation.",
-            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
-            "source_paths": [
-              "lothlorien_bp/scripts/loremaster.js",
-              "lothlorien_bp/scripts/renown_game.js"
-            ]
-          },
-          "placeholders": [],
-          "translations": {
-            "cs_CZ": {
-              "text": "Odevzdat",
-              "based_on": "55642e35c8abcea684b2809b6a0cd81ee79735072db881fd4d491df61b137ad0",
-              "status": "ai-draft"
-            },
-            "es_ES": {
-              "text": "Entregar",
-              "based_on": "55642e35c8abcea684b2809b6a0cd81ee79735072db881fd4d491df61b137ad0",
-              "status": "ai-draft"
-            },
-            "es_MX": {
-              "text": "Entregar",
-              "based_on": "55642e35c8abcea684b2809b6a0cd81ee79735072db881fd4d491df61b137ad0",
-              "status": "ai-draft"
-            },
-            "pt_PT": {
-              "text": "Entregar",
-              "based_on": "55642e35c8abcea684b2809b6a0cd81ee79735072db881fd4d491df61b137ad0",
-              "status": "ai-draft"
-            },
-            "pt_BR": {
-              "text": "Entregar",
-              "based_on": "55642e35c8abcea684b2809b6a0cd81ee79735072db881fd4d491df61b137ad0",
-              "status": "ai-draft"
-            },
-            "de_DE": {
-              "text": "Abgeben",
-              "based_on": "55642e35c8abcea684b2809b6a0cd81ee79735072db881fd4d491df61b137ad0",
-              "status": "ai-draft"
-            },
-            "fr_FR": {
-              "text": "Remettre",
-              "based_on": "55642e35c8abcea684b2809b6a0cd81ee79735072db881fd4d491df61b137ad0",
-              "status": "ai-draft"
-            },
-            "pl_PL": {
-              "text": "Oddaj",
-              "based_on": "55642e35c8abcea684b2809b6a0cd81ee79735072db881fd4d491df61b137ad0",
-              "status": "ai-draft"
-            }
-          }
-        },
-        "lothlorien.message.lore.btn.abandon": {
-          "source": "Abandon the task",
-          "context": {
-            "meaning": "Button on the active task screen: set the task aside.",
-            "location": "lothlorien_rp: button of a Loremaster dialog form",
-            "trigger": "Player talks to the Loremaster elf.",
-            "tone": "Concise Minecraft UI",
-            "grammar": "Short imperative or first-person phrase, no final punctuation.",
-            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
-            "source_paths": [
-              "lothlorien_bp/scripts/loremaster.js",
-              "lothlorien_bp/scripts/renown_game.js"
-            ]
-          },
-          "placeholders": [],
-          "translations": {
-            "cs_CZ": {
-              "text": "Vzdát se úkolu",
-              "based_on": "b13ad2cc495ef32b433e6f64bd9d011e38b59ec725d8e27cb1112d979772c661",
-              "status": "ai-draft"
-            },
-            "es_ES": {
-              "text": "Abandonar la tarea",
-              "based_on": "b13ad2cc495ef32b433e6f64bd9d011e38b59ec725d8e27cb1112d979772c661",
-              "status": "ai-draft"
-            },
-            "es_MX": {
-              "text": "Abandonar la tarea",
-              "based_on": "b13ad2cc495ef32b433e6f64bd9d011e38b59ec725d8e27cb1112d979772c661",
-              "status": "ai-draft"
-            },
-            "pt_PT": {
-              "text": "Abandonar a tarefa",
-              "based_on": "b13ad2cc495ef32b433e6f64bd9d011e38b59ec725d8e27cb1112d979772c661",
-              "status": "ai-draft"
-            },
-            "pt_BR": {
-              "text": "Abandonar a tarefa",
-              "based_on": "b13ad2cc495ef32b433e6f64bd9d011e38b59ec725d8e27cb1112d979772c661",
-              "status": "ai-draft"
-            },
-            "de_DE": {
-              "text": "Aufgabe aufgeben",
-              "based_on": "b13ad2cc495ef32b433e6f64bd9d011e38b59ec725d8e27cb1112d979772c661",
-              "status": "ai-draft"
-            },
-            "fr_FR": {
-              "text": "Abandonner la tâche",
-              "based_on": "b13ad2cc495ef32b433e6f64bd9d011e38b59ec725d8e27cb1112d979772c661",
-              "status": "ai-draft"
-            },
-            "pl_PL": {
-              "text": "Porzuć zadanie",
-              "based_on": "b13ad2cc495ef32b433e6f64bd9d011e38b59ec725d8e27cb1112d979772c661",
-              "status": "ai-draft"
-            }
-          }
-        },
-        "lothlorien.message.lore.btn.abandon_yes": {
-          "source": "Yes, abandon it",
-          "context": {
-            "meaning": "Confirmation button: really set the task aside.",
-            "location": "lothlorien_rp: button of a Loremaster dialog form",
-            "trigger": "Player talks to the Loremaster elf.",
-            "tone": "Concise Minecraft UI",
-            "grammar": "Short imperative or first-person phrase, no final punctuation.",
-            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
-            "source_paths": [
-              "lothlorien_bp/scripts/loremaster.js",
-              "lothlorien_bp/scripts/renown_game.js"
-            ]
-          },
-          "placeholders": [],
-          "translations": {
-            "cs_CZ": {
-              "text": "Ano, vzdát se",
-              "based_on": "5ee94f30f82495735b10f3db43c2ae248e8b100e4f061223d64ad94ff95d2a6c",
-              "status": "ai-draft"
-            },
-            "es_ES": {
-              "text": "Sí, abandonarla",
-              "based_on": "5ee94f30f82495735b10f3db43c2ae248e8b100e4f061223d64ad94ff95d2a6c",
-              "status": "ai-draft"
-            },
-            "es_MX": {
-              "text": "Sí, abandonarla",
-              "based_on": "5ee94f30f82495735b10f3db43c2ae248e8b100e4f061223d64ad94ff95d2a6c",
-              "status": "ai-draft"
-            },
-            "pt_PT": {
-              "text": "Sim, abandonar",
-              "based_on": "5ee94f30f82495735b10f3db43c2ae248e8b100e4f061223d64ad94ff95d2a6c",
-              "status": "ai-draft"
-            },
-            "pt_BR": {
-              "text": "Sim, abandonar",
-              "based_on": "5ee94f30f82495735b10f3db43c2ae248e8b100e4f061223d64ad94ff95d2a6c",
-              "status": "ai-draft"
-            },
-            "de_DE": {
-              "text": "Ja, aufgeben",
-              "based_on": "5ee94f30f82495735b10f3db43c2ae248e8b100e4f061223d64ad94ff95d2a6c",
-              "status": "ai-draft"
-            },
-            "fr_FR": {
-              "text": "Oui, l’abandonner",
-              "based_on": "5ee94f30f82495735b10f3db43c2ae248e8b100e4f061223d64ad94ff95d2a6c",
-              "status": "ai-draft"
-            },
-            "pl_PL": {
-              "text": "Tak, porzuć",
-              "based_on": "5ee94f30f82495735b10f3db43c2ae248e8b100e4f061223d64ad94ff95d2a6c",
               "status": "ai-draft"
             }
           }
@@ -15118,13 +14764,13 @@
           }
         },
         "lothlorien.message.lore.lesson.harmony.text": {
-          "source": "The forest weighs how you walk in it. Peaceful time among the trees mends your Harmony, while harming its creatures wounds it; the leaf shows where you stand. Those who keep the peace long become Friends of Lothlórien, and one wrong deed loses it again. Walk in peace in Lothlórien for several minutes, then tell me it is done.",
+          "source": "The forest weighs how you walk in it. Peaceful time among the trees mends your Harmony, while harming its creatures wounds it; the leaf shows where you stand. Those who keep the peace long become Friends of Lothlórien, and one wrong deed loses it again.",
           "context": {
-            "meaning": "Lesson 1 (chapter I, a deed lesson): Harmony, the standing with the forest from Hated to Friend. Peaceful time inside the forest raises it; harming the forest's creatures lowers it; the leaf icon on the action bar shows the band; a long peace makes the player a Friend of Lothlórien and any wrong deed loses it. No numbers: the player never sees Harmony numbers. The task: walk in peace in the forest for several minutes (Harmony reaches the required level) and press 'It is done'.",
+            "meaning": "Lesson Harmony of the forest (chapter I, Harmony). Peaceful time mends Harmony, harming creatures wounds it, the leaf shows the standing, Friends of Lothlorien lose it by one wrong deed. The task goal is shown separately.",
             "location": "lothlorien_rp: body of a lesson screen in the Loremaster dialog",
             "trigger": "Player opens a lesson in the Loremaster dialog.",
             "tone": "Formal, elven, Tolkien-flavoured but factual about the mod mechanics",
-            "grammar": "2 to 5 short sentences; the last one states the task or ends the teaching; no player gender.",
+            "grammar": "2 to 5 short sentences; the concrete goal is a separate message (lore.lesson.<id>.goal), not part of this text; no player gender.",
             "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
             "source_paths": [
               "lothlorien_bp/scripts/loremaster.js"
@@ -15133,43 +14779,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Les váží, jak v něm kráčíte. Pokojný čas mezi stromy hojí váš soulad, zatímco ubližování jeho tvorům jej raní; list ukazuje, kde stojíte. Kdo dlouho zachovává pokoj, získá Přízeň Lothlórienu a jediný zlý čin vás o ni připraví. Kráčejte v Lothlórienu několik minut v pokoji a pak mi řekněte, že je hotovo.",
-              "based_on": "09066481ddb782064a0efaf0c60a35fd7bdaaf6e6b1edd0caf6623c0950e2881",
+              "text": "Les váží, jak v něm kráčíte. Pokojný čas mezi stromy hojí váš soulad, zatímco ubližování jeho tvorům jej raní; list ukazuje, kde stojíte. Kdo dlouho zachovává pokoj, získá Přízeň Lothlórienu a jediný zlý čin vás o ni připraví.",
+              "based_on": "eb6fea84e6f02359e119ad4663cb3250d543d4d1d66de41c5bc9bcb97afdf66e",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "El bosque pesa cómo caminas por él. El tiempo en paz entre los árboles sana tu armonía, mientras que dañar a sus criaturas la hiere; la hoja muestra dónde estás. Quien guarda la paz mucho tiempo gana la Amistad de Lothlórien, y una sola mala acción la pierde de nuevo. Camina en paz por Lothlórien durante varios minutos y dime que está hecho.",
-              "based_on": "09066481ddb782064a0efaf0c60a35fd7bdaaf6e6b1edd0caf6623c0950e2881",
+              "text": "El bosque pesa cómo caminas por él. El tiempo en paz entre los árboles sana tu armonía, mientras que dañar a sus criaturas la hiere; la hoja muestra dónde estás. Quien guarda la paz mucho tiempo gana la Amistad de Lothlórien, y una sola mala acción la pierde de nuevo.",
+              "based_on": "eb6fea84e6f02359e119ad4663cb3250d543d4d1d66de41c5bc9bcb97afdf66e",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "El bosque pesa cómo caminas por él. El tiempo en paz entre los árboles sana tu armonía, mientras que dañar a sus criaturas la hiere; la hoja muestra dónde estás. Quien guarda la paz mucho tiempo gana la Amistad de Lothlórien, y una sola mala acción la pierde de nuevo. Camina en paz por Lothlórien durante varios minutos y dime que está hecho.",
-              "based_on": "09066481ddb782064a0efaf0c60a35fd7bdaaf6e6b1edd0caf6623c0950e2881",
+              "text": "El bosque pesa cómo caminas por él. El tiempo en paz entre los árboles sana tu armonía, mientras que dañar a sus criaturas la hiere; la hoja muestra dónde estás. Quien guarda la paz mucho tiempo gana la Amistad de Lothlórien, y una sola mala acción la pierde de nuevo.",
+              "based_on": "eb6fea84e6f02359e119ad4663cb3250d543d4d1d66de41c5bc9bcb97afdf66e",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "A floresta pesa a forma como nela caminhas. O tempo em paz entre as árvores cura a tua harmonia, enquanto ferir as suas criaturas a fere; a folha mostra onde estás. Quem mantém a paz durante muito tempo ganha a Amizade de Lothlórien, e um único ato mau perde-a de novo. Caminha em paz por Lothlórien durante vários minutos e diz-me que está feito.",
-              "based_on": "09066481ddb782064a0efaf0c60a35fd7bdaaf6e6b1edd0caf6623c0950e2881",
+              "text": "A floresta pesa a forma como nela caminhas. O tempo em paz entre as árvores cura a tua harmonia, enquanto ferir as suas criaturas a fere; a folha mostra onde estás. Quem mantém a paz durante muito tempo ganha a Amizade de Lothlórien, e um único ato mau perde-a de novo.",
+              "based_on": "eb6fea84e6f02359e119ad4663cb3250d543d4d1d66de41c5bc9bcb97afdf66e",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "A floresta pesa a forma como você caminha nela. O tempo em paz entre as árvores cura a sua harmonia, enquanto ferir as criaturas dela a fere; a folha mostra onde você está. Quem mantém a paz por muito tempo ganha a Amizade de Lothlórien, e um único ato mau a perde de novo. Caminhe em paz por Lothlórien por vários minutos e me diga que está feito.",
-              "based_on": "09066481ddb782064a0efaf0c60a35fd7bdaaf6e6b1edd0caf6623c0950e2881",
+              "text": "A floresta pesa a forma como você caminha nela. O tempo em paz entre as árvores cura a sua harmonia, enquanto ferir as criaturas dela a fere; a folha mostra onde você está. Quem mantém a paz por muito tempo ganha a Amizade de Lothlórien, e um único ato mau a perde de novo.",
+              "based_on": "eb6fea84e6f02359e119ad4663cb3250d543d4d1d66de41c5bc9bcb97afdf66e",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Der Wald wägt, wie du in ihm gehst. Friedliche Zeit unter den Bäumen heilt deine Harmonie, während das Verletzen seiner Geschöpfe sie verwundet; das Blatt zeigt, wo du stehst. Wer lange den Frieden wahrt, erlangt die Freundschaft mit Lothlórien, und eine einzige üble Tat verliert sie wieder. Wandle einige Minuten in Frieden durch Lothlórien und sag mir dann, es sei getan.",
-              "based_on": "09066481ddb782064a0efaf0c60a35fd7bdaaf6e6b1edd0caf6623c0950e2881",
+              "text": "Der Wald wägt, wie du in ihm gehst. Friedliche Zeit unter den Bäumen heilt deine Harmonie, während das Verletzen seiner Geschöpfe sie verwundet; das Blatt zeigt, wo du stehst. Wer lange den Frieden wahrt, erlangt die Freundschaft mit Lothlórien, und eine einzige üble Tat verliert sie wieder.",
+              "based_on": "eb6fea84e6f02359e119ad4663cb3250d543d4d1d66de41c5bc9bcb97afdf66e",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "La forêt pèse la manière dont tu y marches. Le temps paisible parmi les arbres soigne ton harmonie, tandis que blesser ses créatures la meurtrit ; la feuille montre où tu en es. Qui garde longtemps la paix gagne l’Amitié de Lothlórien, et un seul mauvais acte la perd de nouveau. Marche en paix dans Lothlórien pendant plusieurs minutes, puis dis-moi que c’est fait.",
-              "based_on": "09066481ddb782064a0efaf0c60a35fd7bdaaf6e6b1edd0caf6623c0950e2881",
+              "text": "La forêt pèse la manière dont tu y marches. Le temps paisible parmi les arbres soigne ton harmonie, tandis que blesser ses créatures la meurtrit ; la feuille montre où tu en es. Qui garde longtemps la paix gagne l’Amitié de Lothlórien, et un seul mauvais acte la perd de nouveau.",
+              "based_on": "eb6fea84e6f02359e119ad4663cb3250d543d4d1d66de41c5bc9bcb97afdf66e",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Las waży, jak w nim stąpasz. Spokojny czas wśród drzew leczy twoją harmonię, a krzywdzenie jego stworzeń ją rani; liść pokazuje, gdzie stoisz. Kto długo zachowuje pokój, zyskuje Przyjaźń Lothlórien, a jeden zły czyn znów ją odbiera. Idź w pokoju przez Lothlórien kilka minut i powiedz mi, że gotowe.",
-              "based_on": "09066481ddb782064a0efaf0c60a35fd7bdaaf6e6b1edd0caf6623c0950e2881",
+              "text": "Las waży, jak w nim stąpasz. Spokojny czas wśród drzew leczy twoją harmonię, a krzywdzenie jego stworzeń ją rani; liść pokazuje, gdzie stoisz. Kto długo zachowuje pokój, zyskuje Przyjaźń Lothlórien, a jeden zły czyn znów ją odbiera.",
+              "based_on": "eb6fea84e6f02359e119ad4663cb3250d543d4d1d66de41c5bc9bcb97afdf66e",
               "status": "ai-draft"
             }
           }
@@ -15460,13 +15106,13 @@
           }
         },
         "lothlorien.message.lore.lesson.dew.text": {
-          "source": "At first light the leaves weep silver. Dew gathers in the morning on leaf litter and blossoms that lie beneath Mallorn leaves. Use a glass bottle on each dewy patch, for every patch gives one drop and eight fill the bottle. Fill a bottle with morning dew.",
+          "source": "At first light the leaves weep silver. Dew gathers in the morning on leaf litter and blossoms that lie beneath Mallorn leaves. Fill a glass bottle from each dewy patch, for every patch gives one drop and eight fill the bottle.",
           "context": {
-            "meaning": "Lesson 4 (chapter I, deed): morning dew. At dawn dew gathers on leaf litter and blossoms lying under Mallorn leaves; using a glass bottle on a dewy patch gives one drop and the patch dries; eight drops fill the bottle. Deed: fill a Bottle of morning dew.",
+            "meaning": "Lesson Morning dew (chapter I, deed). At dawn dew gathers on leaf litter and blossoms under Mallorn leaves; a glass bottle used on a dewy patch gives one drop and the patch dries; eight drops fill the bottle. The task goal is shown separately.",
             "location": "lothlorien_rp: body of a lesson screen in the Loremaster dialog",
             "trigger": "Player opens a lesson in the Loremaster dialog.",
             "tone": "Formal, elven, Tolkien-flavoured but factual about the mod mechanics",
-            "grammar": "2 to 5 short sentences; the last one states the task or ends the teaching; no player gender.",
+            "grammar": "2 to 5 short sentences; the concrete goal is a separate message (lore.lesson.<id>.goal), not part of this text; no player gender.",
             "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
             "source_paths": [
               "lothlorien_bp/scripts/loremaster.js"
@@ -15475,43 +15121,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "S prvním světlem listy pláčí stříbrem. Ráno se rosa sbírá na listovém steli a květech, které leží pod listím mallornu. Použijte skleněnou láhev na každé orosené místo, neboť každé dá jednu kapku a osm jich láhev naplní. Naplňte láhev ranní rosou.",
-              "based_on": "15147445b6027803c9c8711d16fcfb6ebe9a2b2fec7e541f9c72e0b6c3801f26",
+              "text": "S prvním světlem listy pláčí stříbrem. Ráno se rosa sbírá na listovém steli a květech, které leží pod listím mallornu. Naplňte skleněnou láhev z každého oroseného místa, neboť každé dá jednu kapku a osm jich láhev naplní.",
+              "based_on": "3a95d350cc921e776f8d870905c6d0f2250ab0d809c957937f13a83c9c2202c0",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "Al primer rayo de luz las hojas lloran plata. Por la mañana el rocío se posa en la hojarasca y las flores que yacen bajo las hojas de mallorn. Usa una botella de cristal en cada lugar con rocío: cada uno da una gota y ocho llenan la botella. Llena una botella de rocío matinal.",
-              "based_on": "15147445b6027803c9c8711d16fcfb6ebe9a2b2fec7e541f9c72e0b6c3801f26",
+              "text": "Al primer rayo de luz las hojas lloran plata. Por la mañana el rocío se posa en la hojarasca y las flores que yacen bajo las hojas de mallorn. Llena una botella de cristal en cada lugar con rocío: cada uno da una gota y ocho llenan la botella.",
+              "based_on": "3a95d350cc921e776f8d870905c6d0f2250ab0d809c957937f13a83c9c2202c0",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "Al primer rayo de luz las hojas lloran plata. Por la mañana el rocío se posa en la hojarasca y las flores que yacen bajo las hojas de mallorn. Usa una botella de cristal en cada lugar con rocío: cada uno da una gota y ocho llenan la botella. Llena una botella de rocío matinal.",
-              "based_on": "15147445b6027803c9c8711d16fcfb6ebe9a2b2fec7e541f9c72e0b6c3801f26",
+              "text": "Al primer rayo de luz las hojas lloran plata. Por la mañana el rocío se posa en la hojarasca y las flores que yacen bajo las hojas de mallorn. Llena una botella de cristal en cada lugar con rocío: cada uno da una gota y ocho llenan la botella.",
+              "based_on": "3a95d350cc921e776f8d870905c6d0f2250ab0d809c957937f13a83c9c2202c0",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Ao primeiro raio de luz as folhas choram prata. De manhã o orvalho pousa na folhada e nas flores que jazem sob as folhas de mallorn. Usa uma garrafa de vidro em cada local com orvalho: cada um dá uma gota e oito enchem a garrafa. Enche uma garrafa de orvalho da manhã.",
-              "based_on": "15147445b6027803c9c8711d16fcfb6ebe9a2b2fec7e541f9c72e0b6c3801f26",
+              "text": "Ao primeiro raio de luz as folhas choram prata. De manhã o orvalho pousa na folhada e nas flores que jazem sob as folhas de mallorn. Enche uma garrafa de vidro em cada local com orvalho: cada um dá uma gota e oito enchem a garrafa.",
+              "based_on": "3a95d350cc921e776f8d870905c6d0f2250ab0d809c957937f13a83c9c2202c0",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Ao primeiro raio de luz as folhas choram prata. De manhã o orvalho pousa na folhada e nas flores que jazem sob as folhas de mallorn. Use uma garrafa de vidro em cada local com orvalho: cada um dá uma gota e oito enchem a garrafa. Encha uma garrafa de orvalho da manhã.",
-              "based_on": "15147445b6027803c9c8711d16fcfb6ebe9a2b2fec7e541f9c72e0b6c3801f26",
+              "text": "Ao primeiro raio de luz as folhas choram prata. De manhã o orvalho pousa na folhada e nas flores que jazem sob as folhas de mallorn. Encha uma garrafa de vidro em cada local com orvalho: cada um dá uma gota e oito enchem a garrafa.",
+              "based_on": "3a95d350cc921e776f8d870905c6d0f2250ab0d809c957937f13a83c9c2202c0",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Im ersten Licht weinen die Blätter Silber. Am Morgen sammelt sich Tau auf Laubstreu und Blüten, die unter Mallornlaub liegen. Benutze eine Glasflasche an jeder betauten Stelle, denn jede gibt einen Tropfen, und acht füllen die Flasche. Fülle eine Flasche mit Morgentau.",
-              "based_on": "15147445b6027803c9c8711d16fcfb6ebe9a2b2fec7e541f9c72e0b6c3801f26",
+              "text": "Im ersten Licht weinen die Blätter Silber. Am Morgen sammelt sich Tau auf Laubstreu und Blüten, die unter Mallornlaub liegen. Fülle eine Glasflasche an jeder betauten Stelle, denn jede gibt einen Tropfen, und acht füllen die Flasche.",
+              "based_on": "3a95d350cc921e776f8d870905c6d0f2250ab0d809c957937f13a83c9c2202c0",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "À la première lueur, les feuilles pleurent de l’argent. Le matin, la rosée se dépose sur la litière de feuilles et les fleurs qui gisent sous les feuilles de mallorn. Utilise une bouteille en verre sur chaque endroit couvert de rosée : chacun donne une goutte, et huit remplissent la bouteille. Remplis une bouteille de rosée matinale.",
-              "based_on": "15147445b6027803c9c8711d16fcfb6ebe9a2b2fec7e541f9c72e0b6c3801f26",
+              "text": "À la première lueur, les feuilles pleurent de l’argent. Le matin, la rosée se dépose sur la litière de feuilles et les fleurs qui gisent sous les feuilles de mallorn. Remplis une bouteille en verre à chaque endroit couvert de rosée : chacun donne une goutte, et huit remplissent la bouteille.",
+              "based_on": "3a95d350cc921e776f8d870905c6d0f2250ab0d809c957937f13a83c9c2202c0",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "O pierwszym świetle liście płaczą srebrem. Rankiem rosa osiada na ściółce z liści i kwiatach leżących pod liśćmi mallornu. Użyj szklanej butelki na każdym oszronionym miejscu: każde daje jedną kroplę, a osiem napełnia butelkę. Napełnij butelkę poranną rosą.",
-              "based_on": "15147445b6027803c9c8711d16fcfb6ebe9a2b2fec7e541f9c72e0b6c3801f26",
+              "text": "O pierwszym świetle liście płaczą srebrem. Rankiem rosa osiada na ściółce z liści i kwiatach leżących pod liśćmi mallornu. Napełnij szklaną butelkę przy każdym oszronionym miejscu: każde daje jedną kroplę, a osiem napełnia butelkę.",
+              "based_on": "3a95d350cc921e776f8d870905c6d0f2250ab0d809c957937f13a83c9c2202c0",
               "status": "ai-draft"
             }
           }
@@ -15574,13 +15220,13 @@
           }
         },
         "lothlorien.message.lore.lesson.nectar.text": {
-          "source": "Nectar blooms hang beneath the Mallorn leaves and fill in four stages. Use a glass bottle on a full bloom, and the bloom begins to fill again. Fill a bottle with Mallorn nectar.",
+          "source": "Nectar blooms hang beneath the Mallorn leaves and fill in four stages. Fill a glass bottle from a full bloom, and the bloom begins to fill again.",
           "context": {
-            "meaning": "Lesson 5 (chapter I, deed): nectar blooms hang beneath Mallorn leaves and fill in four stages; a glass bottle on a full bloom gives Mallorn nectar and empties the bloom. Deed: bottle Mallorn nectar.",
+            "meaning": "Lesson Mallorn nectar (chapter I, deed). Nectar blooms hang under Mallorn leaves and fill in four stages; a glass bottle used on a full bloom gives nectar and the bloom fills again. The task goal is shown separately.",
             "location": "lothlorien_rp: body of a lesson screen in the Loremaster dialog",
             "trigger": "Player opens a lesson in the Loremaster dialog.",
             "tone": "Formal, elven, Tolkien-flavoured but factual about the mod mechanics",
-            "grammar": "2 to 5 short sentences; the last one states the task or ends the teaching; no player gender.",
+            "grammar": "2 to 5 short sentences; the concrete goal is a separate message (lore.lesson.<id>.goal), not part of this text; no player gender.",
             "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
             "source_paths": [
               "lothlorien_bp/scripts/loremaster.js"
@@ -15589,43 +15235,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Nektarové květy visí pod listím mallornu a plní se ve čtyřech stupních. Použijte skleněnou láhev na plný květ a ten se začne plnit znovu. Naplňte láhev nektarem mallornu.",
-              "based_on": "dccfc8fccb60f945e5f2c4223756194fec3211e50a2933e9efb538e615804c5a",
+              "text": "Nektarové květy visí pod listím mallornu a plní se ve čtyřech stupních. Naplňte skleněnou láhev z plného květu a ten se začne plnit znovu.",
+              "based_on": "e2df42e4b9f9382d18fef81a980a1c97a70e4e196eecb11f0e0ed49d5a0762d6",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "Las flores de néctar cuelgan bajo las hojas de mallorn y se llenan en cuatro etapas. Usa una botella de cristal en una flor llena y la flor empezará a llenarse de nuevo. Llena una botella de néctar de mallorn.",
-              "based_on": "dccfc8fccb60f945e5f2c4223756194fec3211e50a2933e9efb538e615804c5a",
+              "text": "Las flores de néctar cuelgan bajo las hojas de mallorn y se llenan en cuatro etapas. Llena una botella de cristal de una flor llena y la flor empezará a llenarse de nuevo.",
+              "based_on": "e2df42e4b9f9382d18fef81a980a1c97a70e4e196eecb11f0e0ed49d5a0762d6",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "Las flores de néctar cuelgan bajo las hojas de mallorn y se llenan en cuatro etapas. Usa una botella de cristal en una flor llena y la flor empezará a llenarse de nuevo. Llena una botella de néctar de mallorn.",
-              "based_on": "dccfc8fccb60f945e5f2c4223756194fec3211e50a2933e9efb538e615804c5a",
+              "text": "Las flores de néctar cuelgan bajo las hojas de mallorn y se llenan en cuatro etapas. Llena una botella de cristal de una flor llena y la flor empezará a llenarse de nuevo.",
+              "based_on": "e2df42e4b9f9382d18fef81a980a1c97a70e4e196eecb11f0e0ed49d5a0762d6",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "As flores de néctar pendem sob as folhas de mallorn e enchem-se em quatro etapas. Usa uma garrafa de vidro numa flor cheia e a flor começa a encher-se de novo. Enche uma garrafa de néctar de mallorn.",
-              "based_on": "dccfc8fccb60f945e5f2c4223756194fec3211e50a2933e9efb538e615804c5a",
+              "text": "As flores de néctar pendem sob as folhas de mallorn e enchem-se em quatro etapas. Enche uma garrafa de vidro numa flor cheia e a flor começa a encher-se de novo.",
+              "based_on": "e2df42e4b9f9382d18fef81a980a1c97a70e4e196eecb11f0e0ed49d5a0762d6",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "As flores de néctar pendem sob as folhas de mallorn e se enchem em quatro etapas. Use uma garrafa de vidro numa flor cheia e a flor começa a se encher de novo. Encha uma garrafa de néctar de mallorn.",
-              "based_on": "dccfc8fccb60f945e5f2c4223756194fec3211e50a2933e9efb538e615804c5a",
+              "text": "As flores de néctar pendem sob as folhas de mallorn e se enchem em quatro etapas. Encha uma garrafa de vidro numa flor cheia e a flor começa a se encher de novo.",
+              "based_on": "e2df42e4b9f9382d18fef81a980a1c97a70e4e196eecb11f0e0ed49d5a0762d6",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Nektarblüten hängen unter dem Mallornlaub und füllen sich in vier Stufen. Benutze eine Glasflasche an einer vollen Blüte, und die Blüte beginnt sich neu zu füllen. Fülle eine Flasche mit Mallornnektar.",
-              "based_on": "dccfc8fccb60f945e5f2c4223756194fec3211e50a2933e9efb538e615804c5a",
+              "text": "Nektarblüten hängen unter dem Mallornlaub und füllen sich in vier Stufen. Fülle eine Glasflasche an einer vollen Blüte, und die Blüte beginnt sich neu zu füllen.",
+              "based_on": "e2df42e4b9f9382d18fef81a980a1c97a70e4e196eecb11f0e0ed49d5a0762d6",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Les fleurs de nectar pendent sous les feuilles de mallorn et se remplissent en quatre étapes. Utilise une bouteille en verre sur une fleur pleine, et la fleur recommence à se remplir. Remplis une bouteille de nectar de mallorn.",
-              "based_on": "dccfc8fccb60f945e5f2c4223756194fec3211e50a2933e9efb538e615804c5a",
+              "text": "Les fleurs de nectar pendent sous les feuilles de mallorn et se remplissent en quatre étapes. Remplis une bouteille en verre sur une fleur pleine, et la fleur recommence à se remplir.",
+              "based_on": "e2df42e4b9f9382d18fef81a980a1c97a70e4e196eecb11f0e0ed49d5a0762d6",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Kwiaty nektaru zwisają pod liśćmi mallornu i napełniają się w czterech etapach. Użyj szklanej butelki na pełnym kwiecie, a kwiat zacznie napełniać się od nowa. Napełnij butelkę nektarem mallornu.",
-              "based_on": "dccfc8fccb60f945e5f2c4223756194fec3211e50a2933e9efb538e615804c5a",
+              "text": "Kwiaty nektaru zwisają pod liśćmi mallornu i napełniają się w czterech etapach. Napełnij szklaną butelkę z pełnego kwiatu, a kwiat zacznie napełniać się od nowa.",
+              "based_on": "e2df42e4b9f9382d18fef81a980a1c97a70e4e196eecb11f0e0ed49d5a0762d6",
               "status": "ai-draft"
             }
           }
@@ -15802,13 +15448,13 @@
           }
         },
         "lothlorien.message.lore.lesson.lembas.text": {
-          "source": "Plant Western Corn and gather its grain. Mix the grain with sugar to make dough; bake the dough, then wrap the cake in a Mallorn leaf. Wrapped Lembas feeds well and lifts Hunger, the food for a long road. Eat a wrapped Lembas.",
+          "source": "Plant Western Corn and gather its grain. Mix the grain with sugar to make dough; bake the dough, then wrap the cake in a Mallorn leaf. Wrapped Lembas feeds well and lifts Hunger, the food for a long road.",
           "context": {
-            "meaning": "Lesson 7 (chapter II, deed): Lembas. Plant Western Corn and gather its grain; mix the grain with sugar to make dough; bake the dough to a cake; wrap the cake in a Mallorn leaf to make wrapped Lembas, which lifts the Hunger effect when eaten. No item counts in the text. Deed: eat wrapped Lembas.",
+            "meaning": "Lesson Lembas (chapter II, deed). Plant Western Corn, make dough with sugar, bake, wrap in a Mallorn leaf; wrapped Lembas feeds well and lifts Hunger. The task goal is shown separately.",
             "location": "lothlorien_rp: body of a lesson screen in the Loremaster dialog",
             "trigger": "Player opens a lesson in the Loremaster dialog.",
             "tone": "Formal, elven, Tolkien-flavoured but factual about the mod mechanics",
-            "grammar": "2 to 5 short sentences; the last one states the task or ends the teaching; no player gender.",
+            "grammar": "2 to 5 short sentences; the concrete goal is a separate message (lore.lesson.<id>.goal), not part of this text; no player gender.",
             "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
             "source_paths": [
               "lothlorien_bp/scripts/loremaster.js"
@@ -15817,43 +15463,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Zasaďte západní obilí a sklízejte jeho zrní. Smíchejte zrní s cukrem na těsto; těsto upečte a pak koláč zabalte do listu mallornu. Zabalený lembas dobře sytí a zahání Hlad, je to pokrm na dlouhou cestu. Snězte zabalený lembas.",
-              "based_on": "82e3b945d919120f90f31bef6a4cb61a50d4877efcfb7b7d654cbe0052e6f80e",
+              "text": "Zasaďte západní obilí a sklízejte jeho zrní. Smíchejte zrní s cukrem na těsto; těsto upečte a pak koláč zabalte do listu mallornu. Zabalený lembas dobře sytí a zahání Hlad, je to pokrm na dlouhou cestu.",
+              "based_on": "f12c6cff0141fb6a4e62d26d758637ca3a01c478ef5d0665bd6e8dd3055206b0",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "Planta cereal del Oeste y recoge su grano. Mezcla el grano con azúcar para hacer masa; hornea la masa y envuelve el pastel en una hoja de mallorn. El lembas envuelto alimenta bien y quita el Hambre: la comida para un largo camino. Come un lembas envuelto.",
-              "based_on": "82e3b945d919120f90f31bef6a4cb61a50d4877efcfb7b7d654cbe0052e6f80e",
+              "text": "Planta cereal del Oeste y recoge su grano. Mezcla el grano con azúcar para hacer masa; hornea la masa y envuelve el pastel en una hoja de mallorn. El lembas envuelto alimenta bien y quita el Hambre: la comida para un largo camino.",
+              "based_on": "f12c6cff0141fb6a4e62d26d758637ca3a01c478ef5d0665bd6e8dd3055206b0",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "Planta cereal del Oeste y recoge su grano. Mezcla el grano con azúcar para hacer masa; hornea la masa y envuelve el pastel en una hoja de mallorn. El lembas envuelto alimenta bien y quita el Hambre: la comida para un largo camino. Come un lembas envuelto.",
-              "based_on": "82e3b945d919120f90f31bef6a4cb61a50d4877efcfb7b7d654cbe0052e6f80e",
+              "text": "Planta cereal del Oeste y recoge su grano. Mezcla el grano con azúcar para hacer masa; hornea la masa y envuelve el pastel en una hoja de mallorn. El lembas envuelto alimenta bien y quita el Hambre: la comida para un largo camino.",
+              "based_on": "f12c6cff0141fb6a4e62d26d758637ca3a01c478ef5d0665bd6e8dd3055206b0",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Planta cereal do Oeste e colhe o seu grão. Mistura o grão com açúcar para fazer massa; coze a massa e embrulha o bolo numa folha de mallorn. O lembas embrulhado alimenta bem e tira a Fome: a comida para um longo caminho. Come um lembas embrulhado.",
-              "based_on": "82e3b945d919120f90f31bef6a4cb61a50d4877efcfb7b7d654cbe0052e6f80e",
+              "text": "Planta cereal do Oeste e colhe o seu grão. Mistura o grão com açúcar para fazer massa; coze a massa e embrulha o bolo numa folha de mallorn. O lembas embrulhado alimenta bem e tira a Fome: a comida para um longo caminho.",
+              "based_on": "f12c6cff0141fb6a4e62d26d758637ca3a01c478ef5d0665bd6e8dd3055206b0",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Plante cereal do Oeste e colha o seu grão. Misture o grão com açúcar para fazer massa; asse a massa e embrulhe o bolo numa folha de mallorn. O lembas embrulhado alimenta bem e tira a Fome: a comida para um longo caminho. Coma um lembas embrulhado.",
-              "based_on": "82e3b945d919120f90f31bef6a4cb61a50d4877efcfb7b7d654cbe0052e6f80e",
+              "text": "Plante cereal do Oeste e colha o seu grão. Misture o grão com açúcar para fazer massa; asse a massa e embrulhe o bolo numa folha de mallorn. O lembas embrulhado alimenta bem e tira a Fome: a comida para um longo caminho.",
+              "based_on": "f12c6cff0141fb6a4e62d26d758637ca3a01c478ef5d0665bd6e8dd3055206b0",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Pflanze das westliche Getreide und sammle seine Körner. Mische die Körner mit Zucker zu Teig; backe den Teig und wickle den Kuchen dann in ein Mallornblatt. Eingewickeltes Lembas sättigt gut und nimmt den Hunger, die Speise für einen langen Weg. Iss ein eingewickeltes Lembas.",
-              "based_on": "82e3b945d919120f90f31bef6a4cb61a50d4877efcfb7b7d654cbe0052e6f80e",
+              "text": "Pflanze das westliche Getreide und sammle seine Körner. Mische die Körner mit Zucker zu Teig; backe den Teig und wickle den Kuchen dann in ein Mallornblatt. Eingewickeltes Lembas sättigt gut und nimmt den Hunger, die Speise für einen langen Weg.",
+              "based_on": "f12c6cff0141fb6a4e62d26d758637ca3a01c478ef5d0665bd6e8dd3055206b0",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Plante la céréale de l’Ouest et récolte ses grains. Mélange les grains avec du sucre pour faire de la pâte ; cuis la pâte, puis enveloppe le gâteau dans une feuille de mallorn. Le lembas enveloppé nourrit bien et lève la Faim : la nourriture d’une longue route. Mange un lembas enveloppé.",
-              "based_on": "82e3b945d919120f90f31bef6a4cb61a50d4877efcfb7b7d654cbe0052e6f80e",
+              "text": "Plante la céréale de l’Ouest et récolte ses grains. Mélange les grains avec du sucre pour faire de la pâte ; cuis la pâte, puis enveloppe le gâteau dans une feuille de mallorn. Le lembas enveloppé nourrit bien et lève la Faim : la nourriture d’une longue route.",
+              "based_on": "f12c6cff0141fb6a4e62d26d758637ca3a01c478ef5d0665bd6e8dd3055206b0",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Zasadź zboże Zachodu i zbieraj jego ziarno. Wymieszaj ziarno z cukrem na ciasto; upiecz je, a potem owiń placek w liść mallornu. Owinięty lembas syci i usuwa Głód, to strawa na długą drogę. Zjedz owinięty lembas.",
-              "based_on": "82e3b945d919120f90f31bef6a4cb61a50d4877efcfb7b7d654cbe0052e6f80e",
+              "text": "Zasadź zboże Zachodu i zbieraj jego ziarno. Wymieszaj ziarno z cukrem na ciasto; upiecz je, a potem owiń placek w liść mallornu. Owinięty lembas syci i usuwa Głód, to strawa na długą drogę.",
+              "based_on": "f12c6cff0141fb6a4e62d26d758637ca3a01c478ef5d0665bd6e8dd3055206b0",
               "status": "ai-draft"
             }
           }
@@ -15916,13 +15562,13 @@
           }
         },
         "lothlorien.message.lore.lesson.fireflies.text": {
-          "source": "After dusk, fireflies drift above the grass of the wood. Catch one with a glass bottle: a small light to carry, or to give to the lamplighter. Catch a firefly in a bottle.",
+          "source": "After dusk, fireflies drift above the grass of the wood. A firefly in a bottle is a small light to carry, or a gift for the lamplighter.",
           "context": {
-            "meaning": "Lesson 8 (chapter II, deed): fireflies appear at night (low light) above the grass of the forest; using a glass bottle on one catches it and gives a Bottle of Fireflies. Deed: catch a firefly in a bottle.",
+            "meaning": "Lesson Fireflies (chapter II, deed). Fireflies drift above the grass after dusk; one caught in a glass bottle is a small light to carry or a gift for the lamplighter. The task goal is shown separately.",
             "location": "lothlorien_rp: body of a lesson screen in the Loremaster dialog",
             "trigger": "Player opens a lesson in the Loremaster dialog.",
             "tone": "Formal, elven, Tolkien-flavoured but factual about the mod mechanics",
-            "grammar": "2 to 5 short sentences; the last one states the task or ends the teaching; no player gender.",
+            "grammar": "2 to 5 short sentences; the concrete goal is a separate message (lore.lesson.<id>.goal), not part of this text; no player gender.",
             "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
             "source_paths": [
               "lothlorien_bp/scripts/loremaster.js"
@@ -15931,43 +15577,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Po soumraku se nad lesní trávou vznášejí světlušky. Chyťte jednu do skleněné láhve: malé světlo k nošení nebo k předání lampáři. Chyťte světlušku do láhve.",
-              "based_on": "dafe9886b4268f5f014d57ec56342e9e7aeb0a1e4a1b966e87f4684520e6ffb5",
+              "text": "Po soumraku se nad lesní trávou vznášejí světlušky. Světluška v láhvi je malé světlo k nošení nebo dar pro lampáře.",
+              "based_on": "590f4e7ec61a8b3014dbae0e2c8a0b875aa00e39746f28d77a34dd502f70049a",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "Tras el anochecer, las luciérnagas flotan sobre la hierba del bosque. Atrapa una con una botella de cristal: una pequeña luz para llevar o para dar al farolero. Atrapa una luciérnaga en una botella.",
-              "based_on": "dafe9886b4268f5f014d57ec56342e9e7aeb0a1e4a1b966e87f4684520e6ffb5",
+              "text": "Tras el anochecer, las luciérnagas flotan sobre la hierba del bosque. Una luciérnaga en una botella es una pequeña luz para llevar o un regalo para el farolero.",
+              "based_on": "590f4e7ec61a8b3014dbae0e2c8a0b875aa00e39746f28d77a34dd502f70049a",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "Tras el anochecer, las luciérnagas flotan sobre la hierba del bosque. Atrapa una con una botella de cristal: una pequeña luz para llevar o para dar al farolero. Atrapa una luciérnaga en una botella.",
-              "based_on": "dafe9886b4268f5f014d57ec56342e9e7aeb0a1e4a1b966e87f4684520e6ffb5",
+              "text": "Tras el anochecer, las luciérnagas flotan sobre la hierba del bosque. Una luciérnaga en una botella es una pequeña luz para llevar o un regalo para el farolero.",
+              "based_on": "590f4e7ec61a8b3014dbae0e2c8a0b875aa00e39746f28d77a34dd502f70049a",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Depois do anoitecer, os pirilampos flutuam sobre a erva da floresta. Apanha um com uma garrafa de vidro: uma pequena luz para levar ou para dar ao acendedor de lampiões. Apanha um pirilampo numa garrafa.",
-              "based_on": "dafe9886b4268f5f014d57ec56342e9e7aeb0a1e4a1b966e87f4684520e6ffb5",
+              "text": "Depois do anoitecer, os pirilampos flutuam sobre a erva da floresta. Um pirilampo numa garrafa é uma pequena luz para levar ou uma oferta para o acendedor de lampiões.",
+              "based_on": "590f4e7ec61a8b3014dbae0e2c8a0b875aa00e39746f28d77a34dd502f70049a",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Depois do anoitecer, os vaga-lumes flutuam sobre a grama da floresta. Capture um com uma garrafa de vidro: uma pequena luz para levar ou para dar ao acendedor de lampiões. Capture um vaga-lume numa garrafa.",
-              "based_on": "dafe9886b4268f5f014d57ec56342e9e7aeb0a1e4a1b966e87f4684520e6ffb5",
+              "text": "Depois do anoitecer, os vaga-lumes flutuam sobre a grama da floresta. Um vaga-lume numa garrafa é uma pequena luz para levar ou um presente para o acendedor de lampiões.",
+              "based_on": "590f4e7ec61a8b3014dbae0e2c8a0b875aa00e39746f28d77a34dd502f70049a",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Nach der Dämmerung schweben Glühwürmchen über dem Gras des Waldes. Fange eines mit einer Glasflasche: ein kleines Licht zum Tragen oder für den Laternenanzünder. Fange ein Glühwürmchen in einer Flasche.",
-              "based_on": "dafe9886b4268f5f014d57ec56342e9e7aeb0a1e4a1b966e87f4684520e6ffb5",
+              "text": "Nach der Dämmerung schweben Glühwürmchen über dem Gras des Waldes. Ein Glühwürmchen in der Flasche ist ein kleines Licht zum Tragen oder ein Geschenk für den Laternenanzünder.",
+              "based_on": "590f4e7ec61a8b3014dbae0e2c8a0b875aa00e39746f28d77a34dd502f70049a",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Après le crépuscule, les lucioles flottent au-dessus de l’herbe de la forêt. Attrape-en une avec une bouteille en verre : une petite lumière à porter ou à donner à l’allumeur de lanternes. Attrape une luciole dans une bouteille.",
-              "based_on": "dafe9886b4268f5f014d57ec56342e9e7aeb0a1e4a1b966e87f4684520e6ffb5",
+              "text": "Après le crépuscule, les lucioles flottent au-dessus de l’herbe de la forêt. Une luciole en bouteille est une petite lumière à porter, ou un présent pour l’allumeur de lanternes.",
+              "based_on": "590f4e7ec61a8b3014dbae0e2c8a0b875aa00e39746f28d77a34dd502f70049a",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Po zmroku świetliki unoszą się nad trawą lasu. Złap jednego szklaną butelką: małe światło do noszenia lub dla latarnika. Złap świetlika do butelki.",
-              "based_on": "dafe9886b4268f5f014d57ec56342e9e7aeb0a1e4a1b966e87f4684520e6ffb5",
+              "text": "Po zmroku świetliki unoszą się nad trawą lasu. Świetlik w butelce to małe światło do noszenia lub dar dla latarnika.",
+              "based_on": "590f4e7ec61a8b3014dbae0e2c8a0b875aa00e39746f28d77a34dd502f70049a",
               "status": "ai-draft"
             }
           }
@@ -16030,13 +15676,13 @@
           }
         },
         "lothlorien.message.lore.lesson.rope.text": {
-          "source": "Elven rope is made of morning dew and a golden fern, and a whole dawn of gathering goes into one. Use it on the side of a block, and it runs the whole way down or up if you have enough of it; if not, it can be lengthened later. It can be climbed. Hang an elven rope.",
+          "source": "Elven rope is made of morning dew and a golden fern, and a whole dawn of gathering goes into one. Use it on the side of a block, and it runs the whole way down or up if you have enough of it; if not, it can be lengthened later. It can be climbed.",
           "context": {
-            "meaning": "Lesson 9 (chapter II, deed): Elven rope is crafted from one Bottle of morning dew and a golden fern (the dew takes a whole dawn to gather). Used on the side of a block it runs all the way down or up when the player has enough rope, otherwise it can be lengthened later; it can be climbed. Deed: hang an elven rope.",
+            "meaning": "Lesson Elven rope (chapter II, deed). Made of morning dew and a golden fern; used on the side of a block it runs down or up as far as it reaches and can be lengthened later; it can be climbed. The task goal is shown separately.",
             "location": "lothlorien_rp: body of a lesson screen in the Loremaster dialog",
             "trigger": "Player opens a lesson in the Loremaster dialog.",
             "tone": "Formal, elven, Tolkien-flavoured but factual about the mod mechanics",
-            "grammar": "2 to 5 short sentences; the last one states the task or ends the teaching; no player gender.",
+            "grammar": "2 to 5 short sentences; the concrete goal is a separate message (lore.lesson.<id>.goal), not part of this text; no player gender.",
             "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
             "source_paths": [
               "lothlorien_bp/scripts/loremaster.js"
@@ -16045,43 +15691,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Elfí lano se dělá z ranní rosy a zlatého kapradí a do jednoho jde celé jitro sbírání. Použijte je na stranu bloku a rozvine se celou cestu dolů či nahoru, máte-li ho dost; pokud ne, lze ho později prodloužit. Dá se po něm šplhat. Zavěste elfí lano.",
-              "based_on": "23ac390652f724b76f0dd4c14a3d4d3720f6c8be50f6a053738b6b6844d92aaf",
+              "text": "Elfí lano se dělá z ranní rosy a zlatého kapradí a do jednoho jde celé jitro sbírání. Použijte je na stranu bloku a rozvine se celou cestu dolů či nahoru, máte-li ho dost; pokud ne, lze ho později prodloužit. Dá se po něm šplhat.",
+              "based_on": "77d2dcf5fd9101ead7b0f954acbcfda656fe531fc2dfa14a639fe85ed3a7d382",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "La cuerda élfica se hace con rocío matinal y un helecho dorado, y en una cabe todo un amanecer de recolección. Úsala en el lado de un bloque y se extiende hasta el final hacia abajo o hacia arriba si tienes bastante; si no, se puede alargar después. Se puede trepar. Cuelga una cuerda élfica.",
-              "based_on": "23ac390652f724b76f0dd4c14a3d4d3720f6c8be50f6a053738b6b6844d92aaf",
+              "text": "La cuerda élfica se hace con rocío matinal y un helecho dorado, y en una cabe todo un amanecer de recolección. Úsala en el lado de un bloque y se extiende hasta el final hacia abajo o hacia arriba si tienes bastante; si no, se puede alargar después. Se puede trepar.",
+              "based_on": "77d2dcf5fd9101ead7b0f954acbcfda656fe531fc2dfa14a639fe85ed3a7d382",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "La cuerda élfica se hace con rocío matinal y un helecho dorado, y en una cabe todo un amanecer de recolección. Úsala en el lado de un bloque y se extiende hasta el final hacia abajo o hacia arriba si tienes bastante; si no, se puede alargar después. Se puede trepar. Cuelga una cuerda élfica.",
-              "based_on": "23ac390652f724b76f0dd4c14a3d4d3720f6c8be50f6a053738b6b6844d92aaf",
+              "text": "La cuerda élfica se hace con rocío matinal y un helecho dorado, y en una cabe todo un amanecer de recolección. Úsala en el lado de un bloque y se extiende hasta el final hacia abajo o hacia arriba si tienes bastante; si no, se puede alargar después. Se puede trepar.",
+              "based_on": "77d2dcf5fd9101ead7b0f954acbcfda656fe531fc2dfa14a639fe85ed3a7d382",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "A corda élfica faz-se com orvalho da manhã e um feto dourado, e numa cabe todo um amanhecer de recolha. Usa-a no lado de um bloco e ela estende-se por todo o caminho, para baixo ou para cima, se tiveres o suficiente; se não, pode ser alongada depois. Pode ser escalada. Pendura uma corda élfica.",
-              "based_on": "23ac390652f724b76f0dd4c14a3d4d3720f6c8be50f6a053738b6b6844d92aaf",
+              "text": "A corda élfica faz-se com orvalho da manhã e um feto dourado, e numa cabe todo um amanhecer de recolha. Usa-a no lado de um bloco e ela estende-se por todo o caminho, para baixo ou para cima, se tiveres o suficiente; se não, pode ser alongada depois. Pode ser escalada.",
+              "based_on": "77d2dcf5fd9101ead7b0f954acbcfda656fe531fc2dfa14a639fe85ed3a7d382",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "A corda élfica é feita de orvalho da manhã e uma samambaia dourada, e numa cabe todo um amanhecer de coleta. Use-a no lado de um bloco e ela se estende por todo o caminho, para baixo ou para cima, se você tiver o suficiente; se não, ela pode ser alongada depois. Pode ser escalada. Pendure uma corda élfica.",
-              "based_on": "23ac390652f724b76f0dd4c14a3d4d3720f6c8be50f6a053738b6b6844d92aaf",
+              "text": "A corda élfica é feita de orvalho da manhã e uma samambaia dourada, e numa cabe todo um amanhecer de coleta. Use-a no lado de um bloco e ela se estende por todo o caminho, para baixo ou para cima, se você tiver o suficiente; se não, ela pode ser alongada depois. Pode ser escalada.",
+              "based_on": "77d2dcf5fd9101ead7b0f954acbcfda656fe531fc2dfa14a639fe85ed3a7d382",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Das Elbenseil wird aus Morgentau und einem Goldenen Farn gemacht, und in eines geht ein ganzer Morgen des Sammelns. Benutze es an der Seite eines Blocks, und es reicht ganz hinab oder hinauf, wenn du genug davon hast; wenn nicht, lässt es sich später verlängern. Man kann daran klettern. Hänge ein Elbenseil auf.",
-              "based_on": "23ac390652f724b76f0dd4c14a3d4d3720f6c8be50f6a053738b6b6844d92aaf",
+              "text": "Das Elbenseil wird aus Morgentau und einem Goldenen Farn gemacht, und in eines geht ein ganzer Morgen des Sammelns. Benutze es an der Seite eines Blocks, und es reicht ganz hinab oder hinauf, wenn du genug davon hast; wenn nicht, lässt es sich später verlängern. Man kann daran klettern.",
+              "based_on": "77d2dcf5fd9101ead7b0f954acbcfda656fe531fc2dfa14a639fe85ed3a7d382",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "La corde elfique se fait avec de la rosée matinale et une fougère dorée, et une seule demande toute une aube de récolte. Utilise-la sur le côté d’un bloc, et elle court jusqu’au bout vers le bas ou le haut si tu en as assez ; sinon, on peut l’allonger plus tard. On peut y grimper. Accroche une corde elfique.",
-              "based_on": "23ac390652f724b76f0dd4c14a3d4d3720f6c8be50f6a053738b6b6844d92aaf",
+              "text": "La corde elfique se fait avec de la rosée matinale et une fougère dorée, et une seule demande toute une aube de récolte. Utilise-la sur le côté d’un bloc, et elle court jusqu’au bout vers le bas ou le haut si tu en as assez ; sinon, on peut l’allonger plus tard. On peut y grimper.",
+              "based_on": "77d2dcf5fd9101ead7b0f954acbcfda656fe531fc2dfa14a639fe85ed3a7d382",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Elficka lina powstaje z porannej rosy i złotej paproci, a na jedną idzie cały świt zbierania. Użyj jej na boku bloku, a rozwinie się całą drogę w dół lub w górę, jeśli masz jej dość; jeśli nie, można ją później wydłużyć. Można się po niej wspinać. Zawieś elficką linę.",
-              "based_on": "23ac390652f724b76f0dd4c14a3d4d3720f6c8be50f6a053738b6b6844d92aaf",
+              "text": "Elficka lina powstaje z porannej rosy i złotej paproci, a na jedną idzie cały świt zbierania. Użyj jej na boku bloku, a rozwinie się całą drogę w dół lub w górę, jeśli masz jej dość; jeśli nie, można ją później wydłużyć. Można się po niej wspinać.",
+              "based_on": "77d2dcf5fd9101ead7b0f954acbcfda656fe531fc2dfa14a639fe85ed3a7d382",
               "status": "ai-draft"
             }
           }
@@ -16144,13 +15790,13 @@
           }
         },
         "lothlorien.message.lore.lesson.gifts.text": {
-          "source": "Deer love Western Corn, and a deer that is fed will trust you. A Friend of Lothlórien may offer a Mallorn acorn to a squirrel, and it may bring you a gift in return. Try it: win the trust of a squirrel.",
+          "source": "Deer love Western Corn, and a deer that is fed will trust you. A Friend of Lothlórien may offer a Mallorn acorn to a squirrel, and it may bring you a gift in return.",
           "context": {
-            "meaning": "Lesson 10 (chapter III, deed): gifts of the forest. Deer love Western Corn and a deer fed with it trusts the player; a Friend of Lothlórien (Harmony +10) may offer a Mallorn acorn to a squirrel, which may bring a gift in return. Deed: win a squirrel's trust by offering it an acorn (needs Friend).",
+            "meaning": "Lesson Gifts of the forest (chapter III, deed). Deer love Western Corn and trust who feeds them; a Friend of Lothlorien may offer a Mallorn acorn to a squirrel, which may bring a gift. The task goal is shown separately.",
             "location": "lothlorien_rp: body of a lesson screen in the Loremaster dialog",
             "trigger": "Player opens a lesson in the Loremaster dialog.",
             "tone": "Formal, elven, Tolkien-flavoured but factual about the mod mechanics",
-            "grammar": "2 to 5 short sentences; the last one states the task or ends the teaching; no player gender.",
+            "grammar": "2 to 5 short sentences; the concrete goal is a separate message (lore.lesson.<id>.goal), not part of this text; no player gender.",
             "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
             "source_paths": [
               "lothlorien_bp/scripts/loremaster.js"
@@ -16159,43 +15805,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Jeleni milují západní obilí a nakrmený jelen vám bude důvěřovat. Přítel Lothlórienu může nabídnout veverce žalud mallornu a ta vám může na oplátku přinést dar. Zkuste to: získejte důvěru veverky.",
-              "based_on": "495e1fdf92c38666fc90d0aefa0fdee51c81f151e779d3c62740a4f6fd5b7cf3",
+              "text": "Jeleni milují západní obilí a nakrmený jelen vám bude důvěřovat. Přítel Lothlórienu může nabídnout veverce žalud mallornu a ta vám může na oplátku přinést dar.",
+              "based_on": "e779ef2e90329d911c02c368c76e8c7f5bfd12589d65c851cd343f5ca4da2bb9",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "A los ciervos les encanta el cereal del Oeste, y un ciervo alimentado confiará en ti. Un amigo de Lothlórien puede ofrecer una bellota de mallorn a una ardilla, y esta puede traerte un regalo a cambio. Pruébalo: gánate la confianza de una ardilla.",
-              "based_on": "495e1fdf92c38666fc90d0aefa0fdee51c81f151e779d3c62740a4f6fd5b7cf3",
+              "text": "A los ciervos les encanta el cereal del Oeste, y un ciervo alimentado confiará en ti. Un amigo de Lothlórien puede ofrecer una bellota de mallorn a una ardilla, y esta puede traerte un regalo a cambio.",
+              "based_on": "e779ef2e90329d911c02c368c76e8c7f5bfd12589d65c851cd343f5ca4da2bb9",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "A los ciervos les encanta el cereal del Oeste, y un ciervo alimentado confiará en ti. Un amigo de Lothlórien puede ofrecer una bellota de mallorn a una ardilla, y esta puede traerte un regalo a cambio. Pruébalo: gánate la confianza de una ardilla.",
-              "based_on": "495e1fdf92c38666fc90d0aefa0fdee51c81f151e779d3c62740a4f6fd5b7cf3",
+              "text": "A los ciervos les encanta el cereal del Oeste, y un ciervo alimentado confiará en ti. Un amigo de Lothlórien puede ofrecer una bellota de mallorn a una ardilla, y esta puede traerte un regalo a cambio.",
+              "based_on": "e779ef2e90329d911c02c368c76e8c7f5bfd12589d65c851cd343f5ca4da2bb9",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Os veados adoram o cereal do Oeste, e um veado alimentado confiará em ti. Um amigo de Lothlórien pode oferecer uma bolota de mallorn a um esquilo, e este pode trazer-te uma dádiva em troca. Experimenta: ganha a confiança de um esquilo.",
-              "based_on": "495e1fdf92c38666fc90d0aefa0fdee51c81f151e779d3c62740a4f6fd5b7cf3",
+              "text": "Os veados adoram o cereal do Oeste, e um veado alimentado confiará em ti. Um amigo de Lothlórien pode oferecer uma bolota de mallorn a um esquilo, e este pode trazer-te uma dádiva em troca.",
+              "based_on": "e779ef2e90329d911c02c368c76e8c7f5bfd12589d65c851cd343f5ca4da2bb9",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Os veados adoram o cereal do Oeste, e um veado alimentado confiará em você. Um amigo de Lothlórien pode oferecer uma bolota de mallorn a um esquilo, e ele pode trazer uma dádiva a você em troca. Experimente: ganhe a confiança de um esquilo.",
-              "based_on": "495e1fdf92c38666fc90d0aefa0fdee51c81f151e779d3c62740a4f6fd5b7cf3",
+              "text": "Os veados adoram o cereal do Oeste, e um veado alimentado confiará em você. Um amigo de Lothlórien pode oferecer uma bolota de mallorn a um esquilo, e ele pode trazer uma dádiva a você em troca.",
+              "based_on": "e779ef2e90329d911c02c368c76e8c7f5bfd12589d65c851cd343f5ca4da2bb9",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Hirsche lieben das westliche Getreide, und ein gefütterter Hirsch wird dir vertrauen. Ein Freund Lothlóriens darf einem Eichhörnchen eine Mallorneichel anbieten, und es bringt dir vielleicht zum Dank eine Gabe. Versuche es: Gewinne das Vertrauen eines Eichhörnchens.",
-              "based_on": "495e1fdf92c38666fc90d0aefa0fdee51c81f151e779d3c62740a4f6fd5b7cf3",
+              "text": "Hirsche lieben das westliche Getreide, und ein gefütterter Hirsch wird dir vertrauen. Ein Freund Lothlóriens darf einem Eichhörnchen eine Mallorneichel anbieten, und es bringt dir vielleicht zum Dank eine Gabe.",
+              "based_on": "e779ef2e90329d911c02c368c76e8c7f5bfd12589d65c851cd343f5ca4da2bb9",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Les cerfs aiment la céréale de l’Ouest, et un cerf nourri te fera confiance. Un ami de Lothlórien peut offrir un gland de mallorn à un écureuil, et celui-ci peut te rapporter un présent en retour. Essaie : gagne la confiance d’un écureuil.",
-              "based_on": "495e1fdf92c38666fc90d0aefa0fdee51c81f151e779d3c62740a4f6fd5b7cf3",
+              "text": "Les cerfs aiment la céréale de l’Ouest, et un cerf nourri te fera confiance. Un ami de Lothlórien peut offrir un gland de mallorn à un écureuil, et celui-ci peut te rapporter un présent en retour.",
+              "based_on": "e779ef2e90329d911c02c368c76e8c7f5bfd12589d65c851cd343f5ca4da2bb9",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Jelenie kochają zboże Zachodu, a nakarmiony jeleń ci zaufa. Przyjaciel Lothlórien może ofiarować żołądź mallornu wiewiórce, a ta może przynieść ci dar w zamian. Spróbuj: zdobądź zaufanie wiewiórki.",
-              "based_on": "495e1fdf92c38666fc90d0aefa0fdee51c81f151e779d3c62740a4f6fd5b7cf3",
+              "text": "Jelenie kochają zboże Zachodu, a nakarmiony jeleń ci zaufa. Przyjaciel Lothlórien może ofiarować żołądź mallornu wiewiórce, a ta może przynieść ci dar w zamian.",
+              "based_on": "e779ef2e90329d911c02c368c76e8c7f5bfd12589d65c851cd343f5ca4da2bb9",
               "status": "ai-draft"
             }
           }
@@ -17165,6 +16811,1892 @@
             "pl_PL": {
               "text": "Rozmawiaj",
               "based_on": "69a5e203e75d861fd86c0eced0f357341999350ace34a4bc0a77afb63ae6125e",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.lesson.harmony.goal": {
+          "source": "Walk in peace in Lothlórien for several minutes, then return to me.",
+          "context": {
+            "meaning": "One-sentence goal of the deed lesson \"harmony\", shown under the lesson text after \"Your task:\" and on the task screen. It names exactly what the player must do.",
+            "location": "lothlorien_rp: body text of a Loremaster dialog form",
+            "trigger": "Player opens a deed lesson or the task screen in the Loremaster dialog.",
+            "tone": "Formal, elven, short",
+            "grammar": "One short imperative sentence with a final full stop; no player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Kráčejte v Lothlórienu několik minut v pokoji a pak se ke mně vraťte.",
+              "based_on": "efedf9cd165bd9025cbdceeb78d772eb3badf88bd27b4c70da27661b7820fa1c",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Camina en paz por Lothlórien durante varios minutos y vuelve conmigo.",
+              "based_on": "efedf9cd165bd9025cbdceeb78d772eb3badf88bd27b4c70da27661b7820fa1c",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Camina en paz por Lothlórien durante varios minutos y vuelve conmigo.",
+              "based_on": "efedf9cd165bd9025cbdceeb78d772eb3badf88bd27b4c70da27661b7820fa1c",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Caminha em paz por Lothlórien durante vários minutos e volta a mim.",
+              "based_on": "efedf9cd165bd9025cbdceeb78d772eb3badf88bd27b4c70da27661b7820fa1c",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Caminhe em paz por Lothlórien por vários minutos e volte a mim.",
+              "based_on": "efedf9cd165bd9025cbdceeb78d772eb3badf88bd27b4c70da27661b7820fa1c",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Wandle einige Minuten in Frieden durch Lothlórien und kehre dann zu mir zurück.",
+              "based_on": "efedf9cd165bd9025cbdceeb78d772eb3badf88bd27b4c70da27661b7820fa1c",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Marche en paix dans Lothlórien pendant plusieurs minutes, puis reviens vers moi.",
+              "based_on": "efedf9cd165bd9025cbdceeb78d772eb3badf88bd27b4c70da27661b7820fa1c",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Idź w pokoju przez Lothlórien kilka minut, a potem wróć do mnie.",
+              "based_on": "efedf9cd165bd9025cbdceeb78d772eb3badf88bd27b4c70da27661b7820fa1c",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.lesson.dew.goal": {
+          "source": "Fill a bottle with morning dew.",
+          "context": {
+            "meaning": "One-sentence goal of the deed lesson \"dew\", shown under the lesson text after \"Your task:\" and on the task screen. It names exactly what the player must do.",
+            "location": "lothlorien_rp: body text of a Loremaster dialog form",
+            "trigger": "Player opens a deed lesson or the task screen in the Loremaster dialog.",
+            "tone": "Formal, elven, short",
+            "grammar": "One short imperative sentence with a final full stop; no player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Naplňte láhev ranní rosou.",
+              "based_on": "fc01f53c2121c7b239bff3804b1e46209d0a4223545a2314c9e733af7522a878",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Llena una botella de rocío matinal.",
+              "based_on": "fc01f53c2121c7b239bff3804b1e46209d0a4223545a2314c9e733af7522a878",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Llena una botella de rocío matinal.",
+              "based_on": "fc01f53c2121c7b239bff3804b1e46209d0a4223545a2314c9e733af7522a878",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Enche uma garrafa de orvalho da manhã.",
+              "based_on": "fc01f53c2121c7b239bff3804b1e46209d0a4223545a2314c9e733af7522a878",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Encha uma garrafa de orvalho da manhã.",
+              "based_on": "fc01f53c2121c7b239bff3804b1e46209d0a4223545a2314c9e733af7522a878",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Fülle eine Flasche mit Morgentau.",
+              "based_on": "fc01f53c2121c7b239bff3804b1e46209d0a4223545a2314c9e733af7522a878",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Remplis une bouteille de rosée matinale.",
+              "based_on": "fc01f53c2121c7b239bff3804b1e46209d0a4223545a2314c9e733af7522a878",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Napełnij butelkę poranną rosą.",
+              "based_on": "fc01f53c2121c7b239bff3804b1e46209d0a4223545a2314c9e733af7522a878",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.lesson.nectar.goal": {
+          "source": "Fill a glass bottle from a full bloom.",
+          "context": {
+            "meaning": "One-sentence goal of the deed lesson \"nectar\", shown under the lesson text after \"Your task:\" and on the task screen. It names exactly what the player must do.",
+            "location": "lothlorien_rp: body text of a Loremaster dialog form",
+            "trigger": "Player opens a deed lesson or the task screen in the Loremaster dialog.",
+            "tone": "Formal, elven, short",
+            "grammar": "One short imperative sentence with a final full stop; no player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Naplňte skleněnou láhev z plného květu.",
+              "based_on": "08183a02b584db907c64d3e6122f5bb6af939f7f8bd6c9b5b659c3ad42c887b0",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Llena una botella de cristal de una flor llena.",
+              "based_on": "08183a02b584db907c64d3e6122f5bb6af939f7f8bd6c9b5b659c3ad42c887b0",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Llena una botella de cristal de una flor llena.",
+              "based_on": "08183a02b584db907c64d3e6122f5bb6af939f7f8bd6c9b5b659c3ad42c887b0",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Enche uma garrafa de vidro numa flor cheia.",
+              "based_on": "08183a02b584db907c64d3e6122f5bb6af939f7f8bd6c9b5b659c3ad42c887b0",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Encha uma garrafa de vidro numa flor cheia.",
+              "based_on": "08183a02b584db907c64d3e6122f5bb6af939f7f8bd6c9b5b659c3ad42c887b0",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Fülle eine Glasflasche an einer vollen Blüte.",
+              "based_on": "08183a02b584db907c64d3e6122f5bb6af939f7f8bd6c9b5b659c3ad42c887b0",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Remplis une bouteille en verre sur une fleur pleine.",
+              "based_on": "08183a02b584db907c64d3e6122f5bb6af939f7f8bd6c9b5b659c3ad42c887b0",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Napełnij szklaną butelkę z pełnego kwiatu.",
+              "based_on": "08183a02b584db907c64d3e6122f5bb6af939f7f8bd6c9b5b659c3ad42c887b0",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.lesson.lembas.goal": {
+          "source": "Eat a wrapped Lembas.",
+          "context": {
+            "meaning": "One-sentence goal of the deed lesson \"lembas\", shown under the lesson text after \"Your task:\" and on the task screen. It names exactly what the player must do.",
+            "location": "lothlorien_rp: body text of a Loremaster dialog form",
+            "trigger": "Player opens a deed lesson or the task screen in the Loremaster dialog.",
+            "tone": "Formal, elven, short",
+            "grammar": "One short imperative sentence with a final full stop; no player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Snězte zabalený lembas.",
+              "based_on": "1d7d898830ffe066e8d85a425b8f5d6cc2d258aacd44979c9c88f290587d2368",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Come un lembas envuelto.",
+              "based_on": "1d7d898830ffe066e8d85a425b8f5d6cc2d258aacd44979c9c88f290587d2368",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Come un lembas envuelto.",
+              "based_on": "1d7d898830ffe066e8d85a425b8f5d6cc2d258aacd44979c9c88f290587d2368",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Come um lembas embrulhado.",
+              "based_on": "1d7d898830ffe066e8d85a425b8f5d6cc2d258aacd44979c9c88f290587d2368",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Coma um lembas embrulhado.",
+              "based_on": "1d7d898830ffe066e8d85a425b8f5d6cc2d258aacd44979c9c88f290587d2368",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Iss ein eingewickeltes Lembas.",
+              "based_on": "1d7d898830ffe066e8d85a425b8f5d6cc2d258aacd44979c9c88f290587d2368",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Mange un lembas enveloppé.",
+              "based_on": "1d7d898830ffe066e8d85a425b8f5d6cc2d258aacd44979c9c88f290587d2368",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Zjedz owinięty lembas.",
+              "based_on": "1d7d898830ffe066e8d85a425b8f5d6cc2d258aacd44979c9c88f290587d2368",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.lesson.fireflies.goal": {
+          "source": "Catch a firefly with a glass bottle.",
+          "context": {
+            "meaning": "One-sentence goal of the deed lesson \"fireflies\", shown under the lesson text after \"Your task:\" and on the task screen. It names exactly what the player must do.",
+            "location": "lothlorien_rp: body text of a Loremaster dialog form",
+            "trigger": "Player opens a deed lesson or the task screen in the Loremaster dialog.",
+            "tone": "Formal, elven, short",
+            "grammar": "One short imperative sentence with a final full stop; no player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Chyťte světlušku do skleněné láhve.",
+              "based_on": "3a32614e5b8525ab84c9f5304623d2c67acd0e50ca1ff075fdec2ccb220c3e23",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Atrapa una luciérnaga con una botella de cristal.",
+              "based_on": "3a32614e5b8525ab84c9f5304623d2c67acd0e50ca1ff075fdec2ccb220c3e23",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Atrapa una luciérnaga con una botella de cristal.",
+              "based_on": "3a32614e5b8525ab84c9f5304623d2c67acd0e50ca1ff075fdec2ccb220c3e23",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Apanha um pirilampo com uma garrafa de vidro.",
+              "based_on": "3a32614e5b8525ab84c9f5304623d2c67acd0e50ca1ff075fdec2ccb220c3e23",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Capture um vaga-lume com uma garrafa de vidro.",
+              "based_on": "3a32614e5b8525ab84c9f5304623d2c67acd0e50ca1ff075fdec2ccb220c3e23",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Fange ein Glühwürmchen mit einer Glasflasche.",
+              "based_on": "3a32614e5b8525ab84c9f5304623d2c67acd0e50ca1ff075fdec2ccb220c3e23",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Attrape une luciole avec une bouteille en verre.",
+              "based_on": "3a32614e5b8525ab84c9f5304623d2c67acd0e50ca1ff075fdec2ccb220c3e23",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Złap świetlika szklaną butelką.",
+              "based_on": "3a32614e5b8525ab84c9f5304623d2c67acd0e50ca1ff075fdec2ccb220c3e23",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.lesson.rope.goal": {
+          "source": "Hang an elven rope.",
+          "context": {
+            "meaning": "One-sentence goal of the deed lesson \"rope\", shown under the lesson text after \"Your task:\" and on the task screen. It names exactly what the player must do.",
+            "location": "lothlorien_rp: body text of a Loremaster dialog form",
+            "trigger": "Player opens a deed lesson or the task screen in the Loremaster dialog.",
+            "tone": "Formal, elven, short",
+            "grammar": "One short imperative sentence with a final full stop; no player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Zavěste elfí lano.",
+              "based_on": "489e845b3cc58fafe93a0efb6b3e62170f8e417890a1fac9b20665da14ce06da",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Cuelga una cuerda élfica.",
+              "based_on": "489e845b3cc58fafe93a0efb6b3e62170f8e417890a1fac9b20665da14ce06da",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Cuelga una cuerda élfica.",
+              "based_on": "489e845b3cc58fafe93a0efb6b3e62170f8e417890a1fac9b20665da14ce06da",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Pendura uma corda élfica.",
+              "based_on": "489e845b3cc58fafe93a0efb6b3e62170f8e417890a1fac9b20665da14ce06da",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Pendure uma corda élfica.",
+              "based_on": "489e845b3cc58fafe93a0efb6b3e62170f8e417890a1fac9b20665da14ce06da",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Hänge ein Elbenseil auf.",
+              "based_on": "489e845b3cc58fafe93a0efb6b3e62170f8e417890a1fac9b20665da14ce06da",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Accroche une corde elfique.",
+              "based_on": "489e845b3cc58fafe93a0efb6b3e62170f8e417890a1fac9b20665da14ce06da",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Zawieś elficką linę.",
+              "based_on": "489e845b3cc58fafe93a0efb6b3e62170f8e417890a1fac9b20665da14ce06da",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.lesson.gifts.goal": {
+          "source": "Win the trust of a squirrel with a Mallorn acorn.",
+          "context": {
+            "meaning": "One-sentence goal of the deed lesson \"gifts\", shown under the lesson text after \"Your task:\" and on the task screen. It names exactly what the player must do.",
+            "location": "lothlorien_rp: body text of a Loremaster dialog form",
+            "trigger": "Player opens a deed lesson or the task screen in the Loremaster dialog.",
+            "tone": "Formal, elven, short",
+            "grammar": "One short imperative sentence with a final full stop; no player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Získejte důvěru veverky pomocí žaludu mallornu.",
+              "based_on": "6d3e1b9b92a8f3f1e67956ff15032360a364c38f2ab75247b64a88e1d6984207",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Gánate la confianza de una ardilla con una bellota de mallorn.",
+              "based_on": "6d3e1b9b92a8f3f1e67956ff15032360a364c38f2ab75247b64a88e1d6984207",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Gánate la confianza de una ardilla con una bellota de mallorn.",
+              "based_on": "6d3e1b9b92a8f3f1e67956ff15032360a364c38f2ab75247b64a88e1d6984207",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Ganha a confiança de um esquilo com uma bolota de mallorn.",
+              "based_on": "6d3e1b9b92a8f3f1e67956ff15032360a364c38f2ab75247b64a88e1d6984207",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Ganhe a confiança de um esquilo com uma bolota de mallorn.",
+              "based_on": "6d3e1b9b92a8f3f1e67956ff15032360a364c38f2ab75247b64a88e1d6984207",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Gewinne das Vertrauen eines Eichhörnchens mit einer Mallorneichel.",
+              "based_on": "6d3e1b9b92a8f3f1e67956ff15032360a364c38f2ab75247b64a88e1d6984207",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Gagne la confiance d’un écureuil avec un gland de mallorn.",
+              "based_on": "6d3e1b9b92a8f3f1e67956ff15032360a364c38f2ab75247b64a88e1d6984207",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Zdobądź zaufanie wiewiórki żołędziem mallornu.",
+              "based_on": "6d3e1b9b92a8f3f1e67956ff15032360a364c38f2ab75247b64a88e1d6984207",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.task.header": {
+          "source": "Your task:",
+          "context": {
+            "meaning": "Line above the current-task button on the main Loremaster screen.",
+            "location": "lothlorien_rp: body text of a Loremaster dialog form",
+            "trigger": "Player talks to the Loremaster elf.",
+            "tone": "Formal, elven, short",
+            "grammar": "Short heading with a final colon.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Váš úkol:",
+              "based_on": "b96adbfaca4f7d74fbcb92a872f04fa3b91db8a679cb1201ce986645f194db48",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Tu tarea:",
+              "based_on": "b96adbfaca4f7d74fbcb92a872f04fa3b91db8a679cb1201ce986645f194db48",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Tu tarea:",
+              "based_on": "b96adbfaca4f7d74fbcb92a872f04fa3b91db8a679cb1201ce986645f194db48",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "A tua tarefa:",
+              "based_on": "b96adbfaca4f7d74fbcb92a872f04fa3b91db8a679cb1201ce986645f194db48",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "A sua tarefa:",
+              "based_on": "b96adbfaca4f7d74fbcb92a872f04fa3b91db8a679cb1201ce986645f194db48",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Deine Aufgabe:",
+              "based_on": "b96adbfaca4f7d74fbcb92a872f04fa3b91db8a679cb1201ce986645f194db48",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Ta tâche :",
+              "based_on": "b96adbfaca4f7d74fbcb92a872f04fa3b91db8a679cb1201ce986645f194db48",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Twoje zadanie:",
+              "based_on": "b96adbfaca4f7d74fbcb92a872f04fa3b91db8a679cb1201ce986645f194db48",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.lesson.task": {
+          "source": "Your task: %s",
+          "context": {
+            "meaning": "Line in a deed lesson screen naming the goal the player must reach. %s is the goal sentence.",
+            "location": "lothlorien_rp: body text of a Loremaster dialog form",
+            "trigger": "Player opens a deed lesson or the task screen.",
+            "tone": "Formal, elven, short",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "goal",
+              "type": "RawMessage",
+              "meaning": "goal: nested translated one-sentence goal of the lesson"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "Váš úkol: %s",
+              "based_on": "4e50a036007abd43b4da5e3797ae928ed8a64f81374f4ee5cf29017896e756c4",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Tu tarea: %s",
+              "based_on": "4e50a036007abd43b4da5e3797ae928ed8a64f81374f4ee5cf29017896e756c4",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Tu tarea: %s",
+              "based_on": "4e50a036007abd43b4da5e3797ae928ed8a64f81374f4ee5cf29017896e756c4",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "A tua tarefa: %s",
+              "based_on": "4e50a036007abd43b4da5e3797ae928ed8a64f81374f4ee5cf29017896e756c4",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "A sua tarefa: %s",
+              "based_on": "4e50a036007abd43b4da5e3797ae928ed8a64f81374f4ee5cf29017896e756c4",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Deine Aufgabe: %s",
+              "based_on": "4e50a036007abd43b4da5e3797ae928ed8a64f81374f4ee5cf29017896e756c4",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Ta tâche : %s",
+              "based_on": "4e50a036007abd43b4da5e3797ae928ed8a64f81374f4ee5cf29017896e756c4",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Twoje zadanie: %s",
+              "based_on": "4e50a036007abd43b4da5e3797ae928ed8a64f81374f4ee5cf29017896e756c4",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.status.active": {
+          "source": "§7Not done yet",
+          "context": {
+            "meaning": "Second line of the current-task button (grey) and status line of the task screen while the task is still being done.",
+            "location": "lothlorien_rp: button of a Loremaster dialog form",
+            "trigger": "Player talks to the Loremaster elf.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative or first-person phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Ještě nesplněno",
+              "based_on": "e389b9bc6e7b4758069413bd1e8a9873dd3cd47a004cfccc802eb4e69662434e",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§7Aún sin cumplir",
+              "based_on": "e389b9bc6e7b4758069413bd1e8a9873dd3cd47a004cfccc802eb4e69662434e",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§7Aún sin cumplir",
+              "based_on": "e389b9bc6e7b4758069413bd1e8a9873dd3cd47a004cfccc802eb4e69662434e",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§7Ainda por cumprir",
+              "based_on": "e389b9bc6e7b4758069413bd1e8a9873dd3cd47a004cfccc802eb4e69662434e",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§7Ainda não cumprida",
+              "based_on": "e389b9bc6e7b4758069413bd1e8a9873dd3cd47a004cfccc802eb4e69662434e",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§7Noch nicht erledigt",
+              "based_on": "e389b9bc6e7b4758069413bd1e8a9873dd3cd47a004cfccc802eb4e69662434e",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§7Pas encore accompli",
+              "based_on": "e389b9bc6e7b4758069413bd1e8a9873dd3cd47a004cfccc802eb4e69662434e",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§7Jeszcze niewykonane",
+              "based_on": "e389b9bc6e7b4758069413bd1e8a9873dd3cd47a004cfccc802eb4e69662434e",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.status.ready": {
+          "source": "§aReturn to me",
+          "context": {
+            "meaning": "Second line of the current-task button (green) when the task is complete and only needs to be turned in to the Loremaster.",
+            "location": "lothlorien_rp: button of a Loremaster dialog form",
+            "trigger": "Player talks to the Loremaster elf.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative or first-person phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§aVraťte se ke mně",
+              "based_on": "5bd691ab11ab7a3833cbdd7b0597cd30b4b1770191594916c5b3daa355aac305",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§aVuelve conmigo",
+              "based_on": "5bd691ab11ab7a3833cbdd7b0597cd30b4b1770191594916c5b3daa355aac305",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§aVuelve conmigo",
+              "based_on": "5bd691ab11ab7a3833cbdd7b0597cd30b4b1770191594916c5b3daa355aac305",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§aVolta a mim",
+              "based_on": "5bd691ab11ab7a3833cbdd7b0597cd30b4b1770191594916c5b3daa355aac305",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§aVolte a mim",
+              "based_on": "5bd691ab11ab7a3833cbdd7b0597cd30b4b1770191594916c5b3daa355aac305",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§aKehre zu mir zurück",
+              "based_on": "5bd691ab11ab7a3833cbdd7b0597cd30b4b1770191594916c5b3daa355aac305",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§aReviens vers moi",
+              "based_on": "5bd691ab11ab7a3833cbdd7b0597cd30b4b1770191594916c5b3daa355aac305",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§aWróć do mnie",
+              "based_on": "5bd691ab11ab7a3833cbdd7b0597cd30b4b1770191594916c5b3daa355aac305",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.status.done": {
+          "source": "§aDone",
+          "context": {
+            "meaning": "Status line on the task screen when the task is complete.",
+            "location": "lothlorien_rp: body text of a Loremaster dialog form",
+            "trigger": "Player opens the task screen of a completed task.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative or first-person phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§aSplněno",
+              "based_on": "8aced94749628c1747ba8ffc0cbc17938933a42681b900883c42c6149410b1b3",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§aCumplida",
+              "based_on": "8aced94749628c1747ba8ffc0cbc17938933a42681b900883c42c6149410b1b3",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§aCumplida",
+              "based_on": "8aced94749628c1747ba8ffc0cbc17938933a42681b900883c42c6149410b1b3",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§aCumprida",
+              "based_on": "8aced94749628c1747ba8ffc0cbc17938933a42681b900883c42c6149410b1b3",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§aCumprida",
+              "based_on": "8aced94749628c1747ba8ffc0cbc17938933a42681b900883c42c6149410b1b3",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§aErledigt",
+              "based_on": "8aced94749628c1747ba8ffc0cbc17938933a42681b900883c42c6149410b1b3",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§aAccomplie",
+              "based_on": "8aced94749628c1747ba8ffc0cbc17938933a42681b900883c42c6149410b1b3",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§aWykonane",
+              "based_on": "8aced94749628c1747ba8ffc0cbc17938933a42681b900883c42c6149410b1b3",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.ready.chat": {
+          "source": "§a%s: done. Return to the Loremaster.",
+          "context": {
+            "meaning": "Chat line when the player completes the deed of the current lesson in the field. %s is the lesson name.",
+            "location": "lothlorien_rp: chat message",
+            "trigger": "Shown in chat after the deed of the current lesson task is done.",
+            "tone": "Formal, elven, short",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "lesson",
+              "type": "RawMessage",
+              "meaning": "lesson: nested translated lesson name"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "§a%s: splněno. Vraťte se ke Znalci tradic.",
+              "based_on": "9850404a0331a4bb21a53fcea5c494e4f47d0764945b2e10f8811ca6d5ac5327",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§a%s: cumplido. Vuelve con el Maestro del saber.",
+              "based_on": "9850404a0331a4bb21a53fcea5c494e4f47d0764945b2e10f8811ca6d5ac5327",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§a%s: cumplido. Vuelve con el Maestro del saber.",
+              "based_on": "9850404a0331a4bb21a53fcea5c494e4f47d0764945b2e10f8811ca6d5ac5327",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§a%s: cumprido. Volta ao Mestre do saber.",
+              "based_on": "9850404a0331a4bb21a53fcea5c494e4f47d0764945b2e10f8811ca6d5ac5327",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§a%s: cumprido. Volte ao Mestre do saber.",
+              "based_on": "9850404a0331a4bb21a53fcea5c494e4f47d0764945b2e10f8811ca6d5ac5327",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§a%s: erledigt. Kehre zum Wissensmeister zurück.",
+              "based_on": "9850404a0331a4bb21a53fcea5c494e4f47d0764945b2e10f8811ca6d5ac5327",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§a%s : fait. Retourne voir le Maître du savoir.",
+              "based_on": "9850404a0331a4bb21a53fcea5c494e4f47d0764945b2e10f8811ca6d5ac5327",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§a%s: wykonane. Wróć do Mistrza wiedzy.",
+              "based_on": "9850404a0331a4bb21a53fcea5c494e4f47d0764945b2e10f8811ca6d5ac5327",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.harmony.ready_chat": {
+          "source": "§aYou are at peace with the forest. Return to the Loremaster.",
+          "context": {
+            "meaning": "Chat line when the player's Harmony reaches the level the Harmony lesson asks for while that lesson is the current task.",
+            "location": "lothlorien_rp: chat message",
+            "trigger": "Shown in chat when Harmony crosses the required level while the Harmony lesson is the current task.",
+            "tone": "Formal, elven, short",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§aJste s lesem v míru. Vraťte se ke Znalci tradic.",
+              "based_on": "e9a3d3e28791886b17d0914df657709f86df0454cf0f538bdce11100578d4c05",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§aEstás en paz con el bosque. Vuelve con el Maestro del saber.",
+              "based_on": "e9a3d3e28791886b17d0914df657709f86df0454cf0f538bdce11100578d4c05",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§aEstás en paz con el bosque. Vuelve con el Maestro del saber.",
+              "based_on": "e9a3d3e28791886b17d0914df657709f86df0454cf0f538bdce11100578d4c05",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§aEstás em paz com a floresta. Volta ao Mestre do saber.",
+              "based_on": "e9a3d3e28791886b17d0914df657709f86df0454cf0f538bdce11100578d4c05",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§aVocê está em paz com a floresta. Volte ao Mestre do saber.",
+              "based_on": "e9a3d3e28791886b17d0914df657709f86df0454cf0f538bdce11100578d4c05",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§aDu bist mit dem Wald in Frieden. Kehre zum Wissensmeister zurück.",
+              "based_on": "e9a3d3e28791886b17d0914df657709f86df0454cf0f538bdce11100578d4c05",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§aTu es en paix avec la forêt. Retourne voir le Maître du savoir.",
+              "based_on": "e9a3d3e28791886b17d0914df657709f86df0454cf0f538bdce11100578d4c05",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§aJesteś w zgodzie z lasem. Wróć do Mistrza wiedzy.",
+              "based_on": "e9a3d3e28791886b17d0914df657709f86df0454cf0f538bdce11100578d4c05",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.btn.teaching": {
+          "source": "My teaching: %s",
+          "context": {
+            "meaning": "Main-screen button that opens the chapter of the Loremaster's teaching. %s is the chapter name (for example Chapter I).",
+            "location": "lothlorien_rp: button of a Loremaster dialog form",
+            "trigger": "Player talks to the Loremaster elf.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative or first-person phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "chapter",
+              "type": "RawMessage",
+              "meaning": "chapter: nested translated chapter name"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "Mé učení: %s",
+              "based_on": "1de6dfb890a070e9a6926538ece9cb33545172482a91e1d5f99926bf092ef0de",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Mi enseñanza: %s",
+              "based_on": "1de6dfb890a070e9a6926538ece9cb33545172482a91e1d5f99926bf092ef0de",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Mi enseñanza: %s",
+              "based_on": "1de6dfb890a070e9a6926538ece9cb33545172482a91e1d5f99926bf092ef0de",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "O meu ensino: %s",
+              "based_on": "1de6dfb890a070e9a6926538ece9cb33545172482a91e1d5f99926bf092ef0de",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "O meu ensino: %s",
+              "based_on": "1de6dfb890a070e9a6926538ece9cb33545172482a91e1d5f99926bf092ef0de",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Meine Lehre: %s",
+              "based_on": "1de6dfb890a070e9a6926538ece9cb33545172482a91e1d5f99926bf092ef0de",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Mon enseignement : %s",
+              "based_on": "1de6dfb890a070e9a6926538ece9cb33545172482a91e1d5f99926bf092ef0de",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Moja nauka: %s",
+              "based_on": "1de6dfb890a070e9a6926538ece9cb33545172482a91e1d5f99926bf092ef0de",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.chapter.1": {
+          "source": "Chapter I",
+          "context": {
+            "meaning": "Name of chapter 1 of the Loremaster's teaching (Roman numeral).",
+            "location": "lothlorien_rp: button of a Loremaster dialog form",
+            "trigger": "Player talks to the Loremaster elf.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative or first-person phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Kapitola I",
+              "based_on": "4d76ff69d4e77eed8c25be528c6414c5e77366f78bbf9a2f41da6b034c8f0954",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Capítulo I",
+              "based_on": "4d76ff69d4e77eed8c25be528c6414c5e77366f78bbf9a2f41da6b034c8f0954",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Capítulo I",
+              "based_on": "4d76ff69d4e77eed8c25be528c6414c5e77366f78bbf9a2f41da6b034c8f0954",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Capítulo I",
+              "based_on": "4d76ff69d4e77eed8c25be528c6414c5e77366f78bbf9a2f41da6b034c8f0954",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Capítulo I",
+              "based_on": "4d76ff69d4e77eed8c25be528c6414c5e77366f78bbf9a2f41da6b034c8f0954",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Kapitel I",
+              "based_on": "4d76ff69d4e77eed8c25be528c6414c5e77366f78bbf9a2f41da6b034c8f0954",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Chapitre I",
+              "based_on": "4d76ff69d4e77eed8c25be528c6414c5e77366f78bbf9a2f41da6b034c8f0954",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Rozdział I",
+              "based_on": "4d76ff69d4e77eed8c25be528c6414c5e77366f78bbf9a2f41da6b034c8f0954",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.chapter.2": {
+          "source": "Chapter II",
+          "context": {
+            "meaning": "Name of chapter 2 of the Loremaster's teaching (Roman numeral).",
+            "location": "lothlorien_rp: button of a Loremaster dialog form",
+            "trigger": "Player talks to the Loremaster elf.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative or first-person phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Kapitola II",
+              "based_on": "a66cdeeec35ef2b28a276d73c271456bb93577e1fddc0c85fbc7cf246f755716",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Capítulo II",
+              "based_on": "a66cdeeec35ef2b28a276d73c271456bb93577e1fddc0c85fbc7cf246f755716",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Capítulo II",
+              "based_on": "a66cdeeec35ef2b28a276d73c271456bb93577e1fddc0c85fbc7cf246f755716",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Capítulo II",
+              "based_on": "a66cdeeec35ef2b28a276d73c271456bb93577e1fddc0c85fbc7cf246f755716",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Capítulo II",
+              "based_on": "a66cdeeec35ef2b28a276d73c271456bb93577e1fddc0c85fbc7cf246f755716",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Kapitel II",
+              "based_on": "a66cdeeec35ef2b28a276d73c271456bb93577e1fddc0c85fbc7cf246f755716",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Chapitre II",
+              "based_on": "a66cdeeec35ef2b28a276d73c271456bb93577e1fddc0c85fbc7cf246f755716",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Rozdział II",
+              "based_on": "a66cdeeec35ef2b28a276d73c271456bb93577e1fddc0c85fbc7cf246f755716",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.chapter.3": {
+          "source": "Chapter III",
+          "context": {
+            "meaning": "Name of chapter 3 of the Loremaster's teaching (Roman numeral).",
+            "location": "lothlorien_rp: button of a Loremaster dialog form",
+            "trigger": "Player talks to the Loremaster elf.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative or first-person phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Kapitola III",
+              "based_on": "fe27bd40af48d729810dc2c52ed788940b4036c5e88ec9f8187573aa5adfbffe",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Capítulo III",
+              "based_on": "fe27bd40af48d729810dc2c52ed788940b4036c5e88ec9f8187573aa5adfbffe",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Capítulo III",
+              "based_on": "fe27bd40af48d729810dc2c52ed788940b4036c5e88ec9f8187573aa5adfbffe",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Capítulo III",
+              "based_on": "fe27bd40af48d729810dc2c52ed788940b4036c5e88ec9f8187573aa5adfbffe",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Capítulo III",
+              "based_on": "fe27bd40af48d729810dc2c52ed788940b4036c5e88ec9f8187573aa5adfbffe",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Kapitel III",
+              "based_on": "fe27bd40af48d729810dc2c52ed788940b4036c5e88ec9f8187573aa5adfbffe",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Chapitre III",
+              "based_on": "fe27bd40af48d729810dc2c52ed788940b4036c5e88ec9f8187573aa5adfbffe",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Rozdział III",
+              "based_on": "fe27bd40af48d729810dc2c52ed788940b4036c5e88ec9f8187573aa5adfbffe",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.teach.count": {
+          "source": "Lessons waiting: %s",
+          "context": {
+            "meaning": "Second line of the teaching button: how many lessons of the open chapter are still unfinished. %s is a plain number.",
+            "location": "lothlorien_rp: button of a Loremaster dialog form",
+            "trigger": "Player talks to the Loremaster elf.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative or first-person phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "count",
+              "type": "string",
+              "meaning": "count: number of unfinished lessons, plain number"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "Čekající lekce: %s",
+              "based_on": "03dcab93b6e63237c2401502001929d9dd0ee416e9f635c9d2fd2d010c439a60",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Lecciones pendientes: %s",
+              "based_on": "03dcab93b6e63237c2401502001929d9dd0ee416e9f635c9d2fd2d010c439a60",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Lecciones pendientes: %s",
+              "based_on": "03dcab93b6e63237c2401502001929d9dd0ee416e9f635c9d2fd2d010c439a60",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Lições à espera: %s",
+              "based_on": "03dcab93b6e63237c2401502001929d9dd0ee416e9f635c9d2fd2d010c439a60",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Lições à espera: %s",
+              "based_on": "03dcab93b6e63237c2401502001929d9dd0ee416e9f635c9d2fd2d010c439a60",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Wartende Lektionen: %s",
+              "based_on": "03dcab93b6e63237c2401502001929d9dd0ee416e9f635c9d2fd2d010c439a60",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Leçons en attente : %s",
+              "based_on": "03dcab93b6e63237c2401502001929d9dd0ee416e9f635c9d2fd2d010c439a60",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Oczekujące lekcje: %s",
+              "based_on": "03dcab93b6e63237c2401502001929d9dd0ee416e9f635c9d2fd2d010c439a60",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.teach.busy": {
+          "source": "Finish your task, and I will teach you more deeds.",
+          "context": {
+            "meaning": "Line on the chapter screen shown while the player holds a task: new deed lessons wait until it is finished.",
+            "location": "lothlorien_rp: body text of a Loremaster dialog form",
+            "trigger": "Player opens the teaching chapter screen while holding a task.",
+            "tone": "Formal, elven, short",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Dokončete svůj úkol a naučím vás další skutky.",
+              "based_on": "7cfb5bd7f33bc2b0b7172ce7f303ed8ef336dccfb4870ba4720ad350397fff7e",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Termina tu tarea y te enseñaré más hazañas.",
+              "based_on": "7cfb5bd7f33bc2b0b7172ce7f303ed8ef336dccfb4870ba4720ad350397fff7e",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Termina tu tarea y te enseñaré más hazañas.",
+              "based_on": "7cfb5bd7f33bc2b0b7172ce7f303ed8ef336dccfb4870ba4720ad350397fff7e",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Termina a tua tarefa e ensinar-te-ei mais feitos.",
+              "based_on": "7cfb5bd7f33bc2b0b7172ce7f303ed8ef336dccfb4870ba4720ad350397fff7e",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Termine a sua tarefa e eu lhe ensinarei mais feitos.",
+              "based_on": "7cfb5bd7f33bc2b0b7172ce7f303ed8ef336dccfb4870ba4720ad350397fff7e",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Beende deine Aufgabe, und ich lehre dich weitere Taten.",
+              "based_on": "7cfb5bd7f33bc2b0b7172ce7f303ed8ef336dccfb4870ba4720ad350397fff7e",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Achève ta tâche, et je t’enseignerai d’autres actes.",
+              "based_on": "7cfb5bd7f33bc2b0b7172ce7f303ed8ef336dccfb4870ba4720ad350397fff7e",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Dokończ swoje zadanie, a nauczę cię kolejnych czynów.",
+              "based_on": "7cfb5bd7f33bc2b0b7172ce7f303ed8ef336dccfb4870ba4720ad350397fff7e",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.btn.take": {
+          "source": "Take this task",
+          "context": {
+            "meaning": "Button on a deed lesson screen that makes the lesson the player's current task.",
+            "location": "lothlorien_rp: button of a Loremaster dialog form",
+            "trigger": "Player opens a deed lesson.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative or first-person phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Přijmout tento úkol",
+              "based_on": "5da0a7c428d36ef706274cd76bee13ab81cdc8e7df0e9653f9637e8ffaf12f77",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Aceptar esta tarea",
+              "based_on": "5da0a7c428d36ef706274cd76bee13ab81cdc8e7df0e9653f9637e8ffaf12f77",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Aceptar esta tarea",
+              "based_on": "5da0a7c428d36ef706274cd76bee13ab81cdc8e7df0e9653f9637e8ffaf12f77",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Aceitar esta tarefa",
+              "based_on": "5da0a7c428d36ef706274cd76bee13ab81cdc8e7df0e9653f9637e8ffaf12f77",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Aceitar esta tarefa",
+              "based_on": "5da0a7c428d36ef706274cd76bee13ab81cdc8e7df0e9653f9637e8ffaf12f77",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Diese Aufgabe annehmen",
+              "based_on": "5da0a7c428d36ef706274cd76bee13ab81cdc8e7df0e9653f9637e8ffaf12f77",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Accepter cette tâche",
+              "based_on": "5da0a7c428d36ef706274cd76bee13ab81cdc8e7df0e9653f9637e8ffaf12f77",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Przyjmij to zadanie",
+              "based_on": "5da0a7c428d36ef706274cd76bee13ab81cdc8e7df0e9653f9637e8ffaf12f77",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.btn.continue": {
+          "source": "Continue",
+          "context": {
+            "meaning": "Button on a result screen that returns to the main Loremaster screen.",
+            "location": "lothlorien_rp: button of a Loremaster dialog form",
+            "trigger": "Player has just finished, set aside or failed to hand in a task.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative or first-person phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Pokračovat",
+              "based_on": "b022bd506325679f96335e044603b64eac8ec643ee2426201f12987ee10e1a0e",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Continuar",
+              "based_on": "b022bd506325679f96335e044603b64eac8ec643ee2426201f12987ee10e1a0e",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Continuar",
+              "based_on": "b022bd506325679f96335e044603b64eac8ec643ee2426201f12987ee10e1a0e",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Continuar",
+              "based_on": "b022bd506325679f96335e044603b64eac8ec643ee2426201f12987ee10e1a0e",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Continuar",
+              "based_on": "b022bd506325679f96335e044603b64eac8ec643ee2426201f12987ee10e1a0e",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Weiter",
+              "based_on": "b022bd506325679f96335e044603b64eac8ec643ee2426201f12987ee10e1a0e",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Continuer",
+              "based_on": "b022bd506325679f96335e044603b64eac8ec643ee2426201f12987ee10e1a0e",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Dalej",
+              "based_on": "b022bd506325679f96335e044603b64eac8ec643ee2426201f12987ee10e1a0e",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.btn.earlier": {
+          "source": "Earlier lessons",
+          "context": {
+            "meaning": "Button that lists the lessons the player has already completed, to read them again.",
+            "location": "lothlorien_rp: button of a Loremaster dialog form",
+            "trigger": "Player talks to the Loremaster elf.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative or first-person phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Dřívější lekce",
+              "based_on": "bb16f992771e57076e5b0b7ef7ce7c143ec32c1a07f779fc3246a260c607551f",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Lecciones anteriores",
+              "based_on": "bb16f992771e57076e5b0b7ef7ce7c143ec32c1a07f779fc3246a260c607551f",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Lecciones anteriores",
+              "based_on": "bb16f992771e57076e5b0b7ef7ce7c143ec32c1a07f779fc3246a260c607551f",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Lições anteriores",
+              "based_on": "bb16f992771e57076e5b0b7ef7ce7c143ec32c1a07f779fc3246a260c607551f",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Lições anteriores",
+              "based_on": "bb16f992771e57076e5b0b7ef7ce7c143ec32c1a07f779fc3246a260c607551f",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Frühere Lektionen",
+              "based_on": "bb16f992771e57076e5b0b7ef7ce7c143ec32c1a07f779fc3246a260c607551f",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Leçons précédentes",
+              "based_on": "bb16f992771e57076e5b0b7ef7ce7c143ec32c1a07f779fc3246a260c607551f",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Wcześniejsze lekcje",
+              "based_on": "bb16f992771e57076e5b0b7ef7ce7c143ec32c1a07f779fc3246a260c607551f",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.btn.set_aside": {
+          "source": "Set this aside",
+          "context": {
+            "meaning": "Button that sets the current task aside (asks for confirmation); the task may be asked again later.",
+            "location": "lothlorien_rp: button of a Loremaster dialog form",
+            "trigger": "Player opens the task screen or the confirmation screen.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative or first-person phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Odložit",
+              "based_on": "cce2ebea2445841a310191ca022d8fa8d52b0f0f52d0690063de6442a6f8991a",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Dejar a un lado",
+              "based_on": "cce2ebea2445841a310191ca022d8fa8d52b0f0f52d0690063de6442a6f8991a",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Dejar a un lado",
+              "based_on": "cce2ebea2445841a310191ca022d8fa8d52b0f0f52d0690063de6442a6f8991a",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Pôr de lado",
+              "based_on": "cce2ebea2445841a310191ca022d8fa8d52b0f0f52d0690063de6442a6f8991a",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Deixar de lado",
+              "based_on": "cce2ebea2445841a310191ca022d8fa8d52b0f0f52d0690063de6442a6f8991a",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Beiseitelegen",
+              "based_on": "cce2ebea2445841a310191ca022d8fa8d52b0f0f52d0690063de6442a6f8991a",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Mettre de côté",
+              "based_on": "cce2ebea2445841a310191ca022d8fa8d52b0f0f52d0690063de6442a6f8991a",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Odłóż",
+              "based_on": "cce2ebea2445841a310191ca022d8fa8d52b0f0f52d0690063de6442a6f8991a",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.req.prof.gardener": {
+          "source": "The gardener's request",
+          "context": {
+            "meaning": "Name of the current task button when the task is a request of the gardener elf (first line; the status is the second line).",
+            "location": "lothlorien_rp: button of a Loremaster dialog form",
+            "trigger": "Player talks to the Loremaster elf.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative or first-person phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Prosba zahradníka",
+              "based_on": "f9e39b4a09ad079dc4b20c0010eca0df7f0f5823a6179cefdc3f28ae3578bb2c",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "El encargo del jardinero",
+              "based_on": "f9e39b4a09ad079dc4b20c0010eca0df7f0f5823a6179cefdc3f28ae3578bb2c",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "El encargo del jardinero",
+              "based_on": "f9e39b4a09ad079dc4b20c0010eca0df7f0f5823a6179cefdc3f28ae3578bb2c",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "O pedido do jardineiro",
+              "based_on": "f9e39b4a09ad079dc4b20c0010eca0df7f0f5823a6179cefdc3f28ae3578bb2c",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "O pedido do jardineiro",
+              "based_on": "f9e39b4a09ad079dc4b20c0010eca0df7f0f5823a6179cefdc3f28ae3578bb2c",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Der Wunsch des Gärtners",
+              "based_on": "f9e39b4a09ad079dc4b20c0010eca0df7f0f5823a6179cefdc3f28ae3578bb2c",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "La demande du jardinier",
+              "based_on": "f9e39b4a09ad079dc4b20c0010eca0df7f0f5823a6179cefdc3f28ae3578bb2c",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Prośba ogrodnika",
+              "based_on": "f9e39b4a09ad079dc4b20c0010eca0df7f0f5823a6179cefdc3f28ae3578bb2c",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.req.prof.healer": {
+          "source": "The healer's request",
+          "context": {
+            "meaning": "Name of the current task button when the task is a request of the healer elf (first line; the status is the second line).",
+            "location": "lothlorien_rp: button of a Loremaster dialog form",
+            "trigger": "Player talks to the Loremaster elf.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative or first-person phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Prosba léčitele",
+              "based_on": "cb5d42215df24c66e0b361b4668ee99ef5a47aaf537e4325f2540c621c827dd1",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "El encargo del curandero",
+              "based_on": "cb5d42215df24c66e0b361b4668ee99ef5a47aaf537e4325f2540c621c827dd1",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "El encargo del curandero",
+              "based_on": "cb5d42215df24c66e0b361b4668ee99ef5a47aaf537e4325f2540c621c827dd1",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "O pedido do curandeiro",
+              "based_on": "cb5d42215df24c66e0b361b4668ee99ef5a47aaf537e4325f2540c621c827dd1",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "O pedido do curandeiro",
+              "based_on": "cb5d42215df24c66e0b361b4668ee99ef5a47aaf537e4325f2540c621c827dd1",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Der Wunsch des Heilers",
+              "based_on": "cb5d42215df24c66e0b361b4668ee99ef5a47aaf537e4325f2540c621c827dd1",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "La demande du guérisseur",
+              "based_on": "cb5d42215df24c66e0b361b4668ee99ef5a47aaf537e4325f2540c621c827dd1",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Prośba uzdrowiciela",
+              "based_on": "cb5d42215df24c66e0b361b4668ee99ef5a47aaf537e4325f2540c621c827dd1",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.req.prof.woodwright": {
+          "source": "The woodwright's request",
+          "context": {
+            "meaning": "Name of the current task button when the task is a request of the woodwright elf (first line; the status is the second line).",
+            "location": "lothlorien_rp: button of a Loremaster dialog form",
+            "trigger": "Player talks to the Loremaster elf.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative or first-person phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Prosba tesaře",
+              "based_on": "ab2ebc832deec530248083e736ef9fd01b020fdc10eeedaf61e9860f6743940e",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "El encargo del carpintero",
+              "based_on": "ab2ebc832deec530248083e736ef9fd01b020fdc10eeedaf61e9860f6743940e",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "El encargo del carpintero",
+              "based_on": "ab2ebc832deec530248083e736ef9fd01b020fdc10eeedaf61e9860f6743940e",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "O pedido do carpinteiro",
+              "based_on": "ab2ebc832deec530248083e736ef9fd01b020fdc10eeedaf61e9860f6743940e",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "O pedido do carpinteiro",
+              "based_on": "ab2ebc832deec530248083e736ef9fd01b020fdc10eeedaf61e9860f6743940e",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Der Wunsch des Zimmermanns",
+              "based_on": "ab2ebc832deec530248083e736ef9fd01b020fdc10eeedaf61e9860f6743940e",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "La demande du charpentier",
+              "based_on": "ab2ebc832deec530248083e736ef9fd01b020fdc10eeedaf61e9860f6743940e",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Prośba cieśli",
+              "based_on": "ab2ebc832deec530248083e736ef9fd01b020fdc10eeedaf61e9860f6743940e",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.req.prof.lamplighter": {
+          "source": "The lamplighter's request",
+          "context": {
+            "meaning": "Name of the current task button when the task is a request of the lamplighter elf (first line; the status is the second line).",
+            "location": "lothlorien_rp: button of a Loremaster dialog form",
+            "trigger": "Player talks to the Loremaster elf.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative or first-person phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Prosba lampáře",
+              "based_on": "a5391704dcb14a8c3ab7b13fa2375b155f37d43eaa4d387848096e96da1038eb",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "El encargo del farolero",
+              "based_on": "a5391704dcb14a8c3ab7b13fa2375b155f37d43eaa4d387848096e96da1038eb",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "El encargo del farolero",
+              "based_on": "a5391704dcb14a8c3ab7b13fa2375b155f37d43eaa4d387848096e96da1038eb",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "O pedido do acendedor de lampiões",
+              "based_on": "a5391704dcb14a8c3ab7b13fa2375b155f37d43eaa4d387848096e96da1038eb",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "O pedido do acendedor de lampiões",
+              "based_on": "a5391704dcb14a8c3ab7b13fa2375b155f37d43eaa4d387848096e96da1038eb",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Der Wunsch des Laternenanzünders",
+              "based_on": "a5391704dcb14a8c3ab7b13fa2375b155f37d43eaa4d387848096e96da1038eb",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "La demande de l’allumeur de lanternes",
+              "based_on": "a5391704dcb14a8c3ab7b13fa2375b155f37d43eaa4d387848096e96da1038eb",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Prośba latarnika",
+              "based_on": "a5391704dcb14a8c3ab7b13fa2375b155f37d43eaa4d387848096e96da1038eb",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.result.renown": {
+          "source": "Your renown among the Galadhrim grows.",
+          "context": {
+            "meaning": "Line on the result screen after a lesson or request has been handed in and Renown has been paid.",
+            "location": "lothlorien_rp: body text of a Loremaster dialog form",
+            "trigger": "Player has just handed in a task.",
+            "tone": "Formal, elven, short",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Vaše pověst mezi Galadhrim roste.",
+              "based_on": "422cf5066b055b71e6a1d4f8d3857af416a0f0e6486cd308a57a1ff9dc33f6a7",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Tu renombre entre los Galadhrim crece.",
+              "based_on": "422cf5066b055b71e6a1d4f8d3857af416a0f0e6486cd308a57a1ff9dc33f6a7",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Tu renombre entre los Galadhrim crece.",
+              "based_on": "422cf5066b055b71e6a1d4f8d3857af416a0f0e6486cd308a57a1ff9dc33f6a7",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "O teu renome entre os Galadhrim cresce.",
+              "based_on": "422cf5066b055b71e6a1d4f8d3857af416a0f0e6486cd308a57a1ff9dc33f6a7",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "O seu renome entre os Galadhrim cresce.",
+              "based_on": "422cf5066b055b71e6a1d4f8d3857af416a0f0e6486cd308a57a1ff9dc33f6a7",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Dein Ansehen bei den Galadhrim wächst.",
+              "based_on": "422cf5066b055b71e6a1d4f8d3857af416a0f0e6486cd308a57a1ff9dc33f6a7",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Ta renommée parmi les Galadhrim grandit.",
+              "based_on": "422cf5066b055b71e6a1d4f8d3857af416a0f0e6486cd308a57a1ff9dc33f6a7",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Twoja sława wśród Galadhrim rośnie.",
+              "based_on": "422cf5066b055b71e6a1d4f8d3857af416a0f0e6486cd308a57a1ff9dc33f6a7",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.result.learned": {
+          "source": "You have learned: %s",
+          "context": {
+            "meaning": "Line at the top of the teaching screen after the player has read a lore lesson. %s is the lesson name.",
+            "location": "lothlorien_rp: body text of a Loremaster dialog form",
+            "trigger": "Player has just pressed \"I understand\" on a lore lesson.",
+            "tone": "Formal, elven, short",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "lesson",
+              "type": "RawMessage",
+              "meaning": "lesson: nested translated lesson name"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "Nově poznáno: %s",
+              "based_on": "a4bf9fc13d357625f98a0393a0ec22c29fa65793ae6192d7044bea3326b20963",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Has aprendido: %s",
+              "based_on": "a4bf9fc13d357625f98a0393a0ec22c29fa65793ae6192d7044bea3326b20963",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Has aprendido: %s",
+              "based_on": "a4bf9fc13d357625f98a0393a0ec22c29fa65793ae6192d7044bea3326b20963",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Aprendeste: %s",
+              "based_on": "a4bf9fc13d357625f98a0393a0ec22c29fa65793ae6192d7044bea3326b20963",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Você aprendeu: %s",
+              "based_on": "a4bf9fc13d357625f98a0393a0ec22c29fa65793ae6192d7044bea3326b20963",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Du hast gelernt: %s",
+              "based_on": "a4bf9fc13d357625f98a0393a0ec22c29fa65793ae6192d7044bea3326b20963",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Tu as appris : %s",
+              "based_on": "a4bf9fc13d357625f98a0393a0ec22c29fa65793ae6192d7044bea3326b20963",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Zdobyta wiedza: %s",
+              "based_on": "a4bf9fc13d357625f98a0393a0ec22c29fa65793ae6192d7044bea3326b20963",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.too_far": {
+          "source": "§7You are too far from the Loremaster.",
+          "context": {
+            "meaning": "Chat line when the Loremaster dialog ends because the player has walked away from him.",
+            "location": "lothlorien_rp: chat message",
+            "trigger": "Player moved away from the Loremaster while the dialog was open.",
+            "tone": "Formal, elven, short",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Jste příliš daleko od Znalce tradic.",
+              "based_on": "eb9ae223a814406843eb56bcd84486634c8e5bf179b000a9ae6b5bf6bd32318c",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§7Estás demasiado lejos del Maestro del saber.",
+              "based_on": "eb9ae223a814406843eb56bcd84486634c8e5bf179b000a9ae6b5bf6bd32318c",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§7Estás demasiado lejos del Maestro del saber.",
+              "based_on": "eb9ae223a814406843eb56bcd84486634c8e5bf179b000a9ae6b5bf6bd32318c",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§7Estás demasiado longe do Mestre do saber.",
+              "based_on": "eb9ae223a814406843eb56bcd84486634c8e5bf179b000a9ae6b5bf6bd32318c",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§7Você está longe demais do Mestre do saber.",
+              "based_on": "eb9ae223a814406843eb56bcd84486634c8e5bf179b000a9ae6b5bf6bd32318c",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§7Du bist zu weit vom Wissensmeister entfernt.",
+              "based_on": "eb9ae223a814406843eb56bcd84486634c8e5bf179b000a9ae6b5bf6bd32318c",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§7Tu es trop loin du Maître du savoir.",
+              "based_on": "eb9ae223a814406843eb56bcd84486634c8e5bf179b000a9ae6b5bf6bd32318c",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§7Jesteś zbyt daleko od Mistrza wiedzy.",
+              "based_on": "eb9ae223a814406843eb56bcd84486634c8e5bf179b000a9ae6b5bf6bd32318c",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.busy": {
+          "source": "§7Close the other screen and speak to the Loremaster again.",
+          "context": {
+            "meaning": "Chat line when the Loremaster dialog could not open because another screen stayed open.",
+            "location": "lothlorien_rp: chat message",
+            "trigger": "Player talks to the Loremaster while another screen is open.",
+            "tone": "Formal, elven, short",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js",
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Zavřete druhé okno a promluvte si se Znalcem tradic znovu.",
+              "based_on": "b4b8b7dafe1f7b1eb9b49e583b6c6148075a7175fb06859ff0ed01404ba0724e",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§7Cierra la otra pantalla y habla de nuevo con el Maestro del saber.",
+              "based_on": "b4b8b7dafe1f7b1eb9b49e583b6c6148075a7175fb06859ff0ed01404ba0724e",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§7Cierra la otra pantalla y habla de nuevo con el Maestro del saber.",
+              "based_on": "b4b8b7dafe1f7b1eb9b49e583b6c6148075a7175fb06859ff0ed01404ba0724e",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§7Fecha o outro ecrã e fala de novo com o Mestre do saber.",
+              "based_on": "b4b8b7dafe1f7b1eb9b49e583b6c6148075a7175fb06859ff0ed01404ba0724e",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§7Feche a outra tela e fale de novo com o Mestre do saber.",
+              "based_on": "b4b8b7dafe1f7b1eb9b49e583b6c6148075a7175fb06859ff0ed01404ba0724e",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§7Schließe das andere Fenster und sprich noch einmal mit dem Wissensmeister.",
+              "based_on": "b4b8b7dafe1f7b1eb9b49e583b6c6148075a7175fb06859ff0ed01404ba0724e",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§7Ferme l’autre écran et parle de nouveau au Maître du savoir.",
+              "based_on": "b4b8b7dafe1f7b1eb9b49e583b6c6148075a7175fb06859ff0ed01404ba0724e",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§7Zamknij drugie okno i porozmawiaj z Mistrzem wiedzy jeszcze raz.",
+              "based_on": "b4b8b7dafe1f7b1eb9b49e583b6c6148075a7175fb06859ff0ed01404ba0724e",
               "status": "ai-draft"
             }
           }

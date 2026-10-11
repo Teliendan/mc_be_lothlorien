@@ -1,8 +1,9 @@
 // Renown and the Loremaster's teaching (M2): every tunable value and the pure logic. No @minecraft/server import, so
 // tests/renown.mjs can run it offline. The game side is renown_game.js (state, inventory, feedback) and loremaster.js (forms).
-// Design: docs/design/elven_inhabitants.md sections 2-3. Owner decisions 2026-10-10: lessons are chapters, deeds count only
-// while their lesson is active, requests open after chapters I and II, no cooldown, a random permutation of the professions per
-// round, every request can be completed once.
+// Design: docs/design/elven_inhabitants.md sections 2-3. Owner decisions 2026-10-10: lessons are chapters, requests open after
+// chapters I and II, no cooldown, a random permutation of the professions per round, every request can be completed once.
+// Owner decisions 2026-10-11 (dialog redesign): ONE current-task slot shared by deed lessons (Harmony included) and requests;
+// a deed only makes the task ready, Renown is paid at turn-in; deeds done while their lesson is not the task are lost.
 
 // ---- Ranks ----
 export const RANKS = ["stranger", "welcome", "trusted", "elf_friend"];
@@ -22,8 +23,8 @@ export function nextRank(points) {
 }
 
 // ---- Lessons, in chapters ----
-// kind "lore": completes when read ("I understand"); "deed": completes by a deed hook while the lesson is active (deed = hook id);
-// "harmony": completes when the player presses "It is done" while Harmony >= HARMONY_NEEDED (and the lesson is active).
+// kind "lore": completes when read ("I understand"), needs no slot; "deed": becomes ready by a deed hook while it is the task
+// (deed = hook id) and is paid at turn-in; "harmony": ready is computed at talk time (Harmony >= HARMONY_NEEDED), paid at turn-in.
 export const HARMONY_NEEDED = 3;
 export const LESSONS = [
   { id: "harmony", chapter: 1, kind: "harmony" },
@@ -65,25 +66,29 @@ export const REQUESTS = [
 export const requestById = (id) => REQUESTS.find((r) => r.id === id);
 export const REQUEST_SPOT_CAP = 32; // most remembered sapling cells
 
-// ---- State: { v, points, done: {id: true}, active: {lessonId: tick}, request: {id, spots: []} | null, offer: id | null, queue: [professions] } ----
-export const STATE_VERSION = 1;
-export const newState = () => ({ v: STATE_VERSION, points: 0, done: {}, active: {}, request: null, offer: null, queue: [] });
+// ---- State: { v, points, done: {id: true}, task, offer: id | null, queue: [professions] } ----
+// task = null | { kind: "lesson", id, ready, since } | { kind: "request", id, spots: [] }   (v1 had `active` and `request`)
+export const STATE_VERSION = 2;
+export const newState = () => ({ v: STATE_VERSION, points: 0, done: {}, task: null, offer: null, queue: [] });
 export const serialize = (state) => JSON.stringify(state);
 
 const isObj = (x) => x && typeof x === "object" && !Array.isArray(x);
+const spotsOf = (r) => (Array.isArray(r?.spots) ? r.spots.filter((s) => typeof s === "string").slice(0, REQUEST_SPOT_CAP) : []);
 // Tolerates missing or damaged data: unreadable parts fall back to the fresh values; unknown ids are dropped.
+// v1 -> v2: points, done, offer and queue are kept; the v1 request becomes the task; v1 `active` lessons are dropped (players take them again).
 export function parse(text) {
   const state = newState();
   try {
     const raw = JSON.parse(text);
-    if (!isObj(raw) || raw.v !== STATE_VERSION) return state;
+    if (!isObj(raw) || (raw.v !== 1 && raw.v !== 2)) return state;
     if (Number.isFinite(raw.points) && raw.points >= 0) state.points = Math.trunc(raw.points);
     if (isObj(raw.done)) for (const k of Object.keys(raw.done)) if (raw.done[k] === true) state.done[k] = true;
-    if (isObj(raw.active)) for (const k of Object.keys(raw.active)) if (lessonById(k) && Number.isFinite(raw.active[k])) state.active[k] = raw.active[k];
-    if (isObj(raw.request) && requestById(raw.request.id)) {
-      state.request = { id: raw.request.id, spots: Array.isArray(raw.request.spots) ? raw.request.spots.filter((s) => typeof s === "string").slice(0, REQUEST_SPOT_CAP) : [] };
+    const t = raw.v === 1 ? (isObj(raw.request) ? { kind: "request", ...raw.request } : null) : raw.task;
+    if (isObj(t) && t.kind === "request" && requestById(t.id) && !state.done[t.id]) state.task = { kind: "request", id: t.id, spots: spotsOf(t) };
+    else if (isObj(t) && t.kind === "lesson" && isTaskLesson(lessonById(t.id)) && !state.done[t.id]) {
+      state.task = { kind: "lesson", id: t.id, ready: t.ready === true, since: Number.isFinite(t.since) ? t.since : 0 };
     }
-    if (typeof raw.offer === "string" && requestById(raw.offer) && !state.request) state.offer = raw.offer;
+    if (typeof raw.offer === "string" && requestById(raw.offer) && !state.task) state.offer = raw.offer;
     if (Array.isArray(raw.queue)) state.queue = raw.queue.filter((p) => PROFESSIONS.includes(p));
   } catch {
     // no saved state
@@ -102,6 +107,7 @@ export function award(state, pts) {
 
 // ---- Chapters and lessons ----
 export const lessonDone = (state, id) => state.done[id] === true;
+export const isTaskLesson = (lesson) => lesson?.kind === "deed" || lesson?.kind === "harmony"; // lessons that use the task slot
 // Lowest chapter with an unfinished lesson; CHAPTERS.length + 1 when the teaching is complete.
 export function openChapter(state) {
   for (const n of CHAPTERS) if (lessonsOfChapter(n).some((l) => !lessonDone(state, l.id))) return n;
@@ -109,64 +115,90 @@ export function openChapter(state) {
 }
 export const availableLessons = (state) => lessonsOfChapter(openChapter(state)).filter((l) => !lessonDone(state, l.id));
 export const doneLessons = (state) => LESSONS.filter((l) => lessonDone(state, l.id));
-export const lessonActive = (state, id) => id in state.active && !lessonDone(state, id);
 export const requestsOpen = (state) => openChapter(state) >= 3;
+export const lessonTask = (state) => (state.task?.kind === "lesson" ? state.task : null);
+export const requestTask = (state) => (state.task?.kind === "request" ? state.task : null);
 
-// The player opened the screen of a lesson of the open chapter: from now on its deed counts. Returns true when newly given.
-export function activate(state, id, now) {
-  if (!availableLessons(state).some((l) => l.id === id) || id in state.active) return false;
-  state.active[id] = now;
+// "Take this task": a deed or Harmony lesson of the open chapter becomes the current task (the slot must be empty).
+export function takeLesson(state, id, now) {
+  const lesson = lessonById(id);
+  if (state.task || !isTaskLesson(lesson) || !availableLessons(state).some((l) => l.id === id)) return false;
+  state.task = { kind: "lesson", id, ready: false, since: now };
   return true;
 }
 
-// Marks a lesson done and pays it. Returns { points, rank, chapterOpened } (chapterOpened = new open chapter number or undefined).
+// Marks a lesson done and pays it. Returns { lesson, points, rank, chapterOpened } (chapterOpened = new open chapter number or undefined).
 function finish(state, lesson) {
   const chapterBefore = openChapter(state);
   state.done[lesson.id] = true;
-  delete state.active[lesson.id];
+  if (state.task?.kind === "lesson" && state.task.id === lesson.id) state.task = null;
   const pts = lessonPoints(lesson);
   const rank = award(state, pts);
   const chapterAfter = openChapter(state);
   return { lesson: lesson.id, points: pts, rank, chapterOpened: chapterAfter > chapterBefore ? chapterAfter : undefined };
 }
 
-// "I understand" on a lore lesson (must be available and given). Returns the finish result or undefined.
+// "I understand" on a lore lesson of the open chapter (no slot needed). Returns the finish result or undefined.
 export function completeLore(state, id) {
   const lesson = lessonById(id);
   if (!lesson || lesson.kind !== "lore" || !availableLessons(state).some((l) => l.id === id)) return undefined;
-  activate(state, id, 0);
   return finish(state, lesson);
 }
 
-// "It is done" on the Harmony lesson: needs the lesson active and Harmony >= HARMONY_NEEDED now.
-export function completeHarmony(state, harmony) {
-  const lesson = lessonById("harmony");
-  if (!lessonActive(state, "harmony") || !availableLessons(state).some((l) => l.id === "harmony")) return undefined;
-  if (!(harmony >= HARMONY_NEEDED)) return undefined;
-  return finish(state, lesson);
-}
-
-// A deed hook fired. Completes the matching lesson only while it is active (given and not done). Returns a list of finish results.
+// A deed hook fired. Only the current task counts: its lesson becomes ready (no points yet). Deeds done while the lesson is not
+// the task are lost. Returns [{ lesson, ready: true }] or [].
 export function noteDeed(state, deedId) {
-  const results = [];
-  for (const lesson of LESSONS) {
-    if (lesson.kind === "deed" && lesson.deed === deedId && lessonActive(state, lesson.id)) results.push(finish(state, lesson));
+  const task = lessonTask(state);
+  const lesson = task && lessonById(task.id);
+  if (!lesson || lesson.kind !== "deed" || lesson.deed !== deedId || task.ready) return [];
+  task.ready = true;
+  return [{ lesson: lesson.id, ready: true }];
+}
+
+// "active" | "ready" | undefined (no task). `ctx` = { harmony, counts (inventory), saplings (planted count) }, all read by the caller.
+export function taskStatus(state, ctx = {}) {
+  const task = state.task;
+  if (!task) return undefined;
+  if (task.kind === "lesson") {
+    const lesson = lessonById(task.id);
+    return task.ready || (lesson.kind === "harmony" && ctx.harmony >= HARMONY_NEEDED) ? "ready" : "active";
   }
-  return results;
+  const request = requestById(task.id);
+  if (request.deed) return (ctx.saplings ?? 0) >= request.deed.count ? "ready" : "active";
+  return deliveryPlan(request, ctx.counts ?? {}).ok ? "ready" : "active";
+}
+
+// "It is done" on the task lesson: needs it ready (Harmony is re-checked now). Pays and clears the task. Returns the finish result or undefined.
+export function turnIn(state, harmony) {
+  const task = lessonTask(state);
+  if (!task || taskStatus(state, { harmony }) !== "ready") return undefined;
+  return finish(state, lessonById(task.id));
 }
 
 // ---- What the Loremaster offers per band (A6) ----
-// mode: full (friend, guest) | uneasy | shunned | hated. lessons = ids to list; remind = completed lessons to list; requests = may offer / deliver.
+// mode: full (friend, guest) | uneasy | shunned | hated. teaching = { chapter, offered: deed/Harmony lessons to take, lore: lore lessons to read,
+// done: finished lessons to re-read }; canOfferRequest = "A task from my kin" is shown (requests open, slot free, something left).
 export function menuFor(band, state) {
-  if (band === "hated") return { mode: "hated", lessons: [], remind: [], requests: false, renown: false };
-  if (band === "shunned") return { mode: "shunned", lessons: [], remind: [], requests: false, renown: false };
-  if (band === "uneasy") return { mode: "uneasy", lessons: ["harmony"], remind: [], requests: false, renown: false };
+  const none = { chapter: openChapter(state), offered: [], lore: [], done: [] };
+  const off = { renown: false, requestsOpen: false, canOfferRequest: false };
+  if (band === "hated") return { mode: "hated", ...off, teaching: none };
+  if (band === "shunned") return { mode: "shunned", ...off, teaching: none };
+  if (band === "uneasy") {
+    const read = lessonDone(state, "harmony");
+    return { mode: "uneasy", ...off, teaching: { ...none, offered: read ? [] : ["harmony"], done: read ? ["harmony"] : [] } };
+  }
+  const open = availableLessons(state);
   return {
     mode: "full",
-    lessons: availableLessons(state).map((l) => l.id),
-    remind: doneLessons(state).map((l) => l.id),
-    requests: requestsOpen(state),
     renown: true,
+    teaching: {
+      chapter: openChapter(state),
+      offered: open.filter(isTaskLesson).map((l) => l.id),
+      lore: open.filter((l) => l.kind === "lore").map((l) => l.id),
+      done: doneLessons(state).map((l) => l.id),
+    },
+    requestsOpen: requestsOpen(state),
+    canOfferRequest: requestsOpen(state) && !state.task && requestsLeft(state) > 0,
   };
 }
 
@@ -187,7 +219,7 @@ export function shuffled(list, rng) {
 // The request on offer: the active one, else the kept offer, else a new pull (a random not-yet-done request of the next profession in
 // the round; a new round is a fresh permutation of all four). undefined when everything is done. Pulling sets state.offer.
 export function currentOffer(state, rng = Math.random) {
-  if (state.request) return requestById(state.request.id);
+  if (requestTask(state)) return requestById(state.task.id);
   if (state.offer && !state.done[state.offer]) return requestById(state.offer);
   state.offer = null;
   if (requestsLeft(state) === 0) return undefined;
@@ -205,20 +237,22 @@ export function currentOffer(state, rng = Math.random) {
   return undefined;
 }
 
-// "I will": the offer becomes the active request.
+// "I will": the offer becomes the current task (the slot must be empty).
 export function accept(state) {
-  if (state.request || !state.offer || state.done[state.offer]) return false;
-  state.request = { id: state.offer, spots: [] };
+  if (state.task || !state.offer || state.done[state.offer]) return false;
+  state.task = { kind: "request", id: state.offer, spots: [] };
   state.offer = null;
   return true;
 }
 
-// Abandon: nothing taken, no points; not marked done (it may come again); the rotation moves on (the offer is dropped).
-export function abandon(state) {
-  if (!state.request) return false;
-  state.request = null;
-  state.offer = null;
-  return true;
+// Set the current task aside: no points, nothing done. A lesson goes back to offered (its deed must be done again after taking it);
+// a request may come again and the rotation moves on (the offer is dropped). Returns the kind of the task set aside, or false.
+export function abandonTask(state) {
+  const kind = state.task?.kind;
+  if (!kind) return false;
+  state.task = null;
+  if (kind === "request") state.offer = null;
+  return kind;
 }
 
 // ---- Delivery ----
@@ -243,7 +277,7 @@ export function deliveryPlan(request, counts) {
 
 // Sapling request: remember a planted cell (distinct, capped). Returns true when it was new. Only while that request is active.
 export function addSaplingSpot(state, cell) {
-  const r = state.request;
+  const r = requestTask(state);
   if (!r || !requestById(r.id)?.deed || r.spots.includes(cell)) return false;
   if (r.spots.length >= REQUEST_SPOT_CAP) r.spots.shift();
   r.spots.push(cell);
@@ -252,7 +286,7 @@ export function addSaplingSpot(state, cell) {
 // Counts the remembered cells that still hold a sapling or a grown tree; `valid(cell)` returns true/false (an unloaded chunk: true).
 // Cells that went missing are dropped (so breaking and replanting one cell never counts twice).
 export function saplingProgress(state, valid) {
-  const r = state.request;
+  const r = requestTask(state);
   if (!r) return 0;
   r.spots = r.spots.filter((c) => valid(c) !== false);
   return r.spots.length;
@@ -261,10 +295,10 @@ export function saplingProgress(state, valid) {
 // Delivery of the active request, checked by the caller (counts / saplings). Pays and marks it done.
 // Returns { request, points, rank } or undefined.
 export function deliver(state) {
-  const r = state.request;
+  const r = requestTask(state);
   if (!r) return undefined;
   state.done[r.id] = true;
-  state.request = null;
+  state.task = null;
   state.offer = null;
   return { request: r.id, points: POINTS.request, rank: award(state, POINTS.request) };
 }

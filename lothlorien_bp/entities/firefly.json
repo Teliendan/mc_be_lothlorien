@@ -7,11 +7,6 @@
       "is_spawnable": true,
       "is_summonable": true
     },
-    "component_groups": {
-      "caught": {
-        "minecraft:instant_despawn": {}
-      }
-    },
     "components": {
       "minecraft:type_family": {
         "family": [
@@ -92,12 +87,9 @@
                     "value": "minecraft:glass_bottle"
                   }
                 ]
-              },
-              "event": "lothlorien:caught",
-              "target": "self"
+              }
             },
-            "use_item": true,
-            "transform_to_item": "lothlorien:bottle_of_fireflies",
+            "use_item": false,
             "swing": true,
             "interact_text": "action.interact.lothlorien.catch_firefly"
           }
@@ -126,15 +118,6 @@
       },
       "minecraft:pushable_by_entity": {},
       "minecraft:pushable_by_block": {}
-    },
-    "events": {
-      "lothlorien:caught": {
-        "add": {
-          "component_groups": [
-            "caught"
-          ]
-        }
-      }
     }
   }
 }

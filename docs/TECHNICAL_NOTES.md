@@ -994,8 +994,8 @@ Leave and re-enter the world to load the entity and script changes. `/summon` wo
   (8 tries, y +2..18, gaussian x/z +-4) places `nectar_bloom_full_feature` (stage 3, `may_attach_to.top` = leaves) at the end of
   `select_mallorn_tree_with_litter_feature`, after blossoms and litter. Sapling-grown trees get 0-2 dry blooms (`trees.js`, `treeBloomCount`).
 - **Morning dew** (`scripts/dew.js`, `dew_rules.js`): bool state `lothlorien:dew` on leaf litter and blossoms, component `lothlorien:dew_cover`
-  (random tick). Window = time of day 23000..3000; in it a dry cover turns dewy with its chance (litter 1/8, blossom 1/2) if Mallorn leaves are within
-  40 blocks above (checked only after the dice succeed); outside it dew clears. Dewy cover swaps its `*` material to `<name>_dew` (a permutation,
+  (random tick). Window = time of day 23000..3000 with share f = 0 at 23000, 1 at 3000 (`dawnShare`); per random tick a dry cover turns dewy with `DEW_APPEAR * (1 - f)` (litter 1/8, blossom 1/4) if Mallorn leaves are within
+  40 blocks above (checked only after the dice succeed), a dewy one dries with `1/2 * f`; outside the window any random tick dries it (chance 1), so leftover dew vanishes during the day. A visible dewy patch is always collectable (no time check on use: the owner wants no empty outcome). Reason (owner report: 21 bottles and collecting at 5079): dew lingered until its next random tick. Expected about 10 bottles for an eager player over a whole window, about 5 casual, 8 drops per bottle. Not yet seen in game. Dewy cover swaps its `*` material to `<name>_dew` (a permutation,
   `tools/make_dew_textures.py`). Glass bottle on dewy cover -> `lothlorien:dew_bottle` (durability 8, damage = missing drops, new = 1 drop); each
   further use adds a drop; at 8 it becomes `lothlorien:morning_dew`. Bottle icons: `tools/make_nectar_dew.py`.
 - **Star canopy** `lothlorien:star_canopy` (`tools/make_star_canopy.py`): full block, `light_emission` 6, 6-frame blended flipbook
@@ -1221,20 +1221,23 @@ monsters hunt it), natural spawns (spawn rule + one-time depth / deck judge in `
 only the village group adds `minecraft:persistent`. Harmony: fight -1, kill -6, Hated players shot on sight (see Harmony). Open: template entities in jigsaw pieces, home point,
 bow from the equipment table. Depth-estimate cost per natural spawn still unmeasured (`/scriptevent lothlorien:depth`).
 
-## Renown and the Loremaster (M2, 2026-10-10, built; static checks, unit tests only, NOT yet seen in game, not deployed)
-Design: `design/elven_inhabitants.md` sections 2-3. Files: `renown_rules.js` (pure: every value, chapters, requests, rotation, delivery plan, parse/serialize),
-`deeds.js` (hook bus, no imports), `renown_game.js` (state in the player dynamic property `lothlorien:renown`, deed listener, sapling count, firefly detection, inventory, rank-up feedback, debug),
-`loremaster.js` (interception + `ActionFormData` forms; every text through `message()`, keys `lothlorien.message.lore.*`), tests `tests/renown.mjs`. Manifest now lists `@minecraft/server-ui` 2.1.0.
-- **Debug:** `/scriptevent lothlorien:renown` shows state; `points N`, `reset`, `deed <id>` (dew, nectar, lembas, rope, fireflies, squirrel; honours the "lesson active" rule),
-- **Tales dropped (owner 2026-10-11):** no deferred +1 for the white deer / unicorn; those two scripts have no Renown hook. `white_animals` stays a lore lesson. Rank line in the form: "Progress to <rank>: <points> / <threshold>" (`nextRank` returns `threshold`).
-  `chapter N` (marks chapters < N done and sets matching points), `offer <request id>`. Bands: `/scriptevent lothlorien:harmony <value>`.
-- **Interaction:** `beforeEvents.playerInteractWithEntity` on a `lothlorien:elf` with variant 4: cancel, then `system.run` opens the form (not allowed in read-only mode). Lead and name tag return early (not cancelled).
-  `entities/elf.json`: `minecraft:interact` (Speak, no event, `use_item: false`) in the `lothlorien:loremaster` group only, `none_of` lead / name tag in hand.
-- **Forms:** the form body, title and buttons are RawMessage `{ translate }`. Typings for `@minecraft/server-ui` 2.1.0 are not in the workspace; that titles, bodies and buttons accept RawMessage is documented (Microsoft Learn), UNVERIFIED here.
-  `UserBusy` is retried 10 times every 10 ticks; answers are applied only if the player and the Loremaster are valid and within 8 blocks.
-- **Firefly detection (UNVERIFIED):** the catch is entity JSON only (`transform_to_item`). `beforeEvents.playerInteractWithEntity` (target `lothlorien:firefly`, glass bottle in hand) snapshots the firefly bottles in the pack,
-  5 ticks later more bottles mean a catch -> deed `fireflies`. An `afterEvents` listener was not used because the firefly despawns at once (`instant_despawn`), so `target` may already be invalid.
-- **Sapling request:** `afterEvents.playerPlaceBlock` with `lothlorien:mallorn_sapling` inside the biome while the request is active; distinct cells; checked at delivery.
-- **In-game checks:** (1) does using the Loremaster open the form (interact fires, no vanilla reaction)? (2) `UserBusy` seen? (3) does a held lead still leash him, a name tag still name him? (4) firefly deed fires after catching with a bottle?
-  (5) do forms render RawMessage titles, bodies, buttons (and the `\n` inside a rawtext body)? (6) delivery removes exactly the asked items (any-of logs, coal), nothing else, and refuses when short? (7) rank-up chat, sound and particles at 3 / 8 / 15 points?
-  (8) do Uneasy / Shunned / Hated behave as designed (use `lothlorien:harmony`)? (9) deeds before a lesson is opened are ignored; the sapling request counts and drops broken saplings? (10) do the texts fit the form and read well in Czech?
+## Renown and the Loremaster (M2, dialog redesigned 2026-10-11, built; static checks, unit tests only, NOT yet seen in game, not deployed)
+Design: `design/elven_inhabitants.md` sections 2-3. Files: `renown_rules.js` (pure: values, chapters, task slot, requests, rotation, delivery plan, parse/serialize), `deeds.js` (hook bus),
+`renown_game.js` (state in the player dynamic property `lothlorien:renown`, **v2**; deed listener, sapling count, Harmony nudge, inventory, rank-up feedback, debug), `loremaster.js` (interception + forms),
+`fireflies.js` (script-owned firefly catch), tests `tests/renown.mjs`. Every text through `message()`, keys `lothlorien.message.lore.*` (catalog source, `.\mods localize build lothlorien`).
+- **State v2:** `{ v, points, done, task, offer, queue }`, `task = null | { kind: "lesson", id, ready, since } | { kind: "request", id, spots }`. v1 migrates on read: points, done, offer, queue kept; the v1 request becomes the task;
+  v1 `active` lessons are dropped (players take them again). Rules: `takeLesson`, `noteDeed` (-> ready, no points), `taskStatus` (computed from Harmony / inventory / saplings), `turnIn`, `abandonTask`, `completeLore`, `menuFor`.
+- **Debug:** `/scriptevent lothlorien:renown` shows state; `points N`, `reset`, `deed <id>` (dew, nectar, lembas, rope, fireflies, squirrel; only counts while that lesson is the task), `take <lesson id>`, `chapter N`, `offer <request id>`.
+  Bands: `/scriptevent lothlorien:harmony <value>`.
+- **Interaction:** `beforeEvents.playerInteractWithEntity` on a `lothlorien:elf` with variant 4: cancel, then `system.run` opens the form. Lead and name tag return early. `entities/elf.json`: prompt-only `minecraft:interact` ("Speak") in the `lothlorien:loremaster` group.
+- **Forms:** `ActionFormData` screen loop (`next = await SCREENS[next[0]](ctx, next[1])`); RawMessage titles, bodies and buttons; icons `textures/items/<this pack's item>` and vanilla `textures/ui/*`, `textures/items/book_*`, `paper`. The set-aside confirm is an
+  `ActionFormData` with two buttons (not `MessageFormData`, whose button order is a known trap). Selection maps through an `actions[]` array filled only by `button()` calls; the forms use **no header / label / divider** (whether they count in `selection` is unconfirmed),
+  all extra text is in the body. `UserBusy` is retried 10 times every 10 ticks; answers apply only if the player and the Loremaster are valid and within **12** blocks (he strolls up to 6 from home); a dropped answer or exhausted retries sends a chat line.
+- **Firefly catch (script-owned, option A):** `entities/firefly.json` keeps only the prompt (`minecraft:interact` with `use_item: false`, `swing`, no event / transform; the `caught` group and event are gone). `fireflies.js`: before event on a glass bottle, cancel, `repeatedUse`,
+  then `system.run`: remove the firefly (if still valid), `swapHeldBottle` -> Bottle of fireflies, `noteDeed("fireflies")`, `bucket.fill_water` sound. Offhand bottles no longer catch. If the script fails to load, fireflies cannot be caught.
+- **Sapling request:** `afterEvents.playerPlaceBlock` with `lothlorien:mallorn_sapling` inside the biome while the request is the task; distinct cells; checked at turn-in.
+- **In-game checks:** (1) do header-free screens read well, do two-line buttons (`name\nstatus`) and the icons render (task item, ready check, book icons, trash, arrows)? (2) opening the dialog with a ready task lands on the Task screen; "It is done" -> Result -> Continue -> Main.
+  (3) nectar / dew / lembas / rope / squirrel deed -> chat nudge + orb sound -> ready (green "Return to me" on Main). (4) a deed done while another task is held is lost; "Set this aside" returns a lesson to Teaching. (5) Harmony lesson: ready at talk time, nudge once when Harmony reaches +3.
+  (6) lore lesson: "I understand" returns to Teaching with "You have learned: X" (and the chapter-opened line when it applies). (7) request: kin offer, "I will", progress line, turn-in removes exactly the asked items / refuses when short; saplings count. (8) walking away (> 12 blocks) or a busy screen prints the chat line.
+  (9) firefly catch in survival, creative and with two players on one firefly (second gets nothing); the prompt text still shows. (10) a v1 save migrates (points, done, request kept; active lessons gone). (11) Uneasy / Shunned / Hated behave as designed. (12) texts fit the form, Czech reads well.
+- **Tales dropped (owner 2026-10-11):** no deferred +1 for the white deer / unicorn; `white_animals` stays a lore lesson.

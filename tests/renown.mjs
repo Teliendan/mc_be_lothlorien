@@ -9,14 +9,14 @@ function test(name, fn) { fn(); console.log(`ok   renown: ${name}`); }
 // deterministic rng (mulberry32)
 const seeded = (seed) => () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 const OPEN = (s) => R.availableLessons(s).map((l) => l.id);
-// reads and finishes every lesson of the open chapter the way the game does (give it, then complete it); returns the finish results
+// finishes every lesson of the open chapter the way the game does (lore: read; others: take, deed, turn in); returns the finish results
 function doChapter(s) {
   const out = [];
   for (const l of R.availableLessons(s)) {
-    R.activate(s, l.id, 1);
-    if (l.kind === "lore") out.push(R.completeLore(s, l.id));
-    else if (l.kind === "harmony") out.push(R.completeHarmony(s, 5));
-    else out.push(...R.noteDeed(s, l.deed));
+    if (l.kind === "lore") { out.push(R.completeLore(s, l.id)); continue; }
+    assert.equal(R.takeLesson(s, l.id, 1), true, `take ${l.id}`);
+    if (l.kind === "deed") assert.deepEqual(R.noteDeed(s, l.deed), [{ lesson: l.id, ready: true }]);
+    out.push(R.turnIn(s, 5));
   }
   return out;
 }
@@ -38,9 +38,9 @@ test("chapters: only the open chapter is available; the next one opens when ever
   const s = R.newState();
   assert.deepEqual(OPEN(s), ["harmony", "elves", "renown", "dew", "nectar"]);
   assert.equal(R.openChapter(s), 1);
-  R.activate(s, "elves", 1); R.completeLore(s, "elves");
+  R.completeLore(s, "elves");
   assert.deepEqual(OPEN(s), ["harmony", "renown", "dew", "nectar"], "a finished lesson leaves the list");
-  assert.equal(R.activate(s, "depth", 1), false, "a lesson of a later chapter cannot be given");
+  assert.equal(R.takeLesson(s, "lembas", 1), false, "a lesson of a later chapter cannot be taken");
   assert.equal(R.completeLore(s, "depth"), undefined);
   doChapter(s);
   assert.equal(R.openChapter(s), 2);
@@ -66,54 +66,109 @@ test("pacing: chapter I = 3 (Welcome), chapter II = 6 (Trusted needs 1 request),
   assert.equal(s.points, 31, "points keep counting after the last rank (15 + 8 requests x 2)");
 });
 
-test("a deed counts only while its lesson is active; deeds done before the lesson was given are lost", () => {
+test("a deed counts only while its lesson is the task: it makes the task ready, the turn-in pays", () => {
   const s = R.newState();
-  assert.deepEqual(R.noteDeed(s, "dew"), [], "no lesson given yet");
-  assert.equal(s.points, 0);
-  R.activate(s, "dew", 5);
-  assert.equal(R.noteDeed(s, "dew").length, 1);
-  assert.equal(s.points, 1); assert.equal(s.done.dew, true);
-  assert.deepEqual(R.noteDeed(s, "dew"), [], "pays once, ever");
-  assert.deepEqual(R.noteDeed(s, "lembas"), [], "a lesson of a later chapter is never active");
-  assert.equal(s.points, 1);
+  assert.deepEqual(R.noteDeed(s, "dew"), [], "no task yet: the deed is lost");
+  assert.equal(R.takeLesson(s, "dew", 5), true);
+  assert.deepEqual(R.noteDeed(s, "nectar"), [], "another lesson's deed is lost");
+  assert.equal(R.taskStatus(s), "active");
+  assert.deepEqual(R.noteDeed(s, "dew"), [{ lesson: "dew", ready: true }]);
+  assert.equal(s.points, 0, "a deed alone pays nothing"); assert.equal(R.taskStatus(s), "ready");
+  assert.deepEqual(R.noteDeed(s, "dew"), [], "ready already");
+  const r = R.turnIn(s, 0);
+  assert.equal(r.points, 1); assert.equal(s.points, 1); assert.equal(s.done.dew, true); assert.equal(s.task, null);
+  assert.equal(R.turnIn(s, 5), undefined, "pays once, ever");
+  assert.deepEqual(R.noteDeed(s, "dew"), []);
+  assert.equal(R.takeLesson(s, "dew", 6), false, "a finished lesson cannot be taken again");
+  assert.deepEqual(R.noteDeed(s, "lembas"), [], "a lesson of a later chapter is never the task");
 });
 
-test("the Harmony lesson needs the lesson given and Harmony >= +3 at the moment", () => {
+test("one task slot: lessons and requests exclude each other, lore never needs the slot", () => {
   const s = R.newState();
-  assert.equal(R.completeHarmony(s, 10), undefined, "not given yet");
-  R.activate(s, "harmony", 1);
-  assert.equal(R.completeHarmony(s, 2), undefined);
-  assert.equal(R.completeHarmony(s, -5), undefined);
-  assert.equal(R.completeHarmony(s, 3).points, 1);
-  assert.equal(R.completeHarmony(s, 10), undefined, "once");
+  assert.equal(R.takeLesson(s, "elves", 1), false, "lore is not a task");
+  assert.equal(R.takeLesson(s, "dew", 1), true);
+  assert.equal(R.takeLesson(s, "nectar", 1), false, "slot taken");
+  assert.equal(R.completeLore(s, "elves").lesson, "elves", "lore completes while a task is held");
+  assert.equal(s.task.id, "dew");
+  R.noteDeed(s, "dew"); R.turnIn(s, 0); // finish the held task first, then the rest of chapter I and chapter II
+  doChapter(s);
+  doChapter(s);
+  assert.equal(R.takeLesson(s, "gifts", 1), true);
+  s.offer = "g_dew";
+  assert.equal(R.accept(s), false, "a request cannot be accepted while a lesson is the task");
+  R.abandonTask(s);
+  assert.equal(R.accept(s), true);
+  assert.equal(R.takeLesson(s, "gifts", 1), false, "a lesson cannot be taken while a request is the task");
+  assert.equal(R.menuFor("guest", s).canOfferRequest, false, "kin offer hidden while the slot is full");
+});
+
+test("abandon: a lesson goes back to offered (not done, ready cleared, deed again), a request is not done and the rotation moves on", () => {
+  const s = R.newState();
+  R.takeLesson(s, "nectar", 1); R.noteDeed(s, "nectar");
+  assert.equal(R.taskStatus(s), "ready");
+  assert.equal(R.abandonTask(s), "lesson");
+  assert.equal(s.task, null); assert.equal(s.points, 0); assert.equal(s.done.nectar, undefined);
+  assert.ok(R.menuFor("guest", s).teaching.offered.includes("nectar"), "offered again");
+  assert.equal(R.takeLesson(s, "nectar", 2), true);
+  assert.equal(R.taskStatus(s), "active", "the old deed is gone");
+  assert.equal(R.abandonTask(R.newState()), false, "nothing to set aside");
+});
+
+test("the Harmony lesson: ready is computed at talk time (Harmony >= +3), paid by turn-in once", () => {
+  const s = R.newState();
+  assert.equal(R.turnIn(s, 10), undefined, "not taken");
+  assert.equal(R.takeLesson(s, "harmony", 1), true);
+  assert.equal(R.taskStatus(s, { harmony: 2 }), "active");
+  assert.equal(R.taskStatus(s, { harmony: -5 }), "active");
+  assert.equal(R.taskStatus(s, { harmony: 3 }), "ready");
+  assert.deepEqual(R.noteDeed(s, "harmony"), [], "no deed hook for Harmony");
+  assert.equal(R.turnIn(s, 2), undefined);
+  assert.equal(R.turnIn(s, 3).points, 1);
+  assert.equal(R.turnIn(s, 10), undefined, "once");
+});
+
+test("request status is computed from the inventory or the planted saplings", () => {
+  const s = R.newState();
+  s.task = { kind: "request", id: "h_nectar", spots: [] };
+  assert.equal(R.taskStatus(s, { counts: { "lothlorien:mallorn_nectar": 1 } }), "active");
+  assert.equal(R.taskStatus(s, { counts: { "lothlorien:mallorn_nectar": 2 } }), "ready");
+  s.task = { kind: "request", id: "g_acorns", spots: [] };
+  assert.equal(R.taskStatus(s, { saplings: 4 }), "active");
+  assert.equal(R.taskStatus(s, { saplings: 5 }), "ready");
+  assert.equal(R.taskStatus(R.newState(), { harmony: 9 }), undefined, "no task, no status");
 });
 
 test("rank-up result is reported on the point that crosses a threshold", () => {
-  const s = R.newState(); R.activate(s, "dew", 1); R.activate(s, "nectar", 1); R.activate(s, "harmony", 1);
-  R.noteDeed(s, "dew"); R.noteDeed(s, "nectar");
-  const r = R.completeHarmony(s, 3);
+  const s = R.newState();
+  for (const id of ["dew", "nectar"]) { R.takeLesson(s, id, 1); R.noteDeed(s, id); R.turnIn(s, 0); }
+  R.takeLesson(s, "harmony", 1);
+  const r = R.turnIn(s, 3);
   assert.deepEqual(r.rank, { before: "stranger", after: "welcome", rankedUp: true });
 });
 
 test("gating by band: friend and guest full; uneasy only the Harmony lesson; shunned and hated nothing", () => {
   const s = R.newState();
-  for (const band of ["friend", "guest"]) { const m = R.menuFor(band, s); assert.equal(m.mode, "full"); assert.equal(m.renown, true); assert.equal(m.requests, false, "chapters I and II not complete yet"); assert.deepEqual(m.lessons, OPEN(s)); }
-  assert.deepEqual(R.menuFor("uneasy", s), { mode: "uneasy", lessons: ["harmony"], remind: [], requests: false, renown: false });
-  assert.equal(R.menuFor("shunned", s).mode, "shunned"); assert.deepEqual(R.menuFor("shunned", s).lessons, []);
+  for (const band of ["friend", "guest"]) {
+    const m = R.menuFor(band, s); assert.equal(m.mode, "full"); assert.equal(m.renown, true); assert.equal(m.requestsOpen, false, "chapters I and II not complete yet"); assert.equal(m.canOfferRequest, false);
+    assert.deepEqual(m.teaching, { chapter: 1, offered: ["harmony", "dew", "nectar"], lore: ["elves", "renown"], done: [] });
+  }
+  assert.deepEqual(R.menuFor("uneasy", s), { mode: "uneasy", renown: false, requestsOpen: false, canOfferRequest: false, teaching: { chapter: 1, offered: ["harmony"], lore: [], done: [] } });
+  assert.equal(R.menuFor("shunned", s).mode, "shunned"); assert.deepEqual(R.menuFor("shunned", s).teaching.offered, []);
   assert.equal(R.menuFor("hated", s).mode, "hated");
   doChapter(s); doChapter(s);
-  assert.equal(R.menuFor("guest", s).requests, true);
-  assert.equal(R.menuFor("uneasy", s).requests, false, "no requests while uneasy");
-  assert.ok(R.menuFor("guest", s).remind.includes("dew"), "finished lessons stay readable under Remind me");
+  assert.equal(R.menuFor("guest", s).canOfferRequest, true);
+  assert.equal(R.menuFor("uneasy", s).canOfferRequest, false, "no requests while uneasy");
+  assert.ok(R.menuFor("guest", s).teaching.done.includes("dew"), "finished lessons stay readable under Earlier lessons");
+  assert.deepEqual(R.menuFor("uneasy", s).teaching, { chapter: 3, offered: [], lore: [], done: ["harmony"] }, "Harmony read-only once done");
 });
 
-test("an active request survives a drop to Uneasy (kept, paused) and the state round-trips", () => {
+test("an active task survives a drop to Uneasy (kept, paused) and the state round-trips", () => {
   const s = R.newState(); doChapter(s); doChapter(s);
   R.currentOffer(s, seeded(1)); R.accept(s);
-  const id = s.request.id;
+  const id = s.task.id;
   R.menuFor("uneasy", s);
   const back = R.parse(R.serialize(s));
-  assert.equal(back.request.id, id);
+  assert.equal(back.task.id, id);
   assert.deepEqual(back, s);
 });
 
@@ -122,7 +177,7 @@ test("no cooldown: the next request is offered right after delivery and right af
   const first = R.currentOffer(s, rng); R.accept(s); R.deliver(s);
   const second = R.currentOffer(s, rng);
   assert.ok(second && second.id !== first.id);
-  R.accept(s); assert.equal(R.abandon(s), true);
+  R.accept(s); assert.equal(R.abandonTask(s), "request");
   assert.ok(R.currentOffer(s, rng), "a new offer immediately");
   assert.equal(R.REQUEST_GAP_TICKS, undefined, "no gap constant exists");
 });
@@ -133,8 +188,8 @@ test("'Not now' keeps the same offer; abandon pays nothing and does not complete
   assert.equal(a.id, b.id, "same offer next time");
   R.accept(s);
   const pts = s.points;
-  R.abandon(s);
-  assert.equal(s.points, pts); assert.equal(s.done[a.id], undefined); assert.equal(s.offer, null); assert.equal(s.request, null);
+  R.abandonTask(s);
+  assert.equal(s.points, pts); assert.equal(s.done[a.id], undefined); assert.equal(s.offer, null); assert.equal(s.task, null);
 });
 
 test("each request can be completed once ever: 12 deliveries use all 12 requests exactly once, then nothing is offered", () => {
@@ -184,7 +239,7 @@ test("delivery: any-of log count (birch + cherry), all or nothing", () => {
 });
 
 test("saplings: distinct cells only, vanished cells drop out, an unloaded chunk counts as fine", () => {
-  const s = R.newState(); s.request = { id: "g_acorns", spots: [] };
+  const s = R.newState(); s.task = { kind: "request", id: "g_acorns", spots: [] };
   assert.equal(R.addSaplingSpot(s, "o|1,2,3"), true);
   assert.equal(R.addSaplingSpot(s, "o|1,2,3"), false, "the same cell twice");
   for (const c of ["o|2,2,3", "o|3,2,3", "o|4,2,3", "o|5,2,3"]) R.addSaplingSpot(s, c);
@@ -192,18 +247,37 @@ test("saplings: distinct cells only, vanished cells drop out, an unloaded chunk 
   assert.equal(R.saplingProgress(s, (c) => c !== "o|2,2,3"), 4, "a broken sapling no longer counts");
   assert.equal(R.addSaplingSpot(s, "o|2,2,3"), true, "replanting the cell counts again once");
   assert.equal(R.saplingProgress(s, (c) => (c === "o|5,2,3" ? undefined : true)), 5, "unloaded = fine");
-  const other = R.newState(); other.request = { id: "g_dew", spots: [] };
+  const other = R.newState(); other.task = { kind: "request", id: "g_dew", spots: [] };
   assert.equal(R.addSaplingSpot(other, "o|1,1,1"), false, "only for the sapling request");
   assert.equal(R.addSaplingSpot(R.newState(), "o|1,1,1"), false, "only while the request is active");
 });
 
 test("parse tolerates junk, other versions and unknown ids", () => {
   const fresh = R.newState();
-  for (const junk of [undefined, "", "not json", "null", "[]", "42", '{"v":2,"points":99}', '{"points":99}']) assert.deepEqual(R.parse(junk), fresh, String(junk));
-  const p = R.parse(JSON.stringify({ v: 1, points: "x", done: { dew: true, bogus: 1 }, active: { nectar: 7, nope: 1 }, request: { id: "nope" }, offer: "g_dew", queue: ["healer", "baker"] }));
-  assert.equal(p.points, 0); assert.deepEqual(p.done, { dew: true }); assert.deepEqual(p.active, { nectar: 7 });
-  assert.equal(p.request, null); assert.equal(p.offer, "g_dew"); assert.deepEqual(p.queue, ["healer"]);
-  assert.equal(JSON.parse(R.serialize(R.newState())).v, 1);
+  for (const junk of [undefined, "", "not json", "null", "[]", "42", '{"v":3,"points":99}', '{"points":99}']) assert.deepEqual(R.parse(junk), fresh, String(junk));
+  const p = R.parse(JSON.stringify({ v: 2, points: "x", done: { dew: true, bogus: 1 }, task: { kind: "lesson", id: "elves" }, offer: "g_dew", queue: ["healer", "baker"] }));
+  assert.equal(p.points, 0); assert.deepEqual(p.done, { dew: true }); assert.equal(p.task, null, "a lore lesson is no task");
+  assert.equal(p.offer, "g_dew"); assert.deepEqual(p.queue, ["healer"]);
+  assert.equal(R.parse(JSON.stringify({ v: 2, task: { kind: "lesson", id: "dew", ready: true, since: 9 } })).task.ready, true);
+  assert.equal(R.parse(JSON.stringify({ v: 2, done: { dew: true }, task: { kind: "lesson", id: "dew" } })).task, null, "a done lesson is no task");
+  assert.equal(R.parse(JSON.stringify({ v: 2, task: { kind: "request", id: "nope" } })).task, null);
+  assert.equal(JSON.parse(R.serialize(R.newState())).v, 2);
+});
+
+test("migration v1 -> v2: points, done, offer and queue kept, the active request becomes the task, active lessons are dropped", () => {
+  const v1 = { v: 1, points: 7, done: { harmony: true, elves: true, renown: true, dew: true, nectar: true, bogus: 1 }, active: { depth: 3 },
+    request: { id: "g_acorns", spots: ["o|1,2,3", 5] }, offer: "h_athelas", queue: ["healer", "baker", "gardener"] };
+  const p = R.parse(JSON.stringify(v1));
+  assert.equal(p.v, 2); assert.equal(p.points, 7);
+  assert.deepEqual(p.done, { harmony: true, elves: true, renown: true, dew: true, nectar: true });
+  assert.deepEqual(p.task, { kind: "request", id: "g_acorns", spots: ["o|1,2,3"] });
+  assert.equal(p.offer, null, "an offer is dropped when a request is the task");
+  assert.deepEqual(p.queue, ["healer", "gardener"]);
+  assert.equal("active" in p, false); assert.equal("request" in p, false);
+  assert.equal(R.taskStatus(p, { saplings: 5 }), "ready");
+  const q = R.parse(JSON.stringify({ v: 1, points: 2, done: {}, active: { dew: 1 }, request: null, offer: "g_dew", queue: [] }));
+  assert.equal(q.task, null); assert.equal(q.offer, "g_dew");
+  assert.deepEqual(R.parse(R.serialize(p)), p, "v2 round-trips");
 });
 
 test("every request item id exists (vanilla catalog or this mod's items/blocks)", () => {
@@ -225,10 +299,14 @@ test("every translation key the dialog uses exists in the resource catalog", () 
     ...R.REQUESTS.map((r) => `lore.req.${r.id}.text`),
     ...R.RANKS.map((r) => `lore.rank.${r}`),
     ...R.RANKS.slice(1).map((r) => `lore.rankup.${r}`),
+    ...R.LESSONS.filter(R.isTaskLesson).map((l) => `lore.lesson.${l.id}.goal`),
+    ...R.PROFESSIONS.map((p) => `lore.req.prof.${p}`),
+    ...[1, 2, 3].map((n) => `lore.chapter.${n}`),
     ...["title", "greet.friend", "greet.guest", "greet.uneasy", "rank.line", "rank.next", "rank.max", "requests.locked", "requests.none", "requests.paused",
-      "btn.lesson", "btn.remind", "btn.request_new", "btn.request_active", "btn.farewell", "btn.understand", "btn.done", "btn.back", "btn.accept", "btn.notnow",
-      "btn.deliver", "btn.abandon", "btn.abandon_yes", "btn.keep", "remind.body", "harmony.not_yet", "abandon.ask", "abandon.done", "deliver.ok", "deliver.missing",
-      "saplings.counted", "saplings.missing", "req.have", "done.lesson", "chapter.opened", "shunned", "debug.state"].map((k) => `lore.${k}`),
+      "task.header", "status.active", "status.ready", "status.done", "ready.chat", "harmony.ready_chat", "btn.teaching", "teach.count", "teach.busy",
+      "btn.take", "btn.continue", "btn.earlier", "btn.set_aside", "btn.request_new", "btn.farewell", "btn.understand", "btn.done", "btn.back", "btn.accept", "btn.notnow",
+      "btn.keep", "remind.body", "result.renown", "result.learned", "too_far", "busy", "harmony.not_yet", "abandon.ask", "abandon.done", "lesson.task",
+      "deliver.ok", "deliver.missing", "saplings.counted", "saplings.missing", "req.have", "done.lesson", "chapter.opened", "shunned", "debug.state"].map((k) => `lore.${k}`),
   ];
   for (const k of need) assert.ok(keys.has(`lothlorien.message.${k}`), `catalog has lothlorien.message.${k}`);
   assert.ok(keys.has("action.interact.lothlorien.speak"));
@@ -243,4 +321,22 @@ test("lesson texts are short (2-5 sentences) in English", () => {
     const sentences = src.split(/[.!?]+(?:\s|$)/).filter((x) => x.trim()).length;
     assert.ok(sentences >= 2 && sentences <= 5, `${l.id}: ${sentences} sentences`);
   }
+});
+
+test("goal lines: one sentence each, deed lesson texts end without the goal sentence", () => {
+  const cat = JSON.parse(text("../localization/catalog.json")).packs.lothlorien_rp.entries;
+  for (const l of R.LESSONS.filter(R.isTaskLesson)) {
+    const goal = cat[`lothlorien.message.lore.lesson.${l.id}.goal`].source;
+    const sentences = goal.split(/[.!?]+(?:\s|$)/).filter((x) => x.trim()).length;
+    assert.equal(sentences, 1, `${l.id} goal: ${sentences} sentences`);
+  }
+  assert.equal(cat["lothlorien.message.lore.lesson.nectar.goal"].source, "Fill a glass bottle from a full bloom.");
+  assert.ok(cat["lothlorien.message.lore.lesson.nectar.text"].source.includes("Fill a glass bottle from a full bloom, and the bloom begins to fill again."));
+  assert.ok(cat["lothlorien.message.lore.lesson.dew.text"].source.includes("Fill a glass bottle from each dewy patch"));
+});
+
+test("script glue: the Loremaster form does not use header / label / divider (selection maps through actions[] of button() calls)", () => {
+  const src = text("../lothlorien_bp/scripts/loremaster.js");
+  assert.ok(!/\.(header|label|divider)\(/.test(src.replace(/\/\/.*$/gm, "")), "no non-button elements in the form");
+  assert.ok(/MAX_DISTANCE = 12/.test(src));
 });
