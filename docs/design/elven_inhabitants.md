@@ -13,7 +13,7 @@ Looks: `docs/mobs/elves.md` (`tools/make_elves.py`, review sheets in `temp/elves
 | M0 | Spikes: custom bow, arrows, belt (section 8) | done, owner-tested 2026-10-10. Spike files kept in `temp/elven_inhabitants/spike_files/` as the M5 starting point |
 | M1 | Civilian elves placed in villages, Harmony, wardens defend, leads, healer roaming (sections 1, 7, 10) + village polish (rope foot, crowns fit their box, bare branches, living pillars with planner root flares) | done, accepted in game 2026-10-10 (commits 30e1eb1, 5631c22, 6f79109, 7b57536, 6b97311; the ivy start of 6b97311 not yet seen) |
 | M2 | Renown + Loremaster dialog: lessons and requests (sections 2, 3) | done, accepted in game 2026-10-11 (commits 88dbbe2, 6019c88, f854117, ff61ae2, eb1cc5e dew, a10653f niphredil). Notes: `docs/TECHNICAL_NOTES.md` "Renown and the Loremaster (M2)" |
-| M3 | Shops: trade-table generator (band x rank), table swapping by script, refusal (section 4) | |
+| M3 | Shops: trade-table generator (band x rank), table swapping by script, refusal (section 4) | values agreed 2026-10-11 (section 4 "M3 values"); building |
 | M4 | Healer heals elves and Friends (section 7) | |
 | M5 | Final items (Galadriel's gifts) + Galadhrim arrows (sections 5, 6); then the bow template for `bedrock-items` | |
 | M6 | Great Mallorn upgrade (section 9) | |
@@ -101,11 +101,34 @@ Exceptions agreed: the elven lanterns and the final items. Currency: **emeralds*
 | Elf | Buys (player earns emeralds) | Sells, by rank | Final (Elf-friend + Friend) |
 |---|---|---|---|
 | Gardener | bone meal, seeds, vanilla flowers | 0: acorns, Elanor, Niphredil, Athelas, golden fern; 1: blossoms, Western Corn seed; 2: **nectar blooms** (worldgen-only otherwise) | **Elven cloak** |
-| Woodwright | other woods, string, feathers, iron | 0: **Mallorn logs** 1 emerald = 6 (Friend 8; a stack about 10 emeralds); 2: **Galadhrim arrows** about 1 emerald = 8; 2: **Elven rope** 6 emeralds (Friend 5; expensive on purpose: crafting needs a bottle of dew) | **Bow of the Galadhrim** |
+| Woodwright | other woods, string, feathers, iron | 0: **Mallorn logs** 1 emerald = 6 (Friend 8; a stack about 10 emeralds); 2: **Galadhrim arrows** about 1 emerald = 8; 1: **Elven rope** 6 emeralds (Friend 5; expensive on purpose: crafting needs a bottle of dew) | **Bow of the Galadhrim** |
 | Healer | Athelas, Elanor, Niphredil, nectar, glistering melon | potions: Healing, Regeneration, Slow Falling (flets); 3: Miruvor | **Silver belt** |
-| Lamplighter | glass, amethyst, glowstone | 0: **both elven lanterns** (silver, heartwood); **deer antlers** (no killing deer for the chandelier), bottled fireflies, morning dew | **Phial of Galadriel** |
+| Lamplighter | glass, amethyst, glowstone | 0: **both elven lanterns** (silver, heartwood); 1: morning dew; 2: **deer antlers** (no killing deer for the chandelier); no loose fireflies | **Phial of Galadriel** |
 
 No carved decor pieces (owner). No books from the Loremaster (owner). The Great Mallorn nut stays a white-deer-only gift.
+
+### M3 values (owner 2026-10-11; all in `trade_rules.js`, tables generated)
+
+M3 = the four shops with what exists today; final trades and Galadhrim arrows come with their items in M5 (so rank 3 adds only Miruvor in M3).
+Prices are **Uneasy / Guest / Friend**, `a->b` = a emeralds for b items (a bare number = emeralds for one). Guest is the base; Friend about
+20 % better, Uneasy about 50 % worse and Stranger stock only. Buys = items for **1 emerald**. No arbitrage between shops even at Friend.
+
+| Elf | Sells (rank: item U / G / F) | Buys (U / G / F items -> 1 emerald) |
+|---|---|---|
+| Gardener | 0: acorn 1->1 / 1->2 / 2->5; Elanor, Niphredil 1->2 / 1->3 / 1->4; golden fern 1->3 / 1->4 / 1->5; Athelas 3->1 / 2->1 / 3->2. 1: blossom 1->4 / 1->5; Western Corn seeds 1->3 / 1->4. 2: nectar bloom 4 / 3 | bone meal, wheat seeds 48 / 32 / 24; lily of the valley, cornflower, oxeye daisy 12 / 8 / 6 |
+| Woodwright | 0: Mallorn log 1->4 / 1->6 / 1->8. 1: Elven rope 6 / 5. (M5, 2: Galadhrim arrows 1->8 / 1->10) | oak, spruce, dark oak logs, string, feathers 24 / 16 / 12; iron ingot 6 / 4 / 3 |
+| Healer | 0: Potion of Healing 5 / 3 / 2. 1: Regeneration 5 / 4. 2: Slow Falling 4 / 3. 3: Miruvor 10 / 8 | Athelas 4 / 3 / 2; Elanor, Niphredil 12 / 8 / 6; nectar 2 / 1 / (2 -> 3 emeralds); glistering melon slice 4 / 3 / 2 |
+| Lamplighter | 0: elven lantern, heartwood lantern 4 / 3 / 2. 1: morning dew 2 / 3->2. 2: deer antler 6 / 5. **No loose bottles of fireflies** | glass 24 / 16 / 12; amethyst shard 12 / 8 / 6; glowstone dust 16 / 12 / 8 |
+
+Owner decisions 2026-10-11:
+- **Stock grows with every rank** (rope moved to 1; lamplighter spread over 0-2).
+- **Unlimited uses** (`max_uses` very high): balance by price only; script cannot see trades and restock of a custom trader is unreliable.
+- **No elf asks for what it sells itself.** Buying from one elf to hand over to another is allowed (it costs emeralds and a walk). This is why the
+  lamplighter sells no loose bottles of fireflies (his request asks for 3). The gardener's acorns are fine: his request is planting 5 saplings.
+- **Click flow at a trader:** while the player's current request is of that profession, every click opens the request form (progress, "Hand over"
+  when ready, "Trade", close). "Trade" lets that player's next click on that elf through for about 10 s, so it opens the native trade screen.
+  Otherwise a click opens the trade screen directly (Shunned / Hated: refused with a chat line).
+- Table swap: every 10 ticks, to the band and rank of the nearest player within 6 blocks; on a mismatch at click time cancel, swap, click again.
 
 ## 5. Final items (Galadriel's gifts)
 
