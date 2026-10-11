@@ -37,3 +37,11 @@ tests/run.mjs. [Workspace handover](../../../docs/script-performance-progress.md
 records current validation/deployment status and remaining acceptance.
 
 Implementation commit: `Reduce idle support and wildlife script work`.
+
+M3 shops (`Implement M3 elven shops and request trade flow`, 2026-10-11): one
+native elf query within six blocks per player every ten ticks, including away
+from villages. Band/rank reads are lazy when no trader is found. Nearby elves
+are deduplicated across players; each has one property read and no swap event
+unless its chosen key changes. Pins/passes are bounded and cleaned on expiry or
+leave. Mock tests assert query cadence and no repeat events for unchanged tables;
+this is callback/work-count evidence, not an in-game CPU measurement.

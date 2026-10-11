@@ -20,7 +20,8 @@ import "./rail_mender.js";
 import { planNearest, toggleDebug } from "./loop_marker.js";
 import "./warden_replace.js";
 import { leafUndersideY } from "./leaf_fall.js";
-import { handleHarmonyEvent, recordElfFight, startHarmony } from "./harmony_game.js";
+import { handleHarmonyEvent, harmonyOf, recordElfFight, startHarmony } from "./harmony_game.js";
+import { bandOf } from "./harmony.js";
 import { startDeer } from "./deer.js";
 import { startWhiteDeer } from "./white_deer.js";
 import { startElvenWardens } from "./elven_warden.js";
@@ -28,8 +29,10 @@ import { elfDebug, startElves } from "./elf.js";
 import { startSwans } from "./swan.js";
 import { startSquirrels } from "./squirrel.js";
 import { startUnicorns } from "./unicorn.js";
-import { handleRenownEvent, startRenown } from "./renown_game.js";
-import { startLoremaster } from "./loremaster.js";
+import { handleRenownEvent, renownOf, startRenown } from "./renown_game.js";
+import { rankIndexOf, requestProfession } from "./renown_rules.js";
+import { openTraderForm, startLoremaster } from "./loremaster.js";
+import { handleTradeEvent, startTrade } from "./trade.js";
 import { DEPTH_NAMES, estimateDepth, probeCount } from "./depth.js";
 import { startSpeedProbe } from "./speed_probe.js";
 import { startTickRateProbe } from "./tick_rate.js";
@@ -148,6 +151,7 @@ function onScriptEvent(event) {
   if (!player || player.typeId !== "minecraft:player") return;
   if (handleHarmonyEvent(event, player)) return;
   if (handleRenownEvent(event, player)) return; // debug: /scriptevent lothlorien:renown [points N | reset | deed <id> | chapter N | offer <request id>]
+  if (handleTradeEvent(event, player)) return;
   if (event.id === "lothlorien:village") { // debug: plan the loop links of the nearest village now (see loop_marker.js)
     const arg = event.message.trim();
     if (arg === "plan") planNearest(player);
@@ -224,6 +228,12 @@ world.afterEvents.worldLoad.subscribe(() => {
   startUnicorns();
   startRenown(inBiome);
   startLoremaster();
+  startTrade({
+    bandOf: (player) => bandOf(harmonyOf(player).harmony),
+    rankOf: (player) => rankIndexOf(renownOf(player).points),
+    requestProfession: (player) => requestProfession(renownOf(player)),
+    openRequestForm: openTraderForm,
+  });
   startAntlerSupport();
   startRopeClimbing();
 });

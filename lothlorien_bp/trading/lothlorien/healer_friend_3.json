@@ -1,0 +1,243 @@
+{
+  "tiers": [
+    {
+      "total_exp_required": 0,
+      "groups": [
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 2,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "minecraft:potion",
+                  "quantity": 1,
+                  "price_multiplier": 0,
+                  "functions": [
+                    {
+                      "function": "set_potion",
+                      "id": "healing"
+                    }
+                  ]
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 4,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "minecraft:potion",
+                  "quantity": 1,
+                  "price_multiplier": 0,
+                  "functions": [
+                    {
+                      "function": "set_potion",
+                      "id": "regeneration"
+                    }
+                  ]
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 3,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "minecraft:potion",
+                  "quantity": 1,
+                  "price_multiplier": 0,
+                  "functions": [
+                    {
+                      "function": "set_potion",
+                      "id": "slow_falling"
+                    }
+                  ]
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 8,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "lothlorien:miruvor",
+                  "quantity": 1,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "lothlorien:athelas",
+                  "quantity": 2,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 1,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "lothlorien:elanor",
+                  "quantity": 6,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 1,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "lothlorien:niphredil",
+                  "quantity": 6,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 1,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "lothlorien:mallorn_nectar",
+                  "quantity": 2,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 3,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:glistering_melon_slice",
+                  "quantity": 2,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 1,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

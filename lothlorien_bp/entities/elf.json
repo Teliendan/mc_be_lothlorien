@@ -5,7 +5,26 @@
       "identifier": "lothlorien:elf",
       "spawn_category": "creature",
       "is_spawnable": true,
-      "is_summonable": true
+      "is_summonable": true,
+      "properties": {
+        "lothlorien:trade": {
+          "type": "enum",
+          "values": [
+            "none",
+            "uneasy",
+            "guest_0",
+            "guest_1",
+            "guest_2",
+            "guest_3",
+            "friend_0",
+            "friend_1",
+            "friend_2",
+            "friend_3"
+          ],
+          "default": "none",
+          "client_sync": false
+        }
+      }
     },
     "component_groups": {
       "lothlorien:gardener": {
@@ -41,6 +60,11 @@
                           "domain": "hand",
                           "subject": "other",
                           "value": "minecraft:name_tag"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "lothlorien_trade_pass"
                         }
                       ]
                     }
@@ -87,6 +111,11 @@
                           "domain": "hand",
                           "subject": "other",
                           "value": "minecraft:name_tag"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "lothlorien_trade_pass"
                         }
                       ]
                     }
@@ -133,6 +162,11 @@
                           "domain": "hand",
                           "subject": "other",
                           "value": "minecraft:name_tag"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "lothlorien_trade_pass"
                         }
                       ]
                     }
@@ -179,6 +213,11 @@
                           "domain": "hand",
                           "subject": "other",
                           "value": "minecraft:name_tag"
+                        },
+                        {
+                          "test": "has_tag",
+                          "subject": "other",
+                          "value": "lothlorien_trade_pass"
                         }
                       ]
                     }
@@ -316,6 +355,294 @@
             }
           ]
         }
+      },
+      "lothlorien:trade_gardener_uneasy": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.gardener",
+          "table": "trading/lothlorien/gardener_uneasy.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_gardener_guest_0": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.gardener",
+          "table": "trading/lothlorien/gardener_guest_0.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_gardener_guest_1": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.gardener",
+          "table": "trading/lothlorien/gardener_guest_1.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_gardener_guest_2": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.gardener",
+          "table": "trading/lothlorien/gardener_guest_2.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_gardener_guest_3": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.gardener",
+          "table": "trading/lothlorien/gardener_guest_3.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_gardener_friend_0": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.gardener",
+          "table": "trading/lothlorien/gardener_friend_0.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_gardener_friend_1": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.gardener",
+          "table": "trading/lothlorien/gardener_friend_1.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_gardener_friend_2": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.gardener",
+          "table": "trading/lothlorien/gardener_friend_2.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_gardener_friend_3": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.gardener",
+          "table": "trading/lothlorien/gardener_friend_3.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_healer_uneasy": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.healer",
+          "table": "trading/lothlorien/healer_uneasy.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_healer_guest_0": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.healer",
+          "table": "trading/lothlorien/healer_guest_0.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_healer_guest_1": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.healer",
+          "table": "trading/lothlorien/healer_guest_1.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_healer_guest_2": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.healer",
+          "table": "trading/lothlorien/healer_guest_2.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_healer_guest_3": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.healer",
+          "table": "trading/lothlorien/healer_guest_3.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_healer_friend_0": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.healer",
+          "table": "trading/lothlorien/healer_friend_0.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_healer_friend_1": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.healer",
+          "table": "trading/lothlorien/healer_friend_1.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_healer_friend_2": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.healer",
+          "table": "trading/lothlorien/healer_friend_2.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_healer_friend_3": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.healer",
+          "table": "trading/lothlorien/healer_friend_3.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_woodwright_uneasy": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.woodwright",
+          "table": "trading/lothlorien/woodwright_uneasy.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_woodwright_guest_0": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.woodwright",
+          "table": "trading/lothlorien/woodwright_guest_0.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_woodwright_guest_1": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.woodwright",
+          "table": "trading/lothlorien/woodwright_guest_1.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_woodwright_guest_2": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.woodwright",
+          "table": "trading/lothlorien/woodwright_guest_2.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_woodwright_guest_3": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.woodwright",
+          "table": "trading/lothlorien/woodwright_guest_3.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_woodwright_friend_0": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.woodwright",
+          "table": "trading/lothlorien/woodwright_friend_0.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_woodwright_friend_1": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.woodwright",
+          "table": "trading/lothlorien/woodwright_friend_1.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_woodwright_friend_2": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.woodwright",
+          "table": "trading/lothlorien/woodwright_friend_2.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_woodwright_friend_3": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.woodwright",
+          "table": "trading/lothlorien/woodwright_friend_3.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_lamplighter_uneasy": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.lamplighter",
+          "table": "trading/lothlorien/lamplighter_uneasy.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_lamplighter_guest_0": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.lamplighter",
+          "table": "trading/lothlorien/lamplighter_guest_0.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_lamplighter_guest_1": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.lamplighter",
+          "table": "trading/lothlorien/lamplighter_guest_1.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_lamplighter_guest_2": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.lamplighter",
+          "table": "trading/lothlorien/lamplighter_guest_2.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_lamplighter_guest_3": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.lamplighter",
+          "table": "trading/lothlorien/lamplighter_guest_3.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_lamplighter_friend_0": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.lamplighter",
+          "table": "trading/lothlorien/lamplighter_friend_0.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_lamplighter_friend_1": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.lamplighter",
+          "table": "trading/lothlorien/lamplighter_friend_1.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_lamplighter_friend_2": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.lamplighter",
+          "table": "trading/lothlorien/lamplighter_friend_2.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
+      },
+      "lothlorien:trade_lamplighter_friend_3": {
+        "minecraft:economy_trade_table": {
+          "display_name": "lothlorien.elf.profession.lamplighter",
+          "table": "trading/lothlorien/lamplighter_friend_3.json",
+          "new_screen": true,
+          "persist_trades": false
+        }
       }
     },
     "components": {
@@ -431,7 +758,7 @@
               ]
             },
             "max_dist": 6,
-            "walk_speed_multiplier": 1.0,
+            "walk_speed_multiplier": 1,
             "sprint_speed_multiplier": 1.25
           }
         ]
@@ -453,6 +780,40 @@
       },
       "minecraft:behavior.random_look_around": {
         "priority": 8
+      },
+      "minecraft:behavior.trade_with_player": {
+        "priority": 2,
+        "filters": {
+          "all_of": [
+            {
+              "all_of": [
+                {
+                  "test": "in_water",
+                  "value": false
+                }
+              ]
+            },
+            {
+              "any_of": [
+                {
+                  "test": "on_ground",
+                  "value": true
+                },
+                {
+                  "test": "is_sleeping",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "minecraft:behavior.look_at_trading_player": {
+        "priority": 6,
+        "look_time": {
+          "min": 1,
+          "max": 2
+        }
       }
     },
     "events": {
@@ -704,6 +1065,924 @@
           "test": "has_component",
           "operator": "!=",
           "value": "minecraft:variant"
+        }
+      },
+      "lothlorien:trade_uneasy": {
+        "sequence": [
+          {
+            "set_property": {
+              "lothlorien:trade": "uneasy"
+            },
+            "remove": {
+              "component_groups": [
+                "lothlorien:trade_gardener_guest_0",
+                "lothlorien:trade_gardener_guest_1",
+                "lothlorien:trade_gardener_guest_2",
+                "lothlorien:trade_gardener_guest_3",
+                "lothlorien:trade_gardener_friend_0",
+                "lothlorien:trade_gardener_friend_1",
+                "lothlorien:trade_gardener_friend_2",
+                "lothlorien:trade_gardener_friend_3",
+                "lothlorien:trade_healer_guest_0",
+                "lothlorien:trade_healer_guest_1",
+                "lothlorien:trade_healer_guest_2",
+                "lothlorien:trade_healer_guest_3",
+                "lothlorien:trade_healer_friend_0",
+                "lothlorien:trade_healer_friend_1",
+                "lothlorien:trade_healer_friend_2",
+                "lothlorien:trade_healer_friend_3",
+                "lothlorien:trade_woodwright_guest_0",
+                "lothlorien:trade_woodwright_guest_1",
+                "lothlorien:trade_woodwright_guest_2",
+                "lothlorien:trade_woodwright_guest_3",
+                "lothlorien:trade_woodwright_friend_0",
+                "lothlorien:trade_woodwright_friend_1",
+                "lothlorien:trade_woodwright_friend_2",
+                "lothlorien:trade_woodwright_friend_3",
+                "lothlorien:trade_lamplighter_guest_0",
+                "lothlorien:trade_lamplighter_guest_1",
+                "lothlorien:trade_lamplighter_guest_2",
+                "lothlorien:trade_lamplighter_guest_3",
+                "lothlorien:trade_lamplighter_friend_0",
+                "lothlorien:trade_lamplighter_friend_1",
+                "lothlorien:trade_lamplighter_friend_2",
+                "lothlorien:trade_lamplighter_friend_3"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 0
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_gardener_uneasy"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 1
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_healer_uneasy"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 2
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_woodwright_uneasy"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 3
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_lamplighter_uneasy"
+              ]
+            }
+          }
+        ]
+      },
+      "lothlorien:trade_guest_0": {
+        "sequence": [
+          {
+            "set_property": {
+              "lothlorien:trade": "guest_0"
+            },
+            "remove": {
+              "component_groups": [
+                "lothlorien:trade_gardener_uneasy",
+                "lothlorien:trade_gardener_guest_1",
+                "lothlorien:trade_gardener_guest_2",
+                "lothlorien:trade_gardener_guest_3",
+                "lothlorien:trade_gardener_friend_0",
+                "lothlorien:trade_gardener_friend_1",
+                "lothlorien:trade_gardener_friend_2",
+                "lothlorien:trade_gardener_friend_3",
+                "lothlorien:trade_healer_uneasy",
+                "lothlorien:trade_healer_guest_1",
+                "lothlorien:trade_healer_guest_2",
+                "lothlorien:trade_healer_guest_3",
+                "lothlorien:trade_healer_friend_0",
+                "lothlorien:trade_healer_friend_1",
+                "lothlorien:trade_healer_friend_2",
+                "lothlorien:trade_healer_friend_3",
+                "lothlorien:trade_woodwright_uneasy",
+                "lothlorien:trade_woodwright_guest_1",
+                "lothlorien:trade_woodwright_guest_2",
+                "lothlorien:trade_woodwright_guest_3",
+                "lothlorien:trade_woodwright_friend_0",
+                "lothlorien:trade_woodwright_friend_1",
+                "lothlorien:trade_woodwright_friend_2",
+                "lothlorien:trade_woodwright_friend_3",
+                "lothlorien:trade_lamplighter_uneasy",
+                "lothlorien:trade_lamplighter_guest_1",
+                "lothlorien:trade_lamplighter_guest_2",
+                "lothlorien:trade_lamplighter_guest_3",
+                "lothlorien:trade_lamplighter_friend_0",
+                "lothlorien:trade_lamplighter_friend_1",
+                "lothlorien:trade_lamplighter_friend_2",
+                "lothlorien:trade_lamplighter_friend_3"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 0
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_gardener_guest_0"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 1
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_healer_guest_0"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 2
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_woodwright_guest_0"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 3
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_lamplighter_guest_0"
+              ]
+            }
+          }
+        ]
+      },
+      "lothlorien:trade_guest_1": {
+        "sequence": [
+          {
+            "set_property": {
+              "lothlorien:trade": "guest_1"
+            },
+            "remove": {
+              "component_groups": [
+                "lothlorien:trade_gardener_uneasy",
+                "lothlorien:trade_gardener_guest_0",
+                "lothlorien:trade_gardener_guest_2",
+                "lothlorien:trade_gardener_guest_3",
+                "lothlorien:trade_gardener_friend_0",
+                "lothlorien:trade_gardener_friend_1",
+                "lothlorien:trade_gardener_friend_2",
+                "lothlorien:trade_gardener_friend_3",
+                "lothlorien:trade_healer_uneasy",
+                "lothlorien:trade_healer_guest_0",
+                "lothlorien:trade_healer_guest_2",
+                "lothlorien:trade_healer_guest_3",
+                "lothlorien:trade_healer_friend_0",
+                "lothlorien:trade_healer_friend_1",
+                "lothlorien:trade_healer_friend_2",
+                "lothlorien:trade_healer_friend_3",
+                "lothlorien:trade_woodwright_uneasy",
+                "lothlorien:trade_woodwright_guest_0",
+                "lothlorien:trade_woodwright_guest_2",
+                "lothlorien:trade_woodwright_guest_3",
+                "lothlorien:trade_woodwright_friend_0",
+                "lothlorien:trade_woodwright_friend_1",
+                "lothlorien:trade_woodwright_friend_2",
+                "lothlorien:trade_woodwright_friend_3",
+                "lothlorien:trade_lamplighter_uneasy",
+                "lothlorien:trade_lamplighter_guest_0",
+                "lothlorien:trade_lamplighter_guest_2",
+                "lothlorien:trade_lamplighter_guest_3",
+                "lothlorien:trade_lamplighter_friend_0",
+                "lothlorien:trade_lamplighter_friend_1",
+                "lothlorien:trade_lamplighter_friend_2",
+                "lothlorien:trade_lamplighter_friend_3"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 0
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_gardener_guest_1"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 1
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_healer_guest_1"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 2
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_woodwright_guest_1"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 3
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_lamplighter_guest_1"
+              ]
+            }
+          }
+        ]
+      },
+      "lothlorien:trade_guest_2": {
+        "sequence": [
+          {
+            "set_property": {
+              "lothlorien:trade": "guest_2"
+            },
+            "remove": {
+              "component_groups": [
+                "lothlorien:trade_gardener_uneasy",
+                "lothlorien:trade_gardener_guest_0",
+                "lothlorien:trade_gardener_guest_1",
+                "lothlorien:trade_gardener_guest_3",
+                "lothlorien:trade_gardener_friend_0",
+                "lothlorien:trade_gardener_friend_1",
+                "lothlorien:trade_gardener_friend_2",
+                "lothlorien:trade_gardener_friend_3",
+                "lothlorien:trade_healer_uneasy",
+                "lothlorien:trade_healer_guest_0",
+                "lothlorien:trade_healer_guest_1",
+                "lothlorien:trade_healer_guest_3",
+                "lothlorien:trade_healer_friend_0",
+                "lothlorien:trade_healer_friend_1",
+                "lothlorien:trade_healer_friend_2",
+                "lothlorien:trade_healer_friend_3",
+                "lothlorien:trade_woodwright_uneasy",
+                "lothlorien:trade_woodwright_guest_0",
+                "lothlorien:trade_woodwright_guest_1",
+                "lothlorien:trade_woodwright_guest_3",
+                "lothlorien:trade_woodwright_friend_0",
+                "lothlorien:trade_woodwright_friend_1",
+                "lothlorien:trade_woodwright_friend_2",
+                "lothlorien:trade_woodwright_friend_3",
+                "lothlorien:trade_lamplighter_uneasy",
+                "lothlorien:trade_lamplighter_guest_0",
+                "lothlorien:trade_lamplighter_guest_1",
+                "lothlorien:trade_lamplighter_guest_3",
+                "lothlorien:trade_lamplighter_friend_0",
+                "lothlorien:trade_lamplighter_friend_1",
+                "lothlorien:trade_lamplighter_friend_2",
+                "lothlorien:trade_lamplighter_friend_3"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 0
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_gardener_guest_2"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 1
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_healer_guest_2"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 2
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_woodwright_guest_2"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 3
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_lamplighter_guest_2"
+              ]
+            }
+          }
+        ]
+      },
+      "lothlorien:trade_guest_3": {
+        "sequence": [
+          {
+            "set_property": {
+              "lothlorien:trade": "guest_3"
+            },
+            "remove": {
+              "component_groups": [
+                "lothlorien:trade_gardener_uneasy",
+                "lothlorien:trade_gardener_guest_0",
+                "lothlorien:trade_gardener_guest_1",
+                "lothlorien:trade_gardener_guest_2",
+                "lothlorien:trade_gardener_friend_0",
+                "lothlorien:trade_gardener_friend_1",
+                "lothlorien:trade_gardener_friend_2",
+                "lothlorien:trade_gardener_friend_3",
+                "lothlorien:trade_healer_uneasy",
+                "lothlorien:trade_healer_guest_0",
+                "lothlorien:trade_healer_guest_1",
+                "lothlorien:trade_healer_guest_2",
+                "lothlorien:trade_healer_friend_0",
+                "lothlorien:trade_healer_friend_1",
+                "lothlorien:trade_healer_friend_2",
+                "lothlorien:trade_healer_friend_3",
+                "lothlorien:trade_woodwright_uneasy",
+                "lothlorien:trade_woodwright_guest_0",
+                "lothlorien:trade_woodwright_guest_1",
+                "lothlorien:trade_woodwright_guest_2",
+                "lothlorien:trade_woodwright_friend_0",
+                "lothlorien:trade_woodwright_friend_1",
+                "lothlorien:trade_woodwright_friend_2",
+                "lothlorien:trade_woodwright_friend_3",
+                "lothlorien:trade_lamplighter_uneasy",
+                "lothlorien:trade_lamplighter_guest_0",
+                "lothlorien:trade_lamplighter_guest_1",
+                "lothlorien:trade_lamplighter_guest_2",
+                "lothlorien:trade_lamplighter_friend_0",
+                "lothlorien:trade_lamplighter_friend_1",
+                "lothlorien:trade_lamplighter_friend_2",
+                "lothlorien:trade_lamplighter_friend_3"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 0
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_gardener_guest_3"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 1
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_healer_guest_3"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 2
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_woodwright_guest_3"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 3
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_lamplighter_guest_3"
+              ]
+            }
+          }
+        ]
+      },
+      "lothlorien:trade_friend_0": {
+        "sequence": [
+          {
+            "set_property": {
+              "lothlorien:trade": "friend_0"
+            },
+            "remove": {
+              "component_groups": [
+                "lothlorien:trade_gardener_uneasy",
+                "lothlorien:trade_gardener_guest_0",
+                "lothlorien:trade_gardener_guest_1",
+                "lothlorien:trade_gardener_guest_2",
+                "lothlorien:trade_gardener_guest_3",
+                "lothlorien:trade_gardener_friend_1",
+                "lothlorien:trade_gardener_friend_2",
+                "lothlorien:trade_gardener_friend_3",
+                "lothlorien:trade_healer_uneasy",
+                "lothlorien:trade_healer_guest_0",
+                "lothlorien:trade_healer_guest_1",
+                "lothlorien:trade_healer_guest_2",
+                "lothlorien:trade_healer_guest_3",
+                "lothlorien:trade_healer_friend_1",
+                "lothlorien:trade_healer_friend_2",
+                "lothlorien:trade_healer_friend_3",
+                "lothlorien:trade_woodwright_uneasy",
+                "lothlorien:trade_woodwright_guest_0",
+                "lothlorien:trade_woodwright_guest_1",
+                "lothlorien:trade_woodwright_guest_2",
+                "lothlorien:trade_woodwright_guest_3",
+                "lothlorien:trade_woodwright_friend_1",
+                "lothlorien:trade_woodwright_friend_2",
+                "lothlorien:trade_woodwright_friend_3",
+                "lothlorien:trade_lamplighter_uneasy",
+                "lothlorien:trade_lamplighter_guest_0",
+                "lothlorien:trade_lamplighter_guest_1",
+                "lothlorien:trade_lamplighter_guest_2",
+                "lothlorien:trade_lamplighter_guest_3",
+                "lothlorien:trade_lamplighter_friend_1",
+                "lothlorien:trade_lamplighter_friend_2",
+                "lothlorien:trade_lamplighter_friend_3"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 0
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_gardener_friend_0"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 1
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_healer_friend_0"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 2
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_woodwright_friend_0"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 3
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_lamplighter_friend_0"
+              ]
+            }
+          }
+        ]
+      },
+      "lothlorien:trade_friend_1": {
+        "sequence": [
+          {
+            "set_property": {
+              "lothlorien:trade": "friend_1"
+            },
+            "remove": {
+              "component_groups": [
+                "lothlorien:trade_gardener_uneasy",
+                "lothlorien:trade_gardener_guest_0",
+                "lothlorien:trade_gardener_guest_1",
+                "lothlorien:trade_gardener_guest_2",
+                "lothlorien:trade_gardener_guest_3",
+                "lothlorien:trade_gardener_friend_0",
+                "lothlorien:trade_gardener_friend_2",
+                "lothlorien:trade_gardener_friend_3",
+                "lothlorien:trade_healer_uneasy",
+                "lothlorien:trade_healer_guest_0",
+                "lothlorien:trade_healer_guest_1",
+                "lothlorien:trade_healer_guest_2",
+                "lothlorien:trade_healer_guest_3",
+                "lothlorien:trade_healer_friend_0",
+                "lothlorien:trade_healer_friend_2",
+                "lothlorien:trade_healer_friend_3",
+                "lothlorien:trade_woodwright_uneasy",
+                "lothlorien:trade_woodwright_guest_0",
+                "lothlorien:trade_woodwright_guest_1",
+                "lothlorien:trade_woodwright_guest_2",
+                "lothlorien:trade_woodwright_guest_3",
+                "lothlorien:trade_woodwright_friend_0",
+                "lothlorien:trade_woodwright_friend_2",
+                "lothlorien:trade_woodwright_friend_3",
+                "lothlorien:trade_lamplighter_uneasy",
+                "lothlorien:trade_lamplighter_guest_0",
+                "lothlorien:trade_lamplighter_guest_1",
+                "lothlorien:trade_lamplighter_guest_2",
+                "lothlorien:trade_lamplighter_guest_3",
+                "lothlorien:trade_lamplighter_friend_0",
+                "lothlorien:trade_lamplighter_friend_2",
+                "lothlorien:trade_lamplighter_friend_3"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 0
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_gardener_friend_1"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 1
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_healer_friend_1"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 2
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_woodwright_friend_1"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 3
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_lamplighter_friend_1"
+              ]
+            }
+          }
+        ]
+      },
+      "lothlorien:trade_friend_2": {
+        "sequence": [
+          {
+            "set_property": {
+              "lothlorien:trade": "friend_2"
+            },
+            "remove": {
+              "component_groups": [
+                "lothlorien:trade_gardener_uneasy",
+                "lothlorien:trade_gardener_guest_0",
+                "lothlorien:trade_gardener_guest_1",
+                "lothlorien:trade_gardener_guest_2",
+                "lothlorien:trade_gardener_guest_3",
+                "lothlorien:trade_gardener_friend_0",
+                "lothlorien:trade_gardener_friend_1",
+                "lothlorien:trade_gardener_friend_3",
+                "lothlorien:trade_healer_uneasy",
+                "lothlorien:trade_healer_guest_0",
+                "lothlorien:trade_healer_guest_1",
+                "lothlorien:trade_healer_guest_2",
+                "lothlorien:trade_healer_guest_3",
+                "lothlorien:trade_healer_friend_0",
+                "lothlorien:trade_healer_friend_1",
+                "lothlorien:trade_healer_friend_3",
+                "lothlorien:trade_woodwright_uneasy",
+                "lothlorien:trade_woodwright_guest_0",
+                "lothlorien:trade_woodwright_guest_1",
+                "lothlorien:trade_woodwright_guest_2",
+                "lothlorien:trade_woodwright_guest_3",
+                "lothlorien:trade_woodwright_friend_0",
+                "lothlorien:trade_woodwright_friend_1",
+                "lothlorien:trade_woodwright_friend_3",
+                "lothlorien:trade_lamplighter_uneasy",
+                "lothlorien:trade_lamplighter_guest_0",
+                "lothlorien:trade_lamplighter_guest_1",
+                "lothlorien:trade_lamplighter_guest_2",
+                "lothlorien:trade_lamplighter_guest_3",
+                "lothlorien:trade_lamplighter_friend_0",
+                "lothlorien:trade_lamplighter_friend_1",
+                "lothlorien:trade_lamplighter_friend_3"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 0
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_gardener_friend_2"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 1
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_healer_friend_2"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 2
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_woodwright_friend_2"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 3
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_lamplighter_friend_2"
+              ]
+            }
+          }
+        ]
+      },
+      "lothlorien:trade_friend_3": {
+        "sequence": [
+          {
+            "set_property": {
+              "lothlorien:trade": "friend_3"
+            },
+            "remove": {
+              "component_groups": [
+                "lothlorien:trade_gardener_uneasy",
+                "lothlorien:trade_gardener_guest_0",
+                "lothlorien:trade_gardener_guest_1",
+                "lothlorien:trade_gardener_guest_2",
+                "lothlorien:trade_gardener_guest_3",
+                "lothlorien:trade_gardener_friend_0",
+                "lothlorien:trade_gardener_friend_1",
+                "lothlorien:trade_gardener_friend_2",
+                "lothlorien:trade_healer_uneasy",
+                "lothlorien:trade_healer_guest_0",
+                "lothlorien:trade_healer_guest_1",
+                "lothlorien:trade_healer_guest_2",
+                "lothlorien:trade_healer_guest_3",
+                "lothlorien:trade_healer_friend_0",
+                "lothlorien:trade_healer_friend_1",
+                "lothlorien:trade_healer_friend_2",
+                "lothlorien:trade_woodwright_uneasy",
+                "lothlorien:trade_woodwright_guest_0",
+                "lothlorien:trade_woodwright_guest_1",
+                "lothlorien:trade_woodwright_guest_2",
+                "lothlorien:trade_woodwright_guest_3",
+                "lothlorien:trade_woodwright_friend_0",
+                "lothlorien:trade_woodwright_friend_1",
+                "lothlorien:trade_woodwright_friend_2",
+                "lothlorien:trade_lamplighter_uneasy",
+                "lothlorien:trade_lamplighter_guest_0",
+                "lothlorien:trade_lamplighter_guest_1",
+                "lothlorien:trade_lamplighter_guest_2",
+                "lothlorien:trade_lamplighter_guest_3",
+                "lothlorien:trade_lamplighter_friend_0",
+                "lothlorien:trade_lamplighter_friend_1",
+                "lothlorien:trade_lamplighter_friend_2"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 0
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_gardener_friend_3"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 1
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_healer_friend_3"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 2
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_woodwright_friend_3"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "is_variant",
+              "subject": "self",
+              "operator": "==",
+              "value": 3
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:trade_lamplighter_friend_3"
+              ]
+            }
+          }
+        ]
+      },
+      "lothlorien:trade_none": {
+        "set_property": {
+          "lothlorien:trade": "none"
+        },
+        "remove": {
+          "component_groups": [
+            "lothlorien:trade_gardener_uneasy",
+            "lothlorien:trade_gardener_guest_0",
+            "lothlorien:trade_gardener_guest_1",
+            "lothlorien:trade_gardener_guest_2",
+            "lothlorien:trade_gardener_guest_3",
+            "lothlorien:trade_gardener_friend_0",
+            "lothlorien:trade_gardener_friend_1",
+            "lothlorien:trade_gardener_friend_2",
+            "lothlorien:trade_gardener_friend_3",
+            "lothlorien:trade_healer_uneasy",
+            "lothlorien:trade_healer_guest_0",
+            "lothlorien:trade_healer_guest_1",
+            "lothlorien:trade_healer_guest_2",
+            "lothlorien:trade_healer_guest_3",
+            "lothlorien:trade_healer_friend_0",
+            "lothlorien:trade_healer_friend_1",
+            "lothlorien:trade_healer_friend_2",
+            "lothlorien:trade_healer_friend_3",
+            "lothlorien:trade_woodwright_uneasy",
+            "lothlorien:trade_woodwright_guest_0",
+            "lothlorien:trade_woodwright_guest_1",
+            "lothlorien:trade_woodwright_guest_2",
+            "lothlorien:trade_woodwright_guest_3",
+            "lothlorien:trade_woodwright_friend_0",
+            "lothlorien:trade_woodwright_friend_1",
+            "lothlorien:trade_woodwright_friend_2",
+            "lothlorien:trade_woodwright_friend_3",
+            "lothlorien:trade_lamplighter_uneasy",
+            "lothlorien:trade_lamplighter_guest_0",
+            "lothlorien:trade_lamplighter_guest_1",
+            "lothlorien:trade_lamplighter_guest_2",
+            "lothlorien:trade_lamplighter_guest_3",
+            "lothlorien:trade_lamplighter_friend_0",
+            "lothlorien:trade_lamplighter_friend_1",
+            "lothlorien:trade_lamplighter_friend_2",
+            "lothlorien:trade_lamplighter_friend_3"
+          ]
         }
       }
     }

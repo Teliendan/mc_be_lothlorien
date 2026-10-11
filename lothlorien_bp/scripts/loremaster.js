@@ -43,7 +43,7 @@ const LESSON_ICON = {
 const PROFESSION_ICON = { gardener: "mallorn_acorn", healer: "mallorn_nectar", woodwright: "elven_rope", lamplighter: "bottle_of_fireflies" };
 const itemIcon = (name) => `textures/items/${name}`;
 
-const open = new Set(); // player ids with a dialog running
+const open = new Map(); // player ids -> dialog token (an old answer cannot affect a rejoined player's dialog)
 const BUSY = Symbol("busy");
 
 const t = (key, ...values) => message(key, ...values);
@@ -134,7 +134,7 @@ async function choose(ctx, body, buttons) {
   return actions[res.selection]?.next;
 }
 
-function makeContext(player, elf) {
+function makeContext(player, elf, token) {
   const nameTag = elf.nameTag;
   return {
     player,
@@ -142,7 +142,7 @@ function makeContext(player, elf) {
     title: nameTag ? { text: nameTag } : t("lore.title"),
     ok() {
       try {
-        return player.isValid && elf.isValid && elf.dimension.id === player.dimension.id
+        return open.get(player.id) === token && player.isValid && elf.isValid && elf.dimension.id === player.dimension.id
           && Math.hypot(elf.location.x - player.location.x, elf.location.z - player.location.z, (elf.location.y - player.location.y) / 2) <= MAX_DISTANCE;
       } catch {
         return false;
@@ -360,7 +360,7 @@ async function resultScreen(ctx, list) {
   return choose(ctx, lines(list), [{ text: t("lore.btn.continue"), icon: ICON.next, next: step("main") }]);
 }
 
-// The small form on a trader elf whose profession matches the player's current request: the request text and progress, "Hand over" when ready.
+// Request holders can hand over their goods or grant one use of the native shop screen.
 async function traderDialog(ctx, profession) {
   const { player } = ctx;
   const state = renownOf(player);
@@ -369,10 +369,15 @@ async function traderDialog(ctx, profession) {
   const status = statusOf(ctx, state);
   const buttons = [];
   if (status === "ready") buttons.push({ text: t("lore.btn.handover"), icon: ICON.ready, next: step("handOver") });
-  buttons.push({ text: t("lore.btn.back"), icon: ICON.back, next: undefined });
+  buttons.push({ text: t("lore.btn.trade"), icon: "textures/items/emerald", next: step("trade") });
+  buttons.push({ text: t("lore.btn.farewell"), icon: ICON.farewell, next: undefined });
   ctx.title = { translate: `lothlorien.elf.profession.${profession}` };
   const next = await choose(ctx, lines([t(`lore.req.${request.id}.text`), progressLine(player, request)]), buttons);
-  if (next?.[0] === "handOver") handOver(player, state, ctx.elf); // the answer was checked by choose(); chat tells the result, the form closes
+  const current = renownOf(player);
+  const band = bandOf(harmonyOf(player).harmony);
+  if (!ctx.ok() || !elfAccepts(current, profession) || current.task.id !== request.id || band === "shunned" || band === "hated") return;
+  if (next?.[0] === "trade") return "trade";
+  if (next?.[0] === "handOver" && handOver(player, current, ctx.elf)) return "handed";
 }
 
 const SCREENS = {
@@ -401,29 +406,31 @@ async function dialog(ctx) {
 
 async function openDialog(player, elf, profession) {
   if (open.has(player.id)) return;
-  open.add(player.id);
+  const token = {};
+  open.set(player.id, token);
   try {
-    if (profession) await traderDialog(makeContext(player, elf), profession);
-    else await dialog(makeContext(player, elf));
+    if (profession) return await traderDialog(makeContext(player, elf, token), profession);
+    await dialog(makeContext(player, elf, token));
   } catch {
     // player or Loremaster gone mid-dialog
   } finally {
-    open.delete(player.id);
+    if (open.get(player.id) === token) open.delete(player.id);
   }
+}
+
+export function openTraderForm(player, elf, profession) {
+  return openDialog(player, elf, profession);
 }
 
 export function startLoremaster() {
   world.beforeEvents.playerInteractWithEntity.subscribe((event) => {
     const { player, target, itemStack } = event;
-    const loremaster = isLoremaster(target);
-    const profession = loremaster ? undefined : traderProfession(target);
-    if (!loremaster && !profession) return;
+    if (!isLoremaster(target)) return;
     if (itemStack && SKIP_ITEMS.has(itemStack.typeId)) return; // a lead or a name tag keeps working on him
-    if (profession && !elfAccepts(renownOf(player), profession)) return; // a trader without a matching request: nothing happens (until trading, M3)
     event.cancel = true;
-    if (open.has(player.id) || repeatedUse(player, loremaster ? "loremaster" : "trader")) return; // the event repeats for one use
+    if (open.has(player.id) || repeatedUse(player, "loremaster")) return; // the event repeats for one use
     system.run(() => {
-      if (target.isValid && player.isValid) openDialog(player, target, profession);
+      if (target.isValid && player.isValid) openDialog(player, target);
     });
   });
   world.afterEvents.playerLeave.subscribe(({ playerId }) => open.delete(playerId));

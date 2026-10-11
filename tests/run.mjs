@@ -12,6 +12,7 @@ import "./star_canopy_harvest.mjs";
 import "./ordinary_harvest.mjs";
 import "./script_glue.mjs";
 import "./renown.mjs";
+import "./trade.mjs";
 import { leafUndersideY } from "../lothlorien_bp/scripts/leaf_fall.js";
 import { BONEMEAL_TABLE, SPREAD_TRIES, COVERS, pickWeighted } from "../lothlorien_bp/scripts/flora_table.js";
 import { readFileSync } from "node:fs";
@@ -25,6 +26,9 @@ import { existsSync, readdirSync } from "node:fs";
 import * as WR from "../lothlorien_bp/scripts/warden_replace_rules.js";
 import { loadVillageData, parseMcstructure, runSeeds, rotated, PLANKS, FENCE, LANTERN_ID, populateElves } from "../tools/village_sim.mjs";
 import * as EL from "../lothlorien_bp/scripts/elf_rules.js";
+
+// The glue suites share one fake server/clock; finish static imports before resetting it for M3.
+await import("./trade_glue.mjs");
 
 const L = "lothlorien:lothlorien", RIVER = "minecraft:river", FOREST = "minecraft:forest";
 const T = new Set([RIVER]);
@@ -3215,11 +3219,18 @@ test("elf: entity values come from elf_rules STATS / HOME_RADIUS; persistent, no
   assert.deepEqual(nav.blocks_to_avoid.map((b) => b.name), ["lothlorien:elven_rope", "lothlorien:elven_rope_hanging"], "avoids the rope cells");
   assert.deepEqual(c["minecraft:damage_sensor"].triggers, [{ cause: "fall", deals_damage: "no" }], "no fall damage");
 });
-test("elf: using an elf does nothing except the Loremaster's Speak entry and the traders' Hand over entries - no trade, inventory, breeding, riding, egg interaction, loot or xp anywhere", () => {
+test("elf: native shops and profession dialogs only; no inventory, breeding, riding, egg interaction, loot or xp", () => {
   const text = JSON.stringify(elfEntity());
   const found = [...text.matchAll(/"minecraft:(economy_trade_table|trade_table|interact|inventory|breedable|rideable|spawn_egg_interaction|loot|experience_reward|equippable|behavior\.(?:breed|trade_with_player|tempt|follow_parent|ranged_attack|melee_attack))"/g)].map((m) => m[1]);
-  assert.deepEqual(found, EL.PROFESSIONS.map(() => "interact"), "minecraft:interact once per profession group (Speak / Hand over)");
+  assert.equal(found.filter((k) => k === "interact").length, EL.PROFESSIONS.length, "Speak / Hand over once per profession group");
+  assert.equal(found.filter((k) => k === "economy_trade_table").length, 36, "four shops with nine tables each");
+  assert.equal(found.filter((k) => k === "behavior.trade_with_player").length, 1, "native trading movement goal");
+  assert.ok(found.every((k) => ["interact", "economy_trade_table", "behavior.trade_with_player"].includes(k)));
   const e = elfEntity();
+  assert.ok(!e.components["minecraft:economy_trade_table"], "no default shop before table selection");
+  for (const [key, group] of Object.entries(e.component_groups)) {
+    if ("minecraft:economy_trade_table" in group) assert.ok(key.startsWith("lothlorien:trade_"), "trade tables only in generated groups");
+  }
   assert.deepEqual(Object.keys(e.component_groups["lothlorien:loremaster"]), ["minecraft:variant", "minecraft:interact"], "only in the Loremaster group");
   const inter = e.component_groups["lothlorien:loremaster"]["minecraft:interact"].interactions;
   assert.equal(inter.length, 1);
@@ -3230,7 +3241,7 @@ test("elf: using an elf does nothing except the Loremaster's Speak entry and the
 });
 test("elf: every profession group has its variant index and its interact entry; radius groups carry the home radius; each as_<p> event swaps professions and radius", () => {
   const e = elfEntity();
-  assert.deepEqual(Object.keys(e.component_groups), [...EL.PROFESSIONS.map(GROUP), ...EL.RADIUS_GROUPS]);
+  assert.deepEqual(Object.keys(e.component_groups).filter((key) => !key.startsWith("lothlorien:trade_")), [...EL.PROFESSIONS.map(GROUP), ...EL.RADIUS_GROUPS]);
   EL.PROFESSIONS.forEach((p, i) => {
     const g = e.component_groups[GROUP(p)];
     assert.deepEqual(Object.keys(g), ["minecraft:variant", "minecraft:interact"], `${p}: the Loremaster speaks, traders take deliveries (interact; details in tests/renown.mjs)`);

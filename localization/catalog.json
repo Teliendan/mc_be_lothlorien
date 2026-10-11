@@ -11811,52 +11811,56 @@
           "source": "Gardener",
           "context": {
             "meaning": "Profession title of a civilian elf who tends the plants of the tree village.",
-            "location": "lothlorien_rp: title of future trade and dialog screens of the elf (not shown in game yet)",
+            "location": "lothlorien_rp: title of the native trade screen (economy_trade_table display_name) and of the trader’s request form",
             "trigger": "Shown as the title of the screen when the player talks to or trades with an elf of this profession.",
             "tone": "Clear Minecraft UI",
             "grammar": "Standalone noun phrase naming a role, no sentence punctuation.",
-            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender."
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/entities/elf.json",
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
           },
           "placeholders": [],
           "translations": {
             "cs_CZ": {
               "text": "Zahradník",
-              "based_on": "ef6245518d82d5eb6a75a3e376a42b1444151d742aeac80a42832353caeb3c77",
+              "based_on": "3c332415d623efe8b4c142a65d553e149ddf4ff89ccb93e61a448affb34c53f7",
               "status": "ai-draft"
             },
             "es_ES": {
               "text": "Jardinero",
-              "based_on": "ef6245518d82d5eb6a75a3e376a42b1444151d742aeac80a42832353caeb3c77",
+              "based_on": "3c332415d623efe8b4c142a65d553e149ddf4ff89ccb93e61a448affb34c53f7",
               "status": "ai-draft"
             },
             "es_MX": {
               "text": "Jardinero",
-              "based_on": "ef6245518d82d5eb6a75a3e376a42b1444151d742aeac80a42832353caeb3c77",
+              "based_on": "3c332415d623efe8b4c142a65d553e149ddf4ff89ccb93e61a448affb34c53f7",
               "status": "ai-draft"
             },
             "pt_PT": {
               "text": "Jardineiro",
-              "based_on": "ef6245518d82d5eb6a75a3e376a42b1444151d742aeac80a42832353caeb3c77",
+              "based_on": "3c332415d623efe8b4c142a65d553e149ddf4ff89ccb93e61a448affb34c53f7",
               "status": "ai-draft"
             },
             "pt_BR": {
               "text": "Jardineiro",
-              "based_on": "ef6245518d82d5eb6a75a3e376a42b1444151d742aeac80a42832353caeb3c77",
+              "based_on": "3c332415d623efe8b4c142a65d553e149ddf4ff89ccb93e61a448affb34c53f7",
               "status": "ai-draft"
             },
             "de_DE": {
               "text": "Gärtner",
-              "based_on": "ef6245518d82d5eb6a75a3e376a42b1444151d742aeac80a42832353caeb3c77",
+              "based_on": "3c332415d623efe8b4c142a65d553e149ddf4ff89ccb93e61a448affb34c53f7",
               "status": "ai-draft"
             },
             "fr_FR": {
               "text": "Jardinier",
-              "based_on": "ef6245518d82d5eb6a75a3e376a42b1444151d742aeac80a42832353caeb3c77",
+              "based_on": "3c332415d623efe8b4c142a65d553e149ddf4ff89ccb93e61a448affb34c53f7",
               "status": "ai-draft"
             },
             "pl_PL": {
               "text": "Ogrodnik",
-              "based_on": "ef6245518d82d5eb6a75a3e376a42b1444151d742aeac80a42832353caeb3c77",
+              "based_on": "3c332415d623efe8b4c142a65d553e149ddf4ff89ccb93e61a448affb34c53f7",
               "status": "ai-draft"
             }
           }
@@ -11865,52 +11869,56 @@
           "source": "Healer",
           "context": {
             "meaning": "Profession title of a civilian elf who heals the villagers and visitors.",
-            "location": "lothlorien_rp: title of future trade and dialog screens of the elf (not shown in game yet)",
+            "location": "lothlorien_rp: title of the native trade screen (economy_trade_table display_name) and of the trader’s request form",
             "trigger": "Shown as the title of the screen when the player talks to or trades with an elf of this profession.",
             "tone": "Clear Minecraft UI",
             "grammar": "Standalone noun phrase naming a role, no sentence punctuation.",
-            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender."
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/entities/elf.json",
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
           },
           "placeholders": [],
           "translations": {
             "cs_CZ": {
               "text": "Léčitel",
-              "based_on": "b106f7f0558c9fd50547c132dabb34aa5369b6896b426427656368a22eca6968",
+              "based_on": "fb18ff7817cb8b0f85fb5229e009981b24105ba906430f78a115c70e1e3c7426",
               "status": "ai-draft"
             },
             "es_ES": {
               "text": "Sanador",
-              "based_on": "b106f7f0558c9fd50547c132dabb34aa5369b6896b426427656368a22eca6968",
+              "based_on": "fb18ff7817cb8b0f85fb5229e009981b24105ba906430f78a115c70e1e3c7426",
               "status": "ai-draft"
             },
             "es_MX": {
               "text": "Sanador",
-              "based_on": "b106f7f0558c9fd50547c132dabb34aa5369b6896b426427656368a22eca6968",
+              "based_on": "fb18ff7817cb8b0f85fb5229e009981b24105ba906430f78a115c70e1e3c7426",
               "status": "ai-draft"
             },
             "pt_PT": {
               "text": "Curandeiro",
-              "based_on": "b106f7f0558c9fd50547c132dabb34aa5369b6896b426427656368a22eca6968",
+              "based_on": "fb18ff7817cb8b0f85fb5229e009981b24105ba906430f78a115c70e1e3c7426",
               "status": "ai-draft"
             },
             "pt_BR": {
               "text": "Curandeiro",
-              "based_on": "b106f7f0558c9fd50547c132dabb34aa5369b6896b426427656368a22eca6968",
+              "based_on": "fb18ff7817cb8b0f85fb5229e009981b24105ba906430f78a115c70e1e3c7426",
               "status": "ai-draft"
             },
             "de_DE": {
               "text": "Heiler",
-              "based_on": "b106f7f0558c9fd50547c132dabb34aa5369b6896b426427656368a22eca6968",
+              "based_on": "fb18ff7817cb8b0f85fb5229e009981b24105ba906430f78a115c70e1e3c7426",
               "status": "ai-draft"
             },
             "fr_FR": {
               "text": "Guérisseur",
-              "based_on": "b106f7f0558c9fd50547c132dabb34aa5369b6896b426427656368a22eca6968",
+              "based_on": "fb18ff7817cb8b0f85fb5229e009981b24105ba906430f78a115c70e1e3c7426",
               "status": "ai-draft"
             },
             "pl_PL": {
               "text": "Uzdrowiciel",
-              "based_on": "b106f7f0558c9fd50547c132dabb34aa5369b6896b426427656368a22eca6968",
+              "based_on": "fb18ff7817cb8b0f85fb5229e009981b24105ba906430f78a115c70e1e3c7426",
               "status": "ai-draft"
             }
           }
@@ -11919,52 +11927,56 @@
           "source": "Woodwright",
           "context": {
             "meaning": "Profession title of a civilian elf who builds and mends things from wood, a carpenter.",
-            "location": "lothlorien_rp: title of future trade and dialog screens of the elf (not shown in game yet)",
+            "location": "lothlorien_rp: title of the native trade screen (economy_trade_table display_name) and of the trader’s request form",
             "trigger": "Shown as the title of the screen when the player talks to or trades with an elf of this profession.",
             "tone": "Clear Minecraft UI",
             "grammar": "Standalone noun phrase naming a role, no sentence punctuation.",
-            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender."
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/entities/elf.json",
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
           },
           "placeholders": [],
           "translations": {
             "cs_CZ": {
               "text": "Tesař",
-              "based_on": "ec4dba78f4d4fd6915ac9cb57b5d6ac9e57c1391f8a3094f5bb0a7d68fbae746",
+              "based_on": "a053c9b06ef62f6eb6f31429c2f92b1e48c67ed6c0c7a326f08e0bc8bf8d46bc",
               "status": "ai-draft"
             },
             "es_ES": {
               "text": "Carpintero",
-              "based_on": "ec4dba78f4d4fd6915ac9cb57b5d6ac9e57c1391f8a3094f5bb0a7d68fbae746",
+              "based_on": "a053c9b06ef62f6eb6f31429c2f92b1e48c67ed6c0c7a326f08e0bc8bf8d46bc",
               "status": "ai-draft"
             },
             "es_MX": {
               "text": "Carpintero",
-              "based_on": "ec4dba78f4d4fd6915ac9cb57b5d6ac9e57c1391f8a3094f5bb0a7d68fbae746",
+              "based_on": "a053c9b06ef62f6eb6f31429c2f92b1e48c67ed6c0c7a326f08e0bc8bf8d46bc",
               "status": "ai-draft"
             },
             "pt_PT": {
               "text": "Carpinteiro",
-              "based_on": "ec4dba78f4d4fd6915ac9cb57b5d6ac9e57c1391f8a3094f5bb0a7d68fbae746",
+              "based_on": "a053c9b06ef62f6eb6f31429c2f92b1e48c67ed6c0c7a326f08e0bc8bf8d46bc",
               "status": "ai-draft"
             },
             "pt_BR": {
               "text": "Carpinteiro",
-              "based_on": "ec4dba78f4d4fd6915ac9cb57b5d6ac9e57c1391f8a3094f5bb0a7d68fbae746",
+              "based_on": "a053c9b06ef62f6eb6f31429c2f92b1e48c67ed6c0c7a326f08e0bc8bf8d46bc",
               "status": "ai-draft"
             },
             "de_DE": {
               "text": "Zimmermann",
-              "based_on": "ec4dba78f4d4fd6915ac9cb57b5d6ac9e57c1391f8a3094f5bb0a7d68fbae746",
+              "based_on": "a053c9b06ef62f6eb6f31429c2f92b1e48c67ed6c0c7a326f08e0bc8bf8d46bc",
               "status": "ai-draft"
             },
             "fr_FR": {
               "text": "Charpentier",
-              "based_on": "ec4dba78f4d4fd6915ac9cb57b5d6ac9e57c1391f8a3094f5bb0a7d68fbae746",
+              "based_on": "a053c9b06ef62f6eb6f31429c2f92b1e48c67ed6c0c7a326f08e0bc8bf8d46bc",
               "status": "ai-draft"
             },
             "pl_PL": {
               "text": "Cieśla",
-              "based_on": "ec4dba78f4d4fd6915ac9cb57b5d6ac9e57c1391f8a3094f5bb0a7d68fbae746",
+              "based_on": "a053c9b06ef62f6eb6f31429c2f92b1e48c67ed6c0c7a326f08e0bc8bf8d46bc",
               "status": "ai-draft"
             }
           }
@@ -11973,52 +11985,56 @@
           "source": "Lamplighter",
           "context": {
             "meaning": "Profession title of a civilian elf who lights and tends the lanterns of the tree village.",
-            "location": "lothlorien_rp: title of future trade and dialog screens of the elf (not shown in game yet)",
+            "location": "lothlorien_rp: title of the native trade screen (economy_trade_table display_name) and of the trader’s request form",
             "trigger": "Shown as the title of the screen when the player talks to or trades with an elf of this profession.",
             "tone": "Clear Minecraft UI",
             "grammar": "Standalone noun phrase naming a role, no sentence punctuation.",
-            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender."
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/entities/elf.json",
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
           },
           "placeholders": [],
           "translations": {
             "cs_CZ": {
               "text": "Lampář",
-              "based_on": "40b0f211232689f7308145993f170f064099e01edc6d88f3a123c6a1a48e9c97",
+              "based_on": "fc7fa2e15aa919829c00b83689fc410bf68258044a5643a645f37978f7b5c1dd",
               "status": "ai-draft"
             },
             "es_ES": {
               "text": "Farolero",
-              "based_on": "40b0f211232689f7308145993f170f064099e01edc6d88f3a123c6a1a48e9c97",
+              "based_on": "fc7fa2e15aa919829c00b83689fc410bf68258044a5643a645f37978f7b5c1dd",
               "status": "ai-draft"
             },
             "es_MX": {
               "text": "Farolero",
-              "based_on": "40b0f211232689f7308145993f170f064099e01edc6d88f3a123c6a1a48e9c97",
+              "based_on": "fc7fa2e15aa919829c00b83689fc410bf68258044a5643a645f37978f7b5c1dd",
               "status": "ai-draft"
             },
             "pt_PT": {
               "text": "Acendedor de lampiões",
-              "based_on": "40b0f211232689f7308145993f170f064099e01edc6d88f3a123c6a1a48e9c97",
+              "based_on": "fc7fa2e15aa919829c00b83689fc410bf68258044a5643a645f37978f7b5c1dd",
               "status": "ai-draft"
             },
             "pt_BR": {
               "text": "Acendedor de lampiões",
-              "based_on": "40b0f211232689f7308145993f170f064099e01edc6d88f3a123c6a1a48e9c97",
+              "based_on": "fc7fa2e15aa919829c00b83689fc410bf68258044a5643a645f37978f7b5c1dd",
               "status": "ai-draft"
             },
             "de_DE": {
               "text": "Laternenanzünder",
-              "based_on": "40b0f211232689f7308145993f170f064099e01edc6d88f3a123c6a1a48e9c97",
+              "based_on": "fc7fa2e15aa919829c00b83689fc410bf68258044a5643a645f37978f7b5c1dd",
               "status": "ai-draft"
             },
             "fr_FR": {
               "text": "Allumeur de lanternes",
-              "based_on": "40b0f211232689f7308145993f170f064099e01edc6d88f3a123c6a1a48e9c97",
+              "based_on": "fc7fa2e15aa919829c00b83689fc410bf68258044a5643a645f37978f7b5c1dd",
               "status": "ai-draft"
             },
             "pl_PL": {
               "text": "Latarnik",
-              "based_on": "40b0f211232689f7308145993f170f064099e01edc6d88f3a123c6a1a48e9c97",
+              "based_on": "fc7fa2e15aa919829c00b83689fc410bf68258044a5643a645f37978f7b5c1dd",
               "status": "ai-draft"
             }
           }
@@ -20140,6 +20156,312 @@
               "text": "§7Ta sadzonka stoi poza Złotym Lasem; nie liczy się.",
               "based_on": "b2c39b1770b1d70e7ac5087d43461322d595e24a9c5b41c79ba1fcce798a3297",
               "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.trade.refused.shunned": {
+          "source": "§7The elf will not trade with you. Learn to live in peace with the forest, then return.",
+          "context": {
+            "meaning": "The trader refuses a player whose Harmony is Shunned, including a player carrying a request. Peaceful conduct in the forest can restore access; no request form or trade screen opens.",
+            "location": "lothlorien_rp: grey chat feedback when using a trader elf",
+            "trigger": "A Shunned player uses the gardener, healer, woodwright or lamplighter without a lead or name tag.",
+            "tone": "Formal, elven, short",
+            "grammar": "Two complete sentences: refusal followed by advice addressed to the player.",
+            "constraints": "Preserve color codes and sequential %s placeholder order. No rank names, gameplay numbers or assumed player gender. Debug values are exempt from the gameplay-number constraint.",
+            "source_paths": [
+              "lothlorien_bp/scripts/trade.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Elf s vámi nebude obchodovat. Naučte se žít v míru s lesem a pak se vraťte.",
+              "status": "ai-draft",
+              "based_on": "06f8572b394213c12679f7ec0cbadb672bd3c6278afdecebb6980d1ad6328a83"
+            },
+            "es_ES": {
+              "text": "§7El elfo no comerciará contigo. Aprende a vivir en paz con el bosque y luego regresa.",
+              "status": "ai-draft",
+              "based_on": "06f8572b394213c12679f7ec0cbadb672bd3c6278afdecebb6980d1ad6328a83"
+            },
+            "es_MX": {
+              "text": "§7El elfo no comerciará contigo. Aprende a vivir en paz con el bosque y luego regresa.",
+              "status": "ai-draft",
+              "based_on": "06f8572b394213c12679f7ec0cbadb672bd3c6278afdecebb6980d1ad6328a83"
+            },
+            "pt_PT": {
+              "text": "§7O elfo não negociará contigo. Aprende a viver em paz com a floresta e depois regressa.",
+              "status": "ai-draft",
+              "based_on": "06f8572b394213c12679f7ec0cbadb672bd3c6278afdecebb6980d1ad6328a83"
+            },
+            "pt_BR": {
+              "text": "§7O elfo não negociará com você. Aprenda a viver em paz com a floresta e depois volte.",
+              "status": "ai-draft",
+              "based_on": "06f8572b394213c12679f7ec0cbadb672bd3c6278afdecebb6980d1ad6328a83"
+            },
+            "de_DE": {
+              "text": "§7Der Elf wird nicht mit dir handeln. Lerne, in Frieden mit dem Wald zu leben, und kehre dann zurück.",
+              "status": "ai-draft",
+              "based_on": "06f8572b394213c12679f7ec0cbadb672bd3c6278afdecebb6980d1ad6328a83"
+            },
+            "fr_FR": {
+              "text": "§7L’elfe ne commercera pas avec toi. Apprends à vivre en paix avec la forêt, puis reviens.",
+              "status": "ai-draft",
+              "based_on": "06f8572b394213c12679f7ec0cbadb672bd3c6278afdecebb6980d1ad6328a83"
+            },
+            "pl_PL": {
+              "text": "§7Elf nie będzie z tobą handlować. Naucz się żyć w pokoju z lasem, a potem wróć.",
+              "status": "ai-draft",
+              "based_on": "06f8572b394213c12679f7ec0cbadb672bd3c6278afdecebb6980d1ad6328a83"
+            }
+          }
+        },
+        "lothlorien.message.trade.refused.hated": {
+          "source": "§7The elf turns away and will not trade with you.",
+          "context": {
+            "meaning": "The trader refuses a player whose Harmony is Hated, including a player carrying a request. No request form or trade screen opens.",
+            "location": "lothlorien_rp: grey chat feedback when using a trader elf",
+            "trigger": "A Hated player uses the gardener, healer, woodwright or lamplighter without a lead or name tag.",
+            "tone": "Formal, elven, short",
+            "grammar": "One complete third-person sentence describing the elf’s refusal.",
+            "constraints": "Preserve color codes and sequential %s placeholder order. No rank names, gameplay numbers or assumed player gender. Debug values are exempt from the gameplay-number constraint.",
+            "source_paths": [
+              "lothlorien_bp/scripts/trade.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Elf se odvrací a nebude s vámi obchodovat.",
+              "status": "ai-draft",
+              "based_on": "18fd9b0d56fbfd87f6417d3ededfe2039153b73075baa643d3f506b8447d0da8"
+            },
+            "es_ES": {
+              "text": "§7El elfo se da la vuelta y no comerciará contigo.",
+              "status": "ai-draft",
+              "based_on": "18fd9b0d56fbfd87f6417d3ededfe2039153b73075baa643d3f506b8447d0da8"
+            },
+            "es_MX": {
+              "text": "§7El elfo se da la vuelta y no comerciará contigo.",
+              "status": "ai-draft",
+              "based_on": "18fd9b0d56fbfd87f6417d3ededfe2039153b73075baa643d3f506b8447d0da8"
+            },
+            "pt_PT": {
+              "text": "§7O elfo vira-te as costas e não negociará contigo.",
+              "status": "ai-draft",
+              "based_on": "18fd9b0d56fbfd87f6417d3ededfe2039153b73075baa643d3f506b8447d0da8"
+            },
+            "pt_BR": {
+              "text": "§7O elfo vira as costas e não negociará com você.",
+              "status": "ai-draft",
+              "based_on": "18fd9b0d56fbfd87f6417d3ededfe2039153b73075baa643d3f506b8447d0da8"
+            },
+            "de_DE": {
+              "text": "§7Der Elf wendet sich ab und wird nicht mit dir handeln.",
+              "status": "ai-draft",
+              "based_on": "18fd9b0d56fbfd87f6417d3ededfe2039153b73075baa643d3f506b8447d0da8"
+            },
+            "fr_FR": {
+              "text": "§7L’elfe se détourne et ne commercera pas avec toi.",
+              "status": "ai-draft",
+              "based_on": "18fd9b0d56fbfd87f6417d3ededfe2039153b73075baa643d3f506b8447d0da8"
+            },
+            "pl_PL": {
+              "text": "§7Elf odwraca się i nie będzie z tobą handlować.",
+              "status": "ai-draft",
+              "based_on": "18fd9b0d56fbfd87f6417d3ededfe2039153b73075baa643d3f506b8447d0da8"
+            }
+          }
+        },
+        "lothlorien.message.trade.again": {
+          "source": "§7The elf is ready to trade. Use the elf again.",
+          "context": {
+            "meaning": "The elf’s offers are prepared for this player. The player must interact with the same elf again to open the native trade screen; selecting Trade in a request form grants a short pass for this next interaction.",
+            "location": "lothlorien_rp: grey chat feedback after preparing a trader’s offers",
+            "trigger": "An interaction corrects a mismatched trade table, or the player selects Trade in the request form.",
+            "tone": "Formal, elven, short",
+            "grammar": "One complete statement followed by a short imperative referring to the same elf.",
+            "constraints": "Preserve color codes and sequential %s placeholder order. No rank names, gameplay numbers or assumed player gender. Debug values are exempt from the gameplay-number constraint.",
+            "source_paths": [
+              "lothlorien_bp/scripts/trade.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Elf je připraven obchodovat. Znovu oslovte tohoto elfa.",
+              "status": "ai-draft",
+              "based_on": "479edbacd74b14befe9ffcb6e9eba54e797b4f310a37eccecf4e670ec57eeb8e"
+            },
+            "es_ES": {
+              "text": "§7El elfo está listo para comerciar. Interactúa de nuevo con él.",
+              "status": "ai-draft",
+              "based_on": "479edbacd74b14befe9ffcb6e9eba54e797b4f310a37eccecf4e670ec57eeb8e"
+            },
+            "es_MX": {
+              "text": "§7El elfo está listo para comerciar. Interactúa de nuevo con él.",
+              "status": "ai-draft",
+              "based_on": "479edbacd74b14befe9ffcb6e9eba54e797b4f310a37eccecf4e670ec57eeb8e"
+            },
+            "pt_PT": {
+              "text": "§7O elfo está pronto para negociar. Interage novamente com ele.",
+              "status": "ai-draft",
+              "based_on": "479edbacd74b14befe9ffcb6e9eba54e797b4f310a37eccecf4e670ec57eeb8e"
+            },
+            "pt_BR": {
+              "text": "§7O elfo está pronto para negociar. Interaja novamente com ele.",
+              "status": "ai-draft",
+              "based_on": "479edbacd74b14befe9ffcb6e9eba54e797b4f310a37eccecf4e670ec57eeb8e"
+            },
+            "de_DE": {
+              "text": "§7Der Elf ist zum Handeln bereit. Interagiere erneut mit ihm.",
+              "status": "ai-draft",
+              "based_on": "479edbacd74b14befe9ffcb6e9eba54e797b4f310a37eccecf4e670ec57eeb8e"
+            },
+            "fr_FR": {
+              "text": "§7L’elfe est prêt à commercer. Interagis de nouveau avec lui.",
+              "status": "ai-draft",
+              "based_on": "479edbacd74b14befe9ffcb6e9eba54e797b4f310a37eccecf4e670ec57eeb8e"
+            },
+            "pl_PL": {
+              "text": "§7Elf jest gotowy do handlu. Wejdź z nim ponownie w interakcję.",
+              "status": "ai-draft",
+              "based_on": "479edbacd74b14befe9ffcb6e9eba54e797b4f310a37eccecf4e670ec57eeb8e"
+            }
+          }
+        },
+        "lothlorien.message.lore.btn.trade": {
+          "source": "Trade",
+          "context": {
+            "meaning": "Button in a trader’s request form. It closes the form and permits the player’s next interaction with this elf to open the native trade screen; the request remains active.",
+            "location": "lothlorien_rp: emerald-icon button in the trader request form",
+            "trigger": "A player carrying a request of this elf’s profession opens the trader form while permitted to trade.",
+            "tone": "Formal, elven, short",
+            "grammar": "Short action-button label with no final punctuation.",
+            "constraints": "Preserve color codes and sequential %s placeholder order. No rank names, gameplay numbers or assumed player gender. Debug values are exempt from the gameplay-number constraint.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Obchodovat",
+              "status": "ai-draft",
+              "based_on": "8283fa3e53640309609de856155e02ec6551521f756882878c3d0596fd77a2b0"
+            },
+            "es_ES": {
+              "text": "Comerciar",
+              "status": "ai-draft",
+              "based_on": "8283fa3e53640309609de856155e02ec6551521f756882878c3d0596fd77a2b0"
+            },
+            "es_MX": {
+              "text": "Comerciar",
+              "status": "ai-draft",
+              "based_on": "8283fa3e53640309609de856155e02ec6551521f756882878c3d0596fd77a2b0"
+            },
+            "pt_PT": {
+              "text": "Negociar",
+              "status": "ai-draft",
+              "based_on": "8283fa3e53640309609de856155e02ec6551521f756882878c3d0596fd77a2b0"
+            },
+            "pt_BR": {
+              "text": "Negociar",
+              "status": "ai-draft",
+              "based_on": "8283fa3e53640309609de856155e02ec6551521f756882878c3d0596fd77a2b0"
+            },
+            "de_DE": {
+              "text": "Handeln",
+              "status": "ai-draft",
+              "based_on": "8283fa3e53640309609de856155e02ec6551521f756882878c3d0596fd77a2b0"
+            },
+            "fr_FR": {
+              "text": "Commercer",
+              "status": "ai-draft",
+              "based_on": "8283fa3e53640309609de856155e02ec6551521f756882878c3d0596fd77a2b0"
+            },
+            "pl_PL": {
+              "text": "Handluj",
+              "status": "ai-draft",
+              "based_on": "8283fa3e53640309609de856155e02ec6551521f756882878c3d0596fd77a2b0"
+            }
+          }
+        },
+        "lothlorien.message.trade.debug": {
+          "source": "Trade debug: %s, table %s, yours %s, pass %s",
+          "context": {
+            "meaning": "Developer diagnostic for the nearest trader: localized profession, its current table key, the invoking player’s eligible key and current trade-pass state. Technical keys and pass values are supplied verbatim.",
+            "location": "lothlorien_rp: chat response to the trade debug script event",
+            "trigger": "Player runs /scriptevent lothlorien:trade near a trader elf.",
+            "tone": "Concise developer diagnostic",
+            "grammar": "Diagnostic labels with four sequential arguments; keep argument order.",
+            "constraints": "Preserve color codes and sequential %s placeholder order. No rank names, gameplay numbers or assumed player gender. Debug values are exempt from the gameplay-number constraint.",
+            "source_paths": [
+              "lothlorien_bp/scripts/trade.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "profession",
+              "type": "RawMessage",
+              "meaning": "Localized profession title of the nearest trader elf."
+            },
+            {
+              "name": "table",
+              "type": "string",
+              "meaning": "Current lothlorien:trade entity-property value, a technical table key or none."
+            },
+            {
+              "name": "yours",
+              "type": "string",
+              "meaning": "Trade table key allowed by the player’s current Harmony and Renown, or none if refused."
+            },
+            {
+              "name": "pass",
+              "type": "string",
+              "meaning": "Technical state of the player’s temporary pass to this elf’s native trade screen."
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "Ladění obchodu: %s, tabulka %s, vaše %s, oprávnění %s",
+              "status": "ai-draft",
+              "based_on": "a90e8c0c54b203fbb005a69339132ea4146f50efbd69107a294881dd8d2180f3"
+            },
+            "es_ES": {
+              "text": "Depuración de comercio: %s, tabla %s, la tuya %s, permiso %s",
+              "status": "ai-draft",
+              "based_on": "a90e8c0c54b203fbb005a69339132ea4146f50efbd69107a294881dd8d2180f3"
+            },
+            "es_MX": {
+              "text": "Depuración de comercio: %s, tabla %s, la tuya %s, permiso %s",
+              "status": "ai-draft",
+              "based_on": "a90e8c0c54b203fbb005a69339132ea4146f50efbd69107a294881dd8d2180f3"
+            },
+            "pt_PT": {
+              "text": "Depuração de trocas: %s, tabela %s, a tua %s, permissão %s",
+              "status": "ai-draft",
+              "based_on": "a90e8c0c54b203fbb005a69339132ea4146f50efbd69107a294881dd8d2180f3"
+            },
+            "pt_BR": {
+              "text": "Depuração de trocas: %s, tabela %s, a sua %s, permissão %s",
+              "status": "ai-draft",
+              "based_on": "a90e8c0c54b203fbb005a69339132ea4146f50efbd69107a294881dd8d2180f3"
+            },
+            "de_DE": {
+              "text": "Handelsdiagnose: %s, Tabelle %s, deine %s, Freigabe %s",
+              "status": "ai-draft",
+              "based_on": "a90e8c0c54b203fbb005a69339132ea4146f50efbd69107a294881dd8d2180f3"
+            },
+            "fr_FR": {
+              "text": "Débogage du commerce : %s, table %s, la tienne %s, autorisation %s",
+              "status": "ai-draft",
+              "based_on": "a90e8c0c54b203fbb005a69339132ea4146f50efbd69107a294881dd8d2180f3"
+            },
+            "pl_PL": {
+              "text": "Diagnostyka handlu: %s, tabela %s, twoja %s, przepustka %s",
+              "status": "ai-draft",
+              "based_on": "a90e8c0c54b203fbb005a69339132ea4146f50efbd69107a294881dd8d2180f3"
             }
           }
         }

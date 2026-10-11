@@ -431,7 +431,7 @@ test("elf entity: each trader profession has a hand-over prompt filtered by its 
     assert.ok(all.some((f) => f.test === "has_tag" && f.subject === "other" && f.value === R.deliverTagOf(p)), `${p}: has_tag on the player`);
     assert.ok(all.some((f) => f.test === "is_family" && f.subject === "other" && f.value === "player"), `${p}: players only`);
     const none = all.find((f) => f.none_of).none_of.map((f) => f.value).sort();
-    assert.deepEqual(none, ["minecraft:lead", "minecraft:name_tag"], `${p}: lead and name tag keep working`);
+    assert.deepEqual(none, ["lothlorien_trade_pass", "minecraft:lead", "minecraft:name_tag"], `${p}: lead and name tag keep working; trade pass skips delivery prompt`);
     assert.equal(entry.interact_text, "action.interact.lothlorien.hand_over");
     assert.equal(entry.use_item, false);
   }

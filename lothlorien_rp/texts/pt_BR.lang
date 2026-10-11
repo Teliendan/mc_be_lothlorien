@@ -697,3 +697,13 @@ lothlorien.message.lore.btn.handover=Entregar
 action.interact.lothlorien.hand_over=Entregar
 ## Context: Chat line when the player sets a Mallorn sapling outside the Lothlorien biome while the current Loremaster task is 'plant five Mallorn acorns'. That sapling is not counted. Grey.
 lothlorien.message.lore.saplings.outside=§7Este broto está fora da Floresta Dourada; não conta.
+## Context: The trader refuses a player whose Harmony is Shunned, including a player carrying a request. Peaceful conduct in the forest can restore access; no request form or trade screen opens.
+lothlorien.message.trade.refused.shunned=§7O elfo não negociará com você. Aprenda a viver em paz com a floresta e depois volte.
+## Context: The trader refuses a player whose Harmony is Hated, including a player carrying a request. No request form or trade screen opens.
+lothlorien.message.trade.refused.hated=§7O elfo vira as costas e não negociará com você.
+## Context: The elf’s offers are prepared for this player. The player must interact with the same elf again to open the native trade screen; selecting Trade in a request form grants a short pass for this next interaction.
+lothlorien.message.trade.again=§7O elfo está pronto para negociar. Interaja novamente com ele.
+## Context: Button in a trader’s request form. It closes the form and permits the player’s next interaction with this elf to open the native trade screen; the request remains active.
+lothlorien.message.lore.btn.trade=Negociar
+## Context: Developer diagnostic for the nearest trader: localized profession, its current table key, the invoking player’s eligible key and current trade-pass state. Technical keys and pass values are supplied verbatim.
+lothlorien.message.trade.debug=Depuração de trocas: %s, tabela %s, a sua %s, permissão %s

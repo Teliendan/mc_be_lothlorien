@@ -1,0 +1,321 @@
+{
+  "tiers": [
+    {
+      "total_exp_required": 0,
+      "groups": [
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 2,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "lothlorien:mallorn_acorn",
+                  "quantity": 5,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 1,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "lothlorien:elanor",
+                  "quantity": 4,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 1,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "lothlorien:niphredil",
+                  "quantity": 4,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 1,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "lothlorien:golden_fern",
+                  "quantity": 5,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 3,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "lothlorien:athelas",
+                  "quantity": 2,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 1,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "lothlorien:mallorn_blossom",
+                  "quantity": 5,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 1,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "lothlorien:western_corn_seeds",
+                  "quantity": 4,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 3,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "lothlorien:nectar_bloom",
+                  "quantity": 1,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:bone_meal",
+                  "quantity": 24,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 1,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:wheat_seeds",
+                  "quantity": 24,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 1,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:lily_of_the_valley",
+                  "quantity": 6,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 1,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:cornflower",
+                  "quantity": 6,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 1,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        },
+        {
+          "num_to_select": 1,
+          "trades": [
+            {
+              "wants": [
+                {
+                  "item": "minecraft:oxeye_daisy",
+                  "quantity": 6,
+                  "price_multiplier": 0
+                }
+              ],
+              "gives": [
+                {
+                  "item": "minecraft:emerald",
+                  "quantity": 1,
+                  "price_multiplier": 0
+                }
+              ],
+              "trader_exp": 0,
+              "max_uses": 9999999,
+              "reward_exp": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
