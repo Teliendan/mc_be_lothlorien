@@ -129,6 +129,9 @@ Owner decisions 2026-10-11:
   when ready, "Trade", close). "Trade" lets that player's next click on that elf through for about 10 s, so it opens the native trade screen.
   Otherwise a click opens the trade screen directly (Shunned / Hated: refused with a chat line).
 - Table swap: every 10 ticks, to the band and rank of the nearest player within 6 blocks; on a mismatch at click time cancel, swap, click again.
+- (2026-10-11, round 2) Elves **stand still and face** the player while trading (`behavior.trade_with_player`). **Refusal first**: a Shunned/Hated
+  player with a request gets the refusal line, not the request form. **Pin**: a player whose click opened the trade screen keeps the elf's table
+  for up to 30 s while within 6 blocks; another player's click still swaps and says "use again".
 
 ## 5. Final items (Galadriel's gifts)
 
