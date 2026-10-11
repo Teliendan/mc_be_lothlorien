@@ -286,6 +286,7 @@ export function handleRenownEvent(event, player) {
     takeLesson(state, arg, system.currentTick);
   } else if (cmd === "offer" && requestById(arg)) {
     state.task = null;
+    delete state.done[arg]; // debug: a request already done once can be offered again
     state.offer = arg;
   }
   saveRenown(player);
