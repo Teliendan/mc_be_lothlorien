@@ -302,6 +302,9 @@ test("every translation key the dialog uses exists in the resource catalog", () 
     ...R.LESSONS.filter(R.isTaskLesson).map((l) => `lore.lesson.${l.id}.goal`),
     ...R.PROFESSIONS.map((p) => `lore.req.prof.${p}`),
     ...[1, 2, 3].map((n) => `lore.chapter.${n}`),
+    ...R.PROFESSIONS.flatMap((p) => [`lore.who.${p}`, `lore.where.none.${p}`, `lore.status.bring.${p}`]),
+    ...R.DIRECTIONS.map((d) => `lore.dir.${d}`),
+    "lore.where.dir", "lore.where.near", "lore.btn.handover",
     ...["title", "greet.friend", "greet.guest", "greet.uneasy", "rank.line", "rank.next", "rank.max", "requests.locked", "requests.none", "requests.paused",
       "task.header", "status.active", "status.ready", "status.done", "ready.chat", "harmony.ready_chat", "btn.teaching", "teach.count", "teach.busy",
       "btn.take", "btn.continue", "btn.earlier", "btn.set_aside", "btn.request_new", "btn.farewell", "btn.understand", "btn.done", "btn.back", "btn.accept", "btn.notnow",
@@ -310,6 +313,7 @@ test("every translation key the dialog uses exists in the resource catalog", () 
   ];
   for (const k of need) assert.ok(keys.has(`lothlorien.message.${k}`), `catalog has lothlorien.message.${k}`);
   assert.ok(keys.has("action.interact.lothlorien.speak"));
+  assert.ok(keys.has("action.interact.lothlorien.hand_over"));
   // keys used in the scripts as literals also exist
   for (const f of ["loremaster.js", "renown_game.js"]) for (const m of text(`../lothlorien_bp/scripts/${f}`).matchAll(/\bt?\(?message\(\s*"(lore\.[\w.]+)"|\bt\(\s*"(lore\.[\w.]+)"/g)) assert.ok(keys.has(`lothlorien.message.${m[1] ?? m[2]}`), `${f}: ${m[1] ?? m[2]}`);
 });
@@ -339,4 +343,86 @@ test("script glue: the Loremaster form does not use header / label / divider (se
   const src = text("../lothlorien_bp/scripts/loremaster.js");
   assert.ok(!/\.(header|label|divider)\(/.test(src.replace(/\/\/.*$/gm, "")), "no non-button elements in the form");
   assert.ok(/MAX_DISTANCE = 12/.test(src));
+});
+
+// ---- Round 2: delivery to the traders ----
+test("directionTo: 8 compass words (north is -Z, east is +X) and 'nearby' under 8 blocks", () => {
+  const D = (dx, dz) => R.directionTo(dx, dz);
+  assert.deepEqual(R.DIRECTIONS, ["north", "north_east", "east", "south_east", "south", "south_west", "west", "north_west"]);
+  assert.equal(D(0, -20), "north");
+  assert.equal(D(15, -15), "north_east");
+  assert.equal(D(20, 0), "east");
+  assert.equal(D(15, 15), "south_east");
+  assert.equal(D(0, 20), "south");
+  assert.equal(D(-15, 15), "south_west");
+  assert.equal(D(-20, 0), "west");
+  assert.equal(D(-15, -15), "north_west");
+  assert.equal(D(5, -5), "nearby", "7.07 blocks");
+  assert.equal(D(0, 0), "nearby");
+  assert.equal(D(0, -8), "north", "8 blocks is no longer nearby");
+  // sector edges: 22.5 degrees splits north from north-east (tan 22.5 = 0.414)
+  assert.equal(D(8, -20), "north");
+  assert.equal(D(10, -20), "north_east");
+  assert.equal(D(-10, -20), "north_west");
+});
+
+test("nearestOf / deliveryPlace: the nearest elf of the profession within 96 blocks, else the Loremaster takes it", () => {
+  const elves = [
+    { profession: "gardener", x: 40, z: 0 }, { profession: "gardener", x: -10, z: -30 },
+    { profession: "healer", x: 0, z: 50 }, { profession: "woodwright", x: 200, z: 0 },
+  ];
+  const from = { x: 0, z: 0 };
+  assert.equal(R.nearestOf("gardener", elves, from), elves[1]);
+  assert.equal(R.nearestOf("lamplighter", elves, from), undefined);
+  assert.deepEqual(R.deliveryPlace("gardener", elves, from), { who: "trader", elf: elves[1], direction: "north" });
+  assert.equal(R.deliveryPlace("healer", elves, from).direction, "south");
+  assert.deepEqual(R.deliveryPlace("lamplighter", elves, from), { who: "loremaster" }, "no such elf: fallback");
+  assert.deepEqual(R.deliveryPlace("woodwright", elves, from), { who: "loremaster" }, "too far away: fallback");
+  assert.equal(R.deliveryPlace("woodwright", elves, from, 250).who, "trader");
+  assert.equal(R.deliveryPlace("healer", [{ profession: "healer", x: 1, z: 2 }], from).direction, "nearby");
+  assert.deepEqual(R.deliveryPlace("healer", [], from), { who: "loremaster" });
+});
+
+test("delivery tag: exactly the tag of the current request's profession, set / cleared with the state", () => {
+  assert.deepEqual(R.DELIVER_TAGS, ["lothlorien_deliver_gardener", "lothlorien_deliver_healer", "lothlorien_deliver_woodwright", "lothlorien_deliver_lamplighter"]);
+  const s = R.newState();
+  assert.equal(R.requestProfession(s), null);
+  assert.deepEqual(R.tagSync(s, []), { add: [], remove: [] });
+  assert.deepEqual(R.tagSync(s, ["other", "lothlorien_deliver_healer"]), { add: [], remove: ["lothlorien_deliver_healer"] }, "no request: stale tag removed, others kept");
+  s.offer = "h_nectar";
+  assert.deepEqual(R.tagSync(s, []), { add: [], remove: [] }, "an offer is not a request");
+  assert.equal(R.accept(s), true);
+  assert.equal(R.requestProfession(s), "healer");
+  assert.deepEqual(R.tagSync(s, []), { add: ["lothlorien_deliver_healer"], remove: [] });
+  assert.deepEqual(R.tagSync(s, ["lothlorien_deliver_healer"]), { add: [], remove: [] }, "in step: nothing to do");
+  assert.deepEqual(R.tagSync(s, ["lothlorien_deliver_gardener", "x"]), { add: ["lothlorien_deliver_healer"], remove: ["lothlorien_deliver_gardener"] });
+  assert.equal(R.elfAccepts(s, "healer"), true);
+  assert.equal(R.elfAccepts(s, "gardener"), false);
+  assert.equal(R.elfAccepts(s, "loremaster"), false);
+  R.deliver(s);
+  assert.deepEqual(R.tagSync(s, ["lothlorien_deliver_healer"]), { add: [], remove: ["lothlorien_deliver_healer"] }, "delivered: tag cleared");
+  // a lesson task is not a request
+  const t = R.newState();
+  R.takeLesson(t, "harmony", 1);
+  assert.equal(R.requestProfession(t), null);
+  assert.equal(R.elfAccepts(t, "gardener"), false);
+  // abandon clears; a migrated v1 save with a request gets its tag
+  const u = R.parse(JSON.stringify({ v: 1, points: 3, done: {}, request: { id: "w_iron", spots: [] } }));
+  assert.deepEqual(R.tagSync(u, []).add, ["lothlorien_deliver_woodwright"]);
+  R.abandonTask(u);
+  assert.deepEqual(R.tagSync(u, ["lothlorien_deliver_woodwright"]).remove, ["lothlorien_deliver_woodwright"]);
+});
+
+test("elf entity: each trader profession has a hand-over prompt filtered by its delivery tag; leads and name tags are excluded", () => {
+  const elf = JSON.parse(text("../lothlorien_bp/entities/elf.json"))["minecraft:entity"].component_groups;
+  for (const p of R.PROFESSIONS) {
+    const entry = elf[`lothlorien:${p}`]["minecraft:interact"].interactions[0];
+    const all = entry.on_interact.filters.all_of;
+    assert.ok(all.some((f) => f.test === "has_tag" && f.subject === "other" && f.value === R.deliverTagOf(p)), `${p}: has_tag on the player`);
+    assert.ok(all.some((f) => f.test === "is_family" && f.subject === "other" && f.value === "player"), `${p}: players only`);
+    const none = all.find((f) => f.none_of).none_of.map((f) => f.value).sort();
+    assert.deepEqual(none, ["minecraft:lead", "minecraft:name_tag"], `${p}: lead and name tag keep working`);
+    assert.equal(entry.interact_text, "action.interact.lothlorien.hand_over");
+    assert.equal(entry.use_item, false);
+  }
 });

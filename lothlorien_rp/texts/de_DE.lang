@@ -647,3 +647,51 @@ lothlorien.message.lore.result.learned=Du hast gelernt: %s
 lothlorien.message.lore.too_far=§7Du bist zu weit vom Wissensmeister entfernt.
 ## Context: Chat line when the Loremaster dialog could not open because another screen stayed open.
 lothlorien.message.lore.busy=§7Schließe das andere Fenster und sprich noch einmal mit dem Wissensmeister.
+## Context: Where the trader elf lives seen from the Loremaster: to the north (compass direction, north is straight ahead on the map, -Z). Completes the sentence "<profession> lives on a tree ...".
+lothlorien.message.lore.dir.north=im Norden
+## Context: Where the trader elf lives seen from the Loremaster: to the north-east (compass direction, north is straight ahead on the map, -Z). Completes the sentence "<profession> lives on a tree ...".
+lothlorien.message.lore.dir.north_east=im Nordosten
+## Context: Where the trader elf lives seen from the Loremaster: to the east (compass direction, north is straight ahead on the map, -Z). Completes the sentence "<profession> lives on a tree ...".
+lothlorien.message.lore.dir.east=im Osten
+## Context: Where the trader elf lives seen from the Loremaster: to the south-east (compass direction, north is straight ahead on the map, -Z). Completes the sentence "<profession> lives on a tree ...".
+lothlorien.message.lore.dir.south_east=im Südosten
+## Context: Where the trader elf lives seen from the Loremaster: to the south (compass direction, north is straight ahead on the map, -Z). Completes the sentence "<profession> lives on a tree ...".
+lothlorien.message.lore.dir.south=im Süden
+## Context: Where the trader elf lives seen from the Loremaster: to the south-west (compass direction, north is straight ahead on the map, -Z). Completes the sentence "<profession> lives on a tree ...".
+lothlorien.message.lore.dir.south_west=im Südwesten
+## Context: Where the trader elf lives seen from the Loremaster: to the west (compass direction, north is straight ahead on the map, -Z). Completes the sentence "<profession> lives on a tree ...".
+lothlorien.message.lore.dir.west=im Westen
+## Context: Where the trader elf lives seen from the Loremaster: to the north-west (compass direction, north is straight ahead on the map, -Z). Completes the sentence "<profession> lives on a tree ...".
+lothlorien.message.lore.dir.north_west=im Nordwesten
+## Context: The gardener (a civilian elf who receives requests) as the subject of a sentence, with its article, e.g. "The gardener lives on a tree to the north".
+lothlorien.message.lore.who.gardener=Der Gärtner
+## Context: The healer (a civilian elf who receives requests) as the subject of a sentence, with its article, e.g. "The healer lives on a tree to the north".
+lothlorien.message.lore.who.healer=Der Heiler
+## Context: The woodwright (a civilian elf who receives requests) as the subject of a sentence, with its article, e.g. "The woodwright lives on a tree to the north".
+lothlorien.message.lore.who.woodwright=Der Zimmermann
+## Context: The lamplighter (a civilian elf who receives requests) as the subject of a sentence, with its article, e.g. "The lamplighter lives on a tree to the north".
+lothlorien.message.lore.who.lamplighter=Der Laternenanzünder
+## Context: Tells the player where the elf who will receive the current request lives: "<The gardener> lives on a tree <to the north-east>."
+lothlorien.message.lore.where.dir=%s wohnt auf einem Baum %s.
+## Context: Tells the player that the elf who will receive the current request lives within about 8 blocks of the Loremaster: "<The gardener> lives close by."
+lothlorien.message.lore.where.near=%s wohnt ganz in der Nähe.
+## Context: Fallback line under a request of the gardener: no gardener lives near the Loremaster, so he takes the request himself and says other villages may still have one. Address the player without assuming gender; "their" is neutral.
+lothlorien.message.lore.where.none.gardener=In unserem Dorf gibt es keinen Gärtner mehr, darum bitte ich an seiner Stelle. Bring es mir; andere Dörfer haben vielleicht noch ihre Gärtner.
+## Context: Fallback line under a request of the healer: no healer lives near the Loremaster, so he takes the request himself and says other villages may still have one. Address the player without assuming gender; "their" is neutral.
+lothlorien.message.lore.where.none.healer=In unserem Dorf gibt es keinen Heiler mehr, darum bitte ich an seiner Stelle. Bring es mir; andere Dörfer haben vielleicht noch ihre Heiler.
+## Context: Fallback line under a request of the woodwright: no woodwright lives near the Loremaster, so he takes the request himself and says other villages may still have one. Address the player without assuming gender; "their" is neutral.
+lothlorien.message.lore.where.none.woodwright=In unserem Dorf gibt es keinen Zimmermann mehr, darum bitte ich an seiner Stelle. Bring es mir; andere Dörfer haben vielleicht noch ihre Zimmerleute.
+## Context: Fallback line under a request of the lamplighter: no lamplighter lives near the Loremaster, so he takes the request himself and says other villages may still have one. Address the player without assuming gender; "their" is neutral.
+lothlorien.message.lore.where.none.lamplighter=In unserem Dorf gibt es keinen Laternenanzünder mehr, darum bitte ich an seiner Stelle. Bring es mir; andere Dörfer haben vielleicht noch ihre Laternenanzünder.
+## Context: Second line of the current-task button (green) when a request of the gardener is ready: it is handed over to the gardener, not to the Loremaster.
+lothlorien.message.lore.status.bring.gardener=§aBring es zum Gärtner
+## Context: Second line of the current-task button (green) when a request of the healer is ready: it is handed over to the healer, not to the Loremaster.
+lothlorien.message.lore.status.bring.healer=§aBring es zum Heiler
+## Context: Second line of the current-task button (green) when a request of the woodwright is ready: it is handed over to the woodwright, not to the Loremaster.
+lothlorien.message.lore.status.bring.woodwright=§aBring es zum Zimmermann
+## Context: Second line of the current-task button (green) when a request of the lamplighter is ready: it is handed over to the lamplighter, not to the Loremaster.
+lothlorien.message.lore.status.bring.lamplighter=§aBring es zum Laternenanzünder
+## Context: Button on the small form of a trader elf that hands the ready request over (items are taken from the pack, or the planted saplings are counted). Shown only when the request is ready.
+lothlorien.message.lore.btn.handover=Übergeben
+## Context: Interaction prompt for handing the current request over to the elf (opens the small form with the request). Shown only to a player who carries a request of this elf’s profession.
+action.interact.lothlorien.hand_over=Übergeben

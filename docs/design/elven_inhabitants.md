@@ -60,10 +60,10 @@ forest edge keep spawning. Healers exist to prevent accidental deaths. Killing a
 | Shunned -15...-29 | refused | one hint: "Learn to live in peace with the forest, then return." |
 | Hated -30 and below | refused | turns away silently (wardens shoot on sight) |
 
-## 3. Loremaster: lessons and requests (M2; owner decisions 2026-10-10, dialog redesigned 2026-10-11, built, NOT yet seen in game)
+## 3. Loremaster: lessons and requests (M2; owner decisions 2026-10-10, dialog redesigned 2026-10-11, round 2 the same day: delivery to the traders, built, round 2 NOT yet seen in game)
 
 Use on the Loremaster opens a dialog (`@minecraft/server-ui` forms, `loremaster.js`); he never trades. A lead or a name tag in hand still works on him (the
-`minecraft:interact` "Speak" entry exists only in the `lothlorien:loremaster` group and excludes those two items; the script skips them too). Other elves do nothing on use until M3.
+`minecraft:interact` "Speak" entry exists only in the `lothlorien:loremaster` group and excludes those two items; the script skips them too). The four trader professions get a second, conditional prompt ("Hand over", see Requests); otherwise they do nothing on use until M3.
 
 **Lessons are chapters.** All unfinished lessons of the open chapter are listed; chapter N+1 opens when every lesson of chapter N is complete. **Lore** lessons complete
 with "I understand" at any time (0 points, no task slot; the Teaching screen shows "You have learned: X" on top, no result screen). **Deed** lessons (and Harmony) pay 1 point.
@@ -71,11 +71,11 @@ Each deed lesson text has a separate one-sentence **goal line** ("Your task: ...
 
 **One current-task slot** is shared by deed lessons, the Harmony lesson and requests. "Take this task" fills it; while it is full the deed lessons are hidden in Teaching and
 "A task from my kin" is hidden on Main (lore stays readable). A deed makes the task only **ready** (chat line + soft sound: "<lesson>: done. Return to the Loremaster."); Renown is paid at
-**turn-in** ("It is done" on the Task screen, then a Result screen with the renown line, progress to the next rank, chapter-opened and rank-up lines). Deeds done while their lesson is not the task are **lost**.
+**turn-in** ("It is done" on the Task screen; round 2: **no result screen**, the dialog goes back to Main and the chat shows the done line, "Your renown among the Galadhrim grows.", the progress line, a chapter-opened line and the rank-up line). Deeds done while their lesson is not the task are **lost**.
 The Harmony lesson is ready when Harmony >= +3 **at talk time** (re-checked at turn-in; a chat nudge fires once when Harmony crosses the level while it is the task). A request is ready when the items are in the
 pack / the saplings stand (computed). The dialog opens straight on the Task screen when the task is ready. **Set this aside** (confirm): nothing paid, a lesson goes back to offered (its deed must be done again),
 a request is not done and the rotation moves on. Uneasy: the task is kept and paused (Main shows "waits until the forest trusts you again"; only the Harmony text can be read).
-Screens: Main (greeting, rank lines, current-task button with item icon and status, Teaching with chapter + waiting count, kin offer, Farewell), Teaching, Lesson, Task, Kin offer, Set-aside confirm, Earlier lessons, Result.
+Screens: Main (greeting, rank lines, current-task button with item icon and status, Teaching with chapter + waiting count, kin offer, Farewell), Teaching, Lesson, Task, Kin offer, Set-aside confirm (its "task is set aside" result screen stays), Earlier lessons.
 The dialog ends with a chat line (not silently) when the player walked more than 12 blocks away or the `UserBusy` retries ran out.
 
 | Ch | Lesson | Kind | Completion |
@@ -97,6 +97,14 @@ gardener (5 saplings planted inside the forest, 2 morning dew, 16 bone meal), he
 8 string + 8 feathers, 6 iron ingots), lamplighter (3 bottles of fireflies, 16 coal/charcoal in any mix, 16 glass). Each round is a random permutation of the four professions;
 the offered request is a random not-yet-done one of the next profession. "Not now" keeps the offer; abandoning gives nothing, does not complete it, and the rotation moves on.
 Delivery counts the main inventory and removes the items all-or-nothing; saplings are remembered cells (distinct; a cell must still hold a sapling or a Mallorn log).
+
+**Delivery to the traders (round 2, owner 2026-10-11).** The Loremaster only **gives** requests; a request is handed over to the elf of its profession (gardener, healer, woodwright, lamplighter), any elf of that profession in any village (Renown is global).
+- The offer and the Task screen say where that elf lives: "The gardener lives on a tree to the north-east." (8 compass words from the Loremaster to the nearest such elf within 96 blocks, live position, loaded chunks only; north is -Z; closer than 8 blocks: "lives close by").
+  The main task button then reads "Bring it to the <profession>" once the request is ready.
+- **Fallback:** when no elf of that profession is found within 96 blocks of the Loremaster, he takes the request himself: the text says so ("Our village has no gardener any more, so I ask in their place. Bring it to me; ..."), the status is "Return to me", and "It is done" works on his Task screen as before.
+- **At the trader:** using an elf whose profession matches the player's current request opens a small form (title = the profession, body = the request text and progress, "Hand over" only when ready, "Back"). The ready rule is the same as before (items all-or-nothing from the main inventory; saplings still standing). Feedback is chat only, the form closes.
+  With no matching request **nothing happens** (no line) until M3 adds trading; leads and name tags keep working.
+- **Hover prompt only with a request:** each trader profession group has a `minecraft:interact` entry ("Hand over") whose filter tests the player tag `lothlorien_deliver_<profession>` (`has_tag`, subject `other`). The script keeps that tag exactly while the current request is of that profession (set on accept / join, cleared on hand-over, set-aside, reset).
 
 Bands: Friend and Guest get everything; **Uneasy** only the Harmony lesson text (active request kept, paused); **Shunned** one chat line; **Hated** silence.
 Risk: a village whose Loremaster died has no dialog (other villages still work; Renown is global).

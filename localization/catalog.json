@@ -18700,6 +18700,1391 @@
               "status": "ai-draft"
             }
           }
+        },
+        "lothlorien.message.lore.dir.north": {
+          "source": "to the north",
+          "context": {
+            "meaning": "Where the trader elf lives seen from the Loremaster: to the north (compass direction, north is straight ahead on the map, -Z). Completes the sentence \"<profession> lives on a tree ...\".",
+            "location": "lothlorien_rp: inserted into the \"where the trader lives\" sentence of the Loremaster dialog (nested argument)",
+            "trigger": "Player talks to the Loremaster elf while a request is on offer or active.",
+            "tone": "Plain, short",
+            "grammar": "Adverbial phrase that completes \"<profession> lives on a tree ...\", no final punctuation, no capital letter; locale-correct preposition and case.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "na severu",
+              "based_on": "e66f6d497d2427a63f3d16c7f68acae0df29ba1702349ca451d9c1ac32c96458",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "al norte",
+              "based_on": "e66f6d497d2427a63f3d16c7f68acae0df29ba1702349ca451d9c1ac32c96458",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "al norte",
+              "based_on": "e66f6d497d2427a63f3d16c7f68acae0df29ba1702349ca451d9c1ac32c96458",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "a norte",
+              "based_on": "e66f6d497d2427a63f3d16c7f68acae0df29ba1702349ca451d9c1ac32c96458",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "ao norte",
+              "based_on": "e66f6d497d2427a63f3d16c7f68acae0df29ba1702349ca451d9c1ac32c96458",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "im Norden",
+              "based_on": "e66f6d497d2427a63f3d16c7f68acae0df29ba1702349ca451d9c1ac32c96458",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "au nord",
+              "based_on": "e66f6d497d2427a63f3d16c7f68acae0df29ba1702349ca451d9c1ac32c96458",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "na północy",
+              "based_on": "e66f6d497d2427a63f3d16c7f68acae0df29ba1702349ca451d9c1ac32c96458",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.dir.north_east": {
+          "source": "to the north-east",
+          "context": {
+            "meaning": "Where the trader elf lives seen from the Loremaster: to the north-east (compass direction, north is straight ahead on the map, -Z). Completes the sentence \"<profession> lives on a tree ...\".",
+            "location": "lothlorien_rp: inserted into the \"where the trader lives\" sentence of the Loremaster dialog (nested argument)",
+            "trigger": "Player talks to the Loremaster elf while a request is on offer or active.",
+            "tone": "Plain, short",
+            "grammar": "Adverbial phrase that completes \"<profession> lives on a tree ...\", no final punctuation, no capital letter; locale-correct preposition and case.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "na severovýchodě",
+              "based_on": "a72efd0247c6e0ddeb27706c566e858a3bc0dc81c00e25ddbff300c15c2ac79c",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "al noreste",
+              "based_on": "a72efd0247c6e0ddeb27706c566e858a3bc0dc81c00e25ddbff300c15c2ac79c",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "al noreste",
+              "based_on": "a72efd0247c6e0ddeb27706c566e858a3bc0dc81c00e25ddbff300c15c2ac79c",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "a nordeste",
+              "based_on": "a72efd0247c6e0ddeb27706c566e858a3bc0dc81c00e25ddbff300c15c2ac79c",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "ao nordeste",
+              "based_on": "a72efd0247c6e0ddeb27706c566e858a3bc0dc81c00e25ddbff300c15c2ac79c",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "im Nordosten",
+              "based_on": "a72efd0247c6e0ddeb27706c566e858a3bc0dc81c00e25ddbff300c15c2ac79c",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "au nord-est",
+              "based_on": "a72efd0247c6e0ddeb27706c566e858a3bc0dc81c00e25ddbff300c15c2ac79c",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "na północnym wschodzie",
+              "based_on": "a72efd0247c6e0ddeb27706c566e858a3bc0dc81c00e25ddbff300c15c2ac79c",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.dir.east": {
+          "source": "to the east",
+          "context": {
+            "meaning": "Where the trader elf lives seen from the Loremaster: to the east (compass direction, north is straight ahead on the map, -Z). Completes the sentence \"<profession> lives on a tree ...\".",
+            "location": "lothlorien_rp: inserted into the \"where the trader lives\" sentence of the Loremaster dialog (nested argument)",
+            "trigger": "Player talks to the Loremaster elf while a request is on offer or active.",
+            "tone": "Plain, short",
+            "grammar": "Adverbial phrase that completes \"<profession> lives on a tree ...\", no final punctuation, no capital letter; locale-correct preposition and case.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "na východě",
+              "based_on": "386c8b18033e23eecf465181faa5c538ad01ab3b8450ad2e00b032ad2d778b23",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "al este",
+              "based_on": "386c8b18033e23eecf465181faa5c538ad01ab3b8450ad2e00b032ad2d778b23",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "al este",
+              "based_on": "386c8b18033e23eecf465181faa5c538ad01ab3b8450ad2e00b032ad2d778b23",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "a este",
+              "based_on": "386c8b18033e23eecf465181faa5c538ad01ab3b8450ad2e00b032ad2d778b23",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "ao leste",
+              "based_on": "386c8b18033e23eecf465181faa5c538ad01ab3b8450ad2e00b032ad2d778b23",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "im Osten",
+              "based_on": "386c8b18033e23eecf465181faa5c538ad01ab3b8450ad2e00b032ad2d778b23",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "à l’est",
+              "based_on": "386c8b18033e23eecf465181faa5c538ad01ab3b8450ad2e00b032ad2d778b23",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "na wschodzie",
+              "based_on": "386c8b18033e23eecf465181faa5c538ad01ab3b8450ad2e00b032ad2d778b23",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.dir.south_east": {
+          "source": "to the south-east",
+          "context": {
+            "meaning": "Where the trader elf lives seen from the Loremaster: to the south-east (compass direction, north is straight ahead on the map, -Z). Completes the sentence \"<profession> lives on a tree ...\".",
+            "location": "lothlorien_rp: inserted into the \"where the trader lives\" sentence of the Loremaster dialog (nested argument)",
+            "trigger": "Player talks to the Loremaster elf while a request is on offer or active.",
+            "tone": "Plain, short",
+            "grammar": "Adverbial phrase that completes \"<profession> lives on a tree ...\", no final punctuation, no capital letter; locale-correct preposition and case.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "na jihovýchodě",
+              "based_on": "14e4700b2f6c7624f6859d5623186ec4bfebeb774c96ddf8fbf3b89759a5b19b",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "al sureste",
+              "based_on": "14e4700b2f6c7624f6859d5623186ec4bfebeb774c96ddf8fbf3b89759a5b19b",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "al sureste",
+              "based_on": "14e4700b2f6c7624f6859d5623186ec4bfebeb774c96ddf8fbf3b89759a5b19b",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "a sudeste",
+              "based_on": "14e4700b2f6c7624f6859d5623186ec4bfebeb774c96ddf8fbf3b89759a5b19b",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "ao sudeste",
+              "based_on": "14e4700b2f6c7624f6859d5623186ec4bfebeb774c96ddf8fbf3b89759a5b19b",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "im Südosten",
+              "based_on": "14e4700b2f6c7624f6859d5623186ec4bfebeb774c96ddf8fbf3b89759a5b19b",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "au sud-est",
+              "based_on": "14e4700b2f6c7624f6859d5623186ec4bfebeb774c96ddf8fbf3b89759a5b19b",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "na południowym wschodzie",
+              "based_on": "14e4700b2f6c7624f6859d5623186ec4bfebeb774c96ddf8fbf3b89759a5b19b",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.dir.south": {
+          "source": "to the south",
+          "context": {
+            "meaning": "Where the trader elf lives seen from the Loremaster: to the south (compass direction, north is straight ahead on the map, -Z). Completes the sentence \"<profession> lives on a tree ...\".",
+            "location": "lothlorien_rp: inserted into the \"where the trader lives\" sentence of the Loremaster dialog (nested argument)",
+            "trigger": "Player talks to the Loremaster elf while a request is on offer or active.",
+            "tone": "Plain, short",
+            "grammar": "Adverbial phrase that completes \"<profession> lives on a tree ...\", no final punctuation, no capital letter; locale-correct preposition and case.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "na jihu",
+              "based_on": "5d9a873d0d5e4dd670d382c89cd623eed66f1fb6f9996d3dfa3040f441a32447",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "al sur",
+              "based_on": "5d9a873d0d5e4dd670d382c89cd623eed66f1fb6f9996d3dfa3040f441a32447",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "al sur",
+              "based_on": "5d9a873d0d5e4dd670d382c89cd623eed66f1fb6f9996d3dfa3040f441a32447",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "a sul",
+              "based_on": "5d9a873d0d5e4dd670d382c89cd623eed66f1fb6f9996d3dfa3040f441a32447",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "ao sul",
+              "based_on": "5d9a873d0d5e4dd670d382c89cd623eed66f1fb6f9996d3dfa3040f441a32447",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "im Süden",
+              "based_on": "5d9a873d0d5e4dd670d382c89cd623eed66f1fb6f9996d3dfa3040f441a32447",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "au sud",
+              "based_on": "5d9a873d0d5e4dd670d382c89cd623eed66f1fb6f9996d3dfa3040f441a32447",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "na południu",
+              "based_on": "5d9a873d0d5e4dd670d382c89cd623eed66f1fb6f9996d3dfa3040f441a32447",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.dir.south_west": {
+          "source": "to the south-west",
+          "context": {
+            "meaning": "Where the trader elf lives seen from the Loremaster: to the south-west (compass direction, north is straight ahead on the map, -Z). Completes the sentence \"<profession> lives on a tree ...\".",
+            "location": "lothlorien_rp: inserted into the \"where the trader lives\" sentence of the Loremaster dialog (nested argument)",
+            "trigger": "Player talks to the Loremaster elf while a request is on offer or active.",
+            "tone": "Plain, short",
+            "grammar": "Adverbial phrase that completes \"<profession> lives on a tree ...\", no final punctuation, no capital letter; locale-correct preposition and case.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "na jihozápadě",
+              "based_on": "f91cfd0cb49d79736becf418994132a14ca77cfce1e6393797d24e9ea60c1268",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "al suroeste",
+              "based_on": "f91cfd0cb49d79736becf418994132a14ca77cfce1e6393797d24e9ea60c1268",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "al suroeste",
+              "based_on": "f91cfd0cb49d79736becf418994132a14ca77cfce1e6393797d24e9ea60c1268",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "a sudoeste",
+              "based_on": "f91cfd0cb49d79736becf418994132a14ca77cfce1e6393797d24e9ea60c1268",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "ao sudoeste",
+              "based_on": "f91cfd0cb49d79736becf418994132a14ca77cfce1e6393797d24e9ea60c1268",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "im Südwesten",
+              "based_on": "f91cfd0cb49d79736becf418994132a14ca77cfce1e6393797d24e9ea60c1268",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "au sud-ouest",
+              "based_on": "f91cfd0cb49d79736becf418994132a14ca77cfce1e6393797d24e9ea60c1268",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "na południowym zachodzie",
+              "based_on": "f91cfd0cb49d79736becf418994132a14ca77cfce1e6393797d24e9ea60c1268",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.dir.west": {
+          "source": "to the west",
+          "context": {
+            "meaning": "Where the trader elf lives seen from the Loremaster: to the west (compass direction, north is straight ahead on the map, -Z). Completes the sentence \"<profession> lives on a tree ...\".",
+            "location": "lothlorien_rp: inserted into the \"where the trader lives\" sentence of the Loremaster dialog (nested argument)",
+            "trigger": "Player talks to the Loremaster elf while a request is on offer or active.",
+            "tone": "Plain, short",
+            "grammar": "Adverbial phrase that completes \"<profession> lives on a tree ...\", no final punctuation, no capital letter; locale-correct preposition and case.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "na západě",
+              "based_on": "3022f4bb63b8304c96bc09b4136f86b05f7d70a557a2d1a00afda8f9d8e65776",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "al oeste",
+              "based_on": "3022f4bb63b8304c96bc09b4136f86b05f7d70a557a2d1a00afda8f9d8e65776",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "al oeste",
+              "based_on": "3022f4bb63b8304c96bc09b4136f86b05f7d70a557a2d1a00afda8f9d8e65776",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "a oeste",
+              "based_on": "3022f4bb63b8304c96bc09b4136f86b05f7d70a557a2d1a00afda8f9d8e65776",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "ao oeste",
+              "based_on": "3022f4bb63b8304c96bc09b4136f86b05f7d70a557a2d1a00afda8f9d8e65776",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "im Westen",
+              "based_on": "3022f4bb63b8304c96bc09b4136f86b05f7d70a557a2d1a00afda8f9d8e65776",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "à l’ouest",
+              "based_on": "3022f4bb63b8304c96bc09b4136f86b05f7d70a557a2d1a00afda8f9d8e65776",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "na zachodzie",
+              "based_on": "3022f4bb63b8304c96bc09b4136f86b05f7d70a557a2d1a00afda8f9d8e65776",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.dir.north_west": {
+          "source": "to the north-west",
+          "context": {
+            "meaning": "Where the trader elf lives seen from the Loremaster: to the north-west (compass direction, north is straight ahead on the map, -Z). Completes the sentence \"<profession> lives on a tree ...\".",
+            "location": "lothlorien_rp: inserted into the \"where the trader lives\" sentence of the Loremaster dialog (nested argument)",
+            "trigger": "Player talks to the Loremaster elf while a request is on offer or active.",
+            "tone": "Plain, short",
+            "grammar": "Adverbial phrase that completes \"<profession> lives on a tree ...\", no final punctuation, no capital letter; locale-correct preposition and case.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "na severozápadě",
+              "based_on": "a02e0ed4f59704bbd2d2028c2dede347e0c03a995e41e6476d5d4ded1fbd68d4",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "al noroeste",
+              "based_on": "a02e0ed4f59704bbd2d2028c2dede347e0c03a995e41e6476d5d4ded1fbd68d4",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "al noroeste",
+              "based_on": "a02e0ed4f59704bbd2d2028c2dede347e0c03a995e41e6476d5d4ded1fbd68d4",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "a noroeste",
+              "based_on": "a02e0ed4f59704bbd2d2028c2dede347e0c03a995e41e6476d5d4ded1fbd68d4",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "ao noroeste",
+              "based_on": "a02e0ed4f59704bbd2d2028c2dede347e0c03a995e41e6476d5d4ded1fbd68d4",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "im Nordwesten",
+              "based_on": "a02e0ed4f59704bbd2d2028c2dede347e0c03a995e41e6476d5d4ded1fbd68d4",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "au nord-ouest",
+              "based_on": "a02e0ed4f59704bbd2d2028c2dede347e0c03a995e41e6476d5d4ded1fbd68d4",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "na północnym zachodzie",
+              "based_on": "a02e0ed4f59704bbd2d2028c2dede347e0c03a995e41e6476d5d4ded1fbd68d4",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.who.gardener": {
+          "source": "The gardener",
+          "context": {
+            "meaning": "The gardener (a civilian elf who receives requests) as the subject of a sentence, with its article, e.g. \"The gardener lives on a tree to the north\".",
+            "location": "lothlorien_rp: start of a sentence in the Loremaster dialog (nested argument)",
+            "trigger": "Player talks to the Loremaster elf while a request is on offer or active.",
+            "tone": "Plain, short",
+            "grammar": "Noun phrase naming the profession with its article, capitalised as a sentence start (nominative), no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Zahradník",
+              "based_on": "717fced4e86bd421a14ba6eb9a57a95e211cce381fc8c9ff9278cd33a519ee8c",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "El jardinero",
+              "based_on": "717fced4e86bd421a14ba6eb9a57a95e211cce381fc8c9ff9278cd33a519ee8c",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "El jardinero",
+              "based_on": "717fced4e86bd421a14ba6eb9a57a95e211cce381fc8c9ff9278cd33a519ee8c",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "O jardineiro",
+              "based_on": "717fced4e86bd421a14ba6eb9a57a95e211cce381fc8c9ff9278cd33a519ee8c",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "O jardineiro",
+              "based_on": "717fced4e86bd421a14ba6eb9a57a95e211cce381fc8c9ff9278cd33a519ee8c",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Der Gärtner",
+              "based_on": "717fced4e86bd421a14ba6eb9a57a95e211cce381fc8c9ff9278cd33a519ee8c",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Le jardinier",
+              "based_on": "717fced4e86bd421a14ba6eb9a57a95e211cce381fc8c9ff9278cd33a519ee8c",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Ogrodnik",
+              "based_on": "717fced4e86bd421a14ba6eb9a57a95e211cce381fc8c9ff9278cd33a519ee8c",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.who.healer": {
+          "source": "The healer",
+          "context": {
+            "meaning": "The healer (a civilian elf who receives requests) as the subject of a sentence, with its article, e.g. \"The healer lives on a tree to the north\".",
+            "location": "lothlorien_rp: start of a sentence in the Loremaster dialog (nested argument)",
+            "trigger": "Player talks to the Loremaster elf while a request is on offer or active.",
+            "tone": "Plain, short",
+            "grammar": "Noun phrase naming the profession with its article, capitalised as a sentence start (nominative), no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Léčitel",
+              "based_on": "5c9e3cd508ae68033beb1f79ded0059a38290a1ee633a2ca98fe6db87dbb3e22",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "El sanador",
+              "based_on": "5c9e3cd508ae68033beb1f79ded0059a38290a1ee633a2ca98fe6db87dbb3e22",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "El sanador",
+              "based_on": "5c9e3cd508ae68033beb1f79ded0059a38290a1ee633a2ca98fe6db87dbb3e22",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "O curandeiro",
+              "based_on": "5c9e3cd508ae68033beb1f79ded0059a38290a1ee633a2ca98fe6db87dbb3e22",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "O curandeiro",
+              "based_on": "5c9e3cd508ae68033beb1f79ded0059a38290a1ee633a2ca98fe6db87dbb3e22",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Der Heiler",
+              "based_on": "5c9e3cd508ae68033beb1f79ded0059a38290a1ee633a2ca98fe6db87dbb3e22",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Le guérisseur",
+              "based_on": "5c9e3cd508ae68033beb1f79ded0059a38290a1ee633a2ca98fe6db87dbb3e22",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Uzdrowiciel",
+              "based_on": "5c9e3cd508ae68033beb1f79ded0059a38290a1ee633a2ca98fe6db87dbb3e22",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.who.woodwright": {
+          "source": "The woodwright",
+          "context": {
+            "meaning": "The woodwright (a civilian elf who receives requests) as the subject of a sentence, with its article, e.g. \"The woodwright lives on a tree to the north\".",
+            "location": "lothlorien_rp: start of a sentence in the Loremaster dialog (nested argument)",
+            "trigger": "Player talks to the Loremaster elf while a request is on offer or active.",
+            "tone": "Plain, short",
+            "grammar": "Noun phrase naming the profession with its article, capitalised as a sentence start (nominative), no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Tesař",
+              "based_on": "0d546996b41c32c9897afedefaeec6dcfb9be4f14039396cea6332246e2af2f9",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "El carpintero",
+              "based_on": "0d546996b41c32c9897afedefaeec6dcfb9be4f14039396cea6332246e2af2f9",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "El carpintero",
+              "based_on": "0d546996b41c32c9897afedefaeec6dcfb9be4f14039396cea6332246e2af2f9",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "O carpinteiro",
+              "based_on": "0d546996b41c32c9897afedefaeec6dcfb9be4f14039396cea6332246e2af2f9",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "O carpinteiro",
+              "based_on": "0d546996b41c32c9897afedefaeec6dcfb9be4f14039396cea6332246e2af2f9",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Der Zimmermann",
+              "based_on": "0d546996b41c32c9897afedefaeec6dcfb9be4f14039396cea6332246e2af2f9",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Le charpentier",
+              "based_on": "0d546996b41c32c9897afedefaeec6dcfb9be4f14039396cea6332246e2af2f9",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Cieśla",
+              "based_on": "0d546996b41c32c9897afedefaeec6dcfb9be4f14039396cea6332246e2af2f9",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.who.lamplighter": {
+          "source": "The lamplighter",
+          "context": {
+            "meaning": "The lamplighter (a civilian elf who receives requests) as the subject of a sentence, with its article, e.g. \"The lamplighter lives on a tree to the north\".",
+            "location": "lothlorien_rp: start of a sentence in the Loremaster dialog (nested argument)",
+            "trigger": "Player talks to the Loremaster elf while a request is on offer or active.",
+            "tone": "Plain, short",
+            "grammar": "Noun phrase naming the profession with its article, capitalised as a sentence start (nominative), no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Lampář",
+              "based_on": "c5c708bc62f89c19fb66477505e14dbf8287b13d9458f5ee47fb7ec59a0444ea",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "El farolero",
+              "based_on": "c5c708bc62f89c19fb66477505e14dbf8287b13d9458f5ee47fb7ec59a0444ea",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "El farolero",
+              "based_on": "c5c708bc62f89c19fb66477505e14dbf8287b13d9458f5ee47fb7ec59a0444ea",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "O acendedor de lampiões",
+              "based_on": "c5c708bc62f89c19fb66477505e14dbf8287b13d9458f5ee47fb7ec59a0444ea",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "O acendedor de lampiões",
+              "based_on": "c5c708bc62f89c19fb66477505e14dbf8287b13d9458f5ee47fb7ec59a0444ea",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Der Laternenanzünder",
+              "based_on": "c5c708bc62f89c19fb66477505e14dbf8287b13d9458f5ee47fb7ec59a0444ea",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "L’allumeur de lanternes",
+              "based_on": "c5c708bc62f89c19fb66477505e14dbf8287b13d9458f5ee47fb7ec59a0444ea",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Latarnik",
+              "based_on": "c5c708bc62f89c19fb66477505e14dbf8287b13d9458f5ee47fb7ec59a0444ea",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.where.dir": {
+          "source": "%s lives on a tree %s.",
+          "context": {
+            "meaning": "Tells the player where the elf who will receive the current request lives: \"<The gardener> lives on a tree <to the north-east>.\"",
+            "location": "lothlorien_rp: line under a request text in the Loremaster dialog",
+            "trigger": "Player talks to the Loremaster elf while a request is on offer or active.",
+            "tone": "Formal, elven, short",
+            "grammar": "One complete sentence; the first argument is a nested noun phrase in the nominative; no player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "who",
+              "type": "RawMessage",
+              "meaning": "who: nested translated noun phrase with article, e.g. \"The gardener\""
+            },
+            {
+              "name": "direction",
+              "type": "RawMessage",
+              "meaning": "direction: nested translated phrase, e.g. \"to the north-east\""
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "%s bydlí na stromě %s.",
+              "based_on": "50577f6ef8bf69830e358e38395924f0c199d46ecb75907dcc3d9c8a44e7de42",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "%s vive en un árbol %s.",
+              "based_on": "50577f6ef8bf69830e358e38395924f0c199d46ecb75907dcc3d9c8a44e7de42",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "%s vive en un árbol %s.",
+              "based_on": "50577f6ef8bf69830e358e38395924f0c199d46ecb75907dcc3d9c8a44e7de42",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "%s vive numa árvore %s.",
+              "based_on": "50577f6ef8bf69830e358e38395924f0c199d46ecb75907dcc3d9c8a44e7de42",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "%s vive numa árvore %s.",
+              "based_on": "50577f6ef8bf69830e358e38395924f0c199d46ecb75907dcc3d9c8a44e7de42",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "%s wohnt auf einem Baum %s.",
+              "based_on": "50577f6ef8bf69830e358e38395924f0c199d46ecb75907dcc3d9c8a44e7de42",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "%s vit sur un arbre %s.",
+              "based_on": "50577f6ef8bf69830e358e38395924f0c199d46ecb75907dcc3d9c8a44e7de42",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "%s mieszka na drzewie %s.",
+              "based_on": "50577f6ef8bf69830e358e38395924f0c199d46ecb75907dcc3d9c8a44e7de42",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.where.near": {
+          "source": "%s lives close by.",
+          "context": {
+            "meaning": "Tells the player that the elf who will receive the current request lives within about 8 blocks of the Loremaster: \"<The gardener> lives close by.\"",
+            "location": "lothlorien_rp: line under a request text in the Loremaster dialog",
+            "trigger": "Player talks to the Loremaster elf while a request is on offer or active.",
+            "tone": "Formal, elven, short",
+            "grammar": "One complete sentence; the first argument is a nested noun phrase in the nominative; no player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "who",
+              "type": "RawMessage",
+              "meaning": "who: nested translated noun phrase with article, e.g. \"The gardener\""
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "%s bydlí poblíž.",
+              "based_on": "e06d57c39d55fd8c22654cf3b4892329e8899c537add942a80eaa54093ded051",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "%s vive cerca de aquí.",
+              "based_on": "e06d57c39d55fd8c22654cf3b4892329e8899c537add942a80eaa54093ded051",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "%s vive cerca de aquí.",
+              "based_on": "e06d57c39d55fd8c22654cf3b4892329e8899c537add942a80eaa54093ded051",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "%s vive aqui perto.",
+              "based_on": "e06d57c39d55fd8c22654cf3b4892329e8899c537add942a80eaa54093ded051",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "%s vive aqui perto.",
+              "based_on": "e06d57c39d55fd8c22654cf3b4892329e8899c537add942a80eaa54093ded051",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "%s wohnt ganz in der Nähe.",
+              "based_on": "e06d57c39d55fd8c22654cf3b4892329e8899c537add942a80eaa54093ded051",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "%s vit tout près.",
+              "based_on": "e06d57c39d55fd8c22654cf3b4892329e8899c537add942a80eaa54093ded051",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "%s mieszka tuż obok.",
+              "based_on": "e06d57c39d55fd8c22654cf3b4892329e8899c537add942a80eaa54093ded051",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.where.none.gardener": {
+          "source": "Our village has no gardener any more, so I ask in their place. Bring it to me; other villages may still have their gardeners.",
+          "context": {
+            "meaning": "Fallback line under a request of the gardener: no gardener lives near the Loremaster, so he takes the request himself and says other villages may still have one. Address the player without assuming gender; \"their\" is neutral.",
+            "location": "lothlorien_rp: line under a request text in the Loremaster dialog (nobody of this profession lives near)",
+            "trigger": "Player reads the request offer or the task screen and no elf of this profession lives within about 96 blocks of the Loremaster.",
+            "tone": "Formal, elven, short",
+            "grammar": "Two or three short sentences; the Loremaster speaks in the first person and asks the player (address as in the other Loremaster lines) to bring the request to him; no player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "V naší vsi už zahradník není, proto žádám místo něj já. Přineste to mně; v jiných vsích zahradníky možná ještě mají.",
+              "based_on": "bd85affe4ad8126e08c2137bcd7d3817692c33972713aba793809303e66bde56",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "En nuestra aldea ya no hay jardinero, así que pido en su lugar. Tráemelo a mí; quizá otras aldeas aún tengan sus jardineros.",
+              "based_on": "bd85affe4ad8126e08c2137bcd7d3817692c33972713aba793809303e66bde56",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "En nuestra aldea ya no hay jardinero, así que pido en su lugar. Tráemelo a mí; quizá otras aldeas aún tengan sus jardineros.",
+              "based_on": "bd85affe4ad8126e08c2137bcd7d3817692c33972713aba793809303e66bde56",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Na nossa aldeia já não há jardineiro, por isso peço em seu lugar. Traz-mo a mim; talvez outras aldeias ainda tenham os seus jardineiros.",
+              "based_on": "bd85affe4ad8126e08c2137bcd7d3817692c33972713aba793809303e66bde56",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Na nossa aldeia já não há jardineiro, por isso peço em seu lugar. Traga para mim; talvez outras aldeias ainda tenham os seus jardineiros.",
+              "based_on": "bd85affe4ad8126e08c2137bcd7d3817692c33972713aba793809303e66bde56",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "In unserem Dorf gibt es keinen Gärtner mehr, darum bitte ich an seiner Stelle. Bring es mir; andere Dörfer haben vielleicht noch ihre Gärtner.",
+              "based_on": "bd85affe4ad8126e08c2137bcd7d3817692c33972713aba793809303e66bde56",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Notre village n’a plus de jardinier, alors je demande à sa place. Apporte-le-moi ; d’autres villages ont peut-être encore leurs jardiniers.",
+              "based_on": "bd85affe4ad8126e08c2137bcd7d3817692c33972713aba793809303e66bde56",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "W naszej wiosce nie ma już ogrodnika, więc proszę w jego imieniu. Przynieś to mnie; w innych wioskach mogą jeszcze mieć swoich ogrodników.",
+              "based_on": "bd85affe4ad8126e08c2137bcd7d3817692c33972713aba793809303e66bde56",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.where.none.healer": {
+          "source": "Our village has no healer any more, so I ask in their place. Bring it to me; other villages may still have their healers.",
+          "context": {
+            "meaning": "Fallback line under a request of the healer: no healer lives near the Loremaster, so he takes the request himself and says other villages may still have one. Address the player without assuming gender; \"their\" is neutral.",
+            "location": "lothlorien_rp: line under a request text in the Loremaster dialog (nobody of this profession lives near)",
+            "trigger": "Player reads the request offer or the task screen and no elf of this profession lives within about 96 blocks of the Loremaster.",
+            "tone": "Formal, elven, short",
+            "grammar": "Two or three short sentences; the Loremaster speaks in the first person and asks the player (address as in the other Loremaster lines) to bring the request to him; no player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "V naší vsi už léčitel není, proto žádám místo něj já. Přineste to mně; v jiných vsích léčitele možná ještě mají.",
+              "based_on": "920365401cc821d0f1e67279c5b81b521a0aa4fde43e04d593bf4300be10a0d0",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "En nuestra aldea ya no hay sanador, así que pido en su lugar. Tráemelo a mí; quizá otras aldeas aún tengan sus sanadores.",
+              "based_on": "920365401cc821d0f1e67279c5b81b521a0aa4fde43e04d593bf4300be10a0d0",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "En nuestra aldea ya no hay sanador, así que pido en su lugar. Tráemelo a mí; quizá otras aldeas aún tengan sus sanadores.",
+              "based_on": "920365401cc821d0f1e67279c5b81b521a0aa4fde43e04d593bf4300be10a0d0",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Na nossa aldeia já não há curandeiro, por isso peço em seu lugar. Traz-mo a mim; talvez outras aldeias ainda tenham os seus curandeiros.",
+              "based_on": "920365401cc821d0f1e67279c5b81b521a0aa4fde43e04d593bf4300be10a0d0",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Na nossa aldeia já não há curandeiro, por isso peço em seu lugar. Traga para mim; talvez outras aldeias ainda tenham os seus curandeiros.",
+              "based_on": "920365401cc821d0f1e67279c5b81b521a0aa4fde43e04d593bf4300be10a0d0",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "In unserem Dorf gibt es keinen Heiler mehr, darum bitte ich an seiner Stelle. Bring es mir; andere Dörfer haben vielleicht noch ihre Heiler.",
+              "based_on": "920365401cc821d0f1e67279c5b81b521a0aa4fde43e04d593bf4300be10a0d0",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Notre village n’a plus de guérisseur, alors je demande à sa place. Apporte-le-moi ; d’autres villages ont peut-être encore leurs guérisseurs.",
+              "based_on": "920365401cc821d0f1e67279c5b81b521a0aa4fde43e04d593bf4300be10a0d0",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "W naszej wiosce nie ma już uzdrowiciela, więc proszę w jego imieniu. Przynieś to mnie; w innych wioskach mogą jeszcze mieć swoich uzdrowicieli.",
+              "based_on": "920365401cc821d0f1e67279c5b81b521a0aa4fde43e04d593bf4300be10a0d0",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.where.none.woodwright": {
+          "source": "Our village has no woodwright any more, so I ask in their place. Bring it to me; other villages may still have their woodwrights.",
+          "context": {
+            "meaning": "Fallback line under a request of the woodwright: no woodwright lives near the Loremaster, so he takes the request himself and says other villages may still have one. Address the player without assuming gender; \"their\" is neutral.",
+            "location": "lothlorien_rp: line under a request text in the Loremaster dialog (nobody of this profession lives near)",
+            "trigger": "Player reads the request offer or the task screen and no elf of this profession lives within about 96 blocks of the Loremaster.",
+            "tone": "Formal, elven, short",
+            "grammar": "Two or three short sentences; the Loremaster speaks in the first person and asks the player (address as in the other Loremaster lines) to bring the request to him; no player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "V naší vsi už tesař není, proto žádám místo něj já. Přineste to mně; v jiných vsích tesaře možná ještě mají.",
+              "based_on": "e1992c88e8184ff5a6cd2eeef9c14bb64e72c08f18a58d66ff858fbf4305fdff",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "En nuestra aldea ya no hay carpintero, así que pido en su lugar. Tráemelo a mí; quizá otras aldeas aún tengan sus carpinteros.",
+              "based_on": "e1992c88e8184ff5a6cd2eeef9c14bb64e72c08f18a58d66ff858fbf4305fdff",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "En nuestra aldea ya no hay carpintero, así que pido en su lugar. Tráemelo a mí; quizá otras aldeas aún tengan sus carpinteros.",
+              "based_on": "e1992c88e8184ff5a6cd2eeef9c14bb64e72c08f18a58d66ff858fbf4305fdff",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Na nossa aldeia já não há carpinteiro, por isso peço em seu lugar. Traz-mo a mim; talvez outras aldeias ainda tenham os seus carpinteiros.",
+              "based_on": "e1992c88e8184ff5a6cd2eeef9c14bb64e72c08f18a58d66ff858fbf4305fdff",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Na nossa aldeia já não há carpinteiro, por isso peço em seu lugar. Traga para mim; talvez outras aldeias ainda tenham os seus carpinteiros.",
+              "based_on": "e1992c88e8184ff5a6cd2eeef9c14bb64e72c08f18a58d66ff858fbf4305fdff",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "In unserem Dorf gibt es keinen Zimmermann mehr, darum bitte ich an seiner Stelle. Bring es mir; andere Dörfer haben vielleicht noch ihre Zimmerleute.",
+              "based_on": "e1992c88e8184ff5a6cd2eeef9c14bb64e72c08f18a58d66ff858fbf4305fdff",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Notre village n’a plus de charpentier, alors je demande à sa place. Apporte-le-moi ; d’autres villages ont peut-être encore leurs charpentiers.",
+              "based_on": "e1992c88e8184ff5a6cd2eeef9c14bb64e72c08f18a58d66ff858fbf4305fdff",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "W naszej wiosce nie ma już cieśli, więc proszę w jego imieniu. Przynieś to mnie; w innych wioskach mogą jeszcze mieć swoich cieśli.",
+              "based_on": "e1992c88e8184ff5a6cd2eeef9c14bb64e72c08f18a58d66ff858fbf4305fdff",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.where.none.lamplighter": {
+          "source": "Our village has no lamplighter any more, so I ask in their place. Bring it to me; other villages may still have their lamplighters.",
+          "context": {
+            "meaning": "Fallback line under a request of the lamplighter: no lamplighter lives near the Loremaster, so he takes the request himself and says other villages may still have one. Address the player without assuming gender; \"their\" is neutral.",
+            "location": "lothlorien_rp: line under a request text in the Loremaster dialog (nobody of this profession lives near)",
+            "trigger": "Player reads the request offer or the task screen and no elf of this profession lives within about 96 blocks of the Loremaster.",
+            "tone": "Formal, elven, short",
+            "grammar": "Two or three short sentences; the Loremaster speaks in the first person and asks the player (address as in the other Loremaster lines) to bring the request to him; no player gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "V naší vsi už lampář není, proto žádám místo něj já. Přineste to mně; v jiných vsích lampáře možná ještě mají.",
+              "based_on": "a24903a3f7854f1db83878e1b36b3812f46b01eb0b90a947fc3816409e3d5004",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "En nuestra aldea ya no hay farolero, así que pido en su lugar. Tráemelo a mí; quizá otras aldeas aún tengan sus faroleros.",
+              "based_on": "a24903a3f7854f1db83878e1b36b3812f46b01eb0b90a947fc3816409e3d5004",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "En nuestra aldea ya no hay farolero, así que pido en su lugar. Tráemelo a mí; quizá otras aldeas aún tengan sus faroleros.",
+              "based_on": "a24903a3f7854f1db83878e1b36b3812f46b01eb0b90a947fc3816409e3d5004",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Na nossa aldeia já não há acendedor de lampiões, por isso peço em seu lugar. Traz-mo a mim; talvez outras aldeias ainda tenham os seus acendedores de lampiões.",
+              "based_on": "a24903a3f7854f1db83878e1b36b3812f46b01eb0b90a947fc3816409e3d5004",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Na nossa aldeia já não há acendedor de lampiões, por isso peço em seu lugar. Traga para mim; talvez outras aldeias ainda tenham os seus acendedores de lampiões.",
+              "based_on": "a24903a3f7854f1db83878e1b36b3812f46b01eb0b90a947fc3816409e3d5004",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "In unserem Dorf gibt es keinen Laternenanzünder mehr, darum bitte ich an seiner Stelle. Bring es mir; andere Dörfer haben vielleicht noch ihre Laternenanzünder.",
+              "based_on": "a24903a3f7854f1db83878e1b36b3812f46b01eb0b90a947fc3816409e3d5004",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Notre village n’a plus d’allumeur de lanternes, alors je demande à sa place. Apporte-le-moi ; d’autres villages ont peut-être encore leurs allumeurs de lanternes.",
+              "based_on": "a24903a3f7854f1db83878e1b36b3812f46b01eb0b90a947fc3816409e3d5004",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "W naszej wiosce nie ma już latarnika, więc proszę w jego imieniu. Przynieś to mnie; w innych wioskach mogą jeszcze mieć swoich latarników.",
+              "based_on": "a24903a3f7854f1db83878e1b36b3812f46b01eb0b90a947fc3816409e3d5004",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.status.bring.gardener": {
+          "source": "§aBring it to the gardener",
+          "context": {
+            "meaning": "Second line of the current-task button (green) when a request of the gardener is ready: it is handed over to the gardener, not to the Loremaster.",
+            "location": "lothlorien_rp: button of a Loremaster dialog form (second line of the task button, green)",
+            "trigger": "Player talks to the Loremaster elf while the current request is ready to be handed over to its trader.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§aPřineste to zahradníkovi",
+              "based_on": "85a5c4d1398dfb362742b95bd7c80962a18d5c40edf98d0d95ea06d156ede514",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§aLlévalo al jardinero",
+              "based_on": "85a5c4d1398dfb362742b95bd7c80962a18d5c40edf98d0d95ea06d156ede514",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§aLlévalo al jardinero",
+              "based_on": "85a5c4d1398dfb362742b95bd7c80962a18d5c40edf98d0d95ea06d156ede514",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§aLeva-o ao jardineiro",
+              "based_on": "85a5c4d1398dfb362742b95bd7c80962a18d5c40edf98d0d95ea06d156ede514",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§aLeve ao jardineiro",
+              "based_on": "85a5c4d1398dfb362742b95bd7c80962a18d5c40edf98d0d95ea06d156ede514",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§aBring es zum Gärtner",
+              "based_on": "85a5c4d1398dfb362742b95bd7c80962a18d5c40edf98d0d95ea06d156ede514",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§aApporte-le au jardinier",
+              "based_on": "85a5c4d1398dfb362742b95bd7c80962a18d5c40edf98d0d95ea06d156ede514",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§aZanieś to ogrodnikowi",
+              "based_on": "85a5c4d1398dfb362742b95bd7c80962a18d5c40edf98d0d95ea06d156ede514",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.status.bring.healer": {
+          "source": "§aBring it to the healer",
+          "context": {
+            "meaning": "Second line of the current-task button (green) when a request of the healer is ready: it is handed over to the healer, not to the Loremaster.",
+            "location": "lothlorien_rp: button of a Loremaster dialog form (second line of the task button, green)",
+            "trigger": "Player talks to the Loremaster elf while the current request is ready to be handed over to its trader.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§aPřineste to léčiteli",
+              "based_on": "e85b304e391d21cd3bfa657647162036f547fcbf2e4029ab57d8e070fc3778f2",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§aLlévalo al sanador",
+              "based_on": "e85b304e391d21cd3bfa657647162036f547fcbf2e4029ab57d8e070fc3778f2",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§aLlévalo al sanador",
+              "based_on": "e85b304e391d21cd3bfa657647162036f547fcbf2e4029ab57d8e070fc3778f2",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§aLeva-o ao curandeiro",
+              "based_on": "e85b304e391d21cd3bfa657647162036f547fcbf2e4029ab57d8e070fc3778f2",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§aLeve ao curandeiro",
+              "based_on": "e85b304e391d21cd3bfa657647162036f547fcbf2e4029ab57d8e070fc3778f2",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§aBring es zum Heiler",
+              "based_on": "e85b304e391d21cd3bfa657647162036f547fcbf2e4029ab57d8e070fc3778f2",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§aApporte-le au guérisseur",
+              "based_on": "e85b304e391d21cd3bfa657647162036f547fcbf2e4029ab57d8e070fc3778f2",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§aZanieś to uzdrowicielowi",
+              "based_on": "e85b304e391d21cd3bfa657647162036f547fcbf2e4029ab57d8e070fc3778f2",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.status.bring.woodwright": {
+          "source": "§aBring it to the woodwright",
+          "context": {
+            "meaning": "Second line of the current-task button (green) when a request of the woodwright is ready: it is handed over to the woodwright, not to the Loremaster.",
+            "location": "lothlorien_rp: button of a Loremaster dialog form (second line of the task button, green)",
+            "trigger": "Player talks to the Loremaster elf while the current request is ready to be handed over to its trader.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§aPřineste to tesaři",
+              "based_on": "c96299f2d6b846a2609982726dc509cfadabd1071e3eb907d3a965bfd08a938e",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§aLlévalo al carpintero",
+              "based_on": "c96299f2d6b846a2609982726dc509cfadabd1071e3eb907d3a965bfd08a938e",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§aLlévalo al carpintero",
+              "based_on": "c96299f2d6b846a2609982726dc509cfadabd1071e3eb907d3a965bfd08a938e",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§aLeva-o ao carpinteiro",
+              "based_on": "c96299f2d6b846a2609982726dc509cfadabd1071e3eb907d3a965bfd08a938e",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§aLeve ao carpinteiro",
+              "based_on": "c96299f2d6b846a2609982726dc509cfadabd1071e3eb907d3a965bfd08a938e",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§aBring es zum Zimmermann",
+              "based_on": "c96299f2d6b846a2609982726dc509cfadabd1071e3eb907d3a965bfd08a938e",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§aApporte-le au charpentier",
+              "based_on": "c96299f2d6b846a2609982726dc509cfadabd1071e3eb907d3a965bfd08a938e",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§aZanieś to cieśli",
+              "based_on": "c96299f2d6b846a2609982726dc509cfadabd1071e3eb907d3a965bfd08a938e",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.status.bring.lamplighter": {
+          "source": "§aBring it to the lamplighter",
+          "context": {
+            "meaning": "Second line of the current-task button (green) when a request of the lamplighter is ready: it is handed over to the lamplighter, not to the Loremaster.",
+            "location": "lothlorien_rp: button of a Loremaster dialog form (second line of the task button, green)",
+            "trigger": "Player talks to the Loremaster elf while the current request is ready to be handed over to its trader.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative phrase, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§aPřineste to lampáři",
+              "based_on": "f60ce43efa8c7921736f7559dce5e2b92db8ea293c4ba2de55de565d29b1cc34",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§aLlévalo al farolero",
+              "based_on": "f60ce43efa8c7921736f7559dce5e2b92db8ea293c4ba2de55de565d29b1cc34",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§aLlévalo al farolero",
+              "based_on": "f60ce43efa8c7921736f7559dce5e2b92db8ea293c4ba2de55de565d29b1cc34",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§aLeva-o ao acendedor de lampiões",
+              "based_on": "f60ce43efa8c7921736f7559dce5e2b92db8ea293c4ba2de55de565d29b1cc34",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§aLeve ao acendedor de lampiões",
+              "based_on": "f60ce43efa8c7921736f7559dce5e2b92db8ea293c4ba2de55de565d29b1cc34",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§aBring es zum Laternenanzünder",
+              "based_on": "f60ce43efa8c7921736f7559dce5e2b92db8ea293c4ba2de55de565d29b1cc34",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§aApporte-le à l’allumeur de lanternes",
+              "based_on": "f60ce43efa8c7921736f7559dce5e2b92db8ea293c4ba2de55de565d29b1cc34",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§aZanieś to latarnikowi",
+              "based_on": "f60ce43efa8c7921736f7559dce5e2b92db8ea293c4ba2de55de565d29b1cc34",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.lore.btn.handover": {
+          "source": "Hand over",
+          "context": {
+            "meaning": "Button on the small form of a trader elf that hands the ready request over (items are taken from the pack, or the planted saplings are counted). Shown only when the request is ready.",
+            "location": "lothlorien_rp: button of the small form on a trader elf",
+            "trigger": "Player uses an elf of the profession whose request the player carries.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative, no final punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Odevzdat",
+              "based_on": "28734e38b88e0cb8ecd025d1c09725ec41650213a8178ed70a1f54e8bb4d438c",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Entregar",
+              "based_on": "28734e38b88e0cb8ecd025d1c09725ec41650213a8178ed70a1f54e8bb4d438c",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Entregar",
+              "based_on": "28734e38b88e0cb8ecd025d1c09725ec41650213a8178ed70a1f54e8bb4d438c",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Entregar",
+              "based_on": "28734e38b88e0cb8ecd025d1c09725ec41650213a8178ed70a1f54e8bb4d438c",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Entregar",
+              "based_on": "28734e38b88e0cb8ecd025d1c09725ec41650213a8178ed70a1f54e8bb4d438c",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Übergeben",
+              "based_on": "28734e38b88e0cb8ecd025d1c09725ec41650213a8178ed70a1f54e8bb4d438c",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Remettre",
+              "based_on": "28734e38b88e0cb8ecd025d1c09725ec41650213a8178ed70a1f54e8bb4d438c",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Przekaż",
+              "based_on": "28734e38b88e0cb8ecd025d1c09725ec41650213a8178ed70a1f54e8bb4d438c",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "action.interact.lothlorien.hand_over": {
+          "source": "Hand over",
+          "context": {
+            "meaning": "Interaction prompt for handing the current request over to the elf (opens the small form with the request). Shown only to a player who carries a request of this elf’s profession.",
+            "location": "Touch or controller interaction prompt when targeting a trader elf",
+            "trigger": "Player targets an elf (gardener, healer, woodwright, lamplighter) while carrying a request of that profession (any item except a lead or name tag).",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short imperative interaction prompt.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/entities/elf.json"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Odevzdat",
+              "based_on": "98d96156f4e897d1c48f2fa87126ec22ce8bf22e3a0b52b65a963d7f99be5d35",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Entregar",
+              "based_on": "98d96156f4e897d1c48f2fa87126ec22ce8bf22e3a0b52b65a963d7f99be5d35",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Entregar",
+              "based_on": "98d96156f4e897d1c48f2fa87126ec22ce8bf22e3a0b52b65a963d7f99be5d35",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Entregar",
+              "based_on": "98d96156f4e897d1c48f2fa87126ec22ce8bf22e3a0b52b65a963d7f99be5d35",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Entregar",
+              "based_on": "98d96156f4e897d1c48f2fa87126ec22ce8bf22e3a0b52b65a963d7f99be5d35",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Übergeben",
+              "based_on": "98d96156f4e897d1c48f2fa87126ec22ce8bf22e3a0b52b65a963d7f99be5d35",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Remettre",
+              "based_on": "98d96156f4e897d1c48f2fa87126ec22ce8bf22e3a0b52b65a963d7f99be5d35",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Przekaż",
+              "based_on": "98d96156f4e897d1c48f2fa87126ec22ce8bf22e3a0b52b65a963d7f99be5d35",
+              "status": "ai-draft"
+            }
+          }
         }
       }
     }

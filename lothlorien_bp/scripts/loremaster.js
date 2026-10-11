@@ -1,8 +1,12 @@
 import { message } from "./messages.js";
 // The Loremaster's dialog (M2, redesigned 2026-10-11): using the Loremaster elf opens a short chain of screens. Rules and values:
 // renown_rules.js; state, inventory and feedback: renown_game.js. Screens: main, teaching (a chapter), lesson, task (the current task),
-// kinOffer (a request on offer), abandon (confirm), earlier (finished lessons), result (what a turn-in did). Lore lessons have no result screen:
-// "I understand" returns to the teaching screen with a "You have learned" line on top.
+// kinOffer (a request on offer), abandon (confirm), earlier (finished lessons), result (only the "set aside" confirmation). Turn-ins have no
+// result screen (round 2): the feedback is chat lines (renown_game.js) and the dialog goes back to main. Lore lessons: "I understand" returns
+// to the teaching screen with a "You have learned" line on top.
+// Round 2: the Loremaster only GIVES requests. They are handed over to the trader of the profession (a small form on that elf, below), or to the
+// Loremaster himself when no elf of that profession lives within SEARCH_RADIUS (deliveryPlace in renown_rules.js). The offer and the task screen
+// say in which direction the trader lives.
 // The before event only decides and cancels (read-only mode); the forms open next tick, because show() is not allowed in read-only mode.
 // All form text is RawMessage { translate }. Selections are mapped through an array filled only by button() calls; the forms use no
 // header / label / divider elements (whether those count in `selection` is unconfirmed), all other text lives in the body.
@@ -13,12 +17,13 @@ import { bandOf } from "./harmony.js";
 import { harmonyOf } from "./harmony_game.js";
 import { repeatedUse } from "./use_guard.js";
 import {
-  abandonTask, accept, completeLore, currentOffer, deliver, deliveryPlan, isTaskLesson, lessonById, lessonDone, menuFor,
-  nextRank, rankOf, requestById, requestsLeft, requestTask, takeLesson, taskStatus, turnIn,
+  SEARCH_RADIUS, abandonTask, accept, completeLore, currentOffer, deliveryPlace, deliveryPlan, elfAccepts, isTaskLesson, lessonById, lessonDone,
+  menuFor, rankOf, requestById, requestsLeft, takeLesson, taskStatus,
 } from "./renown_rules.js";
-import { celebrate, inventoryCounts, renownOf, saveRenown, saplingsPlanted, takeItems } from "./renown_game.js";
+import { celebrate, handOver, inventoryCounts, rankProgress, renownOf, saveRenown, saplingsPlanted, turnInLesson } from "./renown_game.js";
 
 const LOREMASTER_VARIANT = PROFESSIONS.indexOf("loremaster");
+const TRADERS = PROFESSIONS.filter((p) => p !== "loremaster"); // the four professions that accept requests (variants 0..3)
 const MAX_DISTANCE = 12; // the Loremaster must still be this close when an answer is applied (he strolls up to 6 blocks from home)
 const BUSY_RETRIES = 10;
 const BUSY_WAIT_TICKS = 10;
@@ -51,6 +56,38 @@ function isLoremaster(entity) {
   } catch {
     return false;
   }
+}
+
+// The profession of a trader elf (gardener, healer, woodwright, lamplighter), or undefined.
+function traderProfession(entity) {
+  try {
+    if (entity.typeId !== ELF_ID) return undefined;
+    const profession = PROFESSIONS[entity.getComponent("minecraft:variant")?.value];
+    return TRADERS.includes(profession) ? profession : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+// Living, loaded elves of the four professions around the Loremaster: [{ profession, x, z }] (live positions).
+function tradersAround(loremaster) {
+  try {
+    return loremaster.dimension.getEntities({ type: ELF_ID, location: loremaster.location, maxDistance: SEARCH_RADIUS })
+      .map((e) => ({ profession: traderProfession(e), x: e.location.x, z: e.location.z }))
+      .filter((e) => e.profession);
+  } catch {
+    return [];
+  }
+}
+
+// Where the request of `profession` is handed over, seen from this Loremaster (see deliveryPlace).
+const placeFor = (ctx, profession) => deliveryPlace(profession, tradersAround(ctx.elf), ctx.elf.location);
+
+// The "where" line under a request text: the trader's direction, or "I ask in their place" when none lives near.
+function whereLine(profession, place) {
+  if (place.who !== "trader") return t(`lore.where.none.${profession}`);
+  if (place.direction === "nearby") return t("lore.where.near", t(`lore.who.${profession}`));
+  return t("lore.where.dir", t(`lore.who.${profession}`), t(`lore.dir.${place.direction}`));
 }
 
 const wait = (ticks) => new Promise((resolve) => system.runTimeout(resolve, ticks));
@@ -137,7 +174,15 @@ function statusOf(ctx, state) {
 
 const taskName = (task) => (task.kind === "lesson" ? t(`lore.lesson.${task.id}.name`) : t(`lore.req.prof.${requestById(task.id).profession}`));
 const taskIcon = (task) => itemIcon(task.kind === "lesson" ? LESSON_ICON[task.id] : PROFESSION_ICON[requestById(task.id).profession]);
-const statusText = (status) => t(status === "ready" ? "lore.status.ready" : "lore.status.active");
+// Status line of the task: a ready request that goes to a trader says "Bring it to the <profession>", else "Return to me" / "Not done yet".
+function statusText(ctx, task, status) {
+  if (status !== "ready") return t("lore.status.active");
+  if (task.kind === "request") {
+    const profession = requestById(task.id).profession;
+    if (placeFor(ctx, profession).who === "trader") return t(`lore.status.bring.${profession}`);
+  }
+  return t("lore.status.ready");
+}
 const back = (to = "main") => ({ text: t("lore.btn.back"), icon: ICON.back, next: [to] });
 const step = (name, arg) => [name, arg];
 
@@ -147,10 +192,6 @@ function progressLine(player, request) {
   return t("lore.req.have", plan.have, plan.need);
 }
 
-const rankLines = (state) => {
-  const next = nextRank(state.points);
-  return next ? t("lore.rank.next", t(`lore.rank.${next.next}`), state.points, next.threshold) : t("lore.rank.max");
-};
 
 // ---- Screens (each resolves to the next step [name, arg], or undefined to end the dialog) ----
 async function mainScreen(ctx) {
@@ -165,14 +206,14 @@ async function mainScreen(ctx) {
   const parts = [t(band === "friend" ? "lore.greet.friend" : band === "guest" ? "lore.greet.guest" : "lore.greet.uneasy")];
   const buttons = [];
   if (full) {
-    parts.push("\n\n", t("lore.rank.line", t(`lore.rank.${rankOf(state.points)}`)), "\n", rankLines(state));
+    parts.push("\n\n", t("lore.rank.line", t(`lore.rank.${rankOf(state.points)}`)), "\n", rankProgress(state));
     if (!menu.requestsOpen) parts.push("\n\n", t("lore.requests.locked"));
     else if (!state.task && requestsLeft(state) === 0) parts.push("\n\n", t("lore.requests.none"));
     if (state.task) {
       const status = statusOf(ctx, state);
       parts.push("\n\n", t("lore.task.header"));
       buttons.push({
-        text: join(taskName(state.task), "\n", statusText(status)),
+        text: join(taskName(state.task), "\n", statusText(ctx, state.task, status)),
         icon: status === "ready" ? ICON.ready : taskIcon(state.task),
         next: step("task"),
       });
@@ -258,56 +299,27 @@ async function taskScreen(ctx) {
   if (!task || menu.mode !== "full") return step("main");
   const status = statusOf(ctx, state);
   const parts = [];
+  let place;
   if (task.kind === "lesson") {
     parts.push(t(`lore.lesson.${task.id}.text`), t("lore.lesson.task", t(`lore.lesson.${task.id}.goal`)));
   } else {
-    parts.push(t(`lore.req.${task.id}.text`), progressLine(player, requestById(task.id)));
+    const request = requestById(task.id);
+    place = placeFor(ctx, request.profession);
+    parts.push(t(`lore.req.${task.id}.text`), whereLine(request.profession, place), progressLine(player, request));
   }
-  parts.push(t(status === "ready" ? "lore.status.done" : "lore.status.active"));
+  // "It is done" here: lessons, and requests only when the Loremaster takes them himself (no trader lives near)
+  const atMe = task.kind === "lesson" || place.who !== "trader";
+  parts.push(status !== "ready" ? t("lore.status.active") : atMe ? t("lore.status.done") : statusText(ctx, task, status));
   const buttons = [];
-  if (status === "ready") buttons.push({ text: t("lore.btn.done"), icon: ICON.ready, next: step("turnIn") });
+  if (status === "ready" && atMe) buttons.push({ text: t("lore.btn.done"), icon: ICON.ready, next: step("turnIn") });
   buttons.push({ text: t("lore.btn.set_aside"), icon: ICON.setAside, next: step("abandon") });
   buttons.push(back("main"));
   const next = await choose(ctx, lines(parts), buttons);
-  if (next?.[0] === "turnIn") return task.kind === "lesson" ? turnInLesson(ctx, state) : turnInRequest(ctx, state);
-  return next;
-}
-
-// Rank line of the result screens: the progress to the next rank, and the rank-up line when a threshold was crossed.
-function resultLines(first, result, state) {
-  const out = [first, t("lore.result.renown"), rankLines(state)];
-  if (result.chapterOpened) out.push(t("lore.chapter.opened"));
-  if (result.rank?.rankedUp) out.push(t(`lore.rankup.${result.rank.after}`));
-  return step("result", out);
-}
-
-function turnInLesson(ctx, state) {
-  const { player } = ctx;
-  const result = turnIn(state, harmonyOf(player).harmony); // Harmony is re-checked now
-  if (!result) return step("result", [t("lore.harmony.not_yet")]);
-  saveRenown(player);
-  celebrate(player, [result], ctx.elf);
-  return resultLines(t("lore.done.lesson", t(`lore.lesson.${result.lesson}.name`)), result, state);
-}
-
-// Counting and removing happen here, in the same tick, after the answer (ctx.ok() was checked by choose()).
-function turnInRequest(ctx, state) {
-  const { player } = ctx;
-  const request = requestById(requestTask(state).id);
-  if (request.deed) {
-    if (saplingsPlanted(player) < request.deed.count) {
-      saveRenown(player); // vanished cells were dropped
-      return step("result", [t("lore.saplings.missing")]);
-    }
-  } else {
-    const plan = deliveryPlan(request, inventoryCounts(player));
-    if (!plan.ok || !takeItems(player, plan.take)) return step("result", [t("lore.deliver.missing")]);
+  if (next?.[0] === "turnIn") { // paid in chat, no result screen; a refusal (not ready after all) is told in chat and the task stays
+    const paid = task.kind === "lesson" ? turnInLesson(player, state, ctx.elf) : handOver(player, state, ctx.elf);
+    return step(paid ? "main" : "task");
   }
-  const result = deliver(state);
-  saveRenown(player);
-  if (!result) return step("main");
-  celebrate(player, [result], ctx.elf);
-  return resultLines(t("lore.deliver.ok"), result, state);
+  return next;
 }
 
 // "A task from my kin": the request on offer; "I will" makes it the current task.
@@ -318,7 +330,7 @@ async function kinOfferScreen(ctx) {
   const offer = currentOffer(state);
   saveRenown(player); // a new pull changes the state
   if (!offer) return step("main");
-  const next = await choose(ctx, t(`lore.req.${offer.id}.text`), [
+  const next = await choose(ctx, lines([t(`lore.req.${offer.id}.text`), whereLine(offer.profession, placeFor(ctx, offer.profession))]), [
     { text: t("lore.btn.accept"), icon: ICON.ready, next: step("accept") },
     { text: t("lore.btn.notnow"), icon: ICON.back, next: step("main") }, // "Not now" keeps the offer for next time
   ]);
@@ -343,9 +355,24 @@ async function abandonScreen(ctx) {
   return step("result", [t("lore.abandon.done")]);
 }
 
-// What an action did: a body of lines and one "Continue".
+// The confirmation of "Set this aside": a body of lines and one "Continue".
 async function resultScreen(ctx, list) {
   return choose(ctx, lines(list), [{ text: t("lore.btn.continue"), icon: ICON.next, next: step("main") }]);
+}
+
+// The small form on a trader elf whose profession matches the player's current request: the request text and progress, "Hand over" when ready.
+async function traderDialog(ctx, profession) {
+  const { player } = ctx;
+  const state = renownOf(player);
+  if (!elfAccepts(state, profession)) return;
+  const request = requestById(state.task.id);
+  const status = statusOf(ctx, state);
+  const buttons = [];
+  if (status === "ready") buttons.push({ text: t("lore.btn.handover"), icon: ICON.ready, next: step("handOver") });
+  buttons.push({ text: t("lore.btn.back"), icon: ICON.back, next: undefined });
+  ctx.title = { translate: `lothlorien.elf.profession.${profession}` };
+  const next = await choose(ctx, lines([t(`lore.req.${request.id}.text`), progressLine(player, request)]), buttons);
+  if (next?.[0] === "handOver") handOver(player, state, ctx.elf); // the answer was checked by choose(); chat tells the result, the form closes
 }
 
 const SCREENS = {
@@ -353,10 +380,12 @@ const SCREENS = {
   kinOffer: kinOfferScreen, abandon: abandonScreen, result: resultScreen,
 };
 
-// The dialog opens straight on the task screen when the task is ready to be turned in.
+// The dialog opens straight on the task screen when the task is ready to be turned in at the Loremaster.
 function initialScreen(ctx) {
   const { state, menu } = view(ctx);
-  return menu.mode === "full" && state.task && statusOf(ctx, state) === "ready" ? step("task") : step("main");
+  if (menu.mode !== "full" || !state.task || statusOf(ctx, state) !== "ready") return step("main");
+  // a ready request goes to its trader; the dialog opens on the task only when the Loremaster takes it himself
+  return state.task.kind === "request" && placeFor(ctx, requestById(state.task.id).profession).who === "trader" ? step("main") : step("task");
 }
 
 async function dialog(ctx) {
@@ -370,11 +399,12 @@ async function dialog(ctx) {
   }
 }
 
-async function openDialog(player, elf) {
+async function openDialog(player, elf, profession) {
   if (open.has(player.id)) return;
   open.add(player.id);
   try {
-    await dialog(makeContext(player, elf));
+    if (profession) await traderDialog(makeContext(player, elf), profession);
+    else await dialog(makeContext(player, elf));
   } catch {
     // player or Loremaster gone mid-dialog
   } finally {
@@ -385,12 +415,15 @@ async function openDialog(player, elf) {
 export function startLoremaster() {
   world.beforeEvents.playerInteractWithEntity.subscribe((event) => {
     const { player, target, itemStack } = event;
-    if (!isLoremaster(target)) return;
+    const loremaster = isLoremaster(target);
+    const profession = loremaster ? undefined : traderProfession(target);
+    if (!loremaster && !profession) return;
     if (itemStack && SKIP_ITEMS.has(itemStack.typeId)) return; // a lead or a name tag keeps working on him
+    if (profession && !elfAccepts(renownOf(player), profession)) return; // a trader without a matching request: nothing happens (until trading, M3)
     event.cancel = true;
-    if (open.has(player.id) || repeatedUse(player, "loremaster")) return; // the event repeats for one use
+    if (open.has(player.id) || repeatedUse(player, loremaster ? "loremaster" : "trader")) return; // the event repeats for one use
     system.run(() => {
-      if (target.isValid && player.isValid) openDialog(player, target);
+      if (target.isValid && player.isValid) openDialog(player, target, profession);
     });
   });
   world.afterEvents.playerLeave.subscribe(({ playerId }) => open.delete(playerId));

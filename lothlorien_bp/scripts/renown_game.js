@@ -9,7 +9,8 @@ import { system, world } from "@minecraft/server";
 import { onDeed, noteDeed } from "./deeds.js";
 import {
   HARMONY_NEEDED, LESSONS, POINTS, REQUESTS, SAPLING_BLOCK, SAPLING_GROWN,
-  addSaplingSpot, lessonTask, noteDeed as rulesNoteDeed, openChapter, parse, rankOf, requestById, requestTask, saplingProgress, serialize, newState, takeLesson,
+  addSaplingSpot, deliver, deliveryPlan, lessonTask, nextRank, noteDeed as rulesNoteDeed, openChapter, parse, rankOf, requestById, requestTask, saplingProgress,
+  serialize, newState, tagSync, takeLesson, turnIn,
 } from "./renown_rules.js";
 import { harmonyOf } from "./harmony_game.js";
 
@@ -31,9 +32,21 @@ export function renownOf(player) {
   return state;
 }
 
+// Keeps the delivery tag in step with the state: exactly the tag of the current request's profession (the traders' hover prompt tests it).
+export function syncDeliverTag(player) {
+  try {
+    const { add, remove } = tagSync(renownOf(player), player.getTags());
+    for (const tag of remove) player.removeTag(tag);
+    for (const tag of add) player.addTag(tag);
+  } catch {
+    // player gone
+  }
+}
+
 export function saveRenown(player) {
   try {
     player.setDynamicProperty(PROPERTY, serialize(renownOf(player)));
+    syncDeliverTag(player);
   } catch {
     // player gone
   }
@@ -47,8 +60,63 @@ const say = (player, text) => {
   }
 };
 
-// Sound, particles and the rank-up chat line for results of the rules (finish results, a request delivery); the texts of the
-// turn-in itself are on the Loremaster's result screen (loremaster.js), where chat would be hidden behind the form.
+// "Progress to <rank>: n / m" or the highest-renown line.
+export function rankProgress(state) {
+  const next = nextRank(state.points);
+  return next ? message("lore.rank.next", message(`lore.rank.${next.next}`), state.points, next.threshold) : message("lore.rank.max");
+}
+
+// Chat feedback of a turn-in (round 2: no result screen): the done line, the renown line, the progress line, a chapter line.
+// The rank-up line follows from celebrate().
+function turnInChat(player, first, result, state) {
+  say(player, first);
+  say(player, message("lore.result.renown"));
+  say(player, rankProgress(state));
+  if (result.chapterOpened) say(player, message("lore.chapter.opened"));
+}
+
+// "It is done" on the task lesson at the Loremaster (Harmony is re-checked). Returns true when it was paid; otherwise tells why in chat.
+export function turnInLesson(player, state, at) {
+  const result = turnIn(state, harmonyOf(player).harmony);
+  if (!result) {
+    say(player, message("lore.harmony.not_yet"));
+    return false;
+  }
+  saveRenown(player);
+  turnInChat(player, message("lore.done.lesson", message(`lore.lesson.${result.lesson}.name`)), result, state);
+  celebrate(player, [result], at);
+  return true;
+}
+
+// Hands the current request over (at its trader, or at the Loremaster when no trader lives near): counts and removes in the same tick.
+// Returns true when it was paid; otherwise tells why in chat and changes nothing.
+export function handOver(player, state, at) {
+  const task = requestTask(state);
+  if (!task) return false;
+  const request = requestById(task.id);
+  if (request.deed) {
+    if (saplingsPlanted(player) < request.deed.count) {
+      saveRenown(player); // vanished cells were dropped
+      say(player, message("lore.saplings.missing"));
+      return false;
+    }
+  } else {
+    const plan = deliveryPlan(request, inventoryCounts(player));
+    if (!plan.ok || !takeItems(player, plan.take)) {
+      say(player, message("lore.deliver.missing"));
+      return false;
+    }
+  }
+  const result = deliver(state);
+  saveRenown(player);
+  if (!result) return false;
+  turnInChat(player, message("lore.deliver.ok"), result, state);
+  celebrate(player, [result], at);
+  return true;
+}
+
+// Sound, particles and the rank-up chat line for results of the rules (finish results, a request delivery); the other turn-in
+// texts are chat lines (turnInChat).
 // `at` = the Loremaster entity when the player stands at him (particles there), else the particles circle the player.
 export function celebrate(player, results, at) {
   for (const r of results) {
@@ -230,6 +298,9 @@ export function startRenown(inside) {
   onDeed(onPlayerDeed);
   watchSaplings();
   system.runInterval(checkHarmonyNudges, NUDGE_INTERVAL_TICKS);
+  world.afterEvents.playerSpawn.subscribe(({ player, initialSpawn }) => {
+    if (initialSpawn) system.run(() => syncDeliverTag(player)); // a tag left from an older state (or a v1 save) is put right on joining
+  });
   world.afterEvents.playerLeave.subscribe(({ playerId }) => {
     states.delete(playerId);
     harmonyReady.delete(playerId);

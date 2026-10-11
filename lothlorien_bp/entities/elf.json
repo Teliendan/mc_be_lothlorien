@@ -11,21 +11,185 @@
       "lothlorien:gardener": {
         "minecraft:variant": {
           "value": 0
+        },
+        "minecraft:interact": {
+          "interactions": [
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "player"
+                    },
+                    {
+                      "test": "has_tag",
+                      "subject": "other",
+                      "value": "lothlorien_deliver_gardener"
+                    },
+                    {
+                      "none_of": [
+                        {
+                          "test": "has_equipment",
+                          "domain": "hand",
+                          "subject": "other",
+                          "value": "minecraft:lead"
+                        },
+                        {
+                          "test": "has_equipment",
+                          "domain": "hand",
+                          "subject": "other",
+                          "value": "minecraft:name_tag"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "use_item": false,
+              "swing": true,
+              "interact_text": "action.interact.lothlorien.hand_over"
+            }
+          ]
         }
       },
       "lothlorien:healer": {
         "minecraft:variant": {
           "value": 1
+        },
+        "minecraft:interact": {
+          "interactions": [
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "player"
+                    },
+                    {
+                      "test": "has_tag",
+                      "subject": "other",
+                      "value": "lothlorien_deliver_healer"
+                    },
+                    {
+                      "none_of": [
+                        {
+                          "test": "has_equipment",
+                          "domain": "hand",
+                          "subject": "other",
+                          "value": "minecraft:lead"
+                        },
+                        {
+                          "test": "has_equipment",
+                          "domain": "hand",
+                          "subject": "other",
+                          "value": "minecraft:name_tag"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "use_item": false,
+              "swing": true,
+              "interact_text": "action.interact.lothlorien.hand_over"
+            }
+          ]
         }
       },
       "lothlorien:woodwright": {
         "minecraft:variant": {
           "value": 2
+        },
+        "minecraft:interact": {
+          "interactions": [
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "player"
+                    },
+                    {
+                      "test": "has_tag",
+                      "subject": "other",
+                      "value": "lothlorien_deliver_woodwright"
+                    },
+                    {
+                      "none_of": [
+                        {
+                          "test": "has_equipment",
+                          "domain": "hand",
+                          "subject": "other",
+                          "value": "minecraft:lead"
+                        },
+                        {
+                          "test": "has_equipment",
+                          "domain": "hand",
+                          "subject": "other",
+                          "value": "minecraft:name_tag"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "use_item": false,
+              "swing": true,
+              "interact_text": "action.interact.lothlorien.hand_over"
+            }
+          ]
         }
       },
       "lothlorien:lamplighter": {
         "minecraft:variant": {
           "value": 3
+        },
+        "minecraft:interact": {
+          "interactions": [
+            {
+              "on_interact": {
+                "filters": {
+                  "all_of": [
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "player"
+                    },
+                    {
+                      "test": "has_tag",
+                      "subject": "other",
+                      "value": "lothlorien_deliver_lamplighter"
+                    },
+                    {
+                      "none_of": [
+                        {
+                          "test": "has_equipment",
+                          "domain": "hand",
+                          "subject": "other",
+                          "value": "minecraft:lead"
+                        },
+                        {
+                          "test": "has_equipment",
+                          "domain": "hand",
+                          "subject": "other",
+                          "value": "minecraft:name_tag"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "use_item": false,
+              "swing": true,
+              "interact_text": "action.interact.lothlorien.hand_over"
+            }
+          ]
         }
       },
       "lothlorien:loremaster": {

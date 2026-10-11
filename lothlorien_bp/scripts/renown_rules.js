@@ -2,6 +2,8 @@
 // tests/renown.mjs can run it offline. The game side is renown_game.js (state, inventory, feedback) and loremaster.js (forms).
 // Design: docs/design/elven_inhabitants.md sections 2-3. Owner decisions 2026-10-10: lessons are chapters, requests open after
 // chapters I and II, no cooldown, a random permutation of the professions per round, every request can be completed once.
+// Owner decisions 2026-10-11 round 2: requests are handed over to the trader of the profession (the Loremaster only when none lives near),
+// the request offer says in which direction the trader lives, a player tag marks "has a request of profession X" (hover prompt at the traders).
 // Owner decisions 2026-10-11 (dialog redesign): ONE current-task slot shared by deed lessons (Harmony included) and requests;
 // a deed only makes the task ready, Renown is paid at turn-in; deeds done while their lesson is not the task are lost.
 
@@ -301,4 +303,56 @@ export function deliver(state) {
   state.task = null;
   state.offer = null;
   return { request: r.id, points: POINTS.request, rank: award(state, POINTS.request) };
+}
+
+// ---- Round 2: delivery to the traders ----
+// Tag on the player while the current task is a request of that profession (the elf's hover prompt tests it; the script keeps it in step).
+// Underscores only, like FOE_TAG: a colon in a tag name is not known to work in filters.
+export const DELIVER_TAG_PREFIX = "lothlorien_deliver_";
+export const deliverTagOf = (profession) => DELIVER_TAG_PREFIX + profession;
+export const DELIVER_TAGS = PROFESSIONS.map(deliverTagOf);
+// profession of the request that is the current task, or null
+export const requestProfession = (state) => {
+  const r = requestTask(state);
+  return r ? requestById(r.id)?.profession ?? null : null;
+};
+// Which player tags to add and remove so that exactly the tag of the current request's profession is present (other tags are left alone).
+export function tagSync(state, tags) {
+  const want = requestProfession(state);
+  const wanted = want ? deliverTagOf(want) : null;
+  return {
+    add: wanted && !tags.includes(wanted) ? [wanted] : [],
+    remove: DELIVER_TAGS.filter((t) => t !== wanted && tags.includes(t)),
+  };
+}
+// Does an elf of `elfProfession` accept the player's current request?
+export const elfAccepts = (state, elfProfession) => requestProfession(state) === elfProfession;
+
+export const SEARCH_RADIUS = 96; // the Loremaster looks for a trader of the profession this far around him (loaded chunks)
+export const NEARBY_BLOCKS = 8; // closer than this: "nearby" instead of a direction
+export const DIRECTIONS = ["north", "north_east", "east", "south_east", "south", "south_west", "west", "north_west"]; // clockwise from north
+// Compass word for the vector (dx, dz) from one place to another. Bedrock: north is -Z, east is +X. "nearby" below `nearby` blocks (horizontal).
+export function directionTo(dx, dz, nearby = NEARBY_BLOCKS) {
+  if (Math.hypot(dx, dz) < nearby) return "nearby";
+  const degrees = (Math.atan2(dx, -dz) * 180) / Math.PI; // 0 = north, 90 = east
+  return DIRECTIONS[((Math.round(degrees / 45) % 8) + 8) % 8];
+}
+// elves: [{ profession, x, z }] (living, loaded). The nearest one of the profession to `from` {x, z}, or undefined.
+export function nearestOf(profession, elves, from) {
+  let best;
+  let bestDistance = Infinity;
+  for (const elf of elves) {
+    if (elf.profession !== profession) continue;
+    const d = Math.hypot(elf.x - from.x, elf.z - from.z);
+    if (d < bestDistance) { best = elf; bestDistance = d; }
+  }
+  return best;
+}
+// Where a request of `profession` is handed over, seen from the Loremaster at `from`:
+// { who: "trader", elf, direction } when an elf of the profession lives within SEARCH_RADIUS, else { who: "loremaster" } (fallback: he takes it himself).
+export function deliveryPlace(profession, elves, from, radius = SEARCH_RADIUS) {
+  const near = elves.filter((e) => Math.hypot(e.x - from.x, e.z - from.z) <= radius);
+  const elf = nearestOf(profession, near, from);
+  if (!elf) return { who: "loremaster" };
+  return { who: "trader", elf, direction: directionTo(elf.x - from.x, elf.z - from.z) };
 }
