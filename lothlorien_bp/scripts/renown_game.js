@@ -9,7 +9,7 @@ import { system, world } from "@minecraft/server";
 import { onDeed, noteDeed } from "./deeds.js";
 import {
   HARMONY_NEEDED, LESSONS, POINTS, REQUESTS, SAPLING_BLOCK, SAPLING_GROWN,
-  addSaplingSpot, deliver, deliveryPlan, lessonTask, nextRank, noteDeed as rulesNoteDeed, openChapter, parse, rankOf, requestById, requestTask, saplingProgress,
+  addSaplingSpot, deliver, deliveryPlan, lessonTask, nextRank, noteDeed as rulesNoteDeed, openChapter, parse, rankOf, requestById, requestTask, saplingOutsideNotice, saplingProgress,
   serialize, newState, tagSync, takeLesson, turnIn,
 } from "./renown_rules.js";
 import { harmonyOf } from "./harmony_game.js";
@@ -235,8 +235,11 @@ export function saplingsPlanted(player) {
 function watchSaplings() {
   world.afterEvents.playerPlaceBlock.subscribe(({ player, block }) => {
     try {
-      if (block.typeId !== SAPLING_BLOCK || !isInside(block.dimension, block.location)) return;
+      if (block.typeId !== SAPLING_BLOCK) return;
       const state = renownOf(player);
+      const inside = isInside(block.dimension, block.location);
+      if (saplingOutsideNotice(state, block.typeId, inside)) say(player, message("lore.saplings.outside"));
+      if (!inside) return;
       if (!addSaplingSpot(state, cellOf(block))) return;
       saveRenown(player);
       const need = requestById(requestTask(state).id).deed.count;

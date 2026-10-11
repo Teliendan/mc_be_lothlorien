@@ -252,6 +252,16 @@ test("saplings: distinct cells only, vanished cells drop out, an unloaded chunk 
   assert.equal(R.addSaplingSpot(R.newState(), "o|1,1,1"), false, "only while the request is active");
 });
 
+test("a sapling set outside the wood is announced only during the sapling request", () => {
+  const s = R.newState(); s.task = { kind: "request", id: "g_acorns", spots: [] };
+  assert.equal(R.saplingOutsideNotice(s, R.SAPLING_BLOCK, false), true);
+  assert.equal(R.saplingOutsideNotice(s, R.SAPLING_BLOCK, true), false, "inside the wood it counts");
+  assert.equal(R.saplingOutsideNotice(s, "minecraft:oak_sapling", false), false, "another block");
+  const other = R.newState(); other.task = { kind: "request", id: "g_dew", spots: [] };
+  assert.equal(R.saplingOutsideNotice(other, R.SAPLING_BLOCK, false), false, "another task");
+  assert.equal(R.saplingOutsideNotice(R.newState(), R.SAPLING_BLOCK, false), false, "no task");
+});
+
 test("parse tolerates junk, other versions and unknown ids", () => {
   const fresh = R.newState();
   for (const junk of [undefined, "", "not json", "null", "[]", "42", '{"v":3,"points":99}', '{"points":99}']) assert.deepEqual(R.parse(junk), fresh, String(junk));
@@ -309,7 +319,7 @@ test("every translation key the dialog uses exists in the resource catalog", () 
       "task.header", "status.active", "status.ready", "status.done", "ready.chat", "harmony.ready_chat", "btn.teaching", "teach.count", "teach.busy",
       "btn.take", "btn.continue", "btn.earlier", "btn.set_aside", "btn.request_new", "btn.farewell", "btn.understand", "btn.done", "btn.back", "btn.accept", "btn.notnow",
       "btn.keep", "remind.body", "result.renown", "result.learned", "too_far", "busy", "harmony.not_yet", "abandon.ask", "abandon.done", "lesson.task",
-      "deliver.ok", "deliver.missing", "saplings.counted", "saplings.missing", "req.have", "done.lesson", "chapter.opened", "shunned", "debug.state"].map((k) => `lore.${k}`),
+      "deliver.ok", "deliver.missing", "saplings.counted", "saplings.outside", "saplings.missing", "req.have", "done.lesson", "chapter.opened", "shunned", "debug.state"].map((k) => `lore.${k}`),
   ];
   for (const k of need) assert.ok(keys.has(`lothlorien.message.${k}`), `catalog has lothlorien.message.${k}`);
   assert.ok(keys.has("action.interact.lothlorien.speak"));

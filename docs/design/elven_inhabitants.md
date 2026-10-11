@@ -1,6 +1,6 @@
 # Elven inhabitants: professions, Renown, trades, gifts (design)
 
-Status: **M0 and M1 done and accepted by the owner in game 2026-10-10; M2 (dialog redesigned 2026-10-11) built, not yet seen in game** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
+Status: **M0, M1 (2026-10-10) and M2 (2026-10-11) done and accepted by the owner in game; next is M3 (shops)** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
 Supersedes the profession stock lists and trade-state details in `lothlorien_elven_settlements_plan.md` ("Initial professions",
 "Harmony-aware trading", "Proposed reputation trade states") and the stock part of `harmony_rework_plan.md` section 5. The trade
 **architecture** of that section 5 (native trade screen, per-band tables pre-swapped by script, refusal in `beforeEvents.playerInteractWithEntity`) stays.
@@ -12,7 +12,7 @@ Looks: `docs/mobs/elves.md` (`tools/make_elves.py`, review sheets in `temp/elves
 |---|---|---|
 | M0 | Spikes: custom bow, arrows, belt (section 8) | done, owner-tested 2026-10-10. Spike files kept in `temp/elven_inhabitants/spike_files/` as the M5 starting point |
 | M1 | Civilian elves placed in villages, Harmony, wardens defend, leads, healer roaming (sections 1, 7, 10) + village polish (rope foot, crowns fit their box, bare branches, living pillars with planner root flares) | done, accepted in game 2026-10-10 (commits 30e1eb1, 5631c22, 6f79109, 7b57536, 6b97311; the ivy start of 6b97311 not yet seen) |
-| M2 | Renown + Loremaster dialog: lessons and requests (sections 2, 3) | built 2026-10-10, **not yet seen in game**, not committed or deployed (tests + verify pass). In-game check list: `docs/TECHNICAL_NOTES.md` "Renown and the Loremaster (M2)" |
+| M2 | Renown + Loremaster dialog: lessons and requests (sections 2, 3) | done, accepted in game 2026-10-11 (commits 88dbbe2, 6019c88, f854117, ff61ae2, eb1cc5e dew, a10653f niphredil). Notes: `docs/TECHNICAL_NOTES.md` "Renown and the Loremaster (M2)" |
 | M3 | Shops: trade-table generator (band x rank), table swapping by script, refusal (section 4) | |
 | M4 | Healer heals elves and Friends (section 7) | |
 | M5 | Final items (Galadriel's gifts) + Galadhrim arrows (sections 5, 6); then the bow template for `bedrock-items` | |
@@ -21,9 +21,7 @@ Looks: `docs/mobs/elves.md` (`tools/make_elves.py`, review sheets in `temp/elves
 
 **Working agreement (owner, 2026-10-10).** Stop after each milestone for the owner's in-game test. Before a milestone starts, show the owner one batch
 of proposed values (table with reasons; all values in one tunable rules file); escalate design decisions as options with a recommendation. Commit per
-milestone once verify and tests pass, before the in-game test; deploy before handing anything over. For M2 the batch covers: Renown thresholds (first
-guess 3 / 8 / 15), points per lesson and per request, the lesson list and order, the request list per profession (every request checkable by script),
-one-request-at-a-time and the repeat cooldown, and the dialog texts' tone.
+milestone once verify and tests pass, before the in-game test; deploy before handing anything over.
 
 ## 1. Roster
 
@@ -45,7 +43,7 @@ forest edge keep spawning. Healers exist to prevent accidental deaths. Killing a
 - **Renown** (new): what you did for the elves. **One value for the whole elven society** (owner: keep it simple; "word travels among
   the Galadhrim", so every village knows you), per player, stored on the player, **never lost**. Controls **stock depth**.
   Ranks: **Stranger (0) -> Welcome (1) -> Trusted (2) -> Elf-friend (3)**. Thresholds **3 / 8 / 15 points** (owner 2026-10-10; all values in `renown_rules.js`).
-  Points: a deed lesson 1, a lore lesson 0, a request 2. (Optional "tales" for the white deer and unicorn were dropped, owner 2026-10-11: no deferred +1.) Uncapped, the rank stops at Elf-friend. Stored in the player dynamic property `lothlorien:renown` (JSON, `v: 1`).
+  Points: a deed lesson 1, a lore lesson 0, a request 2. (Optional "tales" for the white deer and unicorn were dropped, owner 2026-10-11: no deferred +1.) Uncapped, the rank stops at Elf-friend. Stored in the player dynamic property `lothlorien:renown` (JSON, `v: 2`).
 - **Final trade of a shop** needs **Elf-friend and the Friend band**.
 - Script cannot see trades (no trade event or trade component in 2.8.0, `.claude/skills/bedrock-modding/references/08-trading.md`), so
   Renown comes only from the Loremaster (section 3), never from trading. No engine trader levelling.
@@ -60,54 +58,40 @@ forest edge keep spawning. Healers exist to prevent accidental deaths. Killing a
 | Shunned -15...-29 | refused | one hint: "Learn to live in peace with the forest, then return." |
 | Hated -30 and below | refused | turns away silently (wardens shoot on sight) |
 
-## 3. Loremaster: lessons and requests (M2; owner decisions 2026-10-10, dialog redesigned 2026-10-11, round 2 the same day: delivery to the traders, built, round 2 NOT yet seen in game)
+## 3. Loremaster: lessons and requests (M2 as built; owner decisions 2026-10-10 and 2026-10-11)
 
-Use on the Loremaster opens a dialog (`@minecraft/server-ui` forms, `loremaster.js`); he never trades. A lead or a name tag in hand still works on him (the
-`minecraft:interact` "Speak" entry exists only in the `lothlorien:loremaster` group and excludes those two items; the script skips them too). The four trader professions get a second, conditional prompt ("Hand over", see Requests); otherwise they do nothing on use until M3.
+Use on the Loremaster opens a dialog (`loremaster.js`); he never trades. A lead or a name tag in hand still works on him. Texts name no ranks, depth stages or item counts.
 
-**Lessons are chapters.** All unfinished lessons of the open chapter are listed; chapter N+1 opens when every lesson of chapter N is complete. **Lore** lessons complete
-with "I understand" at any time (0 points, no task slot; the Teaching screen shows "You have learned: X" on top, no result screen). **Deed** lessons (and Harmony) pay 1 point.
-Each deed lesson text has a separate one-sentence **goal line** ("Your task: ..."); lesson texts name no ranks, depth stages or item counts.
+**Lessons are chapters.** The unfinished lessons of the open chapter are listed; chapter N+1 opens when chapter N is complete. **Lore** lessons ("I understand") give 0 points and need no task slot. **Deed** lessons and the Harmony lesson give 1 point.
+Each deed lesson has a one-sentence goal line.
 
-**One current-task slot** is shared by deed lessons, the Harmony lesson and requests. "Take this task" fills it; while it is full the deed lessons are hidden in Teaching and
-"A task from my kin" is hidden on Main (lore stays readable). A deed makes the task only **ready** (chat line + soft sound: "<lesson>: done. Return to the Loremaster."); Renown is paid at
-**turn-in** ("It is done" on the Task screen; round 2: **no result screen**, the dialog goes back to Main and the chat shows the done line, "Your renown among the Galadhrim grows.", the progress line, a chapter-opened line and the rank-up line). Deeds done while their lesson is not the task are **lost**.
-The Harmony lesson is ready when Harmony >= +3 **at talk time** (re-checked at turn-in; a chat nudge fires once when Harmony crosses the level while it is the task). A request is ready when the items are in the
-pack / the saplings stand (computed). The dialog opens straight on the Task screen when the task is ready. **Set this aside** (confirm): nothing paid, a lesson goes back to offered (its deed must be done again),
-a request is not done and the rotation moves on. Uneasy: the task is kept and paused (Main shows "waits until the forest trusts you again"; only the Harmony text can be read).
-Screens: Main (greeting, rank lines, current-task button with item icon and status, Teaching with chapter + waiting count, kin offer, Farewell), Teaching, Lesson, Task, Kin offer, Set-aside confirm (its "task is set aside" result screen stays), Earlier lessons.
-The dialog ends with a chat line (not silently) when the player walked more than 12 blocks away or the `UserBusy` retries ran out.
+**One task slot** is shared by deed lessons, the Harmony lesson and requests. "Take this task" fills it; while it is full, other deed lessons and kin offers are hidden. A deed only makes the task **ready** (chat line + soft sound); Renown is paid at
+**turn-in** ("It is done") at the Loremaster, with no result screen: the chat shows the done line, the renown line, the progress line, a chapter-opened line and the rank-up line. Deeds done while their lesson is not the task are lost.
+Harmony lesson: ready when Harmony >= +3 at talk time (a chat nudge fires once when it crosses). "Set this aside" pays nothing and puts a lesson back (its deed must be repeated). Uneasy: the task is kept and paused.
 
 | Ch | Lesson | Kind | Completion |
 |---|---|---|---|
-| I | harmony | task (talk check) | Harmony >= +3 when talking / turning in |
+| I | harmony | task | Harmony >= +3 when talking / turning in |
 | I | elves, renown | lore | read |
-| I | dew, nectar | deed | fill a Bottle of morning dew (`dew.js`); bottle nectar (`nectar.js`); both from "Fill a glass bottle from ..." wording |
-| II | depth | lore | read (edge / inner / heart; real effects only: fewer border wardens off decks deeper in, rare creatures more often deeper) |
-| II | lembas, rope | deed | eat wrapped Lembas (`lembas.js`); hang an elven rope (`elven_rope.js`) |
-| II | fireflies | deed | catch a firefly (script-owned catch, `fireflies.js`) |
-| III | gifts | deed | send a squirrel off with an acorn (`squirrel.js`, needs Friend) |
-| III | white_animals, trades | lore | read (white_animals is lore only, no points; trades) |
+| I | dew, nectar | deed | fill a Bottle of morning dew; bottle nectar |
+| II | depth | lore | read |
+| II | lembas, rope | deed | eat wrapped Lembas; hang an elven rope |
+| II | fireflies | deed | catch a firefly (script-owned catch) |
+| III | gifts | deed | send a squirrel off with an acorn (needs Friend) |
+| III | white_animals, trades | lore | read |
 
-Pacing (tested; unchanged by the redesign): chapter I = 3 points (Welcome); chapter II = 6 points in all (Trusted at 8 needs 1 request); chapter III deeds = 7 (Elf-friend at 15 needs 4 requests).
-The rank-up shows a chat line, `random.levelup`, a particle burst, and a rank line in the form plus a progress line ("Progress to <rank>: <points> / <threshold>").
+Ranks at 3 / 8 / 15 points: chapter I gives 3 (Welcome), chapter II 6 in all (Trusted at 8 needs 1 request), chapter III deeds 7 (Elf-friend at 15 needs 4 requests). No deferred points for the white animals.
 
-**Requests** open with chapter III (chapters I and II complete), from Friend and Guest only. One current task at a time (the shared slot), **no cooldown**. Twelve requests, each completable **once ever**:
-gardener (5 saplings planted inside the forest, 2 morning dew, 16 bone meal), healer (4 Athelas, 2 nectar, 4 Elanor + 4 Niphredil), woodwright (32 birch/cherry logs in any mix,
-8 string + 8 feathers, 6 iron ingots), lamplighter (3 bottles of fireflies, 16 coal/charcoal in any mix, 16 glass). Each round is a random permutation of the four professions;
-the offered request is a random not-yet-done one of the next profession. "Not now" keeps the offer; abandoning gives nothing, does not complete it, and the rotation moves on.
-Delivery counts the main inventory and removes the items all-or-nothing; saplings are remembered cells (distinct; a cell must still hold a sapling or a Mallorn log).
+**Requests** open once chapters I and II are complete, for Friend and Guest only; one at a time, no cooldown, each completable **once ever**. Twelve requests: gardener (5 Mallorn saplings planted inside the forest, 2 morning dew, 16 bone meal),
+healer (4 Athelas, 2 nectar, 4 Elanor + 4 Niphredil), woodwright (32 birch/cherry logs in any mix, 8 string + 8 feathers, 6 iron ingots), lamplighter (3 bottles of fireflies, 16 coal/charcoal in any mix, 16 glass).
+The profession rotates in random permutations of the four; the offer is a random not-yet-done request of the next profession. "Not now" keeps the offer; setting a request aside does not complete it and the rotation moves on.
+Items are taken all-or-nothing from the main inventory. Saplings are remembered cells that must still hold a sapling or a Mallorn log; a sapling set outside the forest does not count and says so in chat.
 
-**Delivery to the traders (round 2, owner 2026-10-11).** The Loremaster only **gives** requests; a request is handed over to the elf of its profession (gardener, healer, woodwright, lamplighter), any elf of that profession in any village (Renown is global).
-- The offer and the Task screen say where that elf lives: "The gardener lives on a tree to the north-east." (8 compass words from the Loremaster to the nearest such elf within 96 blocks, live position, loaded chunks only; north is -Z; closer than 8 blocks: "lives close by").
-  The main task button then reads "Bring it to the <profession>" once the request is ready.
-- **Fallback:** when no elf of that profession is found within 96 blocks of the Loremaster, he takes the request himself: the text says so ("Our village has no gardener any more, so I ask in their place. Bring it to me; ..."), the status is "Return to me", and "It is done" works on his Task screen as before.
-- **At the trader:** using an elf whose profession matches the player's current request opens a small form (title = the profession, body = the request text and progress, "Hand over" only when ready, "Back"). The ready rule is the same as before (items all-or-nothing from the main inventory; saplings still standing). Feedback is chat only, the form closes.
-  With no matching request **nothing happens** (no line) until M3 adds trading; leads and name tags keep working.
-- **Hover prompt only with a request:** each trader profession group has a `minecraft:interact` entry ("Hand over") whose filter tests the player tag `lothlorien_deliver_<profession>` (`has_tag`, subject `other`). The script keeps that tag exactly while the current request is of that profession (set on accept / join, cleared on hand-over, set-aside, reset).
+**Delivery.** The Loremaster only gives requests; they are handed over to an elf of that profession in any village (Renown is global). The offer and Task screen say where such an elf lives (8 compass words, north = -Z, "close by" under 8 blocks, search 96 blocks).
+If none is found, the Loremaster takes the request himself and says so ("Our village has no gardener any more, so I ask in their place..."). At the trader a small form shows the request and progress, "Hand over" only when ready. The hover prompt "Hand over" shows only
+while the player's current request is of that profession (player tag `lothlorien_deliver_<profession>`, kept by script); with no matching request nothing happens until M3.
 
-Bands: Friend and Guest get everything; **Uneasy** only the Harmony lesson text (active request kept, paused); **Shunned** one chat line; **Hated** silence.
-Risk: a village whose Loremaster died has no dialog (other villages still work; Renown is global).
+Bands: Friend and Guest get everything; Uneasy only the Harmony lesson (task kept, paused); Shunned one chat line; Hated silence. A village whose Loremaster died has no dialog (other villages work).
 
 ## 4. Shops
 

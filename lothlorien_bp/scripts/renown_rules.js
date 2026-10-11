@@ -285,6 +285,12 @@ export function addSaplingSpot(state, cell) {
   r.spots.push(cell);
   return true;
 }
+// True when a placed block is a Mallorn sapling set outside the Golden Wood while the sapling request is the current task
+// (the sapling does not count; the player is told so in chat).
+export function saplingOutsideNotice(state, typeId, inside) {
+  const r = requestTask(state);
+  return !!r && !!requestById(r.id)?.deed && typeId === SAPLING_BLOCK && !inside;
+}
 // Counts the remembered cells that still hold a sapling or a grown tree; `valid(cell)` returns true/false (an unloaded chunk: true).
 // Cells that went missing are dropped (so breaking and replanting one cell never counts twice).
 export function saplingProgress(state, valid) {

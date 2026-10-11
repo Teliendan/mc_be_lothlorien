@@ -696,3 +696,5 @@ lothlorien.message.lore.status.bring.lamplighter=§aBring it to the lamplighter
 lothlorien.message.lore.btn.handover=Hand over
 ## Context: Interaction prompt for handing the current request over to the elf (opens the small form with the request). Shown only to a player who carries a request of this elf’s profession.
 action.interact.lothlorien.hand_over=Hand over
+## Context: Chat line when the player sets a Mallorn sapling outside the Lothlorien biome while the current Loremaster task is 'plant five Mallorn acorns'. That sapling is not counted. Grey.
+lothlorien.message.lore.saplings.outside=§7This sapling stands outside the Golden Wood; it does not count.

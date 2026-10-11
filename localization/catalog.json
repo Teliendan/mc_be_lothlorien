@@ -20085,6 +20085,63 @@
               "status": "ai-draft"
             }
           }
+        },
+        "lothlorien.message.lore.saplings.outside": {
+          "source": "§7This sapling stands outside the Golden Wood; it does not count.",
+          "context": {
+            "meaning": "Chat line when the player sets a Mallorn sapling outside the Lothlorien biome while the current Loremaster task is 'plant five Mallorn acorns'. That sapling is not counted. Grey.",
+            "location": "lothlorien_rp: chat message",
+            "trigger": "Player places a Mallorn sapling outside the Golden Wood during the sapling task.",
+            "tone": "Formal, elven, short",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Keep % tokens in order. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/renown_game.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Tato sazenice stojí mimo Zlatý les; nezapočítává se.",
+              "based_on": "b2c39b1770b1d70e7ac5087d43461322d595e24a9c5b41c79ba1fcce798a3297",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§7Este brote está fuera del Bosque Dorado; no cuenta.",
+              "based_on": "b2c39b1770b1d70e7ac5087d43461322d595e24a9c5b41c79ba1fcce798a3297",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§7Este brote está fuera del Bosque Dorado; no cuenta.",
+              "based_on": "b2c39b1770b1d70e7ac5087d43461322d595e24a9c5b41c79ba1fcce798a3297",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§7Este rebento está fora da Floresta Dourada; não conta.",
+              "based_on": "b2c39b1770b1d70e7ac5087d43461322d595e24a9c5b41c79ba1fcce798a3297",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§7Este broto está fora da Floresta Dourada; não conta.",
+              "based_on": "b2c39b1770b1d70e7ac5087d43461322d595e24a9c5b41c79ba1fcce798a3297",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§7Dieser Setzling steht außerhalb des Goldenen Waldes; er zählt nicht.",
+              "based_on": "b2c39b1770b1d70e7ac5087d43461322d595e24a9c5b41c79ba1fcce798a3297",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§7Cette pousse se trouve hors de la Forêt d'Or ; elle ne compte pas.",
+              "based_on": "b2c39b1770b1d70e7ac5087d43461322d595e24a9c5b41c79ba1fcce798a3297",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§7Ta sadzonka stoi poza Złotym Lasem; nie liczy się.",
+              "based_on": "b2c39b1770b1d70e7ac5087d43461322d595e24a9c5b41c79ba1fcce798a3297",
+              "status": "ai-draft"
+            }
+          }
         }
       }
     }
