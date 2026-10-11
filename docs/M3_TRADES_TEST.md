@@ -5,8 +5,10 @@ Offline checks cover rules, generated assets, localization and event/timer glue.
 Owner accepted M3 on 2026-10-11: "It all works" (commit 7f86c87), target Bedrock
 1.26.52, server 2.8.0, server-ui 2.1.0. Individual engine-question answers were
 not recorded separately. The checklist below remains useful for regressions.
-Follow-up `Explain the second elf click on the Trade button` adds visible grey
-guidance under Trade; this new line's presentation still needs a game check.
+Follow-up 9cdd1a0, `Explain the second elf click on the Trade button`, adds grey
+guidance after a newline in the label, matching the Loremaster's quest-status
+button. The owner reports that the quest status appears on hover; confirm that
+hovering Trade likewise shows "Then click the elf again".
 
 Leave and re-enter the world after deployment. Existing M1 elves gain shops;
 M3 needs no new world. A village generated before M1 has no civilian elves.
