@@ -1,6 +1,6 @@
 # Elven inhabitants: professions, Renown, trades, gifts (design)
 
-Status: **M0-M3 accepted in game; M4 healer implemented, awaiting owner game test** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
+Status: **M0-M3 accepted in game; M4 healer accepted by the owner; next milestone is M5** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
 Supersedes the profession stock lists and trade-state details in `lothlorien_elven_settlements_plan.md` ("Initial professions",
 "Harmony-aware trading", "Proposed reputation trade states") and the stock part of `harmony_rework_plan.md` section 5. The trade
 **architecture** of that section 5 (native trade screen, per-band tables pre-swapped by script, refusal in `beforeEvents.playerInteractWithEntity`) stays.
@@ -14,7 +14,7 @@ Looks: `docs/mobs/elves.md` (`tools/make_elves.py`, review sheets in `temp/elves
 | M1 | Civilian elves placed in villages, Harmony, wardens defend, leads, healer roaming (sections 1, 7, 10) + village polish (rope foot, crowns fit their box, bare branches, living pillars with planner root flares) | done, accepted in game 2026-10-10 (commits 30e1eb1, 5631c22, 6f79109, 7b57536, 6b97311; the ivy start of 6b97311 not yet seen) |
 | M2 | Renown + Loremaster dialog: lessons and requests (sections 2, 3) | done, accepted in game 2026-10-11 (commits 88dbbe2, 6019c88, f854117, ff61ae2, eb1cc5e dew, a10653f niphredil). Notes: `docs/TECHNICAL_NOTES.md` "Renown and the Loremaster (M2)" |
 | M3 | Shops: trade-table generator (band x rank), table swapping by script, refusal (section 4) | complete, accepted in game 2026-10-11: shops 7f86c87 ("It all works"), Trade hover guidance 9cdd1a0 confirmed on deployed 405d482 ("It works"); [regression checklist](../M3_TRADES_TEST.md) |
-| M4 | Healer heals elves and Friends (section 7) | implemented 2026-10-11; offline checks pass, game acceptance pending; [checklist](../M4_HEALER_TEST.md) |
+| M4 | Healer heals elves and Friends (section 7) | complete, owner accepted 2026-10-11 (bc1da69); [regression checklist](../M4_HEALER_TEST.md) |
 | M5 | Final items (Galadriel's gifts) + Galadhrim arrows (sections 5, 6); then the bow template for `bedrock-items` | |
 | M6 | Great Mallorn upgrade (section 9) | |
 | M7 | Homes + village look (section 10; `lothlorien_jigsaw_settlement.md` section 6) | |
@@ -171,13 +171,14 @@ Dropped: Box of Lórien earth (not unique enough), Elessar (Aragorn's alone; bec
 - Shown as a blessing (arm raise, particles). There is no stable "walk to that entity" script call in 2.8.0 as far as known, so v1 does not
   walk to the patient; an AI-goal trick is a later experiment.
 
-**M4 as built (2026-10-11, game acceptance pending).** `healer_rules.js` owns all healing/blessing values. Loaded healers check once per second:
+**M4 as built (bc1da69, owner accepted 2026-10-11).** `healer_rules.js` owns all healing/blessing values. Loaded healers check once per second:
 injured living elves/wardens (including self), Regeneration II within 8 blocks; injured Harmony Friends, Regeneration I within 6.
 Head-to-head solid-block sight is required except for self. Effects last 3 seconds and finish before renewal, preserving equal/stronger potions
 and avoiding repeated refreshes of their timing. No cooldown; no Renown gate. Each new grant has green sparkles and a finite arm raise authored
 by `make_elves.py`. Event-based discovery/unload cleanup, one startup reconciliation, two local patient queries per healer/check; no timer when
 no healer is loaded. Existing healers work after reload; no worldgen change. Implementation commit: `Implement M4 healer blessings for elves and Friends`.
-Offline evidence and owner test cases: [M4_HEALER_TEST.md](../M4_HEALER_TEST.md). Stop here for the owner's game test before M5.
+Offline evidence and regression cases: [M4_HEALER_TEST.md](../M4_HEALER_TEST.md). Owner accepted M4 after confirming that only injured targets are blessed.
+Individual in-game observations were not supplied; this records overall acceptance. M5 is next and starts on the owner's request.
 
 ## 8. Engine facts (M0 spike, owner-tested in game 2026-10-10, Bedrock 1.26.52, [V])
 

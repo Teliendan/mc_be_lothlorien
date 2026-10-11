@@ -2,7 +2,10 @@
 
 2026-10-11; Bedrock 1.26.52 / stable Script API 2.8.0.
 Implementation commit: `Implement M4 healer blessings for elves and Friends`.
-Status: implemented; offline checks pass; owner game acceptance pending.
+Status: complete; owner accepted 2026-10-11 (bc1da69), after confirming the
+injured-only rule. Offline checks pass. Individual in-game observations were
+not supplied; acceptance does not establish every engine case below. Keep this
+checklist for regressions.
 
 Leave and re-enter the world after deployment. Existing healers gain healing;
 no new world is needed. Villages made before M1 still have no civilian elves.

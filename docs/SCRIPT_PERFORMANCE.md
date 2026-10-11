@@ -56,4 +56,5 @@ in-range patients needing regeneration incur sight rays/effect writes. No
 per-tick timer, recurring whole-dimension discovery, persistent helper or forced
 chunk loading. Mock tests cover duplicate registration, death before deferred
 discovery, unload/reload, invalid handles and empty-world sleep; engine cost
-and visuals still need the owner's M4 test.
+and visuals were not individually reported. Owner accepted M4 overall on
+2026-10-11 (bc1da69); this is not a measured performance result.
