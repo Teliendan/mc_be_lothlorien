@@ -38,10 +38,12 @@ def configure_water(block):
     """Explicit approved inventory: unknown new blocks must get a water decision."""
     body = block["minecraft:block"]
     name = body["description"]["identifier"].split(":")[1]
-    if name not in WATER_POP | WATER_SOLID | WATER_LOGGABLE:
+    if name not in WATER_POP | WATER_SOLID | WATER_LOGGABLE | {"phial_light"}:
         raise ValueError(f"No water policy decided for {name}; see docs/WATER.md")
     rule = {"liquid_type": "water", "can_contain_liquid": name in WATER_LOGGABLE,
             "on_liquid_touches": "popped" if name in WATER_POP else "blocking"}
+    if name == "phial_light":
+        rule["on_liquid_touches"] = "broken"  # Temporary light must yield to incoming water without loot.
     if name in WATER_LOGGABLE:
         # Match current 1.26 rendering explicitly; multipart/empty colliders need game checks.
         rule.update(use_liquid_clipping=False, stops_liquid_flowing_from_direction=[])

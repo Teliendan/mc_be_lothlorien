@@ -1,6 +1,19 @@
 {
   "schema_version": 1,
   "blocks": {
+    "lothlorien:phial_light": {
+      "profile": "redstone_device",
+      "reason": "Script-owned temporary airlike utility light, functional analogue minecraft:light_block. The existing redstone_device profile supplies the desired zero mining/blast resistance, no preferred tools and nonflammability; it does not claim redstone-device function or vanilla light-block destruction parity. Piston popping prevents an untracked relocated helper.",
+      "harvest": "No tool or hand can collect the helper: explicit empty loot. Script removes only its owned helper coordinates; replacement, water and explosion produce no drops.",
+      "property_checks": {
+        "minecraft:redstone_conductivity": {
+          "counterpart": "minecraft:light_block",
+          "expected": { "redstone_conductor": false },
+          "reason": "Temporary light deliberately cannot conduct redstone.",
+          "source": "M5 utility-block design, docs/M5_PHIAL_NOTES.md; source/mock reviewed 2026-10-11, target1.26.52, game acceptance pending."
+        }
+      }
+    },
     "lothlorien:athelas": {
       "profile": "flower",
       "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."

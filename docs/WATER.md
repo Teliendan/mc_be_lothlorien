@@ -55,3 +55,10 @@ break only; water removal can expose dirt, as with other non-player destruction 
 
 This supersedes the older missing-waterlogging/water-flow-breaking notes in
 `TECHNICAL_NOTES.md` and `NOT_IMPLEMENTED.md`. Those files retain historical context.
+# Phial helper (M5, 2026-10-11)
+
+`phial_light` is a hidden temporary block, placed only in air. It cannot contain
+water and incoming water destroys it without drops (`broken`), permitting flow
+to occupy the cell. Existing water/lava are never replaced by the phial script.
+This is an explicit utility-block policy; incoming water/lava timing needs an
+engine check on Bedrock 1.26.52. Source and mock-tested, not observed in game.

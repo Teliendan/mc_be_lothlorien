@@ -1,0 +1,13 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.lothlorien.elven_cloak.hide_first_person": {
+      "loop": true,
+      "bones": {
+        "elven_cloak_body": {
+          "scale": 0
+        }
+      }
+    }
+  }
+}

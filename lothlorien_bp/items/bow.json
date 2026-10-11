@@ -1,0 +1,47 @@
+{
+  "format_version": "1.26.50",
+  "minecraft:item": {
+    "description": {
+      "identifier": "lothlorien:bow",
+      "menu_category": {
+        "category": "equipment"
+      }
+    },
+    "components": {
+      "minecraft:icon": "lothlorien:bow",
+      "minecraft:max_stack_size": 1,
+      "minecraft:hand_equipped": true,
+      "minecraft:durability": {
+        "max_durability": 384
+      },
+      "minecraft:enchantable": {
+        "slot": "bow",
+        "value": 1
+      },
+      "minecraft:use_modifiers": {
+        "use_duration": 3600,
+        "movement_modifier": 0.2,
+        "start_using": "if_first"
+      },
+      "minecraft:shooter": {
+        "ammunition": [
+          {
+            "item": "lothlorien:galadhrim_arrow",
+            "use_offhand": true,
+            "search_inventory": true,
+            "use_in_creative": true
+          },
+          {
+            "item": "minecraft:arrow",
+            "use_offhand": true,
+            "search_inventory": true,
+            "use_in_creative": true
+          }
+        ],
+        "max_draw_duration": 0.8,
+        "scale_power_by_draw_duration": true,
+        "charge_on_draw": false
+      }
+    }
+  }
+}

@@ -710,3 +710,17 @@ lothlorien.message.lore.btn.trade=Commercer
 lothlorien.message.trade.debug=Débogage du commerce : %s, table %s, la tienne %s, autorisation %s
 ## Context: Selecting Trade closes the request form. The player must then click the same elf again to open the native trade screen. This instruction is shown before selecting the button.
 lothlorien.message.lore.btn.trade_hint=Puis clique à nouveau sur l’elfe
+## Context: Chest armour with leather-level protection. Grants invisibility after sneaking without moving for one second.
+item.lothlorien:elven_cloak=Cape elfique
+## Context: Elven bow with a faster draw, native bow enchantments and vanilla arrow flight. Galadhrim is a lore proper name.
+item.lothlorien:bow=Arc des Galadhrim
+## Context: Off-hand gift rendered at the waist; grants Regeneration I while health is strictly below half maximum.
+item.lothlorien:silver_belt=Ceinture d’argent
+## Context: Off-hand gift that lights nearby air and repels spiders. Galadriel is a lore proper name; phial means a small vial.
+item.lothlorien:phial_of_galadriel=Fiole de Galadriel
+## Context: Recoverable arrow ammunition fired only by the Bow of the Galadhrim in Survival; same trajectory as a vanilla arrow.
+item.lothlorien:galadhrim_arrow=Flèche des Galadhrim
+## Context: Recoverable arrow ammunition fired only by the Bow of the Galadhrim in Survival; same trajectory as a vanilla arrow.
+entity.lothlorien:galadhrim_arrow.name=Flèche des Galadhrim
+## Context: Invisible temporary air-space light used by the Phial of Galadriel; hidden from creative inventory and drops nothing.
+tile.lothlorien:phial_light.name=Lumière de la fiole

@@ -156,6 +156,9 @@
     },
     "lothlorien:elven_lantern_wood_heartwood": {
       "textures": "textures/blocks/elven_lantern_wood_heartwood"
+    },
+    "lothlorien:phial_light": {
+      "textures": "textures/blocks/phial_light"
     }
   }
 }

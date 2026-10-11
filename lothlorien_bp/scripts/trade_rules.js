@@ -1,5 +1,5 @@
-// Shops (M3): owner-approved prices, stock and pure decisions. The generator and runtime share this file.
-// Design: docs/design/elven_inhabitants.md, section 4. Final gifts and Galadhrim arrows arrive in M5.
+// Shops (M3/M5): generator and runtime share the stock; gift balance lives in gift_rules.js.
+import { ARROW_ID, ARROW, FINAL_GIFTS } from "./gift_rules.js";
 export const TRADERS = ["gardener", "healer", "woodwright", "lamplighter"]; // minecraft:variant order
 export const CURRENCY = "minecraft:emerald";
 export const TABLE_KEYS = ["uneasy", "guest_0", "guest_1", "guest_2", "guest_3", "friend_0", "friend_1", "friend_2", "friend_3"];
@@ -49,7 +49,7 @@ export const SELLS = {
   woodwright: [
     { id: "lothlorien:mallorn_log", rank: 0, price: { uneasy: [1, 4], guest: [1, 6], friend: [1, 8] } },
     { id: "lothlorien:elven_rope", rank: 1, price: { guest: [6, 1], friend: [5, 1] } },
-    // M5: Galadhrim arrows, rank 2, Guest [1, 8], Friend [1, 10].
+    { id: ARROW_ID, rank: ARROW.rank, price: { guest: ARROW.guestPrice, friend: ARROW.friendPrice } },
   ],
   lamplighter: [
     { id: "lothlorien:elven_lantern", rank: 0, price: { uneasy: [4, 1], guest: [3, 1], friend: [2, 1] } },
@@ -89,8 +89,11 @@ export const BUYS = {
     { id: "minecraft:glowstone_dust", price: buyPrices(16, 12, 8) },
   ],
 };
-// M5 hook: concrete { wants, gives } offers, exclusively for Elf-friend + Friend.
-export const FINAL_TRADES = { gardener: [], healer: [], woodwright: [], lamplighter: [] };
+// Final gifts appear exclusively for Elf-friend + Friend, and remain renewable.
+export const FINAL_TRADES = Object.fromEntries(TRADERS.map((p) => [p, [{
+  wants: [{ id: CURRENCY, count: FINAL_GIFTS[p].emeralds }],
+  gives: [{ id: FINAL_GIFTS[p].item, count: 1 }],
+}]]));
 export const perItemCost = (sell, band) => sell.price[band][0] / sell.price[band][1];
 export const perItemValue = (buy, band) => buy.price[band][1] / buy.price[band][0];
 

@@ -1,0 +1,71 @@
+# Phial of Galadriel
+
+Implemented 2026-10-11 for Bedrock 1.26.52 / stable Script API 2.8.0.
+Source/API reviewed and production mock-tested; owner engine acceptance pending.
+
+The offhand phial creates one hidden level-14 helper block near the holder's
+head, falling back to feet or overhead air. All three choices are air-only: no
+plants, solid blocks, water, lava or existing vanilla light blocks are replaced.
+If none is available, illumination pauses until air is available. The inventory
+and held visual is a 16px silver-stoppered crystal flask with a white star.
+Plain item rendering provides first/third-person hands without an attachable.
+
+`gift_rules.js` owns the item ID, helper ID, light level, candidate offsets,
+five-tick cadence, eight-block spherical spider radius, 0.8 horizontal impulse,
+24 spider query limit, 64 cleanup reads per pass and 256 persisted-light limit.
+`tools/make_phial.py` regenerates both textures and synchronizes the helper's
+emission from that JavaScript module. Root item/terrain atlases bind the assets.
+
+One world dynamic property stores a compact coordinate ledger; records are
+written before light placement so a world stop cannot create an untracked helper.
+Movement, unequip, death, departure and dimension changes remove unused loaded
+lights on the next pass. Reload restores this ledger. Unloaded lights stay
+recorded and cleanup rotates through at most 64 entries per pass; it does not
+load chunks or scan the world. At the cap, new lights pause until cleanup has
+space. Failed cleanup-property writes retain a dirty flag and retry on later
+passes even when the in-memory light set is empty. Multiple holders share a desired-coordinate set so one departure cannot
+extinguish another holder's cell. Cleanup removes only `lothlorien:phial_light`,
+preserving any foreign replacement, including a real vanilla light block.
+There is no built-in world scan for helper blocks introduced manually outside
+the ledger. Removing the add-on prevents its cleanup service from running.
+
+The helper has no collision, selection or drops and can be replaced by building.
+It is nonflammable, nonconducting and pops under pistons so a piston cannot move
+it outside the ownership ledger. Material bookkeeping uses the existing flower
+profile only for zero destruction resistance and no preferred tools; its
+functional analogue is the vanilla light block, without claiming destruction parity.
+Its explicit water policy is non-containable / broken, so incoming water should
+remove it without an item. Script placement never touches an existing liquid.
+The helper is omitted from creative categories. Check engine lighting, building
+through the helper, incoming water/lava, spawn/light consequences and Vibrant
+Visuals before claiming compatibility. Rendering and physics are not simulated
+by the offline mock.
+
+Spider and cave-spider queries run only around living equipped holders. Each
+query is typed, limited by `closest`, and bounded to eight blocks. Each returned
+spider receives one horizontal native knockback per pass, directed away from
+its nearest queried holder; zero horizontal separation uses a finite +X impulse.
+No teleporting, damage, upward force or attack-target mutation is used. Native
+collision governs walls. In crowded cases the total inspected spiders per holder
+is capped at 24; spider type order can defer cave spiders behind a full ordinary
+spider group. Check avoidance strength against hostile spiders, walls, elevation,
+climbing and multiple holders in the game. This is repulsion, not a guarantee
+against attacks by spiders that start in contact with the holder.
+
+`tests/phial.mjs` runs the real runtime against the shared scheduler/API mock:
+movement/unequip; sharing/dimension/death/departure; all air-only safety gates;
+replacement protection; persisted loaded/unloaded orphan cleanup; round-robin
+fairness; capacity; persistence failure/order; both spider types, locality and
+deduplication; helper emission/collision/water/no-drop definition.
+
+Reference review: installed `reference/server-2.8.0.d.ts` confirms the stable
+`applyKnockback({ x, z }, verticalStrength)` signature (the older example in
+the declaration comments still uses four numeric arguments). The official
+[Entity API](https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/entity?view=minecraft-bedrock-stable)
+agrees; use the declaration/signature, not that stale example. The official
+[26.52 hotfix](https://feedback.minecraft.net/hc/en-us/articles/49175370527501-Minecraft-Bedrock-Edition-26-52-Hotfix-Changelog)
+was checked before implementing; no phial/dynamic-item-lighting facility is
+described there. Official [replaceable](https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_replaceable?view=minecraft-bedrock-stable)
+and [liquid detection](https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_liquid_detection?view=minecraft-bedrock-stable)
+documents support the declared helper policy. These are documented/source
+facts, not an in-game test result.

@@ -20521,6 +20521,384 @@
               "based_on": "f5d376037b7407c130d275a62879600e5a96933487685bd59f12c16fda333c4b"
             }
           }
+        },
+        "item.lothlorien:elven_cloak": {
+          "source": "Elven cloak",
+          "context": {
+            "meaning": "Chest armour with leather-level protection. Grants invisibility after sneaking without moving for one second.",
+            "location": "lothlorien_rp: inventory, creative equipment and native elf trade screen",
+            "trigger": "Player inspects or obtains the M5 gift or arrow.",
+            "tone": "Concise Minecraft fantasy item name.",
+            "grammar": "Singular noun phrase, no player gender.",
+            "constraints": "Preserve lore proper names; use one line and no placeholders."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Elfí plášť",
+              "based_on": "81037d43bbfb67f3a29a538fa8aee486f4d23ebbcfce707238493af4834ebd96",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Capa élfica",
+              "based_on": "81037d43bbfb67f3a29a538fa8aee486f4d23ebbcfce707238493af4834ebd96",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Capa élfica",
+              "based_on": "81037d43bbfb67f3a29a538fa8aee486f4d23ebbcfce707238493af4834ebd96",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Capa élfica",
+              "based_on": "81037d43bbfb67f3a29a538fa8aee486f4d23ebbcfce707238493af4834ebd96",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Capa élfica",
+              "based_on": "81037d43bbfb67f3a29a538fa8aee486f4d23ebbcfce707238493af4834ebd96",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Elbenumhang",
+              "based_on": "81037d43bbfb67f3a29a538fa8aee486f4d23ebbcfce707238493af4834ebd96",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Cape elfique",
+              "based_on": "81037d43bbfb67f3a29a538fa8aee486f4d23ebbcfce707238493af4834ebd96",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Elfi płaszcz",
+              "based_on": "81037d43bbfb67f3a29a538fa8aee486f4d23ebbcfce707238493af4834ebd96",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "item.lothlorien:bow": {
+          "source": "Bow of the Galadhrim",
+          "context": {
+            "meaning": "Elven bow with a faster draw, native bow enchantments and vanilla arrow flight. Galadhrim is a lore proper name.",
+            "location": "lothlorien_rp: inventory, creative equipment and native elf trade screen",
+            "trigger": "Player inspects or obtains the M5 gift or arrow.",
+            "tone": "Concise Minecraft fantasy item name.",
+            "grammar": "Singular noun phrase, no player gender.",
+            "constraints": "Preserve lore proper names; use one line and no placeholders."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Luk Galadhrim",
+              "based_on": "783fadaa56468e045de55b418ccac6874cb346fae09757adae93f27948c320b5",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Arco de los Galadhrim",
+              "based_on": "783fadaa56468e045de55b418ccac6874cb346fae09757adae93f27948c320b5",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Arco de los Galadhrim",
+              "based_on": "783fadaa56468e045de55b418ccac6874cb346fae09757adae93f27948c320b5",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Arco dos Galadhrim",
+              "based_on": "783fadaa56468e045de55b418ccac6874cb346fae09757adae93f27948c320b5",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Arco dos Galadhrim",
+              "based_on": "783fadaa56468e045de55b418ccac6874cb346fae09757adae93f27948c320b5",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Bogen der Galadhrim",
+              "based_on": "783fadaa56468e045de55b418ccac6874cb346fae09757adae93f27948c320b5",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Arc des Galadhrim",
+              "based_on": "783fadaa56468e045de55b418ccac6874cb346fae09757adae93f27948c320b5",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Łuk Galadhrim",
+              "based_on": "783fadaa56468e045de55b418ccac6874cb346fae09757adae93f27948c320b5",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "item.lothlorien:silver_belt": {
+          "source": "Silver belt",
+          "context": {
+            "meaning": "Off-hand gift rendered at the waist; grants Regeneration I while health is strictly below half maximum.",
+            "location": "lothlorien_rp: inventory, creative equipment and native elf trade screen",
+            "trigger": "Player inspects or obtains the M5 gift or arrow.",
+            "tone": "Concise Minecraft fantasy item name.",
+            "grammar": "Singular noun phrase, no player gender.",
+            "constraints": "Preserve lore proper names; use one line and no placeholders."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Stříbrný opasek",
+              "based_on": "8554c8a3ba1060feb6c094931c923f7114800a350aacc9189850897398b5f40f",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Cinturón de plata",
+              "based_on": "8554c8a3ba1060feb6c094931c923f7114800a350aacc9189850897398b5f40f",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Cinturón de plata",
+              "based_on": "8554c8a3ba1060feb6c094931c923f7114800a350aacc9189850897398b5f40f",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Cinto de prata",
+              "based_on": "8554c8a3ba1060feb6c094931c923f7114800a350aacc9189850897398b5f40f",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Cinto de prata",
+              "based_on": "8554c8a3ba1060feb6c094931c923f7114800a350aacc9189850897398b5f40f",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Silbergürtel",
+              "based_on": "8554c8a3ba1060feb6c094931c923f7114800a350aacc9189850897398b5f40f",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Ceinture d’argent",
+              "based_on": "8554c8a3ba1060feb6c094931c923f7114800a350aacc9189850897398b5f40f",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Srebrny pas",
+              "based_on": "8554c8a3ba1060feb6c094931c923f7114800a350aacc9189850897398b5f40f",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "item.lothlorien:phial_of_galadriel": {
+          "source": "Phial of Galadriel",
+          "context": {
+            "meaning": "Off-hand gift that lights nearby air and repels spiders. Galadriel is a lore proper name; phial means a small vial.",
+            "location": "lothlorien_rp: inventory, creative equipment and native elf trade screen",
+            "trigger": "Player inspects or obtains the M5 gift or arrow.",
+            "tone": "Concise Minecraft fantasy item name.",
+            "grammar": "Singular noun phrase, no player gender.",
+            "constraints": "Preserve lore proper names; use one line and no placeholders."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Galadrielina lahvička",
+              "based_on": "f49fc377f349e8609bd5bd6e472f9212bcbbe4cfea93a3920454f556daf860d7",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Redoma de Galadriel",
+              "based_on": "f49fc377f349e8609bd5bd6e472f9212bcbbe4cfea93a3920454f556daf860d7",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Redoma de Galadriel",
+              "based_on": "f49fc377f349e8609bd5bd6e472f9212bcbbe4cfea93a3920454f556daf860d7",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Frasco de Galadriel",
+              "based_on": "f49fc377f349e8609bd5bd6e472f9212bcbbe4cfea93a3920454f556daf860d7",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Frasco de Galadriel",
+              "based_on": "f49fc377f349e8609bd5bd6e472f9212bcbbe4cfea93a3920454f556daf860d7",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Galadriels Phiole",
+              "based_on": "f49fc377f349e8609bd5bd6e472f9212bcbbe4cfea93a3920454f556daf860d7",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Fiole de Galadriel",
+              "based_on": "f49fc377f349e8609bd5bd6e472f9212bcbbe4cfea93a3920454f556daf860d7",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Flakonik Galadrieli",
+              "based_on": "f49fc377f349e8609bd5bd6e472f9212bcbbe4cfea93a3920454f556daf860d7",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "item.lothlorien:galadhrim_arrow": {
+          "source": "Galadhrim arrow",
+          "context": {
+            "meaning": "Recoverable arrow ammunition fired only by the Bow of the Galadhrim in Survival; same trajectory as a vanilla arrow.",
+            "location": "lothlorien_rp: inventory, creative equipment and native elf trade screen",
+            "trigger": "Player inspects or obtains the M5 gift or arrow.",
+            "tone": "Concise Minecraft fantasy item name.",
+            "grammar": "Singular noun phrase, no player gender.",
+            "constraints": "Preserve lore proper names; use one line and no placeholders."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Šíp Galadhrim",
+              "based_on": "944966ff96bd65228e225cf60a2a278d071189846c9d709ebbb829c42fab110b",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Flecha de los Galadhrim",
+              "based_on": "944966ff96bd65228e225cf60a2a278d071189846c9d709ebbb829c42fab110b",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Flecha de los Galadhrim",
+              "based_on": "944966ff96bd65228e225cf60a2a278d071189846c9d709ebbb829c42fab110b",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Flecha dos Galadhrim",
+              "based_on": "944966ff96bd65228e225cf60a2a278d071189846c9d709ebbb829c42fab110b",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Flecha dos Galadhrim",
+              "based_on": "944966ff96bd65228e225cf60a2a278d071189846c9d709ebbb829c42fab110b",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Galadhrim-Pfeil",
+              "based_on": "944966ff96bd65228e225cf60a2a278d071189846c9d709ebbb829c42fab110b",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Flèche des Galadhrim",
+              "based_on": "944966ff96bd65228e225cf60a2a278d071189846c9d709ebbb829c42fab110b",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Strzała Galadhrim",
+              "based_on": "944966ff96bd65228e225cf60a2a278d071189846c9d709ebbb829c42fab110b",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "entity.lothlorien:galadhrim_arrow.name": {
+          "source": "Galadhrim arrow",
+          "context": {
+            "meaning": "Recoverable arrow ammunition fired only by the Bow of the Galadhrim in Survival; same trajectory as a vanilla arrow.",
+            "location": "lothlorien_rp: projectile entity name",
+            "trigger": "The custom arrow entity name is displayed.",
+            "tone": "Concise Minecraft fantasy item name.",
+            "grammar": "Singular noun phrase, no player gender.",
+            "constraints": "Preserve lore proper names; use one line and no placeholders."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Šíp Galadhrim",
+              "based_on": "71b47c55c83b7c39ca24f2cbf5c250214c74609f43627dec38e1eb82ff754496",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Flecha de los Galadhrim",
+              "based_on": "71b47c55c83b7c39ca24f2cbf5c250214c74609f43627dec38e1eb82ff754496",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Flecha de los Galadhrim",
+              "based_on": "71b47c55c83b7c39ca24f2cbf5c250214c74609f43627dec38e1eb82ff754496",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Flecha dos Galadhrim",
+              "based_on": "71b47c55c83b7c39ca24f2cbf5c250214c74609f43627dec38e1eb82ff754496",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Flecha dos Galadhrim",
+              "based_on": "71b47c55c83b7c39ca24f2cbf5c250214c74609f43627dec38e1eb82ff754496",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Galadhrim-Pfeil",
+              "based_on": "71b47c55c83b7c39ca24f2cbf5c250214c74609f43627dec38e1eb82ff754496",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Flèche des Galadhrim",
+              "based_on": "71b47c55c83b7c39ca24f2cbf5c250214c74609f43627dec38e1eb82ff754496",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Strzała Galadhrim",
+              "based_on": "71b47c55c83b7c39ca24f2cbf5c250214c74609f43627dec38e1eb82ff754496",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "tile.lothlorien:phial_light.name": {
+          "source": "Phial light",
+          "context": {
+            "meaning": "Invisible temporary air-space light used by the Phial of Galadriel; hidden from creative inventory and drops nothing.",
+            "location": "lothlorien_rp: block name if inspected through commands",
+            "trigger": "A command or inspector displays the hidden temporary light block.",
+            "tone": "Concise Minecraft fantasy item name.",
+            "grammar": "Singular noun phrase, no player gender.",
+            "constraints": "Preserve lore proper names; use one line and no placeholders."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Světlo lahvičky",
+              "based_on": "d2036931ff64888c38cf4a12217f7f9519727f4ea927afb2db22337299d12ae9",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Luz de la redoma",
+              "based_on": "d2036931ff64888c38cf4a12217f7f9519727f4ea927afb2db22337299d12ae9",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Luz de la redoma",
+              "based_on": "d2036931ff64888c38cf4a12217f7f9519727f4ea927afb2db22337299d12ae9",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Luz do frasco",
+              "based_on": "d2036931ff64888c38cf4a12217f7f9519727f4ea927afb2db22337299d12ae9",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Luz do frasco",
+              "based_on": "d2036931ff64888c38cf4a12217f7f9519727f4ea927afb2db22337299d12ae9",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Phiolenlicht",
+              "based_on": "d2036931ff64888c38cf4a12217f7f9519727f4ea927afb2db22337299d12ae9",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Lumière de la fiole",
+              "based_on": "d2036931ff64888c38cf4a12217f7f9519727f4ea927afb2db22337299d12ae9",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Światło flakonika",
+              "based_on": "d2036931ff64888c38cf4a12217f7f9519727f4ea927afb2db22337299d12ae9",
+              "status": "ai-draft"
+            }
+          }
         }
       }
     }

@@ -30,6 +30,9 @@ import * as EL from "../lothlorien_bp/scripts/elf_rules.js";
 // The glue suites share one fake server/clock; finish static imports before resetting it for M3/M4.
 await import("./trade_glue.mjs");
 await import("./healer.mjs");
+await import("./archery.mjs");
+await import("./worn_gifts.mjs");
+await import("./phial.mjs");
 
 const L = "lothlorien:lothlorien", RIVER = "minecraft:river", FOREST = "minecraft:forest";
 const T = new Set([RIVER]);

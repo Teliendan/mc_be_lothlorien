@@ -1,0 +1,96 @@
+{
+  "format_version": "1.16.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.lothlorien.elven_cloak",
+        "texture_width": 64,
+        "texture_height": 64,
+        "visible_bounds_width": 2,
+        "visible_bounds_height": 3,
+        "visible_bounds_offset": [
+          0,
+          1,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "elven_cloak_body",
+          "binding": "'body'",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4.5,
+                20.5,
+                -2.5
+              ],
+              "size": [
+                9,
+                3,
+                5
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                -4.5,
+                4,
+                2.3
+              ],
+              "size": [
+                9,
+                18,
+                0.8
+              ],
+              "uv": [
+                0,
+                16
+              ]
+            },
+            {
+              "origin": [
+                -4.8,
+                7,
+                2.4
+              ],
+              "size": [
+                1,
+                14,
+                0.9
+              ],
+              "uv": [
+                24,
+                16
+              ]
+            },
+            {
+              "origin": [
+                3.8,
+                7,
+                2.4
+              ],
+              "size": [
+                1,
+                14,
+                0.9
+              ],
+              "uv": [
+                28,
+                16
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

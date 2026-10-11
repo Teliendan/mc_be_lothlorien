@@ -103,6 +103,21 @@
     },
     "lothlorien:elven_lantern_heartwood": {
       "textures": "textures/items/elven_lantern_heartwood"
+    },
+    "lothlorien:elven_cloak": {
+      "textures": "textures/items/elven_cloak"
+    },
+    "lothlorien:bow": {
+      "textures": "textures/items/galadhrim_bow"
+    },
+    "lothlorien:silver_belt": {
+      "textures": "textures/items/silver_belt"
+    },
+    "lothlorien:phial_of_galadriel": {
+      "textures": "textures/items/phial_of_galadriel"
+    },
+    "lothlorien:galadhrim_arrow": {
+      "textures": "textures/items/galadhrim_arrow"
     }
   }
 }

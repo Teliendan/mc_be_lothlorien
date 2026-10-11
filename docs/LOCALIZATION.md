@@ -1,5 +1,10 @@
 # Localization
 
+M5 gifts, 2026-10-11: five item names plus projectile/helper names have complete
+context and all nine locales in the catalog, with generated compatibility aliases.
+Translations remain contextual AI drafts, pending native-language and game review.
+Implementation commit: `Implement M5 Galadriel gifts and Galadhrim arrows`.
+
 2026-10-04 RawMessage repair (target 1.26.52 / API 2.8.0): omit `with` for
 translations without arguments, including nested labels. The same helper pattern
 caused Torchlight's owner-reported `RawMessageError`; see workspace

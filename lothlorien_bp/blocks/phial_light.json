@@ -1,0 +1,45 @@
+{
+  "format_version": "1.26.50",
+  "minecraft:block": {
+    "description": {
+      "identifier": "lothlorien:phial_light"
+    },
+    "components": {
+      "minecraft:geometry": "minecraft:geometry.full_block",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "lothlorien:phial_light",
+          "render_method": "blend"
+        }
+      },
+      "minecraft:collision_box": false,
+      "minecraft:selection_box": false,
+      "minecraft:replaceable": {},
+      "minecraft:light_emission": 14,
+      "minecraft:light_dampening": 0,
+      "minecraft:flammable": false,
+      "minecraft:redstone_conductivity": {
+        "redstone_conductor": false
+      },
+      "minecraft:movable": {
+        "movement_type": "popped"
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 0
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 0
+      },
+      "minecraft:loot": "loot_tables/blocks/phial_light.json",
+      "minecraft:liquid_detection": {
+        "detection_rules": [
+          {
+            "liquid_type": "water",
+            "can_contain_liquid": false,
+            "on_liquid_touches": "broken"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import * as T from "../lothlorien_bp/scripts/trade_rules.js";
+import { FINAL_GIFTS, ARROW, ARROW_ID } from "../lothlorien_bp/scripts/gift_rules.js";
 import { PROFESSIONS } from "../lothlorien_bp/scripts/elf_rules.js";
 import { REQUESTS } from "../lothlorien_bp/scripts/renown_rules.js";
 import { buildTables, patchElf } from "../tools/build_trades.mjs";
@@ -27,15 +28,16 @@ test("band/rank keys include refusal, Uneasy stock and clamped ranks", () => {
   assert.deepEqual([T.SWAP_RADIUS, T.SWAP_INTERVAL_TICKS, T.TRADE_PASS_TICKS, T.PASS_REPEAT_TICKS, T.PIN_TICKS], [6, 10, 200, 10, 600]);
 });
 
-test("rank stock and fractional prices match the agreed design; M5 remains empty", () => {
-  const stockCounts = { gardener: [5, 7, 8, 8], healer: [1, 2, 3, 4], woodwright: [1, 2, 2, 2], lamplighter: [2, 3, 4, 4] };
+test("rank stock and fractional prices include final gifts only for Friend Elf-friends", () => {
+  const stockCounts = { gardener: [5, 7, 8, 8], healer: [1, 2, 3, 4], woodwright: [1, 2, 3, 3], lamplighter: [2, 3, 4, 4] };
   for (const p of T.TRADERS) {
-    assert.deepEqual(T.FINAL_TRADES[p], []);
+    assert.deepEqual(T.FINAL_TRADES[p], [{ wants: [{ id: T.CURRENCY, count: 32 }], gives: [{ id: FINAL_GIFTS[p].item, count: 1 }] }]);
     for (const band of ["guest", "friend"]) for (let rank = 0; rank <= 3; rank++) {
       const offers = T.offersFor(p, `${band}_${rank}`), sells = offers.filter((o) => o.wants[0].id === T.CURRENCY);
-      assert.equal(sells.length, stockCounts[p][rank], `${p} ${band} ${rank}`);
+      const final = band === "friend" && rank === 3;
+      assert.equal(sells.length, stockCounts[p][rank] + Number(final), `${p} ${band} ${rank}`);
       assert.equal(offers.length, sells.length + T.BUYS[p].length);
-      assert.deepEqual(sells.map((o) => o.gives[0].id), T.SELLS[p].filter((s) => s.rank <= rank).map((s) => s.id));
+      assert.deepEqual(sells.map((o) => o.gives[0].id), [...T.SELLS[p].filter((s) => s.rank <= rank).map((s) => s.id), ...(final ? [FINAL_GIFTS[p].item] : [])]);
     }
     assert.equal(T.offersFor(p, "uneasy").length, stockCounts[p][0] + T.BUYS[p].length);
   }
@@ -46,7 +48,7 @@ test("rank stock and fractional prices match the agreed design; M5 remains empty
   for (const key of T.TABLE_KEYS) {
     assert.equal(T.offersFor("healer", key).some((o) => o.gives[0].id === "lothlorien:miruvor"), key.endsWith("_3"));
   }
-  assert.ok(!T.SELLS.woodwright.some((s) => s.rank === 2));
+  assert.deepEqual(T.SELLS.woodwright.find((s) => s.rank === 2), { id: ARROW_ID, rank: 2, price: { guest: [1, 8], friend: [1, 10] } });
   assert.ok(!T.SELLS.lamplighter.some((s) => s.id === "lothlorien:bottle_of_fireflies"));
   assert.deepEqual(T.offersFor("loremaster", "friend_3"), []);
   assert.deepEqual(T.offersFor("gardener", "none"), []);
@@ -81,10 +83,23 @@ test("requests never ask for the same shop's stock; trade ids exist", () => {
     assert.ok(!T.SELLS[request.profession].some((sell) => sell.id === id), `${request.id} asks for its own ${id}`);
   }
   const vanilla = new Set(text("../../../.claude/skills/bedrock-lookup/reference/current_catalog_ids.txt").split(/\s+/));
-  for (const entry of [...Object.values(T.SELLS).flat(), ...Object.values(T.BUYS).flat(), { id: T.CURRENCY }]) {
+  for (const entry of [...Object.values(T.SELLS).flat(), ...Object.values(T.BUYS).flat(), ...Object.values(FINAL_GIFTS).map((gift) => ({ id: gift.item })), { id: T.CURRENCY }]) {
     if (entry.id.startsWith("minecraft:")) assert.ok(vanilla.has(entry.id), entry.id);
     else assert.ok(existsSync(new URL(`${bp}items/${entry.id.split(":")[1]}.json`, import.meta.url)), entry.id);
     if (entry.potion) assert.ok(["healing", "regeneration", "slow_falling"].includes(entry.potion));
+  }
+});
+
+test("recoverable arrows also occur in Great Mallorn loot and have no crafting recipe", () => {
+  const loot = json(`${bp}loot_tables/chests/mallorn_flet.json`);
+  assert.deepEqual(loot.pools.flatMap((pool) => pool.entries).filter((entry) => entry.name === ARROW_ID), [{
+    type: "item", name: ARROW_ID, weight: ARROW.lootWeight,
+    functions: [{ function: "set_count", count: ARROW.lootCount }],
+  }]);
+  for (const file of readdirSync(new URL(`${bp}recipes/`, import.meta.url)).filter((name) => name.endsWith(".json"))) {
+    const recipe = json(`${bp}recipes/${file}`);
+    const result = Object.values(recipe).find((value) => value?.result)?.result;
+    assert.ok((typeof result === "string" ? result : result?.item) !== ARROW_ID, file);
   }
 });
 

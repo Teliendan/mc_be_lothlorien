@@ -1,5 +1,15 @@
 # Block materials
 
+M5 phial helper (2026-10-11): `phial_light` is a temporary airlike utility,
+functionally analogous to `minecraft:light_block`. Its ledger uses the existing
+redstone-device destruction profile solely for zero mining/blast resistance, no preferred
+tool and nonflammability; this is a deliberate utility choice, not a claim of
+vanilla light-block mining parity. Empty loot prevents collection. It emits 14,
+blocks no movement or sight selection, dampens no light, conducts no redstone
+and pops without drops under piston movement so it cannot leave an untracked
+relocated helper. Source/mock reviewed; native light, fluid and piston behavior
+needs Bedrock1.26.52 acceptance. See [M5_PHIAL_NOTES.md](M5_PHIAL_NOTES.md).
+
 2026-10-09, Bedrock 1.26.52. Policy: `lothlorien_bp/block_materials.json`.
 Shared standard: `C:/mcmods/.claude/skills/bedrock-blocks/references/materials.md`.
 All choices are reference-based; new engine timing/fire/explosion tests are pending.
