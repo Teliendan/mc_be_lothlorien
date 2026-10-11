@@ -122,7 +122,31 @@
         "priority": 6
       },
       "minecraft:pushable_by_entity": {},
-      "minecraft:pushable_by_block": {}
+      "minecraft:pushable_by_block": {},
+      "minecraft:behavior.tempt": {
+        "priority": 2,
+        "speed_multiplier": 1.0,
+        "items": [
+          "minecraft:wheat",
+          "lothlorien:western_corn_grain"
+        ],
+        "can_get_scared": false,
+        "can_tempt_vertically": true,
+        "within_radius": 12
+      },
+      "minecraft:healable": {
+        "force_use": true,
+        "items": [
+          {
+            "item": "minecraft:wheat",
+            "heal_amount": 2
+          },
+          {
+            "item": "lothlorien:western_corn_grain",
+            "heal_amount": 2
+          }
+        ]
+      }
     },
     "events": {
       "minecraft:entity_spawned": {
@@ -146,6 +170,18 @@
             }
           }
         ]
+      },
+      "lothlorien:fed": {
+        "add": {
+          "component_groups": [
+            "lothlorien:kept"
+          ]
+        }
+      }
+    },
+    "component_groups": {
+      "lothlorien:kept": {
+        "minecraft:persistent": {}
       }
     }
   }

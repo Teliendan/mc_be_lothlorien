@@ -11,6 +11,7 @@ import { system, world } from "@minecraft/server";
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { repeatedUse } from "./use_guard.js";
+import { eatHeldFood, healAnimal, isInjured } from "./animal_food.js";
 import { noteDeed } from "./deeds.js";
 import { addBeaconSource, consumeAcorn, stand } from "./white_deer.js";
 import { ACORN_ID, BEACON_ID } from "./white_deer_rules.js";
@@ -44,11 +45,20 @@ const moveBeacon = (beacon, to) => beacon.teleport({ x: to.x, y: to.y, z: to.z }
 
 function offer(player, squirrel) {
   if (sessions.has(squirrel.id)) return;
+  // A lead wins over errands. It is still possible to feed a squirrel on a lead.
+  if (squirrel.getComponent("minecraft:leashable")?.isLeashed) {
+    if (eatHeldFood(player, squirrel, ACORN_ID)) squirrel.triggerEvent("lothlorien:fed");
+    return;
+  }
   const band = bandOf(harmonyOf(player).harmony);
   const left = cooldownLeft(world.getAbsoluteTime(), squirrel.getDynamicProperty(READY_AT));
   const refusal = offerRefusal({ band, cooldownLeft: left });
   if (refusal === "restless") return say(player, message("squirrel.restless"));
   if (refusal === "untrusted") return say(player, message("squirrel.untrusted"));
+  if (isInjured(squirrel)) {
+    eatHeldFood(player, squirrel, ACORN_ID);
+    return;
+  }
   if (refusal === "full") return say(player, message("squirrel.full"));
   const dimension = squirrel.dimension;
   const away = pickAway(squirrel.location, (x, z, y) => stand(dimension, x, z, y), Math.random() * 2 * Math.PI);
@@ -58,6 +68,7 @@ function offer(player, squirrel) {
     beaconId = dimension.spawnEntity(BEACON_ID, { x: away.x, y: away.y, z: away.z }).id;
     squirrel.triggerEvent("lothlorien:guide_start");
     consumeAcorn(player); // only now: the errand really starts
+    healAnimal(squirrel);
     sessions.set(squirrel.id, { playerId: player.id, beaconId, away, born: system.currentTick, phase: "away", phaseStart: system.currentTick, digFor: 0 });
     say(player, message("squirrel.accept"));
     noteDeed(player, "squirrel"); // Renown lesson "gifts"
@@ -98,6 +109,7 @@ function tickSession(squirrelId, s) {
   const squirrel = world.getEntity(squirrelId);
   const player = world.getPlayers().find((p) => p.id === s.playerId);
   if (!squirrel?.isValid || !player?.isValid || squirrel.dimension.id !== player.dimension.id) return end(squirrelId, squirrel, undefined, undefined);
+  if (squirrel.getComponent("minecraft:leashable")?.isLeashed) return end(squirrelId, squirrel);
   if (squirrel.getProperty("lothlorien:alarmed")) return end(squirrelId, squirrel, player, message("squirrel.alarmed"));
   const now = system.currentTick;
   let beacon = world.getEntity(s.beaconId);
@@ -136,13 +148,20 @@ function tickSessions() {
   }
 }
 
-export function startSquirrels() {
+export function startSquirrels(depthAt = () => ({ level: 1 })) {
   addBeaconSource(() => [...sessions.values()].map((s) => s.beaconId));
   system.runInterval(tickSessions, SQUIRREL_TICKS);
   world.afterEvents.playerInteractWithEntity.subscribe(({ player, target, beforeItemStack, itemStack }) => {
     try {
       if (target.typeId !== SQUIRREL_ID || (beforeItemStack ?? itemStack)?.typeId !== ACORN_ID) return;
-      if (target.getProperty("lothlorien:alarmed") || repeatedUse(player, "squirrel")) return;
+      if (repeatedUse(player, "squirrel")) return;
+      const depth = depthAt(target.dimension, target.location);
+      if (depth.level === 0 && depth.complete !== false) {
+        end(target.id, target);
+        if (eatHeldFood(player, target, ACORN_ID)) target.triggerEvent("lothlorien:fed");
+        return;
+      }
+      if (target.getProperty("lothlorien:alarmed")) return;
       offer(player, target);
     } catch {
       // squirrel or player gone

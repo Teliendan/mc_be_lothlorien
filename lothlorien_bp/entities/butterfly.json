@@ -102,7 +102,177 @@
         "priority": 6
       },
       "minecraft:pushable_by_entity": {},
-      "minecraft:pushable_by_block": {}
+      "minecraft:pushable_by_block": {},
+      "minecraft:leashable": {},
+      "minecraft:behavior.tempt": {
+        "priority": 2,
+        "speed_multiplier": 1.0,
+        "items": [
+          "minecraft:dandelion",
+          "minecraft:poppy",
+          "minecraft:blue_orchid",
+          "minecraft:allium",
+          "minecraft:azure_bluet",
+          "minecraft:red_tulip",
+          "minecraft:orange_tulip",
+          "minecraft:white_tulip",
+          "minecraft:pink_tulip",
+          "minecraft:oxeye_daisy",
+          "minecraft:cornflower",
+          "minecraft:lily_of_the_valley",
+          "minecraft:wither_rose",
+          "minecraft:sunflower",
+          "minecraft:lilac",
+          "minecraft:rose_bush",
+          "minecraft:peony",
+          "minecraft:torchflower",
+          "minecraft:pitcher_plant",
+          "minecraft:pink_petals",
+          "minecraft:open_eyeblossom",
+          "minecraft:closed_eyeblossom",
+          "minecraft:wildflowers",
+          "minecraft:cactus_flower",
+          "minecraft:chorus_flower",
+          "minecraft:spore_blossom",
+          "minecraft:golden_dandelion",
+          "lothlorien:elanor",
+          "lothlorien:niphredil",
+          "lothlorien:mallorn_blossom",
+          "lothlorien:nectar_bloom"
+        ],
+        "can_get_scared": false,
+        "can_tempt_vertically": true,
+        "within_radius": 12
+      },
+      "minecraft:healable": {
+        "force_use": true,
+        "items": [
+          {
+            "item": "minecraft:dandelion",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:poppy",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:blue_orchid",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:allium",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:azure_bluet",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:red_tulip",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:orange_tulip",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:white_tulip",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:pink_tulip",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:oxeye_daisy",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:cornflower",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:lily_of_the_valley",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:wither_rose",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:sunflower",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:lilac",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:rose_bush",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:peony",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:torchflower",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:pitcher_plant",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:pink_petals",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:open_eyeblossom",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:closed_eyeblossom",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:wildflowers",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:cactus_flower",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:chorus_flower",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:spore_blossom",
+            "heal_amount": 2
+          },
+          {
+            "item": "minecraft:golden_dandelion",
+            "heal_amount": 2
+          },
+          {
+            "item": "lothlorien:elanor",
+            "heal_amount": 2
+          },
+          {
+            "item": "lothlorien:niphredil",
+            "heal_amount": 2
+          },
+          {
+            "item": "lothlorien:mallorn_blossom",
+            "heal_amount": 2
+          },
+          {
+            "item": "lothlorien:nectar_bloom",
+            "heal_amount": 2
+          }
+        ]
+      }
     },
     "events": {
       "minecraft:entity_spawned": {
@@ -156,6 +326,18 @@
             }
           }
         ]
+      },
+      "lothlorien:fed": {
+        "add": {
+          "component_groups": [
+            "lothlorien:kept"
+          ]
+        }
+      }
+    },
+    "component_groups": {
+      "lothlorien:kept": {
+        "minecraft:persistent": {}
       }
     }
   }

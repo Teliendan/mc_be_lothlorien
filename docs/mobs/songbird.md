@@ -1,5 +1,8 @@
 # Songbird (`lothlorien:songbird`) - design sheet
 
+2026-10-11 care update (source/offline evidence; Bedrock 1.26.52; owner accepted as done; no new game test results supplied): Wheat and Western Corn grain lure vertically and feed/heal the bird by 2 HP. Feeding keeps it persistent. Existing lead support remains; no breeding.
+See [Bringing wildlife home](BRINGING_HOME.md) for current policy and acceptance checks.
+
 Archetype: ambient flyer that perches. Analogue: parrot (flight, `random_fly` landing on trees, `follow_mob`), pool
 `ambient` like the bat. Phase 13, built 2026-10-02, **static checks only - nothing is tested in game** (every "Tested" = no).
 Files: BP `entities/songbird.json`, `spawn_rules/songbird.json`, `loot_tables/entities/songbird.json`. RP

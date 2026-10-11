@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import "./support_motion.mjs";
 import "./rope_lifecycle.mjs";
+import "./animal_home.mjs";
 import "./stair_water.mjs";
 import "./leaf_harvest.mjs";
 import "./golden_fern_harvest.mjs";
@@ -36,6 +37,9 @@ function test(name, fn) {
 const halfPlane = (border) => (dx) => (dx < border ? L : FOREST);
 
 test("outside the biome", () => assert.equal(depth(() => FOREST).level, 0));
+test("an unreadable animal/player position is unknown, not confirmed outside", () => {
+  assert.deepEqual(depth(() => undefined), { level: 0, distance: 0, complete: false });
+});
 test("border 10 blocks away is edge", () => assert.equal(depth(halfPlane(10)).level, 1));
 test("border 30 blocks away is inner", () => assert.equal(depth(halfPlane(30)).level, 2));
 test("no border within the rings is heart", () => {
@@ -1182,7 +1186,7 @@ test("Phase 15: swan spawn rule takes Lothlorien or river water, and the natural
   assert.deepEqual(c["minecraft:biome_filter"].any_of.map((t) => t.value).sort(), ["lothlorien", "river"]);
   assert.ok("minecraft:spawns_underwater" in c && "minecraft:spawns_on_surface" in c);
   assert.equal(c["minecraft:herd"].event, "lothlorien:spawn_natural");
-  assert.equal(swanEntity().events["lothlorien:spawn_natural"].set_property["lothlorien:natural"], true);
+  assert.equal(swanEntity().events["lothlorien:spawn_natural"].sequence[0].set_property["lothlorien:natural"], true);
   assert.ok("lothlorien:natural" in swanEntity().description.properties);
 });
 test("Phase 15: swan and squirrel read the Harmony band like the deer (same states, radii, alarm; in WARY_TYPES)", () => {

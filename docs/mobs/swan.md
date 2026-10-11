@@ -1,5 +1,8 @@
 # Swan (`lothlorien:swan`) - design sheet
 
+2026-10-11 care update (source/offline evidence; Bedrock 1.26.52; owner accepted as done; no new game test results supplied): Wheat and Western Corn grain lure in calm/Friend states and breed adults; there is no food healing because swans breed. Cygnets follow parents, grow in 20 minutes and grow faster with grain. Born cygnets stay persistent. Natural spawns include 10% cygnets and use the existing near-Lothlorien river check. Old loaded adults acquire breeding groups; babies retain their age. Cygnets use the adult model scaled to 45%.
+See [Bringing wildlife home](BRINGING_HOME.md) for current policy and acceptance checks.
+
 Archetype: calm water bird on the rivers and pools. Analogue: chicken (floats on water, walks ashore) for movement,
 the deer for Harmony wariness. Phase 15, built 2026-10-02, **tried in game 2026-10-02: floats on the surface (chicken setup), still dips up to half a neck deep now and then; owner decided to leave it** (Movement row has the failed attempts). Owner brief: a white swan (no gold or silver on the animals), keeps its distance from players
 by Harmony band like the deer, "makes the forest more alive and ambient".

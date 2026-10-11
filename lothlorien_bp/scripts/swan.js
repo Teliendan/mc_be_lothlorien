@@ -19,6 +19,19 @@ function judgeNaturalSpawn(swan, biome) {
 
 // biome = { id, at(dimension, x, z) -> surface biome id or undefined } (main.js supplies it).
 export function startSwans(biome) {
+  // Existing adult swans predate the lifecycle groups. Babies keep their age on reload.
+  const migrateAdult = entity => {
+    try {
+      if (entity.typeId === SWAN_ID && !entity.getComponent("minecraft:is_baby"))
+        entity.triggerEvent("minecraft:ageable_grow_up");
+    } catch { /* swan unloaded */ }
+  };
+  world.afterEvents.entityLoad.subscribe(({ entity }) => migrateAdult(entity));
+  for (const id of ["overworld", "nether", "the_end"]) {
+    try {
+      for (const swan of world.getDimension(id).getEntities({ type: SWAN_ID })) migrateAdult(swan);
+    } catch { /* dimension unavailable */ }
+  }
   world.afterEvents.entitySpawn.subscribe(({ entity, cause }) => {
     try {
       if (cause === EntityInitializationCause.Loaded || entity.typeId !== SWAN_ID) return;

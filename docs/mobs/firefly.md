@@ -1,5 +1,8 @@
 # Firefly (`lothlorien:firefly`) - design sheet
 
+2026-10-11 care update (source/offline evidence; Bedrock 1.26.52; owner accepted as done; no new game test results supplied): Bottle-only care: use a full Bottle of Fireflies against a block face with adjacent air to release one persistent firefly and receive an empty bottle. Wild fireflies retain normal despawn. Catch and release share a debounce and recheck the live hand. No lead, lure, feeding, healing or breeding. Existing catching is now scripted rather than the old native transform described below.
+See [Bringing wildlife home](BRINGING_HOME.md) for current policy and acceptance checks.
+
 Archetype: tiny hovering night flyer (analogue: bee `navigation.hover` / `random_hover`). Phase 14, built 2026-10-02.
 **In game (1.26.52, Vibrant Visuals): glow, bottle icon, night spawning and catching with a glass bottle all work (owner, 2026-10-02).**
 Files: BP `entities/firefly.json`, `spawn_rules/firefly.json`, `items/bottle_of_fireflies.json`. RP `entity/firefly.entity.json`,

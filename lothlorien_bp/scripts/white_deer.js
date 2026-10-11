@@ -14,6 +14,7 @@ import { EntityInitializationCause, EquipmentSlot, GameMode, ItemStack, system, 
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { repeatedUse } from "./use_guard.js";
+import { eatHeldFood, healAnimal, isInjured } from "./animal_food.js";
 import {
   ACORN_ID, BEACON_ID, GUIDE_TICKS, WHITE_DEER_ID, canBeGuided, hopStatus, horizontal, keepNaturalSpawn,
   newHop, offerRefusal, phase, pickWaypoint, trackProgress,
@@ -178,6 +179,11 @@ function offer(player, deer) {
     say(player, message("deer.restless"));
     return;
   }
+  // A completed gift never prevents healing; feeding does not reset that gift.
+  if (isInjured(deer)) {
+    eatHeldFood(player, deer, ACORN_ID);
+    return;
+  }
   if (deer.getDynamicProperty(GIFTED)) {
     say(player, message("deer.gifted"));
     return;
@@ -208,6 +214,13 @@ function offer(player, deer) {
 function lead(player, deer, spot) {
   let beaconId;
   try {
+    // Finding a gift spot can span ticks. The animal may have been led home meanwhile.
+    const depth = depthAt(deer.dimension, deer.location);
+    if (depth.level === 0 && depth.complete !== false) {
+      if (eatHeldFood(player, deer, ACORN_ID)) deer.triggerEvent("lothlorien:become_tame");
+      return;
+    }
+    if (player.getComponent("equippable")?.getEquipmentSlot(EquipmentSlot.Mainhand)?.typeId !== ACORN_ID) return;
     if (isLeashed(deer)) {
       say(player, message("deer.leashed"));
       return;
@@ -224,6 +237,7 @@ function lead(player, deer, spot) {
     deer.triggerEvent("lothlorien:become_tame"); // fed: persistent, and after guiding it comes back as state_tame
     deer.triggerEvent("lothlorien:guide_start");
     consumeAcorn(player); // only now: guidance really starts
+    healAnimal(deer);
     sessions.set(deer.id, {
       playerId: player.id,
       beaconId,
@@ -394,7 +408,20 @@ export function startWhiteDeer(depth, biomeInfo) {
   world.afterEvents.playerInteractWithEntity.subscribe(({ player, target, beforeItemStack, itemStack }) => {
     try {
       if (target.typeId !== WHITE_DEER_ID || (beforeItemStack ?? itemStack)?.typeId !== ACORN_ID) return;
-      if (target.getProperty("lothlorien:alarmed") || repeatedUse(player, "white_deer")) return;
+      if (repeatedUse(player, "white_deer")) return;
+      const depth = depthAt(target.dimension, target.location);
+      if (depth.level === 0 && depth.complete !== false) {
+        end(target.id, target);
+        if (eatHeldFood(player, target, ACORN_ID)) {
+          target.triggerEvent("lothlorien:become_tame");
+          system.run(() => {
+            if (target.isValid && !target.getProperty("lothlorien:alarmed"))
+              target.triggerEvent(`lothlorien:set_${target.getProperty("lothlorien:wariness")}`);
+          });
+        }
+        return;
+      }
+      if (target.getProperty("lothlorien:alarmed")) return;
       offer(player, target);
     } catch {
       // entity gone

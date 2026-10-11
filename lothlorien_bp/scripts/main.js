@@ -8,6 +8,7 @@ import "./bonemeal.js";
 import "./crop.js";
 import "./nectar.js";
 import "./fireflies.js";
+import "./animal_food.js";
 import "./dew.js";
 import "./lembas.js";
 import { startAntlerSupport } from "./antler.js";
@@ -219,7 +220,7 @@ world.afterEvents.worldLoad.subscribe(() => {
   startElvenWardens(depthAt);
   startElves({ recordFight: recordElfFight });
   startSwans({ id: BIOME_ID, at: (dimension, x, z) => surfaceSampler(dimension, { x, z })(0, 0) });
-  startSquirrels();
+  startSquirrels(depthAt);
   startUnicorns();
   startRenown(inBiome);
   startLoremaster();

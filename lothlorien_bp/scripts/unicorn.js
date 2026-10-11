@@ -7,6 +7,7 @@ import { EquipmentSlot, GameMode, system, world } from "@minecraft/server";
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { repeatedUse } from "./use_guard.js";
+import { eatHeldFood, healAnimal, isInjured } from "./animal_food.js";
 import { setEventFor } from "./deer_rules.js";
 import { ELANOR_ID, UNICORN_ID, mayRide, nextTrust, offerRefusal, ticksSince } from "./unicorn_rules.js";
 
@@ -74,6 +75,7 @@ function offer(player, unicorn) {
   if (refusal) return say(player, REFUSALS[refusal]);
   const { trust, bonded } = nextTrust(unicorn.getProperty("lothlorien:trust"));
   consumeElanor(player);
+  healAnimal(unicorn);
   unicorn.setProperty("lothlorien:trust", trust);
   unicorn.setDynamicProperty(LAST_OFFER, now);
   say(player, MESSAGES[trust - 1]);
@@ -90,9 +92,18 @@ function offer(player, unicorn) {
 export function startUnicorns() {
   // Only the owner mounts a bonded unicorn: the interaction is cancelled for everyone else (before the engine mounts).
   world.beforeEvents.playerInteractWithEntity.subscribe((event) => {
-    const { player, target } = event;
+    const { player, target, itemStack } = event;
     if (target.typeId !== UNICORN_ID || !target.getProperty("lothlorien:tame")) return;
-    if (mayRide(target.getDynamicProperty(OWNER), player.id)) return;
+    if (mayRide(target.getDynamicProperty(OWNER), player.id)) {
+      if (itemStack?.typeId === ELANOR_ID && isInjured(target)) {
+        event.cancel = true;
+        if (repeatedUse(player, "unicorn")) return;
+        system.run(() => {
+          if (target.isValid && player.isValid && isInjured(target)) eatHeldFood(player, target, ELANOR_ID);
+        });
+      }
+      return;
+    }
     event.cancel = true;
     system.run(() => say(player, message("unicorn.other_owner")));
   });

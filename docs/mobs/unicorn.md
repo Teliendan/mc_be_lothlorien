@@ -1,5 +1,8 @@
 # Unicorn (`lothlorien:unicorn`) - design sheet
 
+2026-10-11 care update (source/offline evidence; Bedrock 1.26.52; owner accepted as done; no new game test results supplied): Accepted Elanor trust offerings restore 2 HP. A bonded owner can heal an injured unicorn with Elanor instead of mounting on that use. Full-health mounting, Friend-only bonding, owner restriction, no lead and no breeding remain unchanged.
+See [Bringing wildlife home](BRINGING_HOME.md) for current policy and acceptance checks.
+
 Archetype: rare, timid horse that only a Friend of Lothlorien can approach and bond with (Phase 15). Built 2026-10-02 from the
 vanilla horse (body, walk and look animations) and the deer's Harmony wariness. **Tried in game 2026-10-02 and accepted by the owner**: spawning, taming, riding without a saddle, one-block steps
 while ridden and the head turn all work (flight distances and spawn frequency not specifically measured; "Tested" column left as written). Files: `tools/make_unicorn.py` writes BP `entities/unicorn.json` and the RP entity,

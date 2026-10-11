@@ -1,0 +1,36 @@
+// Food lists for wildlife interactions (Bedrock 1.26.52, owner decisions 2026-10-11).
+export const GRAIN_ITEMS = ["minecraft:wheat", "lothlorien:western_corn_grain"];
+export const FLOWER_ITEMS = [
+  "minecraft:dandelion",
+  "minecraft:poppy",
+  "minecraft:blue_orchid",
+  "minecraft:allium",
+  "minecraft:azure_bluet",
+  "minecraft:red_tulip",
+  "minecraft:orange_tulip",
+  "minecraft:white_tulip",
+  "minecraft:pink_tulip",
+  "minecraft:oxeye_daisy",
+  "minecraft:cornflower",
+  "minecraft:lily_of_the_valley",
+  "minecraft:wither_rose",
+  "minecraft:sunflower",
+  "minecraft:lilac",
+  "minecraft:rose_bush",
+  "minecraft:peony",
+  "minecraft:torchflower",
+  "minecraft:pitcher_plant",
+  "minecraft:pink_petals",
+  "minecraft:open_eyeblossom",
+  "minecraft:closed_eyeblossom",
+  "minecraft:wildflowers",
+  "minecraft:cactus_flower",
+  "minecraft:chorus_flower",
+  "minecraft:spore_blossom",
+  "minecraft:golden_dandelion",
+  "lothlorien:elanor",
+  "lothlorien:niphredil",
+  "lothlorien:mallorn_blossom",
+  "lothlorien:nectar_bloom"
+];
+export const FOOD_HEALTH = 2;

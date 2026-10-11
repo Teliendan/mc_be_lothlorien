@@ -1,5 +1,8 @@
 # White deer (`lothlorien:white_deer`) - design sheet
 
+2026-10-11 care update (source/offline evidence; Bedrock 1.26.52; owner accepted as done; no new game test results supplied): Outside Lothlorien, acorns are ordinary food, restore 2 HP and keep the deer persistent without starting guidance or spending its lifetime gift. Inside, existing Friend/lead rules remain; an injured deer can be healed even after its gift. Existing lead and lure support is unchanged.
+See [Bringing wildlife home](BRINGING_HOME.md) for current policy and acceptance checks.
+
 Archetype: rare, shy loner and guide (Phase 12), always an antlered **white hart**. Built 2026-09-30 from the deer (`docs/mobs/deer.md`);
 owner decisions of 2026-09-30 (second round: leash, always antlered, sure antler, a heavier Harmony cost, depth-dependent spawns; third round: the Great Mallorn nut gift
 replaces leading to flet giants, markers removed) built the same day. **Static checks only - nothing below is tested in game** ("Tested" = `no` until a game run

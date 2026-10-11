@@ -38,6 +38,7 @@ function levelFor(borderDistance) {
 export function estimateDepth(sample, biomeId, transparent) {
   const outside = { level: 0, distance: 0, complete: true };
   const here = sample(0, 0);
+  if (here === undefined) return { ...outside, complete: false };
   if (here !== biomeId && !transparent.has(here)) return outside;
   // Standing in a river counts only if Lothlorien is seen before the first foreign ring.
   let sawBiome = here === biomeId;

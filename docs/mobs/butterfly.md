@@ -1,5 +1,8 @@
 # Butterfly (`lothlorien:butterfly`) - design sheet
 
+2026-10-11 care update (source/offline evidence; Bedrock 1.26.52; owner accepted as done; no new game test results supplied): Lead support added. Vanilla flowers and Lothlorien Elanor, Niphredil, Mallorn blossom and nectar bloom lure vertically and feed/heal by 2 HP. Feeding keeps it persistent; no breeding.
+See [Bringing wildlife home](BRINGING_HOME.md) for current policy and acceptance checks.
+
 Archetype: tiny hovering day flyer (firefly's `random_hover`, see `firefly.md`). Phase 14c, built 2026-10-02. **Not yet tested in game.**
 Files: BP `entities/butterfly.json`, `spawn_rules/butterfly.json`. RP `entity/butterfly.entity.json`, `models/entity/butterfly.geo.json`,
 `animations/butterfly.animation.json`, `render_controllers/butterfly.render_controllers.json`, `textures/entity/butterfly/butterfly_<colour>.png`, `.lang`.

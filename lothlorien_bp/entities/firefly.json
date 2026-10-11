@@ -118,6 +118,20 @@
       },
       "minecraft:pushable_by_entity": {},
       "minecraft:pushable_by_block": {}
+    },
+    "component_groups": {
+      "lothlorien:released": {
+        "minecraft:persistent": {}
+      }
+    },
+    "events": {
+      "lothlorien:released": {
+        "add": {
+          "component_groups": [
+            "lothlorien:released"
+          ]
+        }
+      }
     }
   }
 }

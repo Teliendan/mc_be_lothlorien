@@ -523,6 +523,9 @@
           "always_look_for_leader": true,
           "search_cooldown": 5
         }
+      },
+      "lothlorien:kept": {
+        "minecraft:persistent": {}
       }
     },
     "components": {
@@ -632,7 +635,8 @@
         "priority": 8
       },
       "minecraft:pushable_by_entity": {},
-      "minecraft:pushable_by_block": {}
+      "minecraft:pushable_by_block": {},
+      "minecraft:leashable": {}
     },
     "events": {
       "lothlorien:set_calm": {
@@ -874,6 +878,13 @@
         "remove": {
           "component_groups": [
             "lothlorien:state_guiding"
+          ]
+        }
+      },
+      "lothlorien:fed": {
+        "add": {
+          "component_groups": [
+            "lothlorien:kept"
           ]
         }
       }

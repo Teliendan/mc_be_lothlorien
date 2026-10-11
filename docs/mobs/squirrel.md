@@ -1,5 +1,8 @@
 # Ground squirrel (`lothlorien:squirrel`) - design sheet
 
+2026-10-11 care update (source/offline evidence; Bedrock 1.26.52; owner accepted as done; no new game test results supplied): Lead support added; a lead interrupts an errand. Outside Lothlorien, acorns are ordinary food, restore 2 HP and keep the squirrel persistent, without starting a gift or changing its cooldown. Inside, existing Friend/gift rules remain; injured Friends can feed it for healing before an errand.
+See [Bringing wildlife home](BRINGING_HOME.md) for current policy and acceptance checks.
+
 Archetype: small shy ground animal with a gift errand. Analogue: rabbit/chicken for the body, the white deer for the errand
 (guide beacon, `follow_target_leader`). Phase 15, built 2026-10-02, **tried in game by the owner the same day: works very well** (spawn, wariness, Friend errand and gifts); sounds are placeholders. Owner brief: brown (no gold or silver); give it a nut and, **as a Friend of Lothlorien
 only**, it runs off and brings back a small gift; the gifts make leaf litter and ground petals renewable, and sometimes
