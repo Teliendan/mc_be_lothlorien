@@ -26,6 +26,7 @@ import { startDeer } from "./deer.js";
 import { startWhiteDeer } from "./white_deer.js";
 import { startElvenWardens } from "./elven_warden.js";
 import { elfDebug, startElves } from "./elf.js";
+import { startHealers } from "./healer.js";
 import { startSwans } from "./swan.js";
 import { startSquirrels } from "./squirrel.js";
 import { startUnicorns } from "./unicorn.js";
@@ -223,6 +224,7 @@ world.afterEvents.worldLoad.subscribe(() => {
   });
   startElvenWardens(depthAt);
   startElves({ recordFight: recordElfFight });
+  startHealers({ bandOf: (player) => bandOf(harmonyOf(player).harmony) });
   startSwans({ id: BIOME_ID, at: (dimension, x, z) => surfaceSampler(dimension, { x, z })(0, 0) });
   startSquirrels(depthAt);
   startUnicorns();

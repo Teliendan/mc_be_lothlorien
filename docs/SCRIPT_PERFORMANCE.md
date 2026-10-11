@@ -45,3 +45,15 @@ are deduplicated across players; each has one property read and no swap event
 unless its chosen key changes. Pins/passes are bounded and cleaned on expiry or
 leave. Mock tests assert query cadence and no repeat events for unchanged tables;
 this is callback/work-count evidence, not an in-game CPU measurement.
+
+M4 healers (`Implement M4 healer blessings for elves and Friends`, 2026-10-11):
+spawn/load/profession events maintain a healer index with one startup reconciliation
+(one civilian-elf query in each dimension). A single 20-tick timer runs only while
+healers are loaded, with two radius-eight native patient queries per healer per
+check. Players are read once per pulse; Harmony is lazy and cached only within
+that pulse, so a band change takes effect at the next check. Only injured,
+in-range patients needing regeneration incur sight rays/effect writes. No
+per-tick timer, recurring whole-dimension discovery, persistent helper or forced
+chunk loading. Mock tests cover duplicate registration, death before deferred
+discovery, unload/reload, invalid handles and empty-world sleep; engine cost
+and visuals still need the owner's M4 test.

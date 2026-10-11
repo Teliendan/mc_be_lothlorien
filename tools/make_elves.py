@@ -16,6 +16,7 @@ Not seen in game yet. Box-UV side faces: east (+x) has the front on its right, w
 """
 import json
 import random
+import subprocess
 import sys
 from pathlib import Path
 from PIL import Image
@@ -1021,11 +1022,28 @@ BUILDERS = {"gardener": build_gardener, "healer": build_healer, "woodwright": bu
 
 # ---------------------------------------------------------------- animations, render controller, client entity
 def animations():
+    # Keep M4 pose values with the runtime healing rules; no duplicate tunables in this generator.
+    blessing = json.loads(subprocess.check_output([
+        "node", "--input-type=module", "-e",
+        "import { BLESSING } from './lothlorien_bp/scripts/healer_rules.js'; console.log(JSON.stringify(BLESSING));",
+    ], cwd=MOD, text=True))
+    raise_arm = f"math.sin(math.clamp(query.anim_time / {blessing['seconds']}, 0.0, 1.0) * 180.0)"
     p = "animation.lothlorien.elf"
     mv = "math.cos(query.modified_distance_moved * 38.17) * query.modified_move_speed"
     return {
         "format_version": "1.8.0",
         "animations": {
+            # Procedural one-shot pose, layered after the native humanoid walk (same -this recipe as vanilla evoker).
+            blessing["animation"]: {
+                "loop": False,
+                "animation_length": blessing["seconds"],
+                "bones": {
+                    "rightArm": {"rotation": [f"-{raise_arm} * {blessing['armDegrees']} - this", "-this",
+                                               f"{raise_arm} * {blessing['spreadDegrees']} - this"]},
+                    "leftArm": {"rotation": [f"-{raise_arm} * {blessing['armDegrees']} - this", "-this",
+                                              f"-{raise_arm} * {blessing['spreadDegrees']} - this"]},
+                },
+            },
             # skirt / coat tails, long hair and the lantern trail and swing with the stride
             f"{p}.walk_sway": {
                 "loop": True,
@@ -1079,6 +1097,7 @@ def client_entity(eggs):
                 "move": "animation.humanoid.move",
                 "walk_sway": "animation.lothlorien.elf.walk_sway",
                 "idle_sway": "animation.lothlorien.elf.idle_sway",
+                "bless": "animation.lothlorien.elf.bless",
             },
             "scripts": {
                 "pre_animation": ["variable.tcos0 = (Math.cos(query.modified_distance_moved * 38.17) * query.modified_move_speed / variable.gliding_speed_value) * 57.3;"],

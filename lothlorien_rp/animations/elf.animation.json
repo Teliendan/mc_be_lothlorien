@@ -1,6 +1,26 @@
 {
   "format_version": "1.8.0",
   "animations": {
+    "animation.lothlorien.elf.bless": {
+      "loop": false,
+      "animation_length": 0.8,
+      "bones": {
+        "rightArm": {
+          "rotation": [
+            "-math.sin(math.clamp(query.anim_time / 0.8, 0.0, 1.0) * 180.0) * 75 - this",
+            "-this",
+            "math.sin(math.clamp(query.anim_time / 0.8, 0.0, 1.0) * 180.0) * 12 - this"
+          ]
+        },
+        "leftArm": {
+          "rotation": [
+            "-math.sin(math.clamp(query.anim_time / 0.8, 0.0, 1.0) * 180.0) * 75 - this",
+            "-this",
+            "-math.sin(math.clamp(query.anim_time / 0.8, 0.0, 1.0) * 180.0) * 12 - this"
+          ]
+        }
+      }
+    },
     "animation.lothlorien.elf.walk_sway": {
       "loop": true,
       "bones": {

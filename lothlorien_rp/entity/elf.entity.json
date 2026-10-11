@@ -24,7 +24,8 @@
         "look_at_target": "animation.humanoid.look_at_target.default",
         "move": "animation.humanoid.move",
         "walk_sway": "animation.lothlorien.elf.walk_sway",
-        "idle_sway": "animation.lothlorien.elf.idle_sway"
+        "idle_sway": "animation.lothlorien.elf.idle_sway",
+        "bless": "animation.lothlorien.elf.bless"
       },
       "scripts": {
         "pre_animation": [

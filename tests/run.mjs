@@ -27,8 +27,9 @@ import * as WR from "../lothlorien_bp/scripts/warden_replace_rules.js";
 import { loadVillageData, parseMcstructure, runSeeds, rotated, PLANKS, FENCE, LANTERN_ID, populateElves } from "../tools/village_sim.mjs";
 import * as EL from "../lothlorien_bp/scripts/elf_rules.js";
 
-// The glue suites share one fake server/clock; finish static imports before resetting it for M3.
+// The glue suites share one fake server/clock; finish static imports before resetting it for M3/M4.
 await import("./trade_glue.mjs");
+await import("./healer.mjs");
 
 const L = "lothlorien:lothlorien", RIVER = "minecraft:river", FOREST = "minecraft:forest";
 const T = new Set([RIVER]);
