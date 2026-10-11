@@ -707,3 +707,5 @@ lothlorien.message.trade.again=§7Elf jest gotowy do handlu. Wejdź z nim ponown
 lothlorien.message.lore.btn.trade=Handluj
 ## Context: Developer diagnostic for the nearest trader: localized profession, its current table key, the invoking player’s eligible key and current trade-pass state. Technical keys and pass values are supplied verbatim.
 lothlorien.message.trade.debug=Diagnostyka handlu: %s, tabela %s, twoja %s, przepustka %s
+## Context: Selecting Trade closes the request form. The player must then click the same elf again to open the native trade screen. This instruction is shown before selecting the button.
+lothlorien.message.lore.btn.trade_hint=Potem kliknij elfa ponownie

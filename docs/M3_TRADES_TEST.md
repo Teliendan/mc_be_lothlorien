@@ -1,9 +1,12 @@
-# M3 shops: owner acceptance
+# M3 shops: acceptance and regression checklist
 
 Built 2026-10-11; implementation commit: `Implement M3 elven shops and request trade flow`.
 Offline checks cover rules, generated assets, localization and event/timer glue.
-All game results below are **pending**, target Bedrock 1.26.52, server 2.8.0,
-server-ui 2.1.0. Stop after M3 for this test before starting M4.
+Owner accepted M3 on 2026-10-11: "It all works" (commit 7f86c87), target Bedrock
+1.26.52, server 2.8.0, server-ui 2.1.0. Individual engine-question answers were
+not recorded separately. The checklist below remains useful for regressions.
+Follow-up `Explain the second elf click on the Trade button` adds visible grey
+guidance under Trade; this new line's presentation still needs a game check.
 
 Leave and re-enter the world after deployment. Existing M1 elves gain shops;
 M3 needs no new world. A village generated before M1 has no civilian elves.
@@ -47,7 +50,7 @@ For a gardener request, use `renown chapter 3`, then `renown offer g_bonemeal`
 | Led-away elf, reload/join after unused pass | Transported elf still trades. Reload/rejoin does not keep a stale request bypass. |
 | Czech locale | Profession title, chat, Trade button translated. |
 
-Record engine answers here after testing:
+For future engine investigations, distinguish these cases:
 
 1. Does the before-interaction event fire for native trades, and does cancellation stop the screen?
 2. Does a matching delivery interact open the form, and does the pass tag allow the native screen?

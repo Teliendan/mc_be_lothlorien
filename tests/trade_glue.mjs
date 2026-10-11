@@ -222,13 +222,14 @@ async function requestFormSetup(ready = false) {
   const openForm = () => mod.openTraderForm(p, e, "gardener");
   return { p, e, mod, state, inventory, openForm };
 }
-const buttonKeys = (form) => form.buttons.map((b) => b.text.translate);
+const buttonKeys = (form) => form.buttons.map((b) => b.text.translate ?? b.text.rawtext[0].translate);
 
 await scenario("the actual trader form maps Trade and Hand over to the correct buttons", async () => {
   const { openForm, inventory, state } = await requestFormSetup();
   const trade = openForm(), form = globalThis.__tradeUi.at(-1);
   assert.deepEqual(buttonKeys(form), ["lothlorien.message.lore.btn.trade", "lothlorien.message.lore.btn.farewell"]);
   assert.equal(form.buttons[0].icon, "textures/items/emerald");
+  assert.deepEqual(form.buttons[0].text.rawtext.slice(1), [{ text: "\n§7" }, { translate: "lothlorien.message.lore.btn.trade_hint" }]);
   form.resolve({ canceled: false, selection: 0 }); assert.equal(await trade, "trade");
   inventory.item = { typeId: "minecraft:bone_meal", amount: 16 };
   const handOver = openForm(), ready = globalThis.__tradeUi.at(-1);

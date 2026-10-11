@@ -20464,6 +20464,63 @@
               "based_on": "a90e8c0c54b203fbb005a69339132ea4146f50efbd69107a294881dd8d2180f3"
             }
           }
+        },
+        "lothlorien.message.lore.btn.trade_hint": {
+          "source": "Then click the elf again",
+          "context": {
+            "meaning": "Selecting Trade closes the request form. The player must then click the same elf again to open the native trade screen. This instruction is shown before selecting the button.",
+            "location": "lothlorien_rp: grey second line of the emerald-icon Trade button in the trader request form",
+            "trigger": "The player opens a trader request form with a matching active request.",
+            "tone": "Short, clear gameplay instruction",
+            "grammar": "Brief imperative referring to the next action after selecting Trade.",
+            "constraints": "Keep short enough for a button subtitle. No rank names, numbers or assumed player gender. Refers to clicking the same elf after the form closes; this is visible guidance, not a hover tooltip.",
+            "source_paths": [
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Pak znovu klikněte na elfa",
+              "status": "ai-draft",
+              "based_on": "f5d376037b7407c130d275a62879600e5a96933487685bd59f12c16fda333c4b"
+            },
+            "es_ES": {
+              "text": "Después, vuelve a pulsar al elfo",
+              "status": "ai-draft",
+              "based_on": "f5d376037b7407c130d275a62879600e5a96933487685bd59f12c16fda333c4b"
+            },
+            "es_MX": {
+              "text": "Luego, vuelve a pulsar al elfo",
+              "status": "ai-draft",
+              "based_on": "f5d376037b7407c130d275a62879600e5a96933487685bd59f12c16fda333c4b"
+            },
+            "pt_PT": {
+              "text": "Depois, clica novamente no elfo",
+              "status": "ai-draft",
+              "based_on": "f5d376037b7407c130d275a62879600e5a96933487685bd59f12c16fda333c4b"
+            },
+            "pt_BR": {
+              "text": "Depois, clique novamente no elfo",
+              "status": "ai-draft",
+              "based_on": "f5d376037b7407c130d275a62879600e5a96933487685bd59f12c16fda333c4b"
+            },
+            "de_DE": {
+              "text": "Danach den Elfen erneut anklicken",
+              "status": "ai-draft",
+              "based_on": "f5d376037b7407c130d275a62879600e5a96933487685bd59f12c16fda333c4b"
+            },
+            "fr_FR": {
+              "text": "Puis clique à nouveau sur l’elfe",
+              "status": "ai-draft",
+              "based_on": "f5d376037b7407c130d275a62879600e5a96933487685bd59f12c16fda333c4b"
+            },
+            "pl_PL": {
+              "text": "Potem kliknij elfa ponownie",
+              "status": "ai-draft",
+              "based_on": "f5d376037b7407c130d275a62879600e5a96933487685bd59f12c16fda333c4b"
+            }
+          }
         }
       }
     }

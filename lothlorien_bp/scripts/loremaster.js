@@ -369,7 +369,7 @@ async function traderDialog(ctx, profession) {
   const status = statusOf(ctx, state);
   const buttons = [];
   if (status === "ready") buttons.push({ text: t("lore.btn.handover"), icon: ICON.ready, next: step("handOver") });
-  buttons.push({ text: t("lore.btn.trade"), icon: "textures/items/emerald", next: step("trade") });
+  buttons.push({ text: join(t("lore.btn.trade"), "\n§7", t("lore.btn.trade_hint")), icon: "textures/items/emerald", next: step("trade") });
   buttons.push({ text: t("lore.btn.farewell"), icon: ICON.farewell, next: undefined });
   ctx.title = { translate: `lothlorien.elf.profession.${profession}` };
   const next = await choose(ctx, lines([t(`lore.req.${request.id}.text`), progressLine(player, request)]), buttons);

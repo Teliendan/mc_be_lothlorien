@@ -707,3 +707,5 @@ lothlorien.message.trade.again=§7El elfo está listo para comerciar. Interactú
 lothlorien.message.lore.btn.trade=Comerciar
 ## Context: Developer diagnostic for the nearest trader: localized profession, its current table key, the invoking player’s eligible key and current trade-pass state. Technical keys and pass values are supplied verbatim.
 lothlorien.message.trade.debug=Depuración de comercio: %s, tabla %s, la tuya %s, permiso %s
+## Context: Selecting Trade closes the request form. The player must then click the same elf again to open the native trade screen. This instruction is shown before selecting the button.
+lothlorien.message.lore.btn.trade_hint=Luego, vuelve a pulsar al elfo
