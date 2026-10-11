@@ -21,6 +21,11 @@ import {
 
 const READY_AT = "lothlorien:gift_ready_at"; // dynamic property on the squirrel: world time (ticks) of its next errand
 const sessions = new Map(); // squirrel id -> { playerId, beaconId, away, born, phase, phaseStart, digFor }
+let sessionTimer;
+function syncSessionTimer() {
+  if (sessions.size && sessionTimer === undefined) sessionTimer = system.runInterval(tickSessions, SQUIRREL_TICKS);
+  else if (!sessions.size && sessionTimer !== undefined) { system.clearRun(sessionTimer); sessionTimer = undefined; }
+}
 
 export const isErrand = (squirrelId) => sessions.has(squirrelId);
 
@@ -70,10 +75,12 @@ function offer(player, squirrel) {
     consumeAcorn(player); // only now: the errand really starts
     healAnimal(squirrel);
     sessions.set(squirrel.id, { playerId: player.id, beaconId, away, born: system.currentTick, phase: "away", phaseStart: system.currentTick, digFor: 0 });
+    syncSessionTimer();
     say(player, message("squirrel.accept"));
     noteDeed(player, "squirrel"); // Renown lesson "gifts"
   } catch {
     sessions.delete(squirrel.id);
+    syncSessionTimer();
     removeBeacon(beaconId);
   }
 }
@@ -82,6 +89,7 @@ function offer(player, squirrel) {
 function end(squirrelId, squirrel, player, text) {
   const s = sessions.get(squirrelId);
   sessions.delete(squirrelId);
+  syncSessionTimer();
   removeBeacon(s?.beaconId);
   try {
     if (squirrel?.isValid && squirrel.getProperty("lothlorien:guiding")) {
@@ -150,7 +158,6 @@ function tickSessions() {
 
 export function startSquirrels(depthAt = () => ({ level: 1 })) {
   addBeaconSource(() => [...sessions.values()].map((s) => s.beaconId));
-  system.runInterval(tickSessions, SQUIRREL_TICKS);
   world.afterEvents.playerInteractWithEntity.subscribe(({ player, target, beforeItemStack, itemStack }) => {
     try {
       if (target.typeId !== SQUIRREL_ID || (beforeItemStack ?? itemStack)?.typeId !== ACORN_ID) return;

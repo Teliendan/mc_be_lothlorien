@@ -157,52 +157,79 @@ export function inRope(player) {
   return [Math.floor(y), Math.floor(y + 1)].some((cy) => ROPE_IDS.has(player.dimension.getBlock({ x: cx, y: cy, z: cz })?.typeId));
 }
 
-// player id -> { v: modelled vertical speed while climbing (see levitationStep), else null;
+// player id -> { player; v: modelled vertical speed while climbing (see levitationStep), else null;
 //                y: last height; holdY: height where crouching began, or undefined }
 const climbing = new Map();
 const CLIMB_EFFECTS = ["levitation", "slow_falling"];
+const ENTRY_TICKS = 4; // no pass-through contact callback for a collision-free rope
+let climbingTimer;
+
+function leaveRope(id, player) {
+  climbing.delete(id);
+  try { if (player) for (const effect of CLIMB_EFFECTS) player.removeEffect(effect); } catch { /* disconnected */ }
+}
+
+function syncClimbingTimer() {
+  if (climbing.size && climbingTimer === undefined) climbingTimer = system.runInterval(tickClimbers, 1);
+  else if (!climbing.size && climbingTimer !== undefined) { system.clearRun(climbingTimer); climbingTimer = undefined; }
+}
+
+function updateClimber(player) {
+  try {
+    if (!inRope(player)) {
+      leaveRope(player.id, player);
+      return;
+    }
+    const y = player.location.y;
+    const last = climbing.get(player.id);
+    if (player.isSneaking) {
+      // A custom block has no ladder's built-in crouch grip. Hold the first crouched height without changing
+      // horizontal movement or the direction the player is facing.
+      const holdY = last?.holdY ?? y;
+      player.removeEffect("levitation");
+      player.removeEffect("slow_falling");
+      player.teleport({ x: player.location.x, y: holdY, z: player.location.z });
+      climbing.set(player.id, { player, v: null, y: holdY, holdY });
+      return;
+    }
+    const target = climbSpeed(player);
+    let v = null;
+    let level; // levitation amplifier this tick, or undefined for none
+    if (target > 0) {
+      // climbing: levitation alone (it replaces gravity, slow falling would only add an icon). Start from the real
+      // speed, then follow the model (the level each tick steers it to the target).
+      const step = levitationStep(last?.v ?? player.getVelocity().y, target);
+      v = step.v;
+      level = step.amplifier;
+      player.removeEffect("slow_falling");
+    } else {
+      // sliding down: slow falling, braked by a tick of levitation when faster than a ladder
+      player.addEffect("slow_falling", CLIMB.effectTicks, { amplifier: 0, showParticles: false });
+      if (last && brakes(y - last.y, CLIMB.downSpeed / 20)) level = 0;
+    }
+    climbing.set(player.id, { player, v, y });
+    player.removeEffect("levitation"); // a lower level would not replace a higher one still running
+    if (level !== undefined) player.addEffect("levitation", CLIMB.effectTicks, { amplifier: level, showParticles: false });
+  } catch {
+    leaveRope(player.id, player); // player gone or chunk unloaded this tick
+  }
+}
+
+function tickClimbers() {
+  for (const { player } of climbing.values()) updateClimber(player);
+  syncClimbingTimer();
+}
 
 export function startRopeClimbing() {
   system.runInterval(() => {
     for (const player of world.getPlayers()) {
-      try {
-        if (!inRope(player)) {
-          if (climbing.delete(player.id)) for (const effect of CLIMB_EFFECTS) player.removeEffect(effect);
-          continue;
-        }
-        const y = player.location.y;
-        const last = climbing.get(player.id);
-        if (player.isSneaking) {
-          // A custom block has no ladder's built-in crouch grip. Hold the first crouched height without changing
-          // horizontal movement or the direction the player is facing.
-          const holdY = last?.holdY ?? y;
-          player.removeEffect("levitation");
-          player.removeEffect("slow_falling");
-          player.teleport({ x: player.location.x, y: holdY, z: player.location.z });
-          climbing.set(player.id, { v: null, y: holdY, holdY });
-          continue;
-        }
-        const target = climbSpeed(player);
-        let v = null;
-        let level; // levitation amplifier this tick, or undefined for none
-        if (target > 0) {
-          // climbing: levitation alone (it replaces gravity, slow falling would only add an icon). Start from the real
-          // speed, then follow the model (the level each tick steers it to the target).
-          const step = levitationStep(last?.v ?? player.getVelocity().y, target);
-          v = step.v;
-          level = step.amplifier;
-          player.removeEffect("slow_falling");
-        } else {
-          // sliding down: slow falling, braked by a tick of levitation when faster than a ladder
-          player.addEffect("slow_falling", CLIMB.effectTicks, { amplifier: 0, showParticles: false });
-          if (last && brakes(y - last.y, CLIMB.downSpeed / 20)) level = 0;
-        }
-        climbing.set(player.id, { v, y });
-        player.removeEffect("levitation"); // a lower level would not replace a higher one still running
-        if (level !== undefined) player.addEffect("levitation", CLIMB.effectTicks, { amplifier: level, showParticles: false });
-      } catch {
-        // player gone or chunk unloaded this tick
-      }
+      if (climbing.has(player.id)) continue;
+      try { if (inRope(player)) updateClimber(player); } catch { /* unloaded */ }
     }
-  }, 1);
+    syncClimbingTimer();
+  }, ENTRY_TICKS);
+  world.afterEvents.playerLeave.subscribe(({ playerId }) => {
+    leaveRope(playerId);
+    syncClimbingTimer();
+  });
 }

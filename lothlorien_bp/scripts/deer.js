@@ -9,23 +9,50 @@ import { ALARM_RADIUS, CORN_ID, DEER_ID, DEER_TYPES, WARY_TYPES, WATCH_RADIUS, p
 
 const INTERVAL_TICKS = 40;
 const PLAYER_ID = "minecraft:player";
+const loaded = new Map();
+let warinessTimer;
+
+function stopIfEmpty() {
+  if (!loaded.size && warinessTimer !== undefined) {
+    system.clearRun(warinessTimer);
+    warinessTimer = undefined;
+  }
+}
+function trackCreature(entity) {
+  try {
+    if (!WARY_TYPES.includes(entity.typeId) || !entity.isValid) return;
+    loaded.set(entity.id, entity);
+    if (warinessTimer === undefined) warinessTimer = system.runInterval(updateWariness, INTERVAL_TICKS);
+  } catch { /* entity removed before delivery */ }
+}
 
 const nearDeer = (dimension, location, maxDistance) =>
-  WARY_TYPES.flatMap((type) => dimension.getEntities({ type, location, maxDistance }));
+  [...loaded.values()].filter(entity => {
+    try {
+      const p = entity.location;
+      return entity.isValid && entity.dimension.id === dimension.id &&
+        Math.hypot(p.x-location.x, p.y-location.y, p.z-location.z) <= maxDistance;
+    } catch { return false; }
+  });
 
 function updateWariness() {
-  const seen = new Map(); // deer id -> { deer, candidates }
+  const players = new Map();
   for (const player of world.getPlayers()) {
     const wariness = warinessFor(bandOf(harmonyOf(player).harmony));
-    for (const deer of nearDeer(player.dimension, player.location, WATCH_RADIUS)) {
-      const entry = seen.get(deer.id) ?? { deer, candidates: [] };
-      const dx = deer.location.x - player.location.x, dz = deer.location.z - player.location.z;
-      entry.candidates.push({ distance: Math.hypot(dx, dz), wariness });
-      seen.set(deer.id, entry);
-    }
+    const id = player.dimension.id;
+    if (!players.has(id)) players.set(id, []);
+    players.get(id).push({ location: player.location, wariness });
   }
-  for (const { deer, candidates } of seen.values()) {
+  for (const [id, deer] of loaded) {
     try {
+      if (!deer.isValid) { loaded.delete(id); continue; }
+      const p = deer.location, candidates = [];
+      for (const player of players.get(deer.dimension.id) || []) {
+        const dx = p.x-player.location.x, dy = p.y-player.location.y, dz = p.z-player.location.z;
+        if (dx*dx+dy*dy+dz*dz <= WATCH_RADIUS*WATCH_RADIUS)
+          candidates.push({distance:Math.hypot(dx,dz), wariness:player.wariness});
+      }
+      if (!candidates.length) continue;
       if (deer.getProperty("lothlorien:alarmed")) continue; // the alarm timer hands back to the state
       if (deer.getProperty("lothlorien:guiding")) {
         // a guiding white deer or errand squirrel keeps its guiding state; one with no session (world reloaded mid-way) is released
@@ -35,9 +62,10 @@ function updateWariness() {
       const wariness = pickWariness(candidates);
       if (wariness && deer.getProperty("lothlorien:wariness") !== wariness) deer.triggerEvent(setEventFor(wariness));
     } catch {
-      // deer unloaded meanwhile
+      loaded.delete(id); // entityLoad re-registers it if the chunk returns
     }
   }
+  stopIfEmpty();
 }
 
 // Fed = tame. lothlorien:become_tame sets the property and makes the deer persistent (like a vanilla tamed animal).
@@ -68,7 +96,18 @@ function alarmAround(dimension, location) {
 }
 
 export function startDeer() {
-  system.runInterval(updateWariness, INTERVAL_TICKS);
+  world.afterEvents.entitySpawn.subscribe(({ entity }) => trackCreature(entity));
+  world.afterEvents.entityLoad.subscribe(({ entity }) => trackCreature(entity));
+  world.afterEvents.entityRemove.subscribe(({ removedEntityId }) => {
+    loaded.delete(removedEntityId); stopIfEmpty();
+  });
+  // One-time bootstrap for already loaded animals; no recurring entity query.
+  for (const id of ["overworld", "nether", "the_end"]) {
+    try {
+      const dimension = world.getDimension(id);
+      for (const type of WARY_TYPES) for (const entity of dimension.getEntities({ type })) trackCreature(entity);
+    } catch { /* dimension unavailable */ }
+  }
   world.afterEvents.entityHurt.subscribe(({ hurtEntity, damageSource }) => {
     if (!WARY_TYPES.includes(hurtEntity.typeId) || damageSource.damagingEntity?.typeId !== PLAYER_ID) return;
     try {
@@ -90,6 +129,7 @@ export function startDeer() {
   });
   world.afterEvents.entityDie.subscribe(({ deadEntity, damageSource }) => {
     try {
+      loaded.delete(deadEntity.id); stopIfEmpty();
       if (!WARY_TYPES.includes(deadEntity.typeId) || damageSource.damagingEntity?.typeId !== PLAYER_ID) return;
       alarmAround(deadEntity.dimension, deadEntity.location);
     } catch {

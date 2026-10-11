@@ -76,7 +76,10 @@ def configure(block):
         return None
     c["minecraft:movable"] = {"movement_type": "popped"}
     c["lothlorien:motion_support"] = {}
-    c.setdefault("minecraft:tick", {"interval_range": [2, 2], "looping": True})
+    # Support uses events plus sparse native random ticks. Pressure plates retain
+    # their separate occupancy timer; no other support block needs scheduled ticks.
+    if name not in {"mallorn_pressure_plate", "mallorn_heartwood_pressure_plate"}:
+        c.pop("minecraft:tick", None)
     if name in COVERS:
         c["minecraft:loot"] = f"loot_tables/blocks/{name}.json"
         permutations = b.setdefault("permutations", [])

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createSupportMotionService } from "../lothlorien_bp/scripts/support_motion_service.js";
 import { SUPPORT_POLICIES } from "../lothlorien_bp/scripts/support_policies.js";
+import { supportOffset } from "../lothlorien_bp/scripts/antler_rules.js";
 
 const key = p => `${p.x},${p.y},${p.z}`;
 const P = { x: 0, y: 0, z: 0 }, S = { x: 1, y: 0, z: 0 }, A = { x: 1, y: 1, z: 0 };
@@ -27,10 +28,63 @@ function rig(options = {}) {
     for (const job of due) { scheduled.splice(scheduled.indexOf(job), 1); job.fn(); }
   } };
   put(P, "minecraft:piston"); put(S, "minecraft:stone");
-  const attachment = put(A, "attachment"); service.observe(attachment);
+  const attachment = put(A, "attachment");
+  if (options.warm !== false) service.observe(attachment);
   const activate = () => service.onPiston({ dimension, position: P, axis: { x: 1, y: 0, z: 0 }, isExpanding: true, piston });
   const finish = () => { piston.isMoving = false; advance(12); };
   return { put, service, activate, finish, advance, cells, drops, gone, settled, errors, dimension, attachment, piston };
+}
+
+// No timer/random callback before the first piston event: discover motion locally.
+for (const replacement of ["minecraft:stone", "minecraft:dirt"]) {
+  const r = rig({ warm: false });
+  r.put(S, "minecraft:moving_block"); r.activate();
+  r.put(S, replacement); r.finish();
+  assert.deepEqual(r.drops, ["support-departed"], `cold moving support -> ${replacement}`);
+}
+// Cold head replacement works on all six attachment sides, including distant
+// off-axis cells reported through the piston's attached-block list.
+for (const off of [{x:1,y:0,z:0},{x:-1,y:0,z:0},{x:0,y:1,z:0},
+                   {x:0,y:-1,z:0},{x:0,y:0,z:1},{x:0,y:0,z:-1}]) {
+  const r = rig({ warm: false }); r.cells.delete(key(A));
+  r.put({x:S.x+off.x,y:S.y+off.y,z:S.z+off.z}, "attachment");
+  r.put(S, "minecraft:piston_arm_collision"); r.activate(); r.finish();
+  assert.deepEqual(r.drops, ["support-departed"]);
+}
+{
+  const r = rig({ warm: false }), remote = {x:8,y:3,z:4};
+  r.cells.delete(key(A));
+  r.put({x:8,y:4,z:4}, "attachment", remote);
+  r.piston.getAttachedBlocksLocations = () => [remote];
+  r.put(remote, "minecraft:moving_block"); r.activate();
+  r.put(remote, "minecraft:stone"); r.finish();
+  assert.deepEqual(r.drops, ["support-departed"]);
+}
+// A cold attachment on a stationary piston body remains supported.
+{
+  const r = rig({ warm: false });
+  r.attachment.support = P;
+  r.activate(); r.finish(); assert.equal(r.drops.length, 0);
+}
+// Event-time discovery defers invalid-support destruction until settled. Native
+// popping during the animation therefore cannot produce script loot as well.
+{
+  const r = rig({ warm: false }); r.put(S, "minecraft:air");
+  r.activate(); assert.equal(r.drops.length, 0);
+  r.put(A, "minecraft:air"); r.finish(); assert.equal(r.drops.length, 0);
+}
+// Cold ordinary support removal works through the edit event, with no timer.
+{
+  const r = rig({ warm: false }); r.put(S, "minecraft:air");
+  r.service.resetAround(r.dimension, S);
+  assert.deepEqual(r.drops, ["invalid-support"]);
+}
+// Idle forests schedule no support work, including after one fallback check.
+{
+  const r = rig(); r.advance(20000);
+  assert.equal(r.settled.length, 0); assert.equal(r.drops.length, 0);
+  r.service.observe(r.attachment); r.advance(20000);
+  assert.equal(r.settled.length, 0); assert.equal(r.drops.length, 0);
 }
 
 // Preserve the old support when a scheduled callback precedes pistonActivate.
@@ -109,8 +163,40 @@ for (const [id, policy] of Object.entries(SUPPORT_POLICIES)) {
   const block = JSON.parse(readFileSync(new URL(`../lothlorien_bp/blocks/${id.split(":")[1]}.json`, import.meta.url)))["minecraft:block"];
   assert.equal(block.components["minecraft:movable"].movement_type, "popped", id);
   assert.ok(block.components["lothlorien:motion_support"], id);
-  assert.ok(block.components["minecraft:tick"].looping, id);
+  if (id.endsWith("_pressure_plate")) {
+    assert.deepEqual(block.components["minecraft:tick"].interval_range, [4, 4], id);
+  } else assert.equal(block.components["minecraft:tick"], undefined, `${id}: no support timer`);
   if (policy.allowed) assert.deepEqual(policy.allowed, block.components["minecraft:placement_filter"].conditions[0].block_filter);
+}
+
+// Exercise the production adapter rather than only its pure service: reloaded
+// antlers lose support through a player-break event with no preceding callback.
+{
+  const components = new Map(), events = new Map(), tasks = [], cells = new Map(), drops = [];
+  const dimension = { id: "cold-adapter", getBlock: p => cells.get(key(p)),
+    runCommand(command) { drops.push(command); cells.delete("1,1,0"); } };
+  const put = (p, typeId) => cells.set(key(p), { location:p, dimension, typeId,
+    isAir:typeId === "minecraft:air", isLiquid:false,
+    permutation:{ getState: name => name === "minecraft:block_face" ? "up" : undefined } });
+  globalThis.__supportAdapter = {
+    SUPPORT_POLICIES, createSupportMotionService, supportOffset, dropWholeRope() {},
+    system: { currentTick:0, runTimeout(fn) { tasks.push(fn); }, beforeEvents:{ startup:{
+      subscribe(fn) { fn({blockComponentRegistry:{registerCustomComponent:(id, c) => components.set(id,c)}}); }
+    } } },
+    world: { afterEvents:new Proxy({}, { get:(_, name) => ({subscribe:fn => events.set(name,fn)}) }) },
+  };
+  const source = readFileSync(new URL("../lothlorien_bp/scripts/support_motion.js", import.meta.url), "utf8")
+    .replace(/^import \{([^}]+)\} from "[^"]+";/gm, "const {$1} = globalThis.__supportAdapter;");
+  await import(`data:text/javascript;base64,${Buffer.from(source).toString("base64")}`);
+  delete globalThis.__supportAdapter;
+  const component = components.get("lothlorien:motion_support");
+  assert.equal(component.onTick, undefined);
+  assert.equal(typeof component.onRandomTick, "function");
+  assert.equal(tasks.length, 0, "adapter startup schedules no support polling");
+  put(A, "lothlorien:deer_antler"); put(S, "minecraft:air");
+  events.get("playerBreakBlock")({dimension, block:dimension.getBlock(S)});
+  assert.deepEqual(drops, ["setblock 1 1 0 air destroy"]);
+  assert.equal(tasks.length, 0);
 }
 for (const name of ["mallorn_leaf_carpet", "mallorn_blossom"]) for (let amount = 1; amount <= 4; amount++) {
   const suffix = amount === 1 ? "" : `_${amount}`;

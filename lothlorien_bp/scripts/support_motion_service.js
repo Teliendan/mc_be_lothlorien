@@ -47,13 +47,13 @@ export function createSupportMotionService({ now, schedule, describe, read, remo
     forget(record);
     remove(block, record, reason);
   }
-  function observe(block, { reset = false } = {}) {
+  function observe(block, { reset = false, motion = false } = {}) {
     const incoming = snapshot(block);
     if (!incoming) return;
     const k = address(block.dimension, block.location), previous = records.get(k);
     // Reject an unknown replacement baseline BEFORE retiring known history.
     // This also covers reset/adoption after settlement and deferred refresh.
-    if (incoming.supports.some(s => !s.type || s.type === MOVING)) {
+    if (incoming.supports.some(s => !s.type || s.type === MOVING) && (!motion || previous)) {
       if (previous) previous.seen = now();
       return;
     }
@@ -87,7 +87,9 @@ export function createSupportMotionService({ now, schedule, describe, read, remo
       return;
     }
     if (previous) forget(previous);
-    const record = { ...incoming, key: k, seen: now(), pending: 0, departed: false };
+    // Event-local discovery must also capture cold/reloaded attachments while
+    // their support is moving. Validate these only after the piston settles.
+    const record = { ...incoming, key: k, seen: now(), pending: 0, departed: false, motionDiscovered: motion };
     records.set(k, record);
     for (const support of record.supports) {
       const sk = address(record.dimension, support.position);
@@ -95,13 +97,20 @@ export function createSupportMotionService({ now, schedule, describe, read, remo
       bySupport.get(sk).add(record);
     }
     while (records.size > maxRecords) forget(records.values().next().value);
-    if (validity(block) === false) destroy(record, block, "invalid-support");
+    if (!motion && validity(block) === false) destroy(record, block, "invalid-support");
   }
   function invalidate(dimension, position) {
     const record = records.get(address(dimension, position));
     if (record) forget(record);
   }
   function resetAround(dimension, position) {
+    // Player edits/explosions must work after reload without a warmed index.
+    // Inspect only immediate neighbours whose selected support is this cell.
+    for (const off of NEIGHBOURS.slice(1)) {
+      const block = read(dimension, add(position, off)), info = block && describe(block);
+      if (info?.supports?.some(s => key(s.position) === key(position)) &&
+          !records.has(address(dimension, block.location))) observe(block, { reset: true });
+    }
     // Explicit non-piston edits retire old relationships immediately. Never reset
     // a relationship already captured by a running local piston job.
     for (const record of [...(bySupport.get(address(dimension, position)) || [])]) {
@@ -114,16 +123,19 @@ export function createSupportMotionService({ now, schedule, describe, read, remo
   function onPiston({ dimension, position, axis, isExpanding, piston }) {
     if (!axis) return;
     const delta = isExpanding ? axis : add({ x: 0, y: 0, z: 0 }, axis, -1);
-    const head = add(position, axis), candidates = new Map(), frozen = new Set();
+    const head = add(position, axis), candidates = new Map(), frozen = new Set(), discovered = new Set();
     function candidate(p) {
       const k = key(p);
       if (candidates.has(k)) return;
       candidates.set(k, { ...p });
       // Discover only the event's cells and immediate attachment neighbours.
-      // Scheduled ticks normally warm them before this fallback is needed.
+      // No continuously scheduled block callbacks are needed to warm the index.
       for (const off of NEIGHBOURS) {
-        const nearby = read(dimension, add(p, off));
-        if (nearby && describe(nearby)) observe(nearby);
+        const location = add(p, off), nk = key(location);
+        if (discovered.has(nk)) continue;
+        discovered.add(nk);
+        const nearby = read(dimension, location);
+        if (nearby && describe(nearby)) observe(nearby, { motion: true });
       }
       for (const record of bySupport.get(address(dimension, p)) || []) {
         if (!frozen.has(record)) { frozen.add(record); record.pending++; }
@@ -143,7 +155,8 @@ export function createSupportMotionService({ now, schedule, describe, read, remo
         const current = read(dimension, support.position);
         if (!current) continue;
         const moving = current.typeId === MOVING;
-        const newHead = key(support.position) === key(head) && HEADS.has(current.typeId) && !HEADS.has(support.type);
+        const newHead = key(support.position) === key(head) && HEADS.has(current.typeId) &&
+          (!HEADS.has(support.type) || (record.motionDiscovered && isExpanding));
         const changed = candidates.has(key(support.position)) && support.type && current.typeId !== support.type;
         if (moving || newHead || changed) record.departed = true;
       }

@@ -1,6 +1,6 @@
 // `/scriptevent lothlorien:tps [seconds] [off]` (debug only): measures how many game ticks pass per real second.
 // Runs only when called: one callback per tick for the window (default 10 s), then a chat report and a content-log line.
-// `off` pauses the support checks (support_motion.js onTick) for the window; compare with a run without it.
+// `off` pauses the sparse random-tick support fallback for the window; events stay active.
 // Rules and numbers: tick_rate_rules.js.
 import { system } from "@minecraft/server";
 import { message } from "./messages.js";
@@ -29,7 +29,7 @@ export function startTickRateProbe(player, text) {
     const r = summarizeTicks(clock, now, system.currentTick, supportTickStats.calls);
     const records = supportMotion.size();
     console.warn(`[lothlorien] tps: ${r.ticks} ticks in ${r.seconds.toFixed(1)} s = ${r.tps.toFixed(1)} tps (${r.percent.toFixed(0)} %), `
-      + `avg ${r.averageMs.toFixed(1)} ms, longest ${r.longestMs} ms, support onTick ${r.callsPerSecond.toFixed(0)}/s, `
+      + `avg ${r.averageMs.toFixed(1)} ms, longest ${r.longestMs} ms, support random ticks ${r.callsPerSecond.toFixed(0)}/s, `
       + `${records} support records${pause ? ", support checks paused" : ""}`);
     try {
       player.sendMessage(message("tps.result", r.ticks, r.seconds.toFixed(1), r.tps.toFixed(1), r.percent.toFixed(0)));

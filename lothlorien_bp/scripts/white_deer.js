@@ -28,13 +28,16 @@ const GIFT_SPOT = "lothlorien:gift_spot"; // dynamic property on the deer: JSON 
 const GIFTED = "lothlorien:gifted"; // dynamic property on the deer: true once the nut was laid
 let depthAt; // (dimension, location) -> { level }, from main.js
 let biome; // { id, transparent: Set, at(dimension, x, z) -> surface biome id or undefined (unloaded) }, from main.js
-const SWEEP_TICKS = 100; // stray beacons (no session: world reloaded, chunk came back) are removed this often
 const DIMENSIONS = ["overworld", "nether", "the_end"];
 const DOWN = { x: 0, y: -1, z: 0 };
 const UP = { x: 0, y: 1, z: 0 };
 const PROBE_UP = 6; // a waypoint column is searched from 6 above to 6 below the deer's feet
 const PROBE_DOWN = 6;
-let sinceSweep = 0;
+let sessionTimer;
+function syncSessionTimer() {
+  if (sessions.size && sessionTimer === undefined) sessionTimer = system.runInterval(tickSessions, GUIDE_TICKS);
+  else if (!sessions.size && sessionTimer !== undefined) { system.clearRun(sessionTimer); sessionTimer = undefined; }
+}
 
 export const isGuiding = (deerId) => sessions.has(deerId);
 
@@ -252,9 +255,11 @@ function lead(player, deer, spot) {
       bias: wp.turn || 1,
       waiting: false,
     });
+    syncSessionTimer();
     say(player, message("deer.accept"));
   } catch {
     sessions.delete(deer.id);
+    syncSessionTimer();
     removeBeacon(beaconId);
   }
 }
@@ -262,6 +267,7 @@ function lead(player, deer, spot) {
 function end(deerId, deer, player, text) {
   const s = sessions.get(deerId);
   sessions.delete(deerId);
+  syncSessionTimer();
   removeBeacon(s?.beaconId);
   try {
     if (deer?.isValid && deer.getProperty("lothlorien:guiding")) deer.triggerEvent("lothlorien:guide_end");
@@ -362,6 +368,19 @@ function sweepBeacons() {
   }
 }
 
+function cleanLoadedBeacon(entity) {
+  try { if (entity.typeId !== BEACON_ID) return; } catch { return; }
+  // Spawn callbacks can arrive before the creator assigns its session beaconId.
+  system.run(() => {
+    try {
+      if (!entity.isValid || entity.hasTag("guide_beacon") || entity.nameTag === "guide_beacon") return;
+      if ([...sessions.values()].some(s => s.beaconId === entity.id)) return;
+      if (beaconSources.some(source => source().includes(entity.id))) return;
+      entity.remove();
+    } catch { /* unloaded again */ }
+  });
+}
+
 function tickSessions() {
   for (const [deerId, s] of sessions) {
     try {
@@ -369,11 +388,6 @@ function tickSessions() {
     } catch {
       end(deerId, undefined, undefined, undefined); // deer or beacon unloaded mid-tick
     }
-  }
-  sinceSweep += GUIDE_TICKS;
-  if (sinceSweep >= SWEEP_TICKS) {
-    sinceSweep = 0;
-    sweepBeacons();
   }
 }
 
@@ -395,9 +409,10 @@ export function startWhiteDeer(depth, biomeInfo) {
   depthAt = depth;
   biome = biomeInfo;
   sweepBeacons(); // world load: no session survives a reload, so every beacon found is a stray
-  system.runInterval(tickSessions, GUIDE_TICKS);
+  world.afterEvents.entityLoad.subscribe(({ entity }) => cleanLoadedBeacon(entity));
   world.afterEvents.entitySpawn.subscribe(({ entity, cause }) => {
     try {
+      cleanLoadedBeacon(entity);
       if (cause === EntityInitializationCause.Loaded || entity.typeId !== WHITE_DEER_ID) return;
       // one tick later: the spawn event's property is surely applied by then
       system.runTimeout(() => judgeNaturalSpawn(entity, depthAt), 1);

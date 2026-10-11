@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import "./support_motion.mjs";
 import "./rope_lifecycle.mjs";
+import "./script_performance.mjs";
 import "./animal_home.mjs";
 import "./stair_water.mjs";
 import "./leaf_harvest.mjs";
@@ -483,7 +484,7 @@ test("antler block: a permutation for every floor, ceiling and wall placement; n
     .every((p) => p.components["minecraft:geometry"] === "geometry.lothlorien.deer_antler_wall"));
   assert.ok(!b.components["minecraft:placement_filter"], "placeable on any block, like an item frame");
   assert.ok(b.components["lothlorien:antler_support"], "support handled by script events");
-  assert.deepEqual(b.components["minecraft:tick"].interval_range, [2, 2], "scheduled warming preserves pre-piston support history");
+  assert.equal(b.components["minecraft:tick"], undefined, "support uses events without scheduled polling");
   assert.ok(b.components["lothlorien:motion_support"], "production motion tracking is installed");
 });
 test("antler support: opposite side of the clicked face; air and liquid drop it, unloaded keeps it", () => {
@@ -3033,7 +3034,7 @@ test("tick rate: arguments - seconds (default 10, max 60) and `off` in any order
   assert.deepEqual(TR.parseTpsArgs("999"), { seconds: TR.MAX_SECONDS, pause: false });
   assert.deepEqual(TR.parseTpsArgs("-3 x"), { seconds: 10, pause: false });
 });
-test("tick rate: the debug event is wired, its chat keys are RP catalog entries, support onTick is counted and pausable", () => {
+test("tick rate: the debug event is wired, its chat keys are RP catalog entries, random support checks are counted and pausable", () => {
   const main = readFileSync(new URL("../lothlorien_bp/scripts/main.js", import.meta.url), "utf8");
   assert.ok(main.includes('event.id === "lothlorien:tps"') && main.includes("startTickRateProbe(player, event.message)"));
   const glue = readFileSync(new URL("../lothlorien_bp/scripts/tick_rate.js", import.meta.url), "utf8");
@@ -3044,7 +3045,7 @@ test("tick rate: the debug event is wired, its chat keys are RP catalog entries,
   }
   assert.ok(/supportTickStats\.paused = false;[\s\S]*summarizeTicks/.test(glue), "the pause ends with the window");
   const sm = readFileSync(new URL("../lothlorien_bp/scripts/support_motion.js", import.meta.url), "utf8");
-  assert.ok(/onTick\(\{ block \}\) \{\s*supportTickStats\.calls\+\+;\s*if \(!supportTickStats\.paused\) supportMotion\.observe\(block\);/.test(sm));
+  assert.ok(/onRandomTick\(\{ block \}\) \{\s*supportTickStats\.calls\+\+;\s*if \(!supportTickStats\.paused\) supportMotion\.observe\(block\);/.test(sm));
 });
 test("harmony: the timer is a game-tick clock - one second per 20 game ticks (at 10 tps it runs at half real speed)", () => {
   const game = readFileSync(new URL("../lothlorien_bp/scripts/harmony_game.js", import.meta.url), "utf8");
