@@ -1,3 +1,7 @@
-JSON for banners:
+Silver one:
+
+minecraft:green_banner[banner_patterns=[{"pattern":"cross","color":"lime"},{"pattern":"triangles_bottom","color":"lime"},{"pattern":"triangles_top","color":"lime"},{"pattern":"curly_border","color":"light_gray"},{"pattern":"stripe_middle","color":"lime"},{"pattern":"flower","color":"green"}]]
+
+Blue one
 
 minecraft:green_banner[banner_patterns=[{"pattern":"cross","color":"lime"},{"pattern":"triangles_bottom","color":"lime"},{"pattern":"triangles_top","color":"lime"},{"pattern":"curly_border","color":"light_blue"},{"pattern":"stripe_middle","color":"lime"},{"pattern":"flower","color":"green"}]]
