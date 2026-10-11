@@ -13,7 +13,7 @@ Looks: `docs/mobs/elves.md` (`tools/make_elves.py`, review sheets in `temp/elves
 | M0 | Spikes: custom bow, arrows, belt (section 8) | done, owner-tested 2026-10-10. Spike files kept in `temp/elven_inhabitants/spike_files/` as the M5 starting point |
 | M1 | Civilian elves placed in villages, Harmony, wardens defend, leads, healer roaming (sections 1, 7, 10) + village polish (rope foot, crowns fit their box, bare branches, living pillars with planner root flares) | done, accepted in game 2026-10-10 (commits 30e1eb1, 5631c22, 6f79109, 7b57536, 6b97311; the ivy start of 6b97311 not yet seen) |
 | M2 | Renown + Loremaster dialog: lessons and requests (sections 2, 3) | done, accepted in game 2026-10-11 (commits 88dbbe2, 6019c88, f854117, ff61ae2, eb1cc5e dew, a10653f niphredil). Notes: `docs/TECHNICAL_NOTES.md` "Renown and the Loremaster (M2)" |
-| M3 | Shops: trade-table generator (band x rank), table swapping by script, refusal (section 4) | accepted in game 2026-10-11, commit 7f86c87; owner: "It all works." Trade-button guidance follow-up: `Explain the second elf click on the Trade button` ([checklist](../M3_TRADES_TEST.md)) |
+| M3 | Shops: trade-table generator (band x rank), table swapping by script, refusal (section 4) | complete, accepted in game 2026-10-11: shops 7f86c87 ("It all works"), Trade hover guidance 9cdd1a0 confirmed on deployed 405d482 ("It works"); [regression checklist](../M3_TRADES_TEST.md) |
 | M4 | Healer heals elves and Friends (section 7) | |
 | M5 | Final items (Galadriel's gifts) + Galadhrim arrows (sections 5, 6); then the bow template for `bedrock-items` | |
 | M6 | Great Mallorn upgrade (section 9) | |
@@ -215,6 +215,5 @@ Rule (owner decisions 2026-10-10, details `docs/mobs/elves.md`, implementation c
 
 - A reward or purpose for requests after full Renown (all 12 requests done; Elf-friend reached). Not part of M2.
 - Rank names are gender-marked in some locales (titles such as Přítel elfů, Amigo de los elfos); a neutral wording needs a native reviewer.
-- M3 balance after the owner test (agreed initial values in section 4).
 - Final-item numbers (bow damage/draw speed, cloak armour, belt regen level, phial light radius and spider range).
 - What elves do at night (gathering, lamplighter at dusk); M1 decided: no change at night.

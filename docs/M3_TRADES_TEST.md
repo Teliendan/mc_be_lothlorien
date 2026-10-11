@@ -7,8 +7,8 @@ Owner accepted M3 on 2026-10-11: "It all works" (commit 7f86c87), target Bedrock
 not recorded separately. The checklist below remains useful for regressions.
 Follow-up 9cdd1a0, `Explain the second elf click on the Trade button`, adds grey
 guidance after a newline in the label, matching the Loremaster's quest-status
-button. The owner reports that the quest status appears on hover; confirm that
-hovering Trade likewise shows "Then click the elf again".
+button. The owner confirmed Trade's hover guidance works on 2026-10-11
+("It works", deployed revision 405d482). M3 and this follow-up are complete.
 
 Leave and re-enter the world after deployment. Existing M1 elves gain shops;
 M3 needs no new world. A village generated before M1 has no civilian elves.
