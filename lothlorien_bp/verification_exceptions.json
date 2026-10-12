@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "exceptions": [
+    {
+      "rule": "block.face_only_support",
+      "path": "bp/blocks/elven_chandelier.json",
+      "subject": "",
+      "reason": "Placement filter restricts faces; lothlorien:motion_support and generated policies implement support survival and piston departure. Preserve broad legal support surfaces. Source/production limits: docs/PISTON_SUPPORT.md; 26.52, reviewed 2026-10-13.",
+      "evidence": "docs/VERIFIER_WARNINGS.md",
+      "requires_component": "lothlorien:motion_support"
+    },
+    {
+      "rule": "block.face_only_support",
+      "path": "bp/blocks/elven_lantern.json",
+      "subject": "",
+      "reason": "Placement filter restricts faces; lothlorien:motion_support and generated policies implement support survival and piston departure. Preserve broad legal support surfaces. Source/production limits: docs/PISTON_SUPPORT.md; 26.52, reviewed 2026-10-13.",
+      "evidence": "docs/VERIFIER_WARNINGS.md",
+      "requires_component": "lothlorien:motion_support"
+    },
+    {
+      "rule": "block.face_only_support",
+      "path": "bp/blocks/elven_lantern_heartwood.json",
+      "subject": "",
+      "reason": "Placement filter restricts faces; lothlorien:motion_support and generated policies implement support survival and piston departure. Preserve broad legal support surfaces. Source/production limits: docs/PISTON_SUPPORT.md; 26.52, reviewed 2026-10-13.",
+      "evidence": "docs/VERIFIER_WARNINGS.md",
+      "requires_component": "lothlorien:motion_support"
+    },
+    {
+      "rule": "block.face_only_support",
+      "path": "bp/blocks/firefly_jar.json",
+      "subject": "",
+      "reason": "Placement filter restricts faces; lothlorien:motion_support and generated policies implement support survival and piston departure. Preserve broad legal support surfaces. Source/production limits: docs/PISTON_SUPPORT.md; 26.52, reviewed 2026-10-13.",
+      "evidence": "docs/VERIFIER_WARNINGS.md",
+      "requires_component": "lothlorien:motion_support"
+    },
+    {
+      "rule": "block.face_only_support",
+      "path": "bp/blocks/mallorn_pressure_plate.json",
+      "subject": "",
+      "reason": "Placement filter restricts faces; lothlorien:motion_support and generated policies implement support survival and piston departure. Preserve broad legal support surfaces. Source/production limits: docs/PISTON_SUPPORT.md; 26.52, reviewed 2026-10-13.",
+      "evidence": "docs/VERIFIER_WARNINGS.md",
+      "requires_component": "lothlorien:motion_support"
+    },
+    {
+      "rule": "block.face_only_support",
+      "path": "bp/blocks/mallorn_heartwood_pressure_plate.json",
+      "subject": "",
+      "reason": "Placement filter restricts faces; lothlorien:motion_support and generated policies implement support survival and piston departure. Preserve broad legal support surfaces. Source/production limits: docs/PISTON_SUPPORT.md; 26.52, reviewed 2026-10-13.",
+      "evidence": "docs/VERIFIER_WARNINGS.md",
+      "requires_component": "lothlorien:motion_support"
+    },
+    {
+      "rule": "creative.category_missing",
+      "path": "bp/blocks/phial_light.json",
+      "subject": "",
+      "reason": "Hidden temporary script-owned airlike light, not a player inventory block. Deliberate category omission: docs/M5_PHIAL_NOTES.md, reviewed 2026-10-13.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "plant.compostable_missing",
+      "path": "bp/items/great_mallorn_nut.json",
+      "subject": "lothlorien:great_mallorn_nut",
+      "reason": "Owner explicitly confirmed 2026-10-13: Great Mallorn nut must not be compostable. Its rare gift/planting lifecycle is intentional.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.display_name_missing",
+      "path": "rp/texts/en_US.lang",
+      "subject": "lothlorien:elf_post",
+      "reason": "Invisible village role/location marker, assigned and replaced by actual elves. No spawn egg or player-facing mob name; deliberate omission, source-reviewed 2026-10-13.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.display_name_missing",
+      "path": "rp/texts/en_US.lang",
+      "subject": "lothlorien:loop_marker",
+      "reason": "Invisible marker queues one village loop plan and is removed after completion. No spawn egg or player-facing mob name; deliberate omission, source-reviewed 2026-10-13.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.display_name_missing",
+      "path": "rp/texts/en_US.lang",
+      "subject": "lothlorien:rail_mender",
+      "reason": "Invisible one-shot structure helper repairs missing village rail connections and removes itself. No spawn egg or player-facing mob name; deliberate omission, source-reviewed 2026-10-13.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "attachable.geometry_external",
+      "path": "rp/attachables/bow.json",
+      "subject": "geometry.bow_standby",
+      "reason": "Reuse vanilla bow mesh with local Galadhrim textures and native draw stages. Exact ID verified in installed 1.26.52 RP models/entity/bow.geo.json on 2026-10-13; checker sees this RP only.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "attachable.geometry_external",
+      "path": "rp/attachables/bow.json",
+      "subject": "geometry.bow_pulling_0",
+      "reason": "Reuse vanilla bow mesh with local Galadhrim textures and native draw stages. Exact ID verified in installed 1.26.52 RP models/entity/bow.geo.json on 2026-10-13; checker sees this RP only.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "attachable.geometry_external",
+      "path": "rp/attachables/bow.json",
+      "subject": "geometry.bow_pulling_1",
+      "reason": "Reuse vanilla bow mesh with local Galadhrim textures and native draw stages. Exact ID verified in installed 1.26.52 RP models/entity/bow.geo.json on 2026-10-13; checker sees this RP only.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "attachable.geometry_external",
+      "path": "rp/attachables/bow.json",
+      "subject": "geometry.bow_pulling_2",
+      "reason": "Reuse vanilla bow mesh with local Galadhrim textures and native draw stages. Exact ID verified in installed 1.26.52 RP models/entity/bow.geo.json on 2026-10-13; checker sees this RP only.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    }
+  ]
+}

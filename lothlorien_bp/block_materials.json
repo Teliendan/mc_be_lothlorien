@@ -20,8 +20,13 @@
     },
     "lothlorien:deer_antler": {
       "profile": "bone",
-      "harvest": "Owner 2026-10-10: mounted collectible, collected with any tool or by hand through native default self-drop; pickaxe remains efficient only.",
-      "reason": "Owner approved any-tool collectible harvesting, 2026-10-10; material hardness/blast/fire and efficient tools remain separate."
+      "harvest": "Instant mining, one antler through ungated native self-drop; pickaxe tag is only material classification, no collection gate.",
+      "reason": "Owner 2026-10-13: instantly pick up mounted antlers with any tool or by hand; bone blast/fire/sound policy retained.",
+      "overrides": {
+        "minecraft:destructible_by_mining": {
+          "seconds_to_destroy": 0
+        }
+      }
     },
     "lothlorien:elanor": {
       "profile": "flower",
@@ -120,7 +125,7 @@
     },
     "lothlorien:golden_fern": {
       "profile": "fern",
-      "harvest": "Shears collect one fern. Otherwise 1/8 wheat-seed event, quantity1 without Fortune or1-3/1-5/1-7 at I/II/III. Native decay; Wiki-documented standard enchantment policy, game acceptance pending.",
+      "harvest": "Any tool or bare hand collects one golden fern; no wheat-seed pool or Fortune bonus. Native explosion decay retained.",
       "property_checks": {
         "minecraft:replaceable": {
           "counterpart": "minecraft:fern",
@@ -133,9 +138,10 @@
         "loot_tables/blocks/golden_fern.json": {
           "counterpart": "minecraft:fern",
           "explosion_decay": true,
-          "source": "Mojang Taking Inventory: Fern; Minecraft Wiki Fern revision3810026 (see docs/GOLDEN_FERN_HARVEST.md); native explosion_decay recipe."
+          "source": "Owner decision 2026-10-13, docs/GOLDEN_FERN_HARVEST.md; flower-like collectible override, not vanilla fern drop parity."
         }
-      }
+      },
+      "reason": "Owner 2026-10-13: collectible like a flower, overriding vanilla fern shears/seed harvesting. Retain fern material/fire and nonreplaceable placement."
     },
     "lothlorien:great_mallorn_sprout": {
       "profile": "sapling",
@@ -272,9 +278,7 @@
         },
         "minecraft:redstone_conductivity": {
           "counterpart": "minecraft:oak_slab",
-          "expected": {
-            "redstone_conductor": false
-          },
+          "expected": { "redstone_conductor": false },
           "source": "https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_conductivity?view=minecraft-bedrock-stable"
         },
         "minecraft:destruction_particles": {
@@ -297,9 +301,7 @@
         },
         "minecraft:redstone_conductivity": {
           "counterpart": "minecraft:oak_stairs",
-          "expected": {
-            "redstone_conductor": false
-          },
+          "expected": { "redstone_conductor": false },
           "source": "https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_conductivity?view=minecraft-bedrock-stable"
         },
         "minecraft:destruction_particles": {
@@ -426,9 +428,7 @@
         },
         "minecraft:redstone_conductivity": {
           "counterpart": "minecraft:oak_slab",
-          "expected": {
-            "redstone_conductor": false
-          },
+          "expected": { "redstone_conductor": false },
           "source": "https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_conductivity?view=minecraft-bedrock-stable"
         },
         "minecraft:destruction_particles": {
@@ -451,9 +451,7 @@
         },
         "minecraft:redstone_conductivity": {
           "counterpart": "minecraft:oak_stairs",
-          "expected": {
-            "redstone_conductor": false
-          },
+          "expected": { "redstone_conductor": false },
           "source": "https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/minecraftblock_redstone_conductivity?view=minecraft-bedrock-stable"
         },
         "minecraft:destruction_particles": {

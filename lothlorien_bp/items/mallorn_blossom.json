@@ -16,6 +16,11 @@
       "minecraft:icon": "lothlorien:mallorn_blossom",
       "minecraft:compostable": {
         "composting_chance": 65
+      },
+      "minecraft:tags": {
+        "tags": [
+          "lothlorien:flower"
+        ]
       }
     }
   }

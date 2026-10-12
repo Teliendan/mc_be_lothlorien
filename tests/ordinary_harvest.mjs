@@ -1,12 +1,12 @@
 // Owner collection policy: ordinary blocks do not acquire tool/tier loot gates.
-// Approved fern/leaf/crop rules have dedicated tests; nectar's shears exception is checked here.
+// Approved leaf/crop rules have dedicated tests; nectar's shears exception is checked here.
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 
 const bp = new URL("../lothlorien_bp/", import.meta.url);
 const read = (path) => JSON.parse(readFileSync(new URL(path, bp)));
-const exceptions = new Set(["lothlorien:golden_fern", "lothlorien:mallorn_leaves", "lothlorien:western_corn", "lothlorien:nectar_bloom"]);
+const exceptions = new Set(["lothlorien:mallorn_leaves", "lothlorien:western_corn", "lothlorien:nectar_bloom"]);
 function assertUngated(value) {
   if (Array.isArray(value)) return value.forEach(assertUngated);
   if (!value || typeof value !== "object") return;

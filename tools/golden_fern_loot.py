@@ -2,7 +2,7 @@
 
 python -B tools/golden_fern_loot.py --print-loot
 python -B tools/golden_fern_loot.py --write
-Source and outstanding Bedrock enchantment acceptance: docs/GOLDEN_FERN_HARVEST.md.
+Owner's flower-like collectible policy: docs/GOLDEN_FERN_HARVEST.md.
 """
 import argparse
 import json
@@ -13,37 +13,15 @@ LOOT_PATH = Path(__file__).resolve().parent.parent / "lothlorien_bp/loot_tables/
 
 
 def fern_loot():
-    """Return a fresh table; shears and ordinary-removal pools are exclusive."""
+    """Owner 2026-10-13: one fern with any tool or by hand, native blast decay."""
     def entry(name, count=1):
         return {"type": "item", "name": name, "functions": [
             {"function": "set_count", "count": count},
             {"function": "explosion_decay"},
         ]}
     return {"pools": [
-        {"rolls": 1, "entries": [entry("lothlorien:golden_fern")], "conditions": [
-            {"condition": "match_tool", "item": "minecraft:shears"},
-        ]},
-        *seed_pools(entry),
+        {"rolls": 1, "entries": [entry("lothlorien:golden_fern")]},
     ]}
-
-
-def seed_pools(entry):
-    """Wiki fern recipe: 1/8 event, then 1..(2*Fortune+1) seeds at I-III."""
-    pools = []
-    for level in range(4):
-        bounds = {"range_min": level or 1}
-        if level in (1, 2):
-            bounds["range_max"] = level
-        gate = {"condition": "match_tool", "enchantments": [
-            {"enchantment": "fortune", "levels": bounds}]}
-        if level == 0:
-            gate["operator"] = "not"
-        count = 1 if level == 0 else {"min": 1, "max": 2 * level + 1}
-        pools.append({"rolls": 1, "entries": [entry("minecraft:wheat_seeds", count)], "conditions": [
-            {"condition": "match_tool", "item": "minecraft:shears", "operator": "not"},
-            gate, {"condition": "random_chance", "chance": 0.125},
-        ]})
-    return pools
 
 
 def write_loot(path=LOOT_PATH):

@@ -56,6 +56,12 @@ def configure(block):
     b = block["minecraft:block"]
     name = b["description"]["identifier"].split(":")[1]
     c = b["components"]
+    if name in {"elanor", "niphredil", "athelas", "nectar_bloom", "mallorn_blossom", "golden_fern"}:
+        tags = c.setdefault("minecraft:tags", [])
+        if "lothlorien:flower" not in tags:
+            tags.append("lothlorien:flower")
+    if name == "deer_antler":
+        c["minecraft:destructible_by_mining"] = {"seconds_to_destroy": 0}
     # Owner 2026-10-10 requests vanilla: retain custom default100/full,48/partial
     # candidates until native oak counts are measured (particle-parity.md).
     if name in FULL_WOOD | SINGLE_WOOD_SHAPES:
@@ -99,6 +105,14 @@ def configure(block):
 
 def main():
     policies = {}
+    for name in ("elanor", "niphredil", "athelas", "nectar_bloom", "mallorn_blossom", "golden_fern"):
+        path = BP / f"items/{name}.json"
+        item = json.loads(path.read_text(encoding="utf8"))
+        tags = item["minecraft:item"]["components"].setdefault("minecraft:tags", {"tags": []})["tags"]
+        if "lothlorien:flower" not in tags:
+            tags.append("lothlorien:flower")
+            newline = "\r\n" if b"\r\n" in path.read_bytes() else "\n"
+            path.write_bytes((json.dumps(item, indent=2) + "\n").replace("\n", newline).encode("utf8"))
     for path in sorted((BP / "blocks").glob("*.json")):
         block = json.loads(path.read_text(encoding="utf8"))
         policy = configure(block)

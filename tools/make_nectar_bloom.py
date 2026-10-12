@@ -80,6 +80,7 @@ def block():
         "description": {"identifier": f"{NS}:nectar_bloom", "menu_category": {"category": "none"},
                         "states": {f"{NS}:nectar": list(range(STAGES))}},
         "components": {
+            "minecraft:tags": [f"{NS}:flower"],
             "minecraft:collision_box": False,
             "minecraft:light_dampening": 0,
             "minecraft:selection_box": {"origin": [-5, 2, -5], "size": [10, 14, 10]},
@@ -101,7 +102,8 @@ def item():
     return {"format_version": "1.26.50", "minecraft:item": {
         "description": {"identifier": f"{NS}:nectar_bloom", "menu_category": {"category": "nature", "group": "minecraft:itemGroup.name.flower"}},
         "components": {"minecraft:block_placer": {"block": f"{NS}:nectar_bloom", "replace_block_item": True},
-                       "minecraft:icon": f"{NS}:nectar_bloom"}}}
+                       "minecraft:icon": f"{NS}:nectar_bloom",
+                       "minecraft:tags": {"tags": [f"{NS}:flower"]}}}}
 
 
 def loot():

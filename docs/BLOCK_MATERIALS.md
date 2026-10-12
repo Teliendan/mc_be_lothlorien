@@ -79,9 +79,10 @@ levels. See [LEAF_HARVEST.md](LEAF_HARVEST.md); engine acceptance is pending.
 Golden decorative leaves
 intentionally always self-drop and do not decay. Nectar bloom is explicitly
 collectible with shears or Silk Touch (owner 2026-10-11), with native blast decay.
-Golden fern now follows the native baseline: shears collect
-one fern, otherwise a 1/8 wheat-seed chance, with native decay. Fortune I/II/III
-yields 1–3/1–5/1–7 seeds per successful event, following the Wiki. See
+Owner 2026-10-13: golden fern collects like a flower, one fern with any tool
+or by hand, instant mining, no wheat-seed pool or Fortune bonus. Native decay
+remains. Deer antlers now also mine instantly with any tool or by hand; a
+reasoned mining override retains their bone blast/fire/sound policy. See
 [GOLDEN_FERN_HARVEST.md](GOLDEN_FERN_HARVEST.md) for source/engine limits.
 Both double slabs use set_count2 followed by native explosion_decay, matching
 the installed data-driven double-slab recipe.

@@ -11,7 +11,8 @@
       "minecraft:type_family": {
         "family": [
           "lothlorien_firefly",
-          "mob"
+          "mob",
+          "arthropod"
         ]
       },
       "minecraft:collision_box": {

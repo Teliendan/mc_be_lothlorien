@@ -13,7 +13,12 @@
         "block": "lothlorien:nectar_bloom",
         "replace_block_item": true
       },
-      "minecraft:icon": "lothlorien:nectar_bloom"
+      "minecraft:icon": "lothlorien:nectar_bloom",
+      "minecraft:tags": {
+        "tags": [
+          "lothlorien:flower"
+        ]
+      }
     }
   }
 }

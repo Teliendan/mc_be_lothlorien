@@ -87,7 +87,10 @@
             "on_liquid_touches": "popped"
           }
         ]
-      }
+      },
+      "minecraft:tags": [
+        "lothlorien:flower"
+      ]
     },
     "permutations": [
       {

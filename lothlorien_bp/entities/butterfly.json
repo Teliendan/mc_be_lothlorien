@@ -22,7 +22,8 @@
       "minecraft:type_family": {
         "family": [
           "lothlorien_butterfly",
-          "mob"
+          "mob",
+          "arthropod"
         ]
       },
       "minecraft:collision_box": {
