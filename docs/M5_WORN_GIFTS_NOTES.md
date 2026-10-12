@@ -1,12 +1,13 @@
 # M5 worn gifts
 
-2026-10-11; target Bedrock 1.26.52 / Script API 2.8.0. Source/documentation review
-and offline tests, with owner feedback: belt works but sits low; cloak invisibility
-periodically drops and both worn meshes flicker. Corrections below still need an
-engine retest; the phial was accepted independently.
+2026-10-12; target Bedrock 1.26.52 / Script API 2.8.0. Owner confirmed the corrected
+cloak invisibility works. The earlier feedback was periodic invisibility drops
+and synchronized cloak/belt flicker. The belt works and stays offhand. Wearable
+art corrections below are provisional and still need the owner's visual verdict;
+the phial was accepted independently.
 
 `gift_rules.js` owns the balance. `make_worn_gifts.py` regenerates the item
-definitions, 16-pixel icons, green woven cloak and silver belt texture sheets,
+definitions, 16-pixel icons, green/gold cloak and silver belt texture sheets,
 body-bound geometry, attachables and first-person hide animations.
 
 The cloak uses native `minecraft:wearable` chest protection and native durability,
@@ -27,13 +28,15 @@ This query's behavior in the attachable owner context still needs an in-game che
 
 The belt stays in the offhand slot by the owner's decision during polish, and
 uses a literal body-bone binding, following the owner-tested M0 waist spike.
-Its band and buckle have both been raised exactly two model units. Both worn
+Its band stays raised two model units (origin y13.5); the simplified buckle and
+band share the center y14.5 and x0. Both worn
 meshes have unique body-bound anchor bones and separately named mesh children;
 hide animations scale only the children, isolating visibility transforms from
 owner-bound bones. The original meshes already had different bone names, so
 shared-name animation collision is not established as the cause of flicker.
-The cloak's repeated native invisibility expiry explains synchronized appearance
-changes; this source finding and the isolation correction still need game checks.
+The cloak's repeated native invisibility expiry explained synchronized appearance
+changes. Owner confirmed the corrected invisibility works; first-person appearance
+and the revised geometry still require visual checks.
 It grants Regeneration I strictly below half the
 player's effective maximum health. Equal or stronger regeneration, including an
 infinite effect, finishes before another grant. Reapplying an active regeneration
@@ -57,7 +60,10 @@ The polish regression observes invisibility before the service runs on every
 tick of a full minute, so expiry/reapply in the same script tick cannot conceal
 a gap. It also checks seamless same-strength potion handover, a potion replacing
 an existing cloak grant, the ten-tick exit tail, separate anchor/mesh names and
-hide transforms, and the two-unit belt height correction.
+hide transforms, and the raised belt center. Asset checks also require whole-number
+cube dimensions, no inflate/scale, and per-face UV spans exactly matching physical
+face dimensions. Generator assertions additionally require every sampled texel to
+be painted. These checks directly catch the rejected ornament density.
 It does not establish rendering, native durability damage or effect healing rate.
 
 Evidence checked in this session:
@@ -86,13 +92,32 @@ walking/crouching, health just below and exactly at half, longer/stronger regen
 potions, removal, death/rejoin and multiple players. First-person visibility and
 left-arm suppression in the belt attachable were not separately judged in M0.
 
-Polish alternatives are retained in workspace scratch while the owner chooses:
-`temp/elven_inhabitants/m5_polish/worn/belt_alternatives.png` shows B1 Silver
-leaf, B2 Braided mithril, B3 Evenstar and B4 Woodland vine with frontal torso
-views and close band/clasp views. `cloak_alternatives.png` shows C1 Galadhrim
-mantle, C2 Silver river, C3 Woodland scout and C4 Golden mallorn, front and back.
-Each option includes its actual 16px icon, 64px material sheet, cube geometry,
-attachable and local hide animation under `worn/assets/<code>/`. These are
-offline mesh previews, with preview identifiers only; the options are not
-registered gameplay items or deployed. Production keeps the existing design
-until selection, with the raised belt and visibility-isolation correction.
+Owner decisions in the art revision: original `worn/` studies were rejected for
+excessive detail density and sub-unit ornaments. The C4 Golden Mallorn inventory
+icon alone was selected. Its production generator reproduces the selected PNG
+pixel-for-pixel; the generator has no dependency on scratch files. Its four-color
+palette triggers generic icon-sheet flatness/shade warnings; preserve the exact
+owner-selected pixels rather than changing them to satisfy a heuristic.
+
+The corrected provisional production cloak uses five simple integer-sized cubes,
+gold trim, broad cloth folds and a small painted mallorn sprig. Every model face
+maps one texture texel to one model unit. Fractional origins position the cloth
+without increasing its resolution. There are no sub-unit ornaments, inflated
+cubes, scaled UV swatches or enlarged texture detail; the 64px material sheet
+only packs the separate full-size faces. The belt is a hollow four-strip band
+with one centered symmetric buckle. Its simpler frontal icon is provisional.
+
+New review artifacts are under `temp/elven_inhabitants/m5_polish/worn_v2/`:
+`belt_alternatives_v2.png` shows B1-v2 Silver band, B2-v2 Green and gold,
+B3-v2 Silver links and B4-v2 Broad clasp. `cloak_alternatives_v2.png` shows
+C1-v2 Galadhrim mantle, C2-v2 Silver river, C3-v2 Woodland scout and C4-v2 Golden
+Mallorn. Each contains actual Blockbench front/back renders beside the unchanged
+vanilla Steve texture to show matching world texel size. `worn_icons_contrast.png`
+shows all icons at actual 1x/2x plus 4x on dark and light review tiles; the standard
+`production_icons_vanilla.png` adds vanilla Elytra/chestplate inventory references.
+Actual geometry, texture, icons and the composite render inputs are retained under
+`assets/<code>/`, with full resolution Blockbench screenshots under `renders/`.
+Rebuild scratch with `python -B temp/elven_inhabitants/m5_polish/worn_v2/make_review.py`.
+The optional alternatives are review assets only; only the provisional C4-v2
+wearable and B1-v2 belt are in production. No new wearable design is owner-accepted
+yet. Once accepted, remove obsolete variants/scratch and condense these notes.

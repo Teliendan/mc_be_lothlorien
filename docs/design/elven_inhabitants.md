@@ -1,6 +1,6 @@
 # Elven inhabitants: professions, Renown, trades, gifts (design)
 
-Status: **M0-M4 accepted; M5 belt/phial work, cloak/bow polish awaiting retest and art selection** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
+Status: **M0-M4 accepted; M5 belt/phial/invisibility work; bow speed and corrected worn art awaiting review** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
 Supersedes the profession stock lists and trade-state details in `lothlorien_elven_settlements_plan.md` ("Initial professions",
 "Harmony-aware trading", "Proposed reputation trade states") and the stock part of `harmony_rework_plan.md` section 5. The trade
 **architecture** of that section 5 (native trade screen, per-band tables pre-swapped by script, refusal in `beforeEvents.playerInteractWithEntity`) stays.
@@ -15,7 +15,7 @@ Looks: `docs/mobs/elves.md` (`tools/make_elves.py`, review sheets in `temp/elves
 | M2 | Renown + Loremaster dialog: lessons and requests (sections 2, 3) | done, accepted in game 2026-10-11 (commits 88dbbe2, 6019c88, f854117, ff61ae2, eb1cc5e dew, a10653f niphredil). Notes: `docs/TECHNICAL_NOTES.md` "Renown and the Loremaster (M2)" |
 | M3 | Shops: trade-table generator (band x rank), table swapping by script, refusal (section 4) | complete, accepted in game 2026-10-11: shops 7f86c87 ("It all works"), Trade hover guidance 9cdd1a0 confirmed on deployed 405d482 ("It works"); [regression checklist](../M3_TRADES_TEST.md) |
 | M4 | Healer heals elves and Friends (section 7) | complete, owner accepted 2026-10-11 (bc1da69); [regression checklist](../M4_HEALER_TEST.md) |
-| M5 | Final items (Galadriel's gifts) + Galadhrim arrows (sections 5, 6); then the bow template for `bedrock-items` | implemented 2026-10-11; owner confirmed belt/phial work, cloak/bow corrections await retest and art selection; [checklist](../M5_GIFTS_TEST.md). Shared template maintained in `.claude/skills/bedrock-items/templates/custom_archery/` |
+| M5 | Final items (Galadriel's gifts) + Galadhrim arrows (sections 5, 6); then the bow template for `bedrock-items` | implemented 2026-10-11; owner confirmed belt/phial/invisibility work. Selected bow C, cloak Golden Mallorn icon, phial D and arrow 3. Worn resolution corrections and 0.6s bow await review; [checklist](../M5_GIFTS_TEST.md). Shared template in `.claude/skills/bedrock-items/templates/custom_archery/` |
 | M6 | Great Mallorn upgrade (section 9) | |
 | M7 | Homes + village look (section 10; `lothlorien_jigsaw_settlement.md` section 6) | |
 
@@ -148,7 +148,7 @@ Bedrock has no accessory slots, so each gift takes a real slot and costs somethi
 
 **M5 as built (2026-10-11).** Implementation commit: `Implement M5 Galadriel gifts and Galadhrim arrows`.
 Owner approved the proposed mechanics and set **all four final gifts to 32 emeralds**.
-All tunable values are in `scripts/gift_rules.js`: bow draw 0.8s, vanilla flight/damage,
+All tunable values are in `scripts/gift_rules.js`: bow draw 0.6s (owner requested faster than the initial 0.8s), vanilla flight/damage,
 384 durability, zoom FOV 60; cloak armour 3/durability 80, one second still crouch
 before short invisibility; offhand belt Regeneration I strictly below half health;
 offhand phial level-14 air-only light and 8-block native spider repulsion. Existing
@@ -164,7 +164,11 @@ the owner retest; details in [M5_GIFTS_TEST.md](../M5_GIFTS_TEST.md). Belt remai
 offhand and sits two model units higher. Cloak renews before expiry; bow zoom uses
 `EasingType.Linear`, draw frames include an arrow, and the default bow is longer
 and slimmer. Visual alternatives for all gifts stay in workspace review scratch
-pending selection. Phial gameplay is accepted. M6 has not started.
+pending selection. Phial gameplay and corrected cloak invisibility are accepted.
+2026-10-12 art decisions: bow C, Golden Mallorn cloak icon, phial D/P4 and
+arrow 3. Worn models are rebuilt with whole-unit dimensions and one texel per
+unit after the owner rejected sub-unit detail. Belt stays offhand; symmetry
+is a provisional design choice. M6 has not started.
 
 Dropped: Box of Lórien earth (not unique enough), Elessar (Aragorn's alone; became the belt), Mirror of Galadriel, Circlet of Elanor (cloak is better).
 

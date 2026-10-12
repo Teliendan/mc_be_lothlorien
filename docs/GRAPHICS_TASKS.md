@@ -392,3 +392,14 @@ Review scratch: workspace `temp/elven_inhabitants/m5_polish/` contains four bow,
 four phial, belt/cloak alternatives and three arrow icon choices. Alternatives
 are cosmetic review assets, not extra production item IDs. Keep until the owner
 selects final art, then remove rejected variants and condense these notes.
+
+2026-10-12 selections: bow C (D also liked; detached accent removed), arrow 3,
+Golden Mallorn cloak icon and phial D/P4. Exact selected icons are implemented
+in their generators. Original worn studies were rejected: sub-unit ornaments
+violated Minecraft's pixel density, and pale belt icons were shown on a pale
+background. Corrected worn models use one texel per whole model unit; decoration
+is painted, with centered symmetric belt clasps. New comparison sheets use
+light/dark icon tiles and vanilla-density mannequin references. Worn designs
+remain provisional pending owner review. Invisibility is now owner-confirmed
+working; new worn fit and 0.6-second bow draw still need game acceptance.
+Commit: `Apply selected gift art and faster bow draw`.

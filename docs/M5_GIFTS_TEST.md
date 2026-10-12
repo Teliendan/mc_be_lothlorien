@@ -2,21 +2,34 @@
 
 2026-10-11; Bedrock 1.26.52 / stable Script API 2.8.0.
 Implementation commit: `Implement M5 Galadriel gifts and Galadhrim arrows`.
-Status: implemented; owner confirmed belt mechanics and the phial, then requested
-cloak/bow fixes and visual alternatives. Follow-up corrections need engine
-acceptance. Stop here before M6.
+Status: implemented; owner confirmed belt mechanics, the phial and corrected
+invisibility. Bow timing/zoom and corrected worn art need engine acceptance.
+Stop here before M6.
 
 2026-10-11 feedback: keep the belt offhand and raise its worn position. Cloak
 invisibility briefly expired and the belt/cloak appeared to flicker together.
 Renew before expiry and isolate visible mesh transforms from bound anchors.
 Bow pull sprites now include a nocked arrow; a capitalized Script API easing
 enum corrects the failed zoom, eased over its 0.8-second draw. Default bow is
-slimmer and larger. Phial gameplay and its default art remain as accepted.
+slimmer and larger. Phial gameplay remains as accepted.
 Review-only alternatives live in workspace `temp/elven_inhabitants/m5_polish/`.
 Follow-up commit: `Polish M5 gift visibility and native bow drawing`.
 Validation: shared verify 0 errors / 15 warnings; full project regressions passed.
 Bow/worn generators rerun with zero pack-byte drift. Shared verifier fixture
 suite passes 1493 assertions. These checks do not establish native rendering.
+
+2026-10-12 review: owner selected bow C (also liked D; its detached accent was
+removed), Golden Mallorn cloak icon, phial D/P4 and arrow 3. Worn belts/cloaks
+were rejected for excessive detail density; revised models use whole-unit cubes
+and one texture pixel per unit, with painted ornaments. Belt review icons now
+use contrasting light/dark backgrounds; a symmetric centered buckle is the
+provisional default. Owner confirmed invisibility works. Bow 0.8s felt too close
+to vanilla, so draw and zoom now take 0.6s (12 ticks), pending a game retest.
+Selection/resolution commit: `Apply selected gift art and faster bow draw`.
+Validation for this revision: full shared verification/project suite passes with
+0 errors / 15 warnings. All three gift generators reproduce the packs with
+zero byte drift. Actual Blockbench worn previews match the vanilla player texel
+density; project asset regressions reject fractional cubes and mismatched UV spans.
 
 Leave and re-enter the world after deployment. Existing elves gain the new stock;
 no new world is required. Already-filled chests retain their contents; arrow loot
@@ -28,7 +41,7 @@ Harmony Friend (+10) and Renown Elf-friend (15 points). Balance source of truth:
 
 | Gift / ammunition | Mechanics |
 | --- | --- |
-| Bow of the Galadhrim | Main hand; 0.8s draw, 384 durability, native damage, flight and bow enchantments. Four pull sprites with nocked arrows, native meshes and lowered third-person grip. Zoom FOV 60 while drawing, 0.8s ease. |
+| Bow of the Galadhrim | Main hand; 0.6s draw, 384 durability, native damage, flight and bow enchantments. Four pull sprites with nocked arrows, native meshes and lowered third-person grip. Zoom FOV 60 while drawing, 0.6s ease. |
 | Galadhrim arrows | Native vanilla trajectory; 100% item recovery after a destroyed entity hit, native ground pickup. No trail or crafting. Only the Galadhrim bow fires them in Survival; it also fires vanilla arrows. |
 | Elven cloak | Chest slot, 3 armour, 80 durability. Sneak without moving for 20 ticks to receive invisibility; movement/unsneak/unequip stops renewal. Short grants expire within 10 ticks. Cloak mesh hides while invisible; other equipped gear follows native visibility. |
 | Silver belt | Off-hand, visible at the waist, raised two model units after owner feedback. Regeneration I while living health is strictly below half effective maximum; 60-tick grants finish before renewal. Residual regeneration can last 3s after unequip/recovery. |

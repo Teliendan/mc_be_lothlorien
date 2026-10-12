@@ -1,4 +1,4 @@
-"""Generate the final 16px silver/crystal star phial and invisible helper texture.
+"""Generate the selected 16px faceted moon crystal and invisible helper texture.
 
 python -B mods/lothlorien/tools/make_phial.py
 """
@@ -9,6 +9,34 @@ from PIL import Image, ImageDraw
 
 RP = Path(__file__).resolve().parents[1] / "lothlorien_rp"
 ROOT = RP.parent
+SILVER = "#8ba3b5"
+EDGE = "#496a83"
+PALE = "#d3eef1"
+BLUE = "#87bfd6"
+WHITE = "#f2ffff"
+
+
+def phial_icon():
+    """Owner-selected P4/D, reproduced from the review study with no scratch input."""
+    image = Image.new("RGBA", (16, 16))
+    draw = ImageDraw.Draw(image)
+    # Silver stopper above a narrow neck, with blue edges around clear facets.
+    draw.rectangle((6, 0, 9, 1), fill=SILVER)
+    draw.line((6, 0, 9, 0), fill=WHITE)
+    draw.rectangle((7, 2, 8, 3), fill=PALE)
+    draw.polygon([(7, 4), (8, 4), (11, 7), (11, 10), (8, 14), (7, 14), (4, 10), (4, 7)], fill=EDGE)
+    draw.polygon([(7, 5), (8, 5), (10, 7), (10, 10), (8, 13), (7, 13), (5, 10), (5, 7)], fill=BLUE)
+    draw.polygon([(7, 5), (7, 12), (5, 9), (5, 7)], fill=PALE)
+    draw.line((7, 5, 8, 5), fill=WHITE)
+    draw.line((5, 7, 5, 9), fill=WHITE)
+    draw.line((8, 6, 9, 7), fill="#acdbe7")
+    draw.line((9, 11, 8, 12), fill=PALE)
+    # White starlight crosses the central facets, matching the accepted study.
+    draw.line((8, 7, 8, 11), fill=WHITE)
+    draw.line((6, 9, 10, 9), fill=WHITE)
+    assert image.getbbox() == (4, 0, 12, 15)
+    assert sum(image.getpixel((x, y))[3] > 0 for y in range(16) for x in range(16)) == 72
+    return image
 
 
 def main():
@@ -22,22 +50,7 @@ def main():
     block = json.loads(block_path.read_text(encoding="utf-8"))
     block["minecraft:block"]["components"]["minecraft:light_emission"] = rules["level"]
     block_path.write_text(json.dumps(block, indent=2) + "\n", encoding="utf-8")
-    image = Image.new("RGBA", (16, 16))
-    draw = ImageDraw.Draw(image)
-    # Crystal flask: narrow silver stopper, elliptical shoulders and pointed base.
-    draw.rectangle((6, 1, 9, 2), fill="#637c92")
-    draw.line((6, 1, 9, 1), fill="#f0f5ec")
-    draw.rectangle((7, 3, 8, 4), fill="#d1e7ec")
-    draw.polygon([(6, 5), (9, 5), (11, 7), (11, 12), (9, 14), (6, 14), (4, 12), (4, 7)], fill="#496e88")
-    draw.polygon([(6, 6), (9, 6), (10, 8), (10, 12), (8, 13), (6, 13), (5, 11), (5, 8)], fill="#95cce1")
-    draw.line((5, 8, 5, 11), fill="#e8ffff")
-    draw.line((6, 12, 8, 13), fill="#d5edf3")
-    # White starlight in pale blue water, silver-blue edge gives it shape in hand.
-    draw.line((8, 7, 8, 11), fill="#ffffff")
-    draw.line((6, 9, 10, 9), fill="#ffffff")
-    draw.point((7, 8), fill="#e9ffff")
-    draw.point((9, 10), fill="#e9ffff")
-    image.save(RP / "textures/items/phial_of_galadriel.png")
+    phial_icon().save(RP / "textures/items/phial_of_galadriel.png")
     Image.new("RGBA", (16, 16)).save(RP / "textures/blocks/phial_light.png")
 
 

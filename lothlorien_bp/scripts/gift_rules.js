@@ -1,8 +1,8 @@
 // M5 balance values. Generators and runtime share this file; regenerate assets/tables after edits.
 export const BOW_ID = "lothlorien:bow";
 export const ARROW_ID = "lothlorien:galadhrim_arrow";
-export const BOW = { drawSeconds: 0.8, durability: 384, enchantability: 1, useSeconds: 3600,
-  zoomFov: 60, zoomEaseSeconds: 0.8, watchTicks: 2 };
+export const BOW = { drawSeconds: 0.6, durability: 384, enchantability: 1, useSeconds: 3600,
+  zoomFov: 60, zoomEaseSeconds: 0.6, watchTicks: 2 };
 export const ARROW = { recoveryChance: 1, rank: 2, guestPrice: [1, 8], friendPrice: [1, 10],
   lootWeight: 2, lootCount: { min: 4, max: 8 } };
 export const WORN_CHECK_TICKS = 5;

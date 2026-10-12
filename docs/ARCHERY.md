@@ -8,8 +8,8 @@ and the permissive camera mock hid that error. The enum fix and progressive zoom
 are **offline tested only**; owner engine acceptance is pending. M0 native enchantment/flight/pickup observations
 are recorded in `design/elven_inhabitants.md` section 8.
 
-`gift_rules.js` owns balance: draw 0.8s, durability 384, enchantability 1,
-zoom FOV 60 easing over the full 0.8s draw, active-draw cleanup every 2 ticks,
+`gift_rules.js` owns balance: draw 0.6s (12 ticks), durability 384, enchantability 1,
+zoom FOV 60 easing over the full 0.6s draw, active-draw cleanup every 2 ticks,
 recovery 100%. This is a modest zoom at the default FOV 70; the stable API has no
 normal-FOV getter, so the target cannot follow each player's personal FOV setting.
 `python -B mods/lothlorien/tools/make_galadhrim_archery.py` regenerates item and
@@ -17,6 +17,19 @@ arrow JSON, attachable/render controller and original pixel icons/pull frames.
 Vanilla native bow meshes are reused with all four exact texture keys; the local
 animation lowers third-person grip by 3 model units while retaining first person.
 The bow identifier stays `lothlorien:bow` to get the native two-arm pose.
+
+Speed polish 2026-10-12: the owner reported that 0.8s did not feel noticeably
+quicker and asked for a stronger improvement, with possible animation mismatch.
+Charge is now 0.6s: 25% less time than the previous 0.8s and 40% less than the
+documented vanilla 1s full charge. The native shooter maximum, custom-arrow
+critical threshold, Molang charge denominator (12 ticks), texture frame changes
+and FOV ease all share that timing. The installed native first-person pull
+animation (`vanilla_1.18.10/animations/bow.animation.json`) uses a fixed drawn
+pose and begins its shake when `variable.charge_amount >= 1`; it has no separate
+hard-coded one-second draw that needs replacing. The same charge variable now
+reaches one at 12 ticks. Native flight/damage/enchantment data remains unchanged.
+Source and Node checks establish matching configured timing; the quicker feel,
+client interpolation and full-charge damage/crit at 0.6s still need engine checks.
 
 Visual polish 2026-10-11: the current default is the slender mallorn longbow.
 Its limbs use two-pixel shading rather than the previous broad three-pixel strip,
@@ -30,15 +43,23 @@ Icons and all draw frames were compared with vanilla, then actual native
 texture-mesh extrusions were rendered and inspected in Blockbench. These checks
 establish silhouette and visible arrow geometry, not the in-game hand placement.
 
-Owner review alternatives stay in workspace scratch while the owner chooses:
-`temp/elven_inhabitants/m5_polish/archery/bow_variants.png` compares A carved
-mallorn (silver inlay), B recurve (turned tips), C slender longbow (current
-default), and D silverleaf (cool wood/leaf details), beside vanilla. The same
-folder's `bow_models.png` shows actual Blockbench mesh extrusions at idle/full
-draw, and `arrow_variants.png` compares three cosmetic arrow treatments. Arrow
-production art and flight behavior are unchanged. Scratch generators are
-`make_archery_variants.py` and `render_archery_variants.py` in the parent folder;
-keep them until the owner selects the final design, then clean them up.
+Owner selections 2026-10-11: **bow C, slender mallorn longbow**, and **arrow 3,
+broad silver point with green feathers**. Bow C textures and its 1.12 held scale
+are unchanged by the selection. The selected arrow icon is reproduced directly
+by the production generator, with no scratch dependency; its pixels match the
+approved sheet exactly. Projectile flight and damage stay unchanged. These are
+owner sheet selections; the corrected first-person bow still needs game acceptance.
+
+The owner also liked optional bow D silverleaf except for one stray pixel. Its
+scratch generator now keeps all colour accents inside the existing silhouette,
+removing the detached lower accent from both idle and full-draw previews.
+`temp/elven_inhabitants/m5_polish/archery/bow_variants_selected.png` shows the
+corrected D beside selected C and the other alternatives. The same folder's
+`arrow_variants_selected.png` preserves original arrows 1/2 and labels selected
+arrow 3; `arrow_selected_review.png` compares the final icon with vanilla.
+The earlier `bow_models.png` mesh sheet predates D's one-pixel correction.
+Production retains only selected bow C and arrow 3. Scratch generators are
+`make_archery_variants.py` and `render_archery_variants.py` in the parent folder.
 
 Damage, aim, native enchantments and ammunition selection stay native. Custom
 arrow projectile values equal the current vanilla ordinary player/mob arrow
@@ -68,13 +89,15 @@ callbacks/scheduler, native projectile parity and bindings. They establish event
 glue and cleanup, not engine rendering, FOV, physics or enchantment results.
 The camera fake now rejects lowercase easing, so reintroducing the original
 argument fails the draw/ownership assertions. Tests also cover progressive ease,
-bounded diagnostic logging and cleanup after camera failure.
+bounded diagnostic logging and cleanup after camera failure. They evaluate the
+generated charge/frame expressions at 6, 9 and 12 ticks, require full draw at
+12 ticks and check that the custom-ammo critical threshold matches native charge.
 
 Mandatory owner checks: two-arm pose and lower grip in third person, all pull
 frames in first/third person, zoom and release/cancel/slot/death/portal/reload
 cleanup, table/anvil Power/Punch/Flame/Infinity, identical aim/full-hit damage
 against vanilla, custom-arrow entity recovery and ground pickup. Custom ammo can
-crit at 0.8s; vanilla ammo retains its native threshold, so compare 0.8s and 1s.
+crit at 0.6s; vanilla ammo retains its native threshold, so compare 0.6s and 1s.
 M0 did not record Infinity's custom-arrow consumption: verify exactly one custom
 arrow is consumed and returned, including creative, with no ammo duplication.
 Infinity officially saves normal arrows only; custom consumption is an inference,

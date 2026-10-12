@@ -136,6 +136,9 @@ assert.equal(bow.components["minecraft:shooter"].max_draw_duration, rules.BOW.dr
 assert.equal(bow.components["minecraft:durability"].max_durability, rules.BOW.durability);
 assert.deepEqual(bow.components["minecraft:shooter"].ammunition.map(x => x.item), [rules.ARROW_ID, "minecraft:arrow"]);
 assert.equal(bow.components["minecraft:enchantable"].slot, "bow");
+const customAmmo = json("lothlorien_bp", "items/galadhrim_arrow.json")["minecraft:item"];
+assert.equal(customAmmo.components["minecraft:projectile"].minimum_critical_power, rules.BOW.drawSeconds,
+  "custom ammo critical threshold matches the quicker native charge");
 const arrow = json("lothlorien_bp", "entities/galadhrim_arrow.json")["minecraft:entity"];
 const vanilla = JSON.parse(readFileSync(new URL("../../../reference/vanilla/current/behavior_packs/vanilla_1.26.50/entities/arrow.json", import.meta.url)))["minecraft:entity"];
 assert.deepEqual(arrow.components, vanilla.components, "same native flight and damage");
@@ -145,6 +148,31 @@ assert.deepEqual(arrow.events["minecraft:entity_spawned"].first_valid,
 const attachable = json("lothlorien_rp", "attachables/bow.json")["minecraft:attachable"].description;
 assert.equal(attachable.identifier, rules.BOW_ID);
 assert.ok(attachable.scripts.pre_animation[0].includes(`/ ${rules.BOW.drawSeconds * 20}.0,`));
+// Evaluate the emitted Molang charge/frame expressions at tick boundaries:
+// checking only the item charge does not catch a stale visual denominator.
+const chargeExpression = attachable.scripts.pre_animation[0]
+  .replace(/^variable\.charge_amount\s*=\s*/, "").replace(/;$/, "")
+  .replaceAll("query.main_hand_item_max_duration", "maximum")
+  .replaceAll("query.main_hand_item_use_duration", "remaining")
+  .replaceAll("query.frame_alpha", "alpha").replaceAll("math.clamp", "clamp");
+const charge = new Function("maximum", "remaining", "alpha", "clamp", `return ${chargeExpression};`);
+const frameExpression = attachable.scripts.pre_animation[1]
+  .replace(/^variable\.bow_tex_idx\s*=\s*/, "").replace(/;$/, "")
+  .replaceAll("query.main_hand_item_use_duration", "remaining")
+  .replaceAll("variable.charge_amount", "charge");
+const frame = new Function("remaining", "charge", `return ${frameExpression};`);
+const maximum = rules.BOW.useSeconds * 20;
+const atTick = ticks => charge(maximum, maximum - ticks, 1, (value, min, max) => Math.max(min, Math.min(max, value)));
+assert.equal(rules.BOW.drawSeconds * 20, 12, "owner-requested stronger speed improvement: 12 ticks");
+assert.equal(atTick(6), 0.5);
+assert.equal(atTick(12), 1, "full visual draw reaches the native 12-tick charge");
+assert.equal(atTick(20), 1);
+assert.equal(frame(0, 0), 0, "idle frame when not drawing");
+assert.equal(frame(maximum - 6, atTick(6)), 1);
+assert.equal(frame(maximum - 9, atTick(9)), 2);
+assert.equal(frame(maximum - 12, atTick(12)), 3);
+assert.equal(attachable.animations.wield_first_person_pull, "animation.bow.wield_first_person_pull",
+  "native pull pose/shake reads the same variable.charge_amount");
 assert.equal(Object.keys(attachable.geometry).length, 4);
 assert.equal(new Set(Object.values(attachable.geometry)).size, 4);
 console.log("ok   archery: native projectile parity, balance and four pull frame bindings");

@@ -38,7 +38,7 @@
             "use_in_creative": true
           }
         ],
-        "max_draw_duration": 0.8,
+        "max_draw_duration": 0.6,
         "scale_power_by_draw_duration": true,
         "charge_on_draw": false
       }

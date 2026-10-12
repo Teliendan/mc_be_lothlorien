@@ -224,6 +224,16 @@ for (const name of ["elven_cloak", "silver_belt"]) {
   const [anchor, mesh] = geometry.bones;
   assert.equal(anchor.binding, "'body'"); assert.equal(anchor.cubes, undefined);
   assert.equal(mesh.parent, anchor.name); assert.ok(mesh.cubes.length);
+  for (const cube of mesh.cubes) {
+    assert.ok(cube.size.every(n => Number.isInteger(n) && n >= 1), "worn detail uses whole model units");
+    assert.equal(cube.inflate ?? 0, 0, "inflation changes the worn texture pixel density");
+    assert.equal(cube.scale, undefined);
+    const [w, h, depth] = cube.size;
+    const spans = { north: [w, h], south: [w, h], east: [depth, h], west: [depth, h], up: [w, depth], down: [w, depth] };
+    for (const [face, expected] of Object.entries(spans)) {
+      assert.deepEqual(cube.uv[face].uv_size, expected, "every worn face maps exactly one texel per model unit");
+    }
+  }
   for (const bone of geometry.bones) {
     assert.ok(!wornBoneNames.has(bone.name), "worn attachables never share animated bone names");
     wornBoneNames.add(bone.name);
@@ -239,7 +249,9 @@ for (const name of ["elven_cloak", "silver_belt"]) {
   else {
     assert.equal(attachable.scripts.animate[0].hide_first_person, "c.is_first_person");
     assert.equal(mesh.cubes[0].origin[1], 13.5, "band raised two model units above the accepted M5 baseline");
-    assert.equal(mesh.cubes[1].origin[1], 12.7, "buckle follows the band");
+    const [band, buckle] = mesh.cubes;
+    assert.equal(buckle.origin[0] + buckle.size[0] / 2, 0, "buckle is centered and symmetric");
+    assert.equal(buckle.origin[1] + buckle.size[1] / 2, band.origin[1] + band.size[1] / 2, "buckle and band share a raised center");
   }
 }
 console.log("ok   worn gifts: native item protection/durability and body-bound asset bindings");
