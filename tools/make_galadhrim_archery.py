@@ -44,7 +44,7 @@ write(BP, "items/bow.json", item(BOW_ID, {
 write(BP, "items/galadhrim_arrow.json", item(ARROW_ID, {
     "minecraft:icon": ARROW_ID, "minecraft:max_stack_size": 64,
     "minecraft:projectile": {"projectile_entity": ARROW_ID, "minimum_critical_power": BOW["drawSeconds"]}}, "minecraft:itemGroup.name.arrow"))
-arrow = json.loads((ROOT / "temp/elven_inhabitants/spike_files/lothlorien_bp/entities/spike_arrow.json").read_text())
+arrow = json.loads((MOD / "tools/reference/native_arrow_base.json").read_text())
 arrow["minecraft:entity"]["description"]["identifier"] = ARROW_ID
 write(BP, "entities/galadhrim_arrow.json", arrow)
 client = json.loads((ROOT / "reference/vanilla/current/resource_packs/vanilla/entity/arrow.entity.json").read_text())

@@ -14,6 +14,8 @@ recovery 100%. This is a modest zoom at the default FOV 70; the stable API has n
 normal-FOV getter, so the target cannot follow each player's personal FOV setting.
 `python -B mods/lothlorien/tools/make_galadhrim_archery.py` regenerates item and
 arrow JSON, attachable/render controller and original pixel icons/pull frames.
+The pinned native-arrow input is tracked in `tools/reference/native_arrow_base.json`;
+regeneration does not need the original M0 scratch files on another computer.
 Vanilla native bow meshes are reused with all four exact texture keys; the local
 animation lowers third-person grip by 3 model units while retaining first person.
 The bow identifier stays `lothlorien:bow` to get the native two-arm pose.
