@@ -50,16 +50,9 @@ by the production generator, with no scratch dependency; its pixels match the
 approved sheet exactly. Projectile flight and damage stay unchanged. These are
 owner sheet selections; the corrected first-person bow still needs game acceptance.
 
-The owner also liked optional bow D silverleaf except for one stray pixel. Its
-scratch generator now keeps all colour accents inside the existing silhouette,
-removing the detached lower accent from both idle and full-draw previews.
-`temp/elven_inhabitants/m5_polish/archery/bow_variants_selected.png` shows the
-corrected D beside selected C and the other alternatives. The same folder's
-`arrow_variants_selected.png` preserves original arrows 1/2 and labels selected
-arrow 3; `arrow_selected_review.png` compares the final icon with vanilla.
-The earlier `bow_models.png` mesh sheet predates D's one-pixel correction.
-Production retains only selected bow C and arrow 3. Scratch generators are
-`make_archery_variants.py` and `render_archery_variants.py` in the parent folder.
+Production retains only selected bow C and arrow 3. Review scratch is removed
+after final art selection. Art implementation: `Apply selected gift art and faster
+bow draw` (`03cc808`); final worn choices: `Finalize selected Galadriel worn gifts`.
 
 Damage, aim, native enchantments and ammunition selection stay native. Custom
 arrow projectile values equal the current vanilla ordinary player/mob arrow

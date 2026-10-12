@@ -1,6 +1,8 @@
 """Deterministic worn gifts: integer cubes and exactly one face texel per model unit.
 
 Run python -B tools/make_worn_gifts.py. Balance comes from scripts/gift_rules.js.
+Final owner selection: B4-v2 broad-clasp belt, C2-v2 Silver River cloak mesh,
+with the separately accepted C4 Golden Mallorn inventory icon preserved.
 """
 import json
 import subprocess
@@ -31,7 +33,7 @@ def item(name, components):
 
 def icons():
     # Owner-selected C4 Golden Mallorn icon, reproduced pixel-for-pixel without
-    # reading any iteration scratch. The wearable redesign is still provisional.
+    # reading any iteration scratch. C2 Silver River is the selected worn mesh.
     cloak = Image.new('RGBA', (16, 16))
     d = ImageDraw.Draw(cloak)
     d.polygon([(5, 2), (10, 2), (13, 5), (14, 13), (10, 14), (8, 13), (5, 14), (1, 13), (2, 5)], fill='#52735b')
@@ -40,45 +42,40 @@ def icons():
     d.line([(10, 5), (11, 12)], fill='#b6aa76')
     d.polygon([(7, 4), (9, 4), (8, 7)], fill='#f1e5bd')
     d.line([(5, 3), (7, 4), (9, 4), (10, 3)], fill='#b6aa76')
-    belt = belt_icon('b1')
+    belt = belt_icon()
     for name, image in [('elven_cloak', cloak), ('silver_belt', belt)]:
         target = RP / f'textures/items/{name}.png'
         target.parent.mkdir(parents=True, exist_ok=True)
         image.save(target)
 
 
-GREEN = ['#233e36', '#335245', '#52735b', '#789477']
 TEAL = ['#203e43', '#355c60', '#527b80', '#91aeaa']
 SILVER = ['#465e69', '#78929a', '#a6bdc0', '#e3eee8']
-GOLD = ['#766b45', '#b6aa76', '#d4ca91', '#f1e5bd']
 
 
-def belt_icon(style):
+def belt_icon():
     im = Image.new('RGBA', (16, 16))
     d = ImageDraw.Draw(im)
-    ramp = GREEN if style == 'b2' else SILVER
+    ramp = SILVER
     d.rectangle((2, 6, 13, 10), fill=ramp[1])
     d.line([(2, 6), (13, 6)], fill=ramp[3])
     d.line([(2, 7), (13, 7)], fill=ramp[2])
     d.line([(2, 10), (13, 10)], fill=ramp[0])
-    if style == 'b3':
-        for x in (3, 6, 9, 12): d.point((x, 8), fill=ramp[3])
-    clasp = GOLD if style == 'b2' else SILVER
+    clasp = SILVER
     d.rectangle((6, 5, 9, 11), fill=clasp[2])
     d.line([(6, 5), (9, 5)], fill=clasp[3])
     d.rectangle((7, 7, 8, 9), fill=TEAL[1])
     d.line([(6, 11), (9, 11)], fill=clasp[0])
-    if style == 'b4':
-        d.line([(7, 4), (8, 4)], fill=SILVER[3])
-        d.line([(5, 8), (10, 8)], fill=SILVER[3])
-        d.line([(7, 12), (8, 12)], fill=SILVER[2])
+    d.line([(7, 4), (8, 4)], fill=SILVER[3])
+    d.line([(5, 8), (10, 8)], fill=SILVER[3])
+    d.line([(7, 12), (8, 12)], fill=SILVER[2])
     return im
 
 
-def paint_face(w, h, role, face, style):
+def paint_face(w, h, role, face, kind):
     """Broad shade clusters and whole-texel ornament; no noise or swatch scaling."""
-    ramp = (TEAL if style == 'c2' else GREEN) if style.startswith('c') else (GREEN if style == 'b2' else SILVER)
-    trim = SILVER if style in ('c1', 'c2', 'b1', 'b3', 'b4') else GOLD
+    ramp = TEAL if kind == 'cloak' else SILVER
+    trim = SILVER
     im = Image.new('RGBA', (w, h))
     for y in range(h):
         for x in range(w):
@@ -94,12 +91,6 @@ def paint_face(w, h, role, face, style):
         d.line([(0, 0), (0, h-1)], fill=trim[2])
         d.line([(w-1, 0), (w-1, h-1)], fill=trim[1])
         if role == 'cape': d.line([(0, h-1), (w-1, h-1)], fill=trim[1])
-    if role == 'cape' and face == 'south' and style == 'c4':
-        # Nine-wide cape: readable, low-resolution mallorn sprig, painted on cloth.
-        x = w//2
-        d.line([(x, 2), (x, 7)], fill=GOLD[1])
-        d.point((x-1, 4), fill=GOLD[2]); d.point((x-2, 3), fill=GOLD[1])
-        d.point((x+1, 5), fill=GOLD[1]); d.point((x+2, 4), fill=GOLD[2])
     if role == 'clasp':
         d.rectangle((0, 0, w-1, h-1), fill=trim[2])
         d.line([(0, 0), (w-1, 0)], fill=trim[3])
@@ -109,8 +100,6 @@ def paint_face(w, h, role, face, style):
             d.line([(0, h//2), (w-1, h//2)], fill=TEAL[1])
     if role == 'band' and face in ('north', 'south'):
         d.line([(0, 0), (w-1, 0)], fill=ramp[3])
-        if style == 'b3':
-            for x in range(1, w, 3): d.point((x, min(1, h-1)), fill=ramp[3])
     return im
 
 
@@ -120,26 +109,26 @@ class SurfaceSheet:
         self.image = Image.new('RGBA', (64, 64))
         self.x = self.y = self.row = 0
 
-    def face(self, size, role, face, style):
+    def face(self, size, role, face, kind):
         w, h = size
         assert all(isinstance(v, int) and v > 0 for v in size)
         if self.x + w > 64:
             self.x = 0; self.y += self.row + 1; self.row = 0
         assert self.y + h <= 64, 'material sheet too small'
-        tile = paint_face(w, h, role, face, style)
+        tile = paint_face(w, h, role, face, kind)
         assert tile.getchannel('A').getextrema() == (255, 255), 'unpainted face texel'
         uv = {'uv': [self.x, self.y], 'uv_size': [w, h]}
         self.image.paste(tile, (self.x, self.y))
         self.x += w + 1; self.row = max(self.row, h)
         return uv
 
-    def cube(self, origin, size, role, style):
+    def cube(self, origin, size, role, kind):
         w, h, depth = size
         assert all(isinstance(v, int) and v > 0 for v in size)
         dimensions = {'north': (w, h), 'south': (w, h), 'east': (depth, h),
                       'west': (depth, h), 'up': (w, depth), 'down': (w, depth)}
         return {'origin': origin, 'size': size,
-                'uv': {f: self.face(dim, role, f, style) for f, dim in dimensions.items()}}
+                'uv': {f: self.face(dim, role, f, kind) for f, dim in dimensions.items()}}
 
 
 def validate_density(cubes, image):
@@ -156,21 +145,19 @@ def validate_density(cubes, image):
             assert image.crop((x, y, x+a, y+b)).getchannel('A').getextrema() == (255, 255)
 
 
-def design(kind, style):
+def design(kind):
     sheet = SurfaceSheet()
-    make = lambda origin, size, role: sheet.cube(origin, size, role, style)
+    make = lambda origin, size, role: sheet.cube(origin, size, role, kind)
     if kind == 'cloak':
-        bottom = {'c1': 5, 'c2': 2, 'c3': 8, 'c4': 4}[style]
         cubes = [make([-4.5, 20.5, -2.5], [9, 3, 5], 'shoulder'),
-                 make([-4.5, bottom, 2.5], [9, 22-bottom, 1], 'cape'),
+                 make([-4.5, 2, 2.5], [9, 20, 1], 'cape'),
                  make([-4.5, 17, -3.5], [3, 5, 1], 'lapel'),
                  make([1.5, 17, -3.5], [3, 5, 1], 'lapel'),
                  make([-1, 19, -3.5], [2, 3, 1], 'clasp')]
     else:
         # Hollow band; center x=0, band/buckle center y=14.5. No inflated UVs.
-        clasp_width = 3 if style == 'b4' else 2
         cubes = [make([-4.5, 13.5, -3], [9, 2, 1], 'band'),
-                 make([-clasp_width/2, 13, -4], [clasp_width, 3, 1], 'clasp'),
+                 make([-1.5, 13, -4], [3, 3, 1], 'clasp'),
                  make([-4.5, 13.5, 2], [9, 2, 1], 'band'),
                  make([-4.5, 13.5, -2], [1, 2, 4], 'band'),
                  make([3.5, 13.5, -2], [1, 2, 4], 'band')]
@@ -220,13 +207,13 @@ def main():
         'minecraft:wearable': {'slot': 'slot.weapon.offhand'},
     })
     icons()
-    for name, kind, style in [('elven_cloak', 'cloak', 'c4'), ('silver_belt', 'belt', 'b1')]:
-        cubes, texture = design(kind, style)
+    for name, kind in [('elven_cloak', 'cloak'), ('silver_belt', 'belt')]:
+        cubes, texture = design(kind)
         mesh(name, cubes)
         target = RP / f'textures/models/{name}.png'
         target.parent.mkdir(parents=True, exist_ok=True)
         texture.save(target)
-    print('Generated worn gifts: integer cubes, face UV spans at 1 texel/unit, accepted C4 icon.')
+    print('Generated selected B4-v2 belt and C2-v2 cloak at 1 texel/unit; accepted C4 icon preserved.')
 
 
 if __name__ == '__main__':

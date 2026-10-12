@@ -1,35 +1,33 @@
-# M5 gifts: implementation and game checklist
+# M5 gifts: final design and game checklist
 
-2026-10-11; Bedrock 1.26.52 / stable Script API 2.8.0.
-Implementation commit: `Implement M5 Galadriel gifts and Galadhrim arrows`.
-Status: implemented; owner confirmed belt mechanics, the phial and corrected
-invisibility. Bow timing/zoom and corrected worn art need engine acceptance.
-Stop here before M6.
+2026-10-12; Bedrock 1.26.52 / stable Script API 2.8.0.
+Finalization commit: `Finalize selected Galadriel worn gifts`.
+Status: implemented; owner confirmed belt mechanics, phial gameplay and corrected
+cloak invisibility in game. Final artwork is selected/accepted from previews:
 
-2026-10-11 feedback: keep the belt offhand and raise its worn position. Cloak
-invisibility briefly expired and the belt/cloak appeared to flicker together.
-Renew before expiry and isolate visible mesh transforms from bound anchors.
-Bow pull sprites now include a nocked arrow; a capitalized Script API easing
-enum corrects the failed zoom, eased over its 0.8-second draw. Default bow is
-slimmer and larger. Phial gameplay remains as accepted.
-Review-only alternatives live in workspace `temp/elven_inhabitants/m5_polish/`.
-Follow-up commit: `Polish M5 gift visibility and native bow drawing`.
-Validation: shared verify 0 errors / 15 warnings; full project regressions passed.
-Bow/worn generators rerun with zero pack-byte drift. Shared verifier fixture
-suite passes 1493 assertions. These checks do not establish native rendering.
+| Asset | Final selection |
+| --- | --- |
+| Bow | C, slender mallorn longbow; nocked arrows in all pull textures |
+| Arrow icon | 3, broad silver point with green feathers |
+| Phial | D/P4, faceted moon crystal |
+| Belt | B4-v2 Broad clasp, worn model and matching icon; stays offhand |
+| Cloak | C2-v2 Silver river worn model; C4 Golden Mallorn inventory icon retained |
 
-2026-10-12 review: owner selected bow C (also liked D; its detached accent was
-removed), Golden Mallorn cloak icon, phial D/P4 and arrow 3. Worn belts/cloaks
-were rejected for excessive detail density; revised models use whole-unit cubes
-and one texture pixel per unit, with painted ornaments. Belt review icons now
-use contrasting light/dark backgrounds; a symmetric centered buckle is the
-provisional default. Owner confirmed invisibility works. Bow 0.8s felt too close
-to vanilla, so draw and zoom now take 0.6s (12 ticks), pending a game retest.
-Selection/resolution commit: `Apply selected gift art and faster bow draw`.
-Validation for this revision: full shared verification/project suite passes with
-0 errors / 15 warnings. All three gift generators reproduce the packs with
-zero byte drift. Actual Blockbench worn previews match the vanilla player texel
-density; project asset regressions reject fractional cubes and mismatched UV spans.
+Selected wearable previews were accepted as "Much better". Geometry uses whole
+model units and one face texel per unit, with painted decoration. Belt position
+is raised two units. Cloak renewal occurs before expiry; bow camera easing uses
+`EasingType.Linear`. Native shooter, custom critical threshold, pull-frame charge
+and zoom ease now share 0.6s (12 ticks). The owner requested a more noticeable
+speed difference after 0.8s felt too close to vanilla. Corrected bow rendering,
+0.6s feel/zoom and broader equipment/multiplayer engine cases remain pending.
+Do not treat preview acceptance or offline verification as full M5 engine coverage.
+M6 has not started.
+
+Offline validation covers production runtime callbacks, trade/loot bindings,
+native projectile parity, camera cleanup, effect ownership and asset density.
+Final shared verification/project regressions passed: 0 errors / 15 warnings.
+The shared verifier fixture suite passes 1493 assertions. Generators reproduce
+the final packs; use the verification/deploy procedure below after further edits.
 
 Leave and re-enter the world after deployment. Existing elves gain the new stock;
 no new world is required. Already-filled chests retain their contents; arrow loot
@@ -72,15 +70,15 @@ Keep Survival active for ammunition consumption, durability and damage checks.
 | --- | --- |
 | Four shops at Friend + Elf-friend | Correct final gift in each shop, exactly 32 emeralds each. Guest Elf-friend / Friend Trusted lack all final gifts. |
 | Trusted woodwright / Great Mallorn loot | Arrow stock has the correct count; new chest loot can include arrows. |
-| Bow first/third person, tap/hold/full draw | Recognizable bow, lower grip, native two-arm pose, all pull frames, full draw near 0.8s. |
+| Bow first/third person, tap/hold/full draw | Recognizable bow, lower grip, native two-arm pose, all pull frames, full draw near 0.6s (12 ticks). |
 | Bow release, cancel, slot swap, death, portal, logout/reload | Zoom restores the player's normal FOV; multiplayer players clean up independently. |
 | Table/anvil, Power/Punch/Flame/Infinity | Native enchantments work. Check M0 behavior against final assets. |
-| Vanilla/custom arrows at 0.8s and 1s | Same flight/aim as vanilla; custom crit threshold is 0.8s, vanilla ammo retains its native threshold. Compare actual damage/crit timing. |
+| Vanilla/custom arrows at 0.6s and 1s | Same flight/aim as vanilla; custom crit threshold is 0.6s, vanilla ammo retains its native threshold. Compare actual damage/crit timing. |
 | Mob hit, bounce, ground, blocked/no-damage target | Destroyed custom arrow returns once; bounce does not also drop an item; ground pickup is custom ammo. |
 | Infinity and creative with custom ammo | Count consumed/recovered arrows; M0 did not establish custom-ammo consumption under Infinity. Flag duplication or lost ammo; recovery deliberately remains 100%. |
-| Cloak still sneak, drift, walk, jump, unsneak, unequip | Invisibility only after one stationary second; ends within half a second after leaving the condition. Check cloak and other armour visibility separately. |
+| Cloak still sneak, drift, walk, jump, unsneak, unequip | Invisibility only after one stationary second; ends within half a second after leaving the condition. Corrected effect continuity is owner-confirmed; check selected C2-v2 mesh and other armour visibility separately. |
 | Cloak chest protection and wear | Leather-level protection and native durability; held/inventory cloak grants no effect. |
-| Belt 9/20 vs 10/20 health, off-hand vs main hand | Healing below half only, at native Regeneration I cadence; belt sits at waist. |
+| Belt 9/20 vs 10/20 health, off-hand vs main hand | Healing below half only, at native Regeneration I cadence; selected B4-v2 belt sits at the raised waist position. |
 | Long/strong potion plus either worn gift | Potion duration/potency preserved; unequipping does not erase it. |
 | Phial indoors/outdoors, movement/unequip/death/portals | Smooth useful light with no lingering loaded helpers. Existing light/solid/plant/water/lava blocks remain intact. |
 | Two phial holders in one cell, then separate | One shared light remains until neither holder needs it; correct cleanup per dimension. |
@@ -110,6 +108,6 @@ From the workspace, run `mods localize build lothlorien`, `mods verify lothlorie
 then `mods deploy lothlorien` and confirm `mods status` is in sync.
 Detailed evidence/limits: [ARCHERY.md](ARCHERY.md),
 [M5_WORN_GIFTS_NOTES.md](M5_WORN_GIFTS_NOTES.md),
-[M5_PHIAL_NOTES.md](M5_PHIAL_NOTES.md). Reusable archery template is staged in
-workspace `docs/templates/custom_archery/`; supporting shared skill notes are in
-`.claude/skills/bedrock-items/references/`.
+[M5_PHIAL_NOTES.md](M5_PHIAL_NOTES.md). Reusable archery template is in
+`.claude/skills/bedrock-items/templates/custom_archery/`; supporting shared skill
+notes are in `.claude/skills/bedrock-items/references/`.
