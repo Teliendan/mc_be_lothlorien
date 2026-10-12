@@ -1,11 +1,19 @@
 // Native shooter handles aim, damage, ammunition, durability and enchantments.
-// M5 adds only drawing FOV and recovery after a custom arrow is destroyed on a mob.
+// M5 adds only drawing FOV and recovery after a custom arrow is destroyed on a mob,
+// plus a hint when a vanilla bow refuses to draw while the player carries Galadhrim arrows.
 import { EasingType, ItemStack, system, world } from "@minecraft/server";
 import { BOW_ID, ARROW_ID, BOW, ARROW } from "./gift_rules.js";
+import { message } from "./messages.js";
 
 const ZOOM_PROPERTY = "lothlorien:bow_zoom";
+const VANILLA_BOW_ID = "minecraft:bow";
 const drawing = new Map();
 const recovered = new Set();
+// Players whose vanilla bow use has not (yet) started a draw this tick.
+const refused = new Set();
+// The hint goes to chat (the action bar belongs to the Harmony status), so repeated clicks are throttled.
+const HINT_COOLDOWN_TICKS = 200;
+const lastHint = new Map();
 let timer;
 let started = false;
 const reportedCameraFailures = new Set();
@@ -70,6 +78,31 @@ function begin({ source: player, itemStack }) {
   }
 }
 
+function carriesGaladhrimArrows(player) {
+  const container = player.getComponent("minecraft:inventory")?.container;
+  if (container) {
+    for (let i = 0; i < container.size; i++) if (container.getItem(i)?.typeId === ARROW_ID) return true;
+  }
+  return player.getComponent("minecraft:equippable")?.getEquipmentSlot("Offhand")?.typeId === ARROW_ID;
+}
+
+// In game (1.26.52): a vanilla bow with only Galadhrim arrows fires itemUse but never itemStartUse;
+// a normal draw fires both in the same tick. So "use without a start" means the bow found no ammo.
+function noteVanillaBowUse({ source: player, itemStack }) {
+  if (itemStack?.typeId !== VANILLA_BOW_ID) return;
+  refused.add(player.id);
+  system.run(() => {
+    if (!refused.delete(player.id)) return; // the draw started
+    if (system.currentTick - (lastHint.get(player.id) ?? -Infinity) < HINT_COOLDOWN_TICKS) return;
+    try {
+      if (player.isValid && carriesGaladhrimArrows(player)) {
+        lastHint.set(player.id, system.currentTick);
+        player.sendMessage(message("archery.normal_bow")); // chat: the action bar belongs to the Harmony status (harmony_game.js)
+      }
+    } catch { /* player left or inventory unavailable; the hint is optional */ }
+  });
+}
+
 function returnArrow(event) {
   try {
     const arrow = event.projectile;
@@ -85,7 +118,8 @@ function returnArrow(event) {
 export function startArchery() {
   if (started) return;
   started = true;
-  world.afterEvents.itemStartUse.subscribe(begin);
+  world.afterEvents.itemStartUse.subscribe(event => { refused.delete(event.source.id); begin(event); });
+  world.afterEvents.itemUse.subscribe(noteVanillaBowUse);
   // Stop can omit itemStack on dimension transfer. Only our tracked/marked players are cleared.
   world.afterEvents.itemReleaseUse.subscribe(({ source }) => clearZoom(source));
   world.afterEvents.itemStopUse.subscribe(({ source }) => clearZoom(source));
@@ -93,7 +127,7 @@ export function startArchery() {
     if (deadEntity.typeId === "minecraft:player") clearZoom(deadEntity);
   });
   world.afterEvents.playerDimensionChange.subscribe(({ player }) => clearZoom(player));
-  world.afterEvents.playerLeave.subscribe(({ playerId }) => { drawing.delete(playerId); stopIfEmpty(); });
+  world.afterEvents.playerLeave.subscribe(({ playerId }) => { drawing.delete(playerId); lastHint.delete(playerId); stopIfEmpty(); });
   world.afterEvents.playerSpawn.subscribe(({ player }) => clearZoom(player));
   world.afterEvents.projectileHitEntity.subscribe(returnArrow);
   // A script reload can interrupt a draw without a release event.

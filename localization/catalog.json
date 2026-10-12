@@ -20899,6 +20899,64 @@
               "status": "ai-draft"
             }
           }
+        },
+        "lothlorien.message.archery.normal_bow": {
+          "source": "§7A normal bow cannot shoot Galadhrim arrows.",
+          "context": {
+            "meaning": "The player tried to draw an ordinary (vanilla) bow while carrying Galadhrim arrows and no normal arrows, so it did not draw. Deliberately vague: say only that an ordinary bow cannot shoot them; do not name the elven bow. Galadhrim is a lore proper name; the arrow name should match its item translation.",
+            "location": "lothlorien_rp: chat (the action bar shows the Harmony status)",
+            "trigger": "Right-click with a vanilla bow fails to draw while Galadhrim arrows are carried; at most once per 10 seconds.",
+            "tone": "Short, clear gameplay hint",
+            "grammar": "Complete short sentence; plural arrows; no player address or gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
+            "max_characters": 60,
+            "source_paths": [
+              "lothlorien_bp/scripts/archery.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Obyčejný luk šípy Galadhrim nevystřelí.",
+              "based_on": "a9c869309ad91814f2b37b33d2ac675fe744f09ced67dc0a7ff11c1dbc53024a",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§7Un arco normal no puede disparar flechas de los Galadhrim.",
+              "based_on": "a9c869309ad91814f2b37b33d2ac675fe744f09ced67dc0a7ff11c1dbc53024a",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§7Un arco normal no puede disparar flechas de los Galadhrim.",
+              "based_on": "a9c869309ad91814f2b37b33d2ac675fe744f09ced67dc0a7ff11c1dbc53024a",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§7Um arco comum não dispara flechas dos Galadhrim.",
+              "based_on": "a9c869309ad91814f2b37b33d2ac675fe744f09ced67dc0a7ff11c1dbc53024a",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§7Um arco comum não dispara flechas dos Galadhrim.",
+              "based_on": "a9c869309ad91814f2b37b33d2ac675fe744f09ced67dc0a7ff11c1dbc53024a",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§7Ein gewöhnlicher Bogen verschießt keine Galadhrim-Pfeile.",
+              "based_on": "a9c869309ad91814f2b37b33d2ac675fe744f09ced67dc0a7ff11c1dbc53024a",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§7Un arc ordinaire ne tire pas les flèches des Galadhrim.",
+              "based_on": "a9c869309ad91814f2b37b33d2ac675fe744f09ced67dc0a7ff11c1dbc53024a",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§7Zwykły łuk nie wystrzeli strzał Galadhrim.",
+              "based_on": "a9c869309ad91814f2b37b33d2ac675fe744f09ced67dc0a7ff11c1dbc53024a",
+              "status": "ai-draft"
+            }
+          }
         }
       }
     }

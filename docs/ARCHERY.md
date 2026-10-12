@@ -56,6 +56,16 @@ Production retains only selected bow C and arrow 3. Review scratch is removed
 after final art selection. Art implementation: `Apply selected gift art and faster
 bow draw` (`03cc808`); final worn choices: `Finalize selected Galadriel worn gifts`.
 
+Wrong-bow hint 2026-10-13 (owner request: players may get arrows before the bow).
+A vanilla bow cannot draw with only Galadhrim arrows. When a player uses a vanilla bow,
+no draw starts that tick and Galadhrim arrows are in the inventory or off-hand, chat
+shows `archery.normal_bow` ("A normal bow cannot shoot Galadhrim arrows"), at most once per
+10 s. Owner choices: keep it vague, without naming the elven bow; use chat, not the action
+bar, because the action bar competes with the Harmony status. The trigger was probed in
+game on 1.26.52: a refused draw fires `itemUse` but no `itemStartUse`. The probe has been
+removed. The hint itself needs an in-game check.
+A tooltip line on the arrows was considered as well; it was not built.
+
 Damage, aim, native enchantments and ammunition selection stay native. Custom
 arrow projectile values equal the current vanilla ordinary player/mob arrow
 (crossbow branches are omitted). A hit recovers at the event location after the

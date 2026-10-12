@@ -8,8 +8,9 @@ const source = readFileSync(new URL("../lothlorien_bp/scripts/archery.js", impor
 let serial = 0;
 async function scenario(name, body) {
   const handlers = new Map(), timers = new Map(), players = [], drops = [], warnings = [];
-  let tick = 0, next = 0;
+  let tick = 0, next = 0, queued = [];
   const system = { get currentTick() { return tick; },
+    run(fn) { queued.push(fn); },
     runInterval(fn, ticks) { const id = ++next; timers.set(id, { fn, ticks, at: tick + ticks }); return id; },
     clearRun: id => timers.delete(id) };
   const world = { getPlayers: () => players, afterEvents: new Proxy({}, { get: (_, name) => ({
@@ -17,18 +18,22 @@ async function scenario(name, body) {
   }) }) };
   const dimension = { id: "overworld", spawnItem: (item, location) => drops.push({ item, location }) };
   globalThis.__archery = { ...rules, system, world, EasingType: { Linear: "Linear" },
+    message: key => ({ translate: "lothlorien.message." + key }),
     ItemStack: class { constructor(typeId, amount) { Object.assign(this, { typeId, amount }); } } };
   const { startArchery } = await import(`data:text/javascript;base64,${Buffer.from(source).toString("base64")}#${++serial}`);
   delete globalThis.__archery;
   const fire = (name, event) => { for (const fn of handlers.get(name) || []) fn(event); };
   const advance = n => { for (let i = 0; i < n; i++) {
     tick++;
+    const runs = queued; queued = []; for (const fn of runs) fn();
     for (const [id, t] of [...timers]) if (timers.has(id) && t.at <= tick) { t.at += t.ticks; t.fn(); }
   } };
   function player() {
     const props = new Map(), cameraCalls = [], hand = { typeId: rules.BOW_ID }, hp = { currentValue: 20 };
+    const slots = [], offhand = {}, chat = [];
     const p = { id: `p${++next}`, typeId: "minecraft:player", isValid: true, dimension,
-      selectedSlotIndex: 0, hand, hp, cameraCalls,
+      selectedSlotIndex: 0, hand, hp, cameraCalls, slots, offhand, chat,
+      sendMessage: text => chat.push(text),
       getDynamicProperty: key => props.get(key),
       setDynamicProperty(key, value) { if (value === undefined) props.delete(key); else props.set(key, value); },
       camera: { setFov(options) {
@@ -38,8 +43,8 @@ async function scenario(name, body) {
         if (p.cameraBroken) throw Error("camera unavailable"); cameraCalls.push(options);
       } },
       getComponent(key) { return key === "minecraft:health" ? hp : key === "minecraft:equippable" ? {
-        getEquipmentSlot(slot) { assert.equal(slot, "Mainhand"); return hand; }
-      } : undefined; } };
+        getEquipmentSlot(slot) { assert.ok(slot === "Mainhand" || slot === "Offhand"); return slot === "Mainhand" ? hand : offhand; }
+      } : key === "minecraft:inventory" ? { container: { size: 36, getItem: i => slots[i] } } : undefined; } };
     players.push(p); return p;
   }
   const begin = p => fire("itemStartUse", { source: p, itemStack: { typeId: rules.BOW_ID } });
@@ -127,6 +132,33 @@ await scenario("entity hits recover exactly one custom arrow at hit position, wi
   e.fire("projectileHitBlock", hit);
   assert.equal(e.drops.length, 1, "vanilla arrows, bouncing arrows and ground pickup remain native");
   assert.equal(e.timers.size, 0, "recovery never creates a polling loop");
+});
+
+await scenario("vanilla bow that cannot draw hints in chat only when Galadhrim arrows are carried", async e => {
+  e.startArchery(); const p = e.player();
+  const hint = { translate: "lothlorien.message.archery.normal_bow" };
+  const use = typeId => e.fire("itemUse", { source: p, itemStack: { typeId } });
+  const cooldown = () => e.advance(200);
+  // Observed in game: a refused vanilla bow fires itemUse but no itemStartUse.
+  p.slots[5] = { typeId: rules.ARROW_ID };
+  use("minecraft:bow"); assert.equal(p.chat.length, 0, "hint waits one tick for a possible draw start");
+  e.advance(1); assert.deepEqual(p.chat, [hint]);
+  // Chat stays on screen, so repeated clicks within 10 s add nothing.
+  use("minecraft:bow"); e.advance(1); assert.equal(p.chat.length, 1);
+  cooldown();
+  // A normal draw fires itemStartUse in the same tick: no hint.
+  use("minecraft:bow"); e.fire("itemStartUse", { source: p, itemStack: { typeId: "minecraft:bow" } });
+  e.advance(1); assert.equal(p.chat.length, 1);
+  // Off-hand Galadhrim arrows count; no Galadhrim arrows at all means no hint.
+  p.slots[5] = undefined; p.offhand.typeId = rules.ARROW_ID;
+  use("minecraft:bow"); e.advance(1); assert.equal(p.chat.length, 2);
+  cooldown(); p.offhand.typeId = undefined;
+  use("minecraft:bow"); e.advance(1); assert.equal(p.chat.length, 2);
+  // Other items and the elven bow never hint; a player who left is skipped.
+  p.slots[0] = { typeId: rules.ARROW_ID };
+  use(rules.BOW_ID); use("minecraft:crossbow"); e.advance(1); assert.equal(p.chat.length, 2);
+  use("minecraft:bow"); p.isValid = false; e.advance(1); assert.equal(p.chat.length, 2);
+  assert.equal(e.timers.size, 0, "the hint never creates a polling loop");
 });
 
 const json = (pack, file) => JSON.parse(readFileSync(new URL(`../${pack}/${file}`, import.meta.url)));
