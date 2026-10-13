@@ -1,8 +1,11 @@
 # Section 9 / M6: Great Mallorn watch camps
 
 2026-10-13; target Bedrock 1.26.52 / stable Script API 2.8.0.
-Implementation commit: `Polish Great Mallorn lookouts as elven watch camps`.
-Status: implemented, offline checks pass; owner in-game acceptance pending.
+Initial commit: `14a71b7` (`Polish Great Mallorn lookouts as elven watch camps`).
+Correction commit: `Shelter watch-camp sleepers and correct indented banner edges`.
+Status: owner accepted the camp overall 2026-10-13; bed orientation and indented
+banner edges corrected and awaiting retest. Individual seating/drop/shield results
+were not supplied.
 
 The owner requested section **9**, not a separate M9. This is the existing M6 scope.
 Final values and design: [elven_inhabitants.md section 9](design/elven_inhabitants.md).
@@ -18,8 +21,11 @@ complete, supported native bed pairs; cushion support and green/light-gray varia
 values; two persistent vulnerable bow wardens; six-layer native banner NBT;
 four lanterns and nonzero block light on all open deck cells; connected routes
 from the rope to beds, cushions, guards and chest; exact generator/shipped-byte
-agreement; unfurnished plain giants; generated supply/shield loot and 25% chance.
-The existing M5 arrow loot quantity/weight contract is preserved.
+agreement; unfurnished plain giants; owner-tuned supply/shield loot and 50% chance.
+Bed heads must touch the trunk; the banner must use `bts`/`tts` for its three-tooth
+edges. The owner's source loot was snapshotted before rebuilding and compared
+afterwards: all entries, rolls, functions, weights and counts match exactly.
+M5's shared arrow weight is now 6, retaining stacks of 4-8.
 
 `mods verify lothlorien` passes: zero errors/warnings, 15 existing documented
 exceptions. A conservative light model and NBT assertions do not establish live
@@ -44,10 +50,13 @@ nuts also place the furnished lookout templates in existing worlds.
    Confirm survival placement of its dropped item works too.
 5. Sleep on a straw bed at night: skip the night, retain the previous spawn point,
    and consume that bed. This one-use behavior is vanilla, not a mod respawn loop.
-6. Compare the banner to the silver design in `docs/design/banners.txt`.
+6. Compare the banner to the silver design in `docs/design/banner.png` (the original
+   `banners.txt` also describes the correct pattern). Check three small triangles
+   along both indented edges, rather than one large triangle. Bed heads should
+   rest against the west trunk face, sideways to the north entry, with feet west.
    Break/re-place it and check that the pattern survives. Repeat on a rotated tree.
 7. Generate several samples with `/loot spawn ~ ~1 ~ loot "chests/mallorn_flet"`.
-   Roughly 1 in 4 rolls should have a green shield with the same silver-bordered
+   Roughly 1 in 2 rolls should have a green shield with the same silver-bordered
    six-layer design. Equip it in each hand, block, drop and pick it up. This native
    shield-function behavior remains pending despite offline schema checks.
 8. At night inspect light, fences and furniture in the intended graphics mode;

@@ -19,9 +19,10 @@ export function furnishWatchCamp(tree) {
     blocks.set(key(x, yy, z), { name, states, ...extra });
   };
   for (const [x, z] of CAMP.beds) {
-    if (!open(x, z) || !open(x, z + 1)) throw new Error("watch camp bed lacks supported clear space");
-    for (const head of [true, false]) place(x, y, z + (head ? 0 : 1), "minecraft:straw_bed", {
-      "minecraft:cardinal_direction": "north", head_piece_bit: head, occupied_bit: false,
+    const [dx, dz] = CAMP.bedFootOffset;
+    if (!open(x, z) || !open(x + dx, z + dz)) throw new Error("watch camp bed lacks supported clear space");
+    for (const head of [true, false]) place(x + (head ? 0 : dx), y, z + (head ? 0 : dz), "minecraft:straw_bed", {
+      "minecraft:cardinal_direction": CAMP.bedDirection, head_piece_bit: head, occupied_bit: false,
     });
   }
   for (const [x, z] of CAMP.carpet) {
