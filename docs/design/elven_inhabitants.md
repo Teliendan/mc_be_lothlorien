@@ -1,6 +1,6 @@
 # Elven inhabitants: professions, Renown, trades, gifts (design)
 
-Status: **M0-M4 accepted; M5 final art selected and belt/phial/invisibility work; bow speed/zoom and broader engine checks pending** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
+Status: **M0-M4 and M6 accepted; M5 final art selected and belt/phial/invisibility work; bow speed/zoom and broader engine checks pending** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
 Supersedes the profession stock lists and trade-state details in `lothlorien_elven_settlements_plan.md` ("Initial professions",
 "Harmony-aware trading", "Proposed reputation trade states") and the stock part of `harmony_rework_plan.md` section 5. The trade
 **architecture** of that section 5 (native trade screen, per-band tables pre-swapped by script, refusal in `beforeEvents.playerInteractWithEntity`) stays.
@@ -16,7 +16,7 @@ Looks: `docs/mobs/elves.md` (`tools/make_elves.py`, review sheets in `temp/elves
 | M3 | Shops: trade-table generator (band x rank), table swapping by script, refusal (section 4) | complete, accepted in game 2026-10-11: shops 7f86c87 ("It all works"), Trade hover guidance 9cdd1a0 confirmed on deployed 405d482 ("It works"); [regression checklist](../M3_TRADES_TEST.md) |
 | M4 | Healer heals elves and Friends (section 7) | complete, owner accepted 2026-10-11 (bc1da69); [regression checklist](../M4_HEALER_TEST.md) |
 | M5 | Final items (Galadriel's gifts) + Galadhrim arrows (sections 5, 6); then the bow template for `bedrock-items` | implemented; final art selected/accepted from previews 2026-10-12: bow C, arrow 3, phial D/P4, belt B4-v2 with icon, worn cloak C2-v2 with Golden Mallorn icon. Belt/phial/corrected invisibility owner-confirmed; 0.6s bow feel/zoom and broader engine checks pending; [checklist](../M5_GIFTS_TEST.md). Shared template in `.claude/skills/bedrock-items/templates/custom_archery/` |
-| M6 | Great Mallorn upgrade (section 9) | camp accepted overall 2026-10-13; heads-to-trunk beds and indented banner-edge correction built, awaiting retest; owner's loot tuning retained; [checklist](../M6_WATCH_CAMPS_TEST.md) |
+| M6 | Great Mallorn upgrade (section 9) | complete, owner accepted 2026-10-13 after bed/banner correction; final implementation `0630cdf`; owner's loot tuning retained; [record](../M6_WATCH_CAMPS_TEST.md) |
 | M7 | Homes + village look (section 10; `lothlorien_jigsaw_settlement.md` section 6) | |
 
 **Working agreement (owner, 2026-10-10).** Stop after each milestone for the owner's in-game test. Before a milestone starts, show the owner one batch
@@ -171,7 +171,7 @@ in game. Cloak renews before expiry; bow zoom uses `EasingType.Linear`, pull fra
 include an arrow, and native charge/custom critical/visual charge/zoom ease match
 0.6s (12 ticks). The requested faster bow feel, zoom, final worn fit and broader
 engine cases remain pending in [M5_GIFTS_TEST.md](../M5_GIFTS_TEST.md).
-Finalization commit: `Finalize selected Galadriel worn gifts`. M6 has not started.
+Finalization commit: `Finalize selected Galadriel worn gifts`. M6 is complete (section 9).
 
 Dropped: Box of Lórien earth (not unique enough), Elessar (Aragorn's alone; became the belt), Mirror of Galadriel, Circlet of Elanor (cloak is better).
 
@@ -220,17 +220,17 @@ Details and recipes: `.claude/skills/bedrock-items/references/bows-and-arrows.md
 5. Known: civilian elves placed as structure template entities get engine default attributes (movement 0.7, etc.), like the village wardens
    ([V] 2026-10-08); reuse the `warden_replace.js` pattern.
 
-## 9. Great Mallorn upgrade (2026-10-13; camp accepted, bed/banner correction awaiting retest)
+## 9. Great Mallorn upgrade (complete, owner accepted 2026-10-13)
 
 The flet giants (`lothlorien:giant_mallorn`, lookout variant `round`, loot `loot_tables/chests/mallorn_flet.json`; `TECHNICAL_NOTES.md` Phase 5):
 - **Wardens:** two persistent bow guards per lookout, using the village component group and existing structure-attribute replacement.
 - **Lights:** four silver elven lanterns on the cardinal rim posts. Offline conservative block-light check: every walkable deck cell has light >= 1; actual night rendering/spawning still needs the game test.
 - **Camp furnishing:** two native straw beds across the west-side nook, heads east against the living trunk and feet west toward a small green rug. The north rope entry stays clear; sleepers shelter their heads rather than pointing them toward the approach (owner correction 2026-10-13). Two native cushions (green and light gray) overlook the south side. The 26.50 Wilderness Bound update added functional straw beds (sleep once without resetting spawn) and sit-on cushions.
-- **Banner:** one native wall banner on the south trunk face, using the **silver** design in `banner.png` / `banners.txt`, all six layers in order. Both indented edges have three small triangles (`bts` / `tts` in NBT); the first implementation incorrectly used single-triangle codes `bt` / `tt`. The long pattern names in the owner's original code were correct. Bedrock spells its light-gray dye `silver`.
+- **Banner:** one native wall banner on the south trunk face, using the **silver** design in `banner.png` / `banners.txt`, all six layers in order. Both indented edges have three small triangles (`bts` / `tts` in NBT). Bedrock spells its light-gray dye `silver`.
 - **Loot (owner tuned 2026-10-13):** existing provisions + 3-5 supply rolls, nectar, salve, herbs, corn, acorns, emeralds, antler, Galadhrim arrows (weight 6, stack 4-8) and rope (1-4). Owner removed Elanor, Niphredil, morning dew and bottled fireflies. Separate **50%** chance of one native shield carrying the same pattern (shield/empty weights 3/3). No Great Mallorn nuts or final Galadriel gifts. Generator now reproduces the owner's edited loot exactly; arrow values share `gift_rules.js`.
 - **Scope:** both shipped `round` lookout trees (5 and 7), including future Great Mallorn nut-grown copies. Plain giants and village pieces retain their original bytes. Existing generated trees are not refurnished; unopened old chests use the updated loot table.
 - **Implementation:** `tools/watch_camp_rules.mjs` owns all values; `tools/watch_camp.mjs` furnishes and generates loot during `node tools/build_structures.mjs`. No additional runtime script or recurring scan. One existing rail-mender marker per lookout repairs fence links after placement and removes itself.
-- **Evidence:** Bedrock 1.26.52 / API 2.8.0, 2026-10-13: installed 26.50 templates, official references and offline regression checks. Owner accepted the rest of the camp overall, with the bed orientation/banner corrections above; individual seating, drops and shield-pattern observations were not supplied. Initial commit `14a71b7` (`Polish Great Mallorn lookouts as elven watch camps`); correction: `Shelter watch-camp sleepers and correct indented banner edges`.
+- **Evidence:** Bedrock 1.26.52 / API 2.8.0, 2026-10-13: installed 26.50 templates, official references and passing regression checks. Owner accepted the completed feature after the bed/banner correction: "Perfect, this is done." Individual seating/drop/shield observations were not supplied. Final implementation: `0630cdf` (`Shelter watch-camp sleepers and correct indented banner edges`). Scratch removed on acceptance; permanent banner references and production generators retained.
 
 ## 10. Population (M1, accepted in game 2026-10-10)
 
