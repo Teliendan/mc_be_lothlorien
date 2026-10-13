@@ -13,6 +13,7 @@ import "./ordinary_harvest.mjs";
 import "./script_glue.mjs";
 import "./renown.mjs";
 import "./trade.mjs";
+import "./watch_camp.mjs";
 import { leafUndersideY } from "../lothlorien_bp/scripts/leaf_fall.js";
 import { BONEMEAL_TABLE, SPREAD_TRIES, COVERS, pickWeighted } from "../lothlorien_bp/scripts/flora_table.js";
 import { readFileSync } from "node:fs";

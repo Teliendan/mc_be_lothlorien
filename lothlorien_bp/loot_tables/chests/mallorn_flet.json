@@ -20,7 +20,13 @@
         {
           "type": "item",
           "name": "lothlorien:lembas_wrapped",
-          "weight": 2
+          "weight": 2,
+          "functions": [
+            {
+              "function": "set_count",
+              "count": 1
+            }
+          ]
         }
       ]
     },
@@ -47,7 +53,13 @@
         {
           "type": "item",
           "name": "lothlorien:athelas_salve",
-          "weight": 1
+          "weight": 1,
+          "functions": [
+            {
+              "function": "set_count",
+              "count": 1
+            }
+          ]
         },
         {
           "type": "item",
@@ -157,6 +169,106 @@
               }
             }
           ]
+        },
+        {
+          "type": "item",
+          "name": "lothlorien:morning_dew",
+          "weight": 2,
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 1,
+                "max": 2
+              }
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "lothlorien:bottle_of_fireflies",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "set_count",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "lothlorien:mallorn_nectar",
+          "weight": 2,
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 1,
+                "max": 2
+              }
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "lothlorien:elven_rope",
+          "weight": 2,
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 1,
+                "max": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "minecraft:shield",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "set_banner_details",
+              "type": 0,
+              "base_color": "green",
+              "patterns": [
+                {
+                  "pattern": "cross",
+                  "color": "lime"
+                },
+                {
+                  "pattern": "triangles_bottom",
+                  "color": "lime"
+                },
+                {
+                  "pattern": "triangles_top",
+                  "color": "lime"
+                },
+                {
+                  "pattern": "curly_border",
+                  "color": "silver"
+                },
+                {
+                  "pattern": "stripe_middle",
+                  "color": "lime"
+                },
+                {
+                  "pattern": "flower",
+                  "color": "green"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "empty",
+          "weight": 3
         }
       ]
     }

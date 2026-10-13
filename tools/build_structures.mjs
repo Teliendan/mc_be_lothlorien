@@ -13,11 +13,12 @@
 // first block above the ground at y ROOT_DEPTH; cells the tree does not fill are structure void, so the
 // terrain and plants around it survive. Keep TRUNK_AT / ROOT_DEPTH in step with tools/dev_scripts/showcase.js and
 // with start_height (-ROOT_DEPTH) in worldgen/structures/giant_mallorn.json.
-import { writeFileSync, mkdirSync, readdirSync, unlinkSync } from "node:fs";
+import { writeFileSync, mkdirSync, readdirSync, unlinkSync, realpathSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { makeRandom } from "../lothlorien_bp/scripts/mallorn_tree.js";
 import { buildFletMallorn, ROOT_DEPTH, bareBranchEnds } from "./flet_mallorn.mjs";
+import { furnishWatchCamp, watchCampLoot } from "./watch_camp.mjs";
 
 export const SIZE = 40, SIZE_Y = 54, TRUNK_AT = 18;
 const BLOCK_VERSION = 18168865; // as in the vanilla 1.26.30 structures
@@ -68,9 +69,10 @@ const stateTag = (v) => (typeof v === "boolean" ? byte(v) : typeof v === "number
 //   placed mob's groups this way, so "+lothlorien:village_warden" puts it into that group). mainhand: item name held in the
 //   main hand (written as the saved-entity Mainhand list). invulnerable defaults to true (markers); real mobs pass false.
 const emptySlot = () => compound({ Count: byte(0), Damage: short(0), Name: str(""), WasPickedUp: byte(false) });
-const entityTag = ({ id, x, y, z, definitions, mainhand, invulnerable = true }, n) => compound({
+const entityTag = ({ id, x, y, z, definitions, mainhand, variant, invulnerable = true }, n) => compound({
   Air: short(300), Fire: short(0), OnGround: byte(false), Invulnerable: byte(invulnerable), isPersistent: byte(true),
   identifier: str(id), definitions: list(T.string, (definitions ?? [`+${id}`]).map(str)),
+  ...(variant === undefined ? {} : { Variant: int(variant) }),
   ...(mainhand ? { Mainhand: list(T.compound, [compound({ Count: byte(1), Damage: short(0), Name: str(mainhand), WasPickedUp: byte(false) })]), Offhand: list(T.compound, [emptySlot()]) } : {}),
   Pos: list(T.float, [float(x), float(y), float(z)]), Motion: list(T.float, [float(0), float(0), float(0)]),
   Rotation: list(T.float, [float(0), float(0)]), UniqueID: long(-(2n ** 33n) - BigInt(n) * 7919n),
@@ -112,6 +114,15 @@ export function toMcstructure(blocks, [SX, SY, SZ] = [SIZE, SIZE_Y, SIZE], [OX, 
         }),
       });
     }
+    if (v.banner) {
+      positionData[String(index)] = compound({
+        block_entity_data: compound({
+          id: str("Banner"), isMovable: byte(true), Base: int(v.banner.baseId), Type: int(0),
+          Patterns: list(T.compound, v.banner.patterns.map((p) => compound({ Pattern: str(p.code), Color: int(p.colorId) }))),
+          x: int(x), y: int(y), z: int(z),
+        }),
+      });
+    }
   }
   const root = compound({
     format_version: int(1),
@@ -148,7 +159,7 @@ export const hasChest = (blocks) => [...blocks.values()].some((b) => b.name === 
 
 const treeName = (variant, n) => `mallorn_${variant}_${String(n).padStart(2, "0")}`;
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+if (process.argv[1] && realpathSync(fileURLToPath(import.meta.url)) === realpathSync(process.argv[1])) {
   const [which, countArg, seedArg] = process.argv.slice(2);
   const bp = join(dirname(fileURLToPath(import.meta.url)), "..", "lothlorien_bp");
   const out = join(bp, "structures", "lothlorien");
@@ -160,10 +171,13 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   };
   const write = (variant, n) => {
     const tree = buildFletMallorn(makeRandom(n * 7919), VARIANTS[variant]);
+    const campEntities = furnishWatchCamp(tree).map((e) => ({ ...e,
+      x: e.x + TRUNK_AT, y: e.y + ROOT_DEPTH, z: e.z + TRUNK_AT,
+    }));
     tree.blocks.set(`${ANCHOR_AT.x},${ANCHOR_AT.y},${ANCHOR_AT.z}`, {
       name: "minecraft:jigsaw", states: { facing_direction: 0, rotation: 0 }, jigsaw: TRUNK_ANCHOR, finalState: "lothlorien:mallorn_log",
     });
-    const { buffer, clipped } = toMcstructure(tree.blocks);
+    const { buffer, clipped } = toMcstructure(tree.blocks, undefined, undefined, campEntities);
     const name = treeName(variant, n);
     const bare = bareBranchEnds(tree.blocks); // every branch end carries >= 6 leaves within 2 (tuftBareEnds fixes the rest)
     if (bare.length) throw new Error(`${name}: bare branch end at ${bare.map((q) => `${q.x},${q.y},${q.z}`).join(" ")}`);
@@ -198,4 +212,5 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     },
   }, null, 2) + "\n");
   console.log(`worldgen picks from ${CHOSEN.map(([v, n]) => treeName(v, n)).join(", ")}`);
+  writeFileSync(join(bp, "loot_tables/chests/mallorn_flet.json"), JSON.stringify(watchCampLoot(), null, 2) + "\n");
 }
