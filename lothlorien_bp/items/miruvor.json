@@ -20,7 +20,7 @@
       },
       "minecraft:cooldown": {
         "category": "lothlorien_miruvor",
-        "duration": 30
+        "duration": 0
       },
       "lothlorien:miruvor": {}
     }

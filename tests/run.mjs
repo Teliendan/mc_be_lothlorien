@@ -35,6 +35,7 @@ await import("./healer.mjs");
 await import("./archery.mjs");
 await import("./worn_gifts.mjs");
 await import("./phial.mjs");
+await import("./miruvor.mjs");
 
 const L = "lothlorien:lothlorien", RIVER = "minecraft:river", FOREST = "minecraft:forest";
 const T = new Set([RIVER]);

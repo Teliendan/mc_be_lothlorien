@@ -4,8 +4,12 @@ import { system, EquipmentSlot } from "@minecraft/server";
 // be drunk); these components add the effects. First balance is deliberately conservative: the salve
 // is a modest heal-over-time (about 5 HP), Miruvor about 10 HP plus a short speed boost, and it costs
 // a salve, both rare flowers and Mallorn nectar. Ticks: 20 per second.
-// Miruvor is a skin, not a stack: 4 sips (durability), 30 s between sips (cooldown in the item JSON).
+// Miruvor is a skin, not a stack: 4 sips (durability), 30 s after each completed sip.
 // It is not food, so the sip comes from onCompleteUse (use_modifiers duration) and the item survives.
+// The JSON cooldown duration is zero: native use-start must not penalize an interrupted drink.
+// Keep its category for native blocking/display; start the real cooldown only after the effects.
+const MIRUVOR_COOLDOWN_CATEGORY = "lothlorien_miruvor";
+const MIRUVOR_COOLDOWN_TICKS = 30 * 20;
 const EFFECTS = {
   "lothlorien:salve": [["regeneration", 120, 1]],
   "lothlorien:miruvor": [
@@ -52,6 +56,7 @@ system.beforeEvents.startup.subscribe(({ itemComponentRegistry }) => {
       try {
         apply(source, EFFECTS["lothlorien:miruvor"]);
         sipFromSkin(source);
+        source.startItemCooldown(MIRUVOR_COOLDOWN_CATEGORY, MIRUVOR_COOLDOWN_TICKS);
       } catch {
         // player gone mid-drink
       }

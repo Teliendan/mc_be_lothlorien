@@ -560,19 +560,23 @@ component `lothlorien:lembas`). Numbers are a first guess: the plan (Phase 7 tes
 ## Phase 8 - Athelas salve and Miruvor
 
 Files: items `athelas_salve`, `miruvor`; recipes `athelas_salve`, `miruvor`; `scripts/athelas.js` (components `lothlorien:salve`,
-`lothlorien:miruvor` applying effects in `onConsume`, same pattern as `lembas.js`). Art is placeholder (generated bottles, `GRAPHICS_TASKS.md`).
-**Status: game-tested 2026-09-29 (user, 1.26.52): salve and Miruvor skin work, cooldown and sip counting fine.**
+`lothlorien:miruvor` applying effects in `onCompleteUse`; salve uses `onConsume`, like `lembas.js`). Accepted provision art: `GRAPHICS_TASKS.md`.
+**Status:** owner confirmed the cooldown fix in game and accepted it 2026-10-14
+(target 1.26.52). Cancelled attempts impose no cooldown; a completed sip applies
+effects, spends one sip and starts 600 ticks. The native category remains with
+automatic duration zero. Full verification and `tests/miruvor.mjs` pass.
+Commit: `fix(miruvor): start cooldown only after a completed sip`.
 
 - **Harvest:** unchanged. Athelas is a plant block; breaking it drops the Athelas item (default self-drop, no loot table). Raw Athelas is
   *not* edible: the item already places the block, and one item cannot both place and be eaten. "Raw = weak healing" from the design is dropped
   in favour of the salve.
 - **Salve:** 2 Athelas (vertical) over a glass bottle -> 1 salve. Drink 1.6 s, always drinkable, stack 16. Regeneration II 6 s (about 5 HP), lifts Poison.
 - **Miruvor (Skin):** a reusable skin, not a stack. `minecraft:durability` 4 = 4 sips, stack 1, 30 s cooldown between sips
-  (`minecraft:cooldown`, category `lothlorien_miruvor`), drink 2.0 s. Not food: `use_modifiers` + `use_animation: drink`, and the effects and
+  (native category `lothlorien_miruvor`, explicitly started after completion), drink 2.0 s. Not food: `use_modifiers` + `use_animation: drink`, and the effects and
   the durability loss run in `onCompleteUse` (`athelas.js`); the last sip removes the item. Per sip: instant health I (4 HP), Regeneration II 8 s
   (about 6 HP), Speed I 30 s, lifts Poison. Recipe (3x3): `ENE / SHS / NSL` = 2 Elanor, 2 Niphredil, 3 salves (6 Athelas), 1 Mallorn nectar (Phase 14b; was a honey bottle), 1 leather.
   Balance: one sip is a Healing II potion plus a run, so the skin is paid up front (about 10 items, 3 glass bottles' worth) and throttled by the cooldown.
-  **Verified in game (was unverified):** `onCompleteUse` firing for a non-food item with `use_modifiers`, cooldown starting on use, durability bar showing, `durability.damage`
+  **Verified in game (was unverified):** `onCompleteUse` firing for a non-food item with `use_modifiers`, the old cooldown starting on use (replaced 2026-10-14), durability bar showing, `durability.damage`
   write-back via the mainhand slot. If `onCompleteUse` does not fire, fall back to `onUse` + a manual timer.
 - Effects come from script because item-JSON food effects are not available in format 1.26.50 (not verified; scripts are the working pattern here).
 - **Test list:** items appear in the creative menu and recipe book (salve unlocks on picking up Athelas, Miruvor on getting a salve); drink
