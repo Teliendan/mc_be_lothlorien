@@ -202,9 +202,10 @@ for (const name of ["white_deer","squirrel"]) {
   const h=engine(), mod=await load("swan",{...h.bindings,...swanRules});
   mod.startSwans({id:"lothlorien:lothlorien",at:()=>"minecraft:plains"});
   const adult=h.entity(swanRules.SWAN_ID),cygnet=h.entity(swanRules.SWAN_ID);cygnet.baby=true;
+  adult.setProperty("lothlorien:adult_ready", true); // retired guard from the temporary-test build
   for(const entity of [adult,cygnet])h.fire("after","entityLoad",{entity});
   assert.ok(adult.events.includes("minecraft:ageable_grow_up"));assert.equal(cygnet.events.length,0);
-  assert.equal(adult.getProperty("lothlorien:adult_ready"), true);
+  assert.equal(adult.getProperty("lothlorien:adult_initialized"), true);
   const migratedEvents = adult.events.length;
   h.fire("after","entityLoad",{entity:adult});
   assert.equal(adult.events.length, migratedEvents, "reloading an adult must not restart its feather timer");

@@ -20,21 +20,10 @@ assert.equal(entity.description.properties["lothlorien:shed_phase"].client_sync,
 assert.equal(spawn.spawn_item_event.target, "self");
 const dropEvent = entity.events[spawn.spawn_item_event.event];
 assert.ok(dropEvent, "the native item spawn must fire the animation signal");
-// The opt-in diagnostic uses real native item spawning, once, then restores the
-// adult group and calls the same animation event. It must never apply to babies.
-const testStart = entity.events["lothlorien:test_shedding"].sequence[0];
-assert.deepEqual(testStart.filters, { test: "is_baby", subject: "self", value: false });
-assert.deepEqual(testStart.remove.component_groups, ["lothlorien:adult", "lothlorien:shedding_test"]);
-assert.deepEqual(testStart.add.component_groups, ["lothlorien:shedding_test"]);
-const fast = entity.component_groups["lothlorien:shedding_test"]["minecraft:spawn_entity"].entities;
-assert.deepEqual([fast.min_wait_time, fast.max_wait_time, fast.single_use], [5, 5, true]);
-for (const key of ["spawn_item", "num_to_spawn", "spawn_sound"])
-  assert.deepEqual(fast[key], spawn[key], `diagnostic must exercise the real production ${key}`);
-const finish = entity.events[fast.spawn_item_event.event].sequence;
-assert.deepEqual(finish[0].remove.component_groups, ["lothlorien:shedding_test"]);
-assert.equal(finish[1].trigger, "minecraft:ageable_grow_up");
-assert.equal(finish[2].trigger, spawn.spawn_item_event.event);
-assert.ok(entity.events["lothlorien:spawn_cygnet"].remove.component_groups.includes("lothlorien:shedding_test"));
+// Development diagnostics must not ship in the production entity.
+assert.ok(!Object.keys(entity.component_groups).some(name => /test|debug/.test(name)));
+assert.ok(!Object.keys(entity.events).some(name => /test|debug/.test(name)));
+assert.deepEqual(entity.events["lothlorien:spawn_cygnet"].remove.component_groups, ["lothlorien:adult"]);
 // Death drops and the cooking path must agree; keep the existing feather pool.
 const loot = read("../lothlorien_bp/loot_tables/entities/swan.json").pools;
 assert.equal(loot[0].entries[0].name, "minecraft:feather");
@@ -95,4 +84,4 @@ for (const initial of [false, true]) {
     assert.ok(!controller.states[state].animations?.includes("shake"));
   }
 }
-console.log("ok   swan shedding: native adult drops, five-second diagnostic, meat/cooking, repeated one-shot shakes, neutral endpoints");
+console.log("ok   swan shedding: native adult drops, no runtime diagnostics, meat/cooking, repeated one-shot shakes, neutral endpoints");

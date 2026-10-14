@@ -395,15 +395,14 @@ Commit: `Finalize selected Galadriel worn gifts`.
 
 ## Swan feather shake and meat (2026-10-14)
 
-**Shake accepted in game by owner**, target Bedrock 1.26.52. Native natural
-feather production and five-second test also confirmed. 1.35-second body roll,
-neck counter-sway, tail ruffle and symmetric wing lift; neutral endpoints,
-walking/swimming remain active. Source: `tools/make_swan_shedding.py`, authored
-and exported through Blockbench. Accepted animation iteration scratch removed.
-Implementation commit: `Finish swan drops and visible feather shedding`.
-
-**Meat icons to review in game.** Boneless breast silhouette, pink raw /
-golden-brown cooked, 16x16, top-left highlights; deterministic
-`tools/make_swan_meat.py`. Compared with vanilla poultry; largest flat regions
-11% raw / 13% cooked, no review-sheet warnings. Final review sheet:
-`temp/swan-meat/review.png`; retained until owner art acceptance.
+**Final: owner accepted and declared swans finished.** Target Bedrock 1.26.52.
+Natural shedding, 1-5 minute interval and 1.35-second shake are owner-confirmed.
+Meat icons: angled poultry leg with full meaty end, tapered neck and ivory bone;
+raw pink with a pale fat edge / cooked golden-brown, shared 16x16 silhouette.
+The original boneless oval was rejected as a ball. Final review: 87 painted
+pixels, 12 raw / 10 cooked colours, largest flat area under 15%, no review warnings.
+Generators: `tools/make_swan_shedding.py` (Blockbench) and `make_swan_meat.py`.
+Accepted iteration scratch removed; no unused variants retained. Runtime test
+group/events removed from BP; only production art/controller ship in RP.
+Feature commit: `2810ce3` (`Finish swan drops and visible feather shedding`).
+Final art/cleanup commit: `Finalize swan art and remove runtime diagnostics`.
