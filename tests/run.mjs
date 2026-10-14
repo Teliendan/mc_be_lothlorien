@@ -4,6 +4,7 @@ import "./support_motion.mjs";
 import "./rope_lifecycle.mjs";
 import "./script_performance.mjs";
 import "./animal_home.mjs";
+import "./swan_shedding.mjs";
 import "./stair_water.mjs";
 import "./leaf_harvest.mjs";
 import "./golden_fern_harvest.mjs";

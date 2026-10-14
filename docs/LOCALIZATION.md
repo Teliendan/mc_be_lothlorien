@@ -27,3 +27,10 @@ Offline verification: shared add-on verifier, project regression tests where con
 Remaining in-game review: pack descriptions/settings, inventory/block/entity names, interaction prompts, chat/action bars, mixed-language multiplayer, language switching and new item lore where applicable. Target review states remain `ai-draft`; use named-reviewer evidence before marking `language-reviewed`, and version/date/test evidence for `game-tested`.
 
 Vanilla terminology: Mojang bedrock-samples commit `46ba6ea985fb5a92d79a9419198f10dda14c199d`, documented not verified in game. Shared selected terms: workspace `docs/localization-terminology.json`.
+
+
+2026-10-14 swan meat: Raw Swan Meat / Cooked Swan Meat names added with complete
+context and all nine locales, plus existing compatibility aliases. Item names
+identify swan meat rather than chicken/goose and describe raw versus cooked.
+Translations are AI drafts; `mods localize build lothlorien` passed. Native
+language and in-game item-name review remain pending.

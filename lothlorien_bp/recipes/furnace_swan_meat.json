@@ -1,0 +1,15 @@
+{
+  "format_version": "1.12",
+  "minecraft:recipe_furnace": {
+    "description": {
+      "identifier": "lothlorien:furnace_swan_meat"
+    },
+    "tags": [
+      "furnace",
+      "smoker",
+      "campfire"
+    ],
+    "input": "lothlorien:swan_meat_raw",
+    "output": "lothlorien:swan_meat_cooked"
+  }
+}

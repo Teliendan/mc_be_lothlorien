@@ -392,3 +392,18 @@ engine fit and animation checks remain in [M5_GIFTS_TEST.md](M5_GIFTS_TEST.md).
 Corrected invisibility is owner-confirmed in game. No claim of full M5 engine
 acceptance is implied by these art selections.
 Commit: `Finalize selected Galadriel worn gifts`.
+
+## Swan feather shake and meat (2026-10-14)
+
+**Shake accepted in game by owner**, target Bedrock 1.26.52. Native natural
+feather production and five-second test also confirmed. 1.35-second body roll,
+neck counter-sway, tail ruffle and symmetric wing lift; neutral endpoints,
+walking/swimming remain active. Source: `tools/make_swan_shedding.py`, authored
+and exported through Blockbench. Accepted animation iteration scratch removed.
+Implementation commit: `Finish swan drops and visible feather shedding`.
+
+**Meat icons to review in game.** Boneless breast silhouette, pink raw /
+golden-brown cooked, 16x16, top-left highlights; deterministic
+`tools/make_swan_meat.py`. Compared with vanilla poultry; largest flat regions
+11% raw / 13% cooked, no review-sheet warnings. Final review sheet:
+`temp/swan-meat/review.png`; retained until owner art acceptance.

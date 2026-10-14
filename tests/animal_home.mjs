@@ -59,6 +59,9 @@ function engine() {
         k === "minecraft:is_baby" ? (e.baby ? {} : undefined) : undefined,
       triggerEvent(name) {
         e.events.push(name);
+        if (typeId === swanRules.SWAN_ID)
+          for (const [key, value] of Object.entries(entityJson("swan").events[name]?.set_property || {}))
+            if (typeof value === "boolean") properties.set(key, value);
         if (name === "lothlorien:guide_start") properties.set("lothlorien:guiding", true);
         if (name === "lothlorien:guide_end") properties.set("lothlorien:guiding", false);
       },
@@ -201,6 +204,10 @@ for (const name of ["white_deer","squirrel"]) {
   const adult=h.entity(swanRules.SWAN_ID),cygnet=h.entity(swanRules.SWAN_ID);cygnet.baby=true;
   for(const entity of [adult,cygnet])h.fire("after","entityLoad",{entity});
   assert.ok(adult.events.includes("minecraft:ageable_grow_up"));assert.equal(cygnet.events.length,0);
+  assert.equal(adult.getProperty("lothlorien:adult_ready"), true);
+  const migratedEvents = adult.events.length;
+  h.fire("after","entityLoad",{entity:adult});
+  assert.equal(adult.events.length, migratedEvents, "reloading an adult must not restart its feather timer");
   h.fire("after","entitySpawn",{entity:cygnet,cause:"Born"});h.advance(1);assert.ok(cygnet.isValid);
   const wild=h.entity(swanRules.SWAN_ID);wild.setProperty("lothlorien:natural",true);
   h.fire("after","entitySpawn",{entity:wild,cause:"Spawned"});h.advance(1);assert.equal(wild.isValid,false);

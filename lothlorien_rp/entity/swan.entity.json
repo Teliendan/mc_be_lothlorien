@@ -16,7 +16,9 @@
         "idle": "animation.lothlorien.swan.idle",
         "walk": "animation.lothlorien.swan.walk",
         "swim": "animation.lothlorien.swan.swim",
-        "look_at_target": "animation.common.look_at_target"
+        "look_at_target": "animation.common.look_at_target",
+        "shake": "animation.lothlorien.swan.shake",
+        "shedding": "controller.animation.lothlorien.swan.shedding"
       },
       "scripts": {
         "animate": [
@@ -27,7 +29,8 @@
           },
           {
             "swim": "query.is_in_water"
-          }
+          },
+          "shedding"
         ]
       },
       "render_controllers": [

@@ -120,6 +120,8 @@ These are item-component tags, not block tags. This is a cross-check, not a requ
 | [lothlorien:mallorn_wood](../lothlorien_bp/items/mallorn_wood.json) | `minecraft:logs`, `minecraft:logs_that_burn` |
 | [lothlorien:venison_cooked](../lothlorien_bp/items/venison_cooked.json) | `minecraft:is_food`, `minecraft:is_meat` |
 | [lothlorien:venison_raw](../lothlorien_bp/items/venison_raw.json) | `minecraft:is_food`, `minecraft:is_meat` |
+| [lothlorien:swan_meat_raw](../lothlorien_bp/items/swan_meat_raw.json) | `minecraft:is_food`, `minecraft:is_meat`; edible poultry, same tag policy as venison (2026-10-14, source/offline evidence) |
+| [lothlorien:swan_meat_cooked](../lothlorien_bp/items/swan_meat_cooked.json) | `minecraft:is_food`, `minecraft:is_meat`; edible poultry, same tag policy as venison (2026-10-14, source/offline evidence) |
 
 ## Evidence and follow-up
 

@@ -20957,6 +20957,114 @@
               "status": "ai-draft"
             }
           }
+        },
+        "item.lothlorien:swan_meat_raw": {
+          "source": "Raw Swan Meat",
+          "context": {
+            "meaning": "A raw, edible cut of meat dropped by an adult swan; can be cooked.",
+            "location": "Resource-pack item name in inventory tooltips and Creative inventory.",
+            "trigger": "Viewing the swan meat item in an inventory or holding it.",
+            "tone": "Plain Minecraft food item name.",
+            "grammar": "Standalone noun phrase; adjective agrees with meat, not the bird.",
+            "constraints": "Identify a swan, not a goose or chicken. No sentence punctuation or lore embellishment."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Syrové labutí maso",
+              "based_on": "ef03c570cfccf9af484e6d2529dbcfe4a702fb4ffda870cb1312b138b25b9beb",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Carne de cisne cruda",
+              "based_on": "ef03c570cfccf9af484e6d2529dbcfe4a702fb4ffda870cb1312b138b25b9beb",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Carne de cisne cruda",
+              "based_on": "ef03c570cfccf9af484e6d2529dbcfe4a702fb4ffda870cb1312b138b25b9beb",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Carne de cisne crua",
+              "based_on": "ef03c570cfccf9af484e6d2529dbcfe4a702fb4ffda870cb1312b138b25b9beb",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Carne de cisne crua",
+              "based_on": "ef03c570cfccf9af484e6d2529dbcfe4a702fb4ffda870cb1312b138b25b9beb",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Rohes Schwanenfleisch",
+              "based_on": "ef03c570cfccf9af484e6d2529dbcfe4a702fb4ffda870cb1312b138b25b9beb",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Viande de cygne crue",
+              "based_on": "ef03c570cfccf9af484e6d2529dbcfe4a702fb4ffda870cb1312b138b25b9beb",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Surowe mięso łabędzia",
+              "based_on": "ef03c570cfccf9af484e6d2529dbcfe4a702fb4ffda870cb1312b138b25b9beb",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "item.lothlorien:swan_meat_cooked": {
+          "source": "Cooked Swan Meat",
+          "context": {
+            "meaning": "The cooked edible cut of swan meat, made in a furnace, smoker or campfire.",
+            "location": "Resource-pack item name in inventory tooltips and Creative inventory.",
+            "trigger": "Viewing the swan meat item in an inventory or holding it.",
+            "tone": "Plain Minecraft food item name.",
+            "grammar": "Standalone noun phrase; adjective agrees with meat, not the bird.",
+            "constraints": "Identify a swan, not a goose or chicken. No sentence punctuation or lore embellishment."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Pečené labutí maso",
+              "based_on": "23bc724b5213b43750e4d17d8fdfcfc3742135545249937aec0dc2bdece87fa6",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Carne de cisne cocinada",
+              "based_on": "23bc724b5213b43750e4d17d8fdfcfc3742135545249937aec0dc2bdece87fa6",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Carne de cisne cocinada",
+              "based_on": "23bc724b5213b43750e4d17d8fdfcfc3742135545249937aec0dc2bdece87fa6",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Carne de cisne cozinhada",
+              "based_on": "23bc724b5213b43750e4d17d8fdfcfc3742135545249937aec0dc2bdece87fa6",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Carne de cisne assada",
+              "based_on": "23bc724b5213b43750e4d17d8fdfcfc3742135545249937aec0dc2bdece87fa6",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Gebratenes Schwanenfleisch",
+              "based_on": "23bc724b5213b43750e4d17d8fdfcfc3742135545249937aec0dc2bdece87fa6",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Viande de cygne cuite",
+              "based_on": "23bc724b5213b43750e4d17d8fdfcfc3742135545249937aec0dc2bdece87fa6",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Pieczone mięso łabędzia",
+              "based_on": "23bc724b5213b43750e4d17d8fdfcfc3742135545249937aec0dc2bdece87fa6",
+              "status": "ai-draft"
+            }
+          }
         }
       }
     }

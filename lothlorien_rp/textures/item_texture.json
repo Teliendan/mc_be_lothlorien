@@ -118,6 +118,12 @@
     },
     "lothlorien:galadhrim_arrow": {
       "textures": "textures/items/galadhrim_arrow"
+    },
+    "lothlorien:swan_meat_raw": {
+      "textures": "textures/items/swan_meat_raw"
+    },
+    "lothlorien:swan_meat_cooked": {
+      "textures": "textures/items/swan_meat_cooked"
     }
   }
 }

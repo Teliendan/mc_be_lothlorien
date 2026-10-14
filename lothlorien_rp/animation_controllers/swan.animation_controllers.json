@@ -1,0 +1,56 @@
+{
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.lothlorien.swan.shedding": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "transitions": [
+            {
+              "idle_1": "query.property('lothlorien:shed_phase')"
+            },
+            {
+              "idle_0": "!query.property('lothlorien:shed_phase')"
+            }
+          ]
+        },
+        "idle_0": {
+          "transitions": [
+            {
+              "shake_1": "query.property('lothlorien:shed_phase')"
+            }
+          ]
+        },
+        "shake_1": {
+          "animations": [
+            "shake"
+          ],
+          "blend_transition": 0.08,
+          "transitions": [
+            {
+              "idle_1": "query.all_animations_finished"
+            }
+          ]
+        },
+        "idle_1": {
+          "transitions": [
+            {
+              "shake_0": "!query.property('lothlorien:shed_phase')"
+            }
+          ]
+        },
+        "shake_0": {
+          "animations": [
+            "shake"
+          ],
+          "blend_transition": 0.08,
+          "transitions": [
+            {
+              "idle_0": "query.all_animations_finished"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

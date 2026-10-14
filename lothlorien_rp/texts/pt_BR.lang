@@ -725,3 +725,7 @@ entity.lothlorien:galadhrim_arrow.name=Flecha dos Galadhrim
 tile.lothlorien:phial_light.name=Luz do frasco
 ## Context: The player tried to draw an ordinary (vanilla) bow while carrying Galadhrim arrows and no normal arrows, so it did not draw. Deliberately vague: say only that an ordinary bow cannot shoot them; do not name the elven bow. Galadhrim is a lore proper name; the arrow name should match its item translation.
 lothlorien.message.archery.normal_bow=§7Um arco comum não dispara flechas dos Galadhrim.
+## Context: A raw, edible cut of meat dropped by an adult swan; can be cooked.
+item.lothlorien:swan_meat_raw=Carne de cisne crua
+## Context: The cooked edible cut of swan meat, made in a furnace, smoker or campfire.
+item.lothlorien:swan_meat_cooked=Carne de cisne assada

@@ -19,10 +19,12 @@ function judgeNaturalSpawn(swan, biome) {
 
 // biome = { id, at(dimension, x, z) -> surface biome id or undefined } (main.js supplies it).
 export function startSwans(biome) {
-  // Existing adult swans predate the lifecycle groups. Babies keep their age on reload.
+  // Migrate old adults once. Re-adding the adult group on every load could reset
+  // its native feather timer; babies keep their age and have no shedding timer.
   const migrateAdult = entity => {
     try {
-      if (entity.typeId === SWAN_ID && !entity.getComponent("minecraft:is_baby"))
+      if (entity.typeId === SWAN_ID && !entity.getComponent("minecraft:is_baby") &&
+          !entity.getProperty("lothlorien:adult_ready"))
         entity.triggerEvent("minecraft:ageable_grow_up");
     } catch { /* swan unloaded */ }
   };
