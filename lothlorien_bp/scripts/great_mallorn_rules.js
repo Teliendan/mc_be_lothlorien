@@ -2,14 +2,18 @@
 // great_mallorn.js wires them to the game.
 //
 // The white deer's one gift: a Great Mallorn nut. Planted on soil it becomes a sprout that grows like a sapling
-// (no bone meal) into one of the flet giants (platform, ladder, loot chest), placed from the same .mcstructure files as
+// (no bone meal) into one of the plain giants (tree only), placed from the same .mcstructure files as
 // the worldgen giants. It will not grow while anything built stands where the tree would put a block.
 
 export const NUT_ID = "lothlorien:great_mallorn_nut";
 export const SPROUT_ID = "lothlorien:great_mallorn_sprout";
-// The flet giants (tools/build_structures.mjs, CHOSEN round trees with a chest). Structure ids follow the file path
+// The plain giants (tools/build_structures.mjs, CHOSEN roundplain trees; no platform, furnishings or elves).
+// Owner decision 2026-10-16. Structure ids follow the file path
 // structures/lothlorien/<name>.mcstructure.
-export const FLET_TREES = ["lothlorien:mallorn_round_05", "lothlorien:mallorn_round_07"];
+export const PLAIN_TREES = [
+  "lothlorien:mallorn_roundplain_02", "lothlorien:mallorn_roundplain_03",
+  "lothlorien:mallorn_roundplain_06", "lothlorien:mallorn_roundplain_08",
+];
 
 // Structure box (keep in step with tools/build_structures.mjs SIZE / SIZE_Y / TRUNK_AT and tools/flet_mallorn.mjs
 // ROOT_DEPTH; a test compares them). The trunk fills cells TRUNK_AT..TRUNK_AT+3; the first cell above the ground is y ROOT_DEPTH.

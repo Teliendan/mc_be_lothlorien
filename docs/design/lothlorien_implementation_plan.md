@@ -559,7 +559,7 @@ pathfinding, following an invisible helper `lothlorien:guide_beacon` that script
 `follow_target_leader`; fallbacks prepared in `tools/dev_scripts/guide_goal/`, to be decided by an in-game experiment). Third owner round
 (2026-09-30): leading to hidden markers in flet giants was dropped (a loaded-chunk search only finds trees already in sight; script cannot
 locate placed structures) and the markers removed. Instead, once per deer, it leads 36-56 blocks to a spot it picks inside the biome and
-lays its gift, a **Great Mallorn nut** that grows like a sapling into a flet giant anywhere. Second owner round, built 2026-09-30 (static checks only):
+lays its gift, a **Great Mallorn nut** that grows like a sapling into a plain Great Mallorn anywhere (owner, 2026-10-16: no platform, banners, chest or elves; offline checked, changed selection pending in-game confirmation). Second owner round, built 2026-09-30 (static checks only):
 the white deer is always an antlered hart with a sure antler drop, leashable (a lead always wins over guidance), costs 6 Harmony
 (twice a deer; Disharmony double before), spawns more in the heart than at the edges (script filter on natural spawns by depth); ordinary deer eat only Western Corn
 grain. Design, assumptions, the goal experiment and the in-game test plan: `TECHNICAL_NOTES.md` (White deer guidance)._

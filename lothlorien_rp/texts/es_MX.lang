@@ -289,8 +289,8 @@ lothlorien.message.deer.untrusted=§7El venado blanco te observa, pero aún no c
 lothlorien.message.nut.lore.plant=§7Planta en pasto o tierra.
 ## Context: Tooltip line 2. Dimensions are Minecraft blocks: approximate width 40 and height 50. Full tooltip also explains giant tree and planting surface.
 lothlorien.message.nut.lore.space=§7Espacio: unos 40 de ancho y 50 de alto.
-## Context: Tooltip line 1 of gifted Great Mallorn nut. Flet means wooden platform in the giant tree. Full tooltip explains tree size and planting surface.
-lothlorien.message.nut.lore.tree=§7Crece un mallorn gigante con plataforma.
+## Context: Tooltip line 1 of gifted Great Mallorn nut. Grows a plain giant tree with no platform, furnishings or elves. Full tooltip explains tree size and planting surface.
+lothlorien.message.nut.lore.tree=§7Crece un mallorn gigante.
 ## Context: Mounting refused: unicorn is bonded to a different player.
 lothlorien.message.unicorn.other_owner=§7Este unicornio está vinculado a otra persona.
 ## Context: Third accepted offer creates a permanent bond to this player; now rideable without a saddle.
@@ -315,8 +315,8 @@ lothlorien.message.friend.lost=§7Lothlórien ya no te cuenta entre sus amistade
 lothlorien.message.status.friend=Amistad de Lothlórien
 ## Context: Growth collision warning identifies sprout coordinates, translated obstacle block name and obstacle coordinates. Use Block.localizationKey; never derive a fake English block name from its namespace ID.
 lothlorien.message.mallorn.blocked=§6El retoño de gran mallorn en %s no puede crecer. Obstáculo: %s en %s.
-## Context: Planting warning for Great Mallorn nut: giant tree with a flet (wooden platform). Reserve about 40x40 horizontal blocks, 50 above and 5 below; light required, built blocks prevent growth. Breaking sprout returns nut.
-lothlorien.message.mallorn.planted=§6La nuez de gran mallorn crece hasta formar un árbol gigante con una plataforma de madera: unos 40 bloques de ancho y 50 de alto, con raíces de 5 bloques de profundidad. Necesita luz y espacio sin construcciones. Rompe el retoño para recuperar la nuez.
+## Context: Planting warning for Great Mallorn nut: plain giant tree with no platform, furnishings or elves. Reserve about 40x40 horizontal blocks, 50 above and 5 below; light required, built blocks prevent growth. Breaking sprout returns nut.
+lothlorien.message.mallorn.planted=§6La nuez de gran mallorn crece hasta formar un árbol gigante: unos 40 bloques de ancho y 50 de alto, con raíces de 5 bloques de profundidad. Necesita luz y espacio sin construcciones. Rompe el retoño para recuperar la nuez.
 ## Context: Bone meal is explicitly refused; growth remains governed by natural random ticks and light.
 lothlorien.message.mallorn.no_bonemeal=§7Un gran mallorn no se deja apresurar.
 ## Context: Debug depth class: outside the Lothlorien biome, not outside a building.

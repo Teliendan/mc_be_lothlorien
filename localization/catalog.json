@@ -8022,11 +8022,11 @@
           }
         },
         "lothlorien.message.nut.lore.tree": {
-          "source": "§7Grows a giant Mallorn with a platform.",
+          "source": "§7Grows a giant Mallorn.",
           "context": {
-            "meaning": "Tooltip line 1 of gifted Great Mallorn nut. Flet means wooden platform in the giant tree. Full tooltip explains tree size and planting surface.",
+            "meaning": "Tooltip line 1 of gifted Great Mallorn nut. Grows a plain giant tree with no platform, furnishings or elves. Full tooltip explains tree size and planting surface.",
             "location": "lothlorien_rp: gifted Great Mallorn nut inventory tooltip",
-            "trigger": "Tooltip line 1 of gifted Great Mallorn nut. Flet means wooden platform in the giant tree. Full tooltip explains tree size and planting surface.",
+            "trigger": "Tooltip line 1 of gifted Great Mallorn nut. Grows a plain giant tree with no platform, furnishings or elves. Full tooltip explains tree size and planting surface.",
             "tone": "Gentle woodland narration",
             "grammar": "Complete short instruction; part of a three-line tooltip.",
             "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
@@ -8038,43 +8038,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "§7Vyroste v obří mallorn s plošinou.",
-              "based_on": "addc3ca1ca2a9789471be679c9c841084544bc9716f07fd6c235eff80fe1e715",
+              "text": "§7Vyroste v obří mallorn.",
+              "based_on": "b376ccf58436ebecdd840f493f9d22ab2603e998c6883202f782ed43d4b4f0dd",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "§7Crece un mallorn gigante con plataforma.",
-              "based_on": "addc3ca1ca2a9789471be679c9c841084544bc9716f07fd6c235eff80fe1e715",
+              "text": "§7Crece un mallorn gigante.",
+              "based_on": "b376ccf58436ebecdd840f493f9d22ab2603e998c6883202f782ed43d4b4f0dd",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "§7Crece un mallorn gigante con plataforma.",
-              "based_on": "addc3ca1ca2a9789471be679c9c841084544bc9716f07fd6c235eff80fe1e715",
+              "text": "§7Crece un mallorn gigante.",
+              "based_on": "b376ccf58436ebecdd840f493f9d22ab2603e998c6883202f782ed43d4b4f0dd",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "§7Faz crescer um mallorn gigante com plataforma.",
-              "based_on": "addc3ca1ca2a9789471be679c9c841084544bc9716f07fd6c235eff80fe1e715",
+              "text": "§7Faz crescer um mallorn gigante.",
+              "based_on": "b376ccf58436ebecdd840f493f9d22ab2603e998c6883202f782ed43d4b4f0dd",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "§7Faz crescer um mallorn gigante com plataforma.",
-              "based_on": "addc3ca1ca2a9789471be679c9c841084544bc9716f07fd6c235eff80fe1e715",
+              "text": "§7Faz crescer um mallorn gigante.",
+              "based_on": "b376ccf58436ebecdd840f493f9d22ab2603e998c6883202f782ed43d4b4f0dd",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "§7Wächst zu einem Riesenmallorn mit Plattform.",
-              "based_on": "addc3ca1ca2a9789471be679c9c841084544bc9716f07fd6c235eff80fe1e715",
+              "text": "§7Wächst zu einem Riesenmallorn.",
+              "based_on": "b376ccf58436ebecdd840f493f9d22ab2603e998c6883202f782ed43d4b4f0dd",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "§7Donne un mallorn géant avec plateforme.",
-              "based_on": "addc3ca1ca2a9789471be679c9c841084544bc9716f07fd6c235eff80fe1e715",
+              "text": "§7Donne un mallorn géant.",
+              "based_on": "b376ccf58436ebecdd840f493f9d22ab2603e998c6883202f782ed43d4b4f0dd",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "§7Wyrasta w olbrzymi mallorn z platformą.",
-              "based_on": "addc3ca1ca2a9789471be679c9c841084544bc9716f07fd6c235eff80fe1e715",
+              "text": "§7Wyrasta w olbrzymi mallorn.",
+              "based_on": "b376ccf58436ebecdd840f493f9d22ab2603e998c6883202f782ed43d4b4f0dd",
               "status": "ai-draft"
             }
           }
@@ -8780,11 +8780,11 @@
           }
         },
         "lothlorien.message.mallorn.planted": {
-          "source": "§6The Great Mallorn nut grows into a giant tree with a wooden platform: about 40 blocks wide and 50 high, with roots 5 blocks deep. It needs light and space free of built blocks. Break the sprout to get the nut back.",
+          "source": "§6The Great Mallorn nut grows into a giant tree: about 40 blocks wide and 50 high, with roots 5 blocks deep. It needs light and space free of built blocks. Break the sprout to get the nut back.",
           "context": {
-            "meaning": "Planting warning for Great Mallorn nut: giant tree with a flet (wooden platform). Reserve about 40x40 horizontal blocks, 50 above and 5 below; light required, built blocks prevent growth. Breaking sprout returns nut.",
+            "meaning": "Planting warning for Great Mallorn nut: plain giant tree with no platform, furnishings or elves. Reserve about 40x40 horizontal blocks, 50 above and 5 below; light required, built blocks prevent growth. Breaking sprout returns nut.",
             "location": "lothlorien_rp: chat or action bar",
-            "trigger": "Planting warning for Great Mallorn nut: giant tree with a flet (wooden platform). Reserve about 40x40 horizontal blocks, 50 above and 5 below; light required, built blocks prevent growth. Breaking sprout returns nut.",
+            "trigger": "Planting warning for Great Mallorn nut: plain giant tree with no platform, furnishings or elves. Reserve about 40x40 horizontal blocks, 50 above and 5 below; light required, built blocks prevent growth. Breaking sprout returns nut.",
             "tone": "Gentle woodland narration",
             "grammar": "Complete sentence; address the player without assuming gender.",
             "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
@@ -8795,43 +8795,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "§6Z ořechu velkého mallornu vyroste obří strom s dřevěnou plošinou: asi 40 bloků široký a 50 vysoký, s kořeny 5 bloků hluboko. Potřebuje světlo a prostor bez staveb. Rozbitím výhonku získáte ořech zpět.",
-              "based_on": "883f5238c5963cba60baffa0cfdeae16cb99fbf9151c1b7544fb491c7db40aa4",
+              "text": "§6Z ořechu velkého mallornu vyroste obří strom: asi 40 bloků široký a 50 vysoký, s kořeny 5 bloků hluboko. Potřebuje světlo a prostor bez staveb. Rozbitím výhonku získáte ořech zpět.",
+              "based_on": "a79787bb0fc8d068b037a0ced0babf68b4127226e989ba86fa809ea73722a74b",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "§6La nuez de gran mallorn crece hasta formar un árbol gigante con una plataforma de madera: unos 40 bloques de ancho y 50 de alto, con raíces de 5 bloques de profundidad. Necesita luz y espacio sin construcciones. Rompe el brote para recuperar la nuez.",
-              "based_on": "883f5238c5963cba60baffa0cfdeae16cb99fbf9151c1b7544fb491c7db40aa4",
+              "text": "§6La nuez de gran mallorn crece hasta formar un árbol gigante: unos 40 bloques de ancho y 50 de alto, con raíces de 5 bloques de profundidad. Necesita luz y espacio sin construcciones. Rompe el brote para recuperar la nuez.",
+              "based_on": "a79787bb0fc8d068b037a0ced0babf68b4127226e989ba86fa809ea73722a74b",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "§6La nuez de gran mallorn crece hasta formar un árbol gigante con una plataforma de madera: unos 40 bloques de ancho y 50 de alto, con raíces de 5 bloques de profundidad. Necesita luz y espacio sin construcciones. Rompe el retoño para recuperar la nuez.",
-              "based_on": "883f5238c5963cba60baffa0cfdeae16cb99fbf9151c1b7544fb491c7db40aa4",
+              "text": "§6La nuez de gran mallorn crece hasta formar un árbol gigante: unos 40 bloques de ancho y 50 de alto, con raíces de 5 bloques de profundidad. Necesita luz y espacio sin construcciones. Rompe el retoño para recuperar la nuez.",
+              "based_on": "a79787bb0fc8d068b037a0ced0babf68b4127226e989ba86fa809ea73722a74b",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "§6A noz de grande mallorn dá origem a uma árvore gigante com uma plataforma de madeira: cerca de 40 blocos de largura e 50 de altura, com raízes de 5 blocos de profundidade. Precisa de luz e de espaço sem construções. Parte o rebento para recuperar a noz.",
-              "based_on": "883f5238c5963cba60baffa0cfdeae16cb99fbf9151c1b7544fb491c7db40aa4",
+              "text": "§6A noz de grande mallorn dá origem a uma árvore gigante: cerca de 40 blocos de largura e 50 de altura, com raízes de 5 blocos de profundidade. Precisa de luz e de espaço sem construções. Parte o rebento para recuperar a noz.",
+              "based_on": "a79787bb0fc8d068b037a0ced0babf68b4127226e989ba86fa809ea73722a74b",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "§6A noz de grande mallorn dá origem a uma árvore gigante com uma plataforma de madeira: cerca de 40 blocos de largura e 50 de altura, com raízes de 5 blocos de profundidade. Precisa de luz e espaço sem construções. Quebre o broto para recuperar a noz.",
-              "based_on": "883f5238c5963cba60baffa0cfdeae16cb99fbf9151c1b7544fb491c7db40aa4",
+              "text": "§6A noz de grande mallorn dá origem a uma árvore gigante: cerca de 40 blocos de largura e 50 de altura, com raízes de 5 blocos de profundidade. Precisa de luz e espaço sem construções. Quebre o broto para recuperar a noz.",
+              "based_on": "a79787bb0fc8d068b037a0ced0babf68b4127226e989ba86fa809ea73722a74b",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "§6Die Nuss des Großen Mallorn wächst zu einem riesigen Baum mit einer Holzplattform heran: etwa 40 Blöcke breit und 50 hoch, mit 5 Blöcke tiefen Wurzeln. Er braucht Licht und Platz ohne gebaute Blöcke. Baue den Spross ab, um die Nuss zurückzubekommen.",
-              "based_on": "883f5238c5963cba60baffa0cfdeae16cb99fbf9151c1b7544fb491c7db40aa4",
+              "text": "§6Die Nuss des Großen Mallorn wächst zu einem riesigen Baum heran: etwa 40 Blöcke breit und 50 hoch, mit 5 Blöcke tiefen Wurzeln. Er braucht Licht und Platz ohne gebaute Blöcke. Baue den Spross ab, um die Nuss zurückzubekommen.",
+              "based_on": "a79787bb0fc8d068b037a0ced0babf68b4127226e989ba86fa809ea73722a74b",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "§6La noix de grand mallorn donne un arbre géant avec une plateforme en bois : environ 40 blocs de large et 50 de haut, avec des racines profondes de 5 blocs. Il lui faut de la lumière et un espace sans constructions. Casse la pousse pour récupérer la noix.",
-              "based_on": "883f5238c5963cba60baffa0cfdeae16cb99fbf9151c1b7544fb491c7db40aa4",
+              "text": "§6La noix de grand mallorn donne un arbre géant : environ 40 blocs de large et 50 de haut, avec des racines profondes de 5 blocs. Il lui faut de la lumière et un espace sans constructions. Casse la pousse pour récupérer la noix.",
+              "based_on": "a79787bb0fc8d068b037a0ced0babf68b4127226e989ba86fa809ea73722a74b",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "§6Orzech wielkiego mallornu wyrasta w olbrzymie drzewo z drewnianą platformą: około 40 bloków szerokości i 50 wysokości, z korzeniami sięgającymi 5 bloków w głąb. Potrzebuje światła i miejsca bez budowli. Zniszcz kiełek, by odzyskać orzech.",
-              "based_on": "883f5238c5963cba60baffa0cfdeae16cb99fbf9151c1b7544fb491c7db40aa4",
+              "text": "§6Orzech wielkiego mallornu wyrasta w olbrzymie drzewo: około 40 bloków szerokości i 50 wysokości, z korzeniami sięgającymi 5 bloków w głąb. Potrzebuje światła i miejsca bez budowli. Zniszcz kiełek, by odzyskać orzech.",
+              "based_on": "a79787bb0fc8d068b037a0ced0babf68b4127226e989ba86fa809ea73722a74b",
               "status": "ai-draft"
             }
           }

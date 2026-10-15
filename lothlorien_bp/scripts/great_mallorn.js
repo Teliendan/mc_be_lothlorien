@@ -1,12 +1,12 @@
 import { message } from "./messages.js";
 // Great Mallorn nut in the running game (rules and numbers in great_mallorn_rules.js).
-//   lothlorien:great_sprout  random tick: stage 0 -> 1 -> a flet giant (structure) grows around the sprout, if the light
+//   lothlorien:great_sprout  random tick: stage 0 -> 1 -> a plain giant (structure) grows around the sprout, if the light
 //                            is enough and nothing built stands where the tree would put a block
 // Planting it warns the player about the space it needs; bone meal does nothing on it (and says so).
 import { world, system } from "@minecraft/server";
 import { repeatedUse } from "./use_guard.js";
 import {
-  ANCHOR, BLOCKED_TELL_RADIUS, BLOCKED_TELL_TICKS, FLET_TREES, GROW_CHANCE, MIN_LIGHT, SIZE, SIZE_Y, SPROUT_ID, isNatural, treeOrigin,
+  ANCHOR, BLOCKED_TELL_RADIUS, BLOCKED_TELL_TICKS, PLAIN_TREES, GROW_CHANCE, MIN_LIGHT, SIZE, SIZE_Y, SPROUT_ID, isNatural, treeOrigin,
 } from "./great_mallorn_rules.js";
 
 const STAGE = "lothlorien:stage";
@@ -48,7 +48,7 @@ function tellBlocked(block, obstacle) {
 
 // Check the tree's space and place it. Runs as a job; the sprout may be gone or changed by the time it finishes.
 function* grow(dimension, at) {
-  const id = FLET_TREES[Math.floor(Math.random() * FLET_TREES.length)];
+  const id = PLAIN_TREES[Math.floor(Math.random() * PLAIN_TREES.length)];
   const cells = yield* readCells(id);
   if (!cells) return;
   const origin = treeOrigin(at);

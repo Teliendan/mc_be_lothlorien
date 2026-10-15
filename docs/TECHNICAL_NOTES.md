@@ -809,7 +809,7 @@ standable; `pickWaypoint`'s final ring now starts at radius 0). The marker block
 the same day (owner): gone from the flet giants (rebuilt; plain giants byte-identical), the block file, lang and tests. Worlds generated
 before keep one buried block per flet giant, 4 below the ground inside the trunk, which now loads as an unknown block.
 The nut (`items/great_mallorn_nut.json`, `blocks/great_mallorn_sprout.json`, `scripts/great_mallorn.js` + `great_mallorn_rules.js`, art
-`tools/make_mallorn_seeds.py`): the sprout copies the sapling's states, soil filter and geometry; random tick stage 0 -> 1 -> grow. Growing
+`tools/make_mallorn_seeds.py`): the sprout copies the sapling's states, soil filter and geometry; random tick stage 0 -> 1 -> grow. Owner decision 2026-10-16: selects only plain Great Mallorns (`roundplain` seeds 2, 3, 6, 8), with no platform, banners, chest or elves. Offline structure/regression checks target Bedrock 1.26.52 / API 2.8.0; changed selection awaits in-game confirmation. Growing
 reads the structure's filled cells once per session (`Structure.getBlockPermutation` over 40x54x40 in job steps), checks each against the
 world with `isNatural` (terrain, plants, leaves, unstripped logs, water; anything else = built = wait and tell players within 32 blocks,
 at most every 5 min), then `structureManager.place` with the sprout in trunk cell TRUNK_AT+1 at ground level (`treeOrigin`). The
@@ -990,7 +990,7 @@ Leave and re-enter the world to load the entity and script changes. `/summon` wo
    (`/testfor @e[type=lothlorien:guide_beacon]`).
 8. Great Mallorn nut (any world; `/give @s lothlorien:great_mallorn_nut` or creative Nature tab): planting on grass shows the space
    warning; bone meal: "will not be hurried", no bone meal used. Next to a small build (planks within 20 blocks): chat names the block in
-   the way (at most every 5 min). In the open, `/gamerule randomtickspeed 100` for a moment: a flet giant (platform, ladder, loot chest)
+   the way (at most every 5 min). In the open, `/gamerule randomtickspeed 100` for a moment: a plain Great Mallorn (no platform, banners, chest or elves)
    grows with the trunk on the sprout at ground level; no jigsaw block left at the bottom of the trunk. Break a sprout: the nut drops.
    A creeper blast next to a sprout leaves it standing.
 9. Two players: only the offering player is followed; a second player with low Harmony nearby does not change the guidance. Two white deer

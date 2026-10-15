@@ -153,7 +153,7 @@ export const CHOSEN = [["round", 5, 2], ["round", 7, 2], ["roundplain", 2, 3], [
 export const TRUNK_ANCHOR = "lothlorien:giant_trunk";
 export const ANCHOR_AT = { x: 1, y: -ROOT_DEPTH, z: 1 };
 
-// The flet giants hold a loot chest (the Great Mallorn nut grows only those: scripts/great_mallorn_rules.js FLET_TREES).
+// Worldgen flet giants hold a loot chest; planted nuts grow only the plain giants (great_mallorn_rules.js PLAIN_TREES).
 export const CHEST_BLOCK = "minecraft:chest";
 export const hasChest = (blocks) => [...blocks.values()].some((b) => b.name === CHEST_BLOCK);
 

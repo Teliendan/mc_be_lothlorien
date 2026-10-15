@@ -583,10 +583,17 @@ test("great nut: tree box and anchor match the structure builder; the sprout sit
   assert.ok(cell.x >= TRUNK_AT && cell.x <= TRUNK_AT + 3 && cell.z >= TRUNK_AT && cell.z <= TRUNK_AT + 3, "inside the 4x4 trunk");
   assert.equal(cell.y, ROOT_DEPTH, "first cell above the ground");
 });
-test("great nut: grows only flet giants that ship in the pack and in worldgen", () => {
-  const flets = CHOSEN.filter(([v]) => v === "round").map(([v, n]) => `lothlorien:mallorn_${v}_${String(n).padStart(2, "0")}`);
-  assert.deepEqual([...N.FLET_TREES].sort(), flets.sort());
-  for (const id of N.FLET_TREES) assert.ok(existsSync(new URL(`../lothlorien_bp/structures/${id.replace(":", "/")}.mcstructure`, import.meta.url)), id);
+test("great nut: grows only plain giants, with no platform, furnishings or elves", () => {
+  const plains = CHOSEN.filter(([v]) => v === "roundplain").map(([v, n]) => `lothlorien:mallorn_${v}_${String(n).padStart(2, "0")}`);
+  assert.ok(plains.length > 0);
+  assert.deepEqual([...N.PLAIN_TREES].sort(), plains.sort());
+  const naturalTreeBlocks = new Set(["lothlorien:mallorn_log", "lothlorien:mallorn_wood", "lothlorien:mallorn_leaves"]);
+  for (const id of N.PLAIN_TREES) {
+    const bytes = readFileSync(new URL(`../lothlorien_bp/structures/${id.replace(":", "/")}.mcstructure`, import.meta.url));
+    const tree = parseMcstructure(bytes, id);
+    assert.equal(tree.entities.length, 0, `${id}: no elves or other entities`);
+    for (const block of tree.blocks) assert.ok(naturalTreeBlocks.has(block.name), `${id}: unexpected ${block.name}`);
+  }
 });
 test("great nut: terrain, plants, leaves and logs give way; anything built stops the tree", () => {
   for (const id of ["minecraft:air", "minecraft:grass_block", "minecraft:stone", "minecraft:iron_ore", "minecraft:oak_leaves", "minecraft:oak_log",
@@ -983,11 +990,11 @@ test("guide beacon: invisible, weightless, untouchable helper that removes itsel
   assert.equal(geo.description.identifier, client.geometry.default);
   assert.ok(geo.bones.flatMap((x) => x.cubes).every((cube) => cube.size.every((v) => v === 0)), "nothing to render");
 });
-test("giant structures: the flet giants the nut grows hold a chest, plain giants none; no leftover marker blocks", () => {
+test("giant structures: worldgen flet giants hold a chest, plain giants none; no leftover marker blocks", () => {
   for (const [v, n] of CHOSEN) {
     const id = `lothlorien:mallorn_${v}_${String(n).padStart(2, "0")}`;
     const bytes = readFileSync(new URL(`../lothlorien_bp/structures/${id.replace(":", "/")}.mcstructure`, import.meta.url));
-    assert.equal(bytes.includes(Buffer.from(CHEST_BLOCK)), N.FLET_TREES.includes(id), `${id}: chest only in the flet giants`);
+    assert.equal(bytes.includes(Buffer.from(CHEST_BLOCK)), v === "round", `${id}: chest only in the flet giants`);
     assert.ok(!bytes.includes(Buffer.from("structure_marker")), `${id}: marker removed (run node tools/build_structures.mjs)`);
   }
   assert.ok(!existsSync(new URL("../lothlorien_bp/blocks/structure_marker.json", import.meta.url)));
