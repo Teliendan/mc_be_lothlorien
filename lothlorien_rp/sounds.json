@@ -82,8 +82,9 @@
         ],
         "events": {
           "ambient": {
-            "sound": "mob.parrot.idle",
-            "volume": 0.6
+            "sound": "mob.lothlorien.songbird.ambient",
+            "volume": 0.45,
+            "pitch": [0.96, 1.04]
           },
           "hurt": "mob.parrot.hurt",
           "death": "mob.parrot.death",

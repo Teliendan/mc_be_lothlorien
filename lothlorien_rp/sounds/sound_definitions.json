@@ -1,6 +1,13 @@
 {
   "format_version": "1.14.0",
   "sound_definitions": {
+    "mob.lothlorien.songbird.ambient": {
+      "category": "neutral",
+      "sounds": [
+        "sounds/mob/lothlorien/songbird/ambient2",
+        "sounds/mob/lothlorien/songbird/ambient3"
+      ]
+    },
     "mob.lothlorien.deer.ambient": {
       "category": "neutral",
       "sounds": [

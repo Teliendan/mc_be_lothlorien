@@ -23,7 +23,7 @@ Art: `tools/make_songbird.py` (generated box model, two plumages; same method as
 | Player / Harmony | none: it does not flee from players beyond panic and ignores the Harmony band (the deer carry that); a player kill costs 3 Harmony (an animal) |
 | Drops | feather 0-1 (looting +0-1), XP 1-2 on player kill |
 | Animations | procedural Molang: `idle` (tail and head tilt), `hop` (on ground), `fly` (wing flap, legs tucked, only while not on ground), vanilla `look_at_target` on bone `head` |
-| Sounds | **placeholder** vanilla parrot sounds at pitch 1.3-1.7 (ambient every 6-20 s); real birdsong is Phase 18 |
+| Sounds | Owner accepted woodland-song versions 2/3 on 2026-10-16; version 1 removed as weak. Two random ambient phrases, neutral category, event gain 0.45, pitch 0.96–1.04, native configured interval 14–36 s. Existing parrot hurt/death/step/fly retained. See `../BIRDSONG.md`; native playback check pending |
 
 ## To test in game (1.26.52)
 

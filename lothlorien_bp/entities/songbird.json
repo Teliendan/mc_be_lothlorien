@@ -86,8 +86,8 @@
       },
       "minecraft:ambient_sound_interval": {
         "event_name": "ambient",
-        "value": 6,
-        "range": 14
+        "value": 14,
+        "range": 22
       },
       "minecraft:behavior.float": {
         "priority": 1

@@ -54,7 +54,9 @@ are shipped. Encoding/checking requires only the installed SFX environment:
 & E:\AI\audio\venvs\moss_sfx\Scripts\python.exe -B mods/lothlorien/tools/prepare_ambient_sounds.py --check
 ```
 
-Without `--check` the tool rebuilds just the four final Ogg assets. The check
+Without `--check` the tool rebuilds the ambient Ogg assets; `--animal deer` or
+`--animal swan` limits it to an approved pair (songbirds are documented in
+`BIRDSONG.md`). The check
 compares decoded audio, since Ogg serial numbers can change without changing
 sound. All masters/assets are finite, mono and unclipped; the check passed.
 Raw candidates, rejected variants, audition pages and research scratch are

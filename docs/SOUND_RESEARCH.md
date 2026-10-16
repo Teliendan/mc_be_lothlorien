@@ -34,11 +34,11 @@ Detailed reusable facts, evidence limits and pitch/harmonic/pulse distinctions:
 Research downloads and exploratory measurement/preview scripts were iteration
 scratch and are removed on acceptance; original sources remain linked above.
 
-## Suggested later additions (not implemented)
+## Atmosphere follow-up
 
-1. Songbirds: replace the existing pitched-up parrot ambience with several
-   short woodland phrases. Highest expected atmospheric benefit from the
-   current inventory. [RSPB woodland references](https://www.rspb.org.uk/birds-and-wildlife/sounds-of-spring).
+1. Songbirds completed 2026-10-16: owner accepted versions 2/3, removed weak
+   version 1 and declared the sound task finished. Final sources and decisions:
+   [`BIRDSONG.md`](BIRDSONG.md).
 2. Soft Mallorn leaf rustle/canopy breeze, used sparingly with attention to
    overlap and performance. Sound-design suggestion; no engine implementation
    or trigger is claimed here.
