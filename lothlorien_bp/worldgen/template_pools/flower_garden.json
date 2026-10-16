@@ -1,0 +1,17 @@
+{
+  "format_version": "1.21.100",
+  "minecraft:template_pool": {
+    "description": {
+      "identifier": "lothlorien:flower_garden"
+    },
+    "elements": [
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/flower_garden_01"
+        },
+        "weight": 1
+      }
+    ]
+  }
+}

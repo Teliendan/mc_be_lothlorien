@@ -1,0 +1,21 @@
+{
+  "format_version": "1.21.100",
+  "minecraft:structure_set": {
+    "description": {
+      "identifier": "lothlorien:flower_garden"
+    },
+    "placement": {
+      "type": "minecraft:random_spread",
+      "salt": 794231583,
+      "spacing": 12,
+      "separation": 4,
+      "spread_type": "linear"
+    },
+    "structures": [
+      {
+        "structure": "lothlorien:flower_garden",
+        "weight": 1
+      }
+    ]
+  }
+}

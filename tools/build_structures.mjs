@@ -100,7 +100,7 @@ export function toMcstructure(blocks, [SX, SY, SZ] = [SIZE, SIZE_Y, SIZE], [OX, 
     if (v.loot) {
       positionData[String(index)] = compound({
         block_entity_data: compound({
-          id: str("Chest"), isMovable: byte(true), Findable: byte(false), Items: list(T.compound, []),
+          id: str(v.name === "minecraft:barrel" ? "Barrel" : "Chest"), isMovable: byte(true), Findable: byte(false), Items: list(T.compound, []),
           LootTable: str(v.loot), LootTableSeed: int(0), x: int(x), y: int(y), z: int(z),
         }),
       });
