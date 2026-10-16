@@ -1,10 +1,10 @@
-# Woodland songbird ambience ? final
+# Woodland songbird ambience - final
 
 Owner accepted **versions 2 and 3** on 2026-10-16 and rejected version 1 as weak.
 The sound task is finished. Target Bedrock 1.26.52 / Script API 2.8.0.
-Feature commit: `Finish approved woodland birdsong`.
-Owner listening acceptance is recorded; no new in-game playback observations
-were supplied.
+Feature commit: `4045155` (`Finish approved woodland birdsong`).
+Owner confirmed the deployed sounds work and are liked in game on 2026-10-16.
+This records overall playback acceptance, not separate timing or fade measurements.
 
 ## Final design
 
@@ -15,15 +15,15 @@ entry are removed; the shipped Ogg bytes of versions 2/3 match their auditions.
 
 | RP asset under `sounds/mob/lothlorien/songbird/` | Source | Raw crop | Duration | Decoded peak |
 | --- | --- | --- | --- | --- |
-| `ambient2.ogg` | robin-style seed 233 | 4.22?5.66 s | 1.44 s | -6.1 dBFS |
-| `ambient3.ogg` | blackbird-style seed 231 | 1.82?2.80 s | 0.98 s | -6.4 dBFS |
+| `ambient2.ogg` | robin-style seed 233 | 4.22-5.66 s | 1.44 s | -6.1 dBFS |
+| `ambient3.ogg` | blackbird-style seed 231 | 1.82-2.80 s | 0.98 s | -6.4 dBFS |
 
-Native interval `value: 14`, `range: 22` (configured 14?36 seconds); ambient
-event gain 0.45, base entity gain 0.8, ambient pitch 0.96?1.04. Neutral category,
+Native interval `value: 14`, `range: 22` (configured 14-36 seconds); ambient
+event gain 0.45, base entity gain 0.8, ambient pitch 0.96-1.04. Neutral category,
 mono 48 kHz Vorbis. All plumages share the two random variants. Existing parrot
 hurt/death/step/fly bindings remain. No biome loop, new animal, script callback,
 world scan or script timer was added. Songs follow actual nearby songbirds.
-Exact native timing/mixing and distance fade remain in-game check items.
+Native playback is owner-accepted; exact timing and distance fade were not measured.
 
 ## Sources and reproduction
 
@@ -61,6 +61,5 @@ songbird). Both retained Ogg files matched the approved preview bytes before
 cleanup. Cleanup removed 23 scratch files and 2 empty directories without a
 recursive delete. The normal feature-commit hook deploys the final packs.
 
-After deployment, leave the world and re-enter; no new world is needed for
-these sound changes. Offline verification does not establish native playback
-quality. Listen near one bird and a flock for level, repetition and fade.
+Final packs are deployed; no new world is needed for these sound changes.
+Owner's in-game acceptance completes this task.

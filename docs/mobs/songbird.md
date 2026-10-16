@@ -4,7 +4,7 @@
 See [Bringing wildlife home](BRINGING_HOME.md) for current policy and acceptance checks.
 
 Archetype: ambient flyer that perches. Analogue: parrot (flight, `random_fly` landing on trees, `follow_mob`), pool
-`ambient` like the bat. Phase 13, built 2026-10-02, **static checks only - nothing is tested in game** (every "Tested" = no).
+`ambient` like the bat. Phase 13, built 2026-10-02, **original phase had static checks only**. Sound playback was accepted in game on 2026-10-16; other checks below remain pending.
 Files: BP `entities/songbird.json`, `spawn_rules/songbird.json`, `loot_tables/entities/songbird.json`. RP
 `entity/songbird.entity.json`, `models/entity/songbird.geo.json`, `animations/songbird.animation.json`,
 `render_controllers/songbird.render_controllers.json`, `textures/entity/songbird/`, `sounds.json`, `.lang`.
@@ -23,7 +23,7 @@ Art: `tools/make_songbird.py` (generated box model, two plumages; same method as
 | Player / Harmony | none: it does not flee from players beyond panic and ignores the Harmony band (the deer carry that); a player kill costs 3 Harmony (an animal) |
 | Drops | feather 0-1 (looting +0-1), XP 1-2 on player kill |
 | Animations | procedural Molang: `idle` (tail and head tilt), `hop` (on ground), `fly` (wing flap, legs tucked, only while not on ground), vanilla `look_at_target` on bone `head` |
-| Sounds | Owner accepted woodland-song versions 2/3 on 2026-10-16; version 1 removed as weak. Two random ambient phrases, neutral category, event gain 0.45, pitch 0.96–1.04, native configured interval 14–36 s. Existing parrot hurt/death/step/fly retained. See `../BIRDSONG.md`; native playback check pending |
+| Sounds | Owner accepted woodland-song versions 2/3 on 2026-10-16; version 1 removed as weak. Two random ambient phrases, neutral category, event gain 0.45, pitch 0.96-1.04, native configured interval 14-36 s. Existing parrot hurt/death/step/fly retained. Owner confirmed deployed sounds work and are liked in game on 2026-10-16; see `../BIRDSONG.md` |
 
 ## To test in game (1.26.52)
 
