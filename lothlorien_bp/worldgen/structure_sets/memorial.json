@@ -1,0 +1,21 @@
+{
+  "format_version": "1.21.100",
+  "minecraft:structure_set": {
+    "description": {
+      "identifier": "lothlorien:memorial"
+    },
+    "placement": {
+      "type": "minecraft:random_spread",
+      "salt": 936184257,
+      "spacing": 12,
+      "separation": 4,
+      "spread_type": "linear"
+    },
+    "structures": [
+      {
+        "structure": "lothlorien:memorial",
+        "weight": 1
+      }
+    ]
+  }
+}

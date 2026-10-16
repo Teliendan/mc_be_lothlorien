@@ -1,0 +1,17 @@
+{
+  "format_version": "1.21.100",
+  "minecraft:template_pool": {
+    "description": {
+      "identifier": "lothlorien:memorial"
+    },
+    "elements": [
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/memorial_leaf_01"
+        },
+        "weight": 1
+      }
+    ]
+  }
+}

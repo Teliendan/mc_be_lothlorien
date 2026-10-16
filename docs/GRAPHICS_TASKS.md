@@ -1,5 +1,11 @@
 # Lothl?rien ? graphics tasks
 
+**Leaf memorial (2026-10-16): final, accepted in game.** Silver leaf deck, golden
+vein, straight capped pillar, benches and white flowers. Owner accepted the
+correction removing the cross-shaped arms. Existing assets only; iteration scratch
+removed. Commit: `Add accepted leaf memorials at garden frequency`.
+See [MEMORIAL.md](MEMORIAL.md).
+
 **M5 gifts (2026-10-12): final art selected/accepted from previews.** Bow C,
 arrow 3, phial D/P4, belt B4-v2 including its icon, and worn cloak C2-v2 with the
 separately selected Golden Mallorn inventory icon. Deterministic generators keep
