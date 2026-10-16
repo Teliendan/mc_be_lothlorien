@@ -34,4 +34,4 @@ BP `loot_tables/entities/white_deer.json`.
 | Drops | own table `white_deer.json`: leather 0-2 + venison 1-3 (as a buck deer, looting +0-1) and **one deer antler, always, on any death** (no player-kill or chance condition: it cannot breed, so nothing can be farmed; a hart killed by a wolf still leaves its antlers). XP 1-3 on player kill | no |
 | Harmony | a player kill costs **6** (twice a deer's 3; `DEED_COSTS` in `scripts/harmony.js`, doubled while Harmony is above 0); counted when the player or the hart is inside the forest (owner decision 2026-10-07, replaced Disharmony) | no |
 | Model, animations | deer buck geometry and the deer's procedural animations, texture `deer_white.png` (placeholder palette swap) | no |
-| Sounds | the deer's adult sounds (placeholder horse) | no |
+| Sounds | Adult deer's owner-approved MOSS calls, seeds 122/123 (2026-10-16), configured 45–100 s interval; horse hurt/death/step retained. See `../AMBIENT_SOUNDS.md`; native playback check pending | listening accepted; game pending |

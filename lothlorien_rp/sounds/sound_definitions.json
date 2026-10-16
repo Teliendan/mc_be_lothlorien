@@ -1,0 +1,19 @@
+{
+  "format_version": "1.14.0",
+  "sound_definitions": {
+    "mob.lothlorien.deer.ambient": {
+      "category": "neutral",
+      "sounds": [
+        "sounds/mob/lothlorien/deer/ambient1",
+        "sounds/mob/lothlorien/deer/ambient2"
+      ]
+    },
+    "mob.lothlorien.swan.ambient": {
+      "category": "neutral",
+      "sounds": [
+        "sounds/mob/lothlorien/swan/ambient1",
+        "sounds/mob/lothlorien/swan/ambient2"
+      ]
+    }
+  }
+}

@@ -657,8 +657,8 @@
       },
       "minecraft:conditional_bandwidth_optimization": {},
       "minecraft:ambient_sound_interval": {
-        "value": 12,
-        "range": 20,
+        "value": 45,
+        "range": 55,
         "event_name": "ambient"
       },
       "minecraft:behavior.float": {

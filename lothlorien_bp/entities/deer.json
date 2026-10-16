@@ -648,8 +648,8 @@
       },
       "minecraft:conditional_bandwidth_optimization": {},
       "minecraft:ambient_sound_interval": {
-        "value": 12,
-        "range": 20,
+        "value": 35,
+        "range": 45,
         "event_name": "ambient",
         "event_names": [
           {

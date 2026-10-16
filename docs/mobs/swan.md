@@ -20,7 +20,7 @@ runtime diagnostics`.
 | Food | Raw nutrition 2 / saturation modifier 0.3; cooked 6 / 0.6; no raw-food debuff. Furnace/smoker/campfire recipe; burning adult deaths use native `furnace_smelt`. Food/meat tags match venison |
 | Animation | Idle neck/tail sway, land waddle, swimming leg paddle, look-at-target; accepted 1.35-second feather shake with body roll, neck counter-sway, tail ruffle and slight wing lift |
 | Meat art | Accepted angled poultry leg with full meaty end, narrow neck, exposed ivory bone/knuckle. Shared raw/cooked silhouette, pink raw / browned cooked, 16x16, top-left highlights. Original boneless oval rejected as a ball |
-| Sounds | Existing chicken sounds at pitch 0.7-0.9; shedding uses empty spawn sound to avoid an egg plop |
+| Sounds | Owner-approved MOSS ambient contact calls, seeds 122/123 (2026-10-16), configured 25–60 s interval and ambient pitch 0.95–1.05 (`../AMBIENT_SOUNDS.md`); native playback check pending. Chicken hurt/death/step retained; shedding uses empty spawn sound |
 
 The native item-spawn event toggles the client-synced `lothlorien:shed_phase`;
 the RP controller plays one shake on either edge, then returns to idle. The
