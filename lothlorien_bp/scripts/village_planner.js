@@ -9,7 +9,7 @@
 //   3 score       value = shortcut gained (walking distance through the existing deck network) - cost of the new link
 //   4 greedy      take the best, build its real plan, apply it to an overlay world, enumerate and score again; stop at the budget
 import { repairGen } from "./village_repair.js";
-import { PLANKS, SLAB, FENCE, LOOP, exitAt, sideTarget, sideStarts, scanAhead, findPlazaPartners, findLs, planSpan, planPlaza, planL, blockedCells, clutter, planPier, finalBlocks, isNewKind, MERGE, findMerges, planMerge } from "./village_loop.js";
+import { PLANKS, SLAB, FENCE, isPlank, LOOP, exitAt, sideTarget, sideStarts, scanAhead, findPlazaPartners, findLs, planSpan, planPlaza, planL, blockedCells, clutter, planPier, finalBlocks, isNewKind, MERGE, findMerges, planMerge } from "./village_loop.js";
 
 // budget: extra links per village (owner 2026-10-09: up to 3). minNet/minRatio: a link must save at least 30 cells of walking and be 2.5 times shorter
 // than the way round. value = min(dnet, maxNet) - 2 len - kindCost - landingCost - 0.5 |offset|; spread: a candidate within 12 blocks of a chosen end loses 15.
@@ -24,7 +24,7 @@ export const PLAN = { mergeCap: 6, lMaxLen: 16, lMaxLeg: 10, budget: 3, minNet: 
 // found in 1-2 rounds instead of 4; later rounds grow from the known markers as before. Dropped when the quota does not fit it.
 export const AREA = { seed: 48, margins: [32, 28, 24], maxRounds: 8, minPad: 12, maxDone: 64, maxTries: 3 };
 
-const isWalk = (n) => n === PLANKS || n === SLAB || (typeof n === "string" && /_stairs?$/.test(n));
+const isWalk = (n) => isPlank(n) || n === SLAB || (typeof n === "string" && /_stairs?$/.test(n));
 const key = (x, y, z) => `${x},${y},${z}`;
 
 // shortest walking distance (cells) from A over deck cells (4-neighbours, |dy| <= 1: arched slab bridges, stairs) to every cell, up to `limit`
@@ -51,7 +51,7 @@ export function openWalk(at, A, B, limit) {
     if (d >= limit) continue;
     for (const [a, b] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
       const k = key(x + a, A.y, z + b);
-      if (dist.has(k) || at(x + a, A.y, z + b) !== PLANKS || at(x + a, A.y + 1, z + b) === FENCE) continue;
+      if (dist.has(k) || !isPlank(at(x + a, A.y, z + b)) || at(x + a, A.y + 1, z + b) === FENCE) continue;
       dist.set(k, d + 1); q.push([x + a, z + b]);
     }
   }

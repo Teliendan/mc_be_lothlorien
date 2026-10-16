@@ -76,6 +76,9 @@ weights (`EXIT_WEIGHTS`, `EARLY_END`, `WARDENS`), pools, structure. Runtime shap
 **Preview tools** (run from `mods/lothlorien`; PNGs go to `temp/village_render/` and `temp/village_sim/`):
 - `node tools/village_render.mjs piece <name> [rot] [--leaves]` isometric + top view of one piece; `side <piece>`; `sim <seed> [--links] [--iso x0 x1 z0 z1]` simulated village (+ planner links);
   `dump <dump.json | tests/fixtures/village_v2.json.gz> [--markers m.json] [--budget 3] [--iso]` a REAL village with the planner's picks (colours, ends, leftover candidates). No arguments = usage.
+- **Textured preview** (judge colour, texture, composition without the game): add `--tex` to `piece`, `sim ... --iso` or `dump --iso` (and `--night` for lamp light, `--ppb N` pixels per block, default 16, `--rot R` view turned R quarter turns,
+  `--noleaves`); `node tools/village_render.mjs mcs <any.mcstructure>` renders any structure file (e.g. a mockup in `temp/`). Scripts call `renderBlocks(Map("x,y,z" -> {name, states}), out.png, opts)` from `tools/textured_render.mjs`.
+  Vanilla textures are downloaded once from Mojang's bedrock-samples into `temp/texture_cache/` (mod blocks read `lothlorien_rp`); shapes are approximations (stairs = slab + step, plants = crossed planes, custom-geometry blocks = small boxes).
 - `node tools/piece_ascii.mjs <piece> [y <y> | x <z> [y0 y1] | z <x>]` ASCII layers and cuts, jigsaw list, entities; no argument lists the pieces.
 - `node tools/village_sim.mjs [seeds] [first]` the assembly simulator + planner + all checks (300 seeds take about 80 s). The reusable mocked `@minecraft/server` is in
   `.claude/skills/bedrock-scripting/scripts/` (see `tests/script_glue.mjs`).
@@ -98,6 +101,12 @@ Constants: `village_planner.js` (`PLAN`, `AREA`), `village_loop.js` (`LOOP`, `PL
 - Open limits: a crown beside an upper-level balcony/bridge can find no room (small fallback 1.1 per village in the sim); stacked towers climb 8 per step; rigid placement on uneven ground.
 
 ## 6. Next: village look (M7)
+
+**Status 2026-10-16:** the look is defined in `village_style.md` (style guide, owner's verdicts, phases); the showcase (phase 2) is
+accepted in game. Built: `tools/village_dress.mjs` (dressing, home pavilion, `homeFrame`), `tools/village_central.mjs` (Court + Hall +
+stream, notes in `village_central.md`), `tools/village_checks.mjs` (support, water, keep-clear, spawn-proof), hidden light blocks,
+`scripts/home_furnish.js` (runtime furnishing, notes in `home_furnishing.md`), the forest floor in `scripts/village_repair.js`.
+The text below is the original plan; where it differs, the style guide wins.
 
 Owner decision 2026-10-10, **not built**. The "cut off tree" (a 3x3 trunk stub on a deck whose crown was refused, 0.27 per village in the sim: tower combo boxes and neighbouring crown
 boxes block the crown jigsaw, see the polish plan) is NOT fixed by a crown piece or a runtime crown repair. It is deferred to the **village look milestone M7**, merged with the homes

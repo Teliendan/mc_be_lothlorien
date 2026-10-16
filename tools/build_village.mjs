@@ -18,9 +18,12 @@ import { makeCombo, buildBalcony, STRAIGHT } from "./village_combo.mjs";
 import { sideTarget } from "../lothlorien_bp/scripts/village_loop.js"; // the runtime's own rim test decides where a side marker may stand
 import { POST_ID, POST_GROUP_PREFIX, POST_SPACING, ROPE_CLEARANCE, RESERVE_POSTS, homeSite } from "../lothlorien_bp/scripts/elf_rules.js"; // civilian elf posts (tunables live there)
 import {
-  ROOTS, FLOOR_H, LEVEL_H, FACING, SHAPES, key, AIR, planks, slab, Deck, buildTree, buildCrown, deckJigsaw, lantern, lonelyRail,
-  writeRails, RAIL, shapeCells, addLanterns, bareBranchEnds,
+  ROOTS, FLOOR_H, LEVEL_H, FACING, SHAPES, key, AIR, planks, slab, Deck, buildTree, buildCrown, deckJigsaw, lonelyRail,
+  writeRails, RAIL, shapeCells, addHiddenLights, addSpawnLights, isLightBlock, bareBranchEnds, worstLight, LIGHT_TARGET, HEART_PLANKS,
 } from "./village_mallorn.mjs";
+import { frameCell, frameInterior, frameDoorLane, framePost, dressBalcony, dressLookout } from "./village_dress.mjs"; // deck dressing and the home pavilion frame (M7 WP3)
+import { keepClearCells, keepClearViolations, supportCheck, waterCheck } from "./village_checks.mjs";
+import { COURT_ROWS, COURT_CONN, HALL_ROWS, HALL_BAY, heartwoodRings, buildHall, buildStream, buildCourt } from "./village_central.mjs"; // the central tree: Court, Hall, stream, reading circle (M7 WP2) // keep-clear cells, nothing floats, water stays in its vessel (style guide rule 8)
 
 export const MAX_DEPTH = 2; // hops from the central tree (a combo = one hop; its crown is a sibling, not a deeper level)
 // exits (no combo fits, or the depth is used up): mostly a plain railing, sometimes a braced balcony or a lookout. The combos pool also
@@ -54,12 +57,24 @@ const summary = [];
 // Walkability (owner 2026-10-08, rules in .claude/skills/bedrock-modding/references/13-structure-walkability.md): every piece is checked
 // with the shared checker; any violation stops the build. opts.ring: [{ trunk: [[x, z]], level }] (walk ring round a trunk at deck level),
 // opts.connectors: deck connectors that must be reachable from each other. `blocks` are in piece coordinates (any origin).
-export function walkReport(blocks, { connectors = [], ring = [] } = {}) {
+export function walkReport(blocks, { connectors = [], ring = [], must: extraMust = [] } = {}) {
   const ks = [...blocks.keys()].map((k) => k.split(",").map(Number));
   const lo = (i) => Math.min(...ks.map((k) => k[i])), hi = (i) => Math.max(...ks.map((k) => k[i]));
   const box = { x0: lo(0), x1: hi(0), y0: lo(1), y1: hi(1), z0: lo(2), z1: hi(2) };
-  const must = connectors.map((c) => ({ x: c.x, y: c.y + 1, z: c.z }));
-  const r = checkWalk((x, y, z) => blocks.get(key(x, y, z)), box, { must, ring });
+  const must = connectors.map((c) => ({ x: c.x, y: c.y + 1, z: c.z })).concat(extraMust);
+  // a stripped-log post standing right on the deck (pavilion / flag / Hall posts replace the rim fence under them) is the rail of its cell: the checker sees a fence there
+  const FENCE_AS = { name: RAIL, states: {} };
+  // a top-half slab roof on posts (the balcony arbour) is no floor: the checker would walk it
+  const ROOF = { name: "lothlorien:mallorn_log", states: {} }, roofSlabs = new Set(); // groups of top slabs (same layer, side by side) that stand on or between fence posts and rest on nothing else
+  { const topSlab = (k) => { const b = blocks.get(k); return b?.name === "lothlorien:mallorn_slab" && b.states?.["minecraft:vertical_half"] === "top"; }, seen = new Set();
+    for (const k0 of blocks.keys()) {
+      if (seen.has(k0) || !topSlab(k0)) continue;
+      const grp = [k0]; seen.add(k0); let post = false, solid = false;
+      for (let i = 0; i < grp.length; i++) { const [x, y, z] = grp[i].split(",").map(Number), bn = blocks.get(key(x, y - 1, z))?.name ?? "minecraft:air"; if (/fence$/.test(bn)) post = true; else if (!/air$|pale_hanging_moss|cave_vines|light_block/.test(bn)) solid = true; for (const [a, c] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { if (/fence$/.test(blocks.get(key(x + a, y, z + c))?.name ?? "")) post = true; const nk = key(x + a, y, z + c); if (!seen.has(nk) && topSlab(nk)) { seen.add(nk); grp.push(nk); } } }
+      if (post && !solid) for (const k of grp) roofSlabs.add(k);
+    } }
+  const get = (x, y, z) => { const b = blocks.get(key(x, y, z)); if (b?.name === "lothlorien:mallorn_slab" && b.states?.["minecraft:vertical_half"] === "top" && roofSlabs.has(key(x, y, z))) return ROOF; return b?.name === "lothlorien:mallorn_stripped_log" && /planks$|slab$/.test(blocks.get(key(x, y - 1, z))?.name ?? "") ? FENCE_AS : b; };
+  const r = checkWalk(get, box, { must, ring });
   return r.violations;
 }
 export function assertWalk(name, blocks, opts) {
@@ -86,29 +101,39 @@ function checkConnectors(name, blocks, connectors) {
 // Open deck cells on the deck layer y = FLOOR_H (tree coordinates): planks under the cell and its 8 neighbours, 3 x 3 x 3 explicit air
 // above, no rail within 2 cells, so nothing but open deck around (not at a connector, the trunk, the rope hole, a stair or a lantern).
 // Shared by the warden and the elf post cells. -> [{ x, z, d }] (d = distance to the trunk axis), in block order.
-export function openDeckCells(blocks) {
+const isPlankDeck = (n) => n === B.planks || n === HEART_PLANKS; // the heartwood ring round the trunk is plank deck as well
+export function openDeckCells(blocks, avoid = new Set()) {
   const at = (x, y, z) => blocks.get(key(x, y, z))?.name;
   const ok = [];
   for (const k of blocks.keys()) {
     const [x, y, z] = k.split(",").map(Number);
-    if (y !== FLOOR_H || at(x, y, z) !== B.planks) continue;
+    if (y !== FLOOR_H || at(x, y, z) !== B.planks || avoid.has(`${x},${z}`)) continue; // the elf stands on plain planks; the heartwood ring may be part of the open deck round it
     let good = true;
     for (let dx = -2; dx <= 2 && good; dx++) for (let dz = -2; dz <= 2 && good; dz++) {
       if (at(x + dx, y + 1, z + dz) === RAIL) good = false;
       if (Math.abs(dx) <= 1 && Math.abs(dz) <= 1) {
-        if (at(x + dx, y, z + dz) !== B.planks) good = false;
-        for (let h = 1; h <= 3; h++) if (at(x + dx, y + h, z + dz) !== "minecraft:air") good = false;
+        if (!isPlankDeck(at(x + dx, y, z + dz))) good = false;
+        for (let h = 1; h <= 3; h++) if (at(x + dx, y + h, z + dz) !== "minecraft:air" && !isLightBlock(at(x + dx, y + h, z + dz))) good = false; // a hidden light is air for standing room
       }
     }
     if (good) ok.push({ x, z, d: Math.hypot(x, z) });
   }
   return ok;
 }
+// The elf post cell of a pavilion frame (tree coordinates) and the cells round it that the wardens of the piece keep away from (POST_SPACING)
+const homePostCell = (frame) => { const [x, z] = frameCell(frame, ...framePost(frame)); return { x, z }; };
+const postAvoid = (tree) => {
+  const out = new Set(), frame = tree.home, site = tree.dress?.site;
+  if (!frame && !site) return out;
+  const p = frame ? homePostCell(frame) : { x: site.x0 + ((site.k - 1) >> 1), z: site.z0 + ((site.k - 1) >> 1) };
+  for (let dx = -(POST_SPACING - 1); dx <= POST_SPACING - 1; dx++) for (let dz = -(POST_SPACING - 1); dz <= POST_SPACING - 1; dz++) out.add(`${p.x + dx},${p.z + dz}`);
+  return out;
+};
 // Standing cells for `count` wardens on the deck layer (see openDeckCells). The first warden stands near ring `want`, the next ones as far
 // from the earlier ones as possible. Deterministic. Returns [{ x, z }] (tree coordinates); throws when there is no room.
-export function wardenCells(name, blocks, count, want) {
+export function wardenCells(name, blocks, count, want, avoid = new Set()) {
   if (!count) return [];
-  const ok = openDeckCells(blocks);
+  const ok = openDeckCells(blocks, avoid);
   const near = ok.filter((c) => Math.abs(c.d - want) <= 2.5);
   const pool = (near.length >= count ? near : ok).sort((a, b) => Math.abs(a.d - want) - Math.abs(b.d - want) || a.x - b.x || a.z - b.z);
   if (pool.length < count) throw new Error(`${name}: no room for ${count} wardens`);
@@ -129,12 +154,24 @@ export function wardenCells(name, blocks, count, want) {
 //                 (Small nodes have no cell with the full open-deck margin of a warden, node_e only a 3 x 3 square, so a post there only needs its own
 //                 cell to be open deck: planks underneath, 3 cells of air above.)
 // Other pieces (crowns, ends) carry none. Deterministic (ties by x, then z). -> [{ x, z, kind }]; throws when there is no room.
-export function postCells(name, blocks, taken = []) {
+export function postCells(name, blocks, taken = [], avoid = new Set()) {
   const central = name.startsWith("central"), isNode = name in NODES;
   if (!central && !isNode) return [];
   const apart = (c, list) => list.every((t) => Math.max(Math.abs(c.x - t.x), Math.abs(c.z - t.z)) >= POST_SPACING);
-  const ok = openDeckCells(blocks);
+  const ok = openDeckCells(blocks, avoid);
   const ground = (x, y, z) => blocks.get(key(x, y, z))?.name ?? AIR.name;
+  if (isNode && NODES[name].home) { // the pavilion's post cell (village_dress.mjs framePost): interior, not the door lane, not a screen cell
+    const post = homePostCell(NODES[name].home);
+    if (!apart(post, taken)) throw new Error(`${name}: a warden stands within ${POST_SPACING} cells of the pavilion post`);
+    return [{ ...post, kind: "home" }];
+  }
+  if (isNode && NODES[name].dress?.site) { // no pavilion: the reserved free square (village_dress.mjs reserveSite) is the home site; the post stands in its middle
+    const sq = NODES[name].dress.site, cells = [];
+    for (let i = 0; i < sq.k; i++) for (let j = 0; j < sq.k; j++) cells.push({ x: sq.x0 + i, z: sq.z0 + j, d: Math.hypot(i - ((sq.k - 1) >> 1), j - ((sq.k - 1) >> 1)) });
+    const c = cells.sort((a, b) => a.d - b.d || a.x - b.x || a.z - b.z).find((q) => blocks.get(key(q.x, FLOOR_H, q.z))?.name === B.planks && apart(q, taken)); // plain planks under the elf (not the heartwood ring)
+    if (!c) throw new Error(`${name}: a warden stands within ${POST_SPACING} cells of every cell of the home site`);
+    return [{ x: c.x, z: c.z, kind: "home" }];
+  }
   if (isNode) {
     const strict = new Set(ok.map((c) => `${c.x},${c.z}`));
     let best = null;
@@ -168,13 +205,13 @@ export function postCells(name, blocks, taken = []) {
 // sideTarget holds for a bridge heading into the platform (5-run of rail on 5 planks, two plain deck rows behind with open air; a stair opening,
 // trunk, slab or connector row fails it). `inRegion(x, z)` limits the cells (a combo's bridge half is excluded). -> [[x, z, deckY]] in box coordinates.
 // A platform with no such run still gets one marker (see the end of the function) so every tree piece can start the village planner.
-export function sideMarkerCells(blocks, origin, inRegion = () => true) {
+export function sideMarkerCells(blocks, origin, inRegion = () => true, onlyY = null) {
   const nameAt = (x, y, z) => blocks.get(key(x, y, z))?.name ?? "minecraft:air";
   const runs = new Map();
   for (const [k, b] of blocks) {
     if (b.name !== B.planks) continue;
     const [x, y, z] = k.split(",").map(Number);
-    if (!inRegion(x, z) || nameAt(x, y + 1, z) !== RAIL) continue;
+    if (!inRegion(x, z) || nameAt(x, y + 1, z) !== RAIL || (onlyY !== null && y !== onlyY)) continue;
     for (const out of [[0, -1], [0, 1], [-1, 0], [1, 0]]) {
       if (!sideTarget(nameAt, x, y, z, [-out[0], -out[1]])) continue;
       const along = out[0] ? z : x, line = out[0] ? x : z, id = `${out}|${y}|${line}`;
@@ -197,7 +234,7 @@ export function sideMarkerCells(blocks, origin, inRegion = () => true) {
     for (const [k, b] of blocks) {
       if (b.name !== B.planks) continue;
       const [x, y, z] = k.split(",").map(Number);
-      if (!inRegion(x, z) || nameAt(x, y + 1, z) !== RAIL) continue;
+      if (!inRegion(x, z) || nameAt(x, y + 1, z) !== RAIL || (onlyY !== null && y !== onlyY)) continue;
       if (!best || y < best[2]) best = [x, z, y];
     }
     if (best) res.push(best);
@@ -206,13 +243,19 @@ export function sideMarkerCells(blocks, origin, inRegion = () => true) {
 }
 // extra.markers: [[x, z]] rail mender marker positions in box coordinates (default: the box centre); extra.wardens: standing cells
 // [{ x, z }] in block coordinates (default: computed here for WARDENS[name]); extra.posts: elf post cells [{ x, z, kind }] in block coordinates
-// (default: postCells)
+// (default: postCells); extra.keep: the piece's keep-clear cells (Set "x,y,z", block coordinates; the post and warden cells are added here);
+// extra.waterAllowed: cells the water of the piece may reach besides its own water cells
+const spawnLights = new Map(); // piece -> number of spawn-proof hidden lights
+const cushionTally = new Map(); // piece -> number of native cushions
 function writePiece(name, blocks, size, origin, connectors, extra = {}) {
   checkConnectors(name, blocks, connectors);
   const bare = bareBranchEnds(blocks);
   if (bare.length) throw new Error(`${name}: bare branch end at ${bare.map((q) => `${q.x},${q.y},${q.z}`).join(" ")}`);
-  if (!name.startsWith("crown_")) assertWalk(name, blocks, { connectors });
+  if (!name.startsWith("crown_")) assertWalk(name, blocks, { connectors, ...extra.walk });
   const [sx, sy, sz] = size;
+  const fail = (what, list) => { if (list.length) throw new Error(`${name}: ${list.length} ${what} violations, e.g. ${list.slice(0, 5).map((v) => `${v.rule} at ${v.at} (${v.name ? v.name + ": " : ""}${v.detail})`).join("; ")}`); };
+  fail("support", supportCheck(blocks)); // nothing floats (principle 10)
+  fail("water", waterCheck(blocks, { allowed: extra.waterAllowed }));
   // rail mender markers (scripts/rail_mender.js, scan radius 17): one at the box centre, two for a combo (bridge middle and tree axis,
   // so the whole bridge + node is covered); y = the lowest rail
   const railYs = [...blocks].filter(([, b]) => b.name === RAIL).map(([k]) => Number(k.split(",")[1]));
@@ -228,17 +271,27 @@ function writePiece(name, blocks, size, origin, connectors, extra = {}) {
     id: POST_ID, x: c.x + origin[0] + 0.5, y: FLOOR_H + 1 + origin[1], z: c.z + origin[2] + 0.5,
     definitions: [`+${POST_ID}`, `+${POST_GROUP_PREFIX}${c.kind}`],
   }));
+  const keep = new Set(extra.keep ?? []);
+  for (const c of [...cells, ...(extra.posts ?? postCells(name, blocks, cells))]) { keep.add(key(c.x, FLOOR_H + 1, c.z)); keep.add(key(c.x, FLOOR_H + 2, c.z)); }
+  fail("keep-clear", keepClearViolations(blocks, keep));
   const wardens = cells.map((c) => ({
     id: WARDEN, x: c.x + origin[0] + 0.5, y: FLOOR_H + 1 + origin[1], z: c.z + origin[2] + 0.5,
     definitions: [`+${WARDEN}`, "+lothlorien:village_warden"], mainhand: "minecraft:bow", invulnerable: false,
   }));
-  const { buffer, clipped } = toMcstructure(blocks, size, origin, [...markers, ...wardens, ...posts]);
+  // native cushions (persistent template actors like the M6 camps: the seats of the village; variant = dye id, 15 white, 12 light blue, 2 green)
+  const cushionActors = (extra.cushions ?? []).map((c) => ({ id: "minecraft:cushion", x: c.x + origin[0] + 0.5, y: c.y + 1 + origin[1], z: c.z + origin[2] + 0.5, variant: c.variant, invulnerable: false }));
+  cushionTally.set(name, cushionActors.length);
+  // spawn-proofing: no spawnable surface from deck - 6 up (crowns: all) with block light 0
+  // (owner 2026-10-16: ground and root mobs are fine, branch mobs are not: crowns entirely, elsewhere from deck - 6 up)
+  const sl = name === "railing_end" ? [] : addSpawnLights(blocks, { x0: -origin[0], x1: size[0] - 1 - origin[0], y0: name.startsWith("crown_") ? 0 : name === "balcony_braced" ? -6 : FLOOR_H - 6, y1: size[1] - 1 - origin[1], z0: -origin[2], z1: size[2] - 1 - origin[2] });
+  spawnLights.set(name, sl.length);
+  const { buffer, clipped } = toMcstructure(blocks, size, origin, [...markers, ...wardens, ...posts, ...cushionActors]);
   if (clipped) throw new Error(`${name}: ${clipped} blocks outside the box`);
   writeFileSync(join(out, `${name}.mcstructure`), buffer);
   const tally = (f) => [...blocks.values()].filter(f).length;
   const conn = connectors.map((c) => `${c.facing}@y${c.y + origin[1]}`).join(" ");
   summary.push(`${name}: ${sx}x${sy}x${sz}, connectors ${conn || "none"}; ` +
-    `${wardens.length} wardens, ${posts.length} elf posts, ${tally((b) => b.name.endsWith("_log") || b.name.endsWith("_wood"))} logs, ${tally((b) => b.name === B.leaves)} leaves, ` +
+    `${wardens.length} wardens, ${posts.length} elf posts, ${tally((b) => isLightBlock(b.name))} hidden lights, ${tally((b) => b.name.endsWith("_log") || b.name.endsWith("_wood"))} logs, ${tally((b) => b.name === B.leaves)} leaves, ` +
     `${tally((b) => b.name === B.planks)} planks, ${tally((b) => b.name.includes("slab"))} slabs, ${tally((b) => b.name === RAIL)} rails, ${buffer.length} bytes`);
 }
 
@@ -253,27 +306,50 @@ const treeSpec = (opts) => {
 const C = (facing, off, hi = false) => ({ facing, off, hi });
 // single level: shape, connectors (face, offset along the face), trunk 3x3
 const NODES = {
-  node_a: treeSpec({ trunk: "square3", levels: [{ rows: SHAPES.cutrect13, conn: [C("north", 1), C("south", -2)] }], seed: 11011, lamps: 2 }),
-  node_b: treeSpec({ trunk: "square3", levels: [{ rows: SHAPES.octagon15, conn: [C("west", 1), C("east", -1), C("south", 0)] }], seed: 22022, lamps: 2 }),
-  node_c: treeSpec({ trunk: "square3", levels: [{ rows: SHAPES.plus15, conn: [C("north", -1), C("east", 1), C("south", 1), C("west", 0)] }], seed: 33033, lamps: 3 }),
-  node_d: treeSpec({ trunk: "square3", levels: [{ rows: SHAPES.oval17, conn: [C("east", 0), C("west", 0), C("north", -2)] }], seed: 44044, lamps: 2 }),
-  node_e: treeSpec({ trunk: "square3", levels: [{ rows: SHAPES.cutrect11, conn: [C("north", -1), C("east", 1)] }], seed: 55055, lamps: 2 }),
-  node_f: treeSpec({ trunk: "square3", levels: [{ rows: SHAPES.cutrect17, conn: [C("west", 1), C("east", -1), C("south", 1)] }], seed: 66066, lamps: 3 }),
+  node_a: treeSpec({ trunk: "square3", levels: [{ rows: SHAPES.cutrect15, conn: [C("north", 1), C("south", -2)] }], seed: 11011 }),
+  node_b: treeSpec({ trunk: "square3", levels: [{ rows: SHAPES.octagon15, conn: [C("west", 1), C("east", -1), C("south", 0)] }], seed: 22022 }),
+  node_c: treeSpec({ trunk: "square3", levels: [{ rows: SHAPES.plus15, add: (x, z) => x >= 4 && z <= -4, conn: [C("north", -1), C("east", 1), C("south", 1), C("west", 0)] }], seed: 33033 }),
+  node_d: treeSpec({ trunk: "square3", levels: [{ rows: SHAPES.oval17h, conn: [C("east", 0), C("west", 0), C("north", -2)] }], seed: 44044 }),
+  node_e: treeSpec({ trunk: "square3", levels: [{ rows: SHAPES.cutrect13e, conn: [C("north", -1), C("east", 1)] }], seed: 55055 }),
+  node_f: treeSpec({ trunk: "square3", levels: [{ rows: SHAPES.cutrect17h, conn: [C("west", 1), C("east", -1), C("south", 1)] }], seed: 66066 }),
   // two levels: lower deck, upper deck +8, slab spiral stair in the ring round a 3x3 trunk
-  tower_a: treeSpec({ trunk: "square3", seed: 77077, lamps: 0, levels: [
-    { rows: SHAPES.octagon15, conn: [C("south", -1), C("west", 1)] }, { rows: SHAPES.octagon15, conn: [C("north", 1, true), C("east", -1, true)], clip: (x, z) => z >= 6 }] }), // upper deck stops at z 5: rows to z 4 keep the walk ring round the stair opening (was plus15 clipped at z 4)
-  tower_b: treeSpec({ trunk: "square3", seed: 88088, lamps: 0, levels: [
-    { rows: SHAPES.plus15w, conn: [C("east", 1), C("north", -1), C("south", 0)] }, { rows: SHAPES.octagon15, conn: [C("south", 1, true), C("west", -1, true)] }] }),
-  tower_c: treeSpec({ trunk: "square3", seed: 99099, lamps: 0, levels: [
+  tower_a: treeSpec({ trunk: "square3", seed: 77077, levels: [
+    { rows: SHAPES.octagon17, conn: [C("south", -1), C("west", 1)] }, { rows: SHAPES.octagon17, conn: [C("north", 1, true), C("east", -1, true)], clip: (x, z) => z >= 6 }] }), // upper deck stops at z 5: rows to z 4 keep the walk ring round the stair opening (was plus15 clipped at z 4)
+  tower_b: treeSpec({ trunk: "square3", seed: 88088, levels: [
+    { rows: SHAPES.plus17w, conn: [C("east", 1), C("north", -1), C("south", 0)] }, { rows: SHAPES.octagon17w, conn: [C("south", 1, true), C("west", -1, true)] }] }),
+  tower_c: treeSpec({ trunk: "square3", seed: 99099, levels: [
     { rows: SHAPES.oval17, conn: [C("north", 2), C("south", -2)] }, { rows: SHAPES.cutrect17.concat([6]), conn: [C("east", 1, true), C("west", -1, true)] }] }),
 };
-// central tree: single level, 5x5 round trunk, 4 rim connectors, Elven rope from the ground to the deck, start anchor
+// central tree (village_central.mjs): the Court (lower deck, 4 rim connectors, Elven rope from the ground, start anchor), the round 5x5 trunk with a slab spiral
+// stair round it, the Hall (upper deck +8: open pavilion, dome, chandelier, lookout bay), the stream and the reading circle; crown jigsaw above the Hall
 {
+  const NAME = "central_mallorn_01";
+  let elf = null;
   const t = buildTree({
-    pool: POOL("combos"), levels: [{ rows: SHAPES.octagon21, conn: [C("north", -3), C("east", 2), C("south", 4), C("west", -2)] }],
-    trunk: "round5", seed: 20261007, rope: true, anchor: true, lamps: 4, upPool: POOL("crowns_central"),
+    pool: POOL("combos"), trunk: "round5", seed: 20261007, rope: true, anchor: true, upPool: POOL("crowns_central"),
+    levels: [{ rows: COURT_ROWS, conn: COURT_CONN.map((c) => C(c.facing, c.off)) }, { rows: HALL_ROWS, conn: [], add: HALL_BAY }],
+    dressOpts: { lampBudget: 6, arms: [2, 0], bannerFaces: [0, 0], flags: 0, rimStep: 3, rimMax: 30, gardenR: 10, islands: [4, 0] },
+    hooks: {
+      structure: (ctx) => {
+        heartwoodRings(ctx); buildHall(ctx); buildStream(ctx); buildCourt(ctx);
+        for (let z = -10; z <= -6; z++) for (const h of [1, 2]) ctx.keep.add(key(6, FLOOR_H + h, z)); // the lane east of the reading circle stays open (the strip between the circle and the rim must not become a closed pocket)
+        for (let x = -5; x <= -4; x++) for (let z = -2; z <= 0; z++) for (const h of [1, 2]) ctx.keep.add(key(x, FLOOR_H + LEVEL_H + h, z)); // the exit lane from the last tread onto the Hall floor stays open
+        // elf cells (wardens, Loremaster, reserve posts) from the finished structure; the dressing keeps off them (3 x 3 x 3 round each)
+        // nobody stands ON a bridge path, a stair column or the rope's landing (the ring and the deck beside them are wide enough to pass an elf)
+        const apart = new Set(), paths = keepClearCells(ctx.blocks, { connectors: ctx.keepOpts.connectors, trunkR: ctx.rT, stair: ctx.keepOpts.stair, rope: ctx.keepOpts.rope, deckY: FLOOR_H });
+        for (const k of paths) { const [x, y, z] = k.split(",").map(Number); if (y === FLOOR_H + 1) apart.add(`${x},${z}`); }
+        const wardens = wardenCells(NAME, ctx.blocks, WARDENS[NAME], 7, apart), posts = postCells(NAME, ctx.blocks, wardens, apart);
+        for (const c of [...wardens, ...posts]) for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) for (let h = 1; h <= 3; h++) ctx.keep.add(key(c.x + dx, FLOOR_H + h, c.z + dz));
+        elf = { wardens, posts };
+      },
+    },
   });
-  writePiece("central_mallorn_01", t.blocks, t.size, t.origin, t.connectors, { loopMarkers: sideMarkerCells(t.blocks, t.origin) });
+  const trunk5 = []; for (let x = -2; x <= 2; x++) for (let z = -2; z <= 2; z++) trunk5.push([x, z]);
+  writePiece(NAME, t.blocks, t.size, t.origin, t.connectors, {
+    loopMarkers: sideMarkerCells(t.blocks, t.origin, (x, z) => t.connectors.every((c) => Math.max(Math.abs(x - c.x), Math.abs(z - c.z)) > 4), FLOOR_H), // (never a run whose five rails include a connector's rail post: a joined bridge deck lies outside it)
+    keep: t.keep, wardens: elf.wardens, posts: elf.posts, cushions: t.cushions,
+    walk: { ring: [{ trunk: trunk5, level: FLOOR_H + 1 }, { trunk: trunk5, level: FLOOR_H + LEVEL_H + 1 }], must: [{ x: 0, y: FLOOR_H + LEVEL_H + 1, z: -5 }] }, // a walk ring closed on both decks, the Hall reachable
+  });
 }
 
 // --- combo pieces: bridge + destination tree in one piece ------------------------------------------------------------------
@@ -289,14 +365,14 @@ const comboList = [];
       if (makeCombo(tree, ei, STRAIGHT[0], POOL("combos")).why?.match(/^(entry|another)/)) continue; // no bridge side on this connector
       for (let t = 0; t < STRAIGHT.length; t++) {
         const spec = STRAIGHT[(next + t) % STRAIGHT.length];
-        const cb = makeCombo(tree, ei, spec, POOL("combos"));
+        const cb = makeCombo(tree, ei, spec, POOL("combos"), next);
         if (cb.why) continue; // this bridge sticks out of this node's width: next one
         const name = `combo_${node}_${facing}_${spec.name}`;
-        const wardenCellsOfNode = wardenCells(node, tree.blocks, WARDENS[node] ?? 0, 5);
+        const wardenCellsOfNode = wardenCells(node, tree.blocks, WARDENS[node] ?? 0, 5, postAvoid(tree));
         const nodeWardens = wardenCellsOfNode.map(cb.wardenMap);
         const nodePosts = postCells(node, tree.blocks, wardenCellsOfNode).map((c) => ({ ...cb.wardenMap(c), kind: c.kind }));
         writePiece(name, cb.blocks, cb.size, cb.origin, cb.connectors, {
-          markers: [[cb.bridgeMid[0], cb.bridgeMid[1]], [cb.axis[0] + 0.5, cb.axis[1] + 0.5]], wardens: nodeWardens, posts: nodePosts,
+          markers: [[cb.bridgeMid[0], cb.bridgeMid[1]], [cb.axis[0] + 0.5, cb.axis[1] + 0.5]], wardens: nodeWardens, posts: nodePosts, keep: cb.keep, cushions: cb.cushions,
           loopMarkers: sideMarkerCells(cb.blocks, cb.origin, (x, z) => z >= cb.bridgeLen), // the node's rims; the bridge half has none
         });
         comboList.push({ name, node });
@@ -332,7 +408,7 @@ crown("crown_central_b", { h: 13, H: 30, seed: 10010, branches: 12, blob: 3.3, c
 {
   const b = buildBalcony();
   if (pillarAmount(AMOUNTS.light)) decoratePillar(b.blocks, { x0: -b.origin[0], x1: b.size[0] - 1 - b.origin[0], y0: -b.origin[1], y1: b.size[1] - 1 - b.origin[1], z0: -b.origin[2], z1: b.size[2] - 1 - b.origin[2] }, { amount: pillarAmount(AMOUNTS.light), seed: 4141 });
-  writePiece("balcony_braced", b.blocks, b.size, b.origin, b.connectors, { loopMarkers: [[b.origin[0] + 0.5, b.size[2] - 0.5]] }); // centre of the far rim row
+  writePiece("balcony_braced", b.blocks, b.size, b.origin, b.connectors, { loopMarkers: [[b.origin[0] + 0.5, b.size[2] - 0.5]], keep: b.keep, cushions: b.cushions }); // centre of the far rim row
 }
 // lookout_01: square-ish platform on a log pillar down to ROOTS, one connector
 {
@@ -342,11 +418,13 @@ crown("crown_central_b", { h: 13, H: 30, seed: 10010, branches: 12, blob: 3.3, c
   deck.connect("north", 0, "minecraft:empty");
   const { rails, forced } = deck.build();
   writeRails(blocks, rails, forced);
-  blocks.set(key(0, FLOOR_H + 2, 4), lantern()); // on the rail post at the far end
-  addLanterns(blocks, { x0: -4, x1: 4, y0: -ROOTS, y1: FLOOR_H + 3, z0: -4, z1: 4 }, (x, y, z) => z === -4);
+  const lookoutConnectors = deck.connectors.map((c) => ({ ...c, y: FLOOR_H }));
+  const lookoutKeep = keepClearCells(blocks, { connectors: lookoutConnectors, deckY: FLOOR_H, depth: 4 }) // a pillar, no trunk on the deck: only the connector corridor;
+  const lookoutDress = dressLookout(blocks, lookoutKeep, FLOOR_H, 5252); // flag pole, lamp posts, leaf screen, jar, moss under the deck (village_dress.mjs)
+  addHiddenLights(blocks, { x0: -4, x1: 4, y0: -ROOTS, y1: FLOOR_H + 3, z0: -4, z1: 4 }, (x, y, z) => z === -4);
   // the three free sides (south, east, west) are 5-wide rim rows: loop markers on their centres
   if (pillarAmount(AMOUNTS.full)) decoratePillar(blocks, { x0: -4, x1: 4, y0: -ROOTS, y1: FLOOR_H + 3, z0: -4, z1: 4 }, { amount: pillarAmount(AMOUNTS.full), seed: 5252 });
-  writePiece("lookout_01", blocks, [9, ROOTS + FLOOR_H + 4, 9], [4, ROOTS, 4], deck.connectors.map((c) => ({ ...c, y: FLOOR_H })), { loopMarkers: [[4.5, 8.5], [8.5, 4.5], [0.5, 4.5]] });
+  writePiece("lookout_01", blocks, [9, ROOTS + FLOOR_H + 4, 9], [4, ROOTS, 4], lookoutConnectors, { loopMarkers: [[4.5, 8.5], [8.5, 4.5], [0.5, 4.5]], keep: lookoutKeep, cushions: lookoutDress.cushions });
 }
 // railing_end (plug): deck row of 5 + 5 rails; connector at the middle deck cell facing the parent
 {
@@ -405,3 +483,5 @@ writeFileSync(join(bpOut, "worldgen", "structures", "elven_village.json"), JSON.
 }, null, 2) + "\n");
 
 console.log(summary.join("\n"));
+console.log("spawn-proof hidden lights per piece: " + [...spawnLights].filter(([, n]) => n).map(([k, n]) => `${k} ${n}`).join(", "));
+console.log("native cushions per piece: " + [...cushionTally].filter(([, n]) => n).map(([k, n]) => `${k} ${n}`).join(", "));

@@ -14,7 +14,18 @@
 import { bridgeShape } from "./village_bridge.js";
 
 export const MARKER_ID = "lothlorien:loop_marker";
-export const PLANKS = "lothlorien:mallorn_planks", SLAB = "lothlorien:mallorn_slab", FENCE = "lothlorien:mallorn_fence", LANTERN = "lothlorien:elven_lantern";
+export const PLANKS = "lothlorien:mallorn_planks", SLAB = "lothlorien:mallorn_slab", FENCE = "lothlorien:mallorn_fence", LANTERN = "lothlorien:elven_lantern", HEART = "lothlorien:mallorn_heartwood_planks";
+// the heartwood ring round a trunk (tools/village_dress.mjs) is deck like planks: every deck test below that is not about a plain railing_end accepts it
+export const isPlank = (n) => n === PLANKS || n === HEART;
+// a rim cell is a fence, or a stripped-log post standing on the deck (pavilion / flag posts replace the rim fence under them, tools/village_dress.mjs)
+export const isRailPost = (n) => n === FENCE || n === "lothlorien:mallorn_stripped_log";
+// Light of runtime-built links (M7 style guide section 5, WP3): the safety light is HIDDEN (`minecraft:light_block_14`, plan.lights, invisible; the sim and
+// the tests count it like a lantern of 14), the visible lamps are art (plan.lamps: a lamp post = a second fence on a rail post + an elven lantern on top, at
+// both bridge ends and beside a gate arch). A visible lamp is never counted for the safety: it may be broken or taken.
+export const HIDDEN_LIGHT = "minecraft:light_block_14", LANTERN_GOLD = "lothlorien:elven_lantern_heartwood", LOG_STRIPPED = "lothlorien:mallorn_stripped_log";
+const LIGHT_BLOCK_RE = /^minecraft:light_block_(\d+)$/;
+// level an existing block emits for the planners' light models (lanterns 14, hidden light blocks their own level)
+export const lightLevel = (n) => (n === LANTERN || n === LANTERN_GOLD ? 14 : LIGHT_BLOCK_RE.test(n ?? "") ? +LIGHT_BLOCK_RE.exec(n)[1] : 0);
 // minDist/maxDist: blocks between the two railing rows' centres (bridge length = dist + 1, i.e. 5..16 free cells between the rows);
 // maxOffset: sideways shift (also <= length - 3, the most bridgeShape supports: one block sideways per block forward).
 // Longer spans (maxDist < dist <= maxSpan) are two bridges with a supported 5 x 5 landing in the middle (planSpan): the landing stands on a
@@ -30,7 +41,7 @@ export const PLAZA = { maxDist: 6, maxLat: 8, cantilever: 4, needPier: 2 };
 export const LOG = "lothlorien:mallorn_log";
 
 const AIRS = ["minecraft:air", "minecraft:cave_air", "minecraft:void_air"];
-const isAir = (n) => AIRS.includes(n);
+const isAir = (n) => AIRS.includes(n) || /^minecraft:light_block_\d+$/.test(n); // a hidden light block (village generator) is air for every planner test
 const isLeaves = (n) => typeof n === "string" && n.endsWith("_leaves");
 const SIDE_OF = (v) => (v[1] < 0 ? "north" : v[1] > 0 ? "south" : v[0] < 0 ? "west" : "east");
 
@@ -48,12 +59,12 @@ export function exitAt(at, x, y, z) {
       let ok = true;
       for (let o = -2; o <= 2 && ok; o++) {
         const bx = px + a[0] * o, bz = pz + a[1] * o;
-        if (at(bx, y, bz) !== PLANKS) ok = false;
+        if (!isPlank(at(bx, y, bz))) ok = false;
         else if (Math.abs(o) === 2) ok = at(bx, y + 1, bz) === FENCE;
         else ok = isAir(at(bx, y + 1, bz)) && isAir(at(bx, y + 2, bz));
       }
       const out = at(x - s[0], y, z - s[1]);
-      if (ok && out !== PLANKS && out !== SLAB) return { x, y, z, dir: [-s[0], -s[1]] };
+      if (ok && !isPlank(out) && out !== SLAB) return { x, y, z, dir: [-s[0], -s[1]] };
     }
   }
   return null;
@@ -94,14 +105,29 @@ export function planBridge(A, B, length, offset, side = false, sideA = false) {
     for (const s of r.sides) if (!(side && r.z === length - 1 && s === "south") && !(sideA && r.z === 0 && s === "north")) states[`minecraft:connection_${SIDE_OF(vec[s])}`] = true; // side: no link into the platform interior
     return { ...w(r.x, r.y, r.z), states, row: r.z };
   });
-  const lanterns = planLanterns(shape).map(([x, y, z]) => ({ ...w(x, y, z), row: z }));
+  const pl = planLights(shape, offset);
+  const lights = pl.lights.map(([x, y, z]) => ({ ...w(x, y, z), row: z }));
+  const lamps = pl.lamps.map((q) => ({ ...w(q.x, q.y, q.z), row: q.z, id: q.id }));
+  const gateBlock = (q) => {
+    if (q.kind === "hang") return { id: LANTERN_GOLD, states: { "minecraft:block_face": "down" } };
+    if (q.kind === "crest") return { id: "lothlorien:mallorn_golden_leaves", states: {} };
+    const states = { "minecraft:connection_north": false, "minecraft:connection_south": false, "minecraft:connection_west": false, "minecraft:connection_east": false };
+    if (q.kind === "bar") { // the bar links to its neighbours across the bridge (world side of the local +-x)
+      if (!q.first) states[`minecraft:connection_${SIDE_OF([-ex[0], -ex[1]])}`] = true;
+      if (!q.last) states[`minecraft:connection_${SIDE_OF([ex[0], ex[1]])}`] = true;
+    }
+    return { id: FENCE, states };
+  };
+  const blocks = pl.gate.map((q) => ({ ...w(q.x, q.y, q.z), ...gateBlock(q) }));
+  const pots = pl.pots.map((q) => ({ ...w(q.x, q.y, q.z), row: q.z }));
+  for (const q of pl.gate) if (q.kind === "crest") cells.push({ ...w(q.x, q.y, q.z), kind: "air", row: q.z }); // so blockedCells sees it
   const end = w(shape.connectors[1].x, 0, length - 1);
   if (end.x !== B.x || end.z !== B.z || end.y !== B.y) throw new Error(`planBridge: far end ${end.x},${end.z} is not the partner ${B.x},${B.z}`);
-  return { A, B, length, offset, shape, cells, rails, lanterns, side };
+  return { A, B, length, offset, shape, cells, rails, lights, lamps, blocks, pots, side };
 }
 
 // A span of `dist` blocks (A -> B, B laterally `lat` off): one arched bridge when dist <= maxDist, otherwise two bridges with a supported
-// 5 x 5 landing between them (deck, rim rail, two lanterns; the openings are the bridges' own end rows). Same plan format as planBridge;
+// 5 x 5 landing between them (deck, rim rail, two lamp posts and a hidden light over its middle; the openings are the bridges' own end rows). Same plan format as planBridge;
 // `landing` = { x, y, z (centre deck cell), dir, d1, d2 } and the pier (plan.pier, see planPier) is added by decide().
 export function planSpan(A, B, dist, lat, side = false, sideA = false) {
   if (dist <= LOOP.maxDist) return planBridge(A, B, dist + 1, lat, side, sideA);
@@ -110,7 +136,7 @@ export function planSpan(A, B, dist, lat, side = false, sideA = false) {
   const cell = (k, o) => ({ x: A.x + d[0] * k + ex[0] * o, y: A.y, z: A.z + d[1] * k + ex[1] * o });
   const p1 = planBridge(A, cell(d1, l), d1 + 1, l, true, sideA);
   const p2 = planBridge({ ...cell(d1 + span, l), dir: d }, B, d2 + 1, lat - l, side);
-  const cells = [], rails = new Map(), lanterns = [], h = (N - 1) / 2;
+  const cells = [], rails = new Map(), lights = [], lamps = [], blocks = [], pots = [], h = (N - 1) / 2;
   const ring = new Set(), opening = (k, o) => (k === 0 || k === N - 1) && Math.abs(o) <= 1;
   for (let k = 0; k < N; k++) for (let o = -h; o <= h; o++) {
     const c = cell(d1 + k, l + o);
@@ -132,16 +158,23 @@ export function planSpan(A, B, dist, lat, side = false, sideA = false) {
     }
     addRail({ ...c, y: c.y + 1, states, row: d1 + k });
   }
-  for (const o of [-h, h]) lanterns.push({ ...cell(d1 + Math.floor(N / 2), l + o), y: A.y + 2, row: d1 + Math.floor(N / 2) });
+  for (const o of [-h, h]) lamps.push({ ...cell(d1 + Math.floor(N / 2), l + o), y: A.y + 3, row: d1 + Math.floor(N / 2) }); // lamp posts on the middle rim posts of the two closed sides
+  for (const [k, o] of [[0, -h], [N - 1, h]]) lights.push({ ...cell(d1 + k, l + o), y: A.y + 3, row: d1 + k }); // hidden lights two cells over two diagonal corner posts of the landing (every walk cell within 8 steps; not on the posts' tops: the bridges' step posts stand there)
   const shift = (r, n) => ({ ...r, row: r.row + n });
   for (const c of p1.cells) cells.push(c);
   for (const r of p1.rails) addRail(r);
-  for (const l1 of p1.lanterns) lanterns.push(l1);
+  for (const l1 of p1.lights) lights.push(l1);
+  for (const l1 of p1.lamps) lamps.push(l1);
+  for (const b of p1.blocks) blocks.push(b);
+  for (const q of p1.pots) pots.push(q);
   for (const c of p2.cells) cells.push(shift(c, d1 + span));
   for (const r of p2.rails) addRail(shift(r, d1 + span));
-  for (const l2 of p2.lanterns) lanterns.push(shift(l2, d1 + span));
+  for (const l2 of p2.lights) lights.push(shift(l2, d1 + span));
+  for (const l2 of p2.lamps) lamps.push(shift(l2, d1 + span));
+  for (const b of p2.blocks) blocks.push(b);
+  for (const q of p2.pots) pots.push(shift(q, d1 + span));
   const c0 = cell(d1 + Math.floor(N / 2), l);
-  return { A, B, length: dist + 1, offset: lat, shape: null, cells, rails: [...rails.values()], lanterns, side, landing: { x: c0.x, y: c0.y, z: c0.z, dir: d, d1, d2 }, pier: [] };
+  return { A, B, length: dist + 1, offset: lat, shape: null, cells, rails: [...rails.values()], lights, lamps, blocks, pots, side, landing: { x: c0.x, y: c0.y, z: c0.z, dir: d, d1, d2 }, pier: [] };
 }
 
 // The landing's pier: a plus of log columns (centre + 4 arms) from under the deck down to the ground, and four braces (a log laid out under
@@ -170,15 +203,20 @@ export function planPier(at, L) {
   return { blocks };
 }
 
-// Everything the bridge writes: Map "x,y,z" -> { id, states? }. Later entries win (rails and lanterns replace headroom air).
+// Everything the bridge writes: Map "x,y,z" -> { id, states? }. Later entries win (rails, hidden lights and lamp posts replace headroom air).
 export function finalBlocks(plan) {
   const out = new Map(), k = (c) => `${c.x},${c.y},${c.z}`;
   const KIND = { plank: { id: PLANKS }, slab_bottom: { id: SLAB, states: { "minecraft:vertical_half": "bottom" } }, slab_top: { id: SLAB, states: { "minecraft:vertical_half": "top" } }, air: { id: "minecraft:air" } };
   for (const c of plan.cells) out.set(k(c), KIND[c.kind]);
   for (const b of plan.pier ?? []) out.set(k(b), { id: b.id, states: b.states });
   for (const r of plan.rails) out.set(k(r), { id: FENCE, states: r.states });
-  for (const l of plan.lanterns) out.set(k(l), { id: LANTERN, states: { "minecraft:block_face": "up" } });
-  for (const b of plan.blocks ?? []) out.set(k(b), { id: b.id, states: b.states }); // repairs (village_repair.js): free-form blocks
+  for (const l of plan.lights ?? []) out.set(k(l), { id: HIDDEN_LIGHT, states: {} }); // the safety light: invisible
+  for (const l of plan.lamps ?? []) { // lamp posts: a fence on the rail post below, the lantern on top
+    out.set(`${l.x},${l.y - 1},${l.z}`, { id: FENCE, states: { "minecraft:connection_north": false, "minecraft:connection_south": false, "minecraft:connection_west": false, "minecraft:connection_east": false } });
+    out.set(k(l), { id: l.id ?? LANTERN, states: { "minecraft:block_face": "up" } });
+  }
+  for (const q of plan.pots ?? []) out.set(k(q), { id: "minecraft:decorated_pot", states: {} }); // a pot on the rail post beside a lamp post (a decorated pot: a flower pot needs block entity data; unverified in game)
+  for (const b of plan.blocks ?? []) out.set(k(b), { id: b.id, states: b.states }); // gate arch parts and repairs (village_repair.js): free-form blocks
   return out;
 }
 
@@ -201,14 +239,14 @@ export function sideTarget(at, x, y, z, d) {
   const a = [d[1], -d[0]];
   if (at(x, y + 1, z) !== FENCE) return false;
   for (let o = -2; o <= 2; o++) {
-    if (at(x + a[0] * o, y, z + a[1] * o) !== PLANKS || at(x + a[0] * o, y + 1, z + a[1] * o) !== FENCE) return false;
+    if (!isPlank(at(x + a[0] * o, y, z + a[1] * o)) || !isRailPost(at(x + a[0] * o, y + 1, z + a[1] * o))) return false;
     const fx = x - d[0] + a[0] * o, fz = z - d[1] + a[1] * o;
-    if (at(fx, y, fz) === PLANKS || at(fx, y, fz) === SLAB) return false; // a rail inside a deck, not on its rim
+    if (isPlank(at(fx, y, fz)) || at(fx, y, fz) === SLAB) return false; // a rail inside a deck, not on its rim
   }
   for (const k of [1, 2]) {
     for (let o = -2; o <= 2; o++) {
       const bx = x + d[0] * k + a[0] * o, bz = z + d[1] * k + a[1] * o;
-      if (at(bx, y, bz) !== PLANKS) return false;
+      if (!isPlank(at(bx, y, bz))) return false;
       if (Math.abs(o) <= 1 && !(isAir(at(bx, y + 1, bz)) && isAir(at(bx, y + 2, bz)))) return false;
     }
   }
@@ -218,7 +256,7 @@ export function sideTarget(at, x, y, z, d) {
 // A side marker sits on a rim deck cell of a platform. -> the rim cell (within LOOP.sideSearch cells along the rim, nearest first) where
 // sideTarget holds for a bridge heading INTO the platform, as an exit-like start { x, y, z, dir (outward), side: true }, or null.
 export function sideStarts(at, x, y, z) {
-  if (at(x, y, z) !== PLANKS || at(x, y + 1, z) !== FENCE) return [];
+  if (!isPlank(at(x, y, z)) || at(x, y + 1, z) !== FENCE) return [];
   const found = [];
   for (const out of [[0, -1], [0, 1], [-1, 0], [1, 0]]) {
     const a = [out[1], -out[0]];
@@ -241,7 +279,7 @@ export function clutter(at, plan, margin = LOOP.clutterMargin) {
     for (let dx = -margin; dx <= margin; dx++) for (let dz = -margin; dz <= margin; dz++) {
       const t = (x + dx - plan.A.x) * d[0] + (z + dz - plan.A.z) * d[1];
       if (foot.has(`${x + dx},${z + dz}`) || t < 3 || t > plan.length - 4) continue;
-      for (let y = plan.A.y - 1; y <= plan.A.y + 3; y++) { const n = at(x + dx, y, z + dz); if (n === PLANKS || n === SLAB || n === FENCE) return true; }
+      for (let y = plan.A.y - 1; y <= plan.A.y + 3; y++) { const n = at(x + dx, y, z + dz); if (isPlank(n) || n === SLAB || n === FENCE) return true; }
     }
   }
   return false;
@@ -249,7 +287,7 @@ export function clutter(at, plan, margin = LOOP.clutterMargin) {
 export const isNewKind = (sideStart, dist, offset) => sideStart || dist < LOOP.legacyMinDist || Math.abs(offset) > LOOP.legacyMaxOffset;
 
 // ---- F4 plaza ------------------------------------------------------------------------------------------------------------------------------
-const isDeck = (n) => n === PLANKS || n === SLAB;
+const isDeck = (n) => isPlank(n) || n === SLAB;
 const N4 = [[1, 0], [-1, 0], [0, 1], [0, -1]];
 // Exits facing A at dist 1..PLAZA.maxDist ahead, |lat| <= PLAZA.maxLat, same height: nearest first. -> [{ B, dist, lat, score }]
 export function findPlazaPartners(at, A) {
@@ -361,14 +399,14 @@ export function planPlaza(at, A, B) {
     if (r.error) return { error: r.error };
     pier = r.blocks;
   }
-  return { A, B, length: dist + 1, offset: lat, shape: null, cells, rails, lanterns: lamps.map(([x, yy, z]) => ({ x, y: yy, z, row: 1 })), side: false, plaza: true, pier };
+  return { A, B, length: dist + 1, offset: lat, shape: null, cells, rails, lights: lamps.map(([x, yy, z]) => ({ x, y: yy, z, row: 1 })), side: false, plaza: true, pier };
 }
 function plazaLanterns(ov, walkXZ, posts, y) {
   const k3 = (x, yy, z) => `${x},${yy},${z}`, R = LOOP.lanternLight;
   const xs = [...walkXZ, ...posts].map((c) => c[0]), zs = [...walkXZ, ...posts].map((c) => c[1]);
   const x0 = Math.min(...xs) - R, x1 = Math.max(...xs) + R, z0 = Math.min(...zs) - R, z1 = Math.max(...zs) + R;
   const lamps = [], base = [];
-  for (let x = x0; x <= x1; x++) for (let z = z0; z <= z1; z++) for (let yy = y - 1; yy <= y + 5; yy++) if (ov(x, yy, z) === LANTERN) base.push([x, yy, z]);
+  for (let x = x0; x <= x1; x++) for (let z = z0; z <= z1; z++) for (let yy = y - 1; yy <= y + 5; yy++) if (lightLevel(ov(x, yy, z)) > 0) base.push([x, yy, z, lightLevel(ov(x, yy, z))]);
   const passes = (x, yy, z) => {
     if (x < x0 || x > x1 || z < z0 || z > z1 || yy < y - 1 || yy > y + 5) return false;
     const n = ov(x, yy, z);
@@ -377,7 +415,7 @@ function plazaLanterns(ov, walkXZ, posts, y) {
   const N6 = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
   const lit = () => {
     const Lv = new Map(), q = [];
-    for (const l of [...base, ...lamps]) { Lv.set(k3(...l), R); q.push(l); }
+    for (const l of [...base, ...lamps]) { Lv.set(k3(l[0], l[1], l[2]), l[3] ?? R); q.push([l[0], l[1], l[2]]); }
     for (let i = 0; i < q.length; i++) {
       const [x, yy, z] = q[i], v = Lv.get(k3(x, yy, z));
       if (v <= 1) continue;
@@ -417,7 +455,7 @@ function plazaLanterns(ov, walkXZ, posts, y) {
 // Leave A, straight bridge, a square 5 x 5 railed landing on a log pier at the crossing C = A + d*s = B + e*u, turn 90 degrees, straight bridge
 // into B. Both legs are ordinary bridges (minLeg..maxDist blocks); the landing stands on a pier like the one of the long spans (planPier).
 export function planLanding(C, opens) { // C = centre deck cell {x, y, z}; opens = unit vectors of the faces that carry a bridge
-  const N = LOOP.landing, h = (N - 1) / 2, cells = [], ring = new Set(), lanterns = [], rails = [];
+  const N = LOOP.landing, h = (N - 1) / 2, cells = [], ring = new Set(), lamps = [], lights = [], rails = [];
   const isOpen = (i, j) => opens.some((v) => (Math.abs(v[0]) === 1 ? i === v[0] * h && Math.abs(j) <= 1 : j === v[1] * h && Math.abs(i) <= 1));
   for (let i = -h; i <= h; i++) for (let j = -h; j <= h; j++) {
     cells.push({ x: C.x + i, y: C.y, z: C.z + j, kind: "plank", row: 1 });
@@ -430,9 +468,10 @@ export function planLanding(C, opens) { // C = centre deck cell {x, y, z}; opens
     for (const v of N4) if (ring.has(`${i + v[0]},${j + v[1]}`)) states[`minecraft:connection_${SIDE_OF(v)}`] = true;
     rails.push({ x: C.x + i, y: C.y + 1, z: C.z + j, states, row: 1 });
   }
-  // lanterns on the middle posts of the two closed faces (the posts flanking an opening carry the bridges' step posts)
-  for (const [i, j] of [[-h, 0], [h, 0], [0, -h], [0, h]]) if (ring.has(`${i},${j}`) && lanterns.length < 2) lanterns.push({ x: C.x + i, y: C.y + 2, z: C.z + j, row: 1 });
-  return { cells, rails, lanterns };
+  // lamp posts on the middle posts of the two closed faces (the posts flanking an opening carry the bridges' step posts), a hidden light over the middle
+  for (const [i, j] of [[-h, 0], [h, 0], [0, -h], [0, h]]) if (ring.has(`${i},${j}`) && lamps.length < 2) lamps.push({ x: C.x + i, y: C.y + 3, z: C.z + j, row: 1 });
+  for (const [i, j] of [[-h, -h], [h, h]]) lights.push({ x: C.x + i, y: C.y + 3, z: C.z + j, row: 1 }); // hidden lights two cells over two diagonal corner posts
+  return { cells, rails, lamps, lights };
 }
 export function planL(A, B, s, u) {
   const d = A.dir, e = B.dir, h = (LOOP.landing - 1) / 2;
@@ -447,7 +486,7 @@ export function planL(A, B, s, u) {
     const k = `${r.x},${r.y},${r.z}`, cur = rm.get(k);
     if (!cur) rm.set(k, { ...r, states: { ...r.states } }); else for (const [st, v] of Object.entries(r.states)) if (v) cur.states[st] = true;
   }
-  return { A, B, length: s + u + 1, offset: 0, shape: null, cells: [...p1.cells, ...p2.cells, ...L.cells], rails: [...rm.values()], lanterns: [...p1.lanterns, ...p2.lanterns, ...L.lanterns],
+  return { A, B, length: s + u + 1, offset: 0, shape: null, cells: [...p1.cells, ...p2.cells, ...L.cells], rails: [...rm.values()], lights: [...p1.lights, ...p2.lights, ...L.lights], lamps: [...p1.lamps, ...p2.lamps, ...L.lamps], blocks: [...p1.blocks, ...p2.blocks], pots: [...p1.pots, ...p2.pots],
     side: false, landing: { x: C.x, y: C.y, z: C.z, dir: d, d1: s - h, d2: u - h }, pier: [], L: true, parts: [p1, p2], core: { cells: L.cells, rails: L.rails, length: 99 } };
 }
 // Exits at right angles to A (same deck height) whose heading line crosses A's ahead: [{ B, s, u, score }] nearest first.
@@ -464,20 +503,57 @@ export function findLs(at, A) {
   return out.sort((a, b) => a.score - b.score || a.s - b.s);
 }
 
-// ---- lanterns: the generator's greedy (tools/village_mallorn.mjs addLanterns) on the bridge alone ---------------------------------
-// Light model as in skill 11-structure-lighting: lantern 14, passes through air, void, fences and lanterns, loses 1 per step,
-// everything else stops it. Lanterns go on top of rail posts (never in the two end rows) until every walk cell has >= lightTarget.
-// -> [[x, y, z]] in shape coordinates.
-export function planLanterns(shape) {
+// ---- lights and lamps of a bridge (the generator's hidden-light greedy, tools/village_mallorn.mjs addHiddenLights, on the bridge alone) ---------------
+// planLights(shape, offset) -> { lights: [[x, y, z]], lamps: [{ x, y, z, id? }], gate: [{ x, y, z, log? }] } in shape coordinates.
+//   lamps: lamp posts at both bridge ends (rows 1 and length - 2, the outer rail posts: a second fence on the rail post, y = the lantern cell on top);
+//          the end rows themselves (rails of the neighbouring pieces) stay as they are.
+//   gate:  on a straight bridge of >= 11 whose arch has a flat crown: the two rail posts at mid-span are lamp posts with gold lanterns (nothing hangs over or spans the walk lanes).
+//   lights: hidden `light_block_14` cells (above the walk strip at deck + 3, or above rail posts) until every walk cell is >= lightTarget by them ALONE.
+// Light model as in skill 11-structure-lighting: a light of 14 passes through air, void, fences and lamps, loses 1 per step, everything else stops it.
+export function planLights(shape, offset = 0) {
   const [W, H, L] = shape.size, k = (x, y, z) => `${x},${y},${z}`;
   const g = new Map();
   for (const c of shape.cells) g.set(k(c.x, c.y, c.z), c.kind === "air" ? "a" : "s");
   for (const r of shape.rails) g.set(k(r.x, r.y, r.z), "f");
-  const passes = (x, y, z) => x >= 0 && y >= 0 && z >= 0 && x < W && y < H && z < L && ["a", "f", "l", undefined].includes(g.get(k(x, y, z)));
+  const lamps = [], gate = [], pots = [];
+  const top = (x, z) => shape.rails.filter((r) => r.x === x && r.z === z).reduce((m, r) => Math.max(m, r.y), -1);
+  const lonely = (x, y, z) => ![[1, 0], [-1, 0], [0, 1], [0, -1]].some(([a, b]) => g.get(k(x + a, y, z + b)) === "f"); // a fence with no fence beside it keeps its stored links off
+  const free = (x, y, z) => g.get(k(x, y, z)) === "a";
+  const lampPost = (x, z, id, dry = false) => {
+    const y = top(x, z);
+    if (y < 0 || !free(x, y + 1, z) || !free(x, y + 2, z) || !lonely(x, y + 1, z)) return false;
+    if (dry) return true;
+    g.set(k(x, y + 1, z), "f"); g.set(k(x, y + 2, z), "l");
+    lamps.push({ x, y: y + 2, z, id });
+    return true;
+  };
+  const edges = (z) => { const xs = shape.rails.filter((r) => r.z === z).map((r) => r.x); return xs.length ? [...new Set([Math.min(...xs), Math.max(...xs)])] : []; };
+  for (const rows of [[1, 2, 3], [L - 2, L - 3, L - 4]]) { // each end: a lamp post on both rails, in the same row (every post has its twin), on the first row near the end where both rail posts can carry one
+    let placed = false;
+    for (const z of rows) if (!placed && z >= 1 && z <= L - 2) { const e = edges(z); if (e.length === 2 && e.every((x) => lampPost(x, z, undefined, true))) { for (const x of e) lampPost(x, z); placed = true; } }
+    if (!placed) for (const z of rows) if (!placed && z >= 1 && z <= L - 2) for (const x of edges(z)) if (lampPost(x, z)) placed = true; // (a shape without a matching pair: one post)
+  }
+  if (L >= 11 && offset === 0) { // gate arch at the arch crown
+    const mid = (L - 1) >> 1, e = edges(mid), xl = Math.min(...e), xr = Math.max(...e), yR = top(xl, mid);
+    const flat = e.length === 2 && yR > 0 && top(xr, mid) === yR && [mid - 1, mid + 1].every((z) => top(xl, z) === yR && top(xr, z) === yR) && xr - xl === 4;
+    if (flat) { lampPost(xl, mid, LANTERN_GOLD); lampPost(xr, mid, LANTERN_GOLD); } // the two rail posts at mid-span: a 2-high fence post with a gold lantern standing on top
+  }
+  // pots: never alone on a bridge, only on the rail post next to a lamp post: one at the foot of a lamp post at each end and one at the gate
+  const potBeside = (l) => { // a decorated pot ON THE DECK at the lamp post's foot, inside the rail (a vase never stands on a fence)
+    const yT = l.y - 2, cx = (Math.min(...shape.walk.map((c) => c[0])) + Math.max(...shape.walk.map((c) => c[0]))) / 2, x = l.x + (cx > l.x ? 1 : -1);
+    const plank = shape.cells.some((c) => c.x === x && c.y === yT - 1 && c.z === l.z && c.kind === "plank"); // on a plank row only (a block over a half-height slab is a walk node with no headroom)
+    if (plank && free(x, yT, l.z) && !lamps.some((m) => m.x === x && m.z === l.z)) { g.set(k(x, yT, l.z), "l"); pots.push({ x, y: yT, z: l.z }); }
+  };
+  const endNear = lamps.filter((l) => l.id === undefined && l.z <= 3), endFar = lamps.filter((l) => l.id === undefined && l.z >= L - 4);
+  if (endNear[0]) potBeside(endNear[0]);
+  if (endFar[0]) potBeside(endFar[0]);
+  const gateLamp = lamps.find((l) => l.id !== undefined);
+  if (gateLamp) potBeside(gateLamp);
+  const passes = (x, y, z) => x >= 0 && y >= 0 && z >= 0 && x < W && y < H && z < L && ["a", "f", "l", "h", undefined].includes(g.get(k(x, y, z)));
   const N6 = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
-  const lit = (lamps) => {
+  const lit = (lights) => {
     const Lv = new Map(), q = [];
-    for (const l of lamps) { Lv.set(k(...l), LOOP.lanternLight); q.push(l); }
+    for (const l of lights) { Lv.set(k(...l), LOOP.lanternLight); q.push(l); }
     for (let i = 0; i < q.length; i++) {
       const [x, y, z] = q[i], v = Lv.get(k(x, y, z));
       if (v <= 1) continue;
@@ -489,14 +565,16 @@ export function planLanterns(shape) {
     }
     return Lv;
   };
-  const lamps = [];
+  const cand = []; // candidate cells: above the middle of the walk strip at deck + 3 (the walk cell is the feet cell: + 2), then above the rail posts; never in the two end rows
+  for (const c of shape.walk) if (c[2] > 0 && c[2] < L - 1) cand.push([c[0], c[1] + 2, c[2]]);
+  for (const r of shape.rails) cand.push([r.x, r.y + 1, r.z]);
+  const lights = [];
   for (let guard = 0; guard < 60; guard++) {
-    const Lv = lit(lamps), dark = new Set(shape.walk.filter((c) => (Lv.get(k(...c)) ?? 0) < LOOP.lightTarget).map((c) => k(...c)));
-    if (!dark.size) return lamps;
+    const Lv = lit(lights), dark = new Set(shape.walk.filter((c) => (Lv.get(k(...c)) ?? 0) < LOOP.lightTarget).map((c) => k(...c)));
+    if (!dark.size) return { lights, lamps, gate, pots };
     let best = null, bg = 0;
-    for (const r of shape.rails) {
-      const p = [r.x, r.y + 1, r.z];
-      if (r.z === 0 || r.z === L - 1 || g.get(k(...p)) !== "a") continue;
+    for (const p of cand) {
+      if (p[2] === 0 || p[2] === L - 1 || g.get(k(...p)) !== "a") continue;
       const seen = new Map([[k(...p), 0]]), q = [p];
       let n = 0;
       for (let i = 0; i < q.length; i++) {
@@ -507,10 +585,10 @@ export function planLanterns(shape) {
       }
       if (n > bg) { bg = n; best = p; }
     }
-    if (!best) throw new Error(`planLanterns: cannot light ${dark.size} walk cells`);
-    g.set(k(...best), "l"); lamps.push(best);
+    if (!best) throw new Error(`planLights: cannot light ${dark.size} walk cells`);
+    g.set(k(...best), "h"); lights.push(best);
   }
-  throw new Error("planLanterns: no convergence");
+  throw new Error("planLights: no convergence");
 }
 
 // ---- F6 merge (owner 2026-10-09, screenshots gap8 / gap9): two decks that touch (0 cells apart: a double railing) or nearly touch (1 cell apart) ----
@@ -523,8 +601,8 @@ export function planLanterns(shape) {
 // the post (the opening is one cell shorter there). openMin / openMinTrim: opening width needed with posts on both ends / otherwise (2).
 // minNet (planner): the two decks must not already be joined by a walk of fewer than this many steps (a 2-thick fence wall inside one deck is not a merge).
 export const MERGE = { openMin: 1, openMinTrim: 2, maxGap: 1, minNet: 10 };
-const isRimCell = (at, x, y, z) => at(x, y, z) === PLANKS && at(x, y + 1, z) === FENCE;
-const standCell = (at, x, y, z) => at(x, y, z) === PLANKS && isAir(at(x, y + 1, z)) && isAir(at(x, y + 2, z)); // deck with standing room
+const isRimCell = (at, x, y, z) => isPlank(at(x, y, z)) && at(x, y + 1, z) === FENCE;
+const standCell = (at, x, y, z) => isPlank(at(x, y, z)) && isAir(at(x, y + 1, z)) && isAir(at(x, y + 2, z)); // deck with standing room
 const freeCell = (n) => isAir(n) || isLeaves(n);
 const gapFree = (at, y, x, z) => { for (let h = 0; h <= 3; h++) if (!freeCell(at(x, y + h, z))) return false; return true; };
 // is (x, z) with the partner g + 1 cells ahead (d) a facing rim pair? P = rim, Q = rim, standing deck behind both, the gap cell (g = 1) free
@@ -622,7 +700,7 @@ export function planMerge(at, m) {
   if (lamps.error) return lamps;
   const mid = lo + Math.floor((hi - lo + 1) / 2);
   const A = { x: P[mid][0] - d[0], y, z: P[mid][1] - d[1] }, B = { x: Q[mid][0] + d[0], y, z: Q[mid][1] + d[1] };
-  return { plan: { A, B, length: n, offset: 0, shape: null, cells, rails, lanterns: lamps.map(([x, yy, z]) => ({ x, y: yy, z, row: 1 })), side: false, merge: true, gap: g, pier: [] } };
+  return { plan: { A, B, length: n, offset: 0, shape: null, cells, rails, lights: lamps.map(([x, yy, z]) => ({ x, y: yy, z, row: 1 })), side: false, merge: true, gap: g, pier: [] } };
 }
 // Lanterns on post tops until every watched walk cell (the stretch + all deck cells that were lit before) is lit again; ovB / ovA = the world before / after.
 function mergeLanterns(ovB, ovA, walkXZ, posts, y, b) {
@@ -631,7 +709,7 @@ function mergeLanterns(ovB, ovA, walkXZ, posts, y, b) {
   const passes = (ov, x, yy, z) => { if (!inBox(x, yy, z)) return false; const t = ov(x, yy, z); return isAir(t) || t === FENCE || t === LANTERN; };
   const field = (ov, lamps) => {
     const Lv = new Map(), q = [];
-    for (let x = b.x0; x <= b.x1; x++) for (let z = b.z0; z <= b.z1; z++) for (let yy = y - 1; yy <= y + 5; yy++) if (ov(x, yy, z) === LANTERN) { Lv.set(k3(x, yy, z), R); q.push([x, yy, z]); }
+    for (let x = b.x0; x <= b.x1; x++) for (let z = b.z0; z <= b.z1; z++) for (let yy = y - 1; yy <= y + 5; yy++) if (lightLevel(ov(x, yy, z)) > 0) { Lv.set(k3(x, yy, z), lightLevel(ov(x, yy, z))); q.push([x, yy, z]); }
     for (const l of lamps) { Lv.set(k3(...l), R); q.push(l); }
     for (let i = 0; i < q.length; i++) {
       const [x, yy, z] = q[i], v = Lv.get(k3(x, yy, z));
@@ -645,7 +723,7 @@ function mergeLanterns(ovB, ovA, walkXZ, posts, y, b) {
     return Lv;
   };
   const before = field(ovB, []), watch = new Map();
-  const standing = (x, z) => ovA(x, y, z) === PLANKS && isAir(ovA(x, y + 1, z));
+  const standing = (x, z) => isPlank(ovA(x, y, z)) && isAir(ovA(x, y + 1, z));
   for (const [x, z] of walkXZ) if (standing(x, z)) watch.set(k3(x, y + 1, z), [x, y + 1, z]);
   for (let x = b.x0; x <= b.x1; x++) for (let z = b.z0; z <= b.z1; z++) if (standing(x, z) && (before.get(k3(x, y + 1, z)) ?? 0) >= LOOP.lightTarget) watch.set(k3(x, y + 1, z), [x, y + 1, z]);
   const lamps = [];

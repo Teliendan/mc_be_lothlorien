@@ -151,7 +151,9 @@ export const SUPPORT_POLICIES = {
       "minecraft:calcite",
       "minecraft:snow",
       "minecraft:mycelium",
-      "lothlorien:mallorn_leaf_carpet"
+      "lothlorien:mallorn_leaf_carpet",
+      "lothlorien:mallorn_planks",
+      "lothlorien:mallorn_heartwood_planks"
     ]
   },
   "lothlorien:mallorn_pressure_plate": {

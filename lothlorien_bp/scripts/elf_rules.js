@@ -83,8 +83,8 @@ export const parseHomes = (s) => { try { const v = JSON.parse(s); return Array.i
 export const addHomes = (list, record) => [...list, record].slice(-MAX_HOME_RECORDS);
 
 // ---- Home sites ----
-const AIR_IDS = new Set(["minecraft:air", "minecraft:cave_air", "minecraft:void_air"]);
-const PLANKS = "lothlorien:mallorn_planks"; // a fence (or anything else) in the three cells above fails the air test
+const AIR_IDS = { has: (n) => n === "minecraft:air" || n === "minecraft:cave_air" || n === "minecraft:void_air" || /^minecraft:light_block_\d+$/.test(n) }; // hidden light blocks (village generator, style guide section 5) count as air
+const PLANKS = "lothlorien:mallorn_planks", HEART_PLANKS = "lothlorien:mallorn_heartwood_planks"; // the heartwood ring round a trunk is deck too; a fence (or anything else) in the three cells above fails the air test
 
 // Free square of open deck that contains the deck cell (x, y, z): `at(x, y, z)` -> block type id (the cell under the post's feet is y).
 // Open deck cell = planks at y, three cells of air above, no fence in those cells (trunks are logs, never planks). Returns the largest
@@ -95,7 +95,7 @@ export function homeSite(at, x, y, z) {
   const memo = new Map();
   const open = (cx, cz) => {
     const key = `${cx},${cz}`;
-    if (!memo.has(key)) memo.set(key, at(cx, y, cz) === PLANKS && [1, 2, 3].every((h) => AIR_IDS.has(at(cx, y + h, cz))));
+    if (!memo.has(key)) memo.set(key, (at(cx, y, cz) === PLANKS || at(cx, y, cz) === HEART_PLANKS) && [1, 2, 3].every((h) => AIR_IDS.has(at(cx, y + h, cz))));
     return memo.get(key);
   };
   for (let k = HOME_MAX; k >= HOME_MIN_SQUARE; k--) {

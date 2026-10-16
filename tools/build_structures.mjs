@@ -81,22 +81,27 @@ const entityTag = ({ id, x, y, z, definitions, mainhand, variant, invulnerable =
 // blocks: Map<"x,y,z" (tree coords), { name, states, loot? }>. size/offset default to the giant tree box.
 export function toMcstructure(blocks, [SX, SY, SZ] = [SIZE, SIZE_Y, SIZE], [OX, OY, OZ] = [TRUNK_AT, ROOT_DEPTH, TRUNK_AT], entities = []) {
   const volume = SX * SY * SZ;
-  const layer0 = new Array(volume).fill(-1);
+  const layer0 = new Array(volume).fill(-1), layer1 = new Array(volume).fill(-1); // layer 1 = the liquid layer (a waterlogged block: states.__water)
   const palette = [], paletteIndex = new Map(), positionData = {};
+  const paletteOf = (v) => { // one palette entry per distinct (name, states) of the real block states (the `__` markers are ours, never written)
+    const id = JSON.stringify([v.name, v.states]);
+    if (!paletteIndex.has(id)) {
+      paletteIndex.set(id, palette.length);
+      const states = {};
+      for (const [sk, sv] of Object.entries(v.states)) if (!sk.startsWith("__")) states[sk] = stateTag(sv);
+      palette.push(compound({ name: str(v.name), states: compound(states), version: int(BLOCK_VERSION) }));
+    }
+    return paletteIndex.get(id);
+  };
+  const waterEntry = { name: "minecraft:water", states: { liquid_depth: 0 } };
   let clipped = 0;
   for (const [k, v] of blocks) {
     const [tx, ty, tz] = k.split(",").map(Number);
     const x = tx + OX, y = ty + OY, z = tz + OZ;
     if (x < 0 || x >= SX || y < 0 || y >= SY || z < 0 || z >= SZ) { clipped++; continue; }
-    const id = JSON.stringify([v.name, v.states]);
-    if (!paletteIndex.has(id)) {
-      paletteIndex.set(id, palette.length);
-      const states = {};
-      for (const [sk, sv] of Object.entries(v.states)) states[sk] = stateTag(sv);
-      palette.push(compound({ name: str(v.name), states: compound(states), version: int(BLOCK_VERSION) }));
-    }
     const index = (x * SY + y) * SZ + z;
-    layer0[index] = paletteIndex.get(id);
+    layer0[index] = paletteOf(v);
+    if (v.states?.__water) layer1[index] = paletteOf(waterEntry);
     if (v.loot) {
       positionData[String(index)] = compound({
         block_entity_data: compound({
@@ -110,6 +115,17 @@ export function toMcstructure(blocks, [SX, SY, SZ] = [SIZE, SIZE_Y, SIZE], [OX, 
         block_entity_data: compound({
           id: str("JigsawBlock"), isMovable: byte(true), name: str(v.jigsaw), target: str(v.jigsawTarget ?? "minecraft:empty"),
           target_pool: str(v.jigsawPool ?? "minecraft:empty"), final_state: str(v.finalState), joint: str(v.joint ?? "rollable"),
+          x: int(x), y: int(y), z: int(z),
+        }),
+      });
+    }
+    if (v.plant) { // flower pot: the potted plant is block entity data (format from the vanilla FlowerPot entity; not verified in game)
+      const states = {};
+      for (const [sk, sv] of Object.entries(v.plant.states ?? {})) states[sk] = stateTag(sv);
+      positionData[String(index)] = compound({
+        block_entity_data: compound({
+          id: str("FlowerPot"), isMovable: byte(true),
+          PlantBlock: compound({ name: str(v.plant.name), states: compound(states), version: int(BLOCK_VERSION) }),
           x: int(x), y: int(y), z: int(z),
         }),
       });
@@ -128,7 +144,7 @@ export function toMcstructure(blocks, [SX, SY, SZ] = [SIZE, SIZE_Y, SIZE], [OX, 
     format_version: int(1),
     size: list(T.int, [SX, SY, SZ].map(int)),
     structure: compound({
-      block_indices: list(T.list, [list(T.int, layer0.map(int)), list(T.int, new Array(volume).fill(int(-1)))]),
+      block_indices: list(T.list, [list(T.int, layer0.map(int)), list(T.int, layer1.map(int))]),
       entities: list(T.compound, entities.map(entityTag)),
       palette: compound({ default: compound({ block_palette: list(T.compound, palette), block_position_data: compound(positionData) }) }),
     }),

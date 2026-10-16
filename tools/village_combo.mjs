@@ -8,10 +8,12 @@ import { bridgeShape } from "../lothlorien_bp/scripts/village_bridge.js";
 import { B } from "./flet_mallorn.mjs";
 import { rotateStates } from "./village_sim.mjs";
 import {
-  ROOTS, FLOOR_H, FACING, SHAPES, key, AIR, planks, slab, Deck, deckJigsaw, lantern, lonelyRail, writeRails, RAIL, addLanterns,
-  DECK_HI_NAME, DECK_NAME,
+  ROOTS, FLOOR_H, FACING, SHAPES, key, AIR, planks, slab, Deck, deckJigsaw, writeRails, RAIL, addHiddenLights, DECK_HI_NAME, DECK_NAME,
 } from "./village_mallorn.mjs";
+import { keepClearCells } from "./village_checks.mjs";
+import { dressBridge, dressBalcony, rotateFrame, relinkFences } from "./village_dress.mjs"; // bridge / balcony dressing and the pavilion frame (M7 WP3)
 
+const SLAB_NAME = "lothlorien:mallorn_slab";
 const ORDER = ["north", "east", "south", "west"]; // clockwise seen from above
 const ROT_ID = { 2: 5, 5: 3, 3: 4, 4: 2 }; // facing_direction after one clockwise quarter turn (N->E->S->W)
 const turn = (facing, k) => ORDER[(ORDER.indexOf(facing) + k) % 4];
@@ -43,7 +45,7 @@ export function rotateBlocks(blocks, k) {
 }
 
 // ---- bridge: the slab arch of scripts/village_bridge.js as a block map (deck layer y 0, z 0 = north end) ------------------
-export function buildBridge(length, { lanterns = false } = {}) {
+export function buildBridge(length, seed = 0) {
   const shape = bridgeShape(length, 0, length <= 7 ? 1 : 2);
   const blocks = new Map(), [W, sy] = shape.size;
   const KIND = { plank: planks, slab_bottom: () => slab("bottom"), slab_top: () => slab("top"), air: () => AIR };
@@ -53,21 +55,23 @@ export function buildBridge(length, { lanterns = false } = {}) {
     for (const side of Object.keys(FACING)) states[`minecraft:connection_${side}`] = r.sides.includes(side);
     blocks.set(key(r.x, r.y, r.z), { name: RAIL, states });
   }
-  if (lanterns) {
-    const z = Math.floor(length / 2), k = Math.min(z, length - 1 - z, 4), top = k % 2 ? (k + 1) / 2 : k / 2;
-    for (const x of [0, 4]) { blocks.set(key(x, top + 2, z), lonelyRail()); blocks.set(key(x, top + 3, z), lantern()); }
-  }
-  addLanterns(blocks, { x0: 0, x1: W - 1, y0: 0, y1: sy - 1, z0: 0, z1: length - 1 }, (x, y, z) => z === 0 || z === length - 1); // not on the connector rows
-  return { blocks, shape, W, sy, length };
+  // keep-clear: the walk strip (the three middle columns, feet to +3 over every deck / slab cell). Dressing (village_dress.mjs) goes in between.
+  const strips = [];
+  for (const [k, v] of blocks) { const [x, y, z] = k.split(",").map(Number); if (x >= 1 && x <= W - 2 && (v.name === B.planks || v.name === SLAB_NAME)) strips.push({ x, y, z }); }
+  const keep = keepClearCells(blocks, { strips });
+  const dress = dressBridge(blocks, keep, length, seed || length * 7919); // drifts, pots, gate arch (>= 11), moss and berries under the belly; before the hidden lights
+  // hidden lights, not on the connector rows
+  const lights = addHiddenLights(blocks, { x0: 0, x1: W - 1, y0: 0, y1: sy - 1, z0: 0, z1: length - 1 }, (x, y, z) => z === 0 || z === length - 1);
+  return { blocks, shape, W, sy, length, keep, lights, dress };
 }
 
-export const STRAIGHT = [7, 9, 11, 13, 15].map((L) => ({ name: `bridge_${L}`, length: L, lanterns: L >= 9 }));
+export const STRAIGHT = [7, 9, 11, 13, 15].map((L) => ({ name: `bridge_${L}`, length: L }));
 
 // ---- combo: bridge (north) + rotated node/tower (south) in one frame ------------------------------------------------------
 // tree = buildTree() result (not changed); entryIdx = which of its connectors (name village_deck, lower level) receives the bridge.
 // Frame: bridge deck y = FLOOR_H (= the tree's deck), z 0 .. length - 1 the bridge, the node from z = length on, node trunk axis
 // at (ax, az). Returns null when the pair cannot form a piece with working exits (reason in `why`).
-export function makeCombo(tree, entryIdx, bridgeSpec, poolId) {
+export function makeCombo(tree, entryIdx, bridgeSpec, poolId, seed = 0) {
   const entry = tree.connectors[entryIdx];
   if (entry.name !== DECK_NAME) return { why: "entry is an upper-level connector" };
   if (tree.connectors.some((c, i) => i !== entryIdx && c.facing === entry.facing)) return { why: "another connector on the entry face (it would be blocked by the bridge)" };
@@ -79,7 +83,7 @@ export function makeCombo(tree, entryIdx, bridgeSpec, poolId) {
   });
   const e = conns[entryIdx];
   const hx = k % 2 ? tree.box.hz : tree.box.hx, hz = k % 2 ? tree.box.hx : tree.box.hz;
-  const br = buildBridge(bridgeSpec.length, bridgeSpec);
+  const br = buildBridge(bridgeSpec.length, (seed ^ (tree.box.hx * 131 + tree.box.hz * 17 + entryIdx * 7 + bridgeSpec.length * 1009)) >>> 0);
   const bridgeEnd = br.shape.connectors[1];
   const dx = bridgeEnd.x - e.x, dz = br.length - e.z; // node translation into the combo frame (e.z = -hz, so the node starts at z = length)
   // every exit face must be the node's own box face: the bridge has to lie inside the node's x range, else the union box would
@@ -101,10 +105,17 @@ export function makeCombo(tree, entryIdx, bridgeSpec, poolId) {
     blocks.set(key(...at), deckJigsaw(c.facing, poolId, DECK_HI_NAME));
     connectors.push({ x: at[0], y: c.y, z: at[2], facing: c.facing, entry: false });
   }
+  relinkFences(blocks); // fences that now stand side by side (the bridge's last row and the node's connector row) link, both ways
+  // keep-clear cells of the whole piece: the bridge strip and the tree's, moved into the combo frame like the blocks
+  const keep = new Set();
+  for (const kk of br.keep) { const [x, y, z] = kk.split(",").map(Number); keep.add(key(x - x0, y + FLOOR_H, z)); }
+  for (const kk of tree.keep ?? []) { const [x, y, z] = kk.split(",").map(Number), [rx, rz] = rotateCell(x, z, k); keep.add(key(rx + dx - x0, y, rz + dz)); }
   const sizeX = x1 - x0 + 1, sizeZ = br.length + 2 * hz + 1;
   const topY = tree.topY + 5;
   return {
-    blocks, connectors, size: [sizeX, ROOTS + topY + 1, sizeZ], origin: [0, ROOTS, 0],
+    blocks, connectors, keep, size: [sizeX, ROOTS + topY + 1, sizeZ], origin: [0, ROOTS, 0],
+    cushions: (tree.cushions ?? []).map((c) => { const [rx, rz] = rotateCell(c.x, c.z, k); return { ...c, x: rx + dx - x0, z: rz + dz }; }), // native cushions, moved like the blocks
+    home: tree.home ? rotateFrame(tree.home, k, dx - x0, dz) : null, // the pavilion frame in combo coordinates (village_dress.mjs)
     // tree axis and the bridge centre in combo coordinates, for markers and wardens
     axis: [dx - x0, br.length + hz], bridgeMid: [(br.W - 1) / 2 - x0 + 0.5, br.length / 2],
     wardenMap: (c) => { const [x, z] = rotateCell(c.x, c.z, k); return { x: x + dx - x0, z: z + dz }; },
@@ -132,7 +143,9 @@ export function buildBalcony() {
     blocks.set(key(s * 2, -3, PZ), log("east")); blocks.set(key(s * 3, -2, PZ), log("east")); blocks.set(key(s * 3, -1, PZ), log("up"));
     blocks.set(key(0, -3, PZ + s * 2), log("south")); blocks.set(key(0, -2, PZ + s * 3), log("south")); blocks.set(key(0, -1, PZ + s * 3), log("up"));
   }
-  blocks.set(key(0, 2, widths.length - 1), lantern());
-  addLanterns(blocks, { x0: -3, x1: 3, y0: 0, y1: 3, z0: 0, z1: widths.length - 1 }, (x, y, z) => z === 0);
-  return { blocks, size: [7, BALCONY_DOWN + 4, widths.length], origin: [3, BALCONY_DOWN, 0], connectors: deck.connectors.map((c) => ({ ...c, y: 0 })) };
+  const connectors = deck.connectors.map((c) => ({ ...c, y: 0 }));
+  const keep = keepClearCells(blocks, { connectors, trunkR: 0, deckY: 0, depth: 4 });
+  const dress = dressBalcony(blocks, keep, 4141), cushions = dress.cushions;
+  const lights = addHiddenLights(blocks, { x0: -3, x1: 3, y0: 0, y1: 3, z0: 0, z1: widths.length - 1 }, (x, y, z) => z === 0);
+  return { blocks, size: [7, BALCONY_DOWN + 4, widths.length], origin: [3, BALCONY_DOWN, 0], connectors, keep, lights, cushions };
 }

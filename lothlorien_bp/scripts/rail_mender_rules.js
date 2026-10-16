@@ -2,7 +2,9 @@
 //
 // Bedrock sometimes drops one fence link between two structure pieces placed one after the other (the template states
 // are right, the engine overwrites one). The mender only ever turns a link ON, and only toward a block that is one of
-// our own fences (the engine links those two always; `only_fences` and the shared `has_fence_connections` tag).
+// our own fences (the engine links those two always; `only_fences` and the shared `has_fence_connections` tag) or toward a full-block post of ours
+// (a mallorn log / stripped log / wood standing in the rail line: pavilion, flag and Hall posts replace the rim fence under them; the engine does not link a
+// modded fence to a modded log on its own, so the mender stores the link; if the engine recomputes it on a later neighbour update, the post just stays unlinked).
 export const MENDER_ID = "lothlorien:rail_mender";
 export const FENCE_IDS = ["lothlorien:mallorn_fence", "lothlorien:mallorn_heartwood_fence"];
 export const LINKS = [
@@ -17,7 +19,9 @@ export const MAX_WAIT_TICKS = 600; // give up after 30 s of unloaded corners; th
 export const RETRY_TICKS = 40;
 export const START_DELAY_TICKS = 40;
 
+export const POST_IDS = ["lothlorien:mallorn_stripped_log", "lothlorien:mallorn_log", "lothlorien:mallorn_wood", "lothlorien:mallorn_stripped_wood"];
 export const isFence = (typeId) => FENCE_IDS.includes(typeId);
+export const isLinkTarget = (typeId) => FENCE_IDS.includes(typeId) || POST_IDS.includes(typeId);
 
 // States to switch on for the fence at `pos`. `typeAt(x, y, z)` gives the block type id or undefined when unloaded;
 // `stateOf(state)` the current value of that link on this fence.
@@ -25,7 +29,7 @@ export function missingLinks(pos, typeAt, stateOf) {
   const out = [];
   for (const l of LINKS) {
     if (stateOf(l.state) === true) continue;
-    if (isFence(typeAt(pos.x + l.dx, pos.y, pos.z + l.dz))) out.push(l.state);
+    if (isLinkTarget(typeAt(pos.x + l.dx, pos.y, pos.z + l.dz))) out.push(l.state);
   }
   return out;
 }

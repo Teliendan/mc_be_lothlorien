@@ -4,8 +4,9 @@
 // where (the Loremaster on the central tree, healer / gardener / woodwright / lamplighter on trees of their own, leftovers on reserve posts),
 // spawns one elf per assignment with the profession event, records the result for the home milestone and removes the posts.
 // Idempotent by construction: the posts are gone after one run, so a second run finds none and spawns nothing.
-import { world } from "@minecraft/server";
-import { ELF_ID, HOMES_PROPERTY, HOME_OF_ELF, POST_ID, addHomes, assignHomes, homeSite, parseHomes, spawnEventOf } from "./elf_rules.js";
+import { BlockPermutation, world } from "@minecraft/server";
+import { ELF_ID, HOMES_PROPERTY, HOME_OF_ELF, POST_ID, addHomes, assignHomes, parseHomes, spawnEventOf } from "./elf_rules.js";
+import { findHome, hasLayout, planFurnish, siteOf } from "./home_furnish.js";
 
 const KIND_PREFIX = "elf_post_";
 const boxQuery = (r) => ({ type: POST_ID, location: { x: r.x0, y: -64, z: r.z0 }, volume: { x: r.x1 - r.x0 + 1, y: 420, z: r.z1 - r.z0 + 1 } });
@@ -21,12 +22,33 @@ function kindOf(entity) {
   }
 }
 
+// Furnishes the home pavilion round a home post for its profession (home_furnish.js; the healer only in the showcase): block writes for the objects, a tiny
+// pre-built structure per facing for the banner (the Script API cannot set banner patterns; tools/build_furnish.mjs writes them). Every group of objects is
+// placed whole or not at all, only into air cells of the furnishing area; a second run finds the cells taken and places nothing. -> number of blocks written
+export function furnishHome(dimension, post, profession) {
+  if (!hasLayout(profession) || post.kind === "reserve") return 0;
+  const get = (x, y, z) => { try { return dimension.getBlock({ x, y, z })?.typeId; } catch { return undefined; } };
+  const frame = findHome(get, post);
+  if (!frame) return 0;
+  const plan = planFurnish(profession, frame, get);
+  let n = 0;
+  for (const w of plan.writes) {
+    try { dimension.getBlock({ x: w.x, y: w.y, z: w.z }).setPermutation(BlockPermutation.resolve(w.name, w.states)); n++; }
+    catch (e) { console.warn(`[lothlorien] elves: furnishing ${w.name} at ${w.x},${w.y},${w.z}: ${e?.message ?? e}`); }
+  }
+  for (const b of plan.banners) {
+    try { world.structureManager.place(b.structure, dimension, { x: b.x, y: b.y, z: b.z }, { includeEntities: false }); n++; }
+    catch (e) { console.warn(`[lothlorien] elves: banner ${b.structure} at ${b.x},${b.y},${b.z}: ${e?.message ?? e}`); }
+  }
+  return n;
+}
+
 // -> { spawned, own, reserve, failed }; never throws on a single bad post
 export function populateVillage(dimension, rect, at) {
   const get = (x, y, z) => { try { return dimension.getBlock({ x, y, z })?.typeId; } catch { return undefined; } };
   const posts = dimension.getEntities(boxQuery(rect)).map((entity) => {
     const x = Math.floor(entity.location.x), y = Math.floor(entity.location.y), z = Math.floor(entity.location.z);
-    return { entity, kind: kindOf(entity), x, y, z, site: homeSite(get, x, y - 1, z) }; // the deck cell is the one under the feet
+    return { entity, kind: kindOf(entity), x, y, z, site: siteOf(get, { x, y, z }) }; // the pavilion's square when the home has one (home_furnish.js findHome), else the free square under the feet
   });
   if (!posts.length) return { spawned: 0, own: 0, reserve: 0, failed: 0 }; // a village that was populated before (or an old one): nothing to do
   const byPlace = (a, b) => a.x - b.x || a.z - b.z || a.y - b.y;
@@ -50,6 +72,7 @@ export function populateVillage(dimension, rect, at) {
   for (const { post, p } of assigned) {
     if (!spawn(post, p)) continue;
     if (post.kind === "reserve") result.reserve++; else result.own++;
+    try { furnishHome(dimension, post, p); } catch (e) { console.warn(`[lothlorien] elves: could not furnish the ${p}'s home at ${post.x},${post.y},${post.z}: ${e?.message ?? e}`); }
     homes.push({ p, x: post.x, y: post.y, z: post.z, site: post.kind === "reserve" ? null : post.site });
   }
   if (result.spawned > 0) {

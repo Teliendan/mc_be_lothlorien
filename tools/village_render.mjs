@@ -10,6 +10,10 @@
 //        <dump> = tools/world_scan.py --dump output ({origin,size,palette,blocks}) or tests/fixtures/village_v2.json.gz ({..., cols, markers}).
 //        --markers = JSON from `world_scan.py "<world>" --actors lothlorien:loop_marker --json m.json` ([{pos:[x,y,z]}] or [[x,y,z]]); without markers no planner runs.
 //        --iso also writes an isometric picture of the --region (default: the planner's first pick, padded).
+//   node tools/village_render.mjs mcs <any.mcstructure> [rot=0]        isometric picture of any structure file (e.g. a mockup written to temp/); textured, add --flat for the flat colours
+//   Textured preview (real block textures, see tools/textured_render.mjs): add --tex to piece / sim --iso / dump --iso; --night (lamp light), --ppb N (pixels per block, 16), --rot R (view turned R quarter turns),
+//        --crop x0 x1 z0 z1 / --y y0 y1 (piece only: render just this part of the box, e.g. the Hall of the central tree), --tag name (suffix of the file);
+//        --noleaves (hide leaves); textures are downloaded once into temp/texture_cache/. Without --tex the flat output is unchanged.
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { gunzipSync, deflateSync } from "node:zlib";
 import { dirname, join } from "node:path";
@@ -17,6 +21,8 @@ import { fileURLToPath } from "node:url";
 import { loadVillageData, parseMcstructure, rotated, wkey, wdecode, simulate, check, planLoops, renderTop, renderSide } from "./village_sim.mjs";
 import { finalBlocks } from "../lothlorien_bp/scripts/village_loop.js";
 import { planVillage, startsFromMarkers, enumerate } from "../lothlorien_bp/scripts/village_planner.js";
+import { renderTextured } from "./textured_render.mjs";
+import { ROOTS } from "./village_mallorn.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(root, "..", "..", "temp", "village_render") + "/";
@@ -93,15 +99,29 @@ export function render(get, R, file, { iso = true, S = 14, leaves = false } = {}
   save(file, png(W, H, img));
 }
 const bothViews = (get, R, name, S) => { render(get, R, `${name}_iso.png`, { iso: true, S }); render(get, R, `${name}_top.png`, { iso: false, S }); };
+// textured isometric picture (flags --tex --night --noleaves, options --ppb --rot); the region is rendered as is
+function texView(get, R, name, flags, opt) {
+  mkdirSync(OUT, { recursive: true });
+  const file = `${name}_tex${flags.night ? "_night" : ""}${opt.rot ? "_rot" + opt.rot : ""}.png`;
+  renderTextured(get, R, OUT + file, { ppb: opt.ppb ?? 16, rot: opt.rot ?? 0, night: !!flags.night, leaves: !flags.noleaves });
+  console.log(OUT + file);
+}
 
 // ---- commands ----------------------------------------------------------------------------------------------------------
 const loadPiece = (name) => parseMcstructure(readFileSync(PIECES + name + ".mcstructure"), name);
 
-function cmdPiece(name, rot = 0, flags) {
+function cmdPiece(name, rot = 0, flags, opt = {}) {
   if (!name) throw new Error("piece <name> [rot] [--leaves]");
   const rp = rotated(loadPiece(name), +rot), map = new Map();
-  for (const b of rp.blocks) map.set(`${b.x},${b.y},${b.z}`, { n: b.name, st: b.states });
+  for (const b of rp.blocks) map.set(`${b.x},${b.y},${b.z}`, { n: b.name, st: b.states, banner: b.banner, plant: b.plant });
   const [sx, sy, sz] = rp.size, S = Math.max(8, Math.min(20, Math.floor(900 / (sx + sz))));
+  if (flags.tex) { // jigsaw cells show their final state (usually air) so the picture shows the piece as it ends up
+    for (const j of rp.jigsaws) if (j.final && !AIR(j.final)) map.set(`${j.x},${j.y},${j.z}`, { n: j.final, st: {} });
+    const R = { x0: 0, x1: sx - 1, y0: 0, y1: sy - 1, z0: 0, z1: sz - 1 };
+    if (opt.crop) [R.x0, R.x1, R.z0, R.z1] = opt.crop; // --crop x0 x1 z0 z1 (box coordinates of the piece, before --rot)
+    if (opt.yr) [R.y0, R.y1] = opt.yr; // --y y0 y1 (box coordinates: the piece's y 0 is ROOTS below the nominal ground)
+    return texView((x, y, z) => map.get(`${x},${y},${z}`), R, `piece_${name}_r${rot}${opt.tag ? "_" + opt.tag : ""}`, flags, opt);
+  }
   bothViews((x, y, z) => map.get(`${x},${y},${z}`), { x0: 0, x1: sx - 1, y0: 0, y1: sy - 1, z0: 0, z1: sz - 1 }, `piece_${name}_r${rot}`, S);
   if (flags.leaves) { render((x, y, z) => map.get(`${x},${y},${z}`), { x0: 0, x1: sx - 1, y0: 0, y1: sy - 1, z0: 0, z1: sz - 1 }, `piece_${name}_r${rot}_leaves_iso.png`, { iso: true, S, leaves: true }); }
 }
@@ -129,7 +149,7 @@ function cmdSide(name, sc = "6", axis = "z") {
   save(`side_${name}_${axis}.png`, png(W, H, img));
 }
 
-function cmdSim(seed, flags, rest) {
+function cmdSim(seed, flags, rest, opt = {}) {
   seed = +seed || 1;
   const data = loadVillageData(), res = simulate(data, seed), ck = check(data, res);
   if (flags.links) {
@@ -142,10 +162,14 @@ function cmdSim(seed, flags, rest) {
   if (flags.iso) {
     const [x0, x1, z0, z1, y0, y1] = rest.map(Number);
     if ([x0, x1, z0, z1].some(Number.isNaN)) throw new Error("--iso x0 x1 z0 z1 [y0 y1]");
-    const get = (x, y, z) => { const n = ck.world.get(wkey(x, y, z)); return n && !AIR(n) ? { n, st: ck.states.get(wkey(x, y, z)) } : null; };
+    // --links: the sim's flat terrain (grass on top, 3 dirt) is drawn too, so the forest floor of the repairs is visible; the default y range then starts at the ground
+    const terrain = (y) => y === ROOTS - 1 ? "minecraft:grass_block" : y < ROOTS - 1 && y >= ROOTS - 4 ? "minecraft:dirt" : null;
+    const get = (x, y, z) => { const n = ck.world.get(wkey(x, y, z)) ?? (flags.links ? terrain(y) : null); return n && !AIR(n) ? { n, st: ck.states.get(wkey(x, y, z)) } : null; };
     let lo = y0, hi = y1;
     if (lo === undefined) { lo = 1e9; hi = -1e9; for (const [k, n] of ck.world) { const [x, y, z] = wdecode(k); if (x >= x0 && x <= x1 && z >= z0 && z <= z1 && !AIR(n)) { lo = Math.min(lo, y); hi = Math.max(hi, y); } } }
-    bothViews(get, { x0, x1, z0, z1, y0: lo, y1: hi }, `${tag}_region`, 12);
+    if (flags.links) lo = Math.min(lo, ROOTS - 3);
+    if (flags.tex) texView(get, { x0, x1, z0, z1, y0: lo, y1: hi }, `${tag}_region`, flags, opt);
+    else bothViews(get, { x0, x1, z0, z1, y0: lo, y1: hi }, `${tag}_region`, 12);
   }
 }
 
@@ -212,8 +236,21 @@ function cmdDump(file, flags, opt) {
       const cells = [...finalBlocks(p0.plan).keys()].map((k) => k.split(",").map(Number));
       return { x0: Math.min(...cells.map((c) => c[0])) - 8, x1: Math.max(...cells.map((c) => c[0])) + 8, z0: Math.min(...cells.map((c) => c[2])) - 8, z1: Math.max(...cells.map((c) => c[2])) + 8, y0: p0.A.y - 3, y1: p0.A.y + 7 };
     })() : null;
-    if (R) bothViews((x, y, z) => { const n = get(x, y, z); return n && !AIR(n) ? { n, st: over.has(`${x},${y},${z}`) ? undefined : w.st(x, y, z) } : null; }, R, tag + "_region", 14);
+    const regionGet = (x, y, z) => { const n = get(x, y, z); return n && !AIR(n) ? { n, st: over.has(`${x},${y},${z}`) ? undefined : w.st(x, y, z) } : null; };
+    if (R && flags.tex) texView(regionGet, R, tag + "_region", flags, opt);
+    else if (R) bothViews(regionGet, R, tag + "_region", 14);
   }
+}
+
+// any .mcstructure file (rot = quarter turns of the structure itself, like piece); textured unless --flat
+function cmdMcs(file, rot = 0, flags, opt) {
+  if (!file) throw new Error("mcs <file.mcstructure> [rot] [--flat] [--night] [--ppb N] [--rot R]");
+  const name = file.replace(/\\/g, "/").split("/").pop().replace(/\.mcstructure$/, ""), rp = rotated(parseMcstructure(readFileSync(file), name), +rot), map = new Map();
+  for (const b of rp.blocks) map.set(`${b.x},${b.y},${b.z}`, { n: b.name, st: b.states, banner: b.banner, plant: b.plant });
+  for (const j of rp.jigsaws) if (j.final && !AIR(j.final)) map.set(`${j.x},${j.y},${j.z}`, { n: j.final, st: {} });
+  const [sx, sy, sz] = rp.size, R = { x0: 0, x1: sx - 1, y0: 0, y1: sy - 1, z0: 0, z1: sz - 1 }, get = (x, y, z) => map.get(`${x},${y},${z}`);
+  if (flags.flat) bothViews(get, R, `mcs_${name}_r${rot}`, Math.max(8, Math.min(20, Math.floor(900 / (sx + sz)))));
+  else texView(get, R, `mcs_${name}_r${rot}`, flags, opt);
 }
 
 // ---- argv --------------------------------------------------------------------------------------------------------------
@@ -223,14 +260,20 @@ function main() {
     const a = args[i];
     if (a === "--markers") opt.markers = args[++i];
     else if (a === "--budget") opt.budget = +args[++i];
+    else if (a === "--ppb") opt.ppb = +args[++i];
+    else if (a === "--rot") opt.rot = +args[++i];
+    else if (a === "--crop") opt.crop = args.slice(i + 1, i + 5).map(Number), i += 4;
+    else if (a === "--y") opt.yr = args.slice(i + 1, i + 3).map(Number), i += 2;
+    else if (a === "--tag") opt.tag = args[++i];
     else if (a === "--region") opt.region = args.slice(i + 1, i + 5).map(Number), i += 4;
     else if (a.startsWith("--")) flags[a.slice(2)] = true;
     else pos.push(a);
   }
-  if (cmd === "piece") cmdPiece(pos[0], pos[1], flags);
+  if (cmd === "piece") cmdPiece(pos[0], pos[1], flags, opt);
   else if (cmd === "side") cmdSide(...pos);
-  else if (cmd === "sim") cmdSim(pos[0], flags, pos.slice(1));
+  else if (cmd === "sim") cmdSim(pos[0], flags, pos.slice(1), opt);
   else if (cmd === "dump") cmdDump(pos[0], flags, opt);
+  else if (cmd === "mcs") cmdMcs(pos[0], pos[1], flags, opt);
   else console.log(readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").filter((l) => l.startsWith("//")).map((l) => l.slice(3)).join("\n"));
 }
 if (process.argv[1]?.endsWith("village_render.mjs")) main();

@@ -17,10 +17,12 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const bp = join(root, "lothlorien_bp");
 import { RAIL, SLAB, ROOTS, lightField } from "./village_mallorn.mjs";
 import { protectedCells, checkWalk } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs"; // shared walkability checker (cells a piece owns)
+import { supportScan, waterScan, isSupportSkipped } from "./village_checks.mjs"; // nothing floats, water stays in its vessel (the generator runs them per piece, the sim on assembled villages)
 import { MARKER_ID, finalBlocks } from "../lothlorien_bp/scripts/village_loop.js";
 import { PLAN, planVillage, discoverSync, boundedReader, chunksIn, inRect } from "../lothlorien_bp/scripts/village_planner.js";
-import { POST_ID, PROFESSIONS, HOME_MIN, HEALER2_MIN_TREES, RESERVE_POSTS, homeSite, assignHomes } from "../lothlorien_bp/scripts/elf_rules.js";
-export const PLANKS = "lothlorien:mallorn_planks", FENCE = RAIL, LANTERN_ID = "lothlorien:elven_lantern";
+import { POST_ID, PROFESSIONS, HOME_MIN, HEALER2_MIN_TREES, RESERVE_POSTS, assignHomes } from "../lothlorien_bp/scripts/elf_rules.js";
+import { siteOf, findHome, planFurnish, hasLayout, frameArea, frameCell } from "../lothlorien_bp/scripts/home_furnish.js"; // the home pavilion and its furnishing (M7 WP4b), the very same pure code as elf_village.js
+export const PLANKS = "lothlorien:mallorn_planks", HEART_PLANKS = "lothlorien:mallorn_heartwood_planks", FENCE = RAIL, LANTERN_ID = "lothlorien:elven_lantern";
 const EMPTY = "minecraft:empty", AIR = "minecraft:air", JIGSAW = "minecraft:jigsaw";
 const FACING_VEC = { 2: [0, -1], 3: [0, 1], 4: [-1, 0], 5: [1, 0] };
 const VERT = { 0: [0, -1, 0], 1: [0, 1, 0] }; // facing_direction 0 down, 1 up (vertical jigsaws: crowns)
@@ -49,11 +51,12 @@ export function readNbt(buf) {
 }
 
 // ---- pieces ---------------------------------------------------------------------------------------------
+const BANNER_COLOR = ["black", "red", "green", "brown", "blue", "purple", "cyan", "silver", "gray", "pink", "lime", "yellow", "light_blue", "magenta", "orange", "white"];
 export function parseMcstructure(buf, name = "?") {
   const v = readNbt(buf);
   const [sx, sy, sz] = v.size;
   const pal = v.structure.palette.default;
-  const layer = v.structure.block_indices[0];
+  const layer = v.structure.block_indices[0], layer1 = v.structure.block_indices[1];
   const grid = new Array(layer.length); // block name per cell, null = void
   const blocks = [], jigsaws = [];
   for (let i = 0; i < layer.length; i++) {
@@ -68,18 +71,42 @@ export function parseMcstructure(buf, name = "?") {
       const dir = FACING_VEC[entry.states.facing_direction] ?? null;
       jigsaws.push({ x, y, z, dirId: entry.states.facing_direction, dir, vec: dir ? [dir[0], 0, dir[1]] : VERT[entry.states.facing_direction] ?? null,
         name: e.name, target: e.target, pool: e.target_pool, final: e.final_state, joint: e.joint });
-    } else if (entry.name !== AIR) blocks.push({ x, y, z, name: entry.name, states: entry.states ?? {} });
+    } else if (entry.name !== AIR) {
+      const b = { x, y, z, name: entry.name, states: entry.states ?? {} };
+      if (layer1 && layer1[i] >= 0 && pal.block_palette[layer1[i]]?.name === "minecraft:water") b.states = { ...b.states, __water: true }; // waterlogged (the liquid layer): a water source inside this block
+      const e = (entry.name === "minecraft:wall_banner" || entry.name === "minecraft:flower_pot") ? pal.block_position_data[String(i)]?.block_entity_data : null; // data the renderer draws
+      if (e?.id === "Banner") b.banner = { base: BANNER_COLOR[e.Base], patterns: (e.Patterns ?? []).map((p) => ({ pattern: p.Pattern, color: BANNER_COLOR[p.Color] })) };
+      if (e?.id === "FlowerPot" && e.PlantBlock) b.plant = { name: e.PlantBlock.name, states: e.PlantBlock.states ?? {} };
+      blocks.push(b);
+    }
   }
   const entities = (v.structure.entities ?? []).map((e) => ({ id: e.identifier, pos: e.Pos, defs: e.definitions, invulnerable: !!e.Invulnerable, mainhand: e.Mainhand?.[0]?.Name }));
   return { name, size: [sx, sy, sz], grid, blocks, jigsaws, entities, at: (x, y, z) => (x < 0 || y < 0 || z < 0 || x >= sx || y >= sy || z >= sz ? undefined : grid[(x * sy + y) * sz + z]) };
 }
 
 const SIDES = ["north", "east", "south", "west"];
+// Vanilla integer orientation states, one clockwise quarter turn (seen from above). Documented (minecraft.wiki block states), NOT yet tested in game
+// (2026-10-14); `facing_direction` of the jigsaw is verified. The runtime rotates a placed structure's states the same way.
+//   facing_direction  2 north, 3 south, 4 west, 5 east (0 down / 1 up never turn): wall banners, ladders, chests, barrels, end rods, jigsaws
+//   weirdo_direction  stairs: 0 east, 1 west, 2 south, 3 north
+//   direction         beds, doors, fence gates, repeaters, carved pumpkins: a clockwise cycle 0 -> 1 -> 2 -> 3 -> 0 (bed 0 south, 1 west, 2 north,
+//                     3 east; door 0 east, 1 south, 2 west, 3 north); vanilla TRAPDOORS number like stairs (0 east, 1 west, 2 south, 3 north)
+const FACING_TURN = { 2: 5, 5: 3, 3: 4, 4: 2 };
+const WEIRDO_TURN = { 0: 2, 2: 1, 1: 3, 3: 0 };
+const DIRECTION_TURN = { 0: 1, 1: 2, 2: 3, 3: 0 };
 // One quarter turn clockwise (seen from above), the way Bedrock rotates states (verified from a world save):
 // only vanilla-namespace states move; `lothlorien:*` states stay as written.
 export function rotateStates(name, st) {
   if (!st) return st;
   const out = { ...st };
+  if (typeof st.facing_direction === "number" && FACING_TURN[st.facing_direction] !== undefined) out.facing_direction = FACING_TURN[st.facing_direction];
+  if (name?.startsWith("minecraft:")) {
+    if (typeof st.ground_sign_direction === "number") out.ground_sign_direction = (st.ground_sign_direction + 4) % 16; // standing banners / signs: 16 steps round, 4 per quarter turn clockwise
+    if (typeof st.weirdo_direction === "number" && st.weirdo_direction in WEIRDO_TURN) out.weirdo_direction = WEIRDO_TURN[st.weirdo_direction];
+    if (typeof st.direction === "number" && st.direction in DIRECTION_TURN) out.direction = (/trapdoor$/.test(name) ? WEIRDO_TURN : DIRECTION_TURN)[st.direction];
+  }
+  if (typeof st["minecraft:facing_direction"] === "string" && SIDES.includes(st["minecraft:facing_direction"])) // custom blocks' trait state
+    out["minecraft:facing_direction"] = SIDES[(SIDES.indexOf(st["minecraft:facing_direction"]) + 1) % 4];
   if (typeof st["minecraft:block_face"] === "string" && SIDES.includes(st["minecraft:block_face"]))
     out["minecraft:block_face"] = SIDES[(SIDES.indexOf(st["minecraft:block_face"]) + 1) % 4];
   // trait state of `lothlorien:elven_rope_hanging` (placement_direction); assumed to turn like block_face, test in game
@@ -270,8 +297,9 @@ export const bridgeKindOf = (name) => (name.startsWith("combo_") ? "straight" : 
 // Heights in half-blocks. A block in layer y spans [2y, 2y+2]; a bottom slab [2y, 2y+1], a top slab [2y+1, 2y+2]; a rail
 // [2y, 2y+3] (1.5 blocks). Walking surfaces are mallorn planks and slabs; a cell is walkable when nothing solid reaches into
 // the 2 blocks above the surface; a step is allowed between 4-neighbour cells whose surfaces differ by <= 1 (0.5 block).
+const NO_COLLIDE = /light_block|pale_hanging_moss|cave_vines|glow_lichen|wall_banner|standing_banner|spore_blossom|carpet/; // hidden lights and thin / hanging decor do not stop a walker
 const extent = (n, st, y) => {
-  if (n === undefined || n === AIR || n === JIGSAW || (n && n.startsWith("lothlorien:elven_rope"))) return null;
+  if (n === undefined || n === AIR || n === JIGSAW || (n && (n.startsWith("lothlorien:elven_rope") || NO_COLLIDE.test(n)))) return null;
   if (n === SLAB) return st?.["minecraft:vertical_half"] === "top" ? [2 * y + 1, 2 * y + 2] : [2 * y, 2 * y + 1];
   if (n === FENCE) return [2 * y, 2 * y + 3];
   return [2 * y, 2 * y + 2];
@@ -279,9 +307,14 @@ const extent = (n, st, y) => {
 export function walkability(res, world, states) {
   const cells = [], byCol = new Map();
   for (const [k, n] of world) {
-    if (n !== PLANKS && n !== SLAB) continue;
+    if (n !== PLANKS && n !== SLAB && n !== HEART_PLANKS) continue; // the heartwood ring round a trunk is walking surface too
     const [x, y, z] = wdecode(k);
-    const top = n === PLANKS || states.get(k)?.["minecraft:vertical_half"] === "top";
+    if (n === SLAB && states.get(k)?.["minecraft:vertical_half"] === "top") { // a top-slab roof on fence posts (the balcony arbour) is no walking surface
+      const fenceUnder = (a, b) => world.get(wkey(a, y - 1, b)) === FENCE, topAt = (a, b) => world.get(wkey(a, y, b)) === SLAB && states.get(wkey(a, y, b))?.["minecraft:vertical_half"] === "top";
+      const fenceBeside = (a, b) => world.get(wkey(a, y, b)) === FENCE; // a post top beside the slab (roof between the posts)
+      if (fenceUnder(x, z) || ([AIR, "minecraft:pale_hanging_moss"].includes(world.get(wkey(x, y - 1, z)) ?? AIR) && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([a, b]) => fenceBeside(x + a, z + b) || (topAt(x + a, z + b) && (fenceUnder(x + a, z + b) || [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([c, d]) => fenceBeside(x + a + c, z + b + d))))))) continue;
+    }
+    const top = n === PLANKS || n === HEART_PLANKS || states.get(k)?.["minecraft:vertical_half"] === "top";
     const s = top ? 2 * y + 2 : 2 * y + 1;
     let clear = true;
     for (let h = 1; h <= 2 && clear; h++) {
@@ -370,6 +403,15 @@ export function check(data, res) {
   if (kinds.bridgesNoDest) fail.push(`${kinds.bridgesNoDest} bridge(s) without a destination tree`);
   if (kinds.unsupported) fail.push(`${kinds.unsupported} unsupported balcony / lookout`);
   const walk = walkability(res, world, states);
+  // nothing floats (principle 10) and water stays in its vessel, on the assembled village (every piece is checked alone by the generator already)
+  {
+    const getB = (x, y, z) => { const k = wkey(x, y, z), n = world.get(k); return n === undefined ? undefined : { name: n, states: states.get(k) }; };
+    const sup = supportScan((fn) => { for (const [k, n] of world) { if (isSupportSkipped(n)) continue; const [x, y, z] = wdecode(k); fn(x, y, z, { name: n, states: states.get(k) }); } }, getB, { max: 10 });
+    if (sup.length) fail.push(`${sup.length}${sup.length >= 10 ? "+" : ""} unsupported block(s), e.g. ${sup.slice(0, 3).map((v) => `${v.name} at ${v.at} (${v.detail})`).join("; ")}`);
+    const waters = []; for (const [k, n] of world) if (/water$/.test(n) || states.get(k)?.__water) waters.push(wdecode(k));
+    const wat = waterScan(getB, waters);
+    if (wat.length) fail.push(`${wat.length} water violation(s), e.g. ${wat.slice(0, 3).map((v) => `${v.at} ${v.detail}`).join("; ")}`);
+  }
   // cross-piece overwrite guard (owner 2026-10-08, rails over leaves): a later piece writes over earlier blocks of its box, so no leaf of
   // any piece may sit in a cell another piece owns (rail, tread / deck surface, the two cells above). Boxes never overlap (checked above),
   // so this stays 0 unless pieces start to share cells.
@@ -412,22 +454,23 @@ export function check(data, res) {
         // a link to nothing is an open stub end
         const back = states.get(wkey(x + v[0], y, z + v[1]))?.[`minecraft:connection_${{ north: "south", south: "north", west: "east", east: "west" }[side]}`];
         if (nbFence && stored && !back) info.fenceOneWay++;
-        if (!nbFence && stored) info.fenceDangling++;
+        if (!nbFence && stored && world.get(wkey(x + v[0], y, z + v[1])) !== "lothlorien:mallorn_stripped_log") info.fenceDangling++; // (a fence links to a full block: a log post in the next rim cell is a valid end)
       }
     }
   }
   // leaf decay (trees.js): a non-persistent leaf breaks unless wood is within 10 steps through leaves
-  const LEAF = "lothlorien:mallorn_leaves", WOODS = new Set(["lothlorien:mallorn_log", "lothlorien:mallorn_wood"]);
+  const persistent = (k) => [true, 1].includes(states.get(k)?.["lothlorien:persistent"]); // placed by the dressing (village_dress.mjs): never decays
+  const LEAF = "lothlorien:mallorn_leaves", WOODS = new Set(["log", "wood", "stripped_log", "stripped_wood"].map((n) => `lothlorien:mallorn_${n}`)); // = trees.js WOOD (stripped wood counts)
   const dist = new Map(), queue = [];
   for (const [k, n] of world) if (WOODS.has(n)) { dist.set(k, 0); queue.push(k); }
   for (let qi = 0; qi < queue.length; qi++) {
     const k = queue[qi], d = dist.get(k), [x, y, z] = wdecode(k);
     for (const [dx, dy, dz] of [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]]) {
       const q = wkey(x + dx, y + dy, z + dz);
-      if (world.get(q) === LEAF && !dist.has(q)) { dist.set(q, d + 1); queue.push(q); }
+      if (world.get(q) === LEAF && !dist.has(q) && !persistent(q)) { dist.set(q, d + 1); queue.push(q); }
     }
   }
-  for (const [k, n] of world) if (n === LEAF) { info.leaves++; if (!(dist.get(k) <= 10)) info.decay++; }
+  for (const [k, n] of world) if (n === LEAF && !persistent(k)) { info.leaves++; if (!(dist.get(k) <= 10)) info.decay++; }
   const startY = res.start.o[1] + res.start.rp.jigsaws.find((j) => j.dir).y;
   const levels = levelsY.size ? Math.max(...[...levelsY].map((y) => Math.round((y - startY) / 8))) + 1 : 1;
   const open = res.unfilled.filter((u) => !u.vertical).length;
@@ -485,10 +528,10 @@ export function applyPlan(world, states, plan) {
     if (b.id === AIR) world.delete(wk); else world.set(wk, b.id);
     if (b.id === AIR) states.delete(wk); else states.set(wk, b.states ?? {});
   }
-  for (const r of plan.rails) { // the runtime adds the fence links a neighbour update may have dropped (rail_mender_rules.missingLinks)
+  for (const r of [...plan.rails, ...(plan.lamps ?? []).map((l) => ({ x: l.x, y: l.y - 1, z: l.z }))]) { // the runtime adds the fence links a neighbour update may have dropped (rail_mender_rules.missingLinks), also at the lamp posts
     const st = states.get(wkey(r.x, r.y, r.z));
     if (!st) continue;
-    for (const [side, v] of Object.entries(LINK_SIDES)) if (!st[`minecraft:connection_${side}`] && world.get(wkey(r.x + v[0], r.y, r.z + v[1])) === FENCE) st[`minecraft:connection_${side}`] = true;
+    for (const [side, v] of Object.entries(LINK_SIDES)) if (!st[`minecraft:connection_${side}`] && [FENCE, "lothlorien:mallorn_stripped_log", "lothlorien:mallorn_log", "lothlorien:mallorn_wood", "lothlorien:mallorn_stripped_wood"].includes(world.get(wkey(r.x + v[0], r.y, r.z + v[1])))) st[`minecraft:connection_${side}`] = true;
   }
   return blocks;
 }
@@ -589,11 +632,24 @@ export function planLoops(res, world, states, opts = {}) {
     out.lengths.push(p.plan.length); out.offsets.push(Math.abs(p.plan.offset)); out.picks.push({ ...p, plan: undefined, planRef: p.plan });
   }
   // repairs (rope fit): written like links
-  out.repairs = r.repairs.map((p) => ({ kind: p.kind, x: p.x, z: p.z, buried: p.buried, hung: p.hung, roots: p.roots, leaves: p.leaves, twigs: p.twigs, logs: p.kind === "flare" ? p.blocks.length : undefined }));
+  out.repairs = r.repairs.map((p) => ({ kind: p.kind, x: p.x, z: p.z, buried: p.buried, hung: p.hung, roots: p.roots, leaves: p.leaves, twigs: p.twigs, logs: p.kind === "flare" ? p.blocks.length : undefined, counts: p.counts, trunks: p.trunks }));
   out.flareLog = (r.log ?? []).filter((l) => l.startsWith("flare"));
   for (const p of r.repairs) applyPlan(world, states, p);
   out.ropeFeet = ropeFeet(world, states, rawAt, rect);
+  out.floor = floorCheck(r.repairs.filter((p) => p.kind === "floor").flatMap((p) => p.blocks), rawAt, out.ropeFeet);
   out.at = rawAt;
+  return out;
+}
+
+// Forest floor (village_repair.js planForestFloor) after the repairs: every plant must stand on a ground block, on the first free cell above it, never on a rope foot's 3x3.
+// -> { n, floating, onRope, byId }
+export function floorCheck(blocks, rawAt, feet) {
+  const GROUND = /^minecraft:(grass_block|dirt|podzol|moss_block|coarse_dirt|rooted_dirt)$/, out = { n: blocks.length, floating: 0, onRope: 0, byId: {} };
+  for (const b of blocks) {
+    out.byId[b.id] = (out.byId[b.id] ?? 0) + 1;
+    if (!GROUND.test(rawAt(b.x, b.y - 1, b.z) ?? "")) out.floating++;
+    if (feet.some((f) => Math.abs(f.x - b.x) <= 1 && Math.abs(f.z - b.z) <= 1)) out.onRope++;
+  }
   return out;
 }
 
@@ -617,15 +673,47 @@ export function ropeFeet(world, states, rawAt, rect) {
 // -> { posts, outer, elves, ownTree, onReserve, homeRoom, fail: [string] }
 export function populateElves(res, at, rect) {
   const posts = res.placed.flatMap((p) => entityCells(p, POST_ID)).filter((c) => !rect || inRect(rect, c.cell[0], c.cell[2]))
-    .map(({ cell: [x, y, z], kind }) => ({ kind: kind ?? "home", x, y: y + 1, z, site: homeSite(at, x, y, z) }));
+    .map(({ cell: [x, y, z], kind }) => ({ kind: kind ?? "home", x, y: y + 1, z, site: siteOf(at, { x, y: y + 1, z }) }));
   const lore = posts.filter((q) => q.kind === "loremaster").sort((a, b) => a.x - b.x || a.z - b.z)[0] ?? null;
   const assigned = assignHomes(posts.filter((q) => q.kind !== "loremaster"), lore ? [lore.x, lore.y, lore.z] : null);
   const profs = [...assigned.map((a) => a.p), ...(lore ? ["loremaster"] : [])], fail = [];
   const outerTrees = posts.filter((q) => q.kind === "home").length, healer2 = outerTrees >= HEALER2_MIN_TREES ? 1 : 0;
   for (const p of PROFESSIONS) { const n = profs.filter((q) => q === p).length, want = p === "healer" ? 1 + healer2 : 1; if (n !== want) fail.push(`${p} assigned ${n} times (expected ${want})`); }
   const own = assigned.filter((a) => a.post.kind !== "reserve");
-  return { posts: posts.length, outer: outerTrees, healer2, elves: profs.length, ownTree: own.length, onReserve: assigned.length - own.length,
+  return { assigned, posts: posts.length, outer: outerTrees, healer2, elves: profs.length, ownTree: own.length, onReserve: assigned.length - own.length,
     homeRoom: own.filter((a) => a.post.site && a.post.site.k >= HOME_MIN).length, reservePosts: posts.filter((q) => q.kind === "reserve").length, fail };
+}
+
+// The runtime's home furnishing (elf_village.js furnishHome) on the simulated village: find each assigned home's pavilion, plan the layout like the runtime and write it into
+// world / states. Then check it: every written cell lies in the furnishing area (+1, +2), was air, nothing floats (supportScan on the written cells), the walkable cells stay
+// as connected as before (`before` = walkability() result from before the furnishing). -> { homes, framed, objects, fail: [string], ks: [k] }
+export function furnishVillage(el, world, states, at, res, before) {
+  const out = { homes: 0, framed: 0, objects: 0, fail: [], ks: [] };
+  const written = [];
+  for (const { post, p } of el.assigned) {
+    if (post.kind === "reserve" || !hasLayout(p)) continue;
+    out.homes++;
+    const frame = findHome(at, post);
+    if (!frame) continue;
+    out.framed++; out.ks.push(frame.k);
+    const plan = planFurnish(p, frame, at);
+    const area = new Set(frameArea(frame).flatMap(([u, v]) => { const [x, z] = frameCell(frame, u, v); return [`${x},${frame.y + 1},${z}`, `${x},${frame.y + 2},${z}`]; }));
+    const put = (x, y, z, name, st) => {
+      if (!area.has(`${x},${y},${z}`)) out.fail.push(`furnishing at ${x},${y},${z} is outside the area`);
+      if (at(x, y, z) !== AIR) out.fail.push(`furnishing at ${x},${y},${z} would replace ${at(x, y, z)}`);
+      world.set(wkey(x, y, z), name); states.set(wkey(x, y, z), st); written.push([x, y, z]); out.objects++;
+    };
+    for (const w of plan.writes) put(w.x, w.y, w.z, w.name, w.states);
+    for (const b of plan.banners) put(b.x, b.y, b.z, "minecraft:wall_banner", { facing_direction: { north: 2, south: 3, west: 4, east: 5 }[frame.dv[0] === 1 ? "east" : frame.dv[0] === -1 ? "west" : frame.dv[1] === 1 ? "south" : "north"] });
+    out.skipped = (out.skipped ?? 0) + plan.skipped.length; // a home may lose an object when the pavilion leaves no room (reported, not a failure)
+    if (plan.writes.length + plan.banners.length < 6) out.fail.push(`home at ${post.x},${post.y},${post.z}: only ${plan.writes.length + plan.banners.length} furnishing blocks`);
+  }
+  const getB = (x, y, z) => { const k = wkey(x, y, z), n = world.get(k); return n === undefined ? undefined : { name: n, states: states.get(k) }; };
+  const sup = supportScan((fn) => { for (const [x, y, z] of written) { const b = getB(x, y, z); if (!isSupportSkipped(b.name)) fn(x, y, z, b); } }, getB, { max: 10 });
+  for (const v of sup) out.fail.push(`furnishing floats: ${v.name} at ${v.at} (${v.detail})`);
+  const after = walkability(res, world, states);
+  if (before && after.unreachable.length > before.unreachable.length) out.fail.push(`furnishing cut off ${after.unreachable.length - before.unreachable.length} walkable deck cell(s)`);
+  return out;
 }
 
 // ---- rendering: deck map with height shading, and a side view ------------------------------------------------------------
@@ -688,13 +776,16 @@ function main() {
     row.cov = discoveryCoverage(row.res, { shift });
     row.lpUnreach = walkability(row.res, row.ck.world, row.ck.states).unreachable.length;
     row.el = populateElves(row.res, row.lp.at, row.lp.rect);
+    const walkBefore = walkability(row.res, row.ck.world, row.ck.states);
+    row.fu = furnishVillage(row.el, row.ck.world, row.ck.states, row.lp.at, row.res, walkBefore);
+    row.el.fail.push(...row.fu.fail);
   }
   console.log(`max_depth ${data.structure.max_depth}`);
   console.log("seed pieces trees(tow) lvl straight balc look plug open crowns(sm) unreach overl ropeW decay oneWay noDest result");
   let bad = 0;
   const pad = (v, n) => String(v).padStart(n);
   for (const { seed, res, ck } of rows) {
-    const ok = ck.fail.length === 0 && ck.info.ropeWrong === 0 && ck.info.decay === 0 && rows.find((r) => r.seed === seed).lpUnreach === 0 && rows.find((r) => r.seed === seed).lp.bad.length === 0 && rows.find((r) => r.seed === seed).el.fail.length === 0 && rows.find((r) => r.seed === seed).lp.ropeFeet.every((f) => f.onGround && !f.buried); if (!ok) bad++;
+    const ok = ck.fail.length === 0 && ck.info.ropeWrong === 0 && ck.info.decay === 0 && rows.find((r) => r.seed === seed).lpUnreach === 0 && rows.find((r) => r.seed === seed).lp.bad.length === 0 && rows.find((r) => r.seed === seed).el.fail.length === 0 && rows.find((r) => r.seed === seed).lp.ropeFeet.every((f) => f.onGround && !f.buried) && rows.find((r) => r.seed === seed).lp.floor.floating === 0 && rows.find((r) => r.seed === seed).lp.floor.onRope === 0; if (!ok) bad++;
     const k = ck.kinds;
     console.log(`${pad(seed, 4)} ${pad(res.placed.length, 6)} ${pad(`${k.trees}(${k.tower})`, 10)} ${pad(ck.levels, 3)} ${pad(k.straight, 8)} ${pad(k.balcony, 4)} ${pad(k.lookout, 4)} ${pad(k.plug, 4)} ${pad(ck.open, 4)} ${pad(`${k.crown}(${k.crownSmall})`, 10)} ${pad(ck.unreachable, 7)} ${pad(ck.overlaps, 5)} ${pad(ck.info.ropeWrong, 5)} ${pad(ck.info.decay, 5)} ${pad(ck.info.fenceOneWay, 9)} ${pad(ck.kinds.bridgesNoDest, 6)} ${ok ? "ok" : "FAIL"}`);
     for (const f of [...new Set(ck.fail)].slice(0, 6)) console.log(`       ! ${f}`);
@@ -716,6 +807,8 @@ function main() {
   console.log(`  unreachable walk cells after the links ${rows.reduce((a, r) => a + r.lpUnreach, 0)}; links failing the walk / light checks ${lsum((l) => l.bad.length)}; candidates per village ${avg((r) => r.lp.nRaw)}`);
   const nEl = rows.filter((r) => r.el.elves === PROFESSIONS.length + r.el.healer2).length, hp = (f) => rows.reduce((a, r) => a + f(r.el), 0);
   console.log(`  elves: all five in ${nEl}/${rows.length} villages | own tree 4+ in ${pct(rows.filter((r) => r.el.ownTree >= 4).length, rows.length)} | second healer in ${rows.filter((r) => r.el.healer2).length}/${rows.length} | outer trees ${mm((r) => r.el.outer)} | reserves used mean/max ${(hp((e) => e.onReserve) / rows.length).toFixed(2)}/${Math.max(...rows.map((r) => r.el.onReserve))} | homes with room >= ${HOME_MIN}x${HOME_MIN}: ${pct(hp((e) => e.homeRoom), hp((e) => e.ownTree))}`);
+  const fk = {}; for (const r of rows) for (const k of r.fu.ks) fk[k] = (fk[k] ?? 0) + 1;
+  console.log(`  healer homes furnished: pavilion found ${rows.reduce((a, r) => a + r.fu.framed, 0)}/${rows.reduce((a, r) => a + r.fu.homes, 0)} (k ${JSON.stringify(fk)}), ${(rows.reduce((a, r) => a + r.fu.objects, 0) / Math.max(1, rows.reduce((a, r) => a + r.fu.framed, 0))).toFixed(1)} blocks per home, ${rows.reduce((a, r) => a + (r.fu.skipped ?? 0), 0)} object groups dropped for lack of room`);
   const feet = rows.flatMap((r) => r.lp.ropeFeet);
   const ropeFits = (r) => r.lp.repairs.filter((p) => p.kind === "rope"), flares = rows.flatMap((r) => r.lp.repairs.filter((p) => p.kind === "flare"));
   console.log(`  repairs (rope fit): ${rows.reduce((a, r) => a + ropeFits(r).length, 0)} ropes fitted (buried ${rows.reduce((a, r) => a + ropeFits(r).reduce((b, p) => b + p.buried, 0), 0)}, hung ${rows.reduce((a, r) => a + ropeFits(r).reduce((b, p) => b + p.hung, 0), 0)} pieces); rope bottoms ${feet.length}, not on the ground ${feet.filter((f) => !f.onGround).length}, buried in terrain ${feet.filter((f) => f.buried).length}`);
@@ -723,6 +816,9 @@ function main() {
   console.log(`  repairs (root flares at the pillars): ${flares.length} pillars fitted in ${rows.length} villages (${(flares.length / rows.length).toFixed(2)} per village), roots ${flares.reduce((a, p) => a + p.roots, 0)} (${flares.reduce((a, p) => a + p.logs, 0)} logs), skipped/errors ${rows.reduce((a, r) => a + r.lp.flareLog.length, 0)}`);
   const clears = rows.flatMap((r) => r.lp.repairs.filter((p) => p.kind === "pillarclear"));
   console.log(`  repairs (bare pillar feet): ${clears.length} pillars cleared, leaves ${clears.reduce((a, p) => a + p.leaves, 0)}, twigs ${clears.reduce((a, p) => a + p.twigs, 0)}`);
+  const fl = rows.map((r) => r.lp.floor), flSum = (f) => fl.reduce((a, q) => a + f(q), 0), mix = {};
+  for (const q of fl) for (const [k, v] of Object.entries(q.byId)) mix[k.replace(/^.*:/, "")] = (mix[k.replace(/^.*:/, "")] ?? 0) + v;
+  console.log(`  repairs (forest floor): blocks per village ${mm((r) => r.lp.floor.n)}, floating ${flSum((q) => q.floating)}, on a rope foot's 3x3 ${flSum((q) => q.onRope)}; mix per village ${Object.entries(mix).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${(v / rows.length).toFixed(1)}`).join(", ")}`);
   const sum = (f) => rows.reduce((a, r) => a + f(r.ck.info), 0);
   console.log(`  totals: unreachable walk cells ${rows.reduce((a, r) => a + r.ck.unreachable, 0)}, overlaps ${rows.reduce((a, r) => a + r.ck.overlaps, 0)}, wrong ropes ${sum((i) => i.ropeWrong)}/${sum((i) => i.ropes)}, ` +
     `decaying leaves ${sum((i) => i.decay)}/${sum((i) => i.leaves)}, one-way fence links (open ends only) ${sum((i) => i.fenceOneWay)} (dangling stub ends ${sum((i) => i.fenceDangling)}), near-miss ends ${sum((i) => i.nearMiss)}`);

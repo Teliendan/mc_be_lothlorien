@@ -82,7 +82,7 @@ function* planAndBuild(dimension, found, budget, stats) {
     if (++n % WRITES_PER_TICK === 0) yield;
   }
   const typeAt = (x, y, z) => dimension.getBlock({ x, y, z })?.typeId;
-  for (const p of [...res.merges, ...res.picks]) for (const r of p.plan.rails) {
+  for (const p of [...res.merges, ...res.picks]) for (const r of [...p.plan.rails, ...(p.plan.lamps ?? []).map((l) => ({ x: l.x, y: l.y - 1, z: l.z }))]) { // the rails and the fence under every lamp
     try {
       const block = dimension.getBlock(r), perm = block.permutation, on = missingLinks(r, typeAt, (s) => perm.getState(s));
       if (on.length) { let next = perm; for (const s of on) next = next.withState(s, true); block.setPermutation(next); }
