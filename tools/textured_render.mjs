@@ -191,7 +191,7 @@ const texCache = new Map();
 // block models whose terrain texture is a model atlas, not a face texture: a plain stand-in
 const synth = (rgb, edge) => { const d = new Uint8Array(16 * 16 * 4); for (let i = 0; i < 256; i++) { const e = edge && (i % 16 === 0 || i % 16 === 15 || i < 16 || i >= 240); d.set([...(e ? edge : rgb), 255], i * 4); } return { w: 16, h: 16, data: d }; };
 const SYNTH = { lantern: synth([255, 200, 90], [70, 56, 46]), soul_lantern: synth([100, 210, 230], [60, 60, 70]), torch: synth([255, 170, 60], [120, 85, 45]), soul_torch: synth([90, 200, 230], [120, 85, 45]),
-  end_rod: synth([245, 240, 225], [200, 190, 170]), chain: synth([70, 70, 80], [40, 40, 48]) };
+  end_rod: synth([245, 240, 225], [200, 190, 170]), chain: synth([70, 70, 80], [40, 40, 48]), waxed_oxidized_copper_chain: synth([60, 150, 120], [40, 100, 80]) };
 const FALLBACK = { chest: "planks_oak", trapped_chest: "planks_oak", ender_chest: "obsidian", barrel: "barrel_side", bed: "planks_oak", water: "water_still_grey", flowing_water: "water_still_grey" };
 const SUFFIX = { trapdoor: "trapdoor", door: "door_wood_lower" };
 // -> { up, down, north, south, east, west } each { img, tint, blend } | null ; null overall = unknown block
@@ -258,7 +258,7 @@ const NB = { up: [0, 1, 0], down: [0, -1, 0], north: [0, 0, -1], south: [0, 0, 1
 const ints = ["east", "west", "south", "north"];
 const cardinal = (st) => st?.["minecraft:cardinal_direction"] ?? (typeof st?.weirdo_direction === "number" ? ints[st.weirdo_direction] : typeof st?.direction === "number" ? ints[st.direction] : typeof st?.facing_direction === "number" ? ["down", "up", "north", "south", "west", "east"][st.facing_direction] : undefined) ?? "south";
 const isTop = (st) => st?.["minecraft:vertical_half"] === "top" || st?.upside_down_bit === true || st?.top_slot_bit === true;
-const isOpen = (st) => st?.["lothlorien:open"] === true || st?.open_bit === true;
+const isOpen = (st) => [true,1].includes(st?.["lothlorien:open"]) || [true,1].includes(st?.open_bit); // parsed NBT byte states are 0/1
 
 // ---- banners (block data `banner` = { base, patterns: [{ pattern, color }] }, as the generator writes them; piece files carry none: the owner's watch design) ----
 const DYE = { white: [233, 236, 236], light_gray: [142, 142, 134], silver: [142, 142, 134], gray: [62, 68, 71], black: [20, 21, 25], brown: [114, 71, 40], red: [160, 39, 34], orange: [240, 118, 19], yellow: [248, 198, 39],
@@ -308,7 +308,7 @@ function kindOf(n) {
   else if (/_carpet$|^leaf_litter$|pressure_plate$|^pink_petals$|^lily_pad$|^snow_layer$|rail$|^mallorn_blossom|^blossom_/.test(name) || /leaf_litter|blossom_\d/.test(geo)) kind = "plate";
   else if (/(^|_)lantern$|chandelier/.test(name)) kind = "lantern";
   else if (/^(flower_pot|decorated_pot|firefly_jar|cauldron|deer_antler|phial_light)$|(^|_)candle$|candle_cake/.test(name)) kind = "small";
-  else if (/torch$|^end_rod$|^chain$|^elven_rope|^lightning_rod$/.test(name)) kind = "post";
+  else if (/torch$|^end_rod$|^chain$|_chain$|^elven_rope|^lightning_rod$/.test(name)) kind = "post";
   else if (name === "vine") kind = "vine";
   else if (/^(flowing_)?water$/.test(name)) kind = "water";
   else if (isCross(name) || /plant_cross|sapling/.test(geo) || /^(athelas|elanor|niphredil|golden_fern|nectar_bloom|western_corn|great_mallorn_sprout)/.test(name)) kind = "cross";
@@ -397,7 +397,7 @@ function blockFaces(out, b, x, y, z, get, unknown) {
     }
     const b2 = info?.box ?? (name === "flower_pot" ? [5, 0, 5, 11, 6, 11] : name === "decorated_pot" ? [1, 0, 1, 15, 16, 15] : /candle/.test(name) ? [6, 0, 6, 10, 6, 10] : [3, 0, 3, 13, 10, 13]);
     full(b2.map((v) => Math.max(0, Math.min(16, v))), tmpl, blendEx(tmpl));
-  } else if (kind === "post") full(/rope/.test(name) ? [7, 0, 7, 9, 16, 9] : name === "chain" ? [6.5, 0, 6.5, 9.5, 16, 9.5] : [7, 0, 7, 9, 10, 9]);
+  } else if (kind === "post") full(/rope/.test(name) ? [7, 0, 7, 9, 16, 9] : /chain$/.test(name) ? [6.5, 0, 6.5, 9.5, 16, 9.5] : [7, 0, 7, 9, 10, 9]);
   else if (kind === "vine") {
     const bits = st.vine_direction_bits ?? 0, t = { ...tmpl.north };
     if (bits & 1) planeFaces(out, x, y, z, "z", 15, t); if (bits & 4) planeFaces(out, x, y, z, "z", 1, t); if (bits & 2) planeFaces(out, x, y, z, "x", 1, t); if (bits & 8) planeFaces(out, x, y, z, "x", 15, t);

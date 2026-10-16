@@ -29,8 +29,12 @@ const key = (x, y, z) => `${x},${y},${z}`;
 
 // shortest walking distance (cells) from A over deck cells (4-neighbours, |dy| <= 1: arched slab bridges, stairs) to every cell, up to `limit`
 export function walkDist(at, A, limit = 400) {
+  return drive(walkDistGen(at, A, limit));
+}
+export function* walkDistGen(at, A, limit = 400) {
   const dist = new Map([[key(A.x, A.y, A.z), 0]]), q = [[A.x, A.y, A.z]];
   for (let i = 0; i < q.length; i++) {
+    if (i % 32 === 0) yield;
     const [x, y, z] = q[i], d = dist.get(key(x, y, z));
     if (d >= limit) continue;
     for (const [a, b] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) for (const dy of [0, 1, -1]) {
@@ -126,11 +130,11 @@ export function drive(gen) { let r = gen.next(); while (!r.done) r = gen.next();
 
 export function* scoreGen(at, cands, opts) {
   const o = { ...PLAN, ...opts }, maps = new Map();
-  const dm = (A) => { const k = key(A.x, A.y, A.z); if (!maps.has(k)) maps.set(k, walkDist(at, A, 500)); return maps.get(k); };
+  const dm = function* (A) { const k = key(A.x, A.y, A.z); if (!maps.has(k)) maps.set(k, yield* walkDistGen(at, A, 500)); return maps.get(k); };
   const list = [];
   for (const c of cands) {
     yield;
-    const got = dm(c.A).get(key(c.B.x, c.B.y, c.B.z)); // B is on the same deck level; it is a plank cell
+    const got = (yield* dm(c.A)).get(key(c.B.x, c.B.y, c.B.z)); // B is on the same deck level; it is a plank cell
     const dnet = got === undefined ? 999 : got;
     const landing = c.dist > LOOP.maxDist || c.kind === "L" ? 1 : 0;
     const value = Math.min(dnet, o.maxNet) - 2 * c.len - o.kindCost[c.kind] - o.landingCost * landing - 0.5 * Math.abs(c.offset);

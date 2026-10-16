@@ -28,6 +28,7 @@ export function startTickRateProbe(player, text) {
     running = false;
     const r = summarizeTicks(clock, now, system.currentTick, supportTickStats.calls);
     const records = supportMotion.size();
+    console.warn(`[lothlorien] tick gaps: p95 ${r.p95Ms} ms, p99 ${r.p99Ms} ms, ${r.over100Ms} gaps over 100 ms (wall-clock cadence, not script CPU or FPS)`);
     console.warn(`[lothlorien] tps: ${r.ticks} ticks in ${r.seconds.toFixed(1)} s = ${r.tps.toFixed(1)} tps (${r.percent.toFixed(0)} %), `
       + `avg ${r.averageMs.toFixed(1)} ms, longest ${r.longestMs} ms, support random ticks ${r.callsPerSecond.toFixed(0)}/s, `
       + `${records} support records${pause ? ", support checks paused" : ""}`);

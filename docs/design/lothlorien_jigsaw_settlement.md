@@ -100,24 +100,19 @@ Constants: `village_planner.js` (`PLAN`, `AREA`), `village_loop.js` (`LOOP`, `PL
   still supported, light >= 8 (`planMerge` in `village_loop.js`; test with the real staggered cap pair, `loop merge (F6 ...)` in `tests/run.mjs`).
 - Open limits: a crown beside an upper-level balcony/bridge can find no room (small fallback 1.1 per village in the sim); stacked towers climb 8 per step; rigid placement on uneven ground.
 
-## 6. Next: village look (M7)
+## 6. Completed village look (M7)
 
-**Status 2026-10-16:** the look is defined in `village_style.md` (style guide, owner's verdicts, phases); the showcase (phase 2) is
-accepted in game. Built: `tools/village_dress.mjs` (dressing, home pavilion, `homeFrame`), `tools/village_central.mjs` (Court + Hall +
-stream, notes in `village_central.md`), `tools/village_checks.mjs` (support, water, keep-clear, spawn-proof), hidden light blocks,
-`scripts/home_furnish.js` (runtime furnishing, notes in `home_furnishing.md`), the forest floor in `scripts/village_repair.js`.
-The text below is the original plan; where it differs, the style guide wins.
+Owner accepted the finished villages in game on 2026-10-16: "I love it, villages done."
+Final commit: **Finish accepted elven villages**. The final design is in
+`village_style.md`, the central Hall in `village_central.md`, profession furnishings
+in `home_furnishing.md`, and crown fallback geometry in `village_crowns.md`.
+Final polish, validation and accepted tick-cadence measurements:
+`../VILLAGE_POLISH_2026-10-16.md`.
 
-Owner decision 2026-10-10, **not built**. The "cut off tree" (a 3x3 trunk stub on a deck whose crown was refused, 0.27 per village in the sim: tower combo boxes and neighbouring crown
-boxes block the crown jigsaw, see the polish plan) is NOT fixed by a crown piece or a runtime crown repair. It is deferred to the **village look milestone M7**, merged with the homes
-(buildings, lighting, furniture; `docs/design/elven_inhabitants.md` section 10).
-- **Design.** Tree pieces carry their crown, so a tree is placed only when its crown fits. Where it does not, the jigsaw FALLBACK pool places a low element at deck level
-  (fountain plaza, treetop garden, pavilion, later a home) instead of a stub tree.
-- **Rule that guarantees the fallback fits.** Its footprint lies within the smallest tree node deck, and its height is at most 5 above the deck (below a neighbour's crown box at +6 and a tower's upper deck at +8).
-- **Simulator check.** 0 stubs, and every refused tree gets its fallback. Before the milestone, measure in the sim how many trees and bridges a village loses with crowns bundled into the tree pieces.
-- **Decks may change shape.** Owner: "The platforms (decks) may change shape when buildings are added." So nothing may hard-code today's deck shapes in M7: the fallback-fit rule (footprint within the smallest
-  tree node deck, height <= deck + 5), the elf post / home-site selection (`homeSite`, `postCells`) and the profession site ranking (`assignHomes`) must be derived by the generator from the actual pieces and re-checked by the
-  simulator and tests after any deck change. This round adds no new hard-coded deck coordinates.
-- **Balcony and lookout pillars "more alive"** (owner wish, a few bent branches and leaf blobs on the pillars): a separate next task, not part of M7 and not started.
-
-**Polish round 2026-10-10 (built, not seen in game):** rope start height -17 (see TECHNICAL_NOTES "Elven village"), runtime rope fit (`scripts/village_repair.js`), bent branches capped below the crown box top, generator check `bareBranchEnds` (every branch end has >= 6 leaves within 2; also for the giant trees).
+Homes and dressing derive their sites from the actual deck shape. Small crown
+fallbacks and intrinsic leaf caps below deck +6 replace the former bare-stub
+outcome when a neighboring box refuses a larger crown. Balcony/lookout pillars
+have bent branches and leaf blobs. Runtime repair fits ropes to terrain, adds
+root flares and forest-floor dressing, completes borders and closes unused exits.
+All checks remain required when modifying these pieces; iteration previews were
+removed after acceptance, while the production generators and simulator remain.

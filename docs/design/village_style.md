@@ -1,7 +1,7 @@
 # Elven village look (M7): style guide
 
 Status: **approved by the owner 2026-10-14** (with the changes of section 0); **showcase (phase 2) accepted in game 2026-10-16**
-("Awesome, I love it"). Phase 3 (section 10) is open. Written by Claude as the design authority for M7; implementers follow it,
+("Awesome, I love it"). M7 is complete: owner accepted the finished villages on 2026-10-16 ("I love it, villages done"). Written by Claude as the design authority for M7; implementers follow it,
 reviews judge against it. Structure and engine rules stay in `lothlorien_jigsaw_settlement.md`; roles and homes in `elven_inhabitants.md` section 10.
 
 Owner's brief (2026-10-13): a village of magical, immortal Tolkien elves, "the gem of our mod, so people see it and wonder". Homes (walls and
@@ -19,6 +19,11 @@ magic water allowed in the trees; ground under the village dressed as living for
   pots. Section 7.10 sets a minimum dressing per deck; principle 6 now says "rich at the nodes" instead of "keep half plain".
 
 ### Owner's in-game tests of the showcase (2026-10-15/16)
+Finishing feedback (2026-10-16, Codex; implemented and owner accepted in game): restore two adjacent cushions under slab seat roofs;
+wood posts start on the deck; link rails to moss and slabs consistently; close unused jigsaw mouths; keep flower pots out of cushion views;
+frame every available bed side without closing paths or future furnished-home access. Count real lamps before adding hidden-light gap fill.
+Lag of concern is in an already loaded village; a slower initial build is acceptable. Measurements and retest steps: `../VILLAGE_POLISH_2026-10-16.md`.
+Owner follow-up: "The rest looks good"; moss borders remained incomplete in a fresh village. Corrective pass covers thin path-facing skirts and runtime home beds, preserving bridges and cushions; deployed, verified and owner accepted: "I love it, villages done" (see the finishing report).
 Later rounds (2026-10-16): up to one more banner per tree and 3-4 on the Hall; fences link to log posts (generator + rail mender); no jar
 between a cushion and its view; a pot on a bridge always stands beside a lamp post, bridge lamp posts in left-right pairs; standing banners
 need two free cells above and never stand at outer corners; flower pots (mostly planted, about 1 in 5 empty) on rails, decorated pots only
@@ -102,6 +107,7 @@ Upper-level decks (towers) are +8 over the lower deck, so a home on a lower towe
   not a stair/walk headroom path, inside leaf-roof cavities, under the decks. Chosen by a greedy like `addLanterns`, but the candidates are
   hidden cells, and the target stays **light >= 8 on every walk cell**. Light blocks are walk-transparent and light-transparent: the walk checker
   and the light model must treat them as air (extend `structure_walk.mjs` / `structure_light.mjs` with fixtures).
+  Real emitters count toward coverage (owner follow-up 2026-10-16); hidden blocks fill only remaining gaps. Removing a real lamp may darken its area.
 - **Visible layer (art).** Placed first, by design, never by the greedy:
   - *Hanging lamps* under branches, eaves and the home roof: the lamp hangs from an `elven_rope_hanging` cord 1-2 long or directly under a
     block. Silver on paths, gold at homes and the central tree.
@@ -226,19 +232,31 @@ Small things are 1 block high, on the deck at the rim or against the trunk, neve
 - **Box:** nothing outside the piece box; nothing above deck + 5 except the crown and the central Hall.
 - **Readable at night:** the night render shows the signature of each tree.
 
-## 9. Proposals for round 2 (new blocks; not built now)
+## 9. Round-2 block proposals: owner's decisions (2026-10-16)
 
-1. **Hanging lamp cord** (rope with a lantern hook, 1-3 long, connects to any branch underside): replaces rope+lantern stacks; easy recipe.
-2. **Silver basin** (a shallow wooden bowl block holding water, `lothlorien:mallorn_basin`): one-block fountains anywhere; filled with a bucket;
-   the healer could sell "Mallorn spring water". Would make Galadriel's Mirror possible as a pedestal basin.
-3. **Leaf-roof block** (a thin curved leaf canopy, half a block): roofs that look woven instead of blocky.
-4. **Talan screen** (a woven silver panel with a leaf motif, a door-like block that slides open): the elves' one wall.
-Each with a recipe, a trade (woodwright/lamplighter) and a loot entry in the camps, as the owner suggested.
+No new blocks for now; each proposal is answered with existing blocks:
+1. **Lamp cord** -> `minecraft:waxed_oxidized_copper_chain` (green, waxed so it never changes), 1-3 long, with a lantern hanging under it.
+   Iron chains stay out (palette: no black iron).
+2. **Silver basin** -> a one-block basin: a water source with four mallorn stairs round it, the tall back of each stair against the water and
+   the steps facing outward, on a solid floor. Used as fountain, birdbath, the gardener's watering basin, the healer's clear water.
+3. **Leaf-roof block** -> not needed: normal leaves are good enough.
+4. **Talan screen** -> not now.
+
+### Phase 3 dressing as built (2026-10-16, implementer notes)
+- **Lamp cords.** `minecraft:waxed_oxidized_copper_chain` (state `pillar_axis: "y"`, metadata-checked) hangs the branch-arm lamps: the arm leaves the trunk 1-2 blocks higher (lower decks) or bends
+  out, up one log, out again (under a crown the trunk ends at +4); the lantern bottom stays at deck + 3. Rib-tip lanterns of the pavilion stay on the rib (a cord would drop them below +3).
+- **Stair basins.** One block of water, four `mallorn_stairs` (`facing` = toward the water, bottom half), on deck planks, a lily pad on half of them; about one node or tower in three.
+  `waterCheck` additionally rejects a stair beside a source whose steps face the water or that is upside down.
+- **Tower lookout bays.** The upper deck of every tower fills one outer corner (`add` + `bay` in the level spec): rails round it, two cushions at the outer corner, a seat roof (rail posts to +3,
+  top slabs over the cushions), a jar, a flag pole (stripped log, wall banner). The rest of the bay stays keep-clear.
+- **lookout_01 is 11 x 11** (shape `lookout11`, pillar at the centre, `findPillar` reaches 5 cells): seat bay with roof, flag, jar and two flower beds in the corner pockets. The balcony's near arbour post is a stripped
+  log from the deck up with the flag on its inner side; the far post stays a fence for the exit signature. Pillar foliage `light` 1.1 / `full` 1.8 (3 and 5 bent branches with leaf blobs). Cushion actors cannot be turned: "facing the view" is by position only.
 
 ## 10. Phases and checkpoints
 
 1. **Style approval**: done 2026-10-14.
 2. **Showcase**: done, accepted in game 2026-10-16. It grew beyond the plan: a home pavilion (k = 5) on every node and tower, deck
    dressing on every tree, bridges and runtime loop bridges in the new style, cushions, the healer's furnishing at runtime.
-3. **Open:** furnishing sets for the gardener, woodwright, lamplighter (and the Loremaster's own corner beyond the reading circle); crown
-   stars; upper-level lookouts on towers; the fallback element; balcony/lookout views; the round-2 block proposals (section 9).
+3. **Complete, accepted 2026-10-16:** profession furnishings, crown stars and fallback leaf caps, upper tower lookouts, paired view seats, connections and rails, complete moss-bed borders, and loaded-village performance checks. The central reading circle serves the Loremaster; new block proposals remain deferred by owner decision.
+
+Final commit: **Finish accepted elven villages**. Final design and validation: [finishing record](../VILLAGE_POLISH_2026-10-16.md).

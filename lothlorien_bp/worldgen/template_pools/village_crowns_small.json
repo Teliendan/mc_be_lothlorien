@@ -11,6 +11,22 @@
           "location": "lothlorien/village/crown_small",
           "projection": "rigid"
         },
+        "weight": 24
+      },
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/village/crown_tiny",
+          "projection": "rigid"
+        },
+        "weight": 1
+      },
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/village/crown_nub",
+          "projection": "rigid"
+        },
         "weight": 1
       }
     ]

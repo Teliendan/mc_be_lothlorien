@@ -125,6 +125,7 @@ const lastDepth = new Map();
 
 function updateDepth() {
   for (const player of world.getPlayers()) {
+    if (!player.hasTag(DEBUG_TAG)) { lastDepth.delete(player.id); continue; } // this cache feeds only the debug HUD; gameplay samples depth at its actual spawn event
     const result = playerDepth(player);
     const prev = lastDepth.get(player.id);
     lastDepth.set(player.id, result);

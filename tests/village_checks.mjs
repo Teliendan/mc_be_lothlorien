@@ -88,18 +88,19 @@ test("addHiddenLights: lights every walk cell to the target with hidden blocks o
   assert.equal(l.length, 1);
   assert.ok(l[0].level < 15 && l[0].level >= 11, `lowered to ${l[0].level}`);
 });
-test("village pieces: every walk cell is >= 8 by hidden light alone (visible emitters removed), pieces with a deck carry hidden lights", () => {
+test("village pieces: real lamps plus hidden gap-fill keep every walk cell >= 8", () => {
   const dir = new URL("../lothlorien_bp/structures/lothlorien/village/", import.meta.url);
   let withLights = 0;
   for (const f of readdirSync(dir).filter((q) => q.endsWith(".mcstructure"))) {
     const p = parseMcstructure(readFileSync(new URL(f, dir)), f.replace(".mcstructure", ""));
-    const nameAt = (x, y, z) => { const n = p.at(x, y, z); return n === null ? undefined : EMITTERS[n] !== undefined ? "minecraft:air" : n; };
-    const r = worstLight(nameAt, { x0: 0, x1: p.size[0] - 1, y0: 0, y1: p.size[1] - 1, z0: 0, z1: p.size[2] - 1 });
+    const grid = new Map(p.blocks.map(b => [key(b.x, b.y, b.z), b]));
+    const nameAt = (x, y, z) => p.at(x, y, z) ?? undefined;
+    const r = worstLight(nameAt, { x0: 0, x1: p.size[0] - 1, y0: 0, y1: p.size[1] - 1, z0: 0, z1: p.size[2] - 1 }, (x,y,z) => grid.get(key(x,y,z))?.states);
     if (!r.cells) continue;
-    assert.ok(r.worst >= LIGHT_TARGET, `${p.name}: walk cell ${r.at} has hidden-only light ${r.worst}`);
+    assert.ok(r.worst >= LIGHT_TARGET, `${p.name}: walk cell ${r.at} has light ${r.worst}`);
     if (p.blocks.some((q) => isLightBlock(q.name))) withLights++;
   }
-  assert.ok(withLights >= 25, `${withLights} pieces carry hidden lights`);
+  assert.ok(withLights > 0, `${withLights} pieces still need hidden gap-fill`);
 });
 
 // ---- keep-clear cells and deco() -----------------------------------------------------------------------------------------------
@@ -359,7 +360,7 @@ test("shipped pieces (review 2026-10-15): no leaf drifts, every wall banner on a
         if (y >= 0 && gap < 3) assert.ok(/fence$|_log$|planks$|leaves$/.test(p.at(b.x, y + 1, b.z) ?? "") || b.y - y === 0, `${p.name}: lantern hangs ${gap} over the deck at ${b.x},${b.y},${b.z}`);
       }
     }
-    if (!/^(central|combo_tower)/.test(p.name)) assert.equal(p.blocks.filter((b) => /mallorn_stairs$/.test(b.name) && b.states["minecraft:vertical_half"] !== "top").length, 0, `${p.name}: no stair seats`);
+    if (!/^(central|combo_tower)/.test(p.name)) assert.equal(p.blocks.filter((b) => /mallorn_stairs$/.test(b.name) && b.states["minecraft:vertical_half"] !== "top" && ![[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dz]) => p.at(b.x + dx, b.y, b.z + dz) === "minecraft:water")).length, 0, `${p.name}: no stair seats (the walls of a stair basin are no seats)`);
   }
   assert.ok(standing >= 3 && cushions >= 30, `${standing} flags, ${cushions} cushions`);
 });
@@ -394,6 +395,55 @@ test("supportCheck (rev4): a standing banner needs its cell and the cell above f
       if (q.name === "minecraft:decorated_pot") assert.ok(!/fence$/.test(p.at(q.x, q.y - 1, q.z) ?? ""), `${p.name}: vase on a fence`);
     }
   }
+});
+
+test("waterCheck (stair basin): four mallorn stairs with their tall backs to the water hold a source; a stair turned the wrong way is caught", () => {
+  const stair = (facing, half = "bottom") => blk("lothlorien:mallorn_stairs", { "minecraft:cardinal_direction": facing, "minecraft:vertical_half": half });
+  const mk = (f) => { const b = flatDeck(3); b.set(key(0, 1, 0), water()); b.set(key(0, 1, -1), stair(f.n)); b.set(key(0, 1, 1), stair(f.s)); b.set(key(1, 1, 0), stair(f.e)); b.set(key(-1, 1, 0), stair(f.w)); return b; };
+  assert.deepEqual(waterCheck(mk({ n: "south", s: "north", e: "west", w: "east" })), [], "tall backs toward the water: a closed basin");
+  const bad = waterCheck(mk({ n: "north", s: "north", e: "west", w: "east" }));
+  assert.equal(bad.length, 1); assert.match(bad[0].detail, /steps toward the water/);
+  assert.equal(waterCheck(mk({ n: "south", s: "north", e: "west", w: "east" }).set(key(0, 1, -1), stair("south", "top"))).length, 1, "an upside-down stair is not a basin wall");
+});
+
+test("phase 3 dressing in the shipped pieces: lamp cords are green waxed copper chains (vertical, carrying a lantern or a crown lamp), stair basins hold their water with the tall backs inward, towers have a lookout bay, lookouts a seat roof", () => {
+  const dir = new URL("../lothlorien_bp/structures/lothlorien/village/", import.meta.url);
+  const CHAIN = "minecraft:waxed_oxidized_copper_chain";
+  let chains = 0, basins = 0, bays = 0;
+  for (const f of readdirSync(dir).filter((q) => q.endsWith(".mcstructure"))) {
+    const p = parseMcstructure(readFileSync(new URL(f, dir)), f.replace(".mcstructure", ""));
+    const ys = p.blocks.filter((q) => /planks$/.test(q.name)).map((q) => q.y), top = ys.length ? Math.max(...ys) : null;
+    for (const q of p.blocks) {
+      assert.ok(!/(^|:)(iron_)?chain$/.test(q.name), `${p.name}: iron chain at ${q.x},${q.y},${q.z} (the palette has no black iron: use the waxed oxidized copper chain)`);
+      if (q.name === CHAIN) {
+        chains++;
+        assert.equal(q.states.pillar_axis, "y", `${p.name}: chain is vertical`);
+        const up = p.at(q.x, q.y + 1, q.z) ?? "", dn = p.at(q.x, q.y - 1, q.z) ?? "";
+        assert.ok(/log|wood|leaves|planks|slab|stairs|chain/.test(up) && !/air$/.test(up), `${p.name}: chain at ${q.x},${q.y},${q.z} hangs from ${up}`);
+        assert.ok(/lantern|chain|elven/.test(dn) || /crown_/.test(p.name), `${p.name}: chain at ${q.x},${q.y},${q.z} carries ${dn}`);
+      }
+      if (q.name === "minecraft:water" && /^combo_/.test(p.name)) {
+        basins++;
+        for (const [dx, dz, want] of [[1, 0, "west"], [-1, 0, "east"], [0, 1, "north"], [0, -1, "south"]]) {
+          const n = p.blocks.find((b) => b.x === q.x + dx && b.y === q.y && b.z === q.z + dz);
+          assert.ok(n && /mallorn_stairs$/.test(n.name) && n.states["minecraft:cardinal_direction"] === want && n.states["minecraft:vertical_half"] === "bottom", `${p.name}: basin wall ${dx},${dz} is a stair with its tall back to the water`);
+        }
+        assert.match(p.at(q.x, q.y - 1, q.z) ?? "", /planks/, `${p.name}: the basin stands on a solid deck floor`);
+      }
+    }
+    if (/^combo_tower_/.test(p.name)) { // the upper deck: cushions and a slab roof (+3) in the bay
+      const cu = p.entities.filter((e) => /cushion/.test(e.id) && e.pos[1] > top - 0.5);
+      assert.ok(cu.length >= 2, `${p.name}: lookout bay cushions on the upper deck (${cu.length})`); bays++;
+      assert.ok(p.blocks.some((b) => /slab$/.test(b.name) && b.states["minecraft:vertical_half"] === "top" && b.y === top + 3), `${p.name}: the bay has its seat roof (top slabs at +3)`);
+    }
+    if (p.name === "lookout_01") {
+      assert.ok(p.blocks.some((b) => /slab$/.test(b.name) && b.states["minecraft:vertical_half"] === "top" && b.y === top + 3), "lookout: seat roof of top slabs at +3");
+      assert.ok(p.blocks.some((b) => /wall_banner/.test(b.name)) && p.blocks.some((b) => /firefly_jar/.test(b.name)) && p.entities.filter((e) => /cushion/.test(e.id)).length >= 2, "lookout: flag, jar, cushions");
+    }
+  }
+  assert.ok(chains >= 12, `lamp cords: ${chains} chain blocks in the pieces`);
+  assert.ok(basins >= 3, `stair basins: ${basins}`);
+  assert.equal(bays, 6, "every tower combo has its lookout bay");
 });
 
 if (failed) throw new Error(`${failed} village check test(s) failed`);

@@ -5,10 +5,11 @@
 // Tree-piece coordinates: trunk centre (0,0), y 0 = the first block above the nominal ground, roots down to -ROOTS.
 // The box is (2*hx+1) x (2*hz+1), so toMcstructure offset = [hx, ROOTS, hz].
 import { makeBuilder, makeRandom, DIRS8 } from "../lothlorien_bp/scripts/mallorn_tree.js";
-import { B, trimFarLeaves, roundFoot, bentBranch, bareBranchEnds } from "./flet_mallorn.mjs"; // the giant Mallorns' foot and bent branch (Phase 5, accepted in game)
+import { B, LEAF_KEEP, trimFarLeaves, roundFoot, bentBranch, bareBranchEnds } from "./flet_mallorn.mjs"; // the giant Mallorns' foot and bent branch (Phase 5, accepted in game)
 import { blockLight } from "../../../.claude/skills/bedrock-modding/scripts/structure_light.mjs"; // shared skill script (one implementation of the light model)
 import { keepClearCells } from "./village_checks.mjs";
-import { dressTree } from "./village_dress.mjs"; // deck dressing, art lamps and the home pavilion (M7 WP3)
+import { dressTree, lantern as dressLantern } from "./village_dress.mjs"; // deck dressing, art lamps and the home pavilion (M7 WP3)
+import { isPlanterPanel } from "../lothlorien_bp/scripts/planter_panels.js";
 
 export { bareBranchEnds }; // the generator check lives in flet_mallorn.mjs (the giants use it too)
 export const ROOTS = 18; // trunks and pillars reach this far below the nominal ground (levels up to +16 still reach the ground)
@@ -120,17 +121,19 @@ export function lightField(nameAt, b, stateAt = null) {
 export const HEART_PLANKS = "lothlorien:mallorn_heartwood_planks", HEART_SLAB = "lothlorien:mallorn_heartwood_slab";
 const isDeckBlock = (n) => n === B.planks || n === SLAB || n === HEART_PLANKS || n === HEART_SLAB; // the heartwood ring of the trunk is deck as well
 const NO_COLLIDE = /(^|:)(air|cave_air|void_air|structure_void)$|light_block|carpet|wall_banner|pale_hanging_moss|cave_vines|glow_lichen|spore_blossom|rope/;
-export function walkCells(nameAt, b) {
+export function walkCells(nameAt, b, stateAt = null) {
   const cells = [], free = (n) => n === undefined || NO_COLLIDE.test(n);
+  const get=(x,y,z)=>({name:nameAt(x,y,z),states:stateAt?.(x,y,z)});
+  const open=(x,y,z)=>free(nameAt(x,y,z)) || isPlanterPanel(get,x,y,z);
   for (let x = b.x0; x <= b.x1; x++) for (let y = b.y0; y < b.y1 - 1; y++) for (let z = b.z0; z <= b.z1; z++) {
     const n = nameAt(x, y, z);
     if (!isDeckBlock(n) && n !== "minecraft:jigsaw") continue;
-    if (free(nameAt(x, y + 1, z)) && free(nameAt(x, y + 2, z))) cells.push([x, y + 1, z]);
+    if (open(x,y+1,z) && open(x,y+2,z)) cells.push([x,y+1,z]);
   }
   return cells;
 }
 export function worstLight(nameAt, b, stateAt = null) {
-  const L = lightField(nameAt, b, stateAt), cells = walkCells(nameAt, b);
+  const L = lightField(nameAt, b, stateAt), cells = walkCells(nameAt, b, stateAt);
   let worst = 99, at = null;
   for (const c of cells) { const l = L.get(key(...c)) ?? 0; if (l < worst) { worst = l; at = c; } }
   return { worst, at, cells: cells.length };
@@ -139,13 +142,13 @@ export function worstLight(nameAt, b, stateAt = null) {
 // `light_block_15`; candidates are the cells at deck + 3 over walk cells and the air / void cells right under a deck edge (never in `avoid`, never
 // outside the box). When every walk cell is >= LIGHT_TARGET each placed light is lowered as far as the target still holds (a light that is not needed
 // any more is removed). Call it AFTER all dressing: visible lamps and every other emitter already count. -> [{ x, y, z, level }] of the lights kept.
-export function addHiddenLights(blocks, b, avoid = () => false, { target = LIGHT_TARGET, visible = false } = {}) {
-  // `visible` false (the default): the visible lamps are art and may be broken or taken, so they do not count: the hidden lights alone keep every walk cell >= target
+export function addHiddenLights(blocks, b, avoid = () => false, { target = LIGHT_TARGET, visible = true } = {}) {
+  // Count the real lamps; hidden light only fills gaps. `visible:false` remains available for isolated safety-light probes.
   const nameAt = (x, y, z) => blocks.get(key(x, y, z))?.name;
   const lightAt = (x, y, z) => { const n = nameAt(x, y, z); return !visible && n !== undefined && (EMITTERS[n] !== undefined || STATEFUL.test(n)) ? "minecraft:air" : n; }; // what the light model sees: visible emitters (lamps, jars, berries, candles) are art and do not count
   const stateAt = (x, y, z) => blocks.get(key(x, y, z))?.states;
   const ok = (x, y, z) => inBox(b, x, y, z) && !avoid(x, y, z);
-  const cells = walkCells(lightAt, b); // a cell with a lamp or a jar on it counts: the visible lamp may be taken away
+  const cells = walkCells(lightAt, b, stateAt); // include the center lanes beside moss-mounted skirts
   const cand = [], seenCand = new Set();
   const addCand = (x, y, z) => { const k = key(x, y, z); if (!seenCand.has(k) && ok(x, y, z)) { seenCand.add(k); cand.push([x, y, z]); } };
   for (const [x, y, z] of cells) if (nameAt(x, y + 2, z) === "minecraft:air") addCand(x, y + 2, z); // deck + 3
@@ -208,7 +211,7 @@ export function addHiddenLights(blocks, b, avoid = () => false, { target = LIGHT
 // a piece box (crown branches, root flares, pillars, trunk tops...): block light >= 1 by the same flood fill. Not spawnable: leaves, slabs, stairs, fences, glass, carpets, plants,
 // lamps, pots, cloth, light blocks, beds, cushions (the audit list of temp/village_style/spawn/spawn_audit.mjs).
 export const NO_SPAWN = /leaves|fence|slab|stairs|glass|carpet|lantern|rope|banner|pot|candle|trapdoor|jigsaw|light_block|air|void|water|chandelier|jar|cauldron|brewing|lectern|moss_carpet|flower|fern|elanor|niphredil|athelas|bush|cushion|bed|chest|vine|moss$|spore|sapling|lily|pickle|sign|ladder/;
-const clearAbove = (n) => n === null || n === undefined || /air|void|light_block/.test(n);
+const clearAbove = (n) => n === null || n === undefined || /(^|:)(air|cave_air|void_air|structure_void)$|light_block/.test(n); // (anchored: "stairs" contains "air")
 // -> [[x, y, z]] cells above the dark surfaces (y >= b.y0; the top two layers of the box are skipped: unknown above)
 export function darkSpawnCells(nameAt, stateAt, b, L = null) {
   const field = L ?? lightField(nameAt, b, stateAt), out = [];
@@ -266,7 +269,8 @@ export const SHAPES = {
   oval17: [8, 8, 8, 6, 6, 4, 4], // 17 x 13, ends 5 wide
   octagon21: [10, 10, 10, 10, 10, 10, 8, 8, 6, 6, 6], // 21 x 21 (the central Court before M7)
   octagon23: [11, 11, 11, 11, 11, 11, 9, 9, 7, 7, 7, 7], // central Court, 23 x 23: room for the stair ring, the walk ring, the basin, the reading circle and 7 elf posts
-  lookout9: [4, 4, 4, 2, 2], // 9 x 9
+  lookout9: [4, 4, 4, 2, 2], // 9 x 9 (before phase 3)
+  lookout11: [5, 5, 5, 5, 2, 2], // 11 x 11: a 11 x 7 band with 5-wide arms north and south: corner pockets for a seat bay and beds (phase 3). East / west are 7-long platform sides (sideAt), south is a 5-run exit
   // home wings (M7 WP3 revision): the nodes' own shapes grown so that a free face has 5 deck cells of depth beside the walk ring (a pavilion square, k >= 5)
   cutrect15: [7, 7, 7, 7, 4, 4], // 15 x 11 (node_a)
   cutrect13e: [7, 7, 7, 7, 3, 3], // 15 x 11, short ends (node_e)
@@ -426,7 +430,7 @@ export function buildTree({ levels, trunk = "plus", seed, pool, upPool, rope = f
   const crownCells = trunk === "round5" ? ROUND5 : SQUARE3;
   const pillars = central && two; // central tower: the trunk's four missing corner cells are filled between the Court and just under the Hall's crown (topY + 4) (the stair ring has no pit against them)
   for (let y = -ROOTS; y <= topY + CROWN_AT; y++) {
-    for (const [x, z] of y >= topY + 4 ? crownCells : tk.cells) b.addLog(x, y, z, "up");
+    for (const [x, z] of y === topY + CROWN_AT && !central ? [[0, 0]] : y >= topY + 4 ? crownCells : tk.cells) b.addLog(x, y, z, "up"); // (the top layer is only the crown jigsaw: the leaf cap below hugs it)
     if (pillars && y >= D && y <= topY + 4) for (const [x, z] of CORNERS5) b.addLog(x, y, z, "up");
   }
 
@@ -557,11 +561,22 @@ export function buildTree({ levels, trunk = "plus", seed, pool, upPool, rope = f
   // dressing (village_dress.mjs): heartwood ring, home pavilion, lamp posts, banners, rim and under-deck dressing; after the structure, before the hidden lights
   const trunkSet = new Set(tk.cells.map(([x, z]) => `${x},${z}`));
   const walkRing = (i) => (two ? (i === 0 ? rT + 2 : rT + 3) : rT + 1);
-  const levelsInfo = (two ? [D, D + LEVEL_H] : [D]).map((y, i) => ({ y, walkRing: walkRing(i), ring: walkRing(i) + 1 }));
+  const levelsInfo = (two ? [D, D + LEVEL_H] : [D]).map((y, i) => ({ y, walkRing: walkRing(i), ring: walkRing(i) + 1, bay: levels[i].bay ? (typeof levels[i].bay === "function" ? levels[i].bay : levels[i].add) : null }));
   const dressed = dress === false ? null : dressTree(blocks, keep, {
-    levels: levelsInfo, conns: keepOpts.connectors, trunkR: rT, trunk: (x, z) => trunkSet.has(`${x},${z}`), seed, central, pavilion: !central, box, cushions: ctx.cushions, ...dressOpts,
+    levels: levelsInfo, conns: keepOpts.connectors, trunkR: rT, trunk: (x, z) => trunkSet.has(`${x},${z}`), seed, central, pavilion: !central, box, topY: topY + CROWN_AT, cushions: ctx.cushions, ...dressOpts,
   });
   hooks.late?.({ ...ctx, dressed });
+  // the leaf cap (phase 3, no stub trees): the trunk top is a rounded cap of leaves round the jigsaw cell (layers +4 ring, +5 section and ring). With a crown placed on top it is the
+  // collar of the crown; where the crown jigsaw is refused (a neighbour's crown box is in the way, nothing fits) the tree still ends in a cap, at most deck + 5 high.
+  { const rC = central ? 2 : 1, capLeaf = { name: B.leaves, states: { "lothlorien:persistent": true } };
+    for (let x = -rC - 1; x <= rC + 1; x++) for (let z = -rC - 1; z <= rC + 1; z++) {
+      const d = Math.max(Math.abs(x), Math.abs(z)), corner = Math.abs(x) === rC + 1 && Math.abs(z) === rC + 1;
+      for (const y of [topY + 4, topY + 5]) {
+        if (blocks.has(key(x, y, z)) || corner) continue;
+        const trunkCell = crownCells.some(([a, c]) => a === x && c === z);
+        if (y === topY + 4 ? !trunkCell && d === rC + 1 : (trunkCell || d === rC + 1)) blocks.set(key(x, y, z), capLeaf);
+      }
+    } }
   // hidden lights (safety light, style guide section 5), after all dressing. Not in a stair column (no light block from the deck to the headroom over a
   // tread; the exit nook under cells 14, 15 may hold one at the deck) and not in the connector rows (the joint must stay plain air).
   const stairCol = new Map(two ? stairRing.map((c, i) => [c.join(","), [i < 14 ? D : D + LEVEL_H - 1, D + stairLayer(i) + 3]]) : []); // column -> (lo, hi]
@@ -571,6 +586,80 @@ export function buildTree({ levels, trunk = "plus", seed, pool, upPool, rope = f
   blocks.set(key(0, topY + CROWN_AT, 0), crownUpJigsaw(upPool));
   const connectors = deckObjs.flatMap((dk) => dk.connectors.map((c) => ({ ...c, y: dk.y })));
   return { blocks, connectors, box, topY, size: [2 * hx + 1, ROOTS + topY + CROWN_AT + 1, 2 * hz + 1], origin: [hx, ROOTS, hz], keep, keepOpts, lights, home: dressed?.home ?? null, dress: dressed, cushions: ctx.cushions };
+}
+
+// ---- crown stars (style guide 5, phase 3): the landmark at night -----------------------------------------------------------------------------------------
+// `lamps` lanterns (gold and silver) hang on 1-2 links of green copper chain under the leaf blobs, `fruit` froglights sit INSIDE the blobs (embedded in leaves
+// on at least five sides, so they read as glowing fruit and never as a bare cube), `spores` spore blossoms hang under the lowest leaves (central crowns).
+// Everything stays inside the box margin (|x|, |z| <= h - 1, y <= H - 2); a froglight that would orphan a leaf (decay) is put back as a leaf.
+export const CROWN_CHAIN = "minecraft:waxed_oxidized_copper_chain";
+function addCrownStars(blocks, { h, H, seed, central, lamps = 0, fruit = 0, spores = 0, gold = 0.5, loose = false }) {
+  const rnd = makeRandom((seed ^ 0x57a2) >>> 0), at = (x, y, z) => blocks.get(key(x, y, z))?.name, free = (x, y, z) => !blocks.has(key(x, y, z));
+  const inside = (x, y, z) => Math.abs(x) <= h - 1 && Math.abs(z) <= h - 1 && y >= 1 && y <= H - 2;
+  const leaves = [...blocks].filter(([, v]) => v.name === B.leaves).map(([k]) => k.split(",").map(Number));
+  const shuffled = (a) => { const r = a.slice(); for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; } return r; };
+  const placed = [], apart = (x, y, z, d) => placed.every((q) => Math.max(Math.abs(q[0] - x), Math.abs(q[2] - z), Math.abs(q[1] - y)) >= d);
+  const out = { lamps: 0, fruit: 0, spores: 0 };
+  // lamps: below a leaf whose column is free for the chain and the lantern, with air round the lantern
+  let want = lamps, goldLeft = Math.round(lamps * gold);
+  const outward = shuffled(leaves).map((l) => [Math.hypot(l[0], l[2]) + rnd() * h * 0.6, l]).sort((a, b) => b[0] - a[0]).map((e) => e[1]); // the lamps hang far out on the blobs, where they are seen
+  for (const [x, y, z] of outward) {
+    if (!want) break;
+    const len = 1 + Math.floor(rnd() * 2), ly = y - 1 - len;
+    if (![...Array(len + 1).keys()].every((i) => free(x, y - 1 - i, z) && inside(x, y - 1 - i, z)) || !apart(x, ly, z, central ? 5 : 4)) continue;
+    if (!loose && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dz]) => !free(x + dx, ly, z + dz))) continue;
+    for (let i = 0; i < len; i++) blocks.set(key(x, y - 1 - i, z), { name: CROWN_CHAIN, states: { pillar_axis: "y" } });
+    const isGold = goldLeft > 0 && (want <= goldLeft || rnd() < 0.5); if (isGold) goldLeft--;
+    blocks.set(key(x, ly, z), dressLantern(true, isGold)); placed.push([x, ly, z]); want--; out.lamps++;
+  }
+  // spore blossoms under the lowest leaves
+  if (spores) {
+    const low = Math.min(...leaves.map((l) => l[1]));
+    for (const [x, y, z] of shuffled(leaves.filter((l) => l[1] <= low + 2))) {
+      if (!spores) break;
+      if (free(x, y - 1, z) && inside(x, y - 1, z) && apart(x, y - 1, z, 4)) { blocks.set(key(x, y - 1, z), { name: "minecraft:spore_blossom", states: {} }); placed.push([x, y - 1, z]); spores--; out.spores++; }
+    }
+  }
+  // froglights inside the blobs
+  const solid = (x, y, z) => { const n = at(x, y, z); return n === B.leaves || n === B.log || n === B.wood; };
+  const N6 = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
+  const orphans = () => { // leaves with no log within LEAF_KEEP steps through leaves
+    const dist = new Set(), q = [];
+    for (const [k, v] of blocks) if (v.name === B.log || v.name === B.wood) { dist.add(k); q.push(k); }
+    let fr = q;
+    for (let d = 1; d <= LEAF_KEEP && fr.length; d++) { const nx = []; for (const k of fr) { const [x, y, z] = k.split(",").map(Number); for (const [dx, dy, dz] of N6) { const n = key(x + dx, y + dy, z + dz); if (!dist.has(n) && blocks.get(n)?.name === B.leaves) { dist.add(n); nx.push(n); } } } fr = nx; }
+    let bad = 0; for (const [k, v] of blocks) if (v.name === B.leaves && !dist.has(k)) bad++;
+    return bad;
+  };
+  const base = orphans();
+  for (const [x, y, z] of shuffled(leaves)) {
+    if (!fruit) break;
+    if (!inside(x, y, z) || !apart(x, y, z, 5)) continue;
+    const open = N6.filter(([dx, dy, dz]) => !solid(x + dx, y + dy, z + dz));
+    if (open.length > 1 || (open.length === 1 && open[0][1] === 1)) continue; // fully embedded, one open face at most and never the top one (no bare cube on top)
+    if (N6.some(([dx, dy, dz]) => at(x + dx, y + dy, z + dz) === CROWN_CHAIN)) continue;
+    const old = blocks.get(key(x, y, z));
+    blocks.set(key(x, y, z), { name: `minecraft:${out.fruit % 2 === 0 ? "verdant" : "pearlescent"}_froglight`, states: { pillar_axis: "y" } });
+    if (orphans() > base) { blocks.set(key(x, y, z), old); continue; }
+    placed.push([x, y, z]); fruit--; out.fruit++;
+  }
+  return out;
+}
+
+// The smallest crown (the last resort of the crown pools, box 5 x 8 x 5): a short tapering trunk, a rounded leaf cap and a gold lantern on one chain link.
+export function buildNubCrown() {
+  const blocks = new Map(), H = 8, h = 2;
+  for (const [x, z] of SQUARE3) blocks.set(key(x, 1, z), logBlock("up"));
+  for (const [x, z] of PLUS) blocks.set(key(x, 2, z), logBlock("up"));
+  for (const y of [3, 4]) blocks.set(key(0, y, 0), logBlock("up"));
+  const leaf = (x, y, z) => blocks.set(key(x, y, z), leafBlock());
+  for (const [x, z] of SQUARE3) if (x || z) leaf(x, 4, z); // the ring round the trunk top
+  for (const [x, z] of SQUARE3) leaf(x, 5, z);
+  for (const [x, z] of PLUS) leaf(x, 6, z);
+  blocks.set(key(1, 3, 1), { name: CROWN_CHAIN, states: { pillar_axis: "y" } }); blocks.set(key(1, 2, 1), dressLantern(true, true)); // hangs from the ring's corner leaf
+  for (const [x, z] of SQUARE3) blocks.set(key(x, 0, z), logBlock("up"));
+  blocks.set(key(0, 0, 0), crownDownJigsaw());
+  return { blocks, size: [2 * h + 1, H, 2 * h + 1], origin: [h, 0, h], overflow: false };
 }
 
 // ---- crown piece: trunk continues from the jigsaw upward, branches, leaves, all inside the box ------------------------
@@ -585,7 +674,7 @@ export function buildCrown(opts) {
   }
   throw new Error(`crown seed ${opts.seed}: does not fit with a margin`);
 }
-function buildCrownScaled({ h, H, seed, branches, blob, central = false, fit = false, scale = 1 }) {
+function buildCrownScaled({ h, H, seed, branches, blob, central = false, fit = false, scale = 1, stars = null }) {
   const random = makeRandom(seed), b = makeBuilder(random);
   // the trunk keeps the platform's section well up into the crown and tapers gradually, thin only in the top third:
   // village 3x3 -> plus (from 40 %) -> 1x1 (from 67 %); central round 5x5 -> 3x3 (30 %) -> plus (50 %) -> 1x1 (67 %)
@@ -620,6 +709,7 @@ function buildCrownScaled({ h, H, seed, branches, blob, central = false, fit = f
     if (Math.abs(x) > h || Math.abs(z) > h || y < 1 || y > H - 1) blocks.delete(k);
   }
   trimFarLeaves(blocks);
+  if (stars) addCrownStars(blocks, { h, H, seed, central, ...stars });
   for (const [x, z] of central ? ROUND5 : SQUARE3) blocks.set(key(x, 0, z), logBlock("up")); // the full trunk section starts at the jigsaw layer
   blocks.set(key(0, 0, 0), crownDownJigsaw());
   return { blocks, size: [2 * h + 1, H, 2 * h + 1], origin: [h, 0, h], overflow };

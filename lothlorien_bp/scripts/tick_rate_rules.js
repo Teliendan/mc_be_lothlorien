@@ -24,12 +24,13 @@ export function parseTpsArgs(text) {
 
 // Start of a window: real time (ms, Date.now()) and the game tick (system.currentTick).
 export function createTickClock(startMs, startTick, calls = 0) {
-  return { startMs, startTick, startCalls: calls, lastMs: startMs, longestMs: 0 };
+  return { startMs, startTick, startCalls: calls, lastMs: startMs, longestMs: 0, gaps: [] };
 }
 
 // One callback per game tick: remembers the longest real gap between two of them (one slow tick shows up here).
 export function addTick(clock, nowMs) {
   const gap = nowMs - clock.lastMs;
+  clock.gaps.push(gap);
   if (gap > clock.longestMs) clock.longestMs = gap;
   clock.lastMs = nowMs;
 }
@@ -43,6 +44,8 @@ export function summarizeTicks(clock, endMs, endTick, calls = 0) {
   const ticks = Math.max(0, endTick - clock.startTick);
   const seconds = ms / 1000;
   const tps = ticks / seconds;
+  const sorted = [...clock.gaps].sort((a,b) => a-b);
+  const percentile = q => sorted.length ? sorted[Math.ceil(sorted.length*q)-1] : 0;
   return {
     ticks,
     seconds,
@@ -50,6 +53,9 @@ export function summarizeTicks(clock, endMs, endTick, calls = 0) {
     percent: (tps / NORMAL_TPS) * 100,
     averageMs: ticks > 0 ? ms / ticks : ms,
     longestMs: clock.longestMs,
+    p95Ms: percentile(0.95),
+    p99Ms: percentile(0.99),
+    over100Ms: sorted.filter(ms => ms > 100).length,
     callsPerSecond: Math.max(0, calls - clock.startCalls) / seconds,
   };
 }

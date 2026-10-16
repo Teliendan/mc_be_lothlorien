@@ -1,6 +1,6 @@
 # Elven inhabitants: professions, Renown, trades, gifts (design)
 
-Status: **M0-M4 and M6 accepted; M5 final art selected and belt/phial/invisibility work; bow speed/zoom and broader engine checks pending** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
+Status: **M0-M4, M6 and M7 accepted; M5 final art selected and belt/phial/invisibility work; bow speed/zoom and broader engine checks pending** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
 Supersedes the profession stock lists and trade-state details in `lothlorien_elven_settlements_plan.md` ("Initial professions",
 "Harmony-aware trading", "Proposed reputation trade states") and the stock part of `harmony_rework_plan.md` section 5. The trade
 **architecture** of that section 5 (native trade screen, per-band tables pre-swapped by script, refusal in `beforeEvents.playerInteractWithEntity`) stays.
@@ -17,7 +17,7 @@ Looks: `docs/mobs/elves.md` (`tools/make_elves.py`, review sheets in `temp/elves
 | M4 | Healer heals elves and Friends (section 7) | complete, owner accepted 2026-10-11 (bc1da69); [regression checklist](../M4_HEALER_TEST.md) |
 | M5 | Final items (Galadriel's gifts) + Galadhrim arrows (sections 5, 6); then the bow template for `bedrock-items` | implemented; final art selected/accepted from previews 2026-10-12: bow C, arrow 3, phial D/P4, belt B4-v2 with icon, worn cloak C2-v2 with Golden Mallorn icon. Belt/phial/corrected invisibility owner-confirmed; 0.6s bow feel/zoom and broader engine checks pending; [checklist](../M5_GIFTS_TEST.md). Shared template in `.claude/skills/bedrock-items/templates/custom_archery/` |
 | M6 | Great Mallorn upgrade (section 9) | complete, owner accepted 2026-10-13 after bed/banner correction; final implementation `0630cdf`; owner's loot tuning retained; [record](../M6_WATCH_CAMPS_TEST.md) |
-| M7 | Homes + village look (section 10; `lothlorien_jigsaw_settlement.md` section 6) | showcase accepted in game 2026-10-16 (style guide `village_style.md`); phase 3 open |
+| M7 | Homes + village look (section 10; `lothlorien_jigsaw_settlement.md` section 6) | complete, owner accepted 2026-10-16: "I love it, villages done"; final commit **Finish accepted elven villages**, [record](../VILLAGE_POLISH_2026-10-16.md) |
 
 **Working agreement (owner, 2026-10-10).** Stop after each milestone for the owner's in-game test. Before a milestone starts, show the owner one batch
 of proposed values (table with reasons; all values in one tunable rules file); escalate design decisions as options with a recommendation. Commit per

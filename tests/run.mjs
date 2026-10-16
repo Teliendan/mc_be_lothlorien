@@ -20,6 +20,7 @@ import "./memorial.mjs";
 import { leafUndersideY } from "../lothlorien_bp/scripts/leaf_fall.js";
 import { BONEMEAL_TABLE, SPREAD_TRIES, COVERS, pickWeighted } from "../lothlorien_bp/scripts/flora_table.js";
 import { readFileSync } from "node:fs";
+import { isPlanterPanel,planterWalkName } from "../lothlorien_bp/scripts/planter_panels.js";
 import { MAX_GROWTH, growChance, bonemealSteps, advanceGrowth } from "../lothlorien_bp/scripts/crop_rules.js";
 import { estimateDepth, probeCount, ringOffsets, DEPTH_NAMES, DEPTH_RADII } from "../lothlorien_bp/scripts/depth.js";
 import * as H from "../lothlorien_bp/scripts/harmony.js";
@@ -41,6 +42,8 @@ await import("./miruvor.mjs");
 await import("./village_checks.mjs"); // village keep-clear / support / water checks, hidden lights, rotateStates
 await import("./village_central.mjs"); // the central tree: Court, stair, Hall, stream, basin, reading circle (WP2)
 await import("./home_furnish.mjs"); // home furnishing (WP4b): findHome, layouts per k, support, non-overwrite
+await import("./village_polish.mjs");
+await import("./planter_panels.mjs");
 
 const L = "lothlorien:lothlorien", RIVER = "minecraft:river", FOREST = "minecraft:forest";
 const T = new Set([RIVER]);
@@ -1572,8 +1575,8 @@ test("village: tree pieces carry an upward rollable crown jigsaw (log final stat
   const locs = (id) => pool(id).elements.map((e) => e.element.location.split("/").pop());
   assert.deepEqual(locs("crowns"), ["crown_large", "crown_medium"]);
   assert.equal(pool("crowns").fallback, "lothlorien:village/crowns_fallback");
-  assert.deepEqual(locs("crowns_fallback"), ["crown_large", "crown_medium", "crown_small"], "trees at max_depth only see the fallback: it offers the big crowns too");
-  assert.deepEqual(locs("crowns_small"), ["crown_small"]);
+  assert.deepEqual(locs("crowns_fallback"), ["crown_large", "crown_medium", "crown_small", "crown_tiny", "crown_nub"], "trees at max_depth only see the fallback: it offers the big crowns too, and the last resorts (small weights)");
+  assert.deepEqual(locs("crowns_small"), ["crown_small", "crown_tiny", "crown_nub"]);
   assert.equal(pool("crowns_central").fallback, "lothlorien:village/crowns_small");
   assert.ok(locs("crowns_central").length >= 2);
   assert.equal(pool("exits").elements.length, 3);
@@ -1691,7 +1694,7 @@ test("village exits: no free-floating balcony; the braced balcony and the lookou
   assert.ok(braces.length >= 8, `braces under the deck: ${braces.length}`);
   assert.ok(braces.every((b) => ["bottom", undefined].every(() => true)) && braces.some((b) => b.y === con.y - 1), "a brace ends right under the deck");
   const lookout = villagePieces().find((p) => p.name === "lookout_01");
-  assert.equal(lookout.at(4, 0, 4), MALLORN_LOG, "lookout pillar to the bottom of the box");
+  assert.equal(lookout.at(5, 0, 5), MALLORN_LOG, "lookout pillar to the bottom of the box (11 x 11 since phase 3)");
   const ex = villageData.pools.get("lothlorien:village/exits");
   assert.deepEqual(ex.elements.map((e) => e.element.location.split("/").pop()).sort(), ["balcony_braced", "lookout_01", "railing_end"]);
   assert.equal(ex.fallback, "lothlorien:village/plugs");
@@ -1824,8 +1827,9 @@ const woodNeighbours = (blocks, x, y, z, pillar) => { // wood cells among the 26
 test("root flare: findPillar finds the plus-shaped pillar 3 or 4 cells from a marker, and not a 3x3 trunk", () => {
   const w = pillarWorld();
   assert.deepEqual(RP.findPillar(w.at, w.marker), w.pillar);
-  assert.deepEqual(RP.findPillar(w.at, [5, 16, 9]), w.pillar, "4 cells away (lookout), another axis");
-  assert.equal(RP.findPillar(w.at, [5, 16, 12]), null);
+  assert.deepEqual(RP.findPillar(w.at, [5, 16, 9]), w.pillar, "4 cells away (the 9-wide lookout), another axis");
+  assert.deepEqual(RP.findPillar(w.at, [5, 16, 10]), w.pillar, "5 cells away (the 11-wide lookout)");
+  assert.equal(RP.findPillar(w.at, [5, 16, 13]), null);
   const trunk = pillarWorld({ extra: Object.fromEntries([[6, 6], [4, 4], [6, 4], [4, 6]].map(([x, z]) => [`${x},15,${z}`, PILLAR_LOG])) });
   assert.equal(RP.findPillar(trunk.at, trunk.marker), null, "diagonal logs = a trunk, not a pillar");
 });
@@ -1933,6 +1937,7 @@ function railPosts(piece) {
   }
   const roofSlab = (b) => roofKeys.has(`${b.x},${b.y},${b.z}`); // a top-slab roof on posts is no floor
   const blocks = piece.blocks.map((b) => {
+    if (isPlanterPanel((x,y,z)=>byKey.get(`${x},${y},${z}`),b.x,b.y,b.z,b)) return {...b,name:"minecraft:air",states:{}}; // thin moss skirts leave the cell-center walk lane open
     if (roofSlab(b)) return { ...b, name: "lothlorien:mallorn_log" };
     if (!isPost(b.x, b.y, b.z)) return b;
     const states = {};
@@ -1940,7 +1945,7 @@ function railPosts(piece) {
     return { ...b, name: FENCE, states, post: true };
   });
   const roofAt = new Set(piece.blocks.filter(roofSlab).map((b) => `${b.x},${b.y},${b.z}`));
-  return { ...piece, blocks, at: (x, y, z) => (isPost(x, y, z) ? FENCE : roofAt.has(`${x},${y},${z}`) ? "lothlorien:mallorn_log" : piece.at(x, y, z)) };
+  return { ...piece, blocks, at: (x, y, z) => (isPlanterPanel((a,b,c)=>byKey.get(`${a},${b},${c}`),x,y,z) ? "minecraft:air" : isPost(x, y, z) ? FENCE : roofAt.has(`${x},${y},${z}`) ? "lothlorien:mallorn_log" : piece.at(x, y, z)) };
 }
 test("village: fence links are symmetric and consistent in every piece (the stored state matches the neighbouring fence)", () => {
   const OPP = { north: "south", south: "north", east: "west", west: "east" };
@@ -1958,7 +1963,7 @@ test("village: fence links are symmetric and consistent in every piece (the stor
         if (b.post || nb?.post) continue; // a log post in a rail cell: the engine links fences to it by itself
         const tag = `${piece.name} fence ${b.x},${b.y},${b.z} ${side}`;
         if (!inBox) continue; // a link out of the box is the connector standard's forced link, checked in the connector test
-        assert.equal(stored, nb?.name === FENCE, `${tag}: stored ${stored}, neighbour ${nb?.name}`);
+        assert.equal(stored, MEND.isLinkTarget(nb?.name), `${tag}: stored ${stored}, neighbour ${nb?.name}`);
         if (nb?.name === FENCE) assert.equal(!!nb.states[`minecraft:connection_${OPP[side]}`], stored, `${tag}: one-way link`);
       }
     }
@@ -2164,7 +2169,8 @@ const towerWalk = (mutate) => {
   if (mutate) mutate(t.blocks);
   const trunk = []; for (let x = -1; x <= 1; x++) for (let z = -1; z <= 1; z++) trunk.push([x, z]);
   const box = { x0: -t.box.hx, x1: t.box.hx, y0: -V_ROOTS, y1: t.topY + 5, z0: -t.box.hz, z1: t.box.hz };
-  return checkWalk((x, y, z) => t.blocks.get(`${x},${y},${z}`), box, { ring: [{ trunk, level: V_FLOOR + 1 }, { trunk, level: V_FLOOR + V_LEVEL + 1 }], must: t.connectors.map((c) => ({ x: c.x, y: c.y + 1, z: c.z })) });
+  const raw=(x,y,z)=>t.blocks.get(`${x},${y},${z}`);
+  return checkWalk((x,y,z)=>isPlanterPanel(raw,x,y,z)?undefined:raw(x,y,z), box, { ring: [{ trunk, level: V_FLOOR + 1 }, { trunk, level: V_FLOOR + V_LEVEL + 1 }], must: t.connectors.map((c) => ({ x: c.x, y: c.y + 1, z: c.z })) });
 };
 const rulesOf = (r) => [...new Set(r.violations.map((v) => v.rule))].sort();
 test("village walkability fixtures: the owner's four stair problems are caught (low slab over the head, ring blocked, leaves in the way, rail without step link)", () => {
@@ -2249,7 +2255,8 @@ test("village: block light - every walkable cell of every piece is lit to >= 8 b
   const worst = {};
   for (const p of villagePieces()) {
     const nameAt = (x, y, z) => { const n = p.at(x, y, z); return n === null ? undefined : n; };
-    const r = worstLight(nameAt, { x0: 0, x1: p.size[0] - 1, y0: 0, y1: p.size[1] - 1, z0: 0, z1: p.size[2] - 1 });
+    const grid = new Map(p.blocks.map(b => [`${b.x},${b.y},${b.z}`, b]));
+    const r = worstLight(nameAt, { x0: 0, x1: p.size[0] - 1, y0: 0, y1: p.size[1] - 1, z0: 0, z1: p.size[2] - 1 }, (x,y,z) => grid.get(`${x},${y},${z}`)?.states);
     if (!r.cells) continue;
     assert.ok(r.worst >= LIGHT_TARGET, `${p.name}: walk cell ${r.at} has block light ${r.worst}`);
     const type = p.name.replace(/_(dog_)?\d+.*$/, "").replace(/_[a-z]$/, "");
@@ -2370,14 +2377,14 @@ test("loop planner: every tree / platform piece carries a loop marker (the first
   }
   const seen = {}, exits = {}, sides = [];
   for (const r of villages()) { // in every rotation each marker sits on the centre fence of a placed piece, and the exit signature faces away from the platform
-    const states = new Map(), world = buildWorld(r.res, states), at = (x, y, z) => world.get(wkey(x, y, z)) ?? "minecraft:air";
+    const states = new Map(), world = buildWorld(r.res, states), at = planterWalkName((x,y,z)=>({name:world.get(wkey(x,y,z))??"minecraft:air",states:states.get(wkey(x,y,z))}));
     for (const p of r.res.placed.filter((q) => MARKED[q.name] || /^(central|combo_)/.test(q.name))) {
       for (const [x, y, z] of markerCells(p)) {
         assert.equal(at(x, y + 1, z), FENCE, `seed ${r.seed}: ${p.name} marker on the centre fence`);
         assert.equal(at(x, y, z), PLANKS);
         // balcony far rim and the lookout's three free sides are exits in the sense of exitAt (a neighbouring piece may merge the rim into a longer run)
         seen[p.name] = (seen[p.name] ?? 0) + 1;
-        if (LOOP.exitAt(at, x, y, z)) exits[p.name] = (exits[p.name] ?? 0) + 1;
+        if (LOOP.exitAt(at, x, y, z) || (p.name === "lookout_01" && LEG.sideAt(at, x, y, z))) exits[p.name] = (exits[p.name] ?? 0) + 1; // (the 11 x 11 lookout's east / west ends are 7-long platform sides: sideAt recognises them)
         else if (!MARKED[p.name]) sides.push(!!LEG.sideAt(at, x, y, z));
       }
     }

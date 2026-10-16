@@ -18,11 +18,14 @@ import { makeCombo, buildBalcony, STRAIGHT } from "./village_combo.mjs";
 import { sideTarget } from "../lothlorien_bp/scripts/village_loop.js"; // the runtime's own rim test decides where a side marker may stand
 import { POST_ID, POST_GROUP_PREFIX, POST_SPACING, ROPE_CLEARANCE, RESERVE_POSTS, homeSite } from "../lothlorien_bp/scripts/elf_rules.js"; // civilian elf posts (tunables live there)
 import {
-  ROOTS, FLOOR_H, LEVEL_H, FACING, SHAPES, key, AIR, planks, slab, Deck, buildTree, buildCrown, deckJigsaw, lonelyRail,
+  ROOTS, FLOOR_H, LEVEL_H, FACING, SHAPES, key, AIR, planks, slab, Deck, buildTree, buildCrown, buildNubCrown, deckJigsaw, lonelyRail,
   writeRails, RAIL, shapeCells, addHiddenLights, addSpawnLights, isLightBlock, bareBranchEnds, worstLight, LIGHT_TARGET, HEART_PLANKS,
 } from "./village_mallorn.mjs";
 import { frameCell, frameInterior, frameDoorLane, framePost, dressBalcony, dressLookout } from "./village_dress.mjs"; // deck dressing and the home pavilion frame (M7 WP3)
 import { keepClearCells, keepClearViolations, supportCheck, waterCheck } from "./village_checks.mjs";
+import { groundWoodPosts } from "./village_polish.mjs";
+import { relinkFences } from "./village_dress.mjs";
+import { isPlanterPanel } from "../lothlorien_bp/scripts/planter_panels.js";
 import { COURT_ROWS, COURT_CONN, HALL_ROWS, HALL_BAY, heartwoodRings, buildHall, buildStream, buildCourt } from "./village_central.mjs"; // the central tree: Court, Hall, stream, reading circle (M7 WP2) // keep-clear cells, nothing floats, water stays in its vessel (style guide rule 8)
 
 export const MAX_DEPTH = 2; // hops from the central tree (a combo = one hop; its crown is a sibling, not a deeper level)
@@ -42,7 +45,7 @@ const bp = join(dirname(fileURLToPath(import.meta.url)), "..", "lothlorien_bp");
 // at the real ground by the planner (scripts/village_repair.js). Preview (nothing shipped is touched): PILLAR_PREVIEW=<dir> writes the pieces, pools and
 // structure under <dir> instead of the pack; PILLARS=bare|light|full forces one amount for both pillars; CROWN_FIT=0 builds the old, clipped crowns.
 const PREVIEW = process.env.PILLAR_PREVIEW ? process.env.PILLAR_PREVIEW : null;
-const AMOUNTS = { bare: 0, light: 0.7, full: 1.4 };
+const AMOUNTS = { bare: 0, light: 1.1, full: 1.8 }; // (phase 3, owner: the balcony / lookout pillars "more alive": 3 and 5 bent branches with leaf blobs)
 const pillarAmount = (dflt) => (process.env.PILLARS ? AMOUNTS[process.env.PILLARS] ?? dflt : dflt);
 const bpOut = PREVIEW ? join(PREVIEW, "bp") : bp;
 const out = join(bpOut, "structures", "lothlorien", "village");
@@ -74,7 +77,8 @@ export function walkReport(blocks, { connectors = [], ring = [], must: extraMust
       if (post && !solid) for (const k of grp) roofSlabs.add(k);
     } }
   const get = (x, y, z) => { const b = blocks.get(key(x, y, z)); if (b?.name === "lothlorien:mallorn_slab" && b.states?.["minecraft:vertical_half"] === "top" && roofSlabs.has(key(x, y, z))) return ROOF; return b?.name === "lothlorien:mallorn_stripped_log" && /planks$|slab$/.test(blocks.get(key(x, y - 1, z))?.name ?? "") ? FENCE_AS : b; };
-  const r = checkWalk(get, box, { must, ring });
+  const walkGet=(x,y,z)=>isPlanterPanel((a,b,c)=>blocks.get(key(a,b,c)),x,y,z) ? AIR : get(x,y,z);
+  const r = checkWalk(walkGet, box, { must, ring });
   return r.violations;
 }
 export function assertWalk(name, blocks, opts) {
@@ -248,6 +252,9 @@ export function sideMarkerCells(blocks, origin, inRegion = () => true, onlyY = n
 const spawnLights = new Map(); // piece -> number of spawn-proof hidden lights
 const cushionTally = new Map(); // piece -> number of native cushions
 function writePiece(name, blocks, size, origin, connectors, extra = {}) {
+  groundWoodPosts(blocks); // also covers bridge beams and later pillar decoration
+  relinkFences(blocks);
+  for (const [k, b] of blocks) if (b.name === B.leaves) blocks.set(k, { ...b, states: { ...b.states, "lothlorien:persistent": true } }); // decorative village foliage never needs decay BFS
   checkConnectors(name, blocks, connectors);
   const bare = bareBranchEnds(blocks);
   if (bare.length) throw new Error(`${name}: bare branch end at ${bare.map((q) => `${q.x},${q.y},${q.z}`).join(" ")}`);
@@ -314,11 +321,11 @@ const NODES = {
   node_f: treeSpec({ trunk: "square3", levels: [{ rows: SHAPES.cutrect17h, conn: [C("west", 1), C("east", -1), C("south", 1)] }], seed: 66066 }),
   // two levels: lower deck, upper deck +8, slab spiral stair in the ring round a 3x3 trunk
   tower_a: treeSpec({ trunk: "square3", seed: 77077, levels: [
-    { rows: SHAPES.octagon17, conn: [C("south", -1), C("west", 1)] }, { rows: SHAPES.octagon17, conn: [C("north", 1, true), C("east", -1, true)], clip: (x, z) => z >= 6 }] }), // upper deck stops at z 5: rows to z 4 keep the walk ring round the stair opening (was plus15 clipped at z 4)
+    { rows: SHAPES.octagon17, conn: [C("south", -1), C("west", 1)] }, { rows: SHAPES.octagon17, conn: [C("north", 1, true), C("east", -1, true)], clip: (x, z) => z >= 6, add: (x, z) => x <= -6 && z <= -4, bay: true }] }), // upper deck stops at z 5: rows to z 4 keep the walk ring round the stair opening (was plus15 clipped at z 4)
   tower_b: treeSpec({ trunk: "square3", seed: 88088, levels: [
-    { rows: SHAPES.plus17w, conn: [C("east", 1), C("north", -1), C("south", 0)] }, { rows: SHAPES.octagon17w, conn: [C("south", 1, true), C("west", -1, true)] }] }),
+    { rows: SHAPES.plus17w, conn: [C("east", 1), C("north", -1), C("south", 0)] }, { rows: SHAPES.octagon17w, conn: [C("south", 1, true), C("west", -1, true)], add: (x, z) => x >= 4 && z <= -4, bay: true }] }),
   tower_c: treeSpec({ trunk: "square3", seed: 99099, levels: [
-    { rows: SHAPES.oval17, conn: [C("north", 2), C("south", -2)] }, { rows: SHAPES.cutrect17.concat([6]), conn: [C("east", 1, true), C("west", -1, true)] }] }),
+    { rows: SHAPES.oval17, conn: [C("north", 2), C("south", -2)] }, { rows: SHAPES.cutrect17.concat([6]), conn: [C("east", 1, true), C("west", -1, true)], add: (x, z) => x <= -7 && z <= -4, bay: (x, z) => x <= -5 && z <= -4 }] }),
 };
 // central tree (village_central.mjs): the Court (lower deck, 4 rim connectors, Elven rope from the ground, start anchor), the round 5x5 trunk with a slab spiral
 // stair round it, the Hall (upper deck +8: open pavilion, dome, chandelier, lookout bay), the stream and the reading circle; crown jigsaw above the Hall
@@ -387,7 +394,7 @@ const comboList = [];
 // Crown fit (owner 2026-10-10: the crowns were clipped flat at the box faces): crowns are rebuilt smaller until nothing lies in the outermost cell layer of the box (sides and top), asserted here for every crown piece
 const CROWN_FIT = process.env.CROWN_FIT !== "0";
 const crown = (name, o) => {
-  const c = buildCrown({ ...o, fit: CROWN_FIT });
+  const c = o.nub ? buildNubCrown() : buildCrown({ ...o, fit: CROWN_FIT });
   if (CROWN_FIT) {
     const [sx, sy, sz] = c.size;
     for (const k of c.blocks.keys()) {
@@ -397,11 +404,15 @@ const crown = (name, o) => {
   }
   writePiece(name, c.blocks, c.size, c.origin, []);
 };
-crown("crown_small", { h: 7, H: 16, seed: 4004, branches: 8, blob: 2.1 });
-crown("crown_medium", { h: 8, H: 20, seed: 6006, branches: 9, blob: 2.6 });
-crown("crown_large", { h: 10, H: 24, seed: 8008, branches: 11, blob: 2.9 });
-crown("crown_central_a", { h: 16, H: 34, seed: 12012, branches: 14, blob: 3.6, central: true });
-crown("crown_central_b", { h: 13, H: 30, seed: 10010, branches: 12, blob: 3.3, central: true });
+// Crown stars (style guide 5, phase 3): lanterns on copper chains under the blobs, froglights inside them, spore blossoms under the lowest boughs of the central crowns
+crown("crown_small", { h: 7, H: 16, seed: 4004, branches: 8, blob: 2.1, stars: { lamps: 2, fruit: 1 } });
+crown("crown_medium", { h: 8, H: 20, seed: 6006, branches: 9, blob: 2.6, stars: { lamps: 3, fruit: 2 } });
+crown("crown_large", { h: 10, H: 24, seed: 8008, branches: 11, blob: 2.9, stars: { lamps: 4, fruit: 3 } });
+crown("crown_central_a", { h: 16, H: 34, seed: 12012, branches: 14, blob: 3.6, central: true, stars: { lamps: 10, fruit: 3, spores: 2, gold: 0.6 } });
+crown("crown_central_b", { h: 13, H: 30, seed: 10010, branches: 12, blob: 3.3, central: true, stars: { lamps: 8, fruit: 3, spores: 2, gold: 0.6 } });
+// Last resorts (no stub trees): a tree whose crown box is refused everywhere else still ends in a small leaf cap with a lantern (box 7 x 8 x 7, then 5 x 8 x 5)
+crown("crown_tiny", { h: 3, H: 8, seed: 3003, branches: 0, blob: 1, stars: { lamps: 1, fruit: 0, loose: true } });
+crown("crown_nub", { nub: true });
 
 // --- ends ---------------------------------------------------------------------------------------------------------------
 // balcony_braced: half-round rim balcony on a log pillar to the ground, braced under the deck; one connector, 7 x 7
@@ -410,21 +421,21 @@ crown("crown_central_b", { h: 13, H: 30, seed: 10010, branches: 12, blob: 3.3, c
   if (pillarAmount(AMOUNTS.light)) decoratePillar(b.blocks, { x0: -b.origin[0], x1: b.size[0] - 1 - b.origin[0], y0: -b.origin[1], y1: b.size[1] - 1 - b.origin[1], z0: -b.origin[2], z1: b.size[2] - 1 - b.origin[2] }, { amount: pillarAmount(AMOUNTS.light), seed: 4141 });
   writePiece("balcony_braced", b.blocks, b.size, b.origin, b.connectors, { loopMarkers: [[b.origin[0] + 0.5, b.size[2] - 0.5]], keep: b.keep, cushions: b.cushions }); // centre of the far rim row
 }
-// lookout_01: square-ish platform on a log pillar down to ROOTS, one connector
+// lookout_01: 11 x 11 platform (a 11 x 7 band, arms north / south) on a log pillar down to ROOTS, one connector (phase 3: room for a seat bay and beds)
 {
   const blocks = new Map();
   for (let y = -ROOTS; y < FLOOR_H; y++) for (const [x, z] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) blocks.set(key(x, y, z), { name: B.log, states: { "minecraft:block_face": "up" } });
-  const deck = new Deck(blocks, FLOOR_H, SHAPES.lookout9, { box: { hx: 4, hz: 4 } });
+  const deck = new Deck(blocks, FLOOR_H, SHAPES.lookout11, { box: { hx: 5, hz: 5 } });
   deck.connect("north", 0, "minecraft:empty");
   const { rails, forced } = deck.build();
   writeRails(blocks, rails, forced);
   const lookoutConnectors = deck.connectors.map((c) => ({ ...c, y: FLOOR_H }));
   const lookoutKeep = keepClearCells(blocks, { connectors: lookoutConnectors, deckY: FLOOR_H, depth: 4 }) // a pillar, no trunk on the deck: only the connector corridor;
-  const lookoutDress = dressLookout(blocks, lookoutKeep, FLOOR_H, 5252); // flag pole, lamp posts, leaf screen, jar, moss under the deck (village_dress.mjs)
-  addHiddenLights(blocks, { x0: -4, x1: 4, y0: -ROOTS, y1: FLOOR_H + 3, z0: -4, z1: 4 }, (x, y, z) => z === -4);
+  const lookoutDress = dressLookout(blocks, lookoutKeep, FLOOR_H, 5252); // seat bay, beds, flag, lamp posts, moss under the deck (village_dress.mjs)
+  addHiddenLights(blocks, { x0: -5, x1: 5, y0: -ROOTS, y1: FLOOR_H + 3, z0: -5, z1: 5 }, (x, y, z) => z === -5);
   // the three free sides (south, east, west) are 5-wide rim rows: loop markers on their centres
-  if (pillarAmount(AMOUNTS.full)) decoratePillar(blocks, { x0: -4, x1: 4, y0: -ROOTS, y1: FLOOR_H + 3, z0: -4, z1: 4 }, { amount: pillarAmount(AMOUNTS.full), seed: 5252 });
-  writePiece("lookout_01", blocks, [9, ROOTS + FLOOR_H + 4, 9], [4, ROOTS, 4], lookoutConnectors, { loopMarkers: [[4.5, 8.5], [8.5, 4.5], [0.5, 4.5]], keep: lookoutKeep, cushions: lookoutDress.cushions });
+  if (pillarAmount(AMOUNTS.full)) decoratePillar(blocks, { x0: -5, x1: 5, y0: -ROOTS, y1: FLOOR_H + 3, z0: -5, z1: 5 }, { amount: pillarAmount(AMOUNTS.full), seed: 5252 });
+  writePiece("lookout_01", blocks, [11, ROOTS + FLOOR_H + 4, 11], [5, ROOTS, 5], lookoutConnectors, { loopMarkers: [[5.5, 10.5], [10.5, 5.5], [0.5, 5.5]], keep: lookoutKeep, cushions: lookoutDress.cushions });
 }
 // railing_end (plug): deck row of 5 + 5 rails; connector at the middle deck cell facing the parent
 {
@@ -459,8 +470,8 @@ pool("exits", [["railing_end", EXIT_WEIGHTS.railing], ["balcony_braced", EXIT_WE
 pool("plugs", [["railing_end", 1]]);
 // trees placed at max_depth only get the fallback pool (Java rule), so the fallback offers the big crowns too; small is the last resort
 pool("crowns", [["crown_large", 3], ["crown_medium", 2]], POOL("crowns_fallback"));
-pool("crowns_fallback", [["crown_large", 12], ["crown_medium", 8], ["crown_small", 1]]);
-pool("crowns_small", [["crown_small", 1]]);
+pool("crowns_fallback", [["crown_large", 48], ["crown_medium", 32], ["crown_small", 4], ["crown_tiny", 1], ["crown_nub", 1]]); // (one fallback level only: the last resorts live here, with small weights)
+pool("crowns_small", [["crown_small", 24], ["crown_tiny", 1], ["crown_nub", 1]]);
 pool("crowns_central", [["crown_central_a", 2], ["crown_central_b", 1]], POOL("crowns_small"));
 for (const f of readdirSync(join(bpOut, "worldgen", "template_pools"))) if (f.startsWith("village_") && !poolFiles.has(f)) unlinkSync(join(bpOut, "worldgen", "template_pools", f));
 

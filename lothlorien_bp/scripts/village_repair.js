@@ -17,6 +17,7 @@
 // pick a theme each, so the floor reads as patches and drifts, not confetti; flowers lie near the trunk feet, litter and ferns farther out; the central tree
 // (the one nearest the rope) gets the widest and densest disc. Pure and deterministic (hash of cell and village seed). Not verified in game.
 import { hullOf, growRect, drive } from "./village_planner.js";
+import { FENCE_IDS, LINKS, POST_IDS } from "./rail_mender_rules.js";
 
 export const ROPE_ID = "lothlorien:elven_rope_hanging";
 export const REPAIR = { maxHang: 24, minAbove: 2, scanChunk: 512, flareScan: 48, flareStep: 1, PILLAR_LEAF_CLEAR: 4 };
@@ -82,10 +83,10 @@ export function planRopeFit(at, top) {
 const isLog = (n) => LOGS.has(n);
 const freeForRoot = (n) => isAir(n) || SOFT.test(n ?? "");
 // The pillar a loop marker belongs to: a plus of mallorn logs (centre + 4 arms, no diagonals: the village trunks are 3x3 or round) just under the deck,
-// 3 (balcony) or 4 (lookout) cells from the marker along an axis. m = [x, y, z] deck cell. -> { x, z, y } (y = the deck cell) or null.
+// 3 (balcony), 4 or 5 (lookout, 9 / 11 wide) cells from the marker along an axis. m = [x, y, z] deck cell. -> { x, z, y } (y = the deck cell) or null.
 export function findPillar(at, m) {
   const [mx, my, mz] = m, y = my - 1;
-  for (const dist of [3, 4]) for (const [dx, dz] of OFFSETS) {
+  for (const dist of [3, 4, 5]) for (const [dx, dz] of OFFSETS) {
     const x = mx + dx * dist, z = mz + dz * dist;
     if (!isLog(at(x, y, z)) || !OFFSETS.every(([a, b]) => isLog(at(x + a, y, z + b)))) continue;
     if ([[1, 1], [1, -1], [-1, 1], [-1, -1]].some(([a, b]) => isLog(at(x + a, y, z + b)))) continue;
@@ -377,9 +378,41 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
 export const planForestFloor = (at, rect, trunks, ropeFoot, seed, o) => drive(planForestFloorGen(at, rect, trunks, ropeFoot, seed, o));
 
 // All repairs of a village (the planner calls this after the links): -> [{ kind: "rope", x, z, buried, hung, cells: [], rails: [], lanterns: [], blocks }]
+// Jigsaw may leave an exit unfilled when every child box collides, including above a bridge.
+// Close only unused flat three-wide mouths: rail shoulders, a walkable deck behind,
+// and no onward surface (check the lower layer too, so an arch or stair remains open).
+export function* closeUnusedExitsGen(at, rect, levels) {
+  const out = [], plank = n => /^lothlorien:mallorn_(heartwood_)?planks$/.test(n ?? "");
+  const surface = n => plank(n) || /^lothlorien:mallorn_(heartwood_)?(slab|stairs)$/.test(n ?? "");
+  const air = n => AIRS.has(n) || /^minecraft:light_block_\d+$/.test(n ?? "");
+  const shoulder = n => FENCE_IDS.includes(n) || POST_IDS.includes(n);
+  for (const y of new Set(levels)) for (let x = rect.x0 + 2; x <= rect.x1 - 2; x++) {
+    yield;
+    for (let z = rect.z0 + 2; z <= rect.z1 - 2; z++) {
+      if (!plank(at(x,y,z)) || !air(at(x,y+1,z))) continue;
+      for (const [dx,dz] of OFFSETS) {
+        const px = -dz, pz = dx;
+        if (![-2,2].every(s => shoulder(at(x+px*s,y+1,z+pz*s)))) continue;
+        if (![-1,0,1].every(s => {
+          const a=x+px*s,b=z+pz*s;
+          return plank(at(a,y,b)) && air(at(a,y+1,b)) && air(at(a,y+2,b))
+            && plank(at(a-dx,y,b-dz)) && air(at(a-dx,y+1,b-dz))
+            && at(a+dx,y,b+dz) !== undefined && !surface(at(a+dx,y,b+dz)) && !surface(at(a+dx,y-1,b+dz));
+        })) continue;
+        const rails = [-1,0,1].map(s => ({x:x+px*s,y:y+1,z:z+pz*s}));
+        const states = Object.fromEntries(LINKS.map(l => [l.state, l.dx * px + l.dz * pz !== 0]));
+        const plan = {kind:"railcap",x,y,z,cells:[],rails,lanterns:[],blocks:rails.map(p => ({...p,id:FENCE_IDS[0],states}))};
+        out.push(plan); at.apply(plan); break;
+      }
+    }
+  }
+  return out;
+}
+
 export function* repairGen(at, markers, o = {}) {
   if (o.repairs === false || !markers.length) return [];
   const rect = o.rect ?? growRect(hullOf(markers), 24), y = Math.min(...markers.map((m) => m[1])), out = [];
+  out.push(...yield* closeUnusedExitsGen(at, rect, markers.map(m => m[1])));
   const ropes = yield* findRopesGen(at, rect, y);
   const columns = ropes.filter((r) => at(r.x, r.y + 1, r.z) !== ROPE_ID); // the top piece of each column only (no rope above it)
   const feet = columns.map((r) => ({ x: r.x, z: r.z }));
@@ -433,4 +466,4 @@ export function* repairGen(at, markers, o = {}) {
   return out;
 }
 
-export const describeRepair = (p) => p.kind === "floor" ? `forest floor: ${p.blocks.length} blocks round ${p.trunks} trunks (${Object.entries(p.counts).map(([k, v]) => `${k.replace(/^.*:/, "")} ${v}`).join(", ")})` : p.kind === "pillarclear" ? `pillar at ${p.x},${p.z}: ${p.leaves} leaves, ${p.twigs} twigs cleared at the foot` : p.kind === "flare" ? `pillar at ${p.x},${p.z}: ${p.roots} roots (${p.blocks.length} logs)` : `rope at ${p.x},${p.z}: -${p.buried} buried, +${p.hung} hung`;
+export const describeRepair = (p) => p.kind === "railcap" ? `unused exit at ${p.x},${p.z}: ${p.rails.length} missing rails closed` : p.kind === "floor" ? `forest floor: ${p.blocks.length} blocks round ${p.trunks} trunks (${Object.entries(p.counts).map(([k, v]) => `${k.replace(/^.*:/, "")} ${v}`).join(", ")})` : p.kind === "pillarclear" ? `pillar at ${p.x},${p.z}: ${p.leaves} leaves, ${p.twigs} twigs cleared at the foot` : p.kind === "flare" ? `pillar at ${p.x},${p.z}: ${p.roots} roots (${p.blocks.length} logs)` : `rope at ${p.x},${p.z}: -${p.buried} buried, +${p.hung} hung`;

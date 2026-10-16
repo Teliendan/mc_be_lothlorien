@@ -104,4 +104,33 @@ test("central tree: elves - 2 wardens, the Loremaster and 4 reserve posts on the
   for (const e of [...posts, ...wardens]) assert.equal(Math.floor(e.pos[1]) - ROOTS, D + 1, "standing on the Court layer");
 });
 
+// ---- crown stars (phase 3): lanterns on copper chains, froglights inside the blobs, spore blossoms; the last-resort crowns ---------------------------------------------
+import { readdirSync } from "node:fs";
+test("crown stars: every crown carries lanterns on green copper chains, central crowns 8-10 plus spore blossoms, froglights sit inside leaf blobs (no bare cube), all supported", () => {
+  const dir = new URL("../lothlorien_bp/structures/lothlorien/village/", import.meta.url);
+  const want = { crown_small: [2, 1], crown_medium: [3, 2], crown_large: [4, 3], crown_central_a: [10, 3], crown_central_b: [8, 3], crown_tiny: [1, 0], crown_nub: [1, 0] };
+  for (const [name, [lamps, fruit]] of Object.entries(want)) {
+    const p = parseMcstructure(readFileSync(new URL(`${name}.mcstructure`, dir)), name), n = (re) => p.blocks.filter((b) => re.test(b.name)).length;
+    assert.equal(n(/elven_lantern(_heartwood)?$/), lamps, `${name}: lanterns`);
+    assert.ok(n(/waxed_oxidized_copper_chain$/) >= lamps, `${name}: chains`);
+    assert.equal(n(/froglight$/), fruit, `${name}: froglights`);
+    if (name.startsWith("crown_central")) assert.equal(n(/spore_blossom$/), 2, `${name}: spore blossoms`);
+    const m = new Map(p.blocks.map((b) => [`${b.x},${b.y},${b.z}`, { name: b.name, states: b.states }]));
+    assert.deepEqual(supportCheck(m), [], `${name}: nothing floats`);
+    for (const b of p.blocks.filter((q) => /froglight$/.test(q.name))) { // glowing fruit: at most one open face, never the top one
+      const open = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]].filter(([dx, dy, dz]) => !/leaves|_log$|_wood$/.test(p.at(b.x + dx, b.y + dy, b.z + dz) ?? ""));
+      assert.ok(open.length <= 1 && !open.some((o) => o[1] === 1), `${name}: froglight at ${b.x},${b.y},${b.z} is inside the blob`);
+    }
+  }
+});
+test("no stub trees: the crown pools end in last-resort crowns (7 x 8 x 7 and 5 x 8 x 5), every tree piece's trunk top carries a leaf cap", () => {
+  const dir = "../lothlorien_bp/structures/lothlorien/village/";
+  for (const [name, size] of [["crown_tiny", [7, 8, 7]], ["crown_nub", [5, 8, 5]]]) assert.deepEqual(parseMcstructure(readFileSync(new URL(`${dir}${name}.mcstructure`, import.meta.url)), name).size, size);
+  for (const f of readdirSync(new URL(dir, import.meta.url)).filter((q) => /^combo_(node|tower)/.test(q))) {
+    const p = parseMcstructure(readFileSync(new URL(dir + f, import.meta.url)), f), up = p.jigsaws.find((j) => j.dirId === 1);
+    const leaves = [[1, 0], [-1, 0], [0, 1], [0, -1]].filter(([dx, dz]) => p.at(up.x + dx, up.y, up.z + dz) === "lothlorien:mallorn_leaves").length;
+    assert.ok(leaves >= 2, `${f}: leaf cap round the crown jigsaw (${leaves})`);
+  }
+});
+
 if (failed) throw new Error(`${failed} central tree test(s) failed`);

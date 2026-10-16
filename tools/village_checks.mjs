@@ -9,6 +9,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { isPlanterPanel } from "../lothlorien_bp/scripts/planter_panels.js";
 
 const key = (x, y, z) => `${x},${y},${z}`;
 const AIR_RE = /(^|:)(air|cave_air|void_air|structure_void)$/;
@@ -69,7 +70,7 @@ export function keepClearViolations(blocks, keep, { ok = KEEP_OK } = {}) {
   const v = [];
   for (const k of keep) {
     const b = blocks.get(k);
-    if (!b || ok.test(b.name)) continue;
+    if (!b || ok.test(b.name) || isPlanterPanel((x,y,z)=>blocks.get(key(x,y,z)),...k.split(",").map(Number),b)) continue;
     v.push({ rule: "keep_clear", at: k.split(",").map(Number), detail: `${b.name} in a keep-clear cell` });
   }
   return v;
@@ -156,6 +157,10 @@ function whyFloating(get, x, y, z, b, opts) {
     return filterOk("up", below);
   };
   const ok = (r) => (r === true ? null : r);
+  if (/froglight$/.test(n)) { // glowing fruit: a froglight embedded in a leaf blob (at least five of its six sides are leaves, wood or another froglight) is held by the blob; anywhere else it needs a carrier below
+    const held = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]].filter(([dx, dy, dz]) => { const q = at(dx, dy, dz); return q && (TREE.test(q.name) || /froglight$/.test(q.name)); }).length;
+    if (held >= 5) return null;
+  }
   if (/(^|:)wall_banner$/.test(n)) { // a banner hangs on a FULL block face (trunk, log post, planks), never on a fence, a trapdoor, stairs, a slab or a pot
     const v = FACING_VEC[st.facing_direction], q = v && at(-v[0], 0, -v[1]);
     if (!q || !isCarrier(q.name) || /fence|_wall$|trapdoor|stairs|slab|door|pot$|chain|bars|lantern/.test(q.name)) return `banner on ${q?.name ?? "nothing"}, not a full block`;
@@ -251,6 +256,10 @@ export function waterScan(get, waters, { allowed = new Set() } = {}) {
       for (const [dx, dy, dz] of [[1, 0, 0], [-1, 0, 0], [0, 0, 1], [0, 0, -1], [0, -1, 0]]) {
         const q = get(x + dx, y + dy, z + dz);
         if (!q || !(blocksWater(q.name) || isWet(q))) out.push({ rule: "water", at: [x, y, z], detail: `source without a wall ${dx},${dy},${dz} (${q?.name ?? "void"})` });
+        else if (dy === 0 && /stairs$/.test(q.name) && !isWet(q)) { // the stair-back rule (basins, style guide 9.2): a stair beside a source stands with its tall back to the water (facing = toward it), right way up
+          const f = q.states?.["minecraft:cardinal_direction"], want = dx === 1 ? "west" : dx === -1 ? "east" : dz === 1 ? "north" : "south";
+          if (f !== want || q.states?.["minecraft:vertical_half"] === "top") out.push({ rule: "water", at: [x, y, z], detail: `stair beside a source has its steps toward the water (${q.name} ${f}/${q.states?.["minecraft:vertical_half"]}, back wanted ${want})` });
+        }
       }
     }
     push(x, y, z, depth >= 8 || depth === 0 ? 7 : 7 - depth);

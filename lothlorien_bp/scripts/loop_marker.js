@@ -17,12 +17,14 @@ import { MARKER_ID, finalBlocks } from "./village_loop.js";
 import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, chunksIn, describePick, describeMerge } from "./village_planner.js";
 import { describeRepair } from "./village_repair.js";
 import { missingLinks } from "./rail_mender_rules.js";
+import { mendAround } from "./rail_connections.js";
+import { PANEL_ID,planterWalkName } from "./planter_panels.js";
 import { message } from "./messages.js";
 import { populateVillage } from "./elf_village.js";
 
 // START_DELAY_TICKS 5 (was 20, owner 2026-10-10: the village looked empty for a long time). JOB_SLICE_MS: one engine job step runs the planner's inner steps
 // until this many ms are used, then yields once; without it the job may advance only ONE inner step per tick (about 200 steps = 10 s).
-const START_DELAY_TICKS = 5, SETTLE_TICKS = 40, AREA_TIMEOUT_TICKS = 600, WRITES_PER_TICK = 400, JOB_SLICE_MS = 8;
+const START_DELAY_TICKS = 5, SETTLE_TICKS = 40, AREA_TIMEOUT_TICKS = 600, WRITES_PER_TICK = 32, JOB_SLICE_MS = 2;
 const TRIES = "lothlorien:loop_tries", DONE = "lothlorien:village_plans";
 const seen = new Set(), queue = [], failed = [];
 let claim = null, running = false, loggedQuota = false, debug = false;
@@ -62,7 +64,14 @@ export function* sliced(gen, ms, stats, now = Date.now) {
 
 // one job: plan on the loaded blocks, then write every pick (fence links as rail_mender_rules wants them)
 function* planAndBuild(dimension, found, budget, stats) {
-  const get = (x, y, z) => { try { return dimension.getBlock({ x, y, z })?.typeId; } catch { return undefined; } };
+  const raw = (x,y,z) => {
+    try {
+      const block=dimension.getBlock({x,y,z});
+      if(!block)return undefined;
+      return {name:block.typeId,states:block.typeId===PANEL_ID ? {"lothlorien:open":block.permutation.getState("lothlorien:open"),"minecraft:cardinal_direction":block.permutation.getState("minecraft:cardinal_direction")} : undefined};
+    } catch {return undefined;}
+  };
+  const get = planterWalkName(raw);
   const at = boundedReader(get, found.rect);
   if (stats) stats.reads = at.size;
   const res = yield* planGen(at, found.known, { budget, rect: found.rect });
@@ -82,12 +91,14 @@ function* planAndBuild(dimension, found, budget, stats) {
     if (++n % WRITES_PER_TICK === 0) yield;
   }
   const typeAt = (x, y, z) => dimension.getBlock({ x, y, z })?.typeId;
-  for (const p of [...res.merges, ...res.picks]) for (const r of [...p.plan.rails, ...(p.plan.lamps ?? []).map((l) => ({ x: l.x, y: l.y - 1, z: l.z }))]) { // the rails and the fence under every lamp
+  for (const item of [...res.merges, ...res.picks, ...res.repairs]) for (const r of [...(item.plan ?? item).rails, ...((item.plan ?? item).lamps ?? []).map((l) => ({ x: l.x, y: l.y - 1, z: l.z }))]) { // rails and lamp supports after every write
     try {
       const block = dimension.getBlock(r), perm = block.permutation, on = missingLinks(r, typeAt, (s) => perm.getState(s));
       if (on.length) { let next = perm; for (const s of on) next = next.withState(s, true); block.setPermutation(next); }
     } catch { failedWrites++; }
+    yield;
   }
+  for (const k of writes.keys()) { const [x,y,z] = k.split(",").map(Number); mendAround(dimension, {x,y,z}); yield; }
   return { ...res, blocks: count, failedWrites };
 }
 

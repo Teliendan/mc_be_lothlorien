@@ -128,7 +128,7 @@ export function makeCombo(tree, entryIdx, bridgeSpec, poolId, seed = 0) {
 // the ground); four log braces climb from the pillar to the underside of the deck.
 export const BALCONY_DOWN = 40;
 export function buildBalcony() {
-  const blocks = new Map(), cells = new Set(), widths = [2, 3, 3, 3, 3, 2, 2];
+  const blocks = new Map(), cells = new Set(), widths = [2, 3, 3, 3, 3, 3, 2]; // both cushions fit at rows 3/4; far exit stays five wide
   widths.forEach((w, a) => { for (let x = -w; x <= w; x++) cells.add(`${x},${a}`); });
   const deck = new Deck(blocks, 0, null, { box: { hx: 3, hz: 0 }, cells });
   deck.connect("north", 0, "minecraft:empty");

@@ -1,10 +1,11 @@
 // Home furnishing (M7 WP4b): lothlorien_bp/scripts/home_furnish.js (pure) on synthetic pavilions of every size and orientation, and on the real village pieces.
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
-import { findHome, furnishLayout, planFurnish, frameArea, frameCell, framePost, frameLamp, frameCu, frameSquare, siteOf, hasLayout, MARKER_LANTERN, bannerStructure, BANNER_DESIGNS } from "../lothlorien_bp/scripts/home_furnish.js";
+import { findHome, furnishLayout, planFurnish, frameArea, frameCell, framePost, frameLamp, frameCu, frameSquare, siteOf, hasLayout, MARKER_LANTERN, bannerStructure, BANNER_DESIGNS, POT_PLANTS, CUSHION_VARIANTS } from "../lothlorien_bp/scripts/home_furnish.js";
 import { supportScan, isSupportSkipped } from "../tools/village_checks.mjs";
 import { parseMcstructure, entityCells } from "../tools/village_sim.mjs";
-import { bannerStructures } from "../tools/build_furnish.mjs";
+import { furnishStructures } from "../tools/build_furnish.mjs";
+import { SILVER_WATCH } from "../tools/watch_camp_rules.mjs";
 
 let failed = 0;
 function test(name, fn) { try { fn(); console.log(`ok   ${name}`); } catch (e) { failed++; console.log(`FAIL ${name}\n     ${e.stack.split("\n").slice(0, 4).join("\n     ")}`); } }
@@ -58,8 +59,8 @@ test("home_furnish: findHome returns null without the lantern, on a floor with a
 });
 
 test("home_furnish: the healer layout fits every k and orientation, stays in the furnishing area at +1/+2, avoids the post cell and the door lane, has no double cells, is deterministic", () => {
-  assert.ok(hasLayout("healer") && !hasLayout("gardener"));
-  assert.deepEqual(furnishLayout("gardener", pavilion(5, [0, 1]).f), []);
+  assert.ok(hasLayout("healer") && !hasLayout("loremaster"));
+  assert.deepEqual(furnishLayout("loremaster", pavilion(5, [0, 1]).f), []);
   for (const k of [4, 5, 6, 7, 8]) for (const dv of DVS) for (const origin of [[10, 20], [11, 20], [10, 21], [-7, 13]]) {
     const p = pavilion(k, dv, origin), area = new Set(frameArea(p.f).map((c) => c.join(",")));
     const lay = furnishLayout("healer", p.f);
@@ -67,7 +68,7 @@ test("home_furnish: the healer layout fits every k and orientation, stays in the
     const seen = new Set();
     for (const it of lay) {
       assert.ok(area.has(`${it.u},${it.v}`), `k ${k}: ${it.name} at ${it.u},${it.v} is outside the area`);
-      assert.ok(it.h === 1 || it.h === 2);
+      assert.ok(it.h >= 1 && it.h <= 3);
       const id = `${it.u},${it.v},${it.h}`; assert.ok(!seen.has(id), `double cell ${id}`); seen.add(id);
       assert.ok(!(it.u === frameCu(p.f) && it.v <= p.f.k - 3 && !/carpet$/.test(it.name)), `the aisle column u = cu stays free of solid things (${it.name} at ${it.u},${it.v})`);
     }
@@ -166,15 +167,124 @@ test("home_furnish: on every real village piece with a pavilion the healer set f
   }
   assert.ok(homes >= 4, `${homes} pavilions found in the pieces`);
 });
-test("home_furnish: the banner structures on disk are the generated ones (one per design and facing), 1 x 1 x 1 with a wall banner", () => {
-  const dir = new URL("../lothlorien_bp/structures/lothlorien/furnish/", import.meta.url), want = bannerStructures();
-  assert.equal(want.length, Object.keys(BANNER_DESIGNS).length * 4);
+test("home_furnish: the furnishing structures on disk are the generated ones (banners, planted pots, cushions), one cell each; the watch design is the owner's SILVER_WATCH", () => {
+  const dir = new URL("../lothlorien_bp/structures/lothlorien/furnish/", import.meta.url), want = furnishStructures();
+  assert.equal(want.length, Object.keys(BANNER_DESIGNS).length * 4 + POT_PLANTS.length + CUSHION_VARIANTS.length);
+  assert.equal(readdirSync(dir).length, want.length, "no stale file");
   for (const s of want) {
     assert.ok(Buffer.from(readFileSync(new URL(s.file, dir))).equals(s.buffer), `${s.file} is stale: run node tools/build_furnish.mjs`);
     const piece = parseMcstructure(s.buffer, s.file);
-    assert.deepEqual(piece.size, [1, 1, 1]); assert.equal(piece.blocks[0].name, "minecraft:wall_banner");
-    assert.equal(s.id, bannerStructure("healer", s.file.replace(/^banner_healer_|\.mcstructure$/g, "")));
+    assert.deepEqual(piece.size, [1, 1, 1]);
+    assert.equal(piece.blocks[0].name, /banner_/.test(s.file) ? "minecraft:wall_banner" : /pot_/.test(s.file) ? "minecraft:flower_pot" : "minecraft:structure_void");
+    if (/cushion_/.test(s.file)) { assert.equal(piece.entities.length, 1); assert.equal(piece.entities[0].id, "minecraft:cushion"); }
   }
+  assert.equal(JSON.stringify(BANNER_DESIGNS.watch), JSON.stringify(SILVER_WATCH));
+  assert.equal(BANNER_DESIGNS.lightblue.patterns.find((q) => q.code === "cbo").color, "light_blue");
+  assert.equal(BANNER_DESIGNS.white.patterns.find((q) => q.code === "cbo").colorId, 15);
+});
+
+// ---- the other professions (phase 3) -----------------------------------------------------------------------------------------------------------
+const PROFS = ["gardener", "woodwright", "lamplighter"];
+const roofed = (p) => {
+  const m = new Map(p.m);
+  for (let u = -1; u <= p.f.k; u++) for (let v = -1; v <= p.f.k; v++) { const [x, z] = frameCell(p.f, u, v); m.set(key(x, p.f.y + 4, z), { name: "lothlorien:mallorn_leaves", states: {} }); }
+  return { ...p, m, at: (x, y, z) => m.get(key(x, y, z))?.name ?? "minecraft:air" };
+};
+const applyAll = (p, plan) => {
+  const m = new Map(p.m);
+  for (const w of plan.writes) m.set(key(w.x, w.y, w.z), { name: w.name, states: w.states });
+  for (const s of plan.structures) if (s.kind !== "cushion") m.set(key(s.x, s.y, s.z), { name: s.name, states: s.states });
+  return m;
+};
+test("home_furnish: gardener, woodwright and lamplighter have layouts for k 4 to 8; every item inside the area (+1..+3), no double cell, aisle free of solid things, decorated pots on the floor only, deterministic", () => {
+  for (const prof of PROFS) {
+    assert.ok(hasLayout(prof));
+    for (const k of [4, 5, 6, 7, 8]) for (const dv of DVS) for (const origin of [[10, 20], [11, 20], [10, 21]]) {
+      const p = pavilion(k, dv, origin), area = new Set(frameArea(p.f).map((c) => c.join(",")));
+      const lay = furnishLayout(prof, p.f);
+      assert.ok(lay.length >= 2, `${prof} k ${k}`);
+      const seen = new Set();
+      for (const it of lay) {
+        assert.ok(area.has(`${it.u},${it.v}`), `${prof} k ${k}: ${it.name} at ${it.u},${it.v} is outside the area`);
+        const id = `${it.u},${it.v},${it.h}`; assert.ok(!seen.has(id), `${prof} double cell ${id}`); seen.add(id);
+        assert.ok(it.h <= 2 || /chain$/.test(it.name), "only a lamp chain reaches +3");
+        assert.ok(!(it.u === frameCu(p.f) && it.v <= p.f.k - 3 && !/carpet$/.test(it.name)), `${prof}: aisle column u = cu stays free (${it.name} at ${it.u},${it.v})`);
+        if (it.name === "minecraft:decorated_pot") assert.equal(it.h, 1, "decorated pots only on the floor");
+      }
+      assert.equal(JSON.stringify(lay), JSON.stringify(furnishLayout(prof, p.f)));
+    }
+  }
+});
+test("home_furnish: every profession's set at k 5, 6, 7 is complete (>= 6 items), supported, in air; the signature objects are there at k 6 and 7", () => {
+  const sig = {
+    gardener: ["minecraft:composter", "minecraft:cauldron", "minecraft:moss_block", "minecraft:flowering_azalea", "minecraft:flower_pot"],
+    woodwright: ["minecraft:fletching_table", "lothlorien:mallorn_heartwood_slab", "lothlorien:mallorn_stripped_log", "minecraft:barrel", "lothlorien:elven_rope"],
+    lamplighter: ["lothlorien:firefly_jar", "lothlorien:elven_lantern", "lothlorien:elven_lantern_heartwood", "minecraft:waxed_oxidized_copper_chain", "minecraft:white_candle"],
+  };
+  for (const prof of PROFS) for (const k of [5, 6, 7]) for (const dv of DVS) {
+    const p = roofed(pavilion(k, dv)), plan = planFurnish(prof, p.f, p.at), m = applyAll(p, plan);
+    assert.equal(plan.skipped.length, 0, `${prof} k ${k} fits whole on a free deck`);
+    assert.ok(plan.writes.length + plan.structures.length >= 6);
+    const names = new Set([...m.values()].map((b) => b.name));
+    if (k >= 6) for (const n of sig[prof]) assert.ok(names.has(n), `${prof} k ${k} lacks ${n}`);
+    const only = new Set([...plan.writes, ...plan.structures.filter((s) => s.kind !== "cushion")].map((w) => key(w.x, w.y, w.z)));
+    assert.deepEqual(floating(m, only).map((v) => `${v.name} ${v.at} ${v.detail}`), [], `${prof} k ${k} dv ${dv}`);
+  }
+});
+test("home_furnish: the lamplighter's lanterns hang on green copper chains from the roof, over a barrel (never below +3 over a walk cell); without a roof the lamps are dropped, not floated; a furnished home is still found", () => {
+  const p = roofed(pavilion(6, [1, 0])), plan = planFurnish("lamplighter", p.f, p.at), m = applyAll(p, plan);
+  const hung = plan.writes.filter((w) => /elven_lantern/.test(w.name) && w.states["minecraft:block_face"] === "down");
+  assert.ok(hung.length >= 2, "a bough of at least two lamps");
+  for (const w of hung) {
+    assert.equal(m.get(key(w.x, w.y + 1, w.z)).name, "minecraft:waxed_oxidized_copper_chain");
+    assert.equal(m.get(key(w.x, w.y + 2, w.z)).name, "lothlorien:mallorn_leaves");
+    assert.equal(m.get(key(w.x, w.y - 1, w.z)).name, "minecraft:barrel", "a solid thing below, not a walk cell");
+    assert.equal(w.y, p.f.y + 2);
+  }
+  const bare = pavilion(6, [1, 0]), np = planFurnish("lamplighter", bare.f, bare.at);
+  assert.ok(!np.writes.some((w) => /chain$/.test(w.name)) && !np.writes.some((w) => w.states["minecraft:block_face"] === "down"), "no roof, no hanging lamp");
+  assert.deepEqual(floating(applyAll(bare, np), new Set(np.writes.map((w) => key(w.x, w.y, w.z)))).map((v) => v.name), []);
+  assert.ok(findHome((x, y, z) => m.get(key(x, y, z))?.name, p.post), "chains at +3 do not hide the pavilion");
+});
+test("home_furnish: about a quarter of the flowers are pretty vanilla ones, flower pots are mostly planted, no lantern beside a fence, cushions and pots are structures", () => {
+  let flowers = 0, vanilla = 0, pots = 0, empty = 0;
+  const FLOWER = /^(lothlorien:(elanor|niphredil|golden_fern)|minecraft:(lily_of_the_valley|cornflower|blue_orchid|allium|azure_bluet|white_tulip|pink_tulip|oxeye_daisy))$/;
+  for (let i = 0; i < 80; i++) for (const prof of ["gardener", "woodwright"]) {
+    const p = pavilion(7, DVS[i % 4], [i * 5, i * 3 + 1]), lay = furnishLayout(prof, p.f);
+    for (const it of lay) {
+      if (it.h === 2 && FLOWER.test(it.name)) { flowers++; if (it.name.startsWith("minecraft:")) vanilla++; }
+      if (it.kind === "pot") { pots++; if (it.structure.endsWith("pot_empty")) empty++; assert.ok(POT_PLANTS.includes(it.structure.replace(/^.*pot_/, ""))); }
+      if (it.kind === "cushion") assert.ok(it.structure.startsWith("lothlorien:furnish/cushion_") && it.soft);
+    }
+  }
+  assert.ok(flowers > 200 && vanilla / flowers > 0.15 && vanilla / flowers < 0.4, `vanilla share ${vanilla}/${flowers}`);
+  assert.ok(pots > 100 && empty / pots <= 0.2, `empty pots ${empty}/${pots}`);
+  for (const prof of ["healer", ...PROFS]) {
+    const p = roofed(pavilion(7, [0, 1])), plan = planFurnish(prof, p.f, p.at);
+    for (const w of plan.writes.filter((q) => /lantern/.test(q.name))) for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) assert.ok(!/fence$/.test(p.at(w.x + dx, w.y, w.z + dz)), "no lantern beside a fence");
+  }
+});
+test("home_furnish: the other professions on the real village pieces: every set fits, in air inside the area, supported, no walkable cell walled in", () => {
+  const dir = new URL("../lothlorien_bp/structures/lothlorien/village/", import.meta.url);
+  let homes = 0;
+  for (const f of readdirSync(dir)) {
+    const piece = parseMcstructure(readFileSync(new URL(f, dir)), f), map = new Map();
+    for (const b of piece.blocks) map.set(key(b.x, b.y, b.z), { name: b.name, states: b.states });
+    const at = (x, y, z) => map.get(key(x, y, z))?.name ?? "minecraft:air";
+    for (const post of entityCells({ piece, rot: 0, o: [0, 0, 0] }, "lothlorien:elf_post").filter((c) => c.kind === "home")) {
+      const fr = findHome(at, { x: post.cell[0], y: post.cell[1] + 1, z: post.cell[2] });
+      if (!fr) continue;
+      for (const prof of PROFS) {
+        homes++;
+        const plan = planFurnish(prof, fr, at), area = new Set(frameArea(fr).flatMap(([u, v]) => { const [x, z] = frameCell(fr, u, v); return [1, 2, 3].map((h) => key(x, fr.y + h, z)); }));
+        assert.ok(plan.writes.length + plan.structures.length >= 6, `${f} ${prof}: ${plan.writes.length} + ${plan.structures.length}`);
+        const m = new Map(map), blocks = [...plan.writes, ...plan.structures.filter((s) => s.kind !== "cushion")];
+        for (const w of blocks) { assert.ok(area.has(key(w.x, w.y, w.z)), `${f}: outside the area`); assert.equal(at(w.x, w.y, w.z), "minecraft:air"); m.set(key(w.x, w.y, w.z), { name: w.name, states: w.states }); }
+        assert.deepEqual(floating(m, new Set(blocks.map((w) => key(w.x, w.y, w.z)))).map((v) => `${v.name} ${v.at} ${v.detail}`), [], `${f} ${prof}`);
+      }
+    }
+  }
+  assert.ok(homes >= 12, `${homes} furnished homes`);
 });
 
 if (failed) { console.log(`${failed} home furnishing test(s) failed`); process.exit(1); }

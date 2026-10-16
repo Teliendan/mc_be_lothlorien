@@ -1,5 +1,15 @@
 # Script performance
 
+Village finishing follow-up, 2026-10-16: [measured offline workload and engine
+profiling steps](VILLAGE_POLISH_2026-10-16.md). Decorative village foliage now
+skips decay BFS, debug-only depth caching skips non-debug players, hidden lighting
+counts real emitters, and fence repair remains finite/event-local. TPS diagnostics
+also log p95/p99 tick gaps and counts above 100 ms. No lower-end FPS claim yet.
+Owner's two 30-second in-game runs (2026-10-16): both 20.0 TPS / 100%, longest
+gaps 80/64 ms, p95 63/63 ms, p99 65/64 ms, no gaps above 100 ms. Owner accepts
+this cadence check and keeps the diagnostic for future suspected lag. Full
+measurements and their scope are in the linked finishing report.
+
 2026-10-11, Bedrock 1.26.52 / server 2.8.0. Source and offline regression evidence;
 the new scheduling is not yet verified or profiled in game.
 

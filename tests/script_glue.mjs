@@ -345,4 +345,44 @@ await scenario("loop_marker.js: sliced() runs many inner steps per engine step, 
   for (const re of [/\(debug\) discovery lothlorien_village_-?\d+_-?\d+_1: \d+ chunks in \d+ ms/, /\(debug\) settle \d+ ms/, /\(debug\) plan\+build \d+ ms wall, \d+ ticks, \d+ inner steps, \d+ ms inside them, \d+ distinct reads, \d+ cells written/, /\(debug\) populate \d+ ms/]) assert.equal(grep(re).length, 1, String(re));
 });
 
+await scenario("rail connections: deferred player edits link moss and slabs, clear removed targets, and finish with no timer", async () => {
+  const F="lothlorien:mallorn_fence";
+  mock.setBlocks((x,y,z)=>y===70 && x===0 && z===0 ? F : "minecraft:air");
+  const dim=mock.dimension();
+  await loadScript("rail_mender.js");
+  const put=(x,z,id)=>{const b=dim.getBlock({x,y:70,z});b.setType(id);mock.fire("playerPlaceBlock",{block:b,dimension:dim});};
+  put(1,0,"minecraft:moss_block"); put(0,1,"lothlorien:mallorn_slab");
+  await mock.settle();
+  let st=dim.overrides.get("0,70,0").states;
+  assert.equal(st["minecraft:connection_east"],true); assert.equal(st["minecraft:connection_south"],true);
+  const gone=dim.getBlock({x:1,y:70,z:0});gone.setType("minecraft:air");
+  mock.fire("playerBreakBlock",{block:gone,dimension:dim});
+  await mock.settle(); st=dim.overrides.get("0,70,0").states;
+  assert.equal(st["minecraft:connection_east"],false); assert.equal(st["minecraft:connection_south"],true);
+  assert.equal(mock.pending,0,"no permanent fence poll");
+});
+
+await scenario("rail mender: duplicate marker events during a running scan do not launch a second scan", async () => {
+  mock.stepsPerTick=1;
+  mock.setBlocks((x,y,z)=>y===70 && z===0 && x>=0 && x<20 ? "lothlorien:mallorn_fence" : "minecraft:air");
+  const e=mock.addEntity("lothlorien:rail_mender",{x:1,y:70,z:0});
+  const dim=mock.dimension(), get=dim.getBlocks.bind(dim);let scans=0;
+  dim.getBlocks=(...args)=>{scans++;return get(...args);};
+  await loadScript("rail_mender.js");mock.fire("entityLoad",{entity:e});
+  await mock.advance(41);mock.fire("entityLoad",{entity:e});mock.fire("entitySpawn",{entity:e});
+  await mock.settle();assert.equal(scans,1);assert.equal(e.isValid,false);assert.equal(mock.pending,0);
+});
+
+await scenario("rail mender: loaded corners do not hide an unloaded interior chunk", async () => {
+  mock.strictLoading=true;
+  const dim=mock.dimension();
+  for(let x=-2;x<=1;x++)for(let z=-2;z<=1;z++)if(x!==0||z!==0)dim.alwaysLoaded.add(`${x},${z}`);
+  mock.setBlocks((x,y,z)=>x===0&&y===70&&z===0?"lothlorien:mallorn_fence":"minecraft:air");
+  let scans=0;const get=dim.getBlocks.bind(dim);dim.getBlocks=(...args)=>{scans++;return get(...args);};
+  const e=mock.addEntity("lothlorien:rail_mender",{x:0,y:70,z:0});
+  await loadScript("rail_mender.js");mock.fire("entityLoad",{entity:e});
+  await mock.advance(40);assert.equal(scans,0);assert.equal(e.isValid,true);
+  dim.alwaysLoaded.add("0,0");await mock.settle();assert.equal(scans,1);assert.equal(e.isValid,false);
+});
+
 console.warn = realWarn;

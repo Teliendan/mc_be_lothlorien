@@ -20,6 +20,9 @@ import { deco, isAirName } from "./village_checks.mjs";
 import { SILVER_WATCH } from "./watch_camp_rules.mjs";
 import { homeSite } from "../lothlorien_bp/scripts/elf_rules.js";
 import { sideTarget } from "../lothlorien_bp/scripts/village_loop.js"; // the runtime planner's own rim test: a bridge may start on a rim run
+import { isFence, missingLinks } from "../lothlorien_bp/scripts/rail_mender_rules.js";
+import { finishDressing } from "./village_polish.mjs";
+import { isPlanterPanel } from "../lothlorien_bp/scripts/planter_panels.js";
 
 const L = "lothlorien:", M = "minecraft:";
 const key = (x, y, z) => `${x},${y},${z}`;
@@ -39,6 +42,8 @@ const slab = (half = "bottom", heart = false) => ({ name: `${L}mallorn_${heart ?
 const stripped = () => ({ name: `${L}mallorn_stripped_log`, states: { "minecraft:block_face": "up" } });
 const logAlong = (vec) => ({ name: B.log, states: { "minecraft:block_face": vec[0] !== 0 ? "east" : "south" } }); // east = x axis, south = z axis
 const fence = (heart = false) => ({ name: `${L}mallorn_${heart ? "heartwood_" : ""}fence`, states: { "minecraft:connection_north": false, "minecraft:connection_south": false, "minecraft:connection_west": false, "minecraft:connection_east": false } });
+// the lamp cord (owner 2026-10-16): green waxed copper chain (never iron: no black in the palette); vertical, the lantern hangs under it
+export const chain = () => ({ name: "minecraft:waxed_oxidized_copper_chain", states: { pillar_axis: "y" } });
 export const lantern = (hang = false, gold = false) => ({ name: `${L}elven_lantern${gold ? "_heartwood" : ""}`, states: { "minecraft:block_face": hang ? "down" : "up" } });
 // open mallorn trapdoor standing on edge: `facing` = the direction it faces (away from the block it is attached to; its panel is on the opposite edge)
 const trapOpen = (facing) => ({ name: `${L}mallorn_trapdoor`, states: { "minecraft:cardinal_direction": nameOfVec(facing), "minecraft:vertical_half": "bottom", "lothlorien:open": true } });
@@ -89,7 +94,7 @@ export function rotateFrame(f, quarter, dx = 0, dz = 0) {
 // Walkable = a deck block with nothing that collides in the two cells above. Components are compared before and after the dressing; a part that was connected to a
 // bigger part before and is not any more is a pocket: the dressing blocks beside it are removed (trapdoors first) until it is connected again.
 const SOFT_BLOCK = /light_block|carpet|wall_banner|pale_hanging_moss|cave_vines|glow_lichen|spore_blossom|elven_rope/;
-const walkFree = (map, x, y, z) => { const n = map.get(key(x, y, z))?.name; return isAirName(n) || SOFT_BLOCK.test(n); };
+const walkFree = (map, x, y, z) => { const n = map.get(key(x, y, z))?.name; return isAirName(n) || SOFT_BLOCK.test(n) || isPlanterPanel((a,b,c)=>map.get(key(a,b,c)),x,y,z); };
 function walkComps(map, Y) {
     const id = new Map(), size = [];
     for (const [k, b] of map) {
@@ -147,7 +152,7 @@ function repairPockets(blocks, before, ys, stats) {
       for (const re of order) {
         for (const [a, c] of D4) for (const h of [1, 2]) {
           const k = key(px + a, Y + h, pz + c), b = blocks.get(k);
-          if (b && !isAirName(b.name) && !SOFT_BLOCK.test(b.name) && re.test(b.name) && isAirName(before.get(k)?.name)) { // placed by the dressing
+          if (b && !isAirName(b.name) && !SOFT_BLOCK.test(b.name) && !isPlanterPanel((a,b,c)=>blocks.get(key(a,b,c)),px+a,Y+h,pz+c,b) && re.test(b.name) && isAirName(before.get(k)?.name)) { // placed by the dressing
             for (const hh of [1, 2]) { const kk = key(px + a, Y + hh, pz + c); if (isAirName(before.get(kk)?.name)) blocks.set(kk, before.get(kk) ?? { name: "minecraft:air", states: {} }); } // the item's cells (a planter's plant goes with its moss)
             removed = true; stats.pockets = (stats.pockets ?? 0) + 1;
             break;
@@ -441,13 +446,25 @@ export function dressTree(blocks, keep, o) {
     for (const f of armFaces) {
       if (arms >= wantArms) break;
       const [x1, z1] = f.n, x2 = x1 + f.d[0], z2 = z1 + f.d[1], p = [-f.d[1], f.d[0]];
-      if (!(can(x1, Y + 4, z1) && can(x2, Y + 4, z2) && can(x2, Y + 3, z2))) continue;
-      put(x1, Y + 4, z1, logAlong(f.d)); put(x2, Y + 4, z2, logAlong(f.d));
+      // the arm rises by the chain length (1 or 2): the lantern bottom stays at +3 and the cord (waxed copper chain) hangs from the arm tip. Where the trunk
+      // goes on up (a lower deck) the arm leaves it higher up; under the crown the trunk ends at +4 and the arm bends: out, up one log, out again (1 chain).
+      const clear = (c) => can(x1, Y + 5 + c, z1) && can(x2, Y + 5 + c, z2) && can(x2 + f.d[0], Y + 5 + c, z2 + f.d[1]) && [...Array(c + 1).keys()].every((i) => can(x2, Y + 3 + i, z2)) && Y + 5 + c <= (o.topY ?? 1e9);
+      const straight = (c) => c >= 1 && can(x1, Y + 4 + c, z1) && can(x2, Y + 4 + c, z2) && at(f.c[0], Y + 4 + c, f.c[1])?.name === B.log && clear(c);
+      const bent = () => can(x1, Y + 4, z1) && can(x1, Y + 5, z1) && can(x2, Y + 5, z2) && can(x2, Y + 4, z2) && can(x2, Y + 3, z2) && can(x2 + f.d[0], Y + 5, z2 + f.d[1]) && Y + 5 <= (o.topY ?? 1e9);
+      let ch = rnd() < 0.5 ? 2 : 1, mode = "plain";
+      while (ch > 0 && !straight(ch)) ch--;
+      if (ch > 0) mode = "straight"; else if (bent()) { mode = "bent"; ch = 1; }
+      if (mode === "plain" && !(can(x1, Y + 4, z1) && can(x2, Y + 4, z2) && can(x2, Y + 3, z2))) continue;
+      const ay = Y + 4 + ch;
+      if (mode === "bent") { put(x1, Y + 4, z1, logAlong(f.d)); put(x1, Y + 5, z1, { name: B.log, states: { "minecraft:block_face": "up" } }); put(x2, Y + 5, z2, logAlong(f.d)); }
+      else { put(x1, ay, z1, logAlong(f.d)); put(x2, ay, z2, logAlong(f.d)); }
+      for (let i = 1; i <= ch; i++) put(x2, ay - i, z2, chain());
       put(x2, Y + 3, z2, lantern(true, o.central)); stats.lamps++; stats.arms++; arms++;
-      const leaf = (x, yy, z) => { if (can(x, yy, z) || at(x, yy, z)?.name === B.leaves) blocks.set(key(x, yy, z), LEAF()); };
-      for (const [x, z] of [[x1, z1], [x2, z2]]) { leaf(x, Y + 5, z); for (const s of [-1, 1]) leaf(x + p[0] * s, Y + 4, z + p[1] * s); }
-      leaf(x2 + f.d[0], Y + 4, z2 + f.d[1]); leaf(x2 + f.d[0], Y + 5, z2 + f.d[1]);
+      const leaf = (x, yy, z) => { if (yy <= (o.topY ?? 1e9) && (can(x, yy, z) || at(x, yy, z)?.name === B.leaves)) blocks.set(key(x, yy, z), LEAF()); };
+      for (const [x, z] of [[x1, z1], [x2, z2]]) { leaf(x, ay + 1, z); for (const s of [-1, 1]) leaf(x + p[0] * s, ay, z + p[1] * s); }
+      leaf(x2 + f.d[0], ay, z2 + f.d[1]); leaf(x2 + f.d[0], ay + 1, z2 + f.d[1]);
     }
+    if (lv.bay) lookoutBay(blocks, keep, lv, o, rnd, stats, cushion); // first: gardens and rim scenes take what is left
     trunkGarden(blocks, keep, lv, o, rnd, stats, cushion);
     gardenIslands(blocks, keep, lv, o, rnd, stats);
   }
@@ -456,7 +473,7 @@ export function dressTree(blocks, keep, o) {
   repairPockets(blocks, before, o.levels.map((l) => l.y), stats);
   if (home) sealNooks(blocks, keep, home, rnd, stats);
   for (const k of shell) keep.delete(k);
-  relinkFences(blocks);
+  finishDressing(blocks, keep, cushions, home);
   return { home, homeInfo, site, connLamps, stats, cushions };
 }
 
@@ -469,6 +486,22 @@ function trunkGarden(blocks, keep, lv, o, rnd, stats, cushion) {
   for (let i = corners.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [corners[i], corners[j]] = [corners[j], corners[i]]; }
   const n = 2 + (rnd() < 0.5 ? 1 : 0);
   let done = 0;
+  // a stair basin (owner 2026-10-16, style guide 9.2): a water source with four mallorn stairs round it, the tall back against the water and the steps
+  // facing outward, on a solid deck floor; a birdbath / fountain at about one tree in three, with a lily pad or nothing
+  if (!o.central && lv === o.levels[0] && rnd() < 0.45) {
+    const spots = [];
+    for (let x = -10; x <= 10; x++) for (let z = -10; z <= 10; z++) if (Math.max(Math.abs(x), Math.abs(z)) > R + 1) spots.push([x, z]); // outside the walk ring (the keep-clear cells hold the paths)
+    for (let i = spots.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [spots[i], spots[j]] = [spots[j], spots[i]]; }
+    for (const [cx, cz] of spots) {
+      const okc = (x, z, h = 2) => deckAt(blocks, x, Y, z) && !railAt(blocks, x, Y, z) && can(x, Y + 1, z) && can(x, Y + h, z);
+      if (![[0, 0], ...D4].every(([dx, dz]) => okc(cx + dx, cz + dz))) continue;
+      put(cx, Y + 1, cz, { name: "minecraft:water", states: { liquid_depth: 0 } });
+      for (const d of D4) put(cx + d[0], Y + 1, cz + d[1], stairs([-d[0], -d[1]])); // facing = the side of the tall back: toward the water
+      if (rnd() < 0.5) put(cx, Y + 2, cz, { name: "minecraft:waterlily", states: {} });
+      stats.basins = (stats.basins ?? 0) + 1; done++;
+      break;
+    }
+  }
   for (const [sx, sz] of corners) {
     if (done >= n) break;
     const ok = (x, z, h = 1) => deckAt(blocks, x, Y, z) && !railAt(blocks, x, Y, z) && can(x, Y + h, z);
@@ -492,6 +525,56 @@ function trunkGarden(blocks, keep, lv, o, rnd, stats, cushion) {
     }
     done++; stats.rim++;
   }
+}
+
+// ---- lookout bay (style guide 7.5, phase 3): the upper deck of a tower grows a square corner (the level's `add` cells) that juts out like a rim bump: rails round it, two
+// cushions at its outer corner looking out, a firefly jar, a flag pole whose banner hangs toward the seats. The village gets its views from +24. ------------------------
+function lookoutBay(blocks, keep, lv, o, rnd, stats, cushion) {
+  const Y = lv.y, { put, can } = deco(blocks, keep), box = o.box, cells = [];
+  for (let x = -box.hx; x <= box.hx; x++) for (let z = -box.hz; z <= box.hz; z++) if (lv.bay(x, z) && deckAt(blocks, x, Y, z)) cells.push([x, z]);
+  for (const [x, z] of cells) for (let h = 1; h <= 4; h++) { const k = key(x, Y + h, z); if (blocks.get(k)?.name === B.leaves && !keep.has(k)) blocks.delete(k); } // headroom wins over leaves: the bay's air is cleared of the tree's leaves
+  const free = ([x, z]) => !railAt(blocks, x, Y, z) && can(x, Y + 1, z) && can(x, Y + 2, z);
+
+  const inner = cells.filter(free).sort((a, b) => b[0] * b[0] + b[1] * b[1] - a[0] * a[0] - a[1] * a[1]);
+  if (inner.length < 3) return;
+  const near = (a, b) => Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) === 1, railNb = ([x, z]) => D4.filter((d) => railAt(blocks, x + d[0], Y, z + d[1]));
+  const a = inner[0], b = inner.find((c) => near(c, a) && railNb(c).length), used = new Set([a.join()]);
+  if (!b) return;
+  used.add(b.join());
+  cushion(a[0], Y, a[1]); cushion(b[0], Y, b[1]);
+  // the seat roof (as on the balcony): the rail posts outside the two cushions rise to +3, an upper slab over each cushion rests against its post
+  const out = D4.find((d) => railAt(blocks, a[0] + d[0], Y, a[1] + d[1]) && railAt(blocks, b[0] + d[0], Y, b[1] + d[1]) && !(d[0] === b[0] - a[0] && d[1] === b[1] - a[1]));
+  if (out) {
+    const posts = [a, b].map((c) => [c[0] + out[0], c[1] + out[1]]);
+    if (posts.every(([x, z]) => [2, 3].every((h) => can(x, Y + h, z))) && [a, b].every(([x, z]) => can(x, Y + 3, z))) {
+      for (const [x, z] of posts) for (const h of [2, 3]) put(x, Y + h, z, fence());
+      for (const [x, z] of [a, b]) put(x, Y + 3, z, slab("top"));
+    }
+  }
+  stats.bays = (stats.bays ?? 0) + 1;
+  // the jar: behind the cushions' row on the far side of the bay (a rim cell next to a rail, not in the mouth), then a flag pole at the rim end of the other side
+  const rest = inner.filter((c) => !used.has(c.join()) && railNb(c).length);
+  // a blocking item (jar, pole) may not cut the bay off: every other free bay cell must still reach the deck outside the bay on free cells
+  const inBay = new Set(cells.map((c) => c.join())), blocked = new Set();
+  const walk = ([x, z]) => deckAt(blocks, x, Y, z) && !railAt(blocks, x, Y, z) && !blocked.has(`${x},${z}`) && ((blocks.get(key(x, Y + 1, z))?.name ?? "minecraft:air") === "minecraft:air" || isAirName(blocks.get(key(x, Y + 1, z))?.name));
+  const stays = (c) => {
+    blocked.add(c.join());
+    const mine = cells.filter(walk), seen = new Set(), q = [];
+    for (const m of mine) if (D4.some((d) => { const n = [m[0] + d[0], m[1] + d[1]]; return !inBay.has(n.join()) && walk(n); })) { seen.add(m.join()); q.push(m); }
+    while (q.length) { const [x, z] = q.pop(); for (const d of D4) { const n = [x + d[0], z + d[1]]; if (inBay.has(n.join()) && walk(n) && !seen.has(n.join())) { seen.add(n.join()); q.push(n); } } }
+    const ok = mine.every((m) => seen.has(m.join()));
+    if (!ok) blocked.delete(c.join());
+    return ok;
+  };
+  const jar0 = rest.find((c) => stays(c));
+  if (jar0) { put(jar0[0], Y + 1, jar0[1], jar()); used.add(jar0.join()); }
+  const pole = rest.find((c) => !used.has(c.join()) && !near(c, a) && !near(c, b) && [1, 2, 3].every((h) => can(c[0], Y + h, c[1])) && D4.some((d) => can(c[0] + d[0], Y + 3, c[1] + d[1])) && stays(c));
+  if (pole) {
+    for (const h of [1, 2, 3]) put(pole[0], Y + h, pole[1], stripped());
+    const toward = D4.filter((d) => can(pole[0] + d[0], Y + 3, pole[1] + d[1])).sort((u, v) => (Math.abs(a[0] - pole[0] - u[0]) + Math.abs(a[1] - pole[1] - u[1])) - (Math.abs(a[0] - pole[0] - v[0]) + Math.abs(a[1] - pole[1] - v[1])))[0];
+    put(pole[0] + toward[0], Y + 3, pole[1] + toward[1], wallBanner(toward, BANNERS.watch)); stats.banners++;
+  }
+  for (const [x, z] of cells) if (!railAt(blocks, x, Y, z)) for (const h of [1, 2]) if (isAirName(blocks.get(key(x, Y + h, z))?.name)) keep.add(key(x, Y + h, z)); // the rest of the bay stays open: no planter or scene may wall the seats in
 }
 
 // ---- garden islands: a 2 x 2 moss bed with flowers and a fern, framed by open trapdoors, out in the open quarters of a deck ---------
@@ -731,52 +814,63 @@ export function dressBalcony(blocks, keep, seed) {
   const sx = 2 * side, out = [side, 0];
   for (const [z, v] of [[3, 15], [4, 12]]) if (can(sx, 1, z)) { stats.cushions.push({ x: sx, y: 0, z, variant: v }); for (const h of [1, 2]) keep.add(key(sx, h, z)); } // two native cushions under the arbour
   for (const z of [2, 5]) for (const h of [1, 2, 3]) if (can(sx, h, z) || blocks.get(key(sx, h, z))?.name === RAIL) blocks.set(key(sx, h, z), fence()); // the two posts rise to +3 (owner 2026-10-16: poles up, slabs between them); z 2, not 1: a post top at +3 beside the bridgehead lantern (z 0) would link to it
+  // Wood from the deck up; the far post stays a fence for the exit signature.
+  if ([1, 2, 3].every((h) => blocks.get(key(sx, h, 2))?.name === RAIL || can(sx, h, 2)) && can(sx - side, 3, 2)) {
+    for (const h of [1, 2, 3]) blocks.set(key(sx, h, 2), stripped());
+    put(sx - side, 3, 2, wallBanner([-side, 0], BANNERS.watch)); stats.banners = (stats.banners ?? 0) + 1;
+  }
   for (const z of [3, 4]) if (can(sx, 3, z)) put(sx, 3, z, slab("top")); // the roof: two upper (top-half) slabs between the post tops, not a fence bar
   if (can(sx, 2, 4) && rnd() < 0.7) put(sx, 2, 4, moss(true)); // a beard of moss from the beam (nothing hangs lower than deck + 3 over a walk cell)
   // the other side: a jar and a planter, leaf drifts
   if (can(-sx, 1, 2)) put(-sx, 1, 2, jar());
   if (can(-sx, 1, 3) && can(-sx, 2, 3)) { put(-sx, 1, 3, mossBlock()); put(-sx, 2, 3, { name: `${L}elanor`, states: { [`${L}on_grass`]: true } }); }
-  relinkFences(blocks);
+  finishDressing(blocks, keep, stats.cushions);
   return stats;
 }
 
-// lookout: deck at absolute y (FLOOR_H), x -4..4, z -4..4 (connector north at z -4), plus-shaped pillar below. keep = the connector corridor.
+// lookout (11 x 11, phase 3): deck at absolute y (FLOOR_H), x -5..5, z -5..5 (connector north at z -5), plus-shaped pillar below. keep = the connector corridor.
+// Shape (lookout11): a 11 x 7 band with 5-wide arms north and south; the three free sides (south, east, west) keep their exit (5-run of rail, two plain rows behind it, the middle
+// three columns clear to +2); the four corner pockets are the dressing: a seat bay (cushions under a slab roof, a jar, a flag) in one south corner, a planter bay in the other,
+// and a small flower bed in each north corner.
 export function dressLookout(blocks, keep, y, seed) {
-  const rnd = makeRandom((seed ^ 0x100c) >>> 0), { put, can } = deco(blocks, keep), soft = softWriter(blocks);
-  const stats = { lamps: 0, cushions: [] };
+  const rnd = makeRandom((seed ^ 0x100c) >>> 0), { put, can } = deco(blocks, keep);
+  const stats = { lamps: 0, cushions: [], banners: 0 };
   const rail = (x, z) => blocks.get(key(x, y + 1, z))?.name === RAIL;
-  // the three free rim sides keep their exit: 5-run of rail, rows 2 and 3 behind it, the middle three columns clear at +1, +2
-  for (const [d, a] of [[[0, 1], [1, 0]], [[1, 0], [0, 1]], [[-1, 0], [0, 1]]]) for (let k = 1; k <= 2; k++) for (let o = -1; o <= 1; o++) for (let h = 1; h <= 2; h++) keep.add(key(d[0] * (4 - k) + a[0] * o, y + h, d[1] * (4 - k) + a[1] * o));
-  for (const x of [-2, 2]) if (rail(x, -4) && can(x, y + 2, -4) && can(x, y + 3, -4)) { put(x, y + 2, -4, fence()); put(x, y + 3, -4, lantern(false)); stats.lamps++; }
-  // the warden's flag: a 3-high pole at a corner of the far rim with a banner on its side, a jar, a moss planter behind trapdoors, drifts
-  const bx = rnd() < 0.5 ? -1 : 1, spec = minorBanner(rnd);
-  // the flag pole stands on the deck beside the connector corridor, one stripped log from the deck up (the rim rails of the three exits must stay fences)
-  const pxp = 3 * bx, pzp = -2;
-  if ([1, 2, 3].every((h) => can(pxp, y + h, pzp)) && can(2 * bx, y + 3, pzp) && blocks.get(key(pxp, y, pzp))?.name === PLANKS) {
-    for (const h of [1, 2, 3]) put(pxp, y + h, pzp, stripped());
-    put(2 * bx, y + 3, pzp, wallBanner([-bx, 0], spec)); // hangs on the pole's inner side
+  for (const [d, a] of [[[0, 1], [1, 0]], [[1, 0], [0, 1]], [[-1, 0], [0, 1]]]) for (let k = 1; k <= 2; k++) for (let o = -1; o <= 1; o++) for (let h = 1; h <= 2; h++) keep.add(key(d[0] * (5 - k) + a[0] * o, y + h, d[1] * (5 - k) + a[1] * o));
+  for (const x of [-2, 2]) if (rail(x, -5) && can(x, y + 2, -5) && can(x, y + 3, -5)) { put(x, y + 2, -5, fence()); put(x, y + 3, -5, lantern(false)); stats.lamps++; }
+  const sx = rnd() < 0.5 ? -1 : 1; // the seat bay's side
+  const cushion = (x, Y, z) => { stats.cushions.push({ x, y: Y, z, variant: [15, 12, 2][stats.cushions.length % 3] }); for (const h of [1, 2]) keep.add(key(x, Y + h, z)); };
+  const lv = { y, bay: (x, z) => x * sx >= 2 && z >= 2 };
+  lookoutBay(blocks, keep, lv, { box: { hx: 5, hz: 5 } }, rnd, stats, cushion);
+  // the other corners: planter beds (moss, a flower, open trapdoors round the free sides) and one jar
+  const bed = (cx, cz) => {
+    const cells = [[cx, cz], [cx + Math.sign(cx), cz]].filter(([x, z]) => blocks.get(key(x, y, z))?.name === PLANKS && !rail(x, z) && can(x, y + 1, z) && can(x, y + 2, z));
+    if (cells.length < 2) return;
+    for (const [x, z] of cells) { put(x, y + 1, z, mossBlock()); put(x, y + 2, z, plantBlock(pickPlant(rnd))); }
+    for (const [x, z] of cells) for (const d of D4) { const tx = x + d[0], tz = z + d[1]; if (!cells.some(([bx, bz]) => bx === tx && bz === tz) && blocks.get(key(tx, y, tz))?.name === PLANKS && !rail(tx, tz) && can(tx, y + 1, tz) && Math.hypot(tx, tz) > 1.5 && Math.abs(tz) >= 2) put(tx, y + 1, tz, trapOpen(d)); }
+  };
+  bed(-sx * 3, 2); bed(3, -2);
+  // the north-west corner: the warden's flag, a 3-high stripped pole beside the rim, its banner hanging over the corner cell toward the corridor
+  const fx = -4, fz = -2;
+  if ([1, 2, 3].every((h) => can(fx, y + h, fz)) && can(fx + 1, y + 3, fz) && blocks.get(key(fx, y, fz))?.name === PLANKS && !rail(fx, fz)) {
+    for (const h of [1, 2, 3]) put(fx, y + h, fz, stripped());
+    put(fx + 1, y + 3, fz, wallBanner([1, 0], BANNERS.watch)); stats.banners++;
   }
-  if (can(-2 * bx, y + 1, 3) && !rail(-2 * bx, 3)) put(-2 * bx, y + 1, 3, jar());
-  const px = -3 * bx, pz = -2; // a moss planter on the other side of the corridor
-  if (can(px, y + 1, pz) && can(px, y + 2, pz) && blocks.get(key(px, y, pz))?.name === PLANKS && !rail(px, pz)) {
-    put(px, y + 1, pz, mossBlock()); put(px, y + 2, pz, { name: `${L}niphredil`, states: { [`${L}on_grass`]: true } });
-    for (const [dx, dz] of [[bx, 0], [0, 1], [0, -1]]) if (can(px + dx, y + 1, pz + dz) && blocks.get(key(px + dx, y, pz + dz))?.name === PLANKS && !rail(px + dx, pz + dz)) put(px + dx, y + 1, pz + dz, trapOpen([dx, dz]));
-  }
-  for (const [cx, cz, v] of [[2 * bx, 2, 15], [3 * bx, 1, 12]]) if (can(cx, y + 1, cz) && !rail(cx, cz) && blocks.get(key(cx, y, cz))?.name === PLANKS) { stats.cushions.push({ x: cx, y, z: cz, variant: v }); for (const h of [1, 2]) keep.add(key(cx, y + h, cz)); } // two native cushions
+  bed(-sx * 3, 2) ; // (no-op when already placed)
+  const jx = -sx * 2, jz = 2;
+  if (can(jx, y + 1, jz) && !rail(jx, jz) && blocks.get(key(jx, y, jz))?.name === PLANKS) put(jx, y + 1, jz, jar());
   underDeck(blocks, y, { trunkR: 1 }, rnd, stats);
-  relinkFences(blocks);
+  finishDressing(blocks, keep, stats.cushions);
   return stats;
 }
 
 // Fence links: a fence placed beside another fence at the same height links to it, both ways (the engine would do it when placing; a structure keeps what is stored)
 export function relinkFences(blocks) {
   for (const [k, b] of [...blocks]) {
-    if (b.name !== RAIL) continue;
+    if (!isFence(b.name)) continue;
     const [x, y, z] = k.split(",").map(Number);
-    let states = null; // copy on write: a block object may be shared with another map (the combos rotate a tree by 0 quarter turns without copying)
-    for (const [side, v] of Object.entries(DIRV)) if (/^lothlorien:mallorn_(stripped_)?log$|^lothlorien:mallorn_(stripped_)?wood$/.test(blocks.get(key(x + v[0], y, z + v[1]))?.name ?? "") && blocks.get(key(x + v[0], y - 1, z + v[1]))?.name?.match(/planks$|slab$/) && !b.states[`minecraft:connection_${side}`]) (states ??= { ...b.states })[`minecraft:connection_${side}`] = true; // toward a log post standing on the deck (the rail line goes on through it)
-    for (const [side, v] of Object.entries(DIRV)) if (blocks.get(key(x + v[0], y, z + v[1]))?.name === RAIL && !b.states[`minecraft:connection_${side}`]) (states ??= { ...b.states })[`minecraft:connection_${side}`] = true;
-    if (states) blocks.set(k, { ...b, states });
+    const on = missingLinks({ x, y, z }, (a, h, c) => blocks.get(key(a, h, c))?.name, (s) => b.states[s]);
+    if (on.length) blocks.set(k, { ...b, states: { ...b.states, ...Object.fromEntries(on.map((s) => [s, true])) } });
   }
 }
 

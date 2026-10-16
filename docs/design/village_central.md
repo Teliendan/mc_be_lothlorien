@@ -1,7 +1,6 @@
 # The central tree of the Elven village (M7 WP2): Court, stair, Hall, stream, reading circle
 
-Status 2026-10-15: built and green (generator checks, sim 300 seeds, tests, verify); **nothing here is verified in game yet** (owner's showcase test is
-the next step, together with the healer set and the dressing). Design authority: `village_style.md` sections 0, 7.1, 7.3, 7.6, 7.10. Code:
+Status 2026-10-16: complete, accepted in game as part of the finished villages. Final commit: **Finish accepted elven villages**. Design authority: `village_style.md` sections 0, 7.1, 7.3, 7.6, 7.10. Code:
 `tools/village_central.mjs` (Hall, stream, Court furniture), `tools/village_mallorn.mjs` (`buildTree` with the round-trunk stair and the
 `hooks.structure` hook, `SHAPES.octagon23`), `tools/village_dress.mjs` (all dressing, options `lampBudget`, `arms`, `bannerFaces`, `rimStep`, `rimMax`,
 `gardenR`, `islands`), `tools/build_village.mjs` (the central block: levels, hook, elf cells, markers). Pieces: `central_mallorn_01` (23 x 48 x 23) plus

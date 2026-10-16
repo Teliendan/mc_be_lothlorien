@@ -7,6 +7,7 @@
 import { BlockPermutation, world } from "@minecraft/server";
 import { ELF_ID, HOMES_PROPERTY, HOME_OF_ELF, POST_ID, addHomes, assignHomes, parseHomes, spawnEventOf } from "./elf_rules.js";
 import { findHome, hasLayout, planFurnish, siteOf } from "./home_furnish.js";
+import { mendAround } from "./rail_connections.js";
 
 const KIND_PREFIX = "elf_post_";
 const boxQuery = (r) => ({ type: POST_ID, location: { x: r.x0, y: -64, z: r.z0 }, volume: { x: r.x1 - r.x0 + 1, y: 420, z: r.z1 - r.z0 + 1 } });
@@ -22,24 +23,34 @@ function kindOf(entity) {
   }
 }
 
-// Furnishes the home pavilion round a home post for its profession (home_furnish.js; the healer only in the showcase): block writes for the objects, a tiny
-// pre-built structure per facing for the banner (the Script API cannot set banner patterns; tools/build_furnish.mjs writes them). Every group of objects is
+// Furnishes the home pavilion round a home post for its profession (home_furnish.js; every profession that has a layout there): block writes for the objects, a tiny
+// pre-built structure for each banner (per facing), planted flower pot and cushion (the Script API sets none of them; tools/build_furnish.mjs writes them). Every group of objects is
 // placed whole or not at all, only into air cells of the furnishing area; a second run finds the cells taken and places nothing. -> number of blocks written
 export function furnishHome(dimension, post, profession) {
   if (!hasLayout(profession) || post.kind === "reserve") return 0;
   const get = (x, y, z) => { try { return dimension.getBlock({ x, y, z })?.typeId; } catch { return undefined; } };
   const frame = findHome(get, post);
   if (!frame) return 0;
-  const plan = planFurnish(profession, frame, get);
+  const occupied=new Set(dimension.getEntities({type:"minecraft:cushion",location:post,maxDistance:frame.k*2})
+    .map(e=>{const p=e.location;return `${Math.floor(p.x)},${Math.floor(p.y)},${Math.floor(p.z)}`;}));
+  const plan = planFurnish(profession, frame, get, {occupied});
   let n = 0;
   for (const w of plan.writes) {
     try { dimension.getBlock({ x: w.x, y: w.y, z: w.z }).setPermutation(BlockPermutation.resolve(w.name, w.states)); n++; }
     catch (e) { console.warn(`[lothlorien] elves: furnishing ${w.name} at ${w.x},${w.y},${w.z}: ${e?.message ?? e}`); }
   }
-  for (const b of plan.banners) {
-    try { world.structureManager.place(b.structure, dimension, { x: b.x, y: b.y, z: b.z }, { includeEntities: false }); n++; }
-    catch (e) { console.warn(`[lothlorien] elves: banner ${b.structure} at ${b.x},${b.y},${b.z}: ${e?.message ?? e}`); }
+  for (const b of plan.structures) { // banners, planted flower pots and cushions: pre-built one-cell structures (script can set neither banner patterns, a pot's plant nor a cushion's colour)
+    try {
+      if (b.kind === "cushion" && dimension.getEntities({ type: "minecraft:cushion", location: { x: b.x + 0.5, y: b.y, z: b.z + 0.5 }, maxDistance: 0.8 }).length) continue; // one cushion per cell, also on a second run
+      world.structureManager.place(b.structure, dimension, { x: b.x, y: b.y, z: b.z }, { includeEntities: b.kind === "cushion" });
+      n++;
+    } catch (e) { console.warn(`[lothlorien] elves: structure ${b.structure} at ${b.x},${b.y},${b.z}: ${e?.message ?? e}`); }
   }
+  for(const p of plan.panels) {
+    try { const block=dimension.getBlock(p); if(block?.isAir){block.setPermutation(BlockPermutation.resolve(p.name,p.states));n++;} }
+    catch(e){console.warn(`[lothlorien] elves: planter border at ${p.x},${p.y},${p.z}: ${e?.message ?? e}`);}
+  }
+  for (const p of [...plan.writes, ...plan.structures,...plan.panels]) mendAround(dimension, p);
   return n;
 }
 
