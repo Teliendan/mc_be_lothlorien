@@ -39,4 +39,4 @@ dense forest (a log in the footprint rejects it).
 - Harmony/Renown at a village whose edge leaves the biome.
 - Village frequency feel.
 
-Scratch: `temp/worldgen-fixes/` (dumps, debug scripts). Delete when accepted.
+Committed in `1855fa8`. Scratch: `temp/worldgen-fixes/` (dumps, debug scripts). Delete when accepted.
