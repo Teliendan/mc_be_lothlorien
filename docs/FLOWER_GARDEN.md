@@ -10,7 +10,7 @@ requested the same day and still needs in-game terrain/distribution review.
 An open, roughly 11-block garden with four six-flower beds, low silver Mallorn
 slab edging and broad grass aisles. A three-stair silver bench with trapdoor arms
 sits at the south rim. No walls, roof, residents, planted saplings or new assets.
-Existing canopy outside the two-block clearing height is preserved.
+Existing canopy above the four-block clearing height is preserved (two blocks until 2026-10-20).
 
 Beds pair Niphredil with lily of the valley, allium with Niphredil, Elanor with
 orange tulips, and blue orchids with cornflowers. Each flower stands on grass.
@@ -25,6 +25,11 @@ and increased nut count are preserved in both the table and its generator.
 
 ## Placement and rebuilding
 
+**Since 2026-10-21 (owner) gardens and memorials share one grid**: set `lothlorien:garden_sites`
+(`structure_sets/garden_sites.json`, salt 794231583, spacing 9 / separation 3, linear), garden and memorial
+weight 1 each, so the two never pair up; combined count about 11 % below the two old 12/4 grids. The paragraph
+below is the earlier design.
+
 Natural generation adds gardens to Lothlorien at about one per four big trees,
 counting all plain, platform and shrine variants together. A separate structure set
 uses spacing 12, separation 4, salt 794231583 and linear random spread. The existing
@@ -35,18 +40,21 @@ This is a long-run density target, not a quota in every small patch; biome bound
 and placement success affect observed counts. Independent sets do not exclude each
 other, so natural terrain and occasional proximity to trees need an in-game review.
 The garden shares the giants' biome filter and world-surface projection. Its buried
-anchor becomes dirt; start height -2 aligns the soil. Worldgen changes need a new world.
+anchor becomes dirt; start height 0 puts the garden grass one block above the terrain
+(-2 until 2026-10-20, which sank it one block and flooded one in a lake; see
+`WORLDGEN_FIXES_2026-10-20.md`). Worldgen changes need a new world.
 
 Leave and re-enter the world after deployment. Stand on level grass and load a
-fresh garden centred roughly six blocks ahead:
+fresh garden centred roughly seven blocks ahead:
 
 ```mcfunction
-/structure load lothlorien:flower_garden_01 ~-6 ~-2 ~
+/structure load lothlorien:flower_garden_01 ~-7 ~-6 ~
 ```
 
-Template: 13 x 5 x 13; offset [6, 2, 6]. Top of soil is at player foot height.
-Unused cells remain structure void. Two soil layers support the small level patch;
-this is not a slope-fitting generator. The manual template load retains one buried
+Template: 15 x 10 x 15; offset [7, 6, 7]. Top of soil is at player foot height.
+Unused cells remain structure void. Six soil layers under the patch and a ragged
+one-/two-step shoulder (`tools/ground_skirt.mjs`) carry it on gentle slopes and over
+water; this is not a slope-fitting generator and cannot reject a bad site. The manual template load retains one buried
 jigsaw block at its centre; `/place structure lothlorien:flower_garden` consumes it
 to dirt when using the jigsaw definition in a world that recognises the new definition.
 

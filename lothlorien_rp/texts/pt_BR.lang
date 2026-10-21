@@ -729,3 +729,9 @@ lothlorien.message.archery.normal_bow=§7Um arco comum não dispara flechas dos 
 item.lothlorien:swan_meat_raw=Carne de cisne crua
 ## Context: The cooked edible cut of swan meat, made in a furnace, smoker or campfire.
 item.lothlorien:swan_meat_cooked=Carne de cisne assada
+## Context: Captured firefly name. Long names continue on additional lore lines; the captured identity, not the anvil bottle title, is restored.
+lothlorien.message.firefly.name=Vaga-lume: %s
+## Context: Continuation of a captured firefly name on its own tooltip line. Do not add punctuation or change the name.
+lothlorien.message.firefly.name_more=%s
+## Context: Captured firefly current health in health points, not hearts. Only injured or nondefault-health captures need this lore line.
+lothlorien.message.firefly.health=Vida: %s

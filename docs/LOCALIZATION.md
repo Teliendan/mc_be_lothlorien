@@ -1,5 +1,10 @@
 # Localization
 
+2026-10-17 optional worldgen test pack: localized pack title/description added
+with full context and all nine locales, plus generated compatibility aliases.
+The labels identify the optional diagnostic pack and restrict it to disposable
+test worlds. Translations remain AI drafts; in-game presentation is pending.
+
 M5 gifts, 2026-10-11: five item names plus projectile/helper names have complete
 context and all nine locales in the catalog, with generated compatibility aliases.
 Translations remain contextual AI drafts, pending native-language and game review.

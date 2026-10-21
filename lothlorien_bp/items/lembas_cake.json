@@ -20,7 +20,7 @@
         "saturation_modifier": 0.8
       },
       "minecraft:compostable": {
-        "composting_chance": 100
+        "composting_chance": 85
       },
       "minecraft:tags": {
         "tags": [

@@ -209,6 +209,41 @@ register(`data:text/javascript,${encodeURIComponent(`export function resolve(spe
 }`)}`);
 const { renownOf } = await import("../lothlorien_bp/scripts/renown_game.js");
 const { harmonyOf } = await import("../lothlorien_bp/scripts/harmony_game.js");
+
+await scenario("native leash cutting bypasses every profession UI, refusal, request and table swap", async () => {
+  await start();
+  const lore = await import(`../lothlorien_bp/scripts/loremaster.js?native_cut=${++run}`);
+  lore.startLoremaster(); globalThis.__tradeUi = [];
+  const professions = ["gardener", "healer", "woodwright", "lamplighter", "loremaster"];
+  for (let variant = 0; variant < professions.length; variant++) {
+    const e = elf(2, variant); e.components["minecraft:leashable"] = { isLeashed: true };
+    for (const band of ["guest", "shunned", "hated"]) for (const table of ["none", "guest_0"]) {
+      const p = player(); p.band = band; p.request = professions[variant]; e.table = table;
+      for (const item of ["minecraft:shears", "minecraft:lead", "minecraft:name_tag"]) {
+        assert.equal(click(p, e, item), false, `${professions[variant]}/${band}/${table}/${item}`);
+      }
+    }
+    assert.deepEqual(e.events, [], "the native action must not queue a shop-table mutation");
+  }
+  await mock.advance(1);
+  assert.equal(requests.length, 0); assert.equal(globalThis.__tradeUi.length, 0);
+});
+
+await scenario("unleashed shears retain ordinary delivery dialogs and Loremaster interaction", async () => {
+  await start();
+  const lore = await import(`../lothlorien_bp/scripts/loremaster.js?idle_shears=${++run}`);
+  lore.startLoremaster();
+  for (const [variant, profession] of ["gardener", "healer", "woodwright", "lamplighter"].entries()) {
+    const p = player(), e = elf(2, variant); p.request = profession;
+    e.components["minecraft:leashable"] = { isLeashed: false };
+    assert.equal(click(p, e, "minecraft:shears"), true);
+    await mock.advance(1);
+    assert.equal(requests.at(-1).profession, profession);
+  }
+  const p = player(), e = elf(2, 4); e.components["minecraft:leashable"] = { isLeashed: false };
+  assert.equal(click(p, e, "minecraft:shears"), true, "ordinary Loremaster use still opens his dialog");
+});
+
 async function requestFormSetup(ready = false) {
   globalThis.__tradeUi = [];
   const mod = await import(`../lothlorien_bp/scripts/loremaster.js?trade_form=${++run}`);

@@ -3,6 +3,7 @@ import { SUPPORT_POLICIES } from "./support_policies.js";
 import { createSupportMotionService } from "./support_motion_service.js";
 import { supportOffset } from "./antler_rules.js";
 import { dropWholeRope } from "./elven_rope.js";
+import { cornSoilAllowed, CORN_ORIGIN } from "./crop_rules.js";
 
 const AXES = [{ x: 0, y: -1, z: 0 }, { x: 0, y: 1, z: 0 },
   { x: 0, y: 0, z: 1 }, { x: 0, y: 0, z: -1 }, { x: 1, y: 0, z: 0 }, { x: -1, y: 0, z: 0 }];
@@ -17,9 +18,11 @@ export function describeSupport(block) {
     { x: 0, y: policy.mount === "ceiling" ? 1 : -1 - (policy.mount === "door" ? part : 0), z: 0 };
   if (!offset) return undefined;
   const { x, y, z } = block.location;
-  return { identity: `${block.typeId}|${face || policy.mount}|${part}`,
+  const cropOrigin = block.typeId === "lothlorien:western_corn" ? p.getState(CORN_ORIGIN) === true : undefined;
+  return { identity: `${block.typeId}|${face || policy.mount}|${part}${cropOrigin === undefined ? "" : `|wild=${cropOrigin}`}`,
     supports: [{ position: { x: x + offset.x, y: y + offset.y, z: z + offset.z },
-      valid: support => policy.allowed ? policy.allowed.includes(support.typeId) : !support.isAir && !support.isLiquid }] };
+      valid: support => cropOrigin !== undefined ? cornSoilAllowed(cropOrigin, support.typeId) :
+        policy.allowed ? policy.allowed.includes(support.typeId) : !support.isAir && !support.isLiquid }] };
 }
 function remove(block) {
   if (block.typeId.startsWith("lothlorien:elven_rope")) {

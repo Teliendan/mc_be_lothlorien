@@ -11,6 +11,10 @@
         "lothlorien:powered": [
           false,
           true
+        ],
+        "lothlorien:in_wall": [
+          false,
+          true
         ]
       },
       "traits": {
@@ -116,7 +120,8 @@
             "stops_liquid_flowing_from_direction": []
           }
         ]
-      }
+      },
+      "lothlorien:gate_wall": {}
     },
     "permutations": [
       {
@@ -127,6 +132,13 @@
             "enabled_directions": [
               "east",
               "west"
+            ]
+          },
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              0,
+              0
             ]
           }
         }
@@ -154,6 +166,13 @@
               16,
               8
             ]
+          },
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              0,
+              0
+            ]
           }
         }
       },
@@ -165,6 +184,13 @@
             "enabled_directions": [
               "east",
               "west"
+            ]
+          },
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              180,
+              0
             ]
           }
         }
@@ -192,6 +218,13 @@
               16,
               8
             ]
+          },
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              180,
+              0
+            ]
           }
         }
       },
@@ -208,7 +241,7 @@
           "minecraft:transformation": {
             "rotation": [
               0,
-              90,
+              270,
               0
             ]
           }
@@ -227,7 +260,7 @@
           "minecraft:transformation": {
             "rotation": [
               0,
-              90,
+              270,
               0
             ]
           },
@@ -294,6 +327,258 @@
             "size": [
               16,
               16,
+              8
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('lothlorien:in_wall') && q.block_state('minecraft:cardinal_direction') == 'north' && !q.block_state('lothlorien:open')",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              0,
+              0
+            ]
+          },
+          "minecraft:geometry": "geometry.lothlorien.mallorn_fence_gate_closed_in_wall",
+          "minecraft:collision_box": {
+            "origin": [
+              -8,
+              0,
+              -2
+            ],
+            "size": [
+              16,
+              24,
+              4
+            ]
+          },
+          "minecraft:selection_box": {
+            "origin": [
+              -8,
+              0,
+              -2
+            ],
+            "size": [
+              16,
+              13,
+              4
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('lothlorien:in_wall') && q.block_state('minecraft:cardinal_direction') == 'north' && q.block_state('lothlorien:open')",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              0,
+              0
+            ]
+          },
+          "minecraft:geometry": "geometry.lothlorien.mallorn_fence_gate_open_in_wall",
+          "minecraft:collision_box": false,
+          "minecraft:selection_box": {
+            "origin": [
+              -8,
+              0,
+              -8
+            ],
+            "size": [
+              16,
+              13,
+              8
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('lothlorien:in_wall') && q.block_state('minecraft:cardinal_direction') == 'south' && !q.block_state('lothlorien:open')",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              180,
+              0
+            ]
+          },
+          "minecraft:geometry": "geometry.lothlorien.mallorn_fence_gate_closed_in_wall",
+          "minecraft:collision_box": {
+            "origin": [
+              -8,
+              0,
+              -2
+            ],
+            "size": [
+              16,
+              24,
+              4
+            ]
+          },
+          "minecraft:selection_box": {
+            "origin": [
+              -8,
+              0,
+              -2
+            ],
+            "size": [
+              16,
+              13,
+              4
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('lothlorien:in_wall') && q.block_state('minecraft:cardinal_direction') == 'south' && q.block_state('lothlorien:open')",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              180,
+              0
+            ]
+          },
+          "minecraft:geometry": "geometry.lothlorien.mallorn_fence_gate_open_in_wall",
+          "minecraft:collision_box": false,
+          "minecraft:selection_box": {
+            "origin": [
+              -8,
+              0,
+              -8
+            ],
+            "size": [
+              16,
+              13,
+              8
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('lothlorien:in_wall') && q.block_state('minecraft:cardinal_direction') == 'east' && !q.block_state('lothlorien:open')",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              270,
+              0
+            ]
+          },
+          "minecraft:geometry": "geometry.lothlorien.mallorn_fence_gate_closed_in_wall",
+          "minecraft:collision_box": {
+            "origin": [
+              -8,
+              0,
+              -2
+            ],
+            "size": [
+              16,
+              24,
+              4
+            ]
+          },
+          "minecraft:selection_box": {
+            "origin": [
+              -8,
+              0,
+              -2
+            ],
+            "size": [
+              16,
+              13,
+              4
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('lothlorien:in_wall') && q.block_state('minecraft:cardinal_direction') == 'east' && q.block_state('lothlorien:open')",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              270,
+              0
+            ]
+          },
+          "minecraft:geometry": "geometry.lothlorien.mallorn_fence_gate_open_in_wall",
+          "minecraft:collision_box": false,
+          "minecraft:selection_box": {
+            "origin": [
+              -8,
+              0,
+              -8
+            ],
+            "size": [
+              16,
+              13,
+              8
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('lothlorien:in_wall') && q.block_state('minecraft:cardinal_direction') == 'west' && !q.block_state('lothlorien:open')",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              90,
+              0
+            ]
+          },
+          "minecraft:geometry": "geometry.lothlorien.mallorn_fence_gate_closed_in_wall",
+          "minecraft:collision_box": {
+            "origin": [
+              -8,
+              0,
+              -2
+            ],
+            "size": [
+              16,
+              24,
+              4
+            ]
+          },
+          "minecraft:selection_box": {
+            "origin": [
+              -8,
+              0,
+              -2
+            ],
+            "size": [
+              16,
+              13,
+              4
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('lothlorien:in_wall') && q.block_state('minecraft:cardinal_direction') == 'west' && q.block_state('lothlorien:open')",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              90,
+              0
+            ]
+          },
+          "minecraft:geometry": "geometry.lothlorien.mallorn_fence_gate_open_in_wall",
+          "minecraft:collision_box": false,
+          "minecraft:selection_box": {
+            "origin": [
+              -8,
+              0,
+              -8
+            ],
+            "size": [
+              16,
+              13,
               8
             ]
           }

@@ -48,10 +48,19 @@ def main():
     ], check=True, capture_output=True, text=True).stdout)
     block_path = ROOT / "lothlorien_bp/blocks/phial_light.json"
     block = json.loads(block_path.read_text(encoding="utf-8"))
-    block["minecraft:block"]["components"]["minecraft:light_emission"] = rules["level"]
+    configure_helper(block, rules["level"])
     block_path.write_text(json.dumps(block, indent=2) + "\n", encoding="utf-8")
     phial_icon().save(RP / "textures/items/phial_of_galadriel.png")
     Image.new("RGBA", (16, 16)).save(RP / "textures/blocks/phial_light.png")
+
+
+def configure_helper(block, level):
+    """Keep the hidden helper's approved neighbor policy through regeneration."""
+    components = block["minecraft:block"]["components"]
+    components["minecraft:light_emission"] = level
+    components["minecraft:connection_rule"] = {"accepts_connections_from": "none"}
+    components["minecraft:chest_obstruction"] = {"obstruction_rule": "never"}
+    components["minecraft:precipitation_interactions"] = {"precipitation_behavior": "none"}
 
 
 if __name__ == "__main__":

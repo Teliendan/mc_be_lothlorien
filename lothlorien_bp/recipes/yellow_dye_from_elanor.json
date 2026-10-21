@@ -1,0 +1,28 @@
+{
+  "format_version": "1.26.50",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "lothlorien:yellow_dye_from_elanor"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "F"
+    ],
+    "key": {
+      "F": {
+        "item": "lothlorien:elanor"
+      }
+    },
+    "unlock": [
+      {
+        "item": "lothlorien:elanor"
+      }
+    ],
+    "result": {
+      "item": "minecraft:yellow_dye",
+      "count": 1
+    }
+  }
+}

@@ -2,10 +2,11 @@ import { message } from "./messages.js";
 // Harmony in the running game: deeds and deaths feed the rules in harmony.js, state is kept per player in a dynamic
 // property (survives relogging, independent between players) and written only when harmony changes.
 import { world, system } from "@minecraft/server";
-import { EVERYWHERE_DEEDS, MAX_HARMONY, MIN_HARMONY, bandOf, changeMessages, deedCounts, deedKindOf, hintDue, isHated, parse, recordDeath, recordDeed, serialize, statusText, tick } from "./harmony.js";
+import { EVERYWHERE_DEEDS, MAX_HARMONY, MIN_HARMONY, bandOf, changeMessages, deedCounts, deedKindOf, hintDue, isFriend, isHated, parse, recordDeath, recordDeed, serialize, statusText, tick } from "./harmony.js";
 
 const PROPERTY = "lothlorien:harmony";
 export const HATED_TAG = "lothlorien_hated"; // read by entities/elven_warden.json (wardens attack tagged players on sight)
+export const FRIEND_TAG = "lothlorien_friend"; // native unicorn leader/avoidance filters; Harmony band only
 const TICK_SECONDS = 1;
 const PLAYER_ID = "minecraft:player";
 
@@ -23,12 +24,13 @@ export function harmonyOf(player) {
   return state;
 }
 
-// The tag follows the Hated band; checked after every change and every second (covers join and reload).
-function syncHatedTag(player, state) {
-  const hated = isHated(state);
-  if (hated !== player.hasTag(HATED_TAG)) {
-    if (hated) player.addTag(HATED_TAG);
-    else player.removeTag(HATED_TAG);
+// Band tags share the existing update/one-second refresh (covers join/reload).
+function syncBandTags(player, state) {
+  for (const [tag, needed] of [[HATED_TAG, isHated(state)], [FRIEND_TAG, isFriend(state)]]) {
+    if (needed !== player.hasTag(tag)) {
+      if (needed) player.addTag(tag);
+      else player.removeTag(tag);
+    }
   }
 }
 
@@ -37,7 +39,7 @@ function syncHatedTag(player, state) {
 function update(player, state, change) {
   const before = state.harmony;
   change();
-  syncHatedTag(player, state);
+  syncBandTags(player, state);
   if (state.harmony === before) return false;
   const keys = changeMessages(before, state.harmony);
   for (const key of keys) player.sendMessage(message(key));

@@ -611,6 +611,12 @@
       },
       "minecraft:jump.static": {},
       "minecraft:physics": {},
+      "minecraft:damage_sensor": {
+        "triggers": {
+          "cause": "fall",
+          "deals_damage": "no"
+        }
+      },
       "minecraft:breathable": {
         "total_supply": 15,
         "suffocate_time": 0,

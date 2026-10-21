@@ -8,23 +8,21 @@
       "crafting_table"
     ],
     "pattern": [
-      "ARA",
-      "ALA"
+      "L L",
+      " A ",
+      "L L"
     ],
     "key": {
       "A": {
         "item": "lothlorien:deer_antler"
       },
-      "R": {
-        "item": "lothlorien:elven_rope"
-      },
       "L": {
-        "item": "lothlorien:elven_lantern"
+        "tag": "lothlorien:elven_lantern"
       }
     },
     "unlock": [
       {
-        "item": "lothlorien:elven_lantern"
+        "item": "lothlorien:deer_antler"
       }
     ],
     "result": {

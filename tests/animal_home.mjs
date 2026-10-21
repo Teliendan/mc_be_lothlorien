@@ -7,12 +7,26 @@ import * as giftRules from "../lothlorien_bp/scripts/great_mallorn_rules.js";
 import * as squirrelRules from "../lothlorien_bp/scripts/squirrel_rules.js";
 import * as swanRules from "../lothlorien_bp/scripts/swan_rules.js";
 import * as unicornRules from "../lothlorien_bp/scripts/unicorn_rules.js";
+import { message as localizedMessage } from "../lothlorien_bp/scripts/messages.js";
 
 const ACORN = guideRules.ACORN_ID, BOTTLE = "lothlorien:bottle_of_fireflies";
 const EMPTY = "minecraft:glass_bottle";
 const entityJson = name => JSON.parse(readFileSync(new URL(`../lothlorien_bp/entities/${name}.json`, import.meta.url)))["minecraft:entity"];
 let serial = 0;
+class TestItem {
+  constructor(typeId, amount = 1) { Object.assign(this, { typeId, amount }); }
+  clone() { const copy=new TestItem(this.typeId,this.amount);copy.nameTag=this.nameTag;copy.lore=structuredClone(this.lore);return copy; }
+  getComponent() {} getRawLore() { return structuredClone(this.lore??[]); } getCanPlaceOn() { return []; } getCanDestroy() { return []; }
+  getDynamicPropertyIds() { return []; }
+  setLore(lines) { this.lore = structuredClone(lines); }
+}
 async function load(name, bindings) {
+  if (["fireflies", "white_deer", "squirrel"].includes(name) && !bindings.captureHand) {
+    const cover = await load("cover_use", { ...bindings, readBlock: (d, p) => d.getBlock(p), SUPPORT_POLICIES: {} });
+    const hand = await load("interaction_use", { ...bindings, ...cover });
+    bindings = { ...bindings, ...cover, ...hand };
+  }
+  if (name === "fireflies") bindings = { ...bindings, ...await load("firefly_bottle",{...bindings,message:localizedMessage}) };
   globalThis.__animalHome = bindings;
   const source = readFileSync(new URL(`../lothlorien_bp/scripts/${name}.js`, import.meta.url), "utf8")
     .replace(/^import \{([^}]+)\} from "[^"]+";/gm, "const {$1} = globalThis.__animalHome;");
@@ -29,7 +43,12 @@ function engine() {
     if (!callbacks.has(key)) callbacks.set(key, []);
     callbacks.get(key).push(fn);
   } }) });
-  const fire = (phase, name, event) => { for (const fn of callbacks.get(`${phase}:${name}`) || []) fn(event); };
+  const fire = (phase, name, event) => {
+    if (event.itemStack && !event.itemStack.clone) event.itemStack = new TestItem(event.itemStack.typeId, event.player.slot.amount);
+    if (event.block) event.block = { ...dimension.getBlock(event.block.location), ...event.block,
+      center: () => ({ ...event.block.location, x: event.block.location.x + .5, y: event.block.location.y + .5, z: event.block.location.z + .5 }) };
+    for (const fn of callbacks.get(`${phase}:${name}`) || []) fn(event);
+  };
   const schedule = (fn, delay, repeat = false) => {
     const id = ++nextId; timers.set(id, { fn, at: tick + delay, delay, repeat }); return id;
   };
@@ -37,7 +56,12 @@ function engine() {
     runTimeout: (fn, delay) => schedule(fn, delay), runInterval: (fn, delay) => schedule(fn, delay, true),
     clearRun: id => timers.delete(id) };
   const dimension = { id: "overworld", spawned: [], drops: [], blocked: false,
-    getBlock: () => ({ isAir: !dimension.blocked }), getEntities: ({ type }) => [...entities.values()].filter(e => e.typeId === type),
+    getBlock(location) {
+      const typeId = dimension.blocked ? "minecraft:stone" : "minecraft:air";
+      return { dimension, location, typeId, isAir: typeId === "minecraft:air", isWaterlogged: false,
+        permutation: { matches: id => id === typeId, getAllStates: () => ({}) } };
+    },
+    getEntities: ({ type }) => [...entities.values()].filter(e => e.typeId === type),
     spawnParticle() {}, playSound() {},
     spawnItem(item) { dimension.drops.push(item); },
     spawnEntity(typeId, location, options) {
@@ -69,13 +93,14 @@ function engine() {
     properties.set("lothlorien:wariness", "calm"); entities.set(e.id, e); return e;
   }
   function player(typeId, amount = 1, creative = false, fullInventory = false) {
-    const p = entity("minecraft:player"), slot = { item: { typeId, amount },
+    const p = entity("minecraft:player"), slot = { item: new TestItem(typeId, amount), getItem() { return this.item; },
       hasItem() { return !!this.item; }, get typeId() { return this.item?.typeId; },
       get amount() { return this.item?.amount; }, set amount(n) { this.item.amount = n; }, setItem(item) { this.item = item; } };
     p.slot = slot; p.inventory = []; p.messages = []; p.band = "friend";
+    p.selectedSlotIndex = 0; p.getHeadLocation = () => ({ ...p.location, y: p.location.y + 1.6 });
     p.sendMessage = m => p.messages.push(m);
     p.getGameMode = () => creative ? "creative" : "survival";
-    p.getComponent = k => k === "equippable" ? { getEquipmentSlot: () => slot } : k === "inventory" ? {
+    p.getComponent = k => k === "minecraft:health" ? p.health : k === "equippable" ? { getEquipmentSlot: () => slot } : k === "inventory" ? {
       container: { addItem(item) { if (fullInventory) return item; p.inventory.push(item); } } } : undefined;
     world.players.push(p); return p;
   }
@@ -87,8 +112,8 @@ function engine() {
     }
   } };
   const last = new Map();
-  const bindings = { system, world, EquipmentSlot: { Mainhand: "mainhand" }, GameMode: { Creative: "creative" },
-    EntityInitializationCause: { Loaded: "Loaded" }, ItemStack: class { constructor(typeId, amount = 1) { Object.assign(this, { typeId, amount }); } },
+  const bindings = { system, world, EquipmentSlot: { Mainhand: "mainhand" }, GameMode: { Survival: "survival", Adventure: "adventure", Creative: "creative", Spectator: "spectator" },
+    EntityInitializationCause: { Loaded: "Loaded" }, ItemStack: TestItem,
     harmonyOf: p => ({ harmony: p.band }), bandOf: b => b, message: key => key,
     noteDeed: (...args) => deeds.push(args), repeatedUse(p, action) {
       const key = p.id + action, previous = last.get(key);
@@ -148,6 +173,17 @@ for (const blocked of [false,true]) {
   h.fire("before","playerInteractWithBlock",{player:p,itemStack:{typeId:BOTTLE},block:{dimension:h.dimension,location:{x:0,y:64,z:0}},blockFace:"Up"});
   if (!blocked) p.slot.setItem({typeId:"minecraft:diamond",amount:1});
   h.advance(1); assert.equal(h.dimension.spawned.length,0); assert.equal(p.slot.amount,1);
+}
+{
+  const h=engine(), bottles=await load("bottles",h.bindings); await load("fireflies",{...h.bindings,...bottles});
+  const p=h.player(BOTTLE), read=h.dimension.getBlock.bind(h.dimension);
+  const destination=read({x:0,y:65,z:0});
+  h.fire("before","playerInteractWithBlock",{player:p,itemStack:{typeId:BOTTLE},block:{dimension:h.dimension,location:{x:0,y:64,z:0}},blockFace:"Up"});
+  h.dimension.blocked=true;
+  h.dimension.getBlock=at=>at.y===65?destination:read(at);
+  h.advance(1);
+  assert.equal(h.dimension.spawned.length,0,"changed clicked block rejects release even while destination remains air");
+  assert.equal(p.slot.typeId,BOTTLE,"changed clicked block preserves the full bottle");
 }
 {
   const h=engine(), bottles=await load("bottles",h.bindings); await load("fireflies",{...h.bindings,...bottles});
@@ -214,18 +250,43 @@ for (const name of ["white_deer","squirrel"]) {
   h.fire("after","entitySpawn",{entity:wild,cause:"Spawned"});h.advance(1);assert.equal(wild.isValid,false);
 }
 
-// Bonded unicorn: healing replaces mounting for an injured owner's Elanor use.
-// Strangers still cannot ride or heal someone else's unicorn.
+// Bonded owner interactions go through native healable/rideable unchanged.
+// These callbacks do not emulate native healing or prove mount precedence.
 {
   const h=engine(), food=await load("animal_food",{...h.bindings,...foods});
   const mod=await load("unicorn",{...h.bindings,...food,...unicornRules,setEventFor:s=>`lothlorien:set_${s}`});mod.startUnicorns();
   const p=h.player(unicornRules.ELANOR_ID,2),q=h.player(unicornRules.ELANOR_ID),u=h.entity(unicornRules.UNICORN_ID);
   u.setProperty("lothlorien:tame",true);u.setDynamicProperty("lothlorien:owner",p.id);
-  const ev={player:p,target:u,itemStack:{typeId:unicornRules.ELANOR_ID}};
-  h.fire("before","playerInteractWithEntity",ev);assert.equal(ev.cancel,true);h.advance(1);
-  assert.equal(u.health.currentValue,5);assert.equal(p.slot.amount,1);
+  for(const health of [3,8]) {
+    u.health.currentValue=health;
+    const ev={player:p,target:u,itemStack:{typeId:unicornRules.ELANOR_ID}};
+    h.fire("before","playerInteractWithEntity",ev);assert.notEqual(ev.cancel,true);
+    assert.equal(h.timers.size,0,"owner healing adds no deferred script whose later context could revoke it");
+    h.fire("after","playerInteractWithEntity",ev);h.advance(1);
+    assert.equal(u.health.currentValue,health,"native owns bonded healing; no duplicate scripted heal");
+    assert.equal(p.slot.amount,2,"native owns bonded food consumption; no duplicate script charge");
+  }
   const stranger={player:q,target:u,itemStack:{typeId:unicornRules.ELANOR_ID}};
   h.fire("before","playerInteractWithEntity",stranger);h.advance(1);assert.equal(stranger.cancel,true);
-  assert.equal(u.health.currentValue,5);assert.equal(q.slot.amount,1);
+  assert.equal(u.health.currentValue,8);assert.equal(q.slot.amount,1);
+  for (const [player,denied] of [[p,false],[q,true]]) {
+    const naming={player,target:u,itemStack:{typeId:"minecraft:name_tag"}};
+    h.fire("before","playerInteractWithEntity",naming);assert.equal(naming.cancel===true,denied,"bonded naming remains owner-only");
+  }
 }
-console.log("ok   animal home: bottle inventories/races, outside feeding/gifts, lead priority, swan migration, unicorn healing");
+// Wild trust offerings still consume/heal synchronously, with native healable
+// absent until the actual bond. This tests script integration, not native feeding.
+for(const creative of [false,true]) {
+  const h=engine(), food=await load("animal_food",{...h.bindings,...foods});
+  const mod=await load("unicorn",{...h.bindings,...food,...unicornRules,setEventFor:s=>`lothlorien:set_${s}`});mod.startUnicorns();
+  const p=h.player(unicornRules.ELANOR_ID,3,creative),u=h.entity(unicornRules.UNICORN_ID,20,30);
+  u.setProperty("lothlorien:trust",0); // native description-property default
+  for(let offer=1;offer<=3;offer++) {
+    h.fire("after","playerInteractWithEntity",{player:p,target:u,itemStack:{typeId:unicornRules.ELANOR_ID}});
+    assert.equal(u.health.currentValue,20+2*offer);assert.equal(u.getProperty("lothlorien:trust"),offer);
+    assert.equal(p.slot.amount,creative?3:offer<3?3-offer:undefined);
+    h.advance(unicornRules.OFFER_GAP_TICKS);
+  }
+  assert.equal(u.getDynamicProperty("lothlorien:owner"),p.id);assert.ok(u.events.includes("lothlorien:become_tame"));
+}
+console.log("ok   animal home: bottles, outside care/gifts, leads, swan migration, native unicorn healing handoff and trust consumption");

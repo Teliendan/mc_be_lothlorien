@@ -1,0 +1,24 @@
+{
+  "text": "Welcome, traveller. Rest beneath the trees, and let the evening bring you peace.",
+  "instruction": "Use the reference speaker's voice. Speak gently, warmly and melodiously, with a soft lilting cadence and flowing, connected phrases. Let the pitch rise and fall in small graceful arcs, with tender warmth on the greeting and a peaceful falling ending. Keep a relaxed conversational pace, softly voiced clear vowels and clean consonants. A quietly welcoming elf speaking to one guest. Natural spoken dialogue.",
+  "reference": "spanish/noble_actor_reference.wav",
+  "model": "MOSS-TTS-Local-v1.5 English reference clone",
+  "seed": 22102026,
+  "params": {
+    "max_new_tokens": 256,
+    "do_sample": true,
+    "audio_temperature": 1.2,
+    "audio_top_p": 0.8,
+    "audio_top_k": 25,
+    "audio_repetition_penalty": 1.0
+  },
+  "seconds": 15.76,
+  "full_seconds": 15.76,
+  "trim_seconds": [
+    0.0,
+    15.76
+  ],
+  "generation_seconds": null,
+  "export_recovery": "Saved WAV recovered after Vorbis export stopped both processes; using WAV only for this guide. Exact inference time unavailable.",
+  "status": "guide audition; same identity and requested performance require listening"
+}

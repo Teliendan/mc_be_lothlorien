@@ -13,6 +13,7 @@ import { message } from "./messages.js";
 import { system, world } from "@minecraft/server";
 import { ActionFormData } from "@minecraft/server-ui";
 import { ELF_ID, PROFESSIONS } from "./elf_rules.js";
+import { nativeElfUse } from "./elf_native_use.js";
 import { bandOf } from "./harmony.js";
 import { harmonyOf } from "./harmony_game.js";
 import { repeatedUse } from "./use_guard.js";
@@ -28,7 +29,6 @@ const MAX_DISTANCE = 12; // the Loremaster must still be this close when an answ
 const BUSY_RETRIES = 10;
 const BUSY_WAIT_TICKS = 10;
 const MAX_SCREENS = 100;
-const SKIP_ITEMS = new Set(["minecraft:lead", "minecraft:name_tag"]); // these keep their usual effect on the Loremaster
 
 const ICON = {
   ready: "textures/ui/confirm", done: "textures/ui/check", offered: "textures/items/book_writable", lore: "textures/items/book_normal",
@@ -426,7 +426,7 @@ export function startLoremaster() {
   world.beforeEvents.playerInteractWithEntity.subscribe((event) => {
     const { player, target, itemStack } = event;
     if (!isLoremaster(target)) return;
-    if (itemStack && SKIP_ITEMS.has(itemStack.typeId)) return; // a lead or a name tag keeps working on him
+    if (nativeElfUse(target, itemStack)) return;
     event.cancel = true;
     if (open.has(player.id) || repeatedUse(player, "loremaster")) return; // the event repeats for one use
     system.run(() => {

@@ -1,5 +1,13 @@
 # White deer (`lothlorien:white_deer`) - design sheet
 
+2026-10-19 interaction audit: first five Group12 fixes are implemented with
+offline production coverage.2026-10-20 owner chose to skip unavailable outer
+depth samples and allow optimistic heart estimates, retaining uncertainty and
+the original natural spawn chance table. This sampler change is offline-tested,
+not yet deployed. See [DEER_INTERACTIONS.md](../DEER_INTERACTIONS.md) for current
+offer, delivery, game-mode/error policy and native acceptance limits. Earlier
+dated in-game observations below retain their original scope.
+
 2026-10-11 care update (source/offline evidence; Bedrock 1.26.52; owner accepted as done; no new game test results supplied): Outside Lothlorien, acorns are ordinary food, restore 2 HP and keep the deer persistent without starting guidance or spending its lifetime gift. Inside, existing Friend/lead rules remain; an injured deer can be healed even after its gift. Existing lead and lure support is unchanged.
 See [Bringing wildlife home](BRINGING_HOME.md) for current policy and acceptance checks.
 

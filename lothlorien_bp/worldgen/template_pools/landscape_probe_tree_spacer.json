@@ -1,0 +1,18 @@
+{
+  "format_version": "1.21.100",
+  "minecraft:template_pool": {
+    "description": {
+      "identifier": "lothlorien:landscape_probe/tree_spacer"
+    },
+    "elements": [
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/landscape_probe/tree_spacer",
+          "projection": "terrain_matching"
+        },
+        "weight": 1
+      }
+    ]
+  }
+}

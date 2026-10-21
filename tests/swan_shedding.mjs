@@ -36,7 +36,7 @@ assert.deepEqual(meat.functions.find(f => f.function === "furnace_smelt").condit
 const recipe = read("../lothlorien_bp/recipes/furnace_swan_meat.json")["minecraft:recipe_furnace"];
 assert.equal(recipe.input, meat.name);
 assert.equal(recipe.output, "lothlorien:swan_meat_cooked");
-assert.deepEqual(recipe.tags, ["furnace", "smoker", "campfire"]);
+assert.deepEqual(recipe.tags, ["furnace", "smoker", "campfire", "soul_campfire"]);
 for (const kind of ["raw", "cooked"]) {
   const item = read(`../lothlorien_bp/items/swan_meat_${kind}.json`)["minecraft:item"];
   assert.equal(item.description.identifier, kind === "raw" ? recipe.input : recipe.output);

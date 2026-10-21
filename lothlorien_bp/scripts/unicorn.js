@@ -7,7 +7,7 @@ import { EquipmentSlot, GameMode, system, world } from "@minecraft/server";
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { repeatedUse } from "./use_guard.js";
-import { eatHeldFood, healAnimal, isInjured } from "./animal_food.js";
+import { healAnimal } from "./animal_food.js";
 import { setEventFor } from "./deer_rules.js";
 import { ELANOR_ID, UNICORN_ID, mayRide, nextTrust, offerRefusal, ticksSince } from "./unicorn_rules.js";
 
@@ -92,18 +92,11 @@ function offer(player, unicorn) {
 export function startUnicorns() {
   // Only the owner mounts a bonded unicorn: the interaction is cancelled for everyone else (before the engine mounts).
   world.beforeEvents.playerInteractWithEntity.subscribe((event) => {
-    const { player, target, itemStack } = event;
+    const { player, target } = event;
     if (target.typeId !== UNICORN_ID || !target.getProperty("lothlorien:tame")) return;
-    if (mayRide(target.getDynamicProperty(OWNER), player.id)) {
-      if (itemStack?.typeId === ELANOR_ID && isInjured(target)) {
-        event.cancel = true;
-        if (repeatedUse(player, "unicorn")) return;
-        system.run(() => {
-          if (target.isValid && player.isValid && isInjured(target)) eatHeldFood(player, target, ELANOR_ID);
-        });
-      }
-      return;
-    }
+    // Native bonded-group healable owns Elanor healing and consumption together;
+    // full health keeps normal mounting. No deferred action can revoke feeding.
+    if (mayRide(target.getDynamicProperty(OWNER), player.id)) return;
     event.cancel = true;
     system.run(() => say(player, message("unicorn.other_owner")));
   });

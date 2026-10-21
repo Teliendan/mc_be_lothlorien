@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { MEMORIAL, buildMemorial, memorialWorldgen } from "../tools/memorial.mjs";
-import { flowerGardenWorldgen } from "../tools/flower_garden.mjs";
+import { GARDEN_SITES } from "../tools/flower_garden.mjs";
 import { toMcstructure } from "../tools/build_structures.mjs";
 import { readNbt } from "../tools/village_sim.mjs";
 import { SILVER_WATCH } from "../tools/watch_camp_rules.mjs";
@@ -59,23 +59,25 @@ const asset = (path) => JSON.parse(readFileSync(new URL(`../lothlorien_bp/${path
 const generated = memorialWorldgen();
 for (const [kind, data] of Object.entries(generated))
   assert.deepEqual(data, asset(`worldgen/${kind}/memorial.json`));
-const memorialSet = generated.structure_sets["minecraft:structure_set"];
-const gardenSet = asset("worldgen/structure_sets/flower_garden.json")["minecraft:structure_set"];
+const sites = asset(GARDEN_SITES.file)["minecraft:structure_set"];
 const giantSet = asset("worldgen/structure_sets/giant_mallorn.json")["minecraft:structure_set"];
-const { salt: memorialSalt, ...memorialGrid } = memorialSet.placement;
-const { salt: gardenSalt, ...gardenGrid } = gardenSet.placement;
-assert.deepEqual(memorialGrid, gardenGrid, "same frequency and spread as accepted gardens");
-assert.equal(new Set([memorialSalt, gardenSalt, giantSet.placement.salt]).size, 3, "independent placement grids");
-assert.deepEqual(gardenSet, flowerGardenWorldgen().structure_sets["minecraft:structure_set"],
-  "garden density and membership remain unchanged");
-assert.deepEqual(memorialSet.structures, [{ structure: "lothlorien:memorial", weight: 1 }]);
-assert.equal((giantSet.placement.spacing / memorialSet.placement.spacing) ** 2, 0.25);
-assert.deepEqual(giantSet.structures, [{ structure: "lothlorien:giant_mallorn", weight: 1 }]);
+assert.equal(generated.structure_sets, undefined, "memorials have no grid of their own since 2026-10-21");
+assert.ok(sites.structures.some(e => e.structure === "lothlorien:memorial" && e.weight === 1), "memorial shares the garden grid");
+assert.notEqual(sites.placement.salt, giantSet.placement.salt);
+assert.ok(giantSet.structures.every(e => e.structure !== "lothlorien:memorial"),
+  "memorial stays off the village/tree grid");
 const definition = generated.structures["minecraft:jigsaw"];
 const gardenDef = asset("worldgen/structures/flower_garden.json")["minecraft:jigsaw"];
 for (const field of ["biome_filters", "heightmap_projection", "step", "terrain_adaptation"])
   assert.deepEqual(definition[field], gardenDef[field], `${field}: same garden terrain eligibility`);
-assert.equal(definition.start_height.value.absolute, -MEMORIAL.offset[1]);
+assert.equal(definition.start_height.value.absolute, -1, "the deck stands one above the terrain's top block");
+// owner, Test G 2026-10-20: deep soil under the apron, 4 free cells above the deck, a ragged shoulder
+for (const k of memorial.ground) {
+  const [x, z] = k.split(",").map(Number);
+  for (let y = -6; y <= -2; y++) assert.ok(["minecraft:dirt", "minecraft:jigsaw"].includes(get(x, y, z)?.name), `soil under ${k} at ${y}`);
+  for (let y = 1; y <= 4; y++) assert.ok(get(x, y, z), `cell ${k},${y} is written`);
+}
+assert.ok(memorial.skirt.ring1.length > 20 && memorial.skirt.ring2.length > 4, "a shoulder in both rings");
 assert.equal(definition.start_jigsaw_name, anchor.name);
 assert.equal(definition.start_pool, generated.template_pools["minecraft:template_pool"].description.identifier);
 assert.deepEqual(generated.template_pools["minecraft:template_pool"].elements, [{
@@ -83,4 +85,4 @@ assert.deepEqual(generated.template_pools["minecraft:template_pool"].elements, [
 }]);
 assert.deepEqual(encoded.buffer, readFileSync(new URL("../lothlorien_bp/structures/lothlorien/memorial_leaf_01.mcstructure", import.meta.url)));
 assert.deepEqual(toMcstructure(buildMemorial().blocks, MEMORIAL.size, MEMORIAL.offset).buffer, encoded.buffer);
-console.log("ok   leaf memorial: connected approaches, supported planting, native banners, ground anchor, garden-frequency worldgen, deterministic asset");
+console.log("ok   leaf memorial: connected approaches, supported planting, native banners, ground anchor, shared garden grid, deterministic asset");

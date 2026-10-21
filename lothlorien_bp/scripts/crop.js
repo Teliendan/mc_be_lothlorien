@@ -1,5 +1,6 @@
 import { system } from "@minecraft/server";
-import { MAX_GROWTH, advanceGrowth, bonemealSteps, growChance } from "./crop_rules.js";
+import { MAX_GROWTH, advanceGrowth, bonemealSteps, growChance, cropLayout, CORN_ORIGIN, cornSoilAllowed } from "./crop_rules.js";
+import { readBlock } from "./deferred_use.js";
 
 // Phase 7: Western Corn. `lothlorien:crop` (random tick) advances the state lothlorien:growth 0-7 on farmland;
 // wild corn from worldgen stands on grass at growth 7 and never needs to grow. Seeds only place on farmland
@@ -12,7 +13,7 @@ function lightAt(block) {
   try {
     return block.getLightLevel();
   } catch {
-    return 15; // do not block growth on an API failure
+    return 0; // unreadable light postpones growth
   }
 }
 
@@ -27,20 +28,37 @@ export function isMature(block) {
 
 // Bone meal: 2-5 stages, like vanilla wheat.
 export function growCrop(block) {
+  if (!validCropSoil(block)) return;
   const g = growthOf(block);
   if (g >= MAX_GROWTH) return;
   block.setPermutation(block.permutation.withState(GROWTH, advanceGrowth(g, bonemealSteps(Math.random()))));
 }
 
+export function validCropSoil(block) {
+  const { x, y, z } = block.location;
+  return cornSoilAllowed(block.permutation.getState(CORN_ORIGIN), readBlock(block.dimension, { x, y: y - 1, z })?.typeId);
+}
+
 system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
   blockComponentRegistry.registerCustomComponent("lothlorien:crop", {
+    beforeOnPlayerPlace(event) {
+      event.permutationToPlace = event.permutationToPlace.withState(CORN_ORIGIN, false);
+      const { x, y, z } = event.block.location;
+      if (readBlock(event.dimension, { x, y: y - 1, z })?.typeId !== FARMLAND) event.cancel = true;
+    },
     onRandomTick({ block }) {
       const g = growthOf(block);
       if (g >= MAX_GROWTH) return;
-      const soil = block.below();
+      if (!validCropSoil(block)) return;
+      const { x, y, z } = block.location;
+      const soil = readBlock(block.dimension, { x, y: y - 1, z });
       if (soil?.typeId !== FARMLAND) return; // grows only when farmed
       const moisture = soil.permutation.getState("moisturized_amount");
-      const chance = growChance(lightAt(block), typeof moisture === "number" ? moisture : 0);
+      const light = lightAt(block);
+      if (light < 4) return;
+      const layout = cropLayout((dx, dz) => readBlock(block.dimension, { x: x + dx, y: y - 1, z: z + dz }),
+        (dx, dz) => readBlock(block.dimension, { x: x + dx, y, z: z + dz }));
+      const chance = growChance(light, typeof moisture === "number" ? moisture : 0, layout);
       if (Math.random() >= chance) return;
       block.setPermutation(block.permutation.withState(GROWTH, g + 1));
     },

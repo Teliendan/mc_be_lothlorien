@@ -5,7 +5,6 @@ The native placement filters remain authoritative for eligibility.
 """
 import json
 import importlib.util
-import subprocess
 import runpy
 from pathlib import Path
 
@@ -32,6 +31,15 @@ FULL_WOOD = {"mallorn_log", "mallorn_wood", "mallorn_stripped_log", "mallorn_str
              "mallorn_planks", "mallorn_heartwood_planks", "mallorn_double_slab", "mallorn_heartwood_double_slab"}
 SINGLE_WOOD_SHAPES = {prefix + part for prefix in ("mallorn_", "mallorn_heartwood_")
                      for part in ("slab", "stairs")}
+
+
+def write_json(path, data):
+    """Keep unrelated formatting when a post-pass changes no JSON values."""
+    previous = path.read_bytes() if path.exists() else b""
+    if previous and json.loads(previous) == data:
+        return
+    newline = "\r\n" if b"\r\n" in previous else "\n"
+    path.write_bytes((json.dumps(data, indent=2) + "\n").replace("\n", newline).encode("utf8"))
 
 
 def configure_water(block):
@@ -77,6 +85,8 @@ def configure(block):
     if name in {"mallorn_slab", "mallorn_heartwood_slab", "mallorn_stairs", "mallorn_heartwood_stairs"}:
         c.setdefault("minecraft:light_dampening", 0)
         c.setdefault("minecraft:redstone_conductivity", {"redstone_conductor": False})
+    if name in {"mallorn_stairs", "mallorn_heartwood_stairs"}:
+        c.setdefault("minecraft:chest_obstruction", {"obstruction_rule": "never"})
     if name in {"mallorn_leaves", "mallorn_golden_leaves"}:
         c.setdefault("minecraft:movable", {"movement_type": "popped"})
     placement = c.get("minecraft:placement_filter")
@@ -98,12 +108,23 @@ def configure(block):
     elif name.startswith("elven_rope"):
         c["minecraft:loot"] = "loot_tables/blocks/elven_rope.json"
     condition = placement["conditions"][0] if placement else {}
+    allowed = condition.get("block_filter")
+    if name in COVERS:
+        # Placement conditions are alternatives; cover support families exceed
+        # the per-condition64-ID native limit, so preserve their complete union.
+        allowed = list(dict.fromkeys(id for part in placement["conditions"] for id in part["block_filter"]))
     return {"mount": "face" if name in MOUNTED else "rope" if name.startswith("elven_rope") else
             "door" if name.endswith("_door") else "ceiling" if condition.get("allowed_faces") == ["down"] else "floor",
-            "allowed": condition.get("block_filter")}
+            "allowed": allowed}
 
 
 def main():
+    # Accepted leaf/sapling interaction post-pass, before deriving support eligibility.
+    runpy.run_path(str(ROOT / "tools/configure_leaf_tree_interactions.py"))["configure"]()
+    runpy.run_path(str(ROOT / "tools/configure_flora_crop_interactions.py"))["configure"]()
+    runpy.run_path(str(ROOT / "tools/configure_cover_interactions.py"))["configure"]()
+    runpy.run_path(str(ROOT / "tools/configure_decor_rope_interactions.py"))["configure"]()
+    runpy.run_path(str(ROOT / "tools/configure_food_remedy_interactions.py"))["configure"]()
     policies = {}
     for name in ("elanor", "niphredil", "athelas", "nectar_bloom", "mallorn_blossom", "golden_fern"):
         path = BP / f"items/{name}.json"
@@ -118,12 +139,7 @@ def main():
         policy = configure(block)
         if policy is not None:
             policies[block["minecraft:block"]["description"]["identifier"]] = policy
-        # Preserve the repository's newline convention on Windows.
-        baseline = subprocess.run(["git", "show", "HEAD:" + path.relative_to(ROOT).as_posix()],
-                                  cwd=ROOT, capture_output=True).stdout
-        newline = "\r\n" if b"\r\n" in baseline else "\n"
-        with path.open("w", encoding="utf8", newline="") as stream:
-            stream.write((json.dumps(block, indent=2) + "\n").replace("\n", newline))
+        write_json(path, block)
     (BP / "scripts/support_policies.js").write_text(
         "// Generated from the native block placement filters by tools/configure_support.py.\n"
         "export const SUPPORT_POLICIES = " + json.dumps(policies, indent=2) + ";\n", encoding="utf8")
@@ -132,14 +148,14 @@ def main():
             loot = {"pools": [{"rolls": 1, "entries": [{"type": "item", "name": f"lothlorien:{name}",
                 "functions": [{"function": "set_count", "count": count}]}]}]}
             suffix = "" if count == 1 else f"_{count}"
-            (BP / f"loot_tables/blocks/{name}{suffix}.json").write_text(json.dumps(loot, indent=2) + "\n", encoding="utf8")
-    (BP / "loot_tables/blocks/elven_rope.json").write_text(json.dumps({"pools": [{"rolls": 1,
-        "entries": [{"type": "item", "name": "lothlorien:elven_rope"}]}]}, indent=2) + "\n", encoding="utf8")
+            write_json(BP / f"loot_tables/blocks/{name}{suffix}.json", loot)
+    write_json(BP / "loot_tables/blocks/elven_rope.json", {"pools": [{"rolls": 1,
+        "entries": [{"type": "item", "name": "lothlorien:elven_rope"}]}]})
     fern_loot = runpy.run_path(str(ROOT / "tools/golden_fern_loot.py"))["fern_loot"]
-    (BP / "loot_tables/blocks/golden_fern.json").write_text(json.dumps(fern_loot(), indent=2) + "\n", encoding="utf8")
+    write_json(BP / "loot_tables/blocks/golden_fern.json", fern_loot())
     corn_loot = runpy.run_path(str(ROOT / "tools/western_corn_loot.py"))["corn_loot"]
     for mature, name in [(False, "western_corn"), (True, "western_corn_mature")]:
-        (BP / f"loot_tables/blocks/{name}.json").write_text(json.dumps(corn_loot(mature), indent=2) + "\n", encoding="utf8")
+        write_json(BP / f"loot_tables/blocks/{name}.json", corn_loot(mature))
     print(f"Configured piston support for {len(policies)} block definitions.")
 
 

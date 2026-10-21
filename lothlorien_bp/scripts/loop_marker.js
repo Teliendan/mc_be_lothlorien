@@ -10,11 +10,11 @@
 //   3 plan       planGen on the blocks of that area (budget 3 extra links), run as a job (yields, no long tick).
 //   4 build      all picks are written in the same job (a few hundred blocks per tick), then every marker in the area is removed.
 //   5 populate   civilian elves: the tree pieces' `lothlorien:elf_post` entities are read, assigned and replaced by elves (elf_village.js).
-// The planner is one-shot: no polling, no retry loop. A failed run (quota, timeout, error) keeps the markers; they try again on a later load, at
+// The planner is one-shot: no polling, no retry loop. A failed run (quota, timeout, error) keeps the markers; they retry after world re-entry, at
 // most AREA.maxTries times per marker. `/scriptevent lothlorien:village plan` re-runs it by hand for the nearest marker (see planNearest).
 import { BlockPermutation, system, world } from "@minecraft/server";
 import { MARKER_ID, finalBlocks } from "./village_loop.js";
-import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, chunksIn, describePick, describeMerge } from "./village_planner.js";
+import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, chunksIn, describePick, describeMerge, VILLAGE_PLANS } from "./village_planner.js";
 import { describeRepair } from "./village_repair.js";
 import { missingLinks } from "./rail_mender_rules.js";
 import { mendAround } from "./rail_connections.js";
@@ -25,9 +25,9 @@ import { populateVillage } from "./elf_village.js";
 // START_DELAY_TICKS 5 (was 20, owner 2026-10-10: the village looked empty for a long time). JOB_SLICE_MS: one engine job step runs the planner's inner steps
 // until this many ms are used, then yields once; without it the job may advance only ONE inner step per tick (about 200 steps = 10 s).
 const START_DELAY_TICKS = 5, SETTLE_TICKS = 40, AREA_TIMEOUT_TICKS = 600, WRITES_PER_TICK = 32, JOB_SLICE_MS = 2;
-const TRIES = "lothlorien:loop_tries", DONE = "lothlorien:village_plans";
+const TRIES = "lothlorien:loop_tries", DONE = VILLAGE_PLANS;
 const seen = new Set(), queue = [], failed = [];
-let claim = null, running = false, loggedQuota = false, debug = false;
+let claim = null, running = false, loggedQuota = false, debug = false, areaAttempt = 0;
 
 // Stage logging: the start and the summary of every planner run are always logged; every silent exit (marker skipped, invalid, queued, retried)
 // logs only in debug mode, which `/scriptevent lothlorien:village debug` toggles (see toggleDebug).
@@ -103,19 +103,35 @@ function* planAndBuild(dimension, found, budget, stats) {
 }
 
 async function planVillageAt(entity, force, trigger) {
-  const dimension = entity.dimension, first = cellOf(entity), tam = world.tickingAreaManager, base = `lothlorien_village_${first[0]}_${first[2]}`;
-  const areas = new Set();
+  const dimension = entity.dimension, first = cellOf(entity), tam = world.tickingAreaManager, base = `lothlorien_village_${first[0]}_${first[2]}_${++areaAttempt}`;
+  const areas = new Map();
+  let ended = false;
+  const removeArea = (id) => {
+    const area = areas.get(id);
+    if (!area) return;
+    area.release = true;
+    try {
+      if (tam.hasTickingArea(id)) tam.removeTickingArea(id);
+      // A timeout ends our wait, not creation: keep ownership until it settles.
+      if (!area.pending) areas.delete(id);
+    } catch (e) { log(`could not remove ticking area ${id}: ${e?.message ?? e}`); }
+  };
   const opts = (r) => ({ dimension, from: { x: r.x0, y: first[1], z: r.z0 }, to: { x: r.x1, y: first[1], z: r.z1 } });
   const env = {
     claim: (r) => { claim = r; },
     hasCapacity: (r) => { try { return tam.hasCapacity(opts(r)); } catch { return false; } },
     create: async (id, r) => {
       const t = Date.now();
-      areas.add(id);
-      await withTimeout(Promise.resolve().then(() => tam.createTickingArea(id, opts(r))), AREA_TIMEOUT_TICKS, `ticking area ${id}`);
+      const area = { pending: true, release: false };
+      areas.set(id, area);
+      const creation = Promise.resolve().then(() => tam.createTickingArea(id, opts(r))).finally(() => {
+        area.pending = false;
+        if (ended || area.release) removeArea(id);
+      });
+      await withTimeout(creation, AREA_TIMEOUT_TICKS, `ticking area ${id}`);
       dlog(`discovery ${id}: ${chunksIn(r)} chunks in ${ms(t)} ms`);
     },
-    remove: (id) => { areas.delete(id); try { tam.removeTickingArea(id); } catch { /* already gone */ } },
+    remove: removeArea,
     markersIn: (r) => dimension.getEntities(boxQuery(r)).map(cellOf),
   };
   const t0 = Date.now(), ms = (since) => Date.now() - since;
@@ -131,7 +147,7 @@ async function planVillageAt(entity, force, trigger) {
     const tPlan = Date.now(), tick0 = system.currentTick, stats = { steps: 0, cpu: 0, reads: () => 0, writeCells: 0 };
     const result = await runJobAsync(sliced(planAndBuild(dimension, found, PLAN.budget, stats), JOB_SLICE_MS, stats));
     dlog(`plan+build ${ms(tPlan)} ms wall, ${system.currentTick - tick0} ticks, ${stats.steps} inner steps, ${stats.cpu} ms inside them, ${stats.reads()} distinct reads, ${stats.writeCells} cells written (${result.blocks} changed)`);
-    // the civilians move in while the village is loaded (own try: a population error never fails the planner; unspawned posts stay for a later run)
+    // Civilians move in while loaded. Population errors are logged and posts retained; no automatic population retry.
     const tPop = Date.now();
     try { populateVillage(dimension, found.rect, [first[0], first[2]]); } catch (e) { log(`elves: ${e?.message ?? e}`); }
     dlog(`populate ${ms(tPop)} ms`);
@@ -149,12 +165,13 @@ async function planVillageAt(entity, force, trigger) {
     try {
       if (entity.isValid) {
         const tries = (Number(entity.getDynamicProperty(TRIES)) || 0) + 1;
-        if (tries >= AREA.maxTries) { entity.remove(); dlog(`marker ${first[0]},${first[2]} removed after ${tries} failed tries`); } else { entity.setDynamicProperty(TRIES, tries); dlog(`marker ${first[0]},${first[2]} kept for a retry on a later load (try ${tries} of ${AREA.maxTries})`); }
+        if (tries >= AREA.maxTries) { entity.remove(); dlog(`marker ${first[0]},${first[2]} removed after ${tries} failed tries`); } else { entity.setDynamicProperty(TRIES, tries); dlog(`marker ${first[0]},${first[2]} kept for a retry after world re-entry or manual planning (try ${tries} of ${AREA.maxTries})`); }
       } else dlog(`marker ${first[0]},${first[2]} unloaded meanwhile, no retry counted`);
     } catch { /* entity unloaded meanwhile */ }
     return null;
   } finally {
-    for (const id of [...areas]) env.remove(id);
+    ended = true;
+    for (const id of [...areas.keys()]) env.remove(id);
     claim = null;
   }
 }

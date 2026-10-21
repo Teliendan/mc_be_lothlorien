@@ -25,7 +25,7 @@ All verified in game by the owner on 2026-10-10 unless marked otherwise.
 
 - Hit by a player: panic; flee monsters within 6 blocks. Wardens defend elves: the hitter carries tag `lothlorien_elf_foe` for 60 s (after the LAST hit); wardens target the tag and warden arrows stop being shielded from that player.
 - Harmony: 1 per fight (first hit after 60 s without one) + 6 per kill, like a warden. Night: no change. No fall damage, and avoid the rope cells.
-- Names lang-only (no name tag), one random spawn egg, `/summon lothlorien:elf ~ ~ ~ ~ ~ lothlorien:as_<profession>` (the rotation `~ ~` is required before an event).
+- Generated names are locale-only: the planner assigns no personal `nameTag`. Players may use native name tags (`nameable` and shop/dialog handoff). One random spawn egg, `/summon lothlorien:elf ~ ~ ~ ~ ~ lothlorien:as_<profession>` (the rotation `~ ~` is required before an event).
 - Population: every new village gets all five professions: the Loremaster on the central tree, healer / gardener / woodwright / lamplighter each on an outer tree of their own
   (warden trees allowed, post at least 3 cells from the warden). Fallback F1: with fewer than 4 outer trees the leftover professions stand on reserve posts on the central tree.
   Homes (buildings) are a later milestone; M1 only records which tree belongs to which profession. Existing villages get no elves.
@@ -51,7 +51,7 @@ Closest vanilla analogues: `villager_v2` (1.26.20) and `wandering_trader`, witho
 
 | Row | Decision |
 | --- | --- |
-| A Identity | `lothlorien:elf`, family `lothlorien_elf` + `mob`, name "Elf" (one name for all professions; profession titles `lothlorien.elf.profession.<p>` are in the catalog for M2). Egg "Elf Spawn Egg", one random profession, colours in the client entity. 0.6 x 1.95, health 20, movement 0.3 (below the template-mob threshold 0.5). Summonable and spawnable. |
+| A Identity | `lothlorien:elf`, family `lothlorien_elf` + `wandering_trader` + `mob`, name "Elf" (one name for all professions; profession titles `lothlorien.elf.profession.<p>` are in the catalog for M2). Egg "Elf Spawn Egg", one random profession, colours in the client entity. 0.6 x 1.95, health 20, movement 0.3 (below the template-mob threshold 0.5). Summonable and spawnable. |
 | B Spawning | No spawn rule (`[..]`): only the village planner, egg, `/summon`. Persistent, no `minecraft:despawn`, no `spawn_rules/elf.json` (a test checks both). |
 | C Body | Walk navigation, avoid water and damage blocks, passes doors, does not open them, avoids the two rope blocks (`blocks_to_avoid` with `name`; vanilla goat uses `name` for powder snow, not yet seen working with custom blocks). Floats, jumps, breathes, lava hurts. `damage_sensor`: fall damage off. Pushable. |
 | D Behaviour | float 0, panic 1 (x1.25), avoid monsters except endermen within 6 (x1.0 / x1.25), move towards home 5, stroll 6 (x0.6, 8 / 3), look at player 7, look around 8. Home radius per radius group: Loremaster 6, others 10, healer 64 by day / 10 from dusk. Healer by day: stroll 32 / 4 and follow_range 64 (night: stroll 8 / 3, follow_range 64). |
@@ -61,6 +61,7 @@ Closest vanilla analogues: `villager_v2` (1.26.20) and `wandering_trader`, witho
 
 ## Not yet verified / open
 
+- Group16 approved/source fixes deployed2026-10-20: [NPC interactions](../NPC_INTERACTIONS.md). Native cut handoff and matching prompts; ordinary idle-shears dialogs retained; wandering_trader civilian target family added. Existing lead/rehome, shops/healing and fixed professions retained; nine runners passed, native game acceptance pending.
 - The pillar ivy start fix (6b97311): deployed, not yet seen in game.
 - Whether Bedrock's stroll picks only standable targets or any (affects how far the healer wanders; behaviour looked right in game).
 - `blocks_to_avoid` with `{ "name": ... }` on custom blocks (rope); walking speed 0.3 x 0.6 (measure with `/scriptevent lothlorien:speed`).

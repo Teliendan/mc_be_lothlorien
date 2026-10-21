@@ -18,6 +18,7 @@ import "./trees.js";
 import "./great_mallorn.js";
 import "./rail_mender.js";
 import { planNearest, toggleDebug } from "./loop_marker.js";
+import { VILLAGE_PLANS, villageAreaTest } from "./village_planner.js";
 import "./warden_replace.js";
 import { leafUndersideY } from "./leaf_fall.js";
 import { handleHarmonyEvent, harmonyOf, recordElfFight, startHarmony } from "./harmony_game.js";
@@ -72,7 +73,10 @@ function hostilesInBiome(player) {
   return { inside, total };
 }
 
-const inBiome = (dimension, location) => biomeAt(dimension, location) === BIOME_ID;
+// Gameplay "in Lothlorien" (Harmony, Renown): the biome, or a planned village area (owner 2026-10-20: a village on the biome edge counts too;
+// the biome itself and its colours stay as generated, the Script API has no biome setter).
+const inVillageArea = villageAreaTest(() => world.getDynamicProperty(VILLAGE_PLANS));
+const inBiome = (dimension, location) => biomeAt(dimension, location) === BIOME_ID || (dimension.id === "minecraft:overworld" && inVillageArea(location.x, location.z));
 
 function showDebug() {
   for (const player of world.getPlayers({ tags: [DEBUG_TAG] })) {

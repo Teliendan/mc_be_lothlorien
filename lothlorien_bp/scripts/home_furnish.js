@@ -19,7 +19,7 @@ export const MARKER_LANTERN = `${L}elven_lantern_heartwood`;
 const DECK = new Set([`${L}mallorn_planks`, `${L}mallorn_heartwood_planks`]);
 const AIRS = new Set([`${M}air`, `${M}cave_air`, `${M}void_air`]);
 const isAir = (n) => n === undefined || n === null || AIRS.has(n) || /^minecraft:light_block/.test(n); // for looking: hidden light counts as air
-const isFree = (n) => AIRS.has(n); // for writing: undefined (unloaded) is not free, and a hidden light block is never replaced
+const isFree = (n) => AIRS.has(n) || n === `${M}light_block_0`; // for writing: undefined (unloaded) is not free, a hidden light is never replaced (light_block_0 is the dark headroom shield of the village pieces: free)
 const FACING_ID = { north: 2, south: 3, west: 4, east: 5 };
 const nameOf = (v) => (v[0] === 1 ? "east" : v[0] === -1 ? "west" : v[1] === 1 ? "south" : "north");
 

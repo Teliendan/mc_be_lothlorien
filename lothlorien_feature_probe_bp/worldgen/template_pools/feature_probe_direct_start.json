@@ -1,0 +1,18 @@
+{
+  "format_version": "1.26.50",
+  "minecraft:template_pool": {
+    "description": {
+      "identifier": "lothlorien:feature_probe/direct_start"
+    },
+    "elements": [
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/feature_probe/carrier_direct",
+          "projection": "rigid"
+        },
+        "weight": 1
+      }
+    ]
+  }
+}

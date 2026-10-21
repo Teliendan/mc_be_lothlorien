@@ -2,10 +2,11 @@
 // A request form grants one use of the native screen; read-only interaction callbacks only decide and cancel.
 import { system, world } from "@minecraft/server";
 import { ELF_ID } from "./elf_rules.js";
+import { nativeElfUse } from "./elf_native_use.js";
 import { message } from "./messages.js";
 import {
   TRADERS, NO_TABLE, TABLE_PROPERTY, SWAP_RADIUS, SWAP_INTERVAL_TICKS, TRADE_PASS_TICKS,
-  PASS_REPEAT_TICKS, PIN_TICKS, PASS_TAG, SKIP_ITEMS, tableKey, swapEventOf, clickDecision, chooseKey,
+  PASS_REPEAT_TICKS, PIN_TICKS, PASS_TAG, tableKey, swapEventOf, clickDecision, chooseKey,
 } from "./trade_rules.js";
 
 const passes = new Map(); // player id -> { player, elfId, until, usedAt? }; identity guards stale timers
@@ -13,7 +14,6 @@ const pins = new Map(); // elf id -> { playerId, until }
 const lastCancel = new Map();
 const forms = new Map(); // player id -> token, invalidated when the player leaves or respawns
 const sessions = new Map(); // guards callbacks queued before leave/rejoin
-const skipItems = new Set(SKIP_ITEMS);
 let deps;
 
 function traderProfession(elf) {
@@ -110,7 +110,7 @@ function swapTick() {
 function onInteract(event) {
   const { player, target, itemStack } = event;
   const profession = traderProfession(target);
-  if (!profession || skipItems.has(itemStack?.typeId)) return;
+  if (!profession || nativeElfUse(target, itemStack)) return;
   const now = system.currentTick;
   const canceledAt = lastCancel.get(player.id);
   if (canceledAt !== undefined && now - canceledAt < PASS_REPEAT_TICKS) {

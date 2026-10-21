@@ -12,7 +12,8 @@ const typeAt = (x, y = 71, id) => dim(id).typeAt(x, y, 0);
 const ledger = () => JSON.parse(world.getDynamicProperty(R.PHIAL_OWNERSHIP_PROPERTY) ?? "[]");
 function player(x = 0, id) {
     const p = mock.addEntity("minecraft:player", at(x, 70), {}, id);
-    p.offhand = R.PHIAL_ID; p.health = { currentValue: 20 };
+    p.offhand = R.PHIAL_ID; p.health = { currentValue: 20 }; p.gameMode = "Survival";
+    p.getGameMode = () => p.gameMode;
     p.components["minecraft:equippable"] = { getEquipment: slot => { assert.equal(slot, "Offhand"); return p.offhand ? { typeId: p.offhand } : undefined; } };
     p.components["minecraft:health"] = p.health;
     mock.players.push(p); return p;
@@ -33,6 +34,16 @@ async function start() {
 async function scenario(name, body) {
     mock.reset(); queries = []; impulses = []; instrument(); instrument("minecraft:nether");
     await body(); assert.deepEqual(mock.errors, []); console.log(`ok   phial: ${name}`);
+}
+async function mutateBeforeImpulse(action, body) {
+    const save = world.setDynamicProperty;
+    let fired = false;
+    world.setDynamicProperty = (...args) => {
+        save(...args);
+        if (!fired) { fired = true; action(); }
+    };
+    try { await body(); assert.equal(fired, true); }
+    finally { world.setDynamicProperty = save; }
 }
 
 await scenario("offhand creates one light, movement migrates it, unequip removes it", async () => {
@@ -172,12 +183,120 @@ await scenario("cleanup persistence failure keeps a retry until the empty ledger
     assert.equal(ledger().length, 0, "retry succeeds even though no in-memory lights remain");
 });
 
+await scenario("Spectators neither create light nor query spiders; all three active modes retain magic", async () => {
+    const p = player(), e = spider(2); p.gameMode = "Spectator";
+    await start(); await mock.advance(1);
+    assert.equal(typeAt(0), "minecraft:air"); assert.deepEqual(ledger(), []);
+    assert.deepEqual(queries, []); assert.deepEqual(impulses, []);
+    for (const mode of ["Survival", "Creative", "Adventure"]) {
+        p.gameMode = mode; await mock.advance(R.PHIAL_POLL_TICKS);
+        assert.equal(typeAt(0), R.PHIAL_LIGHT_BLOCK);
+        assert.equal(impulses.at(-1).e, e);
+    }
+    p.gameMode = "Spectator"; impulses = []; queries = [];
+    await mock.advance(R.PHIAL_POLL_TICKS);
+    assert.equal(typeAt(0), "minecraft:air"); assert.deepEqual(ledger(), []);
+    assert.deepEqual(queries, []); assert.deepEqual(impulses, []);
+});
+
+await scenario("a Spectator transition preserves another eligible holder's shared light", async () => {
+    const a = player(), b = player(); spider(2);
+    await start(); await mock.advance(1);
+    a.gameMode = "Spectator"; impulses = [];
+    await mock.advance(R.PHIAL_POLL_TICKS);
+    assert.equal(typeAt(0), R.PHIAL_LIGHT_BLOCK); assert.equal(ledger().length, 1);
+    assert.equal(impulses.length, 1);
+    b.gameMode = "Spectator";
+    await mock.advance(R.PHIAL_POLL_TICKS);
+    assert.equal(typeAt(0), "minecraft:air"); assert.deepEqual(ledger(), []);
+});
+
+await scenario("crowded normal and cave spiders alternate priority within the existing per-pulse budget", async () => {
+    player();
+    for (let i = 0; i < R.PHIAL_MAX_SPIDERS; i++) {
+        spider(2 + i / 100); spider(-2 - i / 100, "minecraft:cave_spider");
+    }
+    await start();
+    const firstTypes = [], totals = new Map();
+    for (let pass = 0; pass < 4; pass++) {
+        impulses = []; queries = [];
+        await mock.advance(pass ? R.PHIAL_POLL_TICKS : 1);
+        assert.equal(impulses.length, R.PHIAL_MAX_SPIDERS);
+        assert.equal(queries.length, 1, "a full first-type result exhausts this holder's budget");
+        firstTypes.push(queries[0].type);
+        for (const { e } of impulses) totals.set(e.typeId, (totals.get(e.typeId) ?? 0) + 1);
+    }
+    assert.deepEqual(firstTypes, ["minecraft:spider", "minecraft:cave_spider", "minecraft:spider", "minecraft:cave_spider"]);
+    assert.equal(totals.get("minecraft:spider"), 2 * R.PHIAL_MAX_SPIDERS);
+    assert.equal(totals.get("minecraft:cave_spider"), 2 * R.PHIAL_MAX_SPIDERS);
+});
+
+await scenario("unreadable, invalid, dead, nonfinite and foreign returned targets do not skip a healthy target", async () => {
+    player();
+    const unreadable = spider(1), invalid = spider(1), dead = spider(1), nonfinite = spider(1);
+    const foreign = spider(1, "minecraft:spider", 70, "minecraft:nether"), wrongType = spider(1, "minecraft:zombie"), healthy = spider(3);
+    Object.defineProperty(unreadable, "location", { get() { throw Error("unloaded target"); } });
+    invalid.isValid = false; dead.components["minecraft:health"] = { currentValue: 0 }; nonfinite.location.x = NaN;
+    dim().getEntities = q => {
+        queries.push(q);
+        return q.type === "minecraft:spider" ? [unreadable, invalid, dead, nonfinite, foreign, wrongType, healthy] : [];
+    };
+    await start(); await mock.advance(1);
+    assert.deepEqual(impulses.map(i => i.e), [healthy]);
+    assert.equal(queries[1].closest, R.PHIAL_MAX_SPIDERS - 7, "bad returned targets still consume inspection budget");
+});
+
+for (const failedType of R.PHIAL_SPIDER_TYPES) await scenario(`a failed ${failedType} query leaves the other type operational`, async () => {
+    player();
+    const healthy = spider(2, R.PHIAL_SPIDER_TYPES.find(type => type !== failedType));
+    const query = dim().getEntities.bind(dim());
+    dim().getEntities = q => { if (q.type === failedType) throw Error("type query unavailable"); return query(q); };
+    await start(); await mock.advance(1); await mock.advance(R.PHIAL_POLL_TICKS);
+    assert.equal(impulses.length, 2); assert.ok(impulses.every(i => i.e === healthy));
+});
+
+for (const [name, change] of [
+    ["target out of range", (p, e) => { e.location.x = 20; }],
+    ["target dimension change", (p, e) => { e.dimension = dim("minecraft:nether"); }],
+    ["target invalidated", (p, e) => { e.isValid = false; }],
+    ["target killed", (p, e) => { e.components["minecraft:health"] = { currentValue: 0 }; }],
+    ["target nonfinite", (p, e) => { e.location.y = Infinity; }],
+    ["holder Spectator", p => { p.gameMode = "Spectator"; }],
+    ["holder unequipped", p => { p.offhand = undefined; }],
+    ["holder killed", p => { p.health.currentValue = 0; }],
+    ["holder departed", p => { p.isValid = false; }],
+    ["holder dimension change", p => { p.dimension = dim("minecraft:nether"); }],
+    ["holder out of range", p => { p.location.x = -20; }],
+]) await scenario(`live impulse validation rejects ${name} after query`, async () => {
+    const p = player(), e = spider(2);
+    await start();
+    await mutateBeforeImpulse(() => change(p, e), () => mock.advance(1));
+    assert.deepEqual(impulses, []);
+});
+
+await scenario("impulse direction uses current positions rather than the query snapshot", async () => {
+    player(); const e = spider(3); await start();
+    await mutateBeforeImpulse(() => { e.location.x = -3; }, () => mock.advance(1));
+    assert.equal(impulses.length, 1); assert.equal(impulses[0].force.x, -R.PHIAL_SPIDER_FORCE);
+});
+
+await scenario("nearest live queried holder supplies one impulse when the previously nearest becomes ineligible", async () => {
+    const a = player(), b = player(4); const e = spider(1); await start();
+    await mutateBeforeImpulse(() => { a.gameMode = "Spectator"; }, () => mock.advance(1));
+    assert.equal(impulses.length, 1); assert.equal(impulses[0].e, e);
+    assert.equal(impulses[0].force.x, -R.PHIAL_SPIDER_FORCE, "remaining holder at x4 repels toward negative X");
+    assert.equal(b.offhand, R.PHIAL_ID);
+});
+
 const block = JSON.parse(readFileSync(new URL("../lothlorien_bp/blocks/phial_light.json", import.meta.url)))["minecraft:block"];
 assert.equal(block.components["minecraft:light_emission"], R.PHIAL_LIGHT_LEVEL);
 assert.equal(block.components["minecraft:collision_box"], false);
 assert.equal(block.components["minecraft:selection_box"], false);
 assert.equal(block.components["minecraft:light_dampening"], 0);
 assert.equal(block.components["minecraft:flammable"], false);
+assert.deepEqual(block.components["minecraft:connection_rule"], { accepts_connections_from: "none" });
+assert.deepEqual(block.components["minecraft:chest_obstruction"], { obstruction_rule: "never" });
+assert.deepEqual(block.components["minecraft:precipitation_interactions"], { precipitation_behavior: "none" });
 assert.deepEqual(block.components["minecraft:redstone_conductivity"], { redstone_conductor: false });
 assert.deepEqual(block.components["minecraft:movable"], { movement_type: "popped" });
 assert.deepEqual(block.components["minecraft:liquid_detection"].detection_rules, [{ liquid_type: "water", can_contain_liquid: false, on_liquid_touches: "broken" }]);

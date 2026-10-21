@@ -35,6 +35,11 @@ def item(identifier, components, group=None):
 write(BP, "items/bow.json", item(BOW_ID, {
     "minecraft:icon": BOW_ID, "minecraft:max_stack_size": 1, "minecraft:hand_equipped": True,
     "minecraft:durability": {"max_durability": BOW["durability"]},
+    # Same-item native repair only, as for vanilla bows; no material repair recipe.
+    "minecraft:repairable": {"repair_items": [
+        {"items": [BOW_ID], "repair_amount": "context.other->query.remaining_durability"}]},
+    # Bedrock bows smelt one item (10 seconds), unlike Java's 1.5 items.
+    "minecraft:fuel": {"duration": 10},
     "minecraft:enchantable": {"slot": "bow", "value": BOW["enchantability"]},
     "minecraft:use_modifiers": {"use_duration": BOW["useSeconds"], "movement_modifier": 0.2, "start_using": "if_first"},
     "minecraft:shooter": {"ammunition": [
@@ -43,6 +48,7 @@ write(BP, "items/bow.json", item(BOW_ID, {
         "max_draw_duration": BOW["drawSeconds"], "scale_power_by_draw_duration": True, "charge_on_draw": False}}))
 write(BP, "items/galadhrim_arrow.json", item(ARROW_ID, {
     "minecraft:icon": ARROW_ID, "minecraft:max_stack_size": 64,
+    "minecraft:allow_off_hand": True,
     "minecraft:projectile": {"projectile_entity": ARROW_ID, "minimum_critical_power": BOW["drawSeconds"]}}, "minecraft:itemGroup.name.arrow"))
 arrow = json.loads((MOD / "tools/reference/native_arrow_base.json").read_text())
 arrow["minecraft:entity"]["description"]["identifier"] = ARROW_ID

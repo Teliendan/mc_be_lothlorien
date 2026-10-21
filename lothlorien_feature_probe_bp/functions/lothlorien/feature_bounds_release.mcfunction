@@ -1,0 +1,1 @@
+tickingarea remove fb_direct

@@ -132,6 +132,95 @@ await scenario("manual planNearest plans even for a done village and does not to
   assert.equal(sent2[0].translate, "lothlorien.message.village.plan.none");
 });
 
+// These scenarios exercise asynchronous completion orders, not observations of
+// native pending-area cancellation. Both registration orders must be safe.
+await scenario("planner timeout releases an already registered area before its loading promise settles", async () => {
+  const markers = setupV2();
+  mock.tickingAreaDelay = 700;
+  await loadScript("loop_marker.js");
+  mock.fire("entityLoad", { entity: markers[0] });
+  await mock.advance(610);
+  assert.equal(grep(/gave up: ticking area .* timed out/).length, 1);
+  assert.equal(mock.tickingAreas.areas.size, 0, "registered area removed at timeout");
+  assert.equal(markersLeft(), markers.length);
+  assert.equal(world.getDynamicProperty("lothlorien:village_plans"), undefined);
+  await mock.settle();
+  assert.equal(mock.areaLog.created.length, 1);
+  assert.equal(mock.areaLog.removed.length, 1, "late resolution tolerates an already removed area");
+  assert.equal(grep(/could not remove ticking area/).length, 0);
+});
+
+await scenario("late area creation cleans only its ended attempt while a manual retry owns another area", async () => {
+  const markers = setupV2(), tam = mock.tickingAreas;
+  const create = tam.createTickingArea.bind(tam), pending = [];
+  // Model registration after the timeout, leaving promises under this scenario's control.
+  tam.createTickingArea = (id, options) => pending.length < 2
+    ? new Promise((resolve, reject) => pending.push({ id, options, resolve, reject }))
+    : create(id, options);
+  const { planNearest } = await loadScript("loop_marker.js");
+  mock.fire("entityLoad", { entity: markers[0] });
+  await mock.advance(610);
+  assert.equal(pending.length, 1);
+  assert.equal(markers[0].getDynamicProperty("lothlorien:loop_tries"), 1);
+  assert.equal(tam.areas.size, 0);
+  const sent = [];
+  planNearest({ dimension: mock.dimension(), location: markers[0].location, sendMessage: (m) => sent.push(m) });
+  await mock.advance(1);
+  assert.equal(pending.length, 2);
+  const [old, current] = pending;
+  assert.notEqual(old.id, current.id, "the same village's retry has a distinct attempt id");
+  const currentReady = create(current.id, current.options);
+  const oldReady = create(old.id, old.options);
+  await mock.advance(3);
+  await Promise.all([currentReady, oldReady]);
+  old.resolve();
+  await mock.advance(1);
+  assert.equal(tam.hasTickingArea(old.id), false, "late success from the timed-out attempt removed");
+  assert.equal(tam.hasTickingArea(current.id), true, "the current attempt's area survives old completion");
+  assert.equal(markersLeft(), markers.length, "the timed-out attempt did not resume building");
+  current.resolve();
+  await mock.settle();
+  assert.equal(markersLeft(), 0, "the manual retry finishes normally");
+  assert.equal(sent[0].translate, "lothlorien.message.village.plan.done");
+  assert.equal(tam.areas.size, 0);
+  assert.equal(grep(/could not remove ticking area/).length, 0);
+});
+
+await scenario("a pending creation rejection after timeout is consumed without resuming the planner", async () => {
+  const markers = setupV2();
+  let rejectCreation;
+  mock.tickingAreas.createTickingArea = () => new Promise((resolve, reject) => { rejectCreation = reject; });
+  await loadScript("loop_marker.js");
+  mock.fire("entityLoad", { entity: markers[0] });
+  await mock.advance(610);
+  rejectCreation(new Error("simulated pending request cancellation"));
+  await mock.advance(1);
+  assert.equal(grep(/gave up:/).length, 1);
+  assert.equal(grep(/could not remove ticking area/).length, 0);
+  assert.equal(markersLeft(), markers.length);
+  assert.equal(world.getDynamicProperty("lothlorien:village_plans"), undefined);
+});
+
+await scenario("cleanup failure is reported and pending completion retries only that owned area", async () => {
+  const markers = setupV2(), tam = mock.tickingAreas;
+  mock.tickingAreaDelay = 700;
+  const remove = tam.removeTickingArea.bind(tam);
+  let failOnce = true;
+  tam.removeTickingArea = (id) => {
+    if (failOnce) { failOnce = false; throw new Error("simulated removal error"); }
+    remove(id);
+  };
+  await loadScript("loop_marker.js");
+  mock.fire("entityLoad", { entity: markers[0] });
+  await mock.advance(610);
+  assert.equal(grep(/could not remove ticking area .*simulated removal error/).length, 1);
+  assert.equal(tam.areas.size, 1, "failed cleanup is not treated as successful removal");
+  await mock.settle();
+  assert.equal(tam.areas.size, 0, "pending completion retries the owned area's cleanup");
+  assert.equal(mock.areaLog.removed.length, 1);
+  assert.equal(markersLeft(), markers.length);
+});
+
 await scenario("rail_mender: waits for loaded corners, switches on the dropped fence links, removes itself; stays when the box never loads", async () => {
   const FENCE = "lothlorien:mallorn_fence", MENDER = "lothlorien:rail_mender";
   mock.setBlocks((x, y, z) => (y === 70 && z === 0 && x >= 0 && x <= 2 ? FENCE : "minecraft:air"));
@@ -342,7 +431,7 @@ await scenario("loop_marker.js: sliced() runs many inner steps per engine step, 
   const m2 = await loadScript("loop_marker.js"); m2.toggleDebug();
   mock.fire("entityLoad", { entity: markers[0] });
   await mock.settle();
-  for (const re of [/\(debug\) discovery lothlorien_village_-?\d+_-?\d+_1: \d+ chunks in \d+ ms/, /\(debug\) settle \d+ ms/, /\(debug\) plan\+build \d+ ms wall, \d+ ticks, \d+ inner steps, \d+ ms inside them, \d+ distinct reads, \d+ cells written/, /\(debug\) populate \d+ ms/]) assert.equal(grep(re).length, 1, String(re));
+  for (const re of [/\(debug\) discovery lothlorien_village_-?\d+_-?\d+_\d+_1: \d+ chunks in \d+ ms/, /\(debug\) settle \d+ ms/, /\(debug\) plan\+build \d+ ms wall, \d+ ticks, \d+ inner steps, \d+ ms inside them, \d+ distinct reads, \d+ cells written/, /\(debug\) populate \d+ ms/]) assert.equal(grep(re).length, 1, String(re));
 });
 
 await scenario("rail connections: deferred player edits link moss and slabs, clear removed targets, and finish with no timer", async () => {

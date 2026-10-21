@@ -20,7 +20,7 @@ import { hullOf, growRect, drive } from "./village_planner.js";
 import { FENCE_IDS, LINKS, POST_IDS } from "./rail_mender_rules.js";
 
 export const ROPE_ID = "lothlorien:elven_rope_hanging";
-export const REPAIR = { maxHang: 24, minAbove: 2, scanChunk: 512, flareScan: 48, flareStep: 1, PILLAR_LEAF_CLEAR: 4 };
+export const REPAIR = { maxHang: 24, minAbove: 2, scanChunk: 512, flareScan: 48, flareStep: 1, PILLAR_LEAF_CLEAR: 4, rootReach: 48, rootScan: 40 };
 const LEAF_ID = "lothlorien:mallorn_leaves";
 const LOGS = new Set(["lothlorien:mallorn_log", "lothlorien:mallorn_wood"]);
 const FACE_OF = { "1,0": "west", "-1,0": "east", "0,1": "north", "0,-1": "south" }; // wall offset from the piece -> rope face (the wall lies opposite)
@@ -30,7 +30,7 @@ const WET = (n) => n === "minecraft:water" || n === "minecraft:flowing_water" ||
 const SOFT = /short_grass|tall_grass|fern|flower|tulip|poppy|dandelion|daisy|orchid|allium|bluet|cornflower|lily|bush|sapling|snow_layer|leaf_litter|petals|vine|mushroom|dead_bush|sweet_berry|azalea/;
 const VILLAGE = /^lothlorien:(mallorn_((heartwood_)?(planks|slab|fence|stairs|trapdoor)|log|wood|stripped_log|stripped_wood|leaves|golden_leaves)|elven_)/;
 const TERRAIN = /^minecraft:(grass_block|dirt|coarse_dirt|podzol|rooted_dirt|mycelium|stone|sand|red_sand|gravel|moss_block|mud|clay|sandstone|red_sandstone|snow|dirt_path|deepslate|andesite|diorite|granite|terracotta|.*_terracotta)$/;
-const isAir = (n) => AIRS.has(n);
+const isAir = (n) => AIRS.has(n) || /^minecraft:light_block_\d+$/.test(n ?? ""); // a hidden light block (village generator: lights, headroom shield) is air
 const isPlant1 = (n) => n === "minecraft:short_grass" || n === "minecraft:fern" || n === "minecraft:tallgrass";
 
 // ground(n): a block the rope may not occupy because it is the terrain (an undefined read is not ground: the caller errors out first)
@@ -198,6 +198,116 @@ export function planPillarClear(at, pillar, ground) {
 // ---- forest floor (style guide 7.8) -------------------------------------------------------------------------------------------------------
 // Tunables. rCentral / rTree: disc radius round the trunk axis; pCentral / pTree: density at the trunk edge (falls to pEdge at the disc edge);
 // blob: size of a theme patch; clear: Chebyshev radius round the rope foot that stays bare (the landing); maxBlocks: budget per village.
+// ---- root down ------------------------------------------------------------------------------------------------------------------------
+// Owner, Test G 2026-10-20: a village is one rigid build at one height, so on a cliff or over a lake its trees (and balcony / lookout pillars)
+// end in the air (trunks at -1360,-1234 stopped 7 blocks above a 20-deep lake). planRootDown carries every column of the trunk's lower section
+// (the trunk cells of layer y0 plus the wider collar under them) down to the real ground through air, plants, leaves and water, and plants it two
+// two blocks into the ground. Roots (o.roots !== false): on land 1-3 logs lying on the ground out from the foot, following the terrain within a step;
+// where the foot stands in water, prop roots leave the trunk just above the water and step out and down two blocks per step (every log touches
+// the next by a face, never a thin diagonal), then drop to the bed. No leaves (owner: none under water). A column that meets a village block
+// stays as it is; a drop beyond REPAIR.rootReach leaves the whole tree as it is.
+// cells: [[x, z]] log cells of the trunk at layer y0. -> { blocks, columns, roots, drop, wet, x, z } | { error } | { skip: reason }
+const ROOT_FREE = (n) => isAir(n) || WET(n) || SOFT.test(n ?? "") || /leaves/.test(n ?? "");
+export function planRootDown(at, cells, y0, o = {}) {
+  const cx = cells.reduce((a, c) => a + c[0], 0) / cells.length, cz = cells.reduce((a, c) => a + c[1], 0) / cells.length;
+  const half = Math.max(...cells.map(([x, z]) => Math.max(Math.abs(x - cx), Math.abs(z - cz)))) + 1; // the collar: one ring wider than the trunk
+  // the lowest log of the trunk itself
+  let bottom = y0;
+  for (const [x, z] of cells) {
+    let y = y0;
+    while (y > y0 - REPAIR.rootScan && isLog(at(x, y - 1, z))) y--;
+    if (at(x, y - 1, z) === undefined) return { error: `unloaded cell at ${x},${y - 1},${z}` };
+    bottom = Math.min(bottom, y);
+  }
+  // footprint: log columns connected to the trunk cells within the collar, in the layers from the bottom up to y0
+  const foot = new Map(), K = (x, z) => `${x},${z}`;
+  for (let y = bottom; y <= y0; y++) {
+    const todo = cells.filter(([x, z]) => isLog(at(x, y, z))), seen = new Set(todo.map(([x, z]) => K(x, z)));
+    while (todo.length) {
+      const [x, z] = todo.pop();
+      if (!foot.has(K(x, z))) foot.set(K(x, z), [x, z]);
+      for (const [a, b] of OFFSETS) {
+        const nx = x + a, nz = z + b;
+        if (seen.has(K(nx, nz)) || Math.max(Math.abs(nx - cx), Math.abs(nz - cz)) > half || !isLog(at(nx, y, nz))) continue;
+        seen.add(K(nx, nz)); todo.push([nx, nz]);
+      }
+    }
+  }
+  // every column: its lowest log (of the run reaching down from y0's section), the ground under it, the first water cell on the way
+  const cols = [];
+  for (const [x, z] of foot.values()) {
+    let y = y0;
+    while (y > bottom - 1 && !isLog(at(x, y, z))) y--;
+    while (isLog(at(x, y - 1, z))) y--;
+    let g = null, water = null, blocked = false;
+    for (let q = y - 1; q >= y - 1 - REPAIR.rootReach; q--) {
+      const n = at(x, q, z);
+      if (n === undefined) return { error: `unloaded cell at ${x},${q},${z}` };
+      if (isGround(n)) { g = q; break; }
+      if (!ROOT_FREE(n)) { blocked = true; break; }
+      if (water === null && WET(n)) water = q;
+    }
+    if (blocked) continue;
+    if (g === null) return { skip: `no ground within ${REPAIR.rootReach} under ${x},${z}` };
+    cols.push({ x, z, low: y, g, water });
+  }
+  const hang = cols.filter((c) => c.low - 1 > c.g);
+  if (!hang.length) return { blocks: [], columns: 0, roots: 0, drop: 0, wet: false, x: cx, z: cz };
+  const blocks = [], put = (x, y, z, face = "up") => blocks.push({ x, y, z, id: "lothlorien:mallorn_log", states: { "minecraft:block_face": face } });
+  for (const c of hang) for (let y = c.low - 1; y >= c.g - 1; y--) put(c.x, y, c.z); // two blocks into the ground: planted, no seam (the pillar flare wants its log under the ground)
+  const drop = Math.max(...hang.map((c) => c.low - 1 - c.g)), wet = hang.some((c) => c.water !== null);
+  let roots = 0;
+  if (o.roots !== false) {
+    const inFoot = (x, z) => foot.has(K(x, z)), byCol = new Map(cols.map((c) => [K(c.x, c.z), c])), taken = new Set();
+    const groundOf = (x, z, from) => { // -> { g, water } | null (unloaded, blocked or too deep)
+      let water = null;
+      for (let q = from; q >= from - REPAIR.rootReach; q--) {
+        const n = at(x, q, z);
+        if (n === undefined || (!isGround(n) && !ROOT_FREE(n))) return null;
+        if (isGround(n)) return { g: q, water };
+        if (water === null && WET(n)) water = q;
+      }
+      return null;
+    };
+    for (let i = 0; i < 4; i++) {
+      const [dx, dz] = OFFSETS[i], face = dx ? "east" : "south";
+      // the edge columns of this side that were extended, the middle ones first
+      const edge = hang.filter((c) => !inFoot(c.x + dx, c.z + dz)).sort((a, b) => (Math.abs(a.x - cx) + Math.abs(a.z - cz)) - (Math.abs(b.x - cx) + Math.abs(b.z - cz)));
+      const want = 1 + (hash(Math.round(cx), Math.round(cz), 20 + i) % 2);
+      for (const c of edge.slice(0, want)) {
+        const len = 1 + (hash(c.x, c.z, 30 + i) % 3), plan = [];
+        if (c.water !== null) { // prop root: out and down two blocks per step from 2 above the water, then down to the bed
+          const top = c.water + 2;
+          let ok = true;
+          for (let k = 1; k <= len + 1 && ok; k++) {
+            const x = c.x + dx * k, z = c.z + dz * k, y = top - (k - 1);
+            for (const yy of [y, y - 1]) { const n = at(x, yy, z); if (n === undefined || !ROOT_FREE(n)) ok = false; else plan.push([x, yy, z, "up"]); }
+            if (k === len + 1 && ok) {
+              const gr = groundOf(x, z, y - 2);
+              if (!gr || y - 2 - gr.g > REPAIR.rootReach) ok = false;
+              else for (let yy = y - 2; yy > gr.g; yy--) plan.push([x, yy, z, "up"]);
+            }
+          }
+          if (!ok) continue;
+        } else { // a lying root on the ground, following it within a step
+          let y = c.g + 1;
+          for (let k = 1; k <= len; k++) {
+            const x = c.x + dx * k, z = c.z + dz * k, gr = groundOf(x, z, y + REPAIR.flareStep);
+            if (!gr || gr.water !== null || Math.abs(gr.g + 1 - y) > REPAIR.flareStep) break;
+            y = gr.g + 1;
+            plan.push([x, y, z, face]);
+          }
+          if (!plan.length) continue;
+        }
+        if (plan.some(([x, y, z]) => taken.has(`${x},${y},${z}`) || byCol.has(K(x, z)))) continue;
+        for (const [x, y, z, f] of plan) { taken.add(`${x},${y},${z}`); put(x, y, z, f); }
+        roots++;
+      }
+    }
+  }
+  return { blocks, columns: hang.length, roots, drop, wet, x: cx, z: cz };
+}
+
 export const FLOOR = { rCentral: 14, rTree: 9, pCentral: 0.62, pTree: 0.5, pEdge: 0.08, blob: 5, clear: 1, minTrunk: 9, maxBlocks: 1500, fireflies: [2, 4], mossCentral: 3, mossTree: [1, 2] };
 const FLOOR_GROUND = /^minecraft:(grass_block|dirt|podzol|moss_block|coarse_dirt|rooted_dirt)$/;
 // blocks the downward ground scan looks through: air, plants, leaves, anything of the mod (decks, roots, our own plants), hanging bits
@@ -231,7 +341,7 @@ export function* findTrunksGen(at, rect, y) {
       for (const [a, b] of OFFSETS) { const q = `${x + a},${z + b}`; if (logs.has(q) && !seen.has(q)) { seen.add(q); todo.push(logs.get(q)); } }
     }
     if (comp.length < FLOOR.minTrunk) continue;
-    out.push({ x: comp.reduce((a, c) => a + c[0], 0) / comp.length, z: comp.reduce((a, c) => a + c[1], 0) / comp.length, r: Math.sqrt(comp.length / Math.PI), size: comp.length });
+    out.push({ x: comp.reduce((a, c) => a + c[0], 0) / comp.length, z: comp.reduce((a, c) => a + c[1], 0) / comp.length, r: Math.sqrt(comp.length / Math.PI), size: comp.length, cells: comp });
   }
   return out.sort((a, b) => a.x - b.x || a.z - b.z);
 }
@@ -416,6 +526,17 @@ export function* repairGen(at, markers, o = {}) {
   const ropes = yield* findRopesGen(at, rect, y);
   const columns = ropes.filter((r) => at(r.x, r.y + 1, r.z) !== ROPE_ID); // the top piece of each column only (no rope above it)
   const feet = columns.map((r) => ({ x: r.x, z: r.z }));
+  // root down first: the rope fit, the flares and the floor then read the ground the trunks stand on
+  const trunks = yield* findTrunksGen(at, rect, y - 1); // not `for (... of yield* ...)`: QuickJS cannot compile it (stack underflow)
+  for (const t of trunks) {
+    yield;
+    const rd = planRootDown(at, t.cells, y - 1);
+    if (rd.error || rd.skip) { o.log?.push(`root down ${Math.round(t.x)},${Math.round(t.z)}: ${rd.error ?? `skipped, ${rd.skip}`}`); continue; }
+    if (!rd.blocks.length) continue;
+    const plan = { kind: "rootdown", x: Math.round(rd.x), z: Math.round(rd.z), columns: rd.columns, roots: rd.roots, drop: rd.drop, wet: rd.wet, buried: 0, hung: 0, cells: [], rails: [], lanterns: [], blocks: rd.blocks };
+    at.apply(plan);
+    out.push(plan);
+  }
   for (const top of columns) {
     yield;
     const fit = planRopeFit(at, top);
@@ -432,6 +553,13 @@ export function* repairGen(at, markers, o = {}) {
     const pillar = findPillar(at, m);
     if (!pillar || seen.has(`${pillar.x},${pillar.z}`)) continue;
     seen.add(`${pillar.x},${pillar.z}`);
+    const rd = planRootDown(at, [[0, 0], ...OFFSETS].map(([a, b]) => [pillar.x + a, pillar.z + b]), pillar.y - 1, { roots: false }); // the flare roots it
+    if (rd.error || rd.skip) o.log?.push(`root down ${pillar.x},${pillar.z}: ${rd.error ?? `skipped, ${rd.skip}`}`);
+    else if (rd.blocks.length) {
+      const plan = { kind: "rootdown", x: pillar.x, z: pillar.z, columns: rd.columns, roots: 0, drop: rd.drop, wet: rd.wet, buried: 0, hung: 0, cells: [], rails: [], lanterns: [], blocks: rd.blocks };
+      at.apply(plan);
+      out.push(plan);
+    }
     let fl = planFlare(at, pillar);
     if (fl.ground !== undefined) { // bare foot first (the leaves would block the roots), then the roots on the cleared ground
       const cl = planPillarClear(at, pillar, fl.ground);
@@ -466,4 +594,4 @@ export function* repairGen(at, markers, o = {}) {
   return out;
 }
 
-export const describeRepair = (p) => p.kind === "railcap" ? `unused exit at ${p.x},${p.z}: ${p.rails.length} missing rails closed` : p.kind === "floor" ? `forest floor: ${p.blocks.length} blocks round ${p.trunks} trunks (${Object.entries(p.counts).map(([k, v]) => `${k.replace(/^.*:/, "")} ${v}`).join(", ")})` : p.kind === "pillarclear" ? `pillar at ${p.x},${p.z}: ${p.leaves} leaves, ${p.twigs} twigs cleared at the foot` : p.kind === "flare" ? `pillar at ${p.x},${p.z}: ${p.roots} roots (${p.blocks.length} logs)` : `rope at ${p.x},${p.z}: -${p.buried} buried, +${p.hung} hung`;
+export const describeRepair = (p) => p.kind === "rootdown" ? `${p.wet ? "trunk in water" : "trunk"} at ${p.x},${p.z}: ${p.columns} columns carried ${p.drop} down to the ground, ${p.roots} roots` : p.kind === "railcap" ? `unused exit at ${p.x},${p.z}: ${p.rails.length} missing rails closed` : p.kind === "floor" ? `forest floor: ${p.blocks.length} blocks round ${p.trunks} trunks (${Object.entries(p.counts).map(([k, v]) => `${k.replace(/^.*:/, "")} ${v}`).join(", ")})` : p.kind === "pillarclear" ? `pillar at ${p.x},${p.z}: ${p.leaves} leaves, ${p.twigs} twigs cleared at the foot` : p.kind === "flare" ? `pillar at ${p.x},${p.z}: ${p.roots} roots (${p.blocks.length} logs)` : `rope at ${p.x},${p.z}: -${p.buried} buried, +${p.hung} hung`;

@@ -5,6 +5,11 @@ locator at (20, 11, 0) fixing a content-log error), which was approved from rend
 and `tools/make_mallorn_boat*.py`.
 
 Four boats: `lothlorien:mallorn_boat`, `mallorn_chest_boat`, `mallorn_heartwood_boat`, `mallorn_heartwood_chest_boat`.
+**Interaction review (owner, 2026-10-18; target 1.26.52):** leads, boarding, steering,
+leaving and ordinary self-drop work well. The report does not enumerate variants,
+mob species or chest-content spilling. All four items now declare 60-second fuel;
+the remaining native dispenser/environment/chest checks are distinguished from
+verified behavior in [BOAT_INTERACTIONS.md](../BOAT_INTERACTIONS.md).
 **One command regenerates every file**: `python -B tools/make_mallorn_boat_family.py` (runs both model generators;
 heartwood art = recolour of the silver art; chest geometry; icons; BP entities, items, recipes, loot; RP client
 entities; lang and item_texture entries). Do not hand-edit the generated files.
@@ -13,7 +18,7 @@ entities; lang and item_texture entries). Do not hand-edit the generated files.
 - BP entities are copies of vanilla `boat` / `chest_boat` (1.26.30) with `runtime_identifier` `minecraft:boat` /
   `minecraft:chest_boat`: the hard-coded boat class does placing, steering, the boat UI and the 27-slot chest.
   Bamboo-raft seat group dropped; own loot tables. Chest boat seat at x 0.35 (vanilla 0.2 would sit in the chest).
-- Items: `entity_placer` + `liquid_clipped`, stack 1; plain boats use `itemGroup.name.boat`, chest boats use `itemGroup.name.chestboat`.
+- Items: `entity_placer` + `liquid_clipped`, stack 1, fuel 60 seconds (six smelts); plain boats use `itemGroup.name.boat`, chest boats use `itemGroup.name.chestboat`. Omitted `dispense_on` is an unrestricted native default, not missing dispenser permission; exact boat-placement parity still needs the linked game comparisons.
 - Recipes: boat = 5 planks in a U (silver or heartwood planks); chest boat = chest over the boat (shaped only).
 - Client: the `hull` bone is turned by the actor yaw (a runtime boat does not turn a custom model); one `lead`
   locator, identical in every geometry (they share locators), on the bow neck; paddles row while ridden and moving;

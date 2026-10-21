@@ -62,7 +62,8 @@
               "minecraft:dirt_with_roots",
               "minecraft:moss_block",
               "minecraft:mud",
-              "minecraft:farmland"
+              "minecraft:farmland",
+              "minecraft:mycelium"
             ]
           }
         ]

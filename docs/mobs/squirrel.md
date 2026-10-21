@@ -1,5 +1,12 @@
 # Ground squirrel (`lothlorien:squirrel`) - design sheet
 
+Group13 owner decisions implemented offline2026-10-20; new native acceptance
+pending. [Interaction ledger](../SWAN_SQUIRREL_INTERACTIONS.md) records guarded
+offers/sessions/gifts, native powder-snow walking and lead-anchor support.
+Only domesticated squirrels stay: existing outside/leashed feeding adds kept
+persistence, while inside wild healing and errands do not. No new pet ownership.
+Earlier dated observations below retain their exact historical scope.
+
 2026-10-11 care update (source/offline evidence; Bedrock 1.26.52; owner accepted as done; no new game test results supplied): Lead support added; a lead interrupts an errand. Outside Lothlorien, acorns are ordinary food, restore 2 HP and keep the squirrel persistent, without starting a gift or changing its cooldown. Inside, existing Friend/gift rules remain; injured Friends can feed it for healing before an errand.
 See [Bringing wildlife home](BRINGING_HOME.md) for current policy and acceptance checks.
 
@@ -14,18 +21,18 @@ Files: BP `entities/squirrel.json`, `spawn_rules/squirrel.json`, `loot_tables/gi
 
 | Area | Decision |
 | --- | --- |
-| Identity | "Ground Squirrel", egg brown `#7c5232` / cream `#ecdcb4`; families `lothlorien_squirrel`, `mob`. No climbing (Bedrock has no animal climbing AI), so it scampers on the ground |
-| Body | collision 0.4 x 0.5, 4 hp, speed 0.28, no attack. No baby, breeding, taming, riding, lead. Nameable |
+| Identity | "Ground Squirrel", egg brown `#7c5232` / cream `#ecdcb4`; families `lothlorien_squirrel`, `mob`. Ground-species design with no added climbing behavior; this is a design choice, not a claim that all Bedrock animal climbing is technically impossible |
+| Body | collision 0.4 x 0.5, 4 hp, speed 0.28, no attack. No baby, breeding, taming or riding. Nameable/leashable; also native leashable_to anchor and can_stand_on_powder_snow. A lead interrupts an errand. Powder-snow walking adds no freezing immunity |
 | Coat | property `lothlorien:coat`: brown 55 % / russet 25 % / dark brown 20 % (random on spawn, client synced). Pale and dark flank stripes, cream belly, banded plume tail |
 | Spawn | surface on grass or dirt, biome tag `lothlorien`, light 7-15, herd 1-2, weight 12, `density_limit.surface 6`, distance 12-40, pool `animal` |
-| Despawn | standard `despawn_from_distance`; a name tag keeps it |
+| Despawn | standard `despawn_from_distance`; name tag or existing outside/leashed feeding keeps it. Inside wild healing/errands intentionally do not add persistence (owner2026-10-20); existing kept animals retain their group |
 | Behaviour | 0 float, 1 panic (x1.5), 3 tempt (Mallorn acorn, calm and Friend states only), 4 avoid (Harmony wariness states), 6 stroll, 7 look at player, 8 look around |
 | Harmony | the deer's states and distances by band (see `swan.md`), via `deer.js`; a player holding a Mallorn acorn does not scare it in calm and Friend states. A player kill costs 3 Harmony (an animal) |
-| The offer | right-click holding a Mallorn acorn (`minecraft:interact` entry, "Offer Acorn"). Refused, acorn kept: Harmony below 0 ("shies from your restless spirit"), calm but not Friend ("does not trust you yet"), cooldown ("busy with its stash"), or no standable spot 10-14 blocks away |
-| The errand | Friend only (**owner rule: gifts need Friend, the white deer too**). The acorn is eaten when the errand starts. `state_guiding` group: the squirrel follows an invisible `lothlorien:guide_beacon` that `squirrel.js` moves: (1) **away** to a standable spot 10-14 blocks off (20 s at most), (2) **dig** 3-5 s standing still, (3) **return** onto the player. Within 2.5 blocks it drops the gift (`/loot spawn ... loot "gifts/squirrel"`) at its feet, hearts, message in chat |
-| Endings | player 40+ blocks away, 2 minutes, squirrel or player gone, or the squirrel hurt (alarmed) end it without a gift; the acorn is gone |
-| Cooldown | 10 minutes of world time per squirrel (dynamic property `lothlorien:gift_ready_at`, world absolute time) |
-| Gift table | `loot_tables/gifts/squirrel.json`, one roll, weights: leaf litter (golden leaf carpet) 28 x2-4, ground petals (Mallorn blossom) 28 x2-4, Western Corn seeds 14 x1-3, athelas 8 x1-2, elanor 8 x1-2, niphredil 6 x1-2, golden fern 6, Mallorn acorn 2. Litter and petals thus become renewable (owner: "great"). Tune the weights here |
+| The offer | right-click holding a Mallorn acorn (`minecraft:interact` entry, "Offer Acorn"). One current food/actor/mode/dimension/reach decision precedes synchronous acceptance and charge; preserve accepted stack metadata without deep same-callback snapshots. Refused, acorn kept: Harmony below0, not Friend, cooldown or no standable spot10-14 blocks away. Unknown biome centre starts neither outside feeding nor an errand; positive partial is inside. Creative Friend incurs no food charge |
+| The errand | Friend only. The acorn is eaten when the errand starts. `state_guiding` follows a moved guide_beacon: away10-14 blocks (20s at most), dig3-5s, return. Within actual3D2.5 blocks, a readable dry passable drop position permits one native LootTableManager roll/stack spawn, then cooldown, optional hearts and chat. No terrain clearing or teleport |
+| Endings | player40+ horizontal blocks away,2min, lost Friend/dead/invalid/Spectator player, dead/invalid squirrel, original-dimension departure, lead or alarm end it without a gift; acorn is gone. Unknown biome/transient reads pause without reward only within the existing2min cap. Optional deed errors do not interrupt accepted errands |
+| Cooldown | 10 minutes of world time after known delivery (`lothlorien:gift_ready_at`). Roll/spawn failure does not spend it or announce a gift. Known delivery has a runtime guard if persistence fails; separate native writes/reload cannot guarantee atomic delivery. No speculative fallback spawn |
+| Gift table | `loot_tables/gifts/squirrel.json`, one roll; unchanged four entries: leaf litter28 x2-4, Mallorn blossom28 x2-4, Western Corn seeds14 x1-3, athelas8 x1-2. Earlier extra flowers/acorn list was stale; none restored. Balance source is the loot table |
 | Drops | none (XP 1-2 on player kill) |
 | Animations | procedural Molang: `idle` (tail and head sway), `walk` (diagonal legs, body bob, tail), vanilla `look_at_target` |
 | Sounds | **placeholder**: vanilla rabbit sounds at pitch 1.5-1.9, a faint chicken step |
@@ -36,7 +43,7 @@ Files: BP `entities/squirrel.json`, `spawn_rules/squirrel.json`, `loot_tables/gi
 2. They keep their distance; holding an acorn, a calm squirrel comes up to you.
 3. Not a Friend (`/scriptevent lothlorien:harmony 0` sets Guest): "does not trust you yet", acorn kept.
 4. Friend (10 minutes at 0 points inside the biome): offer an acorn. Does it run off, dig, come back to you (even if you walk
-   away a little), and drop litter / petals / a plant at your feet? Does the `loot spawn` command work from the script
-   (owner's `/loot spawn ~ ~1 ~ loot "chests/mallorn_flet"` form is the model)? Second acorn at once: "busy with its stash".
+   away a little), and drop the native rolled stack at its feet? Group13 replaces the previously tested command
+   with pinned LootTableManager/spawnItem; this native path needs a fresh game check. Second acorn after delivery: "busy with its stash".
 5. **Open question**: does the follow goal reach a beacon that is moved around, and does the squirrel keep up when you move?
    Hurt it during the errand: it drops the errand.

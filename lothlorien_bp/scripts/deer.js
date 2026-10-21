@@ -1,6 +1,6 @@
 // Deer in the running game: wariness follows the nearest player's Harmony band, and a player
 // hurting a deer alarms the herd. The flight behaviour itself is JSON (entities/deer.json, entities/white_deer.json).
-import { world, system } from "@minecraft/server";
+import { GameMode, world, system } from "@minecraft/server";
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { isGuiding } from "./white_deer.js";
@@ -37,11 +37,17 @@ const nearDeer = (dimension, location, maxDistance) =>
 
 function updateWariness() {
   const players = new Map();
-  for (const player of world.getPlayers()) {
-    const wariness = warinessFor(bandOf(harmonyOf(player).harmony));
-    const id = player.dimension.id;
-    if (!players.has(id)) players.set(id, []);
-    players.get(id).push({ location: player.location, wariness });
+  let nearbyPlayers;
+  try { nearbyPlayers = world.getPlayers(); } catch { return; }
+  for (const player of nearbyPlayers) {
+    try {
+      if (!player.isValid || ![GameMode.Survival, GameMode.Adventure].includes(player.getGameMode()) ||
+          !(player.getComponent("minecraft:health")?.currentValue > 0)) continue;
+      const wariness = warinessFor(bandOf(harmonyOf(player).harmony));
+      const id = player.dimension.id;
+      if (!players.has(id)) players.set(id, []);
+      players.get(id).push({ location: player.location, wariness });
+    } catch { /* one unreadable player must not suppress other players */ }
   }
   for (const [id, deer] of loaded) {
     try {
@@ -62,7 +68,9 @@ function updateWariness() {
       const wariness = pickWariness(candidates);
       if (wariness && deer.getProperty("lothlorien:wariness") !== wariness) deer.triggerEvent(setEventFor(wariness));
     } catch {
-      loaded.delete(id); // entityLoad re-registers it if the chunk returns
+      // A property/location read can fail while a valid actor remains loaded.
+      // Removal events or a confirmed-invalid handle own tracking removal.
+      try { if (deer.isValid === false) loaded.delete(id); } catch { /* retry next pulse */ }
     }
   }
   stopIfEmpty();

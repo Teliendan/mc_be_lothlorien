@@ -1,0 +1,9 @@
+{
+  "format_version": "1.1.0",
+  "lothlorien:mallorn_leaf_carpet": {
+    "sound": "leaf_litter"
+  },
+  "lothlorien:mallorn_blossom": {
+    "sound": "pink_petals"
+  }
+}

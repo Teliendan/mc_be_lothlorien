@@ -1,0 +1,35 @@
+{
+  "format_version": "1.26.50",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "lothlorien:suspicious_stew_from_elanor"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "MM",
+      "BF"
+    ],
+    "key": {
+      "M": {
+        "tag": "minecraft:mushrooms_for_stew"
+      },
+      "B": {
+        "item": "minecraft:bowl"
+      },
+      "F": {
+        "item": "lothlorien:elanor"
+      }
+    },
+    "unlock": [
+      {
+        "item": "lothlorien:elanor"
+      }
+    ],
+    "result": {
+      "item": "minecraft:suspicious_stew",
+      "data": 5
+    }
+  }
+}

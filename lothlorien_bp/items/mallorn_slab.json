@@ -15,7 +15,7 @@
         "replace_block_item": true
       },
       "minecraft:fuel": {
-        "duration": 7.5
+        "duration": 15
       },
       "minecraft:tags": {
         "tags": [

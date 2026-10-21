@@ -1,0 +1,17 @@
+{
+  "format_version": "1.21.100",
+  "minecraft:template_pool": {
+    "description": {
+      "identifier": "lothlorien:tree_grid_shrine"
+    },
+    "elements": [
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/root_shrine_01"
+        },
+        "weight": 16
+      }
+    ]
+  }
+}

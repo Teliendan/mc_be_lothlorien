@@ -62,6 +62,21 @@
                           "value": "minecraft:name_tag"
                         },
                         {
+                          "all_of": [
+                            {
+                              "test": "has_equipment",
+                              "domain": "hand",
+                              "subject": "other",
+                              "value": "minecraft:shears"
+                            },
+                            {
+                              "test": "is_leashed",
+                              "subject": "self",
+                              "value": true
+                            }
+                          ]
+                        },
+                        {
                           "test": "has_tag",
                           "subject": "other",
                           "value": "lothlorien_trade_pass"
@@ -111,6 +126,21 @@
                           "domain": "hand",
                           "subject": "other",
                           "value": "minecraft:name_tag"
+                        },
+                        {
+                          "all_of": [
+                            {
+                              "test": "has_equipment",
+                              "domain": "hand",
+                              "subject": "other",
+                              "value": "minecraft:shears"
+                            },
+                            {
+                              "test": "is_leashed",
+                              "subject": "self",
+                              "value": true
+                            }
+                          ]
                         },
                         {
                           "test": "has_tag",
@@ -164,6 +194,21 @@
                           "value": "minecraft:name_tag"
                         },
                         {
+                          "all_of": [
+                            {
+                              "test": "has_equipment",
+                              "domain": "hand",
+                              "subject": "other",
+                              "value": "minecraft:shears"
+                            },
+                            {
+                              "test": "is_leashed",
+                              "subject": "self",
+                              "value": true
+                            }
+                          ]
+                        },
+                        {
                           "test": "has_tag",
                           "subject": "other",
                           "value": "lothlorien_trade_pass"
@@ -215,6 +260,21 @@
                           "value": "minecraft:name_tag"
                         },
                         {
+                          "all_of": [
+                            {
+                              "test": "has_equipment",
+                              "domain": "hand",
+                              "subject": "other",
+                              "value": "minecraft:shears"
+                            },
+                            {
+                              "test": "is_leashed",
+                              "subject": "self",
+                              "value": true
+                            }
+                          ]
+                        },
+                        {
                           "test": "has_tag",
                           "subject": "other",
                           "value": "lothlorien_trade_pass"
@@ -259,6 +319,21 @@
                           "domain": "hand",
                           "subject": "other",
                           "value": "minecraft:name_tag"
+                        },
+                        {
+                          "all_of": [
+                            {
+                              "test": "has_equipment",
+                              "domain": "hand",
+                              "subject": "other",
+                              "value": "minecraft:shears"
+                            },
+                            {
+                              "test": "is_leashed",
+                              "subject": "self",
+                              "value": true
+                            }
+                          ]
                         }
                       ]
                     }
@@ -649,6 +724,7 @@
       "minecraft:type_family": {
         "family": [
           "lothlorien_elf",
+          "wandering_trader",
           "mob"
         ]
       },

@@ -225,6 +225,13 @@ export const chunksIn = (r) => ((r.x1 - r.x0 + 1) >> 4) * ((r.z1 - r.z0 + 1) >> 
 export const parseDone = (s) => { try { const v = JSON.parse(s); return Array.isArray(v) ? v : []; } catch { return []; } };
 export const addDone = (list, r) => [...list, { x0: r.x0, x1: r.x1, z0: r.z0, z1: r.z1 }].slice(-AREA.maxDone);
 export const isDone = (list, x, z) => list.some((r) => inRect(r, x, z));
+export const VILLAGE_PLANS = "lothlorien:village_plans"; // the world property that holds the done-list (loop_marker.js writes it)
+// Owner 2026-10-20: a village on the biome edge counts as Lothlorien for gameplay. read() -> the done-list JSON; -> (x, z) => inside a planned
+// village area. Parses again only when the property changed.
+export function villageAreaTest(read) {
+  let raw, list = [];
+  return (x, z) => { const r = read(); if (r !== raw) { raw = r; list = parseDone(r); } return isDone(list, Math.floor(x), Math.floor(z)); };
+}
 
 // discoverVillage(env, first): load the village with script ticking areas and collect every loop marker of it. Starts at the marker `first`
 // ([x, y, z] deck cell) and repeats: area = chunk-aligned hull of the known markers + margin; create it, wait, ask which markers lie in it;

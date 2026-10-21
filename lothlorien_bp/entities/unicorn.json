@@ -346,11 +346,28 @@
                     "value": false
                   },
                   {
-                    "test": "has_equipment",
-                    "subject": "other",
-                    "domain": "hand",
-                    "operator": "!=",
-                    "value": "lothlorien:elanor"
+                    "none_of": [
+                      {
+                        "all_of": [
+                          {
+                            "test": "is_family",
+                            "subject": "other",
+                            "value": "player"
+                          },
+                          {
+                            "test": "has_tag",
+                            "subject": "other",
+                            "value": "lothlorien_friend"
+                          },
+                          {
+                            "test": "has_equipment",
+                            "subject": "other",
+                            "domain": "hand",
+                            "value": "lothlorien:elanor"
+                          }
+                        ]
+                      }
+                    ]
                   }
                 ]
               },
@@ -372,11 +389,28 @@
                     "value": true
                   },
                   {
-                    "test": "has_equipment",
-                    "subject": "other",
-                    "domain": "hand",
-                    "operator": "!=",
-                    "value": "lothlorien:elanor"
+                    "none_of": [
+                      {
+                        "all_of": [
+                          {
+                            "test": "is_family",
+                            "subject": "other",
+                            "value": "player"
+                          },
+                          {
+                            "test": "has_tag",
+                            "subject": "other",
+                            "value": "lothlorien_friend"
+                          },
+                          {
+                            "test": "has_equipment",
+                            "subject": "other",
+                            "domain": "hand",
+                            "value": "lothlorien:elanor"
+                          }
+                        ]
+                      }
+                    ]
                   }
                 ]
               },
@@ -406,13 +440,33 @@
             }
           ]
         },
-        "minecraft:behavior.tempt": {
+        "minecraft:behavior.follow_target_leader": {
           "priority": 3,
           "speed_multiplier": 1,
-          "items": [
-            "lothlorien:elanor"
-          ],
-          "can_get_scared": false
+          "leader_filters": {
+            "all_of": [
+              {
+                "test": "is_family",
+                "subject": "other",
+                "value": "player"
+              },
+              {
+                "test": "has_tag",
+                "subject": "other",
+                "value": "lothlorien_friend"
+              },
+              {
+                "test": "has_equipment",
+                "subject": "other",
+                "domain": "hand",
+                "value": "lothlorien:elanor"
+              }
+            ]
+          },
+          "follow_distance": 1.5,
+          "within_radius": 10,
+          "always_look_for_leader": true,
+          "search_cooldown": 20
         },
         "minecraft:interact": {
           "interactions": [
@@ -519,6 +573,15 @@
       "lothlorien:bonded": {
         "minecraft:is_tamed": {},
         "minecraft:persistent": {},
+        "minecraft:healable": {
+          "force_use": false,
+          "items": [
+            {
+              "item": "lothlorien:elanor",
+              "heal_amount": 2
+            }
+          ]
+        },
         "minecraft:rideable": {
           "seat_count": 1,
           "family_types": [
@@ -603,7 +666,21 @@
         "event_name": "ambient"
       },
       "minecraft:behavior.float": {
-        "priority": 0
+        "priority": 0,
+        "chance_per_tick_to_float": 0.0,
+        "time_under_water_to_dismount_passengers": 2.0
+      },
+      "minecraft:buoyant": {
+        "base_buoyancy": 1.0,
+        "apply_gravity": false,
+        "can_auto_step_from_liquid": true,
+        "movement_type": "bobbing",
+        "liquid_blocks": [
+          "minecraft:water",
+          "minecraft:flowing_water",
+          "minecraft:lava",
+          "minecraft:flowing_lava"
+        ]
       },
       "minecraft:behavior.panic": {
         "priority": 1,

@@ -1,0 +1,38 @@
+{
+  "format_version": "1.21.100",
+  "minecraft:template_pool": {
+    "description": {
+      "identifier": "lothlorien:tree_grid_plain"
+    },
+    "elements": [
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/mallorn_roundplain_02"
+        },
+        "weight": 9
+      },
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/mallorn_roundplain_03"
+        },
+        "weight": 9
+      },
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/mallorn_roundplain_06"
+        },
+        "weight": 9
+      },
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/mallorn_roundplain_08"
+        },
+        "weight": 9
+      }
+    ]
+  }
+}

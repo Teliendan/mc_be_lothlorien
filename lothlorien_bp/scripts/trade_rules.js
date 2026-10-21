@@ -12,7 +12,7 @@ export const TRADE_PASS_TICKS = 200;
 export const PASS_REPEAT_TICKS = 10;
 export const PIN_TICKS = 600;
 export const PASS_TAG = "lothlorien_trade_pass";
-export const SKIP_ITEMS = ["minecraft:lead", "minecraft:name_tag"];
+export { SKIP_ITEMS } from "./elf_native_use.js";
 export const MAX_USES = 9999999;
 export const FINAL_KEY = "friend_3";
 export const TABLE_DIR = "trading/lothlorien";

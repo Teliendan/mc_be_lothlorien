@@ -68,6 +68,9 @@
       },
       "minecraft:movable": {
         "movement_type": "popped"
+      },
+      "minecraft:chest_obstruction": {
+        "obstruction_rule": "never"
       }
     }
   }

@@ -8,7 +8,7 @@ export const PANEL_DIRS = [
   {name:"east",dx:1,dz:0}, {name:"west",dx:-1,dz:0},
   {name:"south",dx:0,dz:1}, {name:"north",dx:0,dz:-1},
 ];
-const AIR = new Set(["minecraft:air","minecraft:cave_air","minecraft:void_air"]);
+const AIR = new Set(["minecraft:air","minecraft:cave_air","minecraft:void_air","minecraft:light_block_0"]); // light_block_0: the dark headroom shield of the village pieces
 export const panelBlock = d => ({name:PANEL_ID,states:{"minecraft:cardinal_direction":d.name,"minecraft:vertical_half":"bottom","lothlorien:open":true}});
 
 export function isPlanterPanel(get, x, y, z, block = get(x,y,z)) {

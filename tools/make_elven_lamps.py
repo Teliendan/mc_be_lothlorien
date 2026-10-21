@@ -700,17 +700,20 @@ def lamp_block(ident, light, geometry, placement_faces, boxes, extra_perms=None,
 
 
 def lamp_item(ident, stack=64):
-    return {"format_version": "1.26.50", "minecraft:item": {
+    item = {"format_version": "1.26.50", "minecraft:item": {
         "description": {"identifier": f"{NS}:{ident}", "menu_category": {
             "category": "items", "group": "minecraft:itemGroup.name.lanterns"}},
         "components": {"minecraft:icon": f"{NS}:{ident}", "minecraft:max_stack_size": stack,
                        "minecraft:block_placer": {"block": f"{NS}:{ident}", "replace_block_item": True}}}}
+    if ident in {"elven_lantern", "elven_lantern_heartwood"}:
+        item["minecraft:item"]["components"]["minecraft:tags"] = {"tags": [f"{NS}:elven_lantern"]}
+    return item
 
 
 def recipe(ident, pattern, key, unlock, count=1):
     return {"format_version": "1.20.30", "minecraft:recipe_shaped": {
         "description": {"identifier": f"{NS}:{ident}"}, "tags": ["crafting_table"], "pattern": pattern,
-        "key": {k: {"item": v} for k, v in key.items()}, "unlock": [{"item": unlock}],
+        "key": {k: v if isinstance(v, dict) else {"item": v} for k, v in key.items()}, "unlock": [{"item": unlock}],
         "result": {"item": f"{NS}:{ident}", "count": count}}}
 
 
@@ -841,7 +844,7 @@ def main():
 
     # ---- items and recipes
     for ident in ("elven_lantern", "elven_lantern_heartwood", "firefly_jar", "elven_chandelier"):
-        dump(BP / f"items/{ident}.json", lamp_item(ident, 16 if ident == "elven_chandelier" else 64))
+        dump(BP / f"items/{ident}.json", lamp_item(ident))
     (BP / "items/elven_lantern_arch.json").unlink(missing_ok=True)
     bottle = f"{NS}:bottle_of_fireflies"
     dump(BP / "recipes/elven_lantern.json", recipe(
@@ -852,8 +855,8 @@ def main():
     dump(BP / "recipes/firefly_jar.json", recipe(
         "firefly_jar", ["N", "B"], {"N": f"{NS}:mallorn_button", "B": bottle}, bottle))
     dump(BP / "recipes/elven_chandelier.json", recipe(
-        "elven_chandelier", ["ARA", "ALA"],
-        {"A": f"{NS}:deer_antler", "R": f"{NS}:elven_rope", "L": f"{NS}:elven_lantern"}, f"{NS}:elven_lantern"))
+        "elven_chandelier", ["L L", " A ", "L L"],
+        {"A": f"{NS}:deer_antler", "L": {"tag": f"{NS}:elven_lantern"}}, f"{NS}:deer_antler"))
 
     # ---- names
     merge_lang([f"tile.{NS}:{i}.name={n}\nitem.{NS}:{i}={n}" for i, n in (

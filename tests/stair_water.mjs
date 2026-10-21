@@ -31,6 +31,8 @@ function checkStairs(body) {
       const context = `${body.description.identifier} ${half} ${facing} ${corner}`;
       assert.equal(matches.length, 1, `${context}: exactly one shape policy`);
       const components = { ...body.components, ...matches[0].components };
+      assert.equal(components['minecraft:chest_obstruction'].obstruction_rule, 'never',
+        `${context}: native stairs leave the chest below accessible`);
       const rule = components['minecraft:liquid_detection'].detection_rules.find(r => r.liquid_type === 'water');
       assert.equal(rule.can_contain_liquid, true, `${context}: bucket waterlogging`);
       assert.equal(rule.on_liquid_touches, 'blocking', `${context}: incoming flow stays blocked`);

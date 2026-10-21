@@ -16,6 +16,9 @@
       "minecraft:icon": "lothlorien:mallorn_leaf_carpet",
       "minecraft:compostable": {
         "composting_chance": 30
+      },
+      "minecraft:fuel": {
+        "duration": 5
       }
     }
   }

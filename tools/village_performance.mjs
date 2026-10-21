@@ -25,7 +25,9 @@ export async function benchmark() {
   const system={currentTick:1,beforeEvents:{startup:{subscribe(fn){fn({blockComponentRegistry:{registerCustomComponent(id,c){components.set(id,c);}}});}}}};
   const source=readFileSync(new URL("../lothlorien_bp/scripts/trees.js",import.meta.url),"utf8");
   globalThis.__villagePerf={system,world,BlockPermutation:{},GameMode:{},EquipmentSlot:{}};
-  const transformed=source.replace(/^import .*;\r?$/gm,"");
+  // tree_interaction_rules.js has no imports of its own: inline it, since the leaf callback reads blocks through readTreeBlock.
+  const rules=readFileSync(new URL("../lothlorien_bp/scripts/tree_interaction_rules.js",import.meta.url),"utf8").replace(/^export /gm,"");
+  const transformed=rules+"\n"+source.replace(/^import .*;\r?$/gm,"");
   try { await import(`data:text/javascript;base64,${Buffer.from('const {system,world,BlockPermutation,GameMode,EquipmentSlot}=globalThis.__villagePerf;\n'+transformed).toString('base64')}#${benchmarkRun++}`); }
   finally { delete globalThis.__villagePerf; }
   const tick=components.get("lothlorien:leaves").onRandomTick;

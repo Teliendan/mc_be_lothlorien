@@ -177,7 +177,12 @@ test("generated elf property, groups and events are idempotent and preserve hand
   assert.deepEqual(entity.events[T.swapEventOf("none")], { set_property: { [T.TABLE_PROPERTY]: "none" }, remove: { component_groups: tradeGroups } });
   for (const p of T.TRADERS) {
     const filters = entity.component_groups[`lothlorien:${p}`]["minecraft:interact"].interactions[0].on_interact.filters.all_of;
-    assert.deepEqual(filters.find((f) => f.none_of).none_of.map((f) => [f.test, f.value]), [["has_equipment", "minecraft:lead"], ["has_equipment", "minecraft:name_tag"], ["has_tag", T.PASS_TAG]]);
+    const excluded = filters.find((f) => f.none_of).none_of;
+    assert.deepEqual(excluded.filter((f) => !f.all_of).map((f) => [f.test, f.value]), [["has_equipment", "minecraft:lead"], ["has_equipment", "minecraft:name_tag"], ["has_tag", T.PASS_TAG]]);
+    assert.deepEqual(excluded.find((f) => f.all_of), { all_of: [
+      { test: "has_equipment", domain: "hand", subject: "other", value: "minecraft:shears" },
+      { test: "is_leashed", subject: "self", value: true },
+    ] }, "only a native cut hides the delivery prompt; idle shears still permit dialogs");
     assert.ok(!JSON.stringify(entity.events[`lothlorien:as_${p}`]).includes("lothlorien:trade_"), "no table assigned at spawn");
   }
   assert.equal(entity.components["minecraft:behavior.trade_with_player"].priority, 2);

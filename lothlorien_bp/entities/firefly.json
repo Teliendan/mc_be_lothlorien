@@ -42,6 +42,9 @@
       },
       "minecraft:jump.static": {},
       "minecraft:physics": {},
+      "minecraft:game_event_movement_tracking": {
+        "emit_flap": true
+      },
       "minecraft:nameable": {},
       "minecraft:is_hidden_when_invisible": {},
       "minecraft:conditional_bandwidth_optimization": {},

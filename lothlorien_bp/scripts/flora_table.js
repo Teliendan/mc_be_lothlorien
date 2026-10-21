@@ -18,10 +18,6 @@ export const SPREAD_TRIES = {
   "lothlorien:athelas": 2,
 };
 
-// Segmented ground covers (state lothlorien:amount 1-4): bone meal adds a segment; when full it drops one item (vanilla leaf litter / petals).
-export const COVERS = ["lothlorien:mallorn_leaf_carpet", "lothlorien:mallorn_blossom"];
-export const MAX_AMOUNT = 4;
-
 // r in [0, 1)
 export function pickWeighted(table, r) {
   const total = table.reduce((sum, [, w]) => sum + w, 0);

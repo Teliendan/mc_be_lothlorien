@@ -1,0 +1,58 @@
+{
+  "format_version": "1.21.100",
+  "minecraft:template_pool": {
+    "description": {
+      "identifier": "lothlorien:landscape_probe/woodland"
+    },
+    "elements": [
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/landscape_probe/root_tree_round_05",
+          "projection": "rigid"
+        },
+        "weight": 6
+      },
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/landscape_probe/root_tree_round_07",
+          "projection": "rigid"
+        },
+        "weight": 6
+      },
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/landscape_probe/root_tree_roundplain_02",
+          "projection": "rigid"
+        },
+        "weight": 5
+      },
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/landscape_probe/root_tree_roundplain_03",
+          "projection": "rigid"
+        },
+        "weight": 5
+      },
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/landscape_probe/root_tree_roundplain_06",
+          "projection": "rigid"
+        },
+        "weight": 5
+      },
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/landscape_probe/root_tree_roundplain_08",
+          "projection": "rigid"
+        },
+        "weight": 5
+      }
+    ]
+  }
+}

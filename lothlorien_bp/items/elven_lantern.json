@@ -14,6 +14,11 @@
       "minecraft:block_placer": {
         "block": "lothlorien:elven_lantern",
         "replace_block_item": true
+      },
+      "minecraft:tags": {
+        "tags": [
+          "lothlorien:elven_lantern"
+        ]
       }
     }
   }

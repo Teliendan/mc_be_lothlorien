@@ -423,15 +423,20 @@ test("delivery tag: exactly the tag of the current request's profession, set / c
   assert.deepEqual(R.tagSync(u, ["lothlorien_deliver_woodwright"]).remove, ["lothlorien_deliver_woodwright"]);
 });
 
-test("elf entity: each trader profession has a hand-over prompt filtered by its delivery tag; leads and name tags are excluded", () => {
+test("elf entity: delivery prompts yield to native leads, names and leash cutting", () => {
   const elf = JSON.parse(text("../lothlorien_bp/entities/elf.json"))["minecraft:entity"].component_groups;
   for (const p of R.PROFESSIONS) {
     const entry = elf[`lothlorien:${p}`]["minecraft:interact"].interactions[0];
     const all = entry.on_interact.filters.all_of;
     assert.ok(all.some((f) => f.test === "has_tag" && f.subject === "other" && f.value === R.deliverTagOf(p)), `${p}: has_tag on the player`);
     assert.ok(all.some((f) => f.test === "is_family" && f.subject === "other" && f.value === "player"), `${p}: players only`);
-    const none = all.find((f) => f.none_of).none_of.map((f) => f.value).sort();
+    const exclusions = all.find((f) => f.none_of).none_of;
+    const none = exclusions.filter((f) => !f.all_of).map((f) => f.value).sort();
     assert.deepEqual(none, ["lothlorien_trade_pass", "minecraft:lead", "minecraft:name_tag"], `${p}: lead and name tag keep working; trade pass skips delivery prompt`);
+    assert.deepEqual(exclusions.find((f) => f.all_of), { all_of: [
+      { test: "has_equipment", domain: "hand", subject: "other", value: "minecraft:shears" },
+      { test: "is_leashed", subject: "self", value: true },
+    ] }, `${p}: a native leash-cut use takes precedence`);
     assert.equal(entry.interact_text, "action.interact.lothlorien.hand_over");
     assert.equal(entry.use_item, false);
   }

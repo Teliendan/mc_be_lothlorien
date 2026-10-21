@@ -6,7 +6,8 @@ export const BOW = { drawSeconds: 0.6, durability: 384, enchantability: 1, useSe
 export const ARROW = { recoveryChance: 1, rank: 2, guestPrice: [1, 8], friendPrice: [1, 10],
   lootWeight: 6, lootCount: { min: 4, max: 8 } };
 export const WORN_CHECK_TICKS = 5;
-export const CLOAK = { item: "lothlorien:elven_cloak", armor: 3, durability: 80, stillTicks: 20,
+export const CLOAK = { item: "lothlorien:elven_cloak", armor: 3, durability: 80,
+  enchantability: 15, repairMaterial: "minecraft:string", repairFraction: 0.25, stillTicks: 20,
   moveTolerance: 0.025, effect: "invisibility", effectTicks: 10, amplifier: 0 };
 export const BELT = { item: "lothlorien:silver_belt", effect: "regeneration", effectTicks: 60,
   amplifier: 0, healthFraction: 0.5 };

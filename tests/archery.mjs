@@ -166,9 +166,15 @@ const bow = json("lothlorien_bp", "items/bow.json")["minecraft:item"];
 assert.equal(bow.description.identifier, rules.BOW_ID);
 assert.equal(bow.components["minecraft:shooter"].max_draw_duration, rules.BOW.drawSeconds);
 assert.equal(bow.components["minecraft:durability"].max_durability, rules.BOW.durability);
+assert.deepEqual(bow.components["minecraft:repairable"].repair_items, [
+  { items: [rules.BOW_ID], repair_amount: "context.other->query.remaining_durability" }
+], "same elven bow contributes its remaining durability; no material or vanilla-bow repair");
+assert.equal(bow.components["minecraft:fuel"].duration, 10, "Bedrock bow fuel: one furnace smelt");
 assert.deepEqual(bow.components["minecraft:shooter"].ammunition.map(x => x.item), [rules.ARROW_ID, "minecraft:arrow"]);
 assert.equal(bow.components["minecraft:enchantable"].slot, "bow");
 const customAmmo = json("lothlorien_bp", "items/galadhrim_arrow.json")["minecraft:item"];
+assert.equal(customAmmo.components["minecraft:allow_off_hand"], true,
+  "custom ammo is equipable in the offhand searched by the native shooter");
 assert.equal(customAmmo.components["minecraft:projectile"].minimum_critical_power, rules.BOW.drawSeconds,
   "custom ammo critical threshold matches the quicker native charge");
 const arrow = json("lothlorien_bp", "entities/galadhrim_arrow.json")["minecraft:entity"];

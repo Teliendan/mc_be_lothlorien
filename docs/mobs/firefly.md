@@ -1,6 +1,6 @@
 # Firefly (`lothlorien:firefly`) - design sheet
 
-2026-10-11 care update (source/offline evidence; Bedrock 1.26.52; owner accepted as done; no new game test results supplied): Bottle-only care: use a full Bottle of Fireflies against a block face with adjacent air to release one persistent firefly and receive an empty bottle. Wild fireflies retain normal despawn. Catch and release share a debounce and recheck the live hand. No lead, lure, feeding, healing or breeding. Existing catching is now scripted rather than the old native transform described below.
+2026-10-11 care update (source/offline evidence; Bedrock 1.26.52; owner accepted as done; no new game test results supplied): Bottle-only care: use a full Bottle of Fireflies against a block face with adjacent air to release one persistent firefly and receive an empty bottle. Wild fireflies retain normal despawn. Catch and release share a debounce and recheck the live hand. No lead, lure, feeding, healing or breeding. Catching and release are scripted; the former native transform was replaced.
 See [Bringing wildlife home](BRINGING_HOME.md) for current policy and acceptance checks.
 
 Archetype: tiny hovering night flyer (analogue: bee `navigation.hover` / `random_hover`). Phase 14, built 2026-10-02.
@@ -13,12 +13,32 @@ Art: `tools/make_firefly.py` (generated; green abdomen glows). Feature commit: `
 | Area | Decision |
 | --- | --- |
 | Body | collision 0.2 x 0.2, 2 hp, speed 0.08, no attack, no baby/breed/tame/ride, silent, no drops, no XP |
-| Spawn | surface on grass/dirt, biome tag `lothlorien`, light 0-7 (night, shade), herd 2-4, weight 6, `density_limit.surface 6`, pool `animal`; standard `despawn_from_distance` |
-| Behaviour | float, panic, `random_hover` (xz 6, y 3, height 1-3 above ground), look around |
+| Spawn | surface on grass/dirt, biome tag `lothlorien`, light 0-7 (night/shade rather than a strict clock gate), distance 10-40, herd 2-4, weight 6, `density_limit.surface 6`, pool `animal`; standard `despawn_from_distance` |
+| Behaviour | float, panic, `random_hover` (xz 6, y 3, height 1-3 above ground), look around; native flap game events, silent audio |
 | Glow | PBR texture set (vanilla glow squid / allay way): `firefly.texture_set.json` + `firefly_mers.tga`, emissive (G) 255 on every face of the green abdomen, 0 elsewhere; works under Vibrant Visuals. Owner: whole abdomen glows (not only the underside), no halo particle. Did not glow: `entity_emissive_alpha` alpha mask, `ignore_lighting` render controller, unlit `particles_alpha` sprite. No dynamic light |
-| Catch | glass bottle on firefly: `minecraft:interact` (`use_item`, `transform_to_item` `lothlorien:bottle_of_fireflies`), event `lothlorien:caught` -> group with `instant_despawn` |
-| Item | Bottle of Fireflies, stack 16, items menu. Icon: vanilla empty bottle with two bright dots and a dim one, each in a lime glow (side 230, diagonal 130 alpha); the rest of the glass stays empty (owner: no green fill). Release / Firefly Jar / lamp use: later (plan Phase 14) |
+| Catch / release | Main-hand glass bottle on firefly: script-owned before-event then privileged callback; real delayed hand/metadata/dimension/reach/container checks. Captured name/current health stored as visible localized raw lore and restored before bottle exchange. Release against a block face with adjacent air makes one persistent firefly and returns plain glass. |
+| Item | Bottle of Fireflies, stack 16, items menu. Icon: vanilla empty bottle with two bright dots and a dim one, each in a lime glow (side 230, diagonal 130 alpha); the rest of the glass stays empty (owner: no green fill). Release and existing jar/lantern ingredient uses are implemented; recipes are resource use, not named-animal enclosures |
 
 ## To test in game (1.26.52)
 
 1. Do the wings flutter in the right plane; is the model visible at size 0.2?
+
+## Group15 follow-up2026-10-20
+
+Source/offline verified and deployed after small-flyers, animal-home, decor-rope,
+performance and suite-layout passed; all3 packs in sync. No new native observation.
+The older glow/icon/spawn/catch observation above does not verify new metadata.
+
+Bottle max16 retained. Healthy unnamed captures stay plain. Captured name and
+injured current health use visible localized RawMessage lore; stackable item
+dynamic properties are unsupported and unused. Captured name is canonical lore:
+an anvil bottle title does not rename the animal, and empty-glass name/lore never
+transfers. Only name/current health are saved, no effects or other entity state;
+health above a restored actor's effective maximum is clamped. Restoration failure
+attempts cleanup before charging; operations remain nontransactional.
+
+Check named/injured/fractional-health capture/release, raw-lore persistence across
+save/reload/locale switching and actual bottle merging, plus full inventory and
+Creative. Check insect flap events at sculk while audio stays silent. Fireflies
+remain bottle-only with no leads, food, breeding, hive or colony systems.
+[Full policy and limitations](../SMALL_FLYER_INTERACTIONS.md).

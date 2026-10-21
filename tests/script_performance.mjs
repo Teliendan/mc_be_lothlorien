@@ -6,6 +6,12 @@ import * as guideRules from "../lothlorien_bp/scripts/white_deer_rules.js";
 import * as giftRules from "../lothlorien_bp/scripts/great_mallorn_rules.js";
 import * as squirrelRules from "../lothlorien_bp/scripts/squirrel_rules.js";
 import * as ropeRules from "../lothlorien_bp/scripts/elven_rope_rules.js";
+class TestItem {
+  constructor(typeId = guideRules.ACORN_ID, amount = 1) { Object.assign(this, { typeId, amount }); }
+  clone() { return new TestItem(this.typeId, this.amount); }
+  getComponent() {} getRawLore() { return []; } getCanPlaceOn() { return []; } getCanDestroy() { return []; }
+  getDynamicPropertyIds() { return []; }
+}
 
 function engine() {
   const callbacks = new Map(), timers = new Map(), entities = new Map(), dimensions = new Map();
@@ -14,7 +20,10 @@ function engine() {
     if (!callbacks.has(name)) callbacks.set(name, []);
     callbacks.get(name).push(fn);
   } }) });
-  const fire = (name, value) => { for (const fn of callbacks.get(name) || []) fn(value); };
+  const fire = (name, value) => {
+    if (value.itemStack && !value.itemStack.clone) value.itemStack = new TestItem(value.itemStack.typeId);
+    for (const fn of callbacks.get(name) || []) fn(value);
+  };
   const schedule = (fn, period, repeat) => {
     const id = ++serial; timers.set(id, { fn, period, repeat, at: tick + period }); return id;
   };
@@ -28,7 +37,8 @@ function engine() {
     const dimension = { id, getEntities({ type }) {
       queries++;
       return [...entities.values()].filter(e => e.isValid && e.dimension === dimension && e.typeId === type);
-    }, getBlock() { reads++; return { typeId: dimension.rope ? "lothlorien:elven_rope" : "minecraft:air" }; },
+    }, getBlock(p) { reads++; return { typeId: dimension.rope ? "lothlorien:elven_rope" : p.y < 0 ? "minecraft:stone" : "minecraft:air",
+      isSolid: p.y < 0, isAir: p.y >= 0, isLiquid: false, isWaterlogged: false }; },
     spawnEntity(typeId, location) {
       const e = entity(typeId, dimension, location); fire("entitySpawn", { entity: e }); return e;
     } };
@@ -36,13 +46,16 @@ function engine() {
   }
   function entity(typeId, dimension = dimensions.get("overworld"), location = { x: 0, y: 0, z: 0 }) {
     const properties = new Map(), dynamic = new Map();
-    const e = { id: `e${++serial}`, typeId, dimension, location, isValid: true, events: [],
+    const held = new TestItem(), slot = { getItem: () => held, typeId: held.typeId, hasItem: () => true, amount: 1, setItem() {} };
+    const e = { id: `e${++serial}`, typeId, dimension, location, isValid: true, events: [], selectedSlotIndex: 0,
+      getHeadLocation: () => ({ ...e.location, y: e.location.y + 1.6 }),
       getProperty: key => properties.get(key), setProperty: (key, value) => properties.set(key, value),
       getDynamicProperty: key => dynamic.get(key), setDynamicProperty: (key, value) => dynamic.set(key, value),
       getComponent(component) {
+        if (component === "minecraft:health") return { currentValue: 20, effectiveMax: 20 };
         if (component === "equippable" && typeId === "minecraft:player")
-          return { getEquipmentSlot: () => ({ typeId: guideRules.ACORN_ID }) };
-      }, hasTag: tag => e.tag === tag, sendMessage() {}, getGameMode: () => "creative",
+          return { getEquipmentSlot: () => slot };
+      }, hasTag: tag => e.tag === tag, sendMessage() {}, getGameMode: () => "survival",
       triggerEvent(name) {
         e.events.push(name);
         if (name === "lothlorien:guide_start") properties.set("lothlorien:guiding", true);
@@ -54,6 +67,9 @@ function engine() {
   const advance = n => {
     for (let i = 0; i < n; i++) {
       tick++;
+      for (const entity of entities.values()) for (const [name, effect] of entity.ropeEffects ?? []) {
+        if (--effect.duration <= 0) entity.ropeEffects.delete(name);
+      }
       for (const [id, task] of [...timers]) {
         if (!timers.has(id) || task.at > tick) continue;
         if (task.repeat) task.at += task.period; else timers.delete(id);
@@ -68,6 +84,11 @@ function engine() {
 
 let imports = 0;
 async function load(name, bindings) {
+  if (["white_deer", "squirrel"].includes(name) && !bindings.captureHand) {
+    const cover = await load("cover_use", bindings);
+    const hand = await load("interaction_use", { ...bindings, ...cover });
+    bindings = { ...bindings, ...cover, ...hand };
+  }
   globalThis.__scriptPerformance = bindings;
   const source = readFileSync(new URL(`../lothlorien_bp/scripts/${name}.js`, import.meta.url), "utf8")
     .replace(/^import \{([^}]+)\} from "[^"]+";/gm, "const {$1} = globalThis.__scriptPerformance;");
@@ -76,7 +97,9 @@ async function load(name, bindings) {
   return mod;
 }
 const common = h => ({ system: h.system, world: h.world, harmonyOf: p => ({ harmony: p.band || "friend" }),
+  GameMode: { Survival: "survival", Adventure: "adventure", Creative: "creative", Spectator: "spectator" }, EquipmentSlot: { Mainhand: "mainhand" },
   bandOf: b => b, repeatedUse: () => false, message: () => "", noteDeed() {},
+  readBlock: (dimension, location) => dimension.getBlock(location),
   healAnimal() {}, isInjured: () => false, eatHeldFood: () => true });
 
 {
@@ -113,9 +136,9 @@ const common = h => ({ system: h.system, world: h.world, harmonyOf: p => ({ harm
   const h = engine(), dim = h.dimensions.get("overworld");
   const stray = h.entity(guideRules.BEACON_ID), dev = h.entity(guideRules.BEACON_ID); dev.tag = "guide_beacon";
   const mod = await load("white_deer", { ...common(h), ...guideRules, ...giftRules,
-    EntityInitializationCause: { Loaded: "Loaded" }, EquipmentSlot: {}, GameMode: { Creative: "creative" }, ItemStack: class {},
+    EntityInitializationCause: { Loaded: "Loaded" }, ItemStack: TestItem,
     pickWaypoint: () => ({ x: 10, y: 0, z: 0 }), hopStatus: () => "go" });
-  mod.startWhiteDeer(() => ({ level: 3 }), {});
+  mod.startWhiteDeer(() => ({ level: 3, complete: true }), { id: "lothlorien", at: () => "lothlorien" });
   assert.equal(stray.isValid, false); assert.equal(dev.isValid, true);
   assert.equal(h.intervals(5), 0);
   const bootstrap = h.queries;
@@ -144,6 +167,7 @@ const common = h => ({ system: h.system, world: h.world, harmonyOf: p => ({ harm
     pickAway: () => ({ x: 12, y: 0, z: 0 }) });
   mod.startSquirrels(); assert.equal(h.intervals(10), 0);
   const player = h.entity("minecraft:player"); h.world.players = [player];
+  player.getGameMode = () => "creative"; // lifecycle test can start two errands without inventory charges
   const first = h.entity(squirrelRules.SQUIRREL_ID), second = h.entity(squirrelRules.SQUIRREL_ID);
   const offer = target => h.fire("playerInteractWithEntity", { player, target, itemStack: { typeId: guideRules.ACORN_ID } });
   offer(first); offer(second); assert.equal(h.intervals(10), 1); assert.equal(sources[0]().length, 2);
@@ -159,9 +183,11 @@ const common = h => ({ system: h.system, world: h.world, harmonyOf: p => ({ harm
   const mod = await load("elven_rope", { ...common(h), ...ropeRules,
     BlockPermutation: {}, EquipmentSlot: {}, GameMode: {}, ItemStack: class {} });
   const player = h.entity("minecraft:player"); h.world.players = [player];
-  const effects = new Set();
+  const effects = new Map(); player.ropeEffects = effects;
   Object.assign(player, { inputInfo: { getButtonState: () => "Pressed", getMovementVector: () => ({ y: 0 }) },
-    getVelocity: () => ({ y: 0 }), addEffect: name => effects.add(name), removeEffect: name => effects.delete(name) });
+    getVelocity: () => ({ y: 0 }), getEffect: name => effects.get(name),
+    addEffect: (name, duration, options) => effects.set(name, { duration, ...options }),
+    removeEffect: name => { throw Error(`rope must not remove ${name}`); } });
   mod.startRopeClimbing(); h.advance(20);
   assert.equal(h.intervals(1), 0, "no per-tick loop away from ropes");
   assert.equal(h.reads, 10, "idle entry reads reduced from 40 to 10 per second");

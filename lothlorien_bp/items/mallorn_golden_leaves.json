@@ -1,0 +1,24 @@
+{
+  "format_version": "1.26.50",
+  "minecraft:item": {
+    "description": {
+      "identifier": "lothlorien:mallorn_golden_leaves",
+      "menu_category": {
+        "category": "nature",
+        "group": "minecraft:itemGroup.name.leaves"
+      }
+    },
+    "components": {
+      "minecraft:block_placer": {
+        "block": "lothlorien:mallorn_golden_leaves",
+        "replace_block_item": true
+      },
+      "minecraft:display_name": {
+        "value": "tile.lothlorien:mallorn_golden_leaves.name"
+      },
+      "minecraft:compostable": {
+        "composting_chance": 30
+      }
+    }
+  }
+}

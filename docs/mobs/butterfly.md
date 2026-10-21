@@ -10,11 +10,11 @@ Art: `tools/make_butterfly.py` (generated; add a colour by adding it to `COLOURS
 
 | Area | Decision |
 | --- | --- |
-| Colours | 8 bright, saturated wing colours (owner wanted variety, not silver/gold/blue): red, orange, yellow, lime, turquoise, blue, violet, pink. Dark rim + pale spots in each. Equal chance |
+| Colours | 8 bright, saturated wing colours (current palette retained): red, orange, yellow, lime, turquoise, blue, violet, pink. Dark rim + pale spots in each. Equal chance |
 | Variant | int property `lothlorien:wing` 0-7 (`client_sync`), set at `minecraft:entity_spawned` by `randomize`; render controller picks `Array.wings[property]`. Order = `COLOURS` order |
-| Body | collision 0.3 x 0.3, 2 hp, speed 0.06, no attack, no baby/breed/tame/ride, silent, no drops, no XP, no catch yet |
-| Spawn | surface on grass/dirt, biome tag `lothlorien`, light 8-15 (day), herd 3-5, weight 10, `density_limit.surface 10`, pool `animal`; standard `despawn_from_distance` |
-| Behaviour | float, panic, `random_hover` (xz 8, y 2, height 1-2 above ground (integers only: fractions fail to load)), look around. No flower targeting (custom blocks cannot be targeted, see the bee spike) |
+| Body | collision 0.3 x 0.3, 2 hp, speed 0.06, no attack, no baby/breed/tame/ride, silent, no drops, no XP, no capture by owner-approved design |
+| Spawn | surface on grass/dirt, biome tag `lothlorien`, light 8-15 (not a strict clock gate), distance 10-40, herd 3-5, weight 10, `density_limit.surface 10`, pool `animal`; standard `despawn_from_distance` |
+| Behaviour | float, panic, `random_hover` (xz 8, y 2, height 1-2 above ground (integers only: fractions fail to load)), look around. No flower targeting or pollination by design; bee integration remains owner-deferred after unsuccessful tests, not a universal engine-impossibility claim |
 | Model | 1x1x4 body, 2x2x2 head, two flat 6x6 wings (`mirror` on the right one), 32x32 texture; wings flap +-45 deg about the body (z), body bobs |
 
 ## To test in game
@@ -22,3 +22,17 @@ Art: `tools/make_butterfly.py` (generated; add a colour by adding it to `COLOURS
 1. Is the variety right in a herd of 3-5 (all 8 colours seen)? Are the colours bright enough in Vibrant Visuals?
 2. Do the wings flap up/down (not twist), is the wing outline right side up on top and underneath, is the size good at 0.3?
 3. Daytime density and height versus songbirds; should they stay lower / rarer?
+
+## Group15 follow-up2026-10-20
+
+Existing leads now have native leashable_to anchors. Native movement tracking
+emits flap game events while audio remains silent. No bee hives, honey, stinging,
+colony/breeding/pollination/growth or poisonous-flower rules; no butterfly bottle,
+extra food or variant. Accepted food remains the explicit27 vanilla and4 custom
+plant items, not every tagged plant. Art generator is art-only and was not run.
+
+Source/offline verified and deployed after small-flyers, animal-home, decor-rope,
+performance and suite-layout passed; all3 packs in sync. No new native observation.
+Check lead anchors/cutting/towing, flap events at sculk without sound, native
+food/healing/persistence and reload alongside the visual checks above. Full ledger:
+[SMALL_FLYER_INTERACTIONS.md](../SMALL_FLYER_INTERACTIONS.md).

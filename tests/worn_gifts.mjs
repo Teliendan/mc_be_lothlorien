@@ -192,6 +192,20 @@ await scenario("regeneration completes its healing cadence; potions survive and 
   assert.deepEqual(p.removals, []);
 });
 
+await scenario("cleared effects resume on the next service pulse only while gifts remain equipped", async () => {
+  const p = player(); crouch(p); belt(p);
+  await start(); await mock.advance(CLOAK.stillTicks);
+  assert.ok(p.getEffect(CLOAK.effect)); assert.ok(p.getEffect(BELT.effect));
+  const before = p.grants.length;
+  // Model externally cleared effect state (such as drinking milk), not the native drink itself.
+  p.effects.clear();
+  await mock.advance(STEP - 1); assert.equal(p.grants.length, before);
+  await mock.advance(1); assert.equal(p.grants.length, before + 2);
+  delete p.slots.Chest; delete p.slots.Offhand; p.effects.clear();
+  await mock.advance(STEP * 2); assert.equal(p.grants.length, before + 2);
+  assert.deepEqual(p.removals, [], "gift cleanup never removes an external effect");
+});
+
 await scenario("both gifts work independently and stale player handles are isolated", async () => {
   const bad = player(), p = player();
   bad.getComponent = () => { throw Error("player left during pulse"); };
@@ -215,9 +229,22 @@ const json = (path) => JSON.parse(readFileSync(new URL(path, import.meta.url), "
 const cloakItem = json("../lothlorien_bp/items/elven_cloak.json")["minecraft:item"].components;
 assert.deepEqual(cloakItem["minecraft:wearable"], { slot: "slot.armor.chest", protection: CLOAK.armor });
 assert.equal(cloakItem["minecraft:durability"].max_durability, CLOAK.durability);
+assert.equal(cloakItem["minecraft:enchantable"].slot, "armor_torso", "native chestplate enchantment eligibility");
+assert.equal(cloakItem["minecraft:enchantable"].value, CLOAK.enchantability);
+assert.deepEqual(cloakItem["minecraft:repairable"].repair_items, [
+  { items: [CLOAK.item], repair_amount: "context.other->query.remaining_durability" },
+  { items: [CLOAK.repairMaterial], repair_amount: `query.max_durability * ${CLOAK.repairFraction}` },
+], "accepted self/material repair survives item regeneration");
 const beltItem = json("../lothlorien_bp/items/silver_belt.json")["minecraft:item"].components;
 assert.equal(beltItem["minecraft:allow_off_hand"], true);
-assert.equal(beltItem["minecraft:wearable"].slot, "slot.weapon.offhand");
+assert.deepEqual(beltItem["minecraft:wearable"], { slot: "slot.weapon.offhand" });
+for (const [name, item] of [["cloak", cloakItem], ["belt", beltItem]]) {
+  assert.equal(item["minecraft:dyeable"], undefined, `${name} retains owner-selected artwork`);
+  assert.equal(item["minecraft:max_stack_size"], 1);
+}
+for (const component of ["durability", "enchantable", "repairable"]) {
+  assert.equal(beltItem[`minecraft:${component}`], undefined, "belt's deliberate no-wear/no-repair policy");
+}
 const wornBoneNames = new Set();
 for (const name of ["elven_cloak", "silver_belt"]) {
   const geometry = json(`../lothlorien_rp/models/entity/${name}.geo.json`)["minecraft:geometry"][0];

@@ -10,7 +10,10 @@
     "components": {
       "minecraft:icon": "lothlorien:elven_rope",
       "minecraft:max_stack_size": 64,
-      "lothlorien:rope": {}
+      "lothlorien:rope": {},
+      "minecraft:fuel": {
+        "duration": 15
+      }
     }
   }
 }

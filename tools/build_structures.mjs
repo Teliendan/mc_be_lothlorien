@@ -1,12 +1,12 @@
 // Writes the giant Mallorn structures:
 //   node tools/build_structures.mjs
-//      the worldgen set: only the trees in CHOSEN (every other giant structure is removed from the pack)
+//      the worldgen set: the trees in CHOSEN plus the root shrine (other giant variants are removed)
 //   node tools/build_structures.mjs <variant|all> [count] [firstSeed]      (defaults 8 1)
 //      curation candidates for the dev-only showcase (tools/dev_scripts/showcase.js); they replace that variant's files but never
 //      enter worldgen. Run the plain command again before committing, so the pack keeps only CHOSEN.
 // -> lothlorien_bp/structures/lothlorien/mallorn_<variant>_NN.mcstructure (id lothlorien:mallorn_<variant>_NN)
-//    and worldgen/template_pools/giant_mallorn.json (the CHOSEN trees) for the jigsaw structure
-//    lothlorien:giant_mallorn (worldgen/structures + structure_sets, hand-written). A plain structure
+//    and worldgen/template_pools/giant_mallorn.json (legacy pool: 75% trees, 25% shrine) for the jigsaw structure
+//    lothlorien:giant_mallorn. The dense natural test set is managed by build_tree_grid_test.mjs. A plain structure
 //    feature was cut at chunk borders; jigsaw structures may span chunks.
 // Tree NN of every variant uses the same seed, so round_07 and roundplain_07 share their trunk and height.
 // Each file is SIZE x SIZE_Y x SIZE with the trunk centred horizontally (cells TRUNK_AT..TRUNK_AT+3) and the
@@ -19,6 +19,9 @@ import { fileURLToPath } from "node:url";
 import { makeRandom } from "../lothlorien_bp/scripts/mallorn_tree.js";
 import { buildFletMallorn, ROOT_DEPTH, bareBranchEnds } from "./flet_mallorn.mjs";
 import { furnishWatchCamp, watchCampLoot } from "./watch_camp.mjs";
+import { ANCHOR_AT, TRUNK_ANCHOR, anchorMallorn } from "./mallorn_anchor.mjs";
+import { SHRINE, buildRootShrine, rootShrineLoot } from "./root_shrine.mjs";
+export { ANCHOR_AT, TRUNK_ANCHOR };
 
 export const SIZE = 40, SIZE_Y = 54, TRUNK_AT = 18;
 const BLOCK_VERSION = 18168865; // as in the vanilla 1.26.30 structures
@@ -59,7 +62,7 @@ function encode(root) {
 
 const stateTag = (v) => (typeof v === "boolean" ? byte(v) : typeof v === "number" ? int(v) : str(v));
 
-// blocks: Map<"x,y,z" (tree coords), { name, states, loot? }>. size/offset default to the giant tree box.
+// blocks: Map<"x,y,z" (tree coords), { name, states, loot?, potItem? }>. size/offset default to the giant tree box.
 // NOTE: a template mob loads with ENGINE DEFAULT attributes (movement 0.7, health 20, follow_range 16), not its JSON values; the
 // definitions (component groups) do apply. Village wardens are swapped for a fresh spawn by scripts/warden_replace.js, so the
 // structures need no Attributes list (verified in a saved world, 2026-10-08).
@@ -107,6 +110,20 @@ export function toMcstructure(blocks, [SX, SY, SZ] = [SIZE, SIZE_Y, SIZE], [OX, 
         block_entity_data: compound({
           id: str(v.name === "minecraft:barrel" ? "Barrel" : "Chest"), isMovable: byte(true), Findable: byte(false), Items: list(T.compound, []),
           LootTable: str(v.loot), LootTableSeed: int(0), x: int(x), y: int(y), z: int(z),
+        }),
+      });
+    }
+    if (v.potItem) {
+      if (v.name !== "minecraft:decorated_pot") throw new Error("potItem requires a native decorated pot");
+      const { name, count = 1, damage = 0 } = v.potItem;
+      if (!Number.isInteger(count) || count < 1 || count > 64) throw new Error("potItem count must be 1..64");
+      // Saved Bedrock 1.26.52 pot: one lowercase `item` compound, not a Chest/Items list.
+      // Count is a numeric byte; byte() above is intentionally a boolean helper.
+      positionData[String(index)] = compound({
+        block_entity_data: compound({
+          BlockEntityVersion: int(0), animation: byte(false), id: str("DecoratedPot"),
+          item: compound({ Count: tag(T.byte, count), Damage: short(damage), Name: str(name), WasPickedUp: byte(false) }),
+          x: int(x), y: int(y), z: int(z),
         }),
       });
     }
@@ -160,20 +177,44 @@ export const VARIANTS = {
 };
 
 // Trees placed by world generation: variant + number (the number is the seed) + pool weight. Seeds picked in game 2026-09-29;
-// the round trunk (2026-10-01) replaced the square one on the same seeds. Flet trees (round) are 2 x 2 = 4 of 16, so about 1 giant in 4 has a flet.
+// the round trunk (2026-10-01) replaced the square one on the same seeds. These base weights retain the
+// existing tree mix; giantMallornPool reserves one quarter of the unchanged placement attempts for shrines.
 export const CHOSEN = [["round", 5, 2], ["round", 7, 2], ["roundplain", 2, 3], ["roundplain", 3, 3], ["roundplain", 6, 3], ["roundplain", 8, 3]];
-
-// Jigsaw anchor: the bottom trunk cell holds a jigsaw block with this name, and the jigsaw structure's
-// start_jigsaw_name puts that block on the structure start. So the trunk stays on the start point however
-// the piece is rotated (without it, rotation about the piece corner moved trunks by up to a piece width).
-export const TRUNK_ANCHOR = "lothlorien:giant_trunk";
-export const ANCHOR_AT = { x: 1, y: -ROOT_DEPTH, z: 1 };
 
 // Worldgen flet giants hold a loot chest; planted nuts grow only the plain giants (great_mallorn_rules.js PLAIN_TREES).
 export const CHEST_BLOCK = "minecraft:chest";
 export const hasChest = (blocks) => [...blocks.values()].some((b) => b.name === CHEST_BLOCK);
 
 const treeName = (variant, n) => `mallorn_${variant}_${String(n).padStart(2, "0")}`;
+
+export function giantMallornPool() {
+  const entry = (location, weight) => ({
+    element: { element_type: "minecraft:single_pool_element", location }, weight,
+  });
+  const treeWeight = CHOSEN.reduce((sum, [, , weight]) => sum + weight, 0);
+  return {
+    format_version: "1.21.100",
+    "minecraft:template_pool": {
+      description: { identifier: "lothlorien:giant_mallorn" },
+      elements: [
+        ...CHOSEN.map(([v, n, weight]) => entry(`lothlorien/${treeName(v, n)}`, weight * 3)),
+        entry(SHRINE.id.replace(":", "/"), treeWeight),
+      ],
+    },
+  };
+}
+
+export function writeRootShrineFiles(bp) {
+  const shrine = buildRootShrine();
+  const { buffer, clipped } = toMcstructure(shrine.blocks, SHRINE.size, SHRINE.offset);
+  if (clipped) throw new Error(`root shrine clips ${clipped} blocks`);
+  mkdirSync(join(bp, "structures", "lothlorien"), { recursive: true });
+  mkdirSync(join(bp, "loot_tables", "chests"), { recursive: true });
+  writeFileSync(join(bp, "structures", "lothlorien", "root_shrine_01.mcstructure"), buffer);
+  writeFileSync(join(bp, SHRINE.loot), JSON.stringify(rootShrineLoot(), null, 2) + "\n");
+  console.log(`${SHRINE.id}: ${buffer.length} bytes, ground offset ${SHRINE.offset[1]}, 25% of legacy mixed-pool selections`);
+  return shrine;
+}
 
 if (process.argv[1] && realpathSync(fileURLToPath(import.meta.url)) === realpathSync(process.argv[1])) {
   const [which, countArg, seedArg] = process.argv.slice(2);
@@ -190,9 +231,7 @@ if (process.argv[1] && realpathSync(fileURLToPath(import.meta.url)) === realpath
     const campEntities = furnishWatchCamp(tree).map((e) => ({ ...e,
       x: e.x + TRUNK_AT, y: e.y + ROOT_DEPTH, z: e.z + TRUNK_AT,
     }));
-    tree.blocks.set(`${ANCHOR_AT.x},${ANCHOR_AT.y},${ANCHOR_AT.z}`, {
-      name: "minecraft:jigsaw", states: { facing_direction: 0, rotation: 0 }, jigsaw: TRUNK_ANCHOR, finalState: "lothlorien:mallorn_log",
-    });
+    anchorMallorn(tree.blocks);
     const { buffer, clipped } = toMcstructure(tree.blocks, undefined, undefined, campEntities);
     const name = treeName(variant, n);
     const bare = bareBranchEnds(tree.blocks); // every branch end carries >= 6 leaves within 2 (tuftBareEnds fixes the rest)
@@ -216,17 +255,9 @@ if (process.argv[1] && realpathSync(fileURLToPath(import.meta.url)) === realpath
     for (const [v, n] of CHOSEN) if (variants.includes(v) && (n < firstSeed || n >= firstSeed + count)) write(v, n);
     console.log("candidates written; run `node tools/build_structures.mjs` before committing to keep only CHOSEN in the pack");
   }
+  writeRootShrineFiles(bp);
   mkdirSync(join(bp, "worldgen", "template_pools"), { recursive: true });
-  writeFileSync(join(bp, "worldgen", "template_pools", "giant_mallorn.json"), JSON.stringify({
-    format_version: "1.21.100",
-    "minecraft:template_pool": {
-      description: { identifier: "lothlorien:giant_mallorn" },
-      elements: CHOSEN.map(([v, n, weight]) => ({
-        element: { element_type: "minecraft:single_pool_element", location: `lothlorien/${treeName(v, n)}` },
-        weight,
-      })),
-    },
-  }, null, 2) + "\n");
-  console.log(`worldgen picks from ${CHOSEN.map(([v, n]) => treeName(v, n)).join(", ")}`);
+  writeFileSync(join(bp, "worldgen", "template_pools", "giant_mallorn.json"), JSON.stringify(giantMallornPool(), null, 2) + "\n");
+  console.log(`legacy mixed pool: 75% trees (${CHOSEN.map(([v, n]) => treeName(v, n)).join(", ")}), 25% root shrine; natural test-set selection is managed separately`);
   writeFileSync(join(bp, "loot_tables/chests/mallorn_flet.json"), JSON.stringify(watchCampLoot(), null, 2) + "\n");
 }

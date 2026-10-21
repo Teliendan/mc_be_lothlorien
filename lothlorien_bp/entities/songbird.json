@@ -47,6 +47,7 @@
       "minecraft:physics": {},
       "minecraft:nameable": {},
       "minecraft:leashable": {},
+      "minecraft:leashable_to": {},
       "minecraft:balloonable": {},
       "minecraft:is_hidden_when_invisible": {},
       "minecraft:conditional_bandwidth_optimization": {},
@@ -102,12 +103,6 @@
         "y_dist": 2,
         "speed_multiplier": 1.0,
         "can_land_on_trees": false
-      },
-      "minecraft:behavior.follow_mob": {
-        "priority": 4,
-        "search_range": 12,
-        "speed_multiplier": 1.0,
-        "stop_distance": 3
       },
       "minecraft:behavior.look_at_player": {
         "priority": 5,

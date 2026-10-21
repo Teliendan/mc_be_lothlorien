@@ -8,8 +8,9 @@ globalThis.__ropeLifecycle = { ...rules,
   BlockPermutation: {}, EquipmentSlot: {}, GameMode: { Creative: "creative" },
   ItemStack: class { constructor(typeId, amount) { this.typeId = typeId; this.amount = amount; } },
   repeatedUse: () => false,
+  readBlock: (dimension, location) => dimension.getBlock(location),
   system: { beforeEvents: { startup: { subscribe() {} } } },
-  world: { afterEvents: { playerBreakBlock: { subscribe(fn) { breaks.push(fn); } },
+  world: { gameRules: { doTileDrops: true }, afterEvents: { playerBreakBlock: { subscribe(fn) { breaks.push(fn); } },
     blockExplode: { subscribe(fn) { explosions.push(fn); } } } },
 };
 const src = readFileSync(new URL("../lothlorien_bp/scripts/elven_rope.js", import.meta.url), "utf8")
@@ -20,7 +21,7 @@ delete globalThis.__ropeLifecycle;
 function rope(typeId = "lothlorien:elven_rope") {
   const cells = new Map(), items = [];
   const permutation = (id, face = "north") => ({ type: { id }, getState: () => face });
-  const dimension = { getBlock(p) { return cells.get(`${p.x},${p.y},${p.z}`); },
+  const dimension = { heightRange: { min: -64, max: 320 }, getBlock(p) { return cells.get(`${p.x},${p.y},${p.z}`); },
     spawnItem(stack) { items.push(stack); } };
   for (let y = 0; y <= 2; y++) {
     const block = { typeId, location: { x: 0, y, z: 0 }, dimension, permutation: permutation(typeId),

@@ -14,6 +14,19 @@
       "minecraft:durability": {
         "max_durability": 384
       },
+      "minecraft:repairable": {
+        "repair_items": [
+          {
+            "items": [
+              "lothlorien:bow"
+            ],
+            "repair_amount": "context.other->query.remaining_durability"
+          }
+        ]
+      },
+      "minecraft:fuel": {
+        "duration": 10
+      },
       "minecraft:enchantable": {
         "slot": "bow",
         "value": 1

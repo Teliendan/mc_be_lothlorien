@@ -1,8 +1,11 @@
 // Accepted leaf memorial. Existing assets, standalone woodland worldgen.
 import { SILVER_WATCH } from "./watch_camp_rules.mjs";
+import { addSoilSkirt, SKIRT } from "./ground_skirt.mjs";
 
+// start: the jigsaw start height; the deck stands one above the terrain's top block (owner, Test G 2026-10-20: raised like the garden,
+// with the same deep soil and ragged shoulder; clear: the free cells above the deck and apron).
 export const MEMORIAL = Object.freeze({
-  id: "lothlorien:memorial_leaf_01", size: [13, 8, 16], offset: [6, 2, 7],
+  id: "lothlorien:memorial_leaf_01", size: [15, 6 + SKIRT.depth, 18], offset: [7, SKIRT.depth, 8], start: -1, clear: 4,
   anchor: "lothlorien:memorial_ground",
 });
 const L = "lothlorien:", M = "minecraft:";
@@ -30,7 +33,7 @@ export function buildMemorial() {
     const [x, z] = k.split(",").map(Number);
     put(x, -2, z, M + "dirt");
     put(x, -1, z, M + "grass_block");
-    for (let y = 0; y <= 3; y++) put(x, y, z, M + "air");
+    for (let y = 0; y <= MEMORIAL.clear; y++) put(x, y, z, M + "air");
   }
   for (const k of leaf) {
     const [x, z] = k.split(",").map(Number);
@@ -77,18 +80,13 @@ export function buildMemorial() {
   put(0, -2, 0, M + "jigsaw", { facing_direction: 0, rotation: 0 }, {
     jigsaw: MEMORIAL.anchor, finalState: M + "dirt",
   });
-  return { blocks, flowers, seats, entities: [], leaf, ground };
+  // Deep soil under the apron and a ragged shoulder round it (tools/ground_skirt.mjs).
+  const skirt = addSoilSkirt(put, (x, y, z) => blocks.has(key(x, y, z)), ground, { top: -1, seed: 23 });
+  return { blocks, flowers, seats, entities: [], leaf, ground, skirt };
 }
 
 export function memorialWorldgen() {
   return {
-    structure_sets: { format_version: "1.21.100", "minecraft:structure_set": {
-      description: { identifier: "lothlorien:memorial" },
-      // Garden frequency on its own grid, preserving all existing placements.
-      placement: { type: "minecraft:random_spread", salt: 936184257,
-        spacing: 12, separation: 4, spread_type: "linear" },
-      structures: [{ structure: "lothlorien:memorial", weight: 1 }],
-    } },
     template_pools: { format_version: "1.21.100", "minecraft:template_pool": {
       description: { identifier: "lothlorien:memorial" },
       elements: [{ element: { element_type: "minecraft:single_pool_element",
@@ -99,7 +97,7 @@ export function memorialWorldgen() {
       biome_filters: [{ test: "has_biome_tag", value: "lothlorien" }],
       step: "surface_structures", terrain_adaptation: "none",
       start_pool: "lothlorien:memorial", start_jigsaw_name: MEMORIAL.anchor,
-      max_depth: 1, start_height: { type: "constant", value: { absolute: -2 } },
+      max_depth: 1, start_height: { type: "constant", value: { absolute: MEMORIAL.start } },
       heightmap_projection: "world_surface", max_distance_from_center: { horizontal: 32, vertical: 32 },
     } },
   };

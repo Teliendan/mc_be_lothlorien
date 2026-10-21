@@ -5,12 +5,19 @@ Script API 2.8.0. Feature commit: `2810ce3` (`Finish swan drops and visible
 feather shedding`). Final art/cleanup commit: `Finalize swan art and remove
 runtime diagnostics`.
 
+Group13 owner decision2026-10-20: natural swans still require a positive-readable
+Lothlorien sample nearby; missing-only data does not authorize them. Added
+native chicken-style fall immunity while intentionally retaining explicit
+air+water breathing. Offline data/production tests pass; new native acceptance
+pending. Art, navigation, care, shedding timing/animation and natural settings
+are unchanged. See [interaction ledger](../SWAN_SQUIRREL_INTERACTIONS.md).
+
 | Area | Final decision |
 | --- | --- |
 | Identity | Plain white swan with orange beak, dark knob/lore and black legs; no gold/silver on animals. Families `lothlorien_swan`, `mob`; water-creature spawn category |
-| Body | Collision 0.8 x 1.2, 10 HP, no attack, taming or riding. Leashable/nameable |
+| Body | Collision 0.8 x1.2,10HP, no attack/taming/riding. Leashable/nameable; native fall immunity and explicit air+water breathing, no added flight |
 | Care | Wheat or Western Corn grain lure calm/Friend swans and breed adults. No food healing because swans breed. Cygnets use 45% adult scale, follow parents, grow in 20 minutes and grow faster with grain; born babies stay persistent |
-| Spawning | Lothlorien or river water; water-animal pool; weight 10, herds 1-2, density limit 3, distance 12-40. Natural spawns include 10% cygnets. A one-time near-biome check removes natural river spawns with no Lothlorien within 48 blocks; eggs/summons stay |
+| Spawning | Lothlorien or river water; water-animal pool; weight10, herds1-2, density limit3, distance12-40. Natural spawns include10% cygnets. Once-only25-point check requires observed Lothlorien within48 blocks; missing-only samples remove natural swans intentionally (owner2026-10-20). Eggs/summons/born animals without the natural flag stay |
 | Despawn | Standard `despawn_from_distance`; naming, leads/keeping and born persistence use the established lifecycle |
 | Movement | Chicken-style walk navigation with water pathing and float priority 0; stroll priority 6, panic 1. Surface floating can occasionally dip; owner accepted this. No fish-style random swimming or added buoyancy |
 | Wariness | Shared deer Harmony states/radii: Guest calm 10 / 5 sneaking, Uneasy 13, Shunned 20, Hated 30, Friend 3, alarmed 36 for 20 s. Wolves/monsters scare swans; hurting/killing a deer/swan/squirrel alarms nearby creatures within 20 blocks |

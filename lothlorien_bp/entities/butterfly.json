@@ -105,6 +105,10 @@
       "minecraft:pushable_by_entity": {},
       "minecraft:pushable_by_block": {},
       "minecraft:leashable": {},
+      "minecraft:leashable_to": {},
+      "minecraft:game_event_movement_tracking": {
+        "emit_flap": true
+      },
       "minecraft:behavior.tempt": {
         "priority": 2,
         "speed_multiplier": 1.0,

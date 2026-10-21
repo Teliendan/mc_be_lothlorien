@@ -36,6 +36,9 @@
           "priority": 4,
           "speed_multiplier": 1.0
         }
+      },
+      "lothlorien:kept_warden": {
+        "minecraft:persistent": {}
       }
     },
     "components": {
@@ -274,7 +277,28 @@
       },
       "minecraft:behavior.random_look_around": {
         "priority": 8
-      }
+      },
+      "minecraft:home": {},
+      "minecraft:leashable": {
+        "can_be_stolen": false,
+        "can_be_cut": true,
+        "presets": [
+          {
+            "soft_distance": 4,
+            "hard_distance": 6,
+            "max_distance": 10
+          }
+        ],
+        "on_leash": {
+          "event": "lothlorien:leashed",
+          "target": "self"
+        },
+        "on_unleash": {
+          "event": "lothlorien:rehome",
+          "target": "self"
+        }
+      },
+      "minecraft:leashable_to": {}
     },
     "events": {
       "lothlorien:become_angry": {
@@ -302,6 +326,37 @@
             "lothlorien:village_warden"
           ]
         }
+      },
+      "lothlorien:leashed": {
+        "remove": {
+          "component_groups": [
+            "lothlorien:village_warden"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "lothlorien:kept_warden"
+          ]
+        }
+      },
+      "lothlorien:rehome": {
+        "sequence": [
+          {
+            "remove": {
+              "component_groups": [
+                "lothlorien:kept_warden"
+              ]
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:village_warden"
+              ]
+            }
+          },
+          {
+            "set_home_position": {}
+          }
+        ]
       }
     }
   }

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { GARDEN, buildFlowerGarden, flowerGardenLoot, flowerGardenWorldgen } from "../tools/flower_garden.mjs";
+import { GARDEN, GARDEN_SITES, gardenSitesSet, buildFlowerGarden, flowerGardenLoot, flowerGardenWorldgen } from "../tools/flower_garden.mjs";
 import { toMcstructure } from "../tools/build_structures.mjs";
 import { readNbt } from "../tools/village_sim.mjs";
 import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs";
@@ -64,18 +64,33 @@ assert.deepEqual(loot, JSON.parse(asset(GARDEN.loot)));
 for (const [kind, data] of Object.entries(flowerGardenWorldgen()))
   assert.deepEqual(data, JSON.parse(asset(`worldgen/${kind}/flower_garden.json`)));
 const treeSet = JSON.parse(asset("worldgen/structure_sets/giant_mallorn.json"))["minecraft:structure_set"];
-const gardenSet = flowerGardenWorldgen().structure_sets["minecraft:structure_set"];
+const gardenSet = gardenSitesSet()["minecraft:structure_set"];
+assert.deepEqual(JSON.parse(asset(GARDEN_SITES.file)), gardenSitesSet());
 assert.deepEqual(treeSet.placement, { type: "minecraft:random_spread", salt: 518204731,
   separation: 2, spacing: 6, spread_type: "linear" }, "existing big-tree placement rate and grid remain unchanged");
-assert.deepEqual(treeSet.structures, [{ structure: "lothlorien:giant_mallorn", weight: 1 }],
-  "garden does not compete with existing tree, platform or shrine variants");
-assert.equal((treeSet.placement.spacing / gardenSet.placement.spacing) ** 2, 0.25,
-  "one garden attempt per four attempts across the complete existing giant pool");
+assert.ok(treeSet.structures.every(e => e.structure !== "lothlorien:flower_garden"),
+  "garden keeps its own grid rather than competing on the village/tree grid");
+// owner 2026-10-21: one grid, each candidate a garden or a memorial, about the old combined count
+assert.deepEqual(gardenSet.structures, [{ structure: "lothlorien:flower_garden", weight: 1 }, { structure: "lothlorien:memorial", weight: 1 }]);
+assert.deepEqual([gardenSet.placement.spacing, gardenSet.placement.separation], [9, 3]);
+assert.ok(gardenSet.placement.separation * 2 < gardenSet.placement.spacing, "engine rule: separation < spacing / 2");
+assert.ok(Math.abs(1 / 9 ** 2 / (2 / 12 ** 2) - 1) < 0.15, "combined site density within 15 % of two separate 12-chunk grids");
 assert.notEqual(gardenSet.placement.salt, treeSet.placement.salt);
 const giant = JSON.parse(asset("worldgen/structures/giant_mallorn.json"))["minecraft:jigsaw"];
 const gardenDef = flowerGardenWorldgen().structures["minecraft:jigsaw"];
 assert.deepEqual(gardenDef.biome_filters, giant.biome_filters, "same biome eligibility as giants");
 assert.equal(gardenDef.heightmap_projection, giant.heightmap_projection);
-assert.equal(gardenDef.start_height.value.absolute, -GARDEN.offset[1], "garden soil aligns to terrain");
+assert.equal(gardenDef.start_height.value.absolute, 0, "the buried anchor (y -2) lands on the terrain's top block: the garden grass is one above the terrain");
+// owner, Test G 2026-10-20: deep soil, 4 free cells above the planting, a ragged shoulder (not a square), nothing else written
+for (const k of garden.footprint) {
+  const [x, z] = k.split(",").map(Number);
+  for (let y = -6; y <= -2; y++) assert.ok(["minecraft:dirt", "minecraft:jigsaw"].includes(get(x, y, z)?.name), `soil under ${k} at ${y}`);
+  for (let y = 0; y < 4; y++) assert.ok(get(x, y, z), `cell ${k},${y} is written (cleared or planted)`);
+}
+assert.ok(garden.skirt.ring1.length > 20 && garden.skirt.ring2.length > 4, "a shoulder in both rings");
+const ring1 = new Set(); for (const k of garden.footprint) { const [x, z] = k.split(",").map(Number); for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) if (!garden.footprint.has(`${x + a},${z + b}`)) ring1.add(`${x + a},${z + b}`); }
+assert.ok(garden.skirt.ring1.length < ring1.size, "the shoulder is ragged");
+for (const [x, z] of garden.skirt.ring1) assert.equal(get(x, -2, z)?.name, "minecraft:grass_block", "ring 1 steps down one");
+for (const [x, z] of garden.skirt.ring2) assert.equal(get(x, -3, z)?.name, "minecraft:grass_block", "ring 2 steps down two");
 assert.deepEqual(toMcstructure(buildFlowerGarden().blocks, GARDEN.size, GARDEN.offset).buffer, encoded.buffer);
-console.log("ok   flower garden: supported beds, native barrel, owner loot, independent 1:4 generation, deterministic shipped assets");
+console.log("ok   flower garden: supported beds, native barrel, owner loot, shared garden/memorial grid 9/3, deterministic shipped assets");

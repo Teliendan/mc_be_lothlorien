@@ -3,9 +3,10 @@
 // import handleTreeScriptEvent in main.js and call it from onScriptEvent; remove before committing.
 //   /scriptevent lothlorien:treecount [radius]   /scriptevent lothlorien:grow [n] | growbig [n]
 //   /scriptevent lothlorien:treestats [n]
-import { system } from "@minecraft/server";
+import { system, BlockPermutation } from "@minecraft/server";
 import { makeRandom, buildSmallMallorn, buildBigMallorn } from "./mallorn_tree.js";
 import { growTree } from "./trees.js"; // growTree is exported by the pack's trees.js
+import { validSaplingSoil, readTreeBlock } from "./tree_interaction_rules.js";
 const NS = "lothlorien";
 const LEAVES = `${NS}:mallorn_leaves`;
 const WOOD = new Set(["log", "wood", "stripped_log", "stripped_wood"].map((n) => `${NS}:mallorn_${n}`));
@@ -81,7 +82,15 @@ export function handleTreeScriptEvent(event, player) {
         continue;
       }
       const above = top?.above();
-      if (above && growTree(above, undefined, big)) grown++;
+      if (!above) continue;
+      const { x, y, z } = above.location;
+      const targets = (big ? [[0, 0], [1, 0], [0, 1], [1, 1]] : [[0, 0]])
+        .map(([dx, dz]) => readTreeBlock(player.dimension, { x: x + dx, y, z: z + dz }));
+      if (targets.some(b => !b || !validSaplingSoil(b) || (!b.isAir &&
+          !["minecraft:short_grass", "minecraft:fern", "lothlorien:mallorn_sapling"].includes(b.typeId)))) continue;
+      // Production growth deliberately requires real saplings; this DEV helper plants them first.
+      for (const b of targets) b.setPermutation(BlockPermutation.resolve("lothlorien:mallorn_sapling", { "lothlorien:stage": 1 }));
+      if (growTree(targets[0], undefined, big)) grown++;
     }
     player.sendMessage(`[lothlorien] grew ${grown}/${n} ${big ? "big " : ""}Mallorns`);
     return true;

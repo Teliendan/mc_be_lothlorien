@@ -16,6 +16,26 @@
       },
       "minecraft:durability": {
         "max_durability": 80
+      },
+      "minecraft:enchantable": {
+        "slot": "armor_torso",
+        "value": 15
+      },
+      "minecraft:repairable": {
+        "repair_items": [
+          {
+            "items": [
+              "lothlorien:elven_cloak"
+            ],
+            "repair_amount": "context.other->query.remaining_durability"
+          },
+          {
+            "items": [
+              "minecraft:string"
+            ],
+            "repair_amount": "query.max_durability * 0.25"
+          }
+        ]
       }
     }
   }

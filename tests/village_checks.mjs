@@ -191,7 +191,7 @@ test("supportCheck: wall things (banner, rope, open trapdoor, lichen), hanging p
   assert.deepEqual(why(f).sort(), [`lothlorien:elanor@0,3,0`, `lothlorien:mallorn_leaf_carpet@-3,2,-3`, `minecraft:fern@2,1,0`].sort());
   assert.deepEqual(supportCheck(f, { filters: false }).map((v) => v.name).sort(), ["lothlorien:elanor", "minecraft:fern"], "the leaf carpet on stone bricks is flagged by the filter only");
   assert.ok(placementFilter("lothlorien:mallorn_leaf_carpet") && !placementFilter("lothlorien:mallorn_planks"));
-  const carpetOn = placementFilter("lothlorien:mallorn_leaf_carpet")[0].blocks;
+  const carpetOn = new Set(placementFilter("lothlorien:mallorn_leaf_carpet").flatMap((c) => [...(c.blocks ?? [])])); // the list spans several 64-entry conditions
   assert.ok(carpetOn.has("lothlorien:mallorn_planks") && carpetOn.has("lothlorien:mallorn_heartwood_planks"), "WP3: leaf drifts stand on planks and heartwood planks");
   const hw = flatDeck(2); hw.set(key(0, 0, 0), blk("lothlorien:mallorn_heartwood_planks")); hw.set(key(0, 1, 0), blk("lothlorien:mallorn_leaf_carpet", { "lothlorien:amount": 3 }));
   assert.deepEqual(why(hw), [], "a leaf drift on a heartwood ring cell");

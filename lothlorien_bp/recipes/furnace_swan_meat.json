@@ -7,7 +7,8 @@
     "tags": [
       "furnace",
       "smoker",
-      "campfire"
+      "campfire",
+      "soul_campfire"
     ],
     "input": "lothlorien:swan_meat_raw",
     "output": "lothlorien:swan_meat_cooked"

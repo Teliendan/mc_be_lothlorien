@@ -27,6 +27,11 @@ previews were removed; the generator retains only this final design.
 
 ## Natural generation
 
+**Since 2026-10-21 (owner) gardens and memorials share one grid**: set `lothlorien:garden_sites`
+(`structure_sets/garden_sites.json`, salt 794231583, spacing 9 / separation 3, linear), garden and memorial
+weight 1 each, so the two never pair up; combined count about 11 % below the two old 12/4 grids. The paragraph
+below is the earlier design.
+
 Owner requested the same frequency as elven gardens on 2026-10-16. The memorial's
 independent structure set uses spacing 12, separation 4, linear random spread
 and salt 936184257. Gardens keep their existing spacing 12 / separation 4 / salt
@@ -37,9 +42,10 @@ This is not an exact quota per biome patch: terrain, biome edges and placement
 success affect observed counts. Independent sets can place sites near each other.
 
 The memorial uses the garden's Lothlorien biome filter, world-surface projection
-and start height -2. A buried central jigsaw anchor becomes dirt during natural
-placement and preserves the accepted deck. The small two-layer soil patch is
-level, like the garden; it does not fit slopes. **Worldgen changes need a new world.**
+and start height -1 (deck one above the terrain; -2 until 2026-10-20). A buried central
+jigsaw anchor becomes dirt during natural placement and preserves the accepted deck.
+Six soil layers, a ragged shoulder and four free cells above the deck, as the garden
+(`WORLDGEN_FIXES_2026-10-20.md`); it does not fit steep slopes. **Worldgen changes need a new world.**
 Natural terrain/distribution review remains pending; the owner accepted the
 manually placed structure, not natural counts.
 
@@ -51,7 +57,7 @@ From `C:\mcmods\mods\lothlorien`:
 node tools/build_memorial.mjs
 ```
 
-Writes `lothlorien:memorial_leaf_01`, a 13 x 8 x 16 template with offset [6, 2, 7],
+Writes `lothlorien:memorial_leaf_01`, a 15 x 12 x 18 template with offset [7, 6, 8],
 and its three worldgen definitions. Optional `--preview` renders four textured
 views into disposable `temp/memorial/` for future changes.
 
@@ -59,7 +65,7 @@ After deployment, leave and re-enter the world. On level ground, place a fresh
 copy a few blocks south (+Z) of the player:
 
 ```mcfunction
-/structure load lothlorien:memorial_leaf_01 ~-6 ~-2 ~3
+/structure load lothlorien:memorial_leaf_01 ~-7 ~-6 ~2
 ```
 
 Manual loading retains the buried jigsaw anchor. `/place structure lothlorien:memorial`

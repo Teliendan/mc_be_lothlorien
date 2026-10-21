@@ -18,6 +18,9 @@
         "tags": [
           "lothlorien:flower"
         ]
+      },
+      "minecraft:compostable": {
+        "composting_chance": 65
       }
     }
   }

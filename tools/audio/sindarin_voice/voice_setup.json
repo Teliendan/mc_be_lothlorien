@@ -1,0 +1,38 @@
+{
+  "selected": "F — Gentle, a little more inflection",
+  "owner_accepted": "2026-10-16",
+  "owner_feedback": "Best voice; use this. Sentence pause too long, acceptable for short interaction phrases.",
+  "engine": "installed Chatterbox multilingual t3_mtl23ls_v2",
+  "model_snapshot": "5bb1f6ee58e50c3b8d408bc82a6d3740c2db6e18",
+  "model_files": [
+    "t3_mtl23ls_v2.safetensors",
+    "s3gen.pt",
+    "ve.pt",
+    "grapheme_mtl_merged_expanded_v1.json"
+  ],
+  "language_id": "es",
+  "audio_prompt_path": "actor_reference.wav",
+  "seed": 19102026,
+  "params": {
+    "exaggeration": 0.4,
+    "cfg_weight": 0.3,
+    "temperature": 0.65,
+    "repetition_penalty": 2.0,
+    "min_p": 0.05,
+    "top_p": 1.0
+  },
+  "audition_sindarin": "Mae govannen, mellon. Lasto beth lammen.",
+  "audition_generator_text": "Mai govánnen mélon. Lasto beth lámmen.",
+  "audition_seconds": 6.32,
+  "accepted_audition": "accepted_audition.wav",
+  "accepted_audition_note": "Exact level-adjusted F file from the comparison player; source audio unchanged.",
+  "watermark": "default PerTh retained",
+  "status": "Actor and delivery approved; other phrases still require pronunciation review.",
+  "sha256": {
+    "actor_reference.wav": "dc487adcf741da751d5d144e6dac00a2533c26d074f86e6b2d47ae9c5ff06bd5",
+    "accepted_audition.wav": "0853eb9ba6a439a5aa62ba33dd0fa1ab30004f44ced190c4ffa92133da5fbc25",
+    "original_actor_reference.wav": "0427d26840ca9c60d67d53d2682fbc6cfe4252e44d21760db01ab6488c233878",
+    "original_actor_provenance.json": "519701f17c8c70f649698e4d35f3447ca93fb3f36df94d0079d12c82cc947b7b",
+    "reference_provenance.json": "42caac77fb4437ab3d6a1baa8edf93d472eaadf9268936de6d6a0a4a3f508bfb"
+  }
+}

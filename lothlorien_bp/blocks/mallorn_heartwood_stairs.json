@@ -116,6 +116,9 @@
       "minecraft:light_dampening": 0,
       "minecraft:redstone_conductivity": {
         "redstone_conductor": false
+      },
+      "minecraft:chest_obstruction": {
+        "obstruction_rule": "never"
       }
     },
     "permutations": [

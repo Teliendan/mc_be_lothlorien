@@ -33,8 +33,11 @@ function levelFor(borderDistance) {
 // sample(dx, dz) returns the biome id at that surface offset, or undefined when it cannot be
 // read (unloaded chunk). `transparent` ids (rivers) count as inside the biome.
 // Returns { level, distance, beyond, complete }: distance is the radius of the first ring with
-// a foreign point (Infinity if none; the border is then farther than `beyond`). An unreadable probe stops the search, because the border
-// could be exactly there; the level is then the lowest one still certain and complete=false.
+// a readable foreign point (Infinity if none observed through `beyond`). Owner
+// policy2026-10-20: skip unreadable outer points and keep looking, preferring an
+// optimistic heart to underestimating newly loaded forest. `complete:false`
+// retains missing-data uncertainty; distance/beyond then describe observations,
+// not a guaranteed distance from an unseen border. The centre must be readable.
 export function estimateDepth(sample, biomeId, transparent) {
   const outside = { level: 0, distance: 0, complete: true };
   const here = sample(0, 0);
@@ -42,18 +45,16 @@ export function estimateDepth(sample, biomeId, transparent) {
   if (here !== biomeId && !transparent.has(here)) return outside;
   // Standing in a river counts only if Lothlorien is seen before the first foreign ring.
   let sawBiome = here === biomeId;
-  let lastClean = 0;
+  let complete = true;
   for (const r of DEPTH_RADII) {
-    let foreign = false, unknown = false;
+    let foreign = false;
     for (const [dx, dz] of ringOffsets(r)) {
       const id = sample(dx, dz);
-      if (id === undefined) unknown = true;
+      if (id === undefined) complete = false;
       else if (id === biomeId) sawBiome = true;
       else if (!transparent.has(id)) foreign = true;
     }
-    if (foreign) return sawBiome ? { level: levelFor(r), distance: r, complete: true } : outside;
-    if (unknown) return sawBiome ? { level: levelFor(lastClean + 1), distance: Infinity, beyond: lastClean, complete: false } : { ...outside, complete: false };
-    lastClean = r;
+    if (foreign) return sawBiome ? { level: levelFor(r), distance: r, complete } : { ...outside, complete };
   }
-  return sawBiome ? { level: 3, distance: Infinity, beyond: lastClean, complete: true } : outside;
+  return sawBiome ? { level: 3, distance: Infinity, beyond: DEPTH_RADII[DEPTH_RADII.length - 1], complete } : { ...outside, complete };
 }

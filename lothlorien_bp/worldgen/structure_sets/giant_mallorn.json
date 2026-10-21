@@ -13,8 +13,20 @@
     },
     "structures": [
       {
-        "structure": "lothlorien:giant_mallorn",
-        "weight": 1
+        "structure": "lothlorien:elven_village",
+        "weight": 10
+      },
+      {
+        "structure": "lothlorien:tree_grid_platform",
+        "weight": 19
+      },
+      {
+        "structure": "lothlorien:tree_grid_plain",
+        "weight": 33
+      },
+      {
+        "structure": "lothlorien:tree_grid_shrine",
+        "weight": 18
       }
     ]
   }

@@ -151,6 +151,7 @@ def item(ident):
         "description": {"identifier": ident,
                         "menu_category": {"category": "items", "group": f"minecraft:itemGroup.name.{group}"}},
         "components": {"minecraft:icon": ident, "minecraft:max_stack_size": 1, "minecraft:liquid_clipped": True,
+                       "minecraft:fuel": {"duration": 60},
                        "minecraft:entity_placer": {"entity": ident}}}}
 
 

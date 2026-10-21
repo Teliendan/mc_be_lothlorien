@@ -250,7 +250,27 @@ export function sideMarkerCells(blocks, origin, inRegion = () => true, onlyY = n
 // (default: postCells); extra.keep: the piece's keep-clear cells (Set "x,y,z", block coordinates; the post and warden cells are added here);
 // extra.waterAllowed: cells the water of the piece may reach besides its own water cells
 const spawnLights = new Map(); // piece -> number of spawn-proof hidden lights
+const shielded = new Map(); // piece -> explicit-air headroom cells turned into light_block_0 (shieldHeadroom)
 const cushionTally = new Map(); // piece -> number of native cushions
+// Headroom shield (owner, Test G 2026-10-20: a natural Mallorn's leaves filled a lookout and its cushions were lost). The common trees are a
+// tree feature whose leaves may replace air, so they fill the explicit air a piece wrote; they never replace a light block. Explicit air up to
+// HEADROOM cells above anything solid becomes `light_block_0` (no light, no collision, replaceable; the planner and the scripts already read a
+// light block as air). Structure void stays void.
+const HEADROOM = 3, SHIELD = { name: "minecraft:light_block_0", states: {} };
+function shieldHeadroom(blocks) {
+  let n = 0;
+  for (const [k, b] of blocks) {
+    if (b.name !== AIR.name) continue;
+    const [x, y, z] = k.split(",").map(Number);
+    for (let d = 1; d <= HEADROOM; d++) {
+      const below = blocks.get(key(x, y - d, z))?.name;
+      if (below === undefined || below === AIR.name || isLightBlock(below)) continue;
+      blocks.set(k, SHIELD); n++; break;
+    }
+  }
+  return n;
+}
+
 function writePiece(name, blocks, size, origin, connectors, extra = {}) {
   groundWoodPosts(blocks); // also covers bridge beams and later pillar decoration
   relinkFences(blocks);
@@ -292,6 +312,7 @@ function writePiece(name, blocks, size, origin, connectors, extra = {}) {
   // (owner 2026-10-16: ground and root mobs are fine, branch mobs are not: crowns entirely, elsewhere from deck - 6 up)
   const sl = name === "railing_end" ? [] : addSpawnLights(blocks, { x0: -origin[0], x1: size[0] - 1 - origin[0], y0: name.startsWith("crown_") ? 0 : name === "balcony_braced" ? -6 : FLOOR_H - 6, y1: size[1] - 1 - origin[1], z0: -origin[2], z1: size[2] - 1 - origin[2] });
   spawnLights.set(name, sl.length);
+  shielded.set(name, shieldHeadroom(blocks));
   const { buffer, clipped } = toMcstructure(blocks, size, origin, [...markers, ...wardens, ...posts, ...cushionActors]);
   if (clipped) throw new Error(`${name}: ${clipped} blocks outside the box`);
   writeFileSync(join(out, `${name}.mcstructure`), buffer);
@@ -495,4 +516,5 @@ writeFileSync(join(bpOut, "worldgen", "structures", "elven_village.json"), JSON.
 
 console.log(summary.join("\n"));
 console.log("spawn-proof hidden lights per piece: " + [...spawnLights].filter(([, n]) => n).map(([k, n]) => `${k} ${n}`).join(", "));
+console.log("headroom shield (light_block_0) per piece: " + [...shielded].filter(([, n]) => n).map(([k, n]) => `${k} ${n}`).join(", "));
 console.log("native cushions per piece: " + [...cushionTally].filter(([, n]) => n).map(([k, n]) => `${k} ${n}`).join(", "));

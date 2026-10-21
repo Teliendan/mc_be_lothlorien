@@ -198,9 +198,16 @@ def mesh(name, cubes):
 
 
 def main():
+    # Bedrock 1.26.52 rejects wearable.dispensable despite the docs listing it.
     item('elven_cloak', {
         'minecraft:wearable': {'slot': 'slot.armor.chest', 'protection': RULES['CLOAK']['armor']},
         'minecraft:durability': {'max_durability': RULES['CLOAK']['durability']},
+        'minecraft:enchantable': {'slot': 'armor_torso', 'value': RULES['CLOAK']['enchantability']},
+        'minecraft:repairable': {'repair_items': [
+            {'items': [RULES['CLOAK']['item']], 'repair_amount': 'context.other->query.remaining_durability'},
+            {'items': [RULES['CLOAK']['repairMaterial']],
+             'repair_amount': f"query.max_durability * {RULES['CLOAK']['repairFraction']}"},
+        ]},
     })
     item('silver_belt', {
         'minecraft:allow_off_hand': True,

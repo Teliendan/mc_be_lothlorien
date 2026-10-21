@@ -20,6 +20,7 @@ BP, RP = MOD / "lothlorien_bp", MOD / "lothlorien_rp"
 VANILLA_RP = MOD.parents[1] / "reference" / "vanilla" / "current" / "resource_packs" / "vanilla"
 ID = "lothlorien:unicorn"
 ELANOR = "lothlorien:elanor"
+FRIEND_TAG = "lothlorien_friend"
 ALL_STATES = [f"lothlorien:state_{n}" for n in ("calm", "l1", "l2", "l3", "friend", "tame", "alarmed")]
 
 
@@ -29,14 +30,22 @@ def write(path, data):
 
 
 # ---------------------------------------------------------------- behaviour entity
+def lure_filters():
+    return {"all_of": [
+        {"test": "is_family", "subject": "other", "value": "player"},
+        {"test": "has_tag", "subject": "other", "value": FRIEND_TAG},
+        {"test": "has_equipment", "subject": "other", "domain": "hand", "value": ELANOR},
+    ]}
+
+
 def player_avoid(dist, sneak_dist, walk, sprint, lure=False):
     def entry(sneaking, max_dist):
         tests = [
             {"test": "is_family", "subject": "other", "value": "player"},
             {"test": "is_sneaking", "subject": "other", "value": sneaking},
         ]
-        if lure:  # a player holding the lure is not fled from
-            tests.append({"test": "has_equipment", "subject": "other", "domain": "hand", "operator": "!=", "value": ELANOR})
+        if lure:  # the very same Friend+Elanor predicate qualifies for following and no flight
+            tests.append({"none_of": [lure_filters()]})
         return {"filters": {"all_of": tests}, "max_dist": max_dist, "walk_speed_multiplier": walk, "sprint_speed_multiplier": sprint}
 
     return [entry(False, dist), entry(True, sneak_dist)]
@@ -51,7 +60,9 @@ DANGER = [
 def avoid_group(dist, sneak, walk, sprint, lure=False, extra=None):
     group = {"minecraft:behavior.avoid_mob_type": {"priority": 4, "entity_types": player_avoid(dist, sneak, walk, sprint, lure) + DANGER}}
     if lure:
-        group["minecraft:behavior.tempt"] = {"priority": 3, "speed_multiplier": 1, "items": [ELANOR], "can_get_scared": False}
+        group["minecraft:behavior.follow_target_leader"] = {"priority": 3, "speed_multiplier": 1,
+            "leader_filters": lure_filters(), "follow_distance": 1.5, "within_radius": 10,
+            "always_look_for_leader": True, "search_cooldown": 20}
     if extra:
         group.update(extra)
     return group
@@ -125,6 +136,7 @@ def behaviour_entity():
         "lothlorien:bonded": {
             "minecraft:is_tamed": {},
             "minecraft:persistent": {},
+            "minecraft:healable": {"force_use": False, "items": [{"item": "lothlorien:elanor", "heal_amount": 2}]},
             "minecraft:rideable": {
                 "seat_count": 1,
                 "family_types": ["player"],
@@ -158,7 +170,9 @@ def behaviour_entity():
         "minecraft:despawn": {"despawn_from_distance": {}},
         "minecraft:conditional_bandwidth_optimization": {},
         "minecraft:ambient_sound_interval": {"value": 12, "range": 20, "event_name": "ambient"},
-        "minecraft:behavior.float": {"priority": 0},
+        "minecraft:behavior.float": {"priority": 0, "chance_per_tick_to_float": 0.0, "time_under_water_to_dismount_passengers": 2.0},
+        "minecraft:buoyant": {"base_buoyancy": 1.0, "apply_gravity": False, "can_auto_step_from_liquid": True,
+                              "movement_type": "bobbing", "liquid_blocks": ["minecraft:water", "minecraft:flowing_water", "minecraft:lava", "minecraft:flowing_lava"]},
         "minecraft:behavior.panic": {"priority": 1, "speed_multiplier": 1.8},
         "minecraft:behavior.random_stroll": {"priority": 6, "speed_multiplier": 0.7},
         "minecraft:behavior.look_at_player": {"priority": 7, "look_distance": 6, "probability": 0.02},

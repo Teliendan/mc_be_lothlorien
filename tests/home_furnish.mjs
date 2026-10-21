@@ -159,7 +159,7 @@ test("home_furnish: on every real village piece with a pavilion the healer set f
       const plan = planFurnish("healer", fr, at), area = new Set(frameArea(fr).flatMap(([u, v]) => { const [x, z] = frameCell(fr, u, v); return [key(x, fr.y + 1, z), key(x, fr.y + 2, z)]; }));
       assert.ok(plan.writes.length + plan.banners.length >= 6, `${f}: ${plan.writes.length} blocks`);
       const m = new Map(map);
-      for (const w of plan.writes) { assert.ok(area.has(key(w.x, w.y, w.z)), `${f}: outside the area`); assert.equal(at(w.x, w.y, w.z), "minecraft:air", `${f}: replaces`); m.set(key(w.x, w.y, w.z), { name: w.name, states: w.states }); }
+      for (const w of plan.writes) { assert.ok(area.has(key(w.x, w.y, w.z)), `${f}: outside the area`); assert.ok(["minecraft:air", "minecraft:light_block_0"].includes(at(w.x, w.y, w.z)), `${f}: replaces (light_block_0 is the headroom shield)`); m.set(key(w.x, w.y, w.z), { name: w.name, states: w.states }); }
       for (const b of plan.banners) { assert.ok(area.has(key(b.x, b.y, b.z))); m.set(key(b.x, b.y, b.z), { name: "minecraft:wall_banner", states: { facing_direction: { "0,-1": 2, "0,1": 3, "-1,0": 4, "1,0": 5 }[fr.dv.join(",")] } }); }
       const only = new Set([...plan.writes, ...plan.banners].map((w) => key(w.x, w.y, w.z)));
       assert.deepEqual(floating(m, only).map((v) => `${v.name} ${v.at} ${v.detail}`), [], f);
@@ -279,7 +279,7 @@ test("home_furnish: the other professions on the real village pieces: every set 
         const plan = planFurnish(prof, fr, at), area = new Set(frameArea(fr).flatMap(([u, v]) => { const [x, z] = frameCell(fr, u, v); return [1, 2, 3].map((h) => key(x, fr.y + h, z)); }));
         assert.ok(plan.writes.length + plan.structures.length >= 6, `${f} ${prof}: ${plan.writes.length} + ${plan.structures.length}`);
         const m = new Map(map), blocks = [...plan.writes, ...plan.structures.filter((s) => s.kind !== "cushion")];
-        for (const w of blocks) { assert.ok(area.has(key(w.x, w.y, w.z)), `${f}: outside the area`); assert.equal(at(w.x, w.y, w.z), "minecraft:air"); m.set(key(w.x, w.y, w.z), { name: w.name, states: w.states }); }
+        for (const w of blocks) { assert.ok(area.has(key(w.x, w.y, w.z)), `${f}: outside the area`); assert.ok(["minecraft:air", "minecraft:light_block_0"].includes(at(w.x, w.y, w.z))); m.set(key(w.x, w.y, w.z), { name: w.name, states: w.states }); }
         assert.deepEqual(floating(m, new Set(blocks.map((w) => key(w.x, w.y, w.z)))).map((v) => `${v.name} ${v.at} ${v.detail}`), [], `${f} ${prof}`);
       }
     }

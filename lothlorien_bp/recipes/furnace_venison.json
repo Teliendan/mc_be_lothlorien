@@ -7,7 +7,8 @@
     "tags": [
       "furnace",
       "smoker",
-      "campfire"
+      "campfire",
+      "soul_campfire"
     ],
     "input": "lothlorien:venison_raw",
     "output": "lothlorien:venison_cooked"

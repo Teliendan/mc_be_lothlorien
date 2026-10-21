@@ -12,6 +12,9 @@
       "minecraft:icon": "lothlorien:mallorn_boat",
       "minecraft:max_stack_size": 1,
       "minecraft:liquid_clipped": true,
+      "minecraft:fuel": {
+        "duration": 60
+      },
       "minecraft:entity_placer": {
         "entity": "lothlorien:mallorn_boat"
       }

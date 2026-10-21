@@ -33,8 +33,8 @@ test("central tree: the slab spiral climbs 16 half-block treads round the round 
     assert.ok(n === "lothlorien:mallorn_planks" || n === "lothlorien:mallorn_slab", `tread ${i} at ${x},${z}: ${n}`);
   });
   assert.deepEqual(STAIR7[15], [-3, -1]); assert.equal(nameAt(-3, H, -1), "lothlorien:mallorn_planks", "the last tread is Hall floor");
-  assert.equal(nameAt(-4, H + 1, -1), "minecraft:air", "no rail at the exit");
-  assert.equal(nameAt(-3, H + 1, 2), "minecraft:air", "the stair opening itself is open (railed on the outside)");
+  assert.ok(["minecraft:air", "minecraft:light_block_0"].includes(nameAt(-4, H + 1, -1)), "no rail at the exit"); // light_block_0: headroom shield
+  assert.ok(["minecraft:air", "minecraft:light_block_0"].includes(nameAt(-3, H + 1, 2)), "the stair opening itself is open (railed on the outside)");
 });
 
 test("central tree: Hall inside the height limit (<= Hall + 5), open pavilion (17 posts), chandelier, lookout bay with a bench, spore blossoms, no froglights on the crest", () => {
@@ -44,7 +44,7 @@ test("central tree: Hall inside the height limit (<= Hall + 5), open pavilion (1
   assert.equal(count(/elven_chandelier$/), 1);
   assert.equal(count(/froglight$/), 0); // review 2026-10-15: bare white cubes on the dome
   assert.equal(count(/spore_blossom$/), 2);
-  for (const z of [-1, 0, 1]) assert.equal(nameAt(8, H + 1, z), "minecraft:air", "the bay's seats are native cushions (actors), the cells stay free");
+  for (const z of [-1, 0, 1]) assert.ok(["minecraft:air", "minecraft:light_block_0"].includes(nameAt(8, H + 1, z)), "the bay's seats are native cushions (actors), the cells stay free");
   assert.equal(count(/mallorn_stairs$/), 0, "no stair seats (the engine links fences to stairs); seats are cushion actors (review 2026-10-15)");
   assert.ok(piece.entities.filter((e) => e.id === "minecraft:cushion").length >= 20, "the Hall seats, the bay bench and the reading circle are native cushions");
   assert.ok(count(/cushion/) === 0, "cushions are entities (no cushion blocks in a structure)");

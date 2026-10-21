@@ -1,0 +1,24 @@
+{
+  "format_version": "1.21.100",
+  "minecraft:template_pool": {
+    "description": {
+      "identifier": "lothlorien:tree_grid_platform"
+    },
+    "elements": [
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/mallorn_round_05"
+        },
+        "weight": 6
+      },
+      {
+        "element": {
+          "element_type": "minecraft:single_pool_element",
+          "location": "lothlorien/mallorn_round_07"
+        },
+        "weight": 6
+      }
+    ]
+  }
+}

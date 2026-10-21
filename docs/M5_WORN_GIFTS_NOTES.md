@@ -1,5 +1,15 @@
 # M5 worn gifts
 
+Interaction review, owner decisions and current engine checklist (2026-10-18):
+[WEARABLE_INTERACTIONS.md](WEARABLE_INTERACTIONS.md). Correction 2026-10-21:
+the owner Content Log rejects `wearable.dispensable`; it was removed from both
+items and their generator. Native dispenser equipping still needs a game check.
+Cloak dyeing/trims are intentionally excluded to preserve selected artwork;
+stand/mob compatibility remains native/data-only. Full freezing protection has
+no verified straightforward path; the owner chose on 2026-10-18 to leave it
+pending, without a partial cold-damage replacement. Native protection/repair/enchanting and equip results need game
+acceptance; existing conditional-effect results retain their dated scope.
+
 2026-10-12; Bedrock 1.26.52 / stable Script API 2.8.0.
 Finalization commit: `Finalize selected Galadriel worn gifts`.
 Owner accepted the revised wearable previews ("Much better") and selected
@@ -17,7 +27,24 @@ one texture texel per model unit. Fractional origins position the meshes without
 adding resolution. No sub-unit ornaments, inflated cubes or scaled UV swatches.
 Separate body-bound anchors and mesh children isolate visibility transforms.
 
-The cloak replaces the chestplate: armour 3, durability 80. While equipped,
+The cloak replaces the chestplate: armour 3, durability 80. Native chestplate
+enchantments and repairs added 2026-10-18 (target 1.26.52; source/docs and offline
+verification, engine acceptance pending). `minecraft:enchantable` uses
+`armor_torso`, with enchantability 15 as a balance choice: Protection variants,
+Thorns, Unbreaking, Mending and applicable curses follow native chestplate rules
+and incompatibilities. This does not grant helmet/boot-specific enchantments.
+At an anvil, string restores 25% maximum durability (20 per piece); a second
+cloak contributes its remaining durability using the installed vanilla spear
+repair expression. Mending uses native XP repair. Belt and phial deliberately
+remain without durability, enchantability or repair components.
+Generator and balance source retain these settings across regeneration.
+Shared component evidence: `.claude/skills/bedrock-items/references/armor-enchanting-repair.md`.
+For cloak/belt changes, run `mods deploy lothlorien --tests tests/worn_gifts.mjs`
+from the workspace, then confirm `mods status lothlorien` is in sync. This keeps
+all shared pack checks and runs only the relevant feature regression suite;
+village simulations belong to broader village/full-suite verification.
+
+While equipped,
 sneaking without moving for 20 ticks grants Invisibility I. The five-tick service
 measures displacement from the stillness period's original position and resets
 on velocity, movement or dimension changes. It renews a ten-tick grant before

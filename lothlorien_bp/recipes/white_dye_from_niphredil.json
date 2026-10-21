@@ -1,0 +1,28 @@
+{
+  "format_version": "1.26.50",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "lothlorien:white_dye_from_niphredil"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "F"
+    ],
+    "key": {
+      "F": {
+        "item": "lothlorien:niphredil"
+      }
+    },
+    "unlock": [
+      {
+        "item": "lothlorien:niphredil"
+      }
+    ],
+    "result": {
+      "item": "minecraft:white_dye",
+      "count": 1
+    }
+  }
+}

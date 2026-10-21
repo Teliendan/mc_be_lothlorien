@@ -314,7 +314,7 @@ export function walkability(res, world, states) {
     if (n === SLAB && states.get(k)?.["minecraft:vertical_half"] === "top") { // a top-slab roof on fence posts (the balcony arbour) is no walking surface
       const fenceUnder = (a, b) => world.get(wkey(a, y - 1, b)) === FENCE, topAt = (a, b) => world.get(wkey(a, y, b)) === SLAB && states.get(wkey(a, y, b))?.["minecraft:vertical_half"] === "top";
       const fenceBeside = (a, b) => world.get(wkey(a, y, b)) === FENCE; // a post top beside the slab (roof between the posts)
-      if (fenceUnder(x, z) || ([AIR, "minecraft:pale_hanging_moss"].includes(world.get(wkey(x, y - 1, z)) ?? AIR) && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([a, b]) => fenceBeside(x + a, z + b) || (topAt(x + a, z + b) && (fenceUnder(x + a, z + b) || [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([c, d]) => fenceBeside(x + a + c, z + b + d))))))) continue;
+      if (fenceUnder(x, z) || ([AIR, "minecraft:pale_hanging_moss"].includes(world.get(wkey(x, y - 1, z)) ?? AIR) || /^minecraft:light_block_\d+$/.test(world.get(wkey(x, y - 1, z)) ?? "") && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([a, b]) => fenceBeside(x + a, z + b) || (topAt(x + a, z + b) && (fenceUnder(x + a, z + b) || [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([c, d]) => fenceBeside(x + a + c, z + b + d))))))) continue;
     }
     const top = n === PLANKS || n === HEART_PLANKS || states.get(k)?.["minecraft:vertical_half"] === "top";
     const s = top ? 2 * y + 2 : 2 * y + 1;

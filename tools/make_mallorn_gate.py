@@ -7,6 +7,8 @@ neighbouring fence rails), the centre piece is a 4-wide post with the painted le
 Writes lothlorien_rp/models/blocks/mallorn_fence_gate_closed.geo.json (bones posts, rails; keeps its
 item_display_transforms: the icon pose [30,135,0] is confirmed in game) and mallorn_fence_gate_open.geo.json
 (bones posts, leaves). Both sets share them; every face uses the block's "*" material = mallorn_fence_post texture.
+Also derives closed/open `_in_wall` copies three pixels lower, with unchanged UV/detail.
+Collision remains independently authored at 0..24; lowering it through a block transformation is invalid.
 
 Geometry coordinates throughout (x mirrored against the world, see make_mallorn_fence.py): the closed gate lies
 along x at z -1..1, end posts at x +-7. Opening turns each half a quarter about its post so it points to -z (north
@@ -17,6 +19,7 @@ in the unrotated block), where the old open model and the open selection box (z 
 import json
 import os
 import sys
+from copy import deepcopy
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -115,6 +118,22 @@ def geometries(transforms=None):
     return closed, opn
 
 
+def lowered_geometry(data):
+    """Lower geometry only; native collision must keep its valid 0..24 authored bounds."""
+    result = deepcopy(data)
+    for geometry in result["minecraft:geometry"]:
+        geometry["description"]["identifier"] += "_in_wall"
+        geometry.pop("item_display_transforms", None)  # carried icon uses the ordinary accepted model
+        for bone in geometry["bones"]:
+            if "pivot" in bone:
+                bone["pivot"][1] -= 3
+            for cube in bone.get("cubes", []):
+                cube["origin"][1] -= 3
+                if "pivot" in cube:
+                    cube["pivot"][1] -= 3
+    return result
+
+
 def main():
     closed_path = os.path.join(MODELS, "mallorn_fence_gate_closed.geo.json")
     with open(closed_path, encoding="utf8") as f:
@@ -124,6 +143,10 @@ def main():
     for path, data in [(closed_path, closed), (os.path.join(MODELS, "mallorn_fence_gate_open.geo.json"), opn)]:
         with open(path, "w", encoding="utf8", newline="\n") as f:
             f.write(json.dumps(data, indent=2) + "\n")
+    for pose, data in (("closed", closed), ("open", opn)):
+        path = os.path.join(MODELS, f"mallorn_fence_gate_{pose}_in_wall.geo.json")
+        with open(path, "w", encoding="utf8", newline="\n") as f:
+            f.write(json.dumps(lowered_geometry(data), indent=2) + "\n")
     print("wrote mallorn_fence_gate_closed/open.geo.json")
 
 

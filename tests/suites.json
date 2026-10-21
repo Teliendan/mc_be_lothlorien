@@ -1,0 +1,232 @@
+{
+  "version": 1,
+  "suites": {
+    "npc-interactions": [
+      "npc_interactions.mjs"
+    ],
+    "small-flyers": [
+      "small_flyer_interactions.mjs"
+    ],
+    "unicorn-luring": [
+      "unicorn_luring.mjs"
+    ],
+    "swan-squirrel-interactions": [
+      "swan_squirrel_interactions.mjs"
+    ],
+    "deer-interactions": [
+      "deer_interactions.mjs"
+    ],
+    "food-remedy": [
+      "food_remedy_interactions.mjs",
+      "miruvor.mjs"
+    ],
+    "decor-rope": [
+      "decor_rope_interactions.mjs"
+    ],
+    "flora-crop": [
+      "flora_crop_interactions.mjs"
+    ],
+    "boats": [
+      "boats.mjs"
+    ],
+    "biome": [
+      "biome_depth.mjs"
+    ],
+    "flora": [
+      "flora.mjs",
+      "leaf_harvest.mjs",
+      "golden_fern_harvest.mjs",
+      "star_canopy_harvest.mjs",
+      "ordinary_harvest.mjs"
+    ],
+    "crops": [
+      "crops_lembas.mjs",
+      "western_corn_harvest.mjs",
+      "planter_panels.mjs"
+    ],
+    "wood": [
+      "wood_blocks.mjs",
+      "stair_water.mjs",
+      "wood_interactions.mjs"
+    ],
+    "wood-interactions": [
+      "wood_interactions.mjs",
+      "stair_water.mjs"
+    ],
+    "giant-trees": [
+      "giant_trees.mjs"
+    ],
+    "harmony": [
+      "harmony.mjs"
+    ],
+    "renown": [
+      "renown.mjs"
+    ],
+    "deer": [
+      "deer.mjs"
+    ],
+    "antlers": [
+      "antlers.mjs"
+    ],
+    "white-deer": [
+      "white_deer.mjs"
+    ],
+    "nectar-dew": [
+      "nectar_dew.mjs"
+    ],
+    "swan-squirrel": [
+      "swan_squirrel.mjs",
+      "swan_shedding.mjs"
+    ],
+    "unicorn": [
+      "unicorn.mjs"
+    ],
+    "animal-home": [
+      "animal_home.mjs"
+    ],
+    "rope": [
+      "rope.mjs",
+      "rope_lifecycle.mjs"
+    ],
+    "lamps": [
+      "lamps.mjs"
+    ],
+    "support": [
+      "support_motion.mjs"
+    ],
+    "diagnostics": [
+      "diagnostics.mjs"
+    ],
+    "performance": [
+      "script_performance.mjs"
+    ],
+    "script-glue": [
+      "script_glue.mjs"
+    ],
+    "wardens": [
+      "wardens.mjs"
+    ],
+    "elves": [
+      "elves.mjs"
+    ],
+    "trade": [
+      "trade.mjs",
+      "trade_glue.mjs"
+    ],
+    "healer": [
+      "healer.mjs"
+    ],
+    "archery": [
+      "archery.mjs"
+    ],
+    "worn-gifts": [
+      "worn_gifts.mjs"
+    ],
+    "phial": [
+      "phial.mjs"
+    ],
+    "miruvor": [
+      "miruvor.mjs"
+    ],
+    "village-structures": [
+      "village_structures.mjs"
+    ],
+    "village-planner": [
+      "village_planner.mjs"
+    ],
+    "village-repair": [
+      "village_repair.mjs"
+    ],
+    "village-simulation": [
+      "village_simulation.mjs"
+    ],
+    "village-residents": [
+      "village_residents.mjs"
+    ],
+    "rail-mender": [
+      "rail_mender.mjs"
+    ],
+    "forest-floor": [
+      "forest_floor.mjs"
+    ],
+    "village-checks": [
+      "village_checks.mjs",
+      "village_central.mjs"
+    ],
+    "village-furnishing": [
+      "home_furnish.mjs"
+    ],
+    "village-polish": [
+      "village_polish.mjs"
+    ],
+    "watch-camp": [
+      "watch_camp.mjs"
+    ],
+    "root-shrine": [
+      "root_shrine.mjs"
+    ],
+    "flower-garden": [
+      "flower_garden.mjs"
+    ],
+    "memorial": [
+      "memorial.mjs"
+    ],
+    "landscape-probe": [
+      "landscape_probe.mjs"
+    ],
+    "constrained-feature-probe": [
+      "constrained_feature_probe.mjs"
+    ],
+    "suite-layout": [
+      "suite_layout.mjs"
+    ],
+    "equipment": [
+      "archery.mjs",
+      "worn_gifts.mjs",
+      "phial.mjs"
+    ],
+    "gifts": [
+      "archery.mjs",
+      "worn_gifts.mjs",
+      "phial.mjs",
+      "miruvor.mjs"
+    ],
+    "village": [
+      "script_glue.mjs",
+      "village_structures.mjs",
+      "village_planner.mjs",
+      "village_repair.mjs",
+      "village_simulation.mjs",
+      "village_residents.mjs",
+      "rail_mender.mjs",
+      "forest_floor.mjs",
+      "village_checks.mjs",
+      "village_central.mjs",
+      "home_furnish.mjs",
+      "village_polish.mjs"
+    ],
+    "worldgen-spacing": [
+      "worldgen_spacing.mjs"
+    ],
+    "tree-grid-test": [
+      "tree_grid_test.mjs"
+    ],
+    "controls": [
+      "controls.mjs"
+    ],
+    "leaf-tree": [
+      "leaf_tree_interactions.mjs",
+      "leaf_harvest.mjs",
+      "flora.mjs"
+    ],
+    "covers": [
+      "cover_interactions.mjs"
+    ]
+  },
+  "support_files": {
+    "fixtures/bottle_runtime.mjs": "Shared production bottle/rope API fixture; no tests run on import.",
+    "fixtures/wildlife_runtime.mjs": "Shared production wildlife API fixture; no test bodies or worlds run on import.",
+    "test_helpers.mjs": "Shared assertions and JSON readers; never runs tests on import.",
+    "tree_stats.mjs": "Manual tree balance estimator, not a regression suite."
+  }
+}

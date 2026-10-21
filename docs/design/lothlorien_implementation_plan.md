@@ -825,31 +825,31 @@ Owner, 2026-10-02. Replaces the vanilla ladders in the flet giants (`great_mallo
 
 # Phase 18 — Soundscape
 
-Generate and integrate sound in layers.
+Owner direction, 2026-10-16: keep the first pass simple. Plan recorded for later;
+do not generate audio or implement playback until the owner resumes production.
+Decisions, remaining choices and work sequence:
+[soundscape plan](../SOUNDSCAPE_PLAN.md).
 
-## First pass
+## Selected layers
 
-- day loop,
-- night loop,
-- several bird one-shots,
-- leaf/wind one-shots,
-- subtle chime.
+- Shared ambience throughout Lothlorien. Forest-depth variation is deferred.
+- Occasional local sacred sounds from the root shrine's ceiling, with quiet
+  intervals between phrases.
+- Occasional local gentle, melancholic sounds from the leaf memorial's
+  pillar/totem or the center of its leaf; choose the source later.
+- Village soundtrack heard throughout the village: pieces separated by quiet
+  intervals, following the vanilla background-music model. Gentle harp is a
+  candidate; exact palette and timing remain open.
 
-## Second pass
+Birdsong and other accepted animal calls remain separate existing work. The
+earlier day/night loops, extra chimes and rare distant song are optional ideas,
+not required layers. Keep quiet space and avoid competing prominent melodies.
 
-- structure ambience,
-- rare distant voice/song,
-- optional music cue.
+## Later production workflow
 
-Keep rare sounds rare.
-
-## Technical workflow
-
-local model -> cleanup -> FFmpeg -> `.ogg` -> `sound_definitions.json` / `sounds.json` -> biome sound configuration.
-
-## Primary tool
-
-Local sound model.
+Agree palette, recurrence and mixing -> generate candidates with the local
+SFX/music tools -> audition and edit -> encode `.ogg` -> configure biome
+ambience, positional structure sounds and village music -> verify and test.
 
 ---
 

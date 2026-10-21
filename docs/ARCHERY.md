@@ -1,6 +1,20 @@
 # Bow of the Galadhrim and arrows (M5)
 
 Implemented 2026-10-11 for Bedrock 1.26.52 / stable server API 2.8.0.
+Interaction review and owner decisions, 2026-10-18:
+[per-mechanic ledger](ARCHERY_INTERACTIONS.md). Same-elven-bow native repair and
+10-second Bedrock fuel are now configured; custom ammunition explicitly permits
+offhand equipment. Owner excludes crafting a vanilla dispenser with this bow,
+and approves arrow activation/dispenser launch where supported. Existing native
+projectile ammunition already documents dispenser support; engine acceptance is
+pending. Native target support and custom Mallorn button support are separate
+questions: the latter remains an explicit controls implementation gap.
+Follow-up owner decisions on 2026-10-18: no potion-tipped Galadhrim-arrow variants
+because that would create too many new items; existing vanilla tipped ammunition
+is retained. Mob equipping/use is low priority and limited to straightforward
+data-only support. No concrete missing setting was established, so no mob-support
+expansion was added. Existing native compatibility remains unverified; no scripts,
+new mob definitions/variants or vanilla mob overrides are authorized for this feature.
 Owner feedback 2026-10-11: the bow draws without a visible nocked arrow and
 without zoom; its limbs look too wide and held size too small. The previous FOV
 implementation passed a lowercase command easing name to the Script API enum,
@@ -89,7 +103,7 @@ stable 2.8 declarations contain no `Player.getItemUseDuration` API; no speculati
 polling or scripted replacement of native shots was added. The enum mismatch is
 a concrete source defect, not evidence of an engine event bug.
 
-Run `node mods/lothlorien/tests/archery.mjs`: seven groups exercise production
+Run `node mods/lothlorien/tests/archery.mjs`: eight groups exercise production
 callbacks/scheduler, native projectile parity and bindings. They establish event
 glue and cleanup, not engine rendering, FOV, physics or enchantment results.
 The camera fake now rejects lowercase easing, so reintroducing the original

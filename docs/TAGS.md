@@ -20,9 +20,36 @@ Owner decisions, implemented 2026-10-13:
    an existing regression explicitly asserts group-owned families. No current
    practical benefit was found for the proposed base-family addition.
 
+Group16 exception2026-10-20: owner approved adding `wandering_trader` to civilian
+elves so ordinary zombie/illager targeting includes them while skeleton civilian
+targeting remains absent. See [NPC_INTERACTIONS.md](NPC_INTERACTIONS.md).
 Retain all other families and block tags/omissions. Animals already use distinct mod families plus `mob`; there is no need for a blanket `animal` family. Keep the Warden's intentional `irongolem` family, the arrow's `projectile`/`arrow`, boat families and existing helper classifications. Do not substitute vanilla prey families (`rabbit`, `chicken`, etc.). Keep both `leaves` and `minecraft:leaves`: local tree `may_replace` predicates still query the bare spelling, while current vanilla trees use the namespaced spelling. Leaf carpet remains a thin cover, not full leaves.
 
 Flowers now carry custom classification lothlorien:flower; approved membership and effects are below. Potting/composting are separate components; current pottable decisions, including stateful exclusions, are outside the proposed tag-only changes. No invented vanilla flower tag is recommended. Existing wood recipe item tags are listed below and must stay separate from block tags.
+
+2026-10-19 approved chandelier recipe: custom **item** tag
+`lothlorien:elven_lantern` belongs exactly to `lothlorien:elven_lantern` and
+`lothlorien:elven_lantern_heartwood` (silver/gold). Four independently matched
+recipe slots allow any mixture; no tag is added to blocks, jars, chandeliers or
+vanilla lanterns. Consumer: `recipes/elven_chandelier.json`; native recipe
+acceptance remains pending. Generator/post-pass and regression membership agree.
+
+## Runtime Friend tag2026-10-20
+
+`lothlorien_friend` is a runtime player tag, not a family or item/block tag.
+Authority: persisted `lothlorien:harmony` state and its cached Harmony band.
+Producer: existing harmony_game.js update plus20-tick refresh, shared with the
+unchanged Hated-band tag. It is added for Friend and removed for every other
+band after debug/deed/death/recovery updates; periodic refresh covers join and
+reload/stale tag repair. Existing leave handling drops the cache. Game mode does
+not redefine Friend, and no new timer/world scan is added.
+
+Only consumers are unicorn Friend-state native follow_target_leader and its
+two standing/sneaking no-flight filters. Both require actual player + this tag
++ hand-domain Elanor; the exact predicate is negated for player avoidance.
+No mob family, Hated targeting, other species or Harmony scoring changes.
+Per-player filtering/retargeting native acceptance is tracked in
+[UNICORN_INTERACTIONS.md](UNICORN_INTERACTIONS.md).
 
 ## Complete block inventory
 
@@ -84,7 +111,7 @@ Inspected all block permutations: 0 tag-component overrides. Other components st
 | --- | --- | --- |
 | [lothlorien:butterfly](../lothlorien_bp/entities/butterfly.json) | `lothlorien_butterfly`, `mob`, `arthropod` | Approved arthropod classification implemented |
 | [lothlorien:deer](../lothlorien_bp/entities/deer.json) | `lothlorien_deer`, `mob` | Retain |
-| [lothlorien:elf](../lothlorien_bp/entities/elf.json) | `lothlorien_elf`, `mob` | Retain |
+| [lothlorien:elf](../lothlorien_bp/entities/elf.json) | `lothlorien_elf`, `wandering_trader`, `mob` | Group16 owner-approved2026-10-20: native civilian-target recognition; prior elf retain choice superseded, engine acceptance pending |
 | [lothlorien:elf_post](../lothlorien_bp/entities/elf_post.json) | omitted | `lothlorien:post_loremaster`: `lothlorien_elf_post`, `elf_post_loremaster`, `inanimate`; `lothlorien:post_reserve`: `lothlorien_elf_post`, `elf_post_reserve`, `inanimate`; `lothlorien:post_home`: `lothlorien_elf_post`, `elf_post_home`, `inanimate`; Retain role-group ownership; no useful current base-family consumer |
 | [lothlorien:elven_warden](../lothlorien_bp/entities/elven_warden.json) | `lothlorien_warden`, `irongolem`, `mob` | Retain |
 | [lothlorien:firefly](../lothlorien_bp/entities/firefly.json) | `lothlorien_firefly`, `mob`, `arthropod` | Approved arthropod classification implemented |
@@ -127,7 +154,7 @@ These are item-component tags, not block tags. This is a cross-check, not a requ
 
 - Shared decision rules and primary sources: [tags and families](../../../.claude/skills/bedrock-modding/references/14-tags.md).
 - Cross-mod findings and verification status: [workspace audit](../../../docs/tag-audit-2026-10-13.md).
-- Existing runtime quest/hostility/debug tags are separate from these families. No new runtime tags or cleanup mechanisms are proposed.
+- Runtime quest/hostility/debug tags remain separate from these families; the approved Friend tag and its existing-service lifecycle are documented above.
 - If accepted, update any responsible generator, run `mods verify <mod>`, deploy and confirm `in sync`, then record relevant engine observations here.
 
 ## Final owner decisions and validation (2026-10-13)

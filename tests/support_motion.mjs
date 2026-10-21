@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { createSupportMotionService } from "../lothlorien_bp/scripts/support_motion_service.js";
 import { SUPPORT_POLICIES } from "../lothlorien_bp/scripts/support_policies.js";
 import { supportOffset } from "../lothlorien_bp/scripts/antler_rules.js";
+import { cornSoilAllowed, CORN_ORIGIN } from "../lothlorien_bp/scripts/crop_rules.js";
 
 const key = p => `${p.x},${p.y},${p.z}`;
 const P = { x: 0, y: 0, z: 0 }, S = { x: 1, y: 0, z: 0 }, A = { x: 1, y: 1, z: 0 };
@@ -166,7 +167,8 @@ for (const [id, policy] of Object.entries(SUPPORT_POLICIES)) {
   if (id.endsWith("_pressure_plate")) {
     assert.deepEqual(block.components["minecraft:tick"].interval_range, [4, 4], id);
   } else assert.equal(block.components["minecraft:tick"], undefined, `${id}: no support timer`);
-  if (policy.allowed) assert.deepEqual(policy.allowed, block.components["minecraft:placement_filter"].conditions[0].block_filter);
+  if (policy.allowed) assert.deepEqual(policy.allowed,
+    [...new Set(block.components["minecraft:placement_filter"].conditions.flatMap(c => c.block_filter))]);
 }
 
 // Exercise the production adapter rather than only its pure service: reloaded
@@ -179,7 +181,7 @@ for (const [id, policy] of Object.entries(SUPPORT_POLICIES)) {
     isAir:typeId === "minecraft:air", isLiquid:false,
     permutation:{ getState: name => name === "minecraft:block_face" ? "up" : undefined } });
   globalThis.__supportAdapter = {
-    SUPPORT_POLICIES, createSupportMotionService, supportOffset, dropWholeRope() {},
+    SUPPORT_POLICIES, createSupportMotionService, supportOffset, cornSoilAllowed, CORN_ORIGIN, dropWholeRope() {},
     system: { currentTick:0, runTimeout(fn) { tasks.push(fn); }, beforeEvents:{ startup:{
       subscribe(fn) { fn({blockComponentRegistry:{registerCustomComponent:(id, c) => components.set(id,c)}}); }
     } } },

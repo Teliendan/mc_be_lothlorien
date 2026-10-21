@@ -1,0 +1,16 @@
+{
+  "text": "Welcome, traveller. Rest beneath the trees, and let the evening bring you peace.",
+  "instruction": "A noble adult male elf with a refined light baritone, smooth warm resonance, clear diction and courtly dignity. Poised, serene and quietly authoritative, speaking with gentle musical phrasing at a natural measured pace. An elegant British English accent. Spoken dialogue, not singing; no breathy whisper, growl, gravel, dramatic trailer voice or background sound.",
+  "model": "MOSS-VoiceGenerator",
+  "seed": 17102026,
+  "params": {
+    "max_new_tokens": 256,
+    "audio_temperature": 1.5,
+    "audio_top_p": 0.6,
+    "audio_top_k": 50,
+    "audio_repetition_penalty": 1.1
+  },
+  "seconds": 4.88,
+  "generation_seconds": 6.47,
+  "status": "original synthetic actor, unapproved"
+}

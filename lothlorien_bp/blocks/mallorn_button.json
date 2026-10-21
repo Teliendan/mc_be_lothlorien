@@ -309,6 +309,19 @@
             "strongly_powered_face": "west"
           }
         }
+      },
+      {
+        "condition": "q.block_state('lothlorien:powered')",
+        "components": {
+          "minecraft:tick": {
+            "interval_range": [
+              30,
+              30
+            ],
+            "looping": false
+          },
+          "lothlorien:button_release": {}
+        }
       }
     ]
   }

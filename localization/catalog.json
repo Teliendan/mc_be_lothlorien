@@ -21065,6 +21065,299 @@
               "status": "ai-draft"
             }
           }
+        },
+        "lothlorien.message.firefly.name": {
+          "source": "Firefly: %s",
+          "context": {
+            "meaning": "Captured firefly name. Long names continue on additional lore lines; the captured identity, not the anvil bottle title, is restored.",
+            "location": "Bottle of Fireflies inventory tooltip lore",
+            "trigger": "After catching a named or injured firefly; preserved when released",
+            "tone": "Brief factual Minecraft tooltip",
+            "grammar": "Short label followed by its captured value, or name continuation",
+            "constraints": "Preserve sequential %s. Captured-name parts are at most24 UTF-16 code units; health uses a finite positive decimal. Rendered lore lines must fit50 characters. No assumed player gender."
+          },
+          "placeholders": [
+            {
+              "name": "value",
+              "type": "string",
+              "meaning": "Captured name part (preserve verbatim)"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "Světluška: %s",
+              "based_on": "c86accaa43a082ad61701da44095a42ae8b5aeb7592336cde81cf281a7b07a15",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Luciérnaga: %s",
+              "based_on": "c86accaa43a082ad61701da44095a42ae8b5aeb7592336cde81cf281a7b07a15",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Luciérnaga: %s",
+              "based_on": "c86accaa43a082ad61701da44095a42ae8b5aeb7592336cde81cf281a7b07a15",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Pirilampo: %s",
+              "based_on": "c86accaa43a082ad61701da44095a42ae8b5aeb7592336cde81cf281a7b07a15",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Vaga-lume: %s",
+              "based_on": "c86accaa43a082ad61701da44095a42ae8b5aeb7592336cde81cf281a7b07a15",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Glühwürmchen: %s",
+              "based_on": "c86accaa43a082ad61701da44095a42ae8b5aeb7592336cde81cf281a7b07a15",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Luciole : %s",
+              "based_on": "c86accaa43a082ad61701da44095a42ae8b5aeb7592336cde81cf281a7b07a15",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Świetlik: %s",
+              "based_on": "c86accaa43a082ad61701da44095a42ae8b5aeb7592336cde81cf281a7b07a15",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.firefly.name_more": {
+          "source": "%s",
+          "context": {
+            "meaning": "Continuation of a captured firefly name on its own tooltip line. Do not add punctuation or change the name.",
+            "location": "Bottle of Fireflies inventory tooltip lore",
+            "trigger": "After catching a named or injured firefly; preserved when released",
+            "tone": "Brief factual Minecraft tooltip",
+            "grammar": "Short label followed by its captured value, or name continuation",
+            "constraints": "Preserve sequential %s. Captured-name parts are at most24 UTF-16 code units; health uses a finite positive decimal. Rendered lore lines must fit50 characters. No assumed player gender."
+          },
+          "placeholders": [
+            {
+              "name": "value",
+              "type": "string",
+              "meaning": "Captured name part (preserve verbatim)"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "%s",
+              "based_on": "3458e52b6d8505f1546996c8e0e094bcfb3c3e5e113fce054ee1a223c5b41f88",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "%s",
+              "based_on": "3458e52b6d8505f1546996c8e0e094bcfb3c3e5e113fce054ee1a223c5b41f88",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "%s",
+              "based_on": "3458e52b6d8505f1546996c8e0e094bcfb3c3e5e113fce054ee1a223c5b41f88",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "%s",
+              "based_on": "3458e52b6d8505f1546996c8e0e094bcfb3c3e5e113fce054ee1a223c5b41f88",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "%s",
+              "based_on": "3458e52b6d8505f1546996c8e0e094bcfb3c3e5e113fce054ee1a223c5b41f88",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "%s",
+              "based_on": "3458e52b6d8505f1546996c8e0e094bcfb3c3e5e113fce054ee1a223c5b41f88",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "%s",
+              "based_on": "3458e52b6d8505f1546996c8e0e094bcfb3c3e5e113fce054ee1a223c5b41f88",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "%s",
+              "based_on": "3458e52b6d8505f1546996c8e0e094bcfb3c3e5e113fce054ee1a223c5b41f88",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.firefly.health": {
+          "source": "Health: %s",
+          "context": {
+            "meaning": "Captured firefly current health in health points, not hearts. Only injured or nondefault-health captures need this lore line.",
+            "location": "Bottle of Fireflies inventory tooltip lore",
+            "trigger": "After catching a named or injured firefly; preserved when released",
+            "tone": "Brief factual Minecraft tooltip",
+            "grammar": "Short label followed by its captured value, or name continuation",
+            "constraints": "Preserve sequential %s. Captured-name parts are at most24 UTF-16 code units; health uses a finite positive decimal. Rendered lore lines must fit50 characters. No assumed player gender."
+          },
+          "placeholders": [
+            {
+              "name": "value",
+              "type": "string",
+              "meaning": "Current health points, numeric text"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "Zdraví: %s",
+              "based_on": "9a2baf0ece3a17b178440e68523a8bc38ca45677a054fac86e5fa53bcb48ebe6",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Salud: %s",
+              "based_on": "9a2baf0ece3a17b178440e68523a8bc38ca45677a054fac86e5fa53bcb48ebe6",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Salud: %s",
+              "based_on": "9a2baf0ece3a17b178440e68523a8bc38ca45677a054fac86e5fa53bcb48ebe6",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Vida: %s",
+              "based_on": "9a2baf0ece3a17b178440e68523a8bc38ca45677a054fac86e5fa53bcb48ebe6",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Vida: %s",
+              "based_on": "9a2baf0ece3a17b178440e68523a8bc38ca45677a054fac86e5fa53bcb48ebe6",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Gesundheit: %s",
+              "based_on": "9a2baf0ece3a17b178440e68523a8bc38ca45677a054fac86e5fa53bcb48ebe6",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Santé : %s",
+              "based_on": "9a2baf0ece3a17b178440e68523a8bc38ca45677a054fac86e5fa53bcb48ebe6",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Zdrowie: %s",
+              "based_on": "9a2baf0ece3a17b178440e68523a8bc38ca45677a054fac86e5fa53bcb48ebe6",
+              "status": "ai-draft"
+            }
+          }
+        }
+      }
+    },
+    "lothlorien_feature_probe_bp": {
+      "kind": "behavior",
+      "entries": {
+        "pack.name": {
+          "source": "Lothlorien — Worldgen Test",
+          "context": {
+            "meaning": "Name of the optional native structure-placement diagnostic pack, separate from normal Lothlorien gameplay.",
+            "location": "lothlorien_feature_probe_bp: world behavior pack selection screen",
+            "trigger": "Player selects behavior packs while creating a test world.",
+            "tone": "Concise technical test label",
+            "grammar": "Standalone pack label",
+            "constraints": "Preserve Lothlorien brand; distinguish this optional diagnostic pack from the normal mod."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Lothlorien — Test generování světa",
+              "based_on": "7969603cea3143b6a604160db9a62cf32dfcb4e4f5d5a39f3b4280bc4be74a8e",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Lothlorien — Prueba de generación del mundo",
+              "based_on": "7969603cea3143b6a604160db9a62cf32dfcb4e4f5d5a39f3b4280bc4be74a8e",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Lothlorien — Prueba de generación del mundo",
+              "based_on": "7969603cea3143b6a604160db9a62cf32dfcb4e4f5d5a39f3b4280bc4be74a8e",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Lothlorien — Teste de geração do mundo",
+              "based_on": "7969603cea3143b6a604160db9a62cf32dfcb4e4f5d5a39f3b4280bc4be74a8e",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Lothlorien — Teste de geração do mundo",
+              "based_on": "7969603cea3143b6a604160db9a62cf32dfcb4e4f5d5a39f3b4280bc4be74a8e",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Lothlorien — Weltgenerierungstest",
+              "based_on": "7969603cea3143b6a604160db9a62cf32dfcb4e4f5d5a39f3b4280bc4be74a8e",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Lothlorien — Test de génération du monde",
+              "based_on": "7969603cea3143b6a604160db9a62cf32dfcb4e4f5d5a39f3b4280bc4be74a8e",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Lothlorien — Test generowania świata",
+              "based_on": "7969603cea3143b6a604160db9a62cf32dfcb4e4f5d5a39f3b4280bc4be74a8e",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "pack.description": {
+          "source": "Optional structure placement diagnostics. Enable only in disposable test worlds.",
+          "context": {
+            "meaning": "This optional diagnostic pack adds artificial fixtures to world generation; activate it only in disposable test worlds.",
+            "location": "lothlorien_feature_probe_bp: world behavior pack selection screen",
+            "trigger": "Player selects behavior packs while creating a test world.",
+            "tone": "Concise technical test label",
+            "grammar": "Description followed by a direct instruction",
+            "constraints": "Preserve Lothlorien brand; distinguish this optional diagnostic pack from the normal mod."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Volitelné testy umisťování staveb. Zapínejte pouze ve světech určených k testování a smazání.",
+              "based_on": "fc6d3ebeb82b51c47549c51d6199c8cf44788674e8ff783ae07abda8d66e7885",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Pruebas opcionales de colocación de estructuras. Actívalas solo en mundos de prueba que puedas borrar.",
+              "based_on": "fc6d3ebeb82b51c47549c51d6199c8cf44788674e8ff783ae07abda8d66e7885",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Pruebas opcionales de colocación de estructuras. Actívalas solo en mundos de prueba que puedas borrar.",
+              "based_on": "fc6d3ebeb82b51c47549c51d6199c8cf44788674e8ff783ae07abda8d66e7885",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Testes opcionais de colocação de estruturas. Ativa apenas em mundos de teste que possas apagar.",
+              "based_on": "fc6d3ebeb82b51c47549c51d6199c8cf44788674e8ff783ae07abda8d66e7885",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Testes opcionais de posicionamento de estruturas. Ative apenas em mundos de teste que possam ser apagados.",
+              "based_on": "fc6d3ebeb82b51c47549c51d6199c8cf44788674e8ff783ae07abda8d66e7885",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Optionale Tests zur Platzierung von Bauwerken. Nur in Testwelten aktivieren, die gelöscht werden können.",
+              "based_on": "fc6d3ebeb82b51c47549c51d6199c8cf44788674e8ff783ae07abda8d66e7885",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Tests facultatifs de placement des structures. À activer uniquement dans des mondes de test pouvant être supprimés.",
+              "based_on": "fc6d3ebeb82b51c47549c51d6199c8cf44788674e8ff783ae07abda8d66e7885",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Opcjonalne testy rozmieszczania budowli. Włączaj tylko w światach testowych przeznaczonych do usunięcia.",
+              "based_on": "fc6d3ebeb82b51c47549c51d6199c8cf44788674e8ff783ae07abda8d66e7885",
+              "status": "ai-draft"
+            }
+          }
         }
       }
     }

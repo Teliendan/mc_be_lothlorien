@@ -5,6 +5,7 @@ import { message } from "./messages.js";
 // Planting it warns the player about the space it needs; bone meal does nothing on it (and says so).
 import { world, system } from "@minecraft/server";
 import { repeatedUse } from "./use_guard.js";
+import { saplingLight, validSaplingSoil, readTreeBlock } from "./tree_interaction_rules.js";
 import {
   ANCHOR, BLOCKED_TELL_RADIUS, BLOCKED_TELL_TICKS, PLAIN_TREES, GROW_CHANCE, MIN_LIGHT, SIZE, SIZE_Y, SPROUT_ID, isNatural, treeOrigin,
 } from "./great_mallorn_rules.js";
@@ -48,6 +49,9 @@ function tellBlocked(block, obstacle) {
 
 // Check the tree's space and place it. Runs as a job; the sprout may be gone or changed by the time it finishes.
 function* grow(dimension, at) {
+  const original = readTreeBlock(dimension, at);
+  if (original?.typeId !== SPROUT_ID || !validSaplingSoil(original) || saplingLight(original) < MIN_LIGHT) return;
+  const permutation = original.permutation;
   const id = PLAIN_TREES[Math.floor(Math.random() * PLAIN_TREES.length)];
   const cells = yield* readCells(id);
   if (!cells) return;
@@ -64,7 +68,8 @@ function* grow(dimension, at) {
     if (++n % 400 === 0) yield;
   }
   const sprout = dimension.getBlock(at);
-  if (sprout?.typeId !== SPROUT_ID) return;
+  if (sprout?.typeId !== SPROUT_ID || !permutation.matches(sprout.typeId, sprout.permutation.getAllStates()) ||
+      !validSaplingSoil(sprout) || saplingLight(sprout) < MIN_LIGHT) return;
   world.structureManager.place(id, dimension, origin);
   // the worldgen anchor (a jigsaw block in the bottom trunk cell) is only for jigsaw placement: make it wood
   const anchor = dimension.getBlock({ x: origin.x + ANCHOR.x, y: origin.y + ANCHOR.y, z: origin.z + ANCHOR.z });
@@ -91,18 +96,10 @@ function tryGrow(block) {
   );
 }
 
-function lightAt(block) {
-  try {
-    return block.getLightLevel();
-  } catch {
-    return MIN_LIGHT;
-  }
-}
-
 system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
   blockComponentRegistry.registerCustomComponent("lothlorien:great_sprout", {
     onRandomTick({ block }) {
-      if (Math.random() >= GROW_CHANCE || lightAt(block) < MIN_LIGHT) return;
+      if (Math.random() >= GROW_CHANCE || saplingLight(block) < MIN_LIGHT || !validSaplingSoil(block)) return;
       if (block.permutation.getState(STAGE) === 0) block.setPermutation(block.permutation.withState(STAGE, 1));
       else tryGrow(block);
     },

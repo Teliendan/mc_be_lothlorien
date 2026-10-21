@@ -636,7 +636,9 @@
       },
       "minecraft:pushable_by_entity": {},
       "minecraft:pushable_by_block": {},
-      "minecraft:leashable": {}
+      "minecraft:leashable": {},
+      "minecraft:leashable_to": {},
+      "minecraft:can_stand_on_powder_snow": {}
     },
     "events": {
       "lothlorien:set_calm": {

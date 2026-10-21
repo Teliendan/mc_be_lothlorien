@@ -181,7 +181,7 @@ Dropped: Box of Lórien earth (not unique enough), Elessar (Aragorn's alone; bec
 - **Survive the hit**: on hitting a mob they usually drop as an item to pick up again (chance tunable). Helpful, not overpowered.
 - ~~Silver trail~~ **dropped** (owner 2026-10-10): invisible behind the vanilla arrow's own flight particles [V].
 - **Recovery 100 %** (owner): the arrow item drops at the hit spot by script (`projectileHitEntity`, works [V]); ground-stuck arrows are picked up as the custom item [V].
-- Fired **only from the Bow of the Galadhrim** (owner): a vanilla bow in survival cannot draw with only custom arrows [V] (engine-side, accepted). The Galadhrim bow fires both kinds; the earliest inventory slot is used first [V].
+- Fired from the **Bow of the Galadhrim**, with **dispensers also allowed where supported** (owner 2026-10-18). A vanilla bow in survival cannot draw with only custom arrows [V] (engine-side, accepted); vanilla bow/crossbow custom-ammo restriction remains. The Galadhrim bow fires both kinds; the earliest inventory slot is used first [V]. Native dispenser path and offhand permission: [interaction ledger](../ARCHERY_INTERACTIONS.md), engine acceptance pending.
 - **Leads (owner 2026-10-10, built, not seen in game):** every elf is leashable; a released elf takes a new home where it was released, anywhere (`set_home_position` on the unleash event; the record `lothlorien:village_homes`
   stays as the planner's tree assignment, the elf's own `lothlorien:home` and `lothlorien:moved` track the move). While on a lead there is no home radius. Harmony: elf and warden deeds count everywhere, not only inside the forest.
 - Flight: the custom arrow entity (copy of vanilla `arrow`) flies identically to a vanilla arrow [V].

@@ -3,7 +3,7 @@
 //
 // A Friend of Lothlorien offers a Mallorn acorn: the squirrel takes it, scampers off (the engine's own pathfinding follows
 // the invisible guide beacon, as the white deer does), digs for a moment, comes back to the player and drops a small gift
-// (loot_tables/gifts/squirrel.json, spawned with /loot). One errand per squirrel every COOLDOWN_TICKS.
+// (loot_tables/gifts/squirrel.json, rolled by the native loot-table API). One errand per squirrel every COOLDOWN_TICKS.
 
 export const SQUIRREL_ID = "lothlorien:squirrel";
 export const GIFT_TABLE = "gifts/squirrel";
@@ -14,7 +14,7 @@ export const AWAY_HEADINGS = 8;
 export const AWAY_ARRIVE = 3; // horizontal distance to the away point that counts as "there"
 export const AWAY_TIMEOUT = 400; // 20 s: dig wherever it got to
 export const DIG_TICKS = { min: 60, max: 100 };
-export const GIFT_DIST = 2.5; // horizontal distance to the player that counts as "back"
+export const GIFT_DIST = 2.5; // actual3D delivery distance; the runtime rejects stacked-floor proximity
 export const ABORT_DIST = 40; // the player this far away: the errand is dropped
 export const MAX_TICKS = 2400; // an errand lasts 2 minutes at most (the beacon's own despawn timer is 330 s)
 export const COOLDOWN_TICKS = 12000; // 10 minutes of world time before the same squirrel runs another errand

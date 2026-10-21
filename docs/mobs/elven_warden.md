@@ -1,5 +1,13 @@
 # Elven Warden (`lothlorien:elven_warden`) - design and plan, v1
 
+2026-10-20 Group16 approved/source fixes deployed: [NPC interactions](../NPC_INTERACTIONS.md).
+Native leads/anchors; first leash permanently retains even natural guards. While
+led, persistent with no home restriction; any release sets a new home/radius20.
+Untouched natural guards retain their lifecycle; accepted combat/rewards stay.
+Nine runners passed; native lead/reload/home/AI acceptance remains open.
+The opening status below is historical; later dated owner observations remain
+authoritative within their scope. No new in-game observations.
+
 Archetype: ranged defender, "iron golem with a bow", natural spawner plus persistent village guards. Status 2026-10-07 (game 1.26.52,
 Script API 2.8.0): part A (BP entity, spawn rule, scripts, village pieces, offline tests) is **built**, part B (RP art) is built by a
 second worker, **nothing is tested in game yet**; see section 10 for the owner decisions that override sections 1-9 where different. Every engine assumption is tagged **[V]** verified against a file on disk, **[D]**

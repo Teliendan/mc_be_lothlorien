@@ -1,6 +1,10 @@
 // Small, open woodland garden; only existing blocks and native deferred container loot.
+import { addSoilSkirt, SKIRT } from "./ground_skirt.mjs";
+
+// start: the jigsaw start height. The buried anchor (template y -2) lands on the terrain's top block, so the garden's grass is one above
+// the terrain (owner, Test G 2026-10-20: a raised garden cannot flood, a garden in a lake was flooded at -2).
 export const GARDEN = Object.freeze({
-  id: "lothlorien:flower_garden_01", size: [13, 5, 13], offset: [6, 2, 6],
+  id: "lothlorien:flower_garden_01", size: [15, 4 + SKIRT.depth, 15], offset: [7, SKIRT.depth, 7], start: 0, clear: 4,
   loot: "loot_tables/chests/flower_garden.json", barrel: [4, 0, 5],
   anchor: "lothlorien:garden_ground",
 });
@@ -9,13 +13,15 @@ export function buildFlowerGarden() {
   const blocks = new Map(), flowers = [];
   const put = (x, y, z, name, states = {}, extra = {}) =>
     blocks.set(`${x},${y},${z}`, { name, states, ...extra });
-  // A rounded soil patch supports the planting and grass aisles. Clear only two
+  // A rounded soil patch supports the planting and grass aisles. Clear GARDEN.clear
   // cells above it; the rest of the template stays void, preserving the canopy.
+  const footprint = new Set();
   for (let x = -5; x <= 5; x++) for (let z = -5; z <= 5; z++) {
     if (Math.abs(x) === 5 && Math.abs(z) === 5) continue;
     put(x, -2, z, "minecraft:dirt");
     put(x, -1, z, "minecraft:grass_block");
-    for (let y = 0; y <= 1; y++) put(x, y, z, "minecraft:air");
+    for (let y = 0; y < GARDEN.clear; y++) put(x, y, z, "minecraft:air");
+    footprint.add(`${x},${z}`);
   }
   const bed = (x0, z0, species) => {
     // Six flowers in each bed, with half-height silver edging and cut corners.
@@ -43,13 +49,16 @@ export function buildFlowerGarden() {
   // or the open bench side. No saplings are planted in the composition.
   put(5, -2, 5, "minecraft:dirt");
   put(5, -1, 5, "minecraft:grass_block");
-  for (const x of [3, 4, 5]) for (let y = 0; y <= 1; y++) put(x, y, 5, "minecraft:air");
+  footprint.add("5,5");
+  for (const x of [3, 4, 5]) for (let y = 0; y < GARDEN.clear; y++) put(x, y, 5, "minecraft:air");
   put(...GARDEN.barrel, "minecraft:barrel", { facing_direction: 1, open_bit: false }, { loot: GARDEN.loot });
   // Buried anchor keeps rotation centred and places the soil surface at ground.
   put(0, -2, 0, "minecraft:jigsaw", { facing_direction: 0, rotation: 0 }, {
     jigsaw: GARDEN.anchor, finalState: "minecraft:dirt",
   });
-  return { blocks, flowers, entities: [] };
+  // Deep soil under the patch and a ragged shoulder round it (tools/ground_skirt.mjs).
+  const skirt = addSoilSkirt(put, (x, y, z) => blocks.has(`${x},${y},${z}`), footprint, { top: -1, seed: 11 });
+  return { blocks, flowers, entities: [], footprint, skirt };
 }
 
 export function flowerGardenLoot() {
@@ -65,16 +74,21 @@ export function flowerGardenLoot() {
   ] };
 }
 
+// Gardens and memorials share one grid (owner, 2026-10-21): each candidate places one of them, so the two never
+// pair up. Spacing 9 / separation 3 keeps about the old combined count (1/81 per chunk² against 2/144 from two
+// separate 12-chunk grids); neighbouring sites stay at least three chunks apart. Salt is the old garden one.
+export const GARDEN_SITES = Object.freeze({ file: "worldgen/structure_sets/garden_sites.json", salt: 794231583, spacing: 9, separation: 3 });
+export function gardenSitesSet() {
+  return { format_version: "1.21.100", "minecraft:structure_set": {
+    description: { identifier: "lothlorien:garden_sites" },
+    placement: { type: "minecraft:random_spread", salt: GARDEN_SITES.salt,
+      spacing: GARDEN_SITES.spacing, separation: GARDEN_SITES.separation, spread_type: "linear" },
+    structures: [{ structure: "lothlorien:flower_garden", weight: 1 }, { structure: "lothlorien:memorial", weight: 1 }],
+  } };
+}
+
 export function flowerGardenWorldgen() {
   return {
-    // Twice the existing giant-tree spacing in each axis gives one quarter
-    // as many attempts. A separate salt/grid adds gardens without replacing trees.
-    structure_sets: { format_version: "1.21.100", "minecraft:structure_set": {
-      description: { identifier: "lothlorien:flower_garden" },
-      placement: { type: "minecraft:random_spread", salt: 794231583,
-        spacing: 12, separation: 4, spread_type: "linear" },
-      structures: [{ structure: "lothlorien:flower_garden", weight: 1 }],
-    } },
     template_pools: { format_version: "1.21.100", "minecraft:template_pool": {
       description: { identifier: "lothlorien:flower_garden" },
       elements: [{ element: { element_type: "minecraft:single_pool_element", location: GARDEN.id.replace(":", "/") }, weight: 1 }],
@@ -84,7 +98,7 @@ export function flowerGardenWorldgen() {
       biome_filters: [{ test: "has_biome_tag", value: "lothlorien" }],
       step: "surface_structures", terrain_adaptation: "none",
       start_pool: "lothlorien:flower_garden", start_jigsaw_name: GARDEN.anchor,
-      max_depth: 1, start_height: { type: "constant", value: { absolute: -2 } },
+      max_depth: 1, start_height: { type: "constant", value: { absolute: GARDEN.start } },
       heightmap_projection: "world_surface", max_distance_from_center: { horizontal: 32, vertical: 32 },
     } },
   };

@@ -11,6 +11,18 @@
           "expected": { "redstone_conductor": false },
           "reason": "Temporary light deliberately cannot conduct redstone.",
           "source": "M5 utility-block design, docs/M5_PHIAL_NOTES.md; source/mock reviewed 2026-10-11, target1.26.52, game acceptance pending."
+        },
+        "minecraft:connection_rule": {
+          "counterpart": "minecraft:light_block",
+          "expected": { "accepts_connections_from": "none" },
+          "reason": "Invisible temporary light must not offer visible fence, wall or pane connections; this does not remove supplied support faces.",
+          "source": "Owner-approved Group11, docs/PHIAL_INTERACTIONS.md; current stable component docs/source checked2026-10-19 on1.26.52; native geometry acceptance pending."
+        },
+        "minecraft:precipitation_interactions": {
+          "counterpart": "minecraft:light_block",
+          "expected": { "precipitation_behavior": "none" },
+          "reason": "Temporary invisible light ignores precipitation; no snowlogging or inferred default behavior.",
+          "source": "Owner-approved Group11, docs/PHIAL_INTERACTIONS.md; current stable component docs/source checked2026-10-19 on1.26.52; native rain/snow acceptance pending."
         }
       }
     },
