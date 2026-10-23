@@ -153,7 +153,7 @@ These are item-component tags, not block tags. This is a cross-check, not a requ
 ## Evidence and follow-up
 
 - Shared decision rules and primary sources: [tags and families](../../../.claude/skills/bedrock-modding/references/14-tags.md).
-- Cross-mod findings and verification status: [workspace audit](../../../docs/tag-audit-2026-10-13.md).
+- Cross-mod findings and verification status: [shared tag reference](../../../.claude/skills/bedrock-modding/references/14-tags.md).
 - Runtime quest/hostility/debug tags remain separate from these families; the approved Friend tag and its existing-service lifecycle are documented above.
 - If accepted, update any responsible generator, run `mods verify <mod>`, deploy and confirm `in sync`, then record relevant engine observations here.
 

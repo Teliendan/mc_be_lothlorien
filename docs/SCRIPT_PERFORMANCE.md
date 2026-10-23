@@ -43,7 +43,7 @@ by a measured gain. Items, mobs, multiple occupants and chunk reload must work.
 Regression: tests/script_performance.mjs exercises production lifecycle code,
 including duplicate load, invalid handles, multiple players/sessions, beacon
 ownership races, unload/reload and rope cleanup. Shared verification runs it via
-tests/run.mjs. [Workspace handover](../../../docs/script-performance-progress.md)
+tests/run.mjs. [Workspace handover](../../../.claude/skills/bedrock-scripting/references/performance.md)
 records current validation/deployment status and remaining acceptance.
 
 Implementation commit: `Reduce idle support and wildlife script work`.

@@ -51,7 +51,7 @@ world, without numeric FPS/TPS or a profiler trace; it does not establish every
 loot/motion edge case or the benefit of later creature/rope optimizations.
 Reusable principle: avoid permanent fast support checks per generated block;
 use native survival plus bounded event-local work and the cheapest correct
-fallback. Workspace docs/bedrock-script-performance.md records the full lesson.
+fallback. Workspace .claude/skills/bedrock-scripting/references/performance.md records the full lesson.
 
 Offline regressions cover cold moving/identical replacements, six attachment
 sides at a new head, remote attached positions, a stationary-body guard, deferred

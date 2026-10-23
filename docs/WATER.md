@@ -35,7 +35,7 @@ physics still need comparison; other partial blocks retain their previous outgoi
 Validation on 2026-10-09: full `mods verify lothlorien` passes with zero errors
 (14 warnings); stair postprocessing matches the checked-in block policies and is
 idempotent. Shared generator/guidance and verifier fixtures: workspace commit `cfa1d2a`.
-See `C:/mcmods/docs/vanilla-water-counterparts.md`. Buttons/plates do not inherit
+See `.claude/skills/bedrock-blocks/references/water.md`. Buttons/plates do not inherit
 repeaters' flow-through behavior.
 Every waterloggable block explicitly retains `use_liquid_clipping: false`, the current
 1.26 default; inspect water appearance on partial/multipart shapes before changing it.

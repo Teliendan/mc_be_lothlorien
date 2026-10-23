@@ -4,7 +4,7 @@ Things a vanilla wood type has (or we considered) that the mod does not have. Re
 starting any of them, so nobody re-researches a dead end. Facts were checked against the installed
 game data (1.26.52), the Microsoft creator docs and the Bedrock Wiki, in 2026-09.
 
-2026-10-18 source/Wiki audit: [current interaction ledger](VANILLA_INTERACTIONS.md)
+2026-10-18 source/Wiki audit: [parity: blocks/items](parity/BLOCKS_ITEMS.md), [creatures](parity/CREATURES.md)
 separates documented omissions from open decisions and pending game checks.
 The corrected entries below supersede their older phase descriptions; this
 source audit itself adds no engine verification or new owner-approved exceptions;

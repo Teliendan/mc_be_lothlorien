@@ -27,6 +27,12 @@ item-tag membership and one-antler/four-lantern recipe. The lamp art generator
 also writes the same tags/stack/recipe; accepted assets were not rebuilt.
 15 new production-handler scenarios and10 selected feature runners pass offline.
 
+## Stale generators (2026-10-23)
+
+`tools/make_nectar_bloom.py` and `tools/make_elven_lamps.py` lag behind the committed block JSON: re-running them
+drops later hand/patch edits (`lava_flammable`, `movable`, `motion_support`, ...). Do not re-run them as is; first
+fold the committed components into the generator and diff its output against `lothlorien_bp/blocks/`.
+
 ## Biome (Phase 1)
 
 Files:
@@ -1285,8 +1291,8 @@ Design and all approved prices: `design/elven_inhabitants.md` section 4.
 - **Debug:** `/scriptevent lothlorien:trade` reports the nearest trader, selected key, player's key and pass state. Chat/buttons/titles use the localization catalog in all shipped locales; translations remain `ai-draft`.
 - **Offline validation:** `tests/trade.mjs` covers prices/stock, no cross-band arbitrage, request separation, ids, deterministic generation and bindings; `tests/trade_glue.mjs` covers actual runtime callbacks/timers against the shared fake server, plus real trader-form button mapping, payment and stale-answer guards with a mocked UI. The glue suite is awaited after static imports to avoid sharing a fake clock concurrently with the existing village glue tests. Full checks run through `.\mods verify lothlorien`.
 - **Engine acceptance:** owner reports "It all works" on 2026-10-11 for 7f86c87. This is overall acceptance; individual engine-question answers were not separately logged. Keep [M3_TRADES_TEST.md](M3_TRADES_TEST.md) for regressions and future detailed investigations. Existing M1 elves gain shops after reload; M3 needs no new world.
-- **Trade guidance follow-up:** commit 9cdd1a0, `Explain the second elf click on the Trade button`. The label appends a newline, grey `Â§7` formatting and localized "Then click the elf again", matching the Loremaster's active-quest button pattern. The owner confirmed Trade's hover guidance works on 2026-10-11 ("It works", deployed revision 405d482); no separate hover handler or tooltip argument is involved. Offline form selection/payment regressions pass. No click-flow change. M3 is complete, including this follow-up. Workspace `docs/bedrock-trading.md` records the observation and API distinction.
+- **Trade guidance follow-up:** commit 9cdd1a0, `Explain the second elf click on the Trade button`. The label appends a newline, grey `Â§7` formatting and localized "Then click the elf again", matching the Loremaster's active-quest button pattern. The owner confirmed Trade's hover guidance works on 2026-10-11 ("It works", deployed revision 405d482); no separate hover handler or tooltip argument is involved. Offline form selection/payment regressions pass. No click-flow change. M3 is complete, including this follow-up. Workspace `.claude/skills/bedrock-modding/references/08-trading.md` records the observation and API distinction.
 
-Plan corrections from source/doc review: add the separate native trading look goal; set price multipliers explicitly to zero (documented omitted default is 0.05); woodwright rank 2 stays unchanged until M5. Reusable evidence and sources: workspace `docs/bedrock-trading.md` (`.claude/` is read-only for this agent).
+Plan corrections from source/doc review: add the separate native trading look goal; set price multipliers explicitly to zero (documented omitted default is 0.05); woodwright rank 2 stays unchanged until M5. Reusable evidence and sources: workspace `.claude/skills/bedrock-modding/references/08-trading.md` (`.claude/` is read-only for this agent).
 
 2026-10-19 leaf/tree interaction group: see [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md) for native item compost/smelting/fuel/pots, mixed canopy support, guarded deferred growth/use, above-block light/soil and remaining automation/nest/native checks. Art/harvest/worldgen distributions are unchanged. Regenerate data with `tools/configure_leaf_tree_interactions.py`; `configure_support.py` runs it before deriving policies. New explicit leaf items reuse existing translated block names and native cube rendering. Great structure obstacle scans remain yielded and nontransactional; no full-volume synchronous recheck was added.
