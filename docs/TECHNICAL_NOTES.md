@@ -3,6 +3,9 @@
 Facts checked against the installed game data (`C:\mcmods\reference\vanilla\current`) and the docs,
 kept here so later phases do not re-derive them. Design lives in `design/`.
 
+Owner plan (2026-10-23): when the mod is finished, condense the whole `docs/` folder (this file
+included) to final design, decisions and limits; phase history stays in git.
+
 Water update (2026-10-09): [WATER.md](WATER.md) supersedes the older missing-waterlogging
 and water-flow-breaking notes below. All 44 blocks now declare a policy; actual engine
 flow, rendering and drops still need validation.
