@@ -1,4 +1,4 @@
-# LothlÃ³rien â€” technical notes
+# Lothlórien — technical notes
 
 Facts checked against the installed game data (`C:\mcmods\reference\vanilla\current`) and the docs,
 kept here so later phases do not re-derive them. Design lives in `design/`.
@@ -38,14 +38,14 @@ Files:
 | `lothlorien_rp/fogs/lothlorien_fog_setting.json` | `lothlorien:fog_lothlorien` |
 
 - **Only `minecraft:replace_biomes` makes a custom biome generate**, stable (no experiment)
-  since 1.21.110; `format_version` must be â‰¥ `1.21.110`. It re-labels part of the areas the
+  since 1.21.110; `format_version` must be ≥ `1.21.110`. It re-labels part of the areas the
   vanilla generator already chose as a target biome. It **cannot change terrain shape**:
-  LothlÃ³rien has forest terrain because it only replaces forests.
+  Lothlórien has forest terrain because it only replaces forests.
 - `targets` are **namespaced** ids (`minecraft:forest`). Bare `forest` (what the wiki
   and older docs show) fails in 1.26 with "No biome found with name: 'forest'" and the
   whole biome is dropped. Custom biomes cannot be targets, so
-  a nested "heart" biome is not possible (see design KB Â§3).
-- `amount` (0â€“1] â‰ˆ fraction of target area replaced; `noise_frequency_scale` (0â€“100]:
+  a nested "heart" biome is not possible (see design KB §3).
+- `amount` (0–1] ≈ fraction of target area replaced; `noise_frequency_scale` (0–100]:
   higher = smaller, more frequent patches. Tuning log: `0.35`/`10` gave a mid-sized, long narrow
   region; then `0.5`/`4` plus old-growth birch (`birch_forest_mutated`); then `0.45`/`1`, which in game
   (2026-09-29) still cut a `minecraft:forest` at a taiga edge into a few-tree strip beside a large
@@ -82,7 +82,7 @@ Files:
 - Stable server components: `climate`, `creature_spawn_probability`, `humidity`,
   `map_tints`, `mountain_parameters`, `partially_frozen`, `replace_biomes`,
   `surface_builder`, `surface_material_adjustments`, `tags`. Fog/sky/grass colour are
-  **client** components (`minecraft:client_biome`), not server ones â€” some tutorials put
+  **client** components (`minecraft:client_biome`), not server ones — some tutorials put
   `fog_appearance` / `surface_parameters` in the server file; the vanilla files do not.
 - Client grass/foliage take a flat colour (`"color": "#rrggbb"`, as vanilla `pale_garden`)
   or `{"color_map": ...}`.
@@ -91,17 +91,17 @@ Files:
 
 Spawn rules and feature rules find biomes only by tag.
 
-- `overworld` â†’ vanilla overworld features (ores, grass, flowers...).
-- `forest` â†’ vanilla forest trees (`forest_surface_trees_feature`). Kept for now as the
+- `overworld` → vanilla overworld features (ores, grass, flowers...).
+- `forest` → vanilla forest trees (`forest_surface_trees_feature`). Kept for now as the
   placeholder tree cover; the golden foliage tint makes them read as "not a normal forest".
   Drop it once Mallorns exist, and re-add the vanilla features we still want explicitly.
-- `animal` â†’ vanilla passive spawns.
-- **No `monster`** â†’ vanilla hostile surface spawn rules (zombie, skeleton, creeper, spider,
+- `animal` → vanilla passive spawns.
+- **No `monster`** → vanilla hostile surface spawn rules (zombie, skeleton, creeper, spider,
   witch, enderman...) do not match. Not covered by this: phantoms (player insomnia, not
   biome), patrols/raids, spawners, mobs walking in, other add-ons' mobs. Also check
   slimes and drowned during the spike.
-- `lothlorien` â†’ our own tag for our feature/spawn rules.
-- The biome is 3D: caves under a replaced forest may also be LothlÃ³rien, and then equally
+- `lothlorien` → our own tag for our feature/spawn rules.
+- The biome is 3D: caves under a replaced forest may also be Lothlórien, and then equally
   monster-free. Test it; decide whether that is acceptable.
 
 ## Pack cleanup (2026-09-30)
@@ -117,7 +117,7 @@ in the pack is `dc1182e` (`git show dc1182e:lothlorien_bp/scripts/<file>`). Kept
 `/scriptevent lothlorien:debug` toggles an actionbar showing the biome id underfoot, the depth
 level and the hostile mobs within 64 blocks (in-biome / total). Kept in the pack (it shows the depth).
 **Removed from the pack (2026-09-30 cleanup, code in `tools/dev_scripts/biome_debug.js`, git `dc1182e`):**
-`/scriptevent lothlorien:survey` (LothlÃ³rien share and centre within 160 blocks) and the world-load chat
+`/scriptevent lothlorien:survey` (Lothlórien share and centre within 160 blocks) and the world-load chat
 line saying whether the biome registered.
 
 `/locate biome` returns the **nearest** point of the biome, often its edge, and that edge
@@ -128,7 +128,7 @@ General biome knowledge (for any mod) is in `.claude/skills/bedrock-modding/refe
 
 ## Phase 1 test checklist (new world each time the biome JSON changes)
 
-Worldgen changes affect only newly generated chunks â€” always test in a fresh world.
+Worldgen changes affect only newly generated chunks — always test in a fresh world.
 
 1. `/locate biome lothlorien:lothlorien` finds it; teleport there.
 2. Region size: large contiguous areas, not confetti. Tune `noise_frequency_scale` / `amount`.
@@ -138,14 +138,14 @@ Worldgen changes affect only newly generated chunks â€” always test in a fr
 5. Caves under the biome: hostiles or not?
 6. Vibrant Visuals on/off: colours and fog still look right.
 
-## Phase 2 â€” edge/heart spike
+## Phase 2 — edge/heart spike
 
 **A. Runtime depth** (`scripts/depth.js`, pure; sampler in `main.js`): probes rings at
 8/16/24/32/40 blocks (probes at most 10 blocks apart, 83 in total) at the **surface** under
 each point; the first ring with a foreign point bounds the border distance. Levels: edge
 (border <= 16), inner (<= 40), heart (farther). `minecraft:river` counts as inside. Runs every
 3 s per player, never per tick. `/scriptevent lothlorien:depth` prints the estimate and the
-ms per estimate (200-run average) â€” **record it here**: `_ms per estimate: ?_`.
+ms per estimate (200-run average) — **record it here**: `_ms per estimate: ?_`.
 
 Fixed 2026-09-29 (user saw "inner" from one side and "heart" from the other): `getBiome`
 throws in unloaded chunks and those probes were skipped, so a border ahead of a flying player
@@ -164,11 +164,11 @@ dense dandelion patches only where `query.noise(origin/120)` > 0.3, so grove-lik
 appear as large slow-varying regions independent of the biome border. Superseded in Phase 6: the dandelion patches were replaced by Elanor/Niphredil (see below). Noise is world-position based, so a grove can fall
 on the edge; it is not tied to depth. That is the honest limit of JSON worldgen.
 
-Test (fresh world): fly over a LothlÃ³rien region; patches should cluster in a few large
+Test (fresh world): fly over a Lothlórien region; patches should cluster in a few large
 zones. Judge whether that reads as "deeper = richer". If not, the next option is scripted
 post-generation decoration keyed to `estimateDepth` (not committed to; see plan).
 
-## Phase 3 â€” Mallorn wood set
+## Phase 3 — Mallorn wood set
 
 Block format is **1.26.50** and both manifests need `min_engine_version` 1.26.50 (multi-box
 collision, `minecraft:tags` and `minecraft:sound` are format-gated; `tag:*` keys no longer work).
@@ -240,7 +240,7 @@ inside the open selection box. Both sets now use the `*` texture `mallorn_fence_
 - **Icons (2026-09-30; owner confirmed in game 2026-10-01 that the menu icons look right, 1.26.52).** Owner saw the stairs and gate icons turned, the slab big and high, the fence turned. Every non-cube plank-family block now names an icon geometry in `minecraft:item_visual` whose `item_display_transforms.gui` sets rotation, scale 0.625 and `fit_to_frame: false`: stairs `mallorn_stairs_item` (straight stair, tall half east, `[30,135,0]`, written by `gen_stairs.py`), gate `fence_gate_closed` `[30,135,0]`, slab `slab_bottom`, trapdoor, pressure plate `[30,225,0]`, fence `fence_carried` `[30,225,0]` translation -1 scale 0.62, button `mallorn_button_item` `[30,225,0]` (Java's 6x4x4 box looked turned and too wide in game, 2026-10-01; now 2x4x6 with the long face east; owner confirmed it in game 2026-10-01). Placed blocks, permutations and boxes are unchanged. Door keeps its 2D icon; planks/logs/wood are cubes. Poses come from Kaioga's 1.26.50 templates; the rule is in `bedrock-block-families/references/families.md` "Item icons", the test is "icons: ..." in `tests/run.mjs`. Check in game next to vanilla oak: stairs (tall half back left), slab (low, vanilla size), fence and gate (same diagonal as vanilla), trapdoor, plate, button.
 - **Untested in game** (no game access while writing): everything above. Check first: door swing/hinge, gate open pose, slab merge, log rotation, redstone opening.
 
-## Phase 4 â€” small Mallorn and the acorn loop
+## Phase 4 — small Mallorn and the acorn loop
 
 Files: `scripts/mallorn_tree.js` (pure generator, no Minecraft imports), `scripts/trees.js` (growth,
 bone meal, leaf decay, instruments), `blocks/mallorn_sapling.json`, `items/mallorn_acorn.json`.
@@ -279,7 +279,7 @@ bone meal, leaf decay, instruments), `blocks/mallorn_sapling.json`, `items/mallo
   `crop_growth_emitter` particle name, bone meal event cancel, sapling `placement_filter` with the
   block-item route. Plain-Node generator stats are verified.
 
-## Phase 4b â€” natural Mallorns (native worldgen, no script)
+## Phase 4b — natural Mallorns (native worldgen, no script)
 
 `feature_rules/mallorn_trees_feature_rules.json` (surface_pass, tag `lothlorien`, 5 tries per chunk) places
 `select_mallorn_tree_feature` (weighted: 25 simple, 60 fancy, 15 mega/2x2). The three are vanilla
@@ -543,7 +543,7 @@ tested), `scripts/lembas.js`, items `western_corn_seeds`, `western_corn_grain`, 
 recipes `lembas_dough`, `lembas_wrapped`, `furnace_/smoker_lembas_cake`, loot tables `western_corn(.json|_mature.json)`, features
 `western_corn_*` + two feature rules. All art is placeholder (`GRAPHICS_TASKS.md` step 7).
 
-**The loop:** find wild corn in Lothlorien -> harvest (2026-10-10 wheat-counterpart update: mature one grain plus Binomial(3+Fortune, 8/15) seeds at standard Iâ€“III; young one seed; see `WESTERN_CORN_HARVEST.md`) -> plant seeds on farmland
+**The loop:** find wild corn in Lothlorien -> harvest (2026-10-10 wheat-counterpart update: mature one grain plus Binomial(3+Fortune, 8/15) seeds at standard I–III; young one seed; see `WESTERN_CORN_HARVEST.md`) -> plant seeds on farmland
 anywhere -> grow -> craft **dough** (2x2 shaped: 3 grain + 1 sugar -> 2 dough) -> smelt in furnace or smoker -> **Lembas cake**
 (6 nutrition, "good" saturation, 1.6 s, a bit better than bread) -> craft with one Mallorn leaves block (leaf above cake) ->
 **wrapped Lembas** (8 nutrition, "supernatural" saturation = 19.2, eaten in 1.0 s, lifts the Hunger effect through the item
@@ -639,7 +639,7 @@ Replaces Disharmony (the Phase 9 section below is superseded). Spec, numbers and
   `spawn_rules/test_critter.json`, RP `entity/test_critter.entity.json`. Delete or reuse for Phase 11.
 - Spawn rule: surface, grass, light 7-15, herd 1-2, `density_limit.surface 6`, `distance_filter` 12-44, biome tag `lothlorien` only.
   `population_control: "animal"` is a fixed engine pool shared with cows, sheep, etc. (no custom pools exist): the critter
-  competes with vanilla animals for that cap. Watch whether LÃ³rien animals crowd out (or are crowded out by) vanilla ones.
+  competes with vanilla animals for that cap. Watch whether Lórien animals crowd out (or are crowded out by) vanilla ones.
 - Despawn v2 (after game test 1): not persistent, `random_chance` 20, farther than 54 blocks from a player. v1 also had `inactivity_timer` 300 (copied from vanilla rabbit/sheep, which also require light < 8, i.e. they despawn only at night): a rabbit trapped in a hole, 100+ blocks away, never despawned. Suspects: (a) the inactivity timer never elapses for a mob that keeps trying to walk; (b) despawn filters only run while the entity ticks, i.e. inside simulation distance, so the working window is only "54 blocks .. simulation distance"; a mob left far away is saved with its chunk and is not evaluated. Retest v2 by standing ~58-62 blocks from a critter (simulation distance 4 = 64 blocks).
   (Correction: the note that "no vanilla entity uses `despawn_from_distance`" was wrong; the search only covered the old base
   `vanilla/` folder. Every current vanilla mob (1.26.x update packs) uses `{"despawn_from_distance": {}}`.)
@@ -652,7 +652,7 @@ Replaces Disharmony (the Phase 9 section below is superseded). Spec, numbers and
   **Game-tested 2026-09-30 (1.26.52): works** - critters despawn, including ones spawned under v1/v2 (the rule comes from
   the current pack when the chunk loads). Name-tagged critter stays (c): OK. Phase 10 spike done.
 - Instrument `/scriptevent lothlorien:critters [watch]` (counts): removed from the pack 2026-09-30, now `tools/dev_scripts/critter_watch.js` (git `dc1182e`).
-- Test in a NEW world (spawn rules need no new chunks, but the biome does): (1) stand in LÃ³rien, `watch` on, count should climb to
+- Test in a NEW world (spawn rules need no new chunks, but the biome does): (1) stand in Lórien, `watch` on, count should climb to
   the density limit and stay; (2) run 200+ blocks away and back several times, count near you must recover, "farther loaded" must
   not grow unbounded; (3) leave 2-3 min far away, then return: old critters gone or few; (4) compare with vanilla animals in the
   adjacent forest (same pool); (5) two players in different places if possible. Record numbers here.
@@ -892,7 +892,7 @@ cube: renders nothing but passes the verifier's "geometry has no cubes" check), 
 - **Ordinary deer**: back to its pre-`3426cec` entity, client entity and render controller (no coat, no guiding state); since 2026-09-30 its
   only food is Western Corn grain (see Deer).
 
-**The offer**: right-click an adult white deer holding a **Mallorn acorn** (`lothlorien:mallorn_acorn`) as a **Friend of LothlÃ³rien** (owner rule, 2026-10-02: gifts
+**The offer**: right-click an adult white deer holding a **Mallorn acorn** (`lothlorien:mallorn_acorn`) as a **Friend of Lothlórien** (owner rule, 2026-10-02: gifts
 need Friend; before that Disharmony 0 was enough). Harmony below 0: "shies from your restless spirit"; calm but not yet Friend: "watches you,
 but does not trust you yet" (acorn kept). The entity has a `minecraft:interact` entry for a hand holding the acorn
 (`use_item false`, text "Offer Acorn"): the 2.8.0 declarations say `playerInteractWithEntity` fires after a *successful* interaction, so
@@ -1285,7 +1285,7 @@ Design and all approved prices: `design/elven_inhabitants.md` section 4.
 - **Debug:** `/scriptevent lothlorien:trade` reports the nearest trader, selected key, player's key and pass state. Chat/buttons/titles use the localization catalog in all shipped locales; translations remain `ai-draft`.
 - **Offline validation:** `tests/trade.mjs` covers prices/stock, no cross-band arbitrage, request separation, ids, deterministic generation and bindings; `tests/trade_glue.mjs` covers actual runtime callbacks/timers against the shared fake server, plus real trader-form button mapping, payment and stale-answer guards with a mocked UI. The glue suite is awaited after static imports to avoid sharing a fake clock concurrently with the existing village glue tests. Full checks run through `.\mods verify lothlorien`.
 - **Engine acceptance:** owner reports "It all works" on 2026-10-11 for 7f86c87. This is overall acceptance; individual engine-question answers were not separately logged. Keep [M3_TRADES_TEST.md](M3_TRADES_TEST.md) for regressions and future detailed investigations. Existing M1 elves gain shops after reload; M3 needs no new world.
-- **Trade guidance follow-up:** commit 9cdd1a0, `Explain the second elf click on the Trade button`. The label appends a newline, grey `Â§7` formatting and localized "Then click the elf again", matching the Loremaster's active-quest button pattern. The owner confirmed Trade's hover guidance works on 2026-10-11 ("It works", deployed revision 405d482); no separate hover handler or tooltip argument is involved. Offline form selection/payment regressions pass. No click-flow change. M3 is complete, including this follow-up. Workspace `.claude/skills/bedrock-modding/references/08-trading.md` records the observation and API distinction.
+- **Trade guidance follow-up:** commit 9cdd1a0, `Explain the second elf click on the Trade button`. The label appends a newline, grey `§7` formatting and localized "Then click the elf again", matching the Loremaster's active-quest button pattern. The owner confirmed Trade's hover guidance works on 2026-10-11 ("It works", deployed revision 405d482); no separate hover handler or tooltip argument is involved. Offline form selection/payment regressions pass. No click-flow change. M3 is complete, including this follow-up. Workspace `.claude/skills/bedrock-modding/references/08-trading.md` records the observation and API distinction.
 
 Plan corrections from source/doc review: add the separate native trading look goal; set price multipliers explicitly to zero (documented omitted default is 0.05); woodwright rank 2 stays unchanged until M5. Reusable evidence and sources: workspace `.claude/skills/bedrock-modding/references/08-trading.md` (`.claude/` is read-only for this agent).
 
