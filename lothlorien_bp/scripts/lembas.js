@@ -7,14 +7,8 @@ import { noteDeed } from "./deeds.js";
 system.beforeEvents.startup.subscribe(({ itemComponentRegistry }) => {
   itemComponentRegistry.registerCustomComponent("lothlorien:lembas", {
     onConsume({ source }) {
-      try {
-        source.removeEffect("minecraft:hunger");
-      } catch {
-        // effect not present or entity gone: nothing to lift
-      }
-      try {
-        if (source?.typeId === "minecraft:player") noteDeed(source, "lembas");
-      } catch { /* Renown feedback cannot suppress the food's cure */ }
+      source.removeEffect("minecraft:hunger");
+      if (source.typeId === "minecraft:player") noteDeed(source, "lembas");
     },
   });
 });

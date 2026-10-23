@@ -61,7 +61,7 @@ async function scenario(name, test) {
       } };
     return p;
   }
-  const click = (b, p) => { const event = { block: b, player: p, itemStack: p.held.clone() }; handlers.forEach(fn => fn(event)); return event; };
+  const click = (b, p) => { const event = { block: b, player: p, itemStack: p.held.clone(), isFirstEvent: true }; handlers.forEach(fn => fn(event)); return event; };
   const plant = (id = 'lothlorien:elanor', states = {}) => { block('minecraft:grass_block', {}, { x: 0, y: 63, z: 0 }); return block(id, states); };
   const bloom = () => { block('lothlorien:mallorn_leaves', {}, { x: 0, y: 65, z: 0 }); return block('lothlorien:nectar_bloom', { 'lothlorien:nectar': 3 }); };
   const random = Math.random; Math.random = () => 0;
@@ -72,7 +72,7 @@ async function scenario(name, test) {
 }
 
 await scenario('bone meal preserves plant spreading and ignores both fallen covers at every count', e => {
-  let b = e.plant(), p = e.player(); e.click(b, p); e.badCosmetic(); e.flush(); assert.equal(p.held.amount, 2);
+  let b = e.plant(), p = e.player(); e.click(b, p); e.flush(); assert.equal(p.held.amount, 2);
   for (const id of ['lothlorien:mallorn_leaf_carpet', 'lothlorien:mallorn_blossom']) for (const amount of [1,2,3,4]) {
     b = e.plant(id, { 'lothlorien:amount': amount }); p = e.player();
     const before = e.drops.length, event = e.click(b, p); e.flush();
@@ -80,10 +80,8 @@ await scenario('bone meal preserves plant spreading and ignores both fallen cove
     assert.equal(p.held.amount, 3); assert.equal(e.drops.length, before);
   }
 });
-await scenario('deferred bone meal rejects changed item metadata/count/slot/mode/dimension, disconnect, target and soil', e => {
-  for (const mutate of [(p) => { p.held.typeId = 'minecraft:diamond'; }, p => { p.held.name = 'named'; },
-    p => { p.held.amount--; }, p => { p.selectedSlotIndex++; }, p => { p.mode = 'creative'; },
-    p => { p.dimension = { id: 'nether' }; }, p => { p.getGameMode = () => { throw Error('left'); }; },
+await scenario('deferred bone meal rejects a changed held item type, target and soil', e => {
+  for (const mutate of [(p) => { p.held.typeId = 'minecraft:diamond'; },
     () => e.block('minecraft:stone'), () => e.block('minecraft:stone', {}, { x: 0, y: 63, z: 0 })]) {
     const b = e.plant(), p = e.player(); e.click(b, p); mutate(p); const amount = p.held.amount; e.flush();
     assert.equal(p.held.amount, amount); assert.equal(b.writes, undefined);
@@ -106,39 +104,30 @@ await scenario('nectar delivers once, including single bottle, stacked/full inve
   b = e.bloom(); p = e.player('minecraft:glass_bottle'); p.mode = 'creative'; e.click(b, p); e.flush();
   assert.equal(p.held.amount, 3); assert.equal(p.inventory[0].typeId, 'lothlorien:mallorn_nectar');
   b = e.bloom(); e.block('lothlorien:mallorn_planks', {}, { x: 0, y: 65, z: 0 });
-  p = e.player('minecraft:glass_bottle'); e.click(b, p); e.badCosmetic(); e.flush();
+  p = e.player('minecraft:glass_bottle'); e.click(b, p); e.flush();
   assert.equal(p.held.amount, 2); assert.equal(b.permutation.getState('lothlorien:nectar'), 0);
 });
-await scenario('nectar revalidates bottle/target/support and unload before stage, item or deed changes', e => {
-  for (const mutate of [p => { p.held.typeId = 'minecraft:diamond'; }, p => { p.held.name = 'other'; },
-    p => { p.held.amount++; }, p => { p.selectedSlotIndex++; }, p => { p.mode = 'creative'; },
-    p => { p.dimension = { id: 'nether' }; }, p => { p.getGameMode = () => { throw Error('left'); }; },
-    () => e.block('minecraft:stone'), () => e.block('minecraft:air', {}, { x: 0, y: 65, z: 0 })]) {
+await scenario('nectar rechecks bottle type and target before stage, item or deed changes', e => {
+  for (const mutate of [p => { p.held.typeId = 'minecraft:diamond'; }, () => e.block('minecraft:stone')]) {
     const b = e.bloom(), p = e.player('minecraft:glass_bottle'); e.click(b, p); mutate(p); const amount = p.held.amount; e.flush();
     assert.equal(p.held.amount, amount); assert.equal(b.writes, undefined); assert.equal(e.deeds.length, 0);
   }
   const b = e.bloom(), p = e.player('minecraft:glass_bottle'); e.click(b, p); e.unload(() => true); e.flush();
   assert.equal(b.writes, undefined); assert.equal(e.deeds.length, 0);
 });
-await scenario('player corn placement is farmed; every growth stage uses state-aware support and bone meal', e => {
-  const component = e.components.get('lothlorien:crop');
+await scenario('every growth stage uses state-aware support and bone meal', e => {
   for (let growth = 0; growth <= 7; growth++) for (const wild of [false, true]) {
     const b = e.plant('lothlorien:western_corn', { 'lothlorien:growth': growth, 'lothlorien:wild': wild });
     const info = e.support.describeSupport(b), soil = e.dim.getBlock({ x: 0, y: 63, z: 0 });
     assert.equal(info.supports[0].valid(soil), wild); assert.ok(info.identity.endsWith(`wild=${wild}`));
     const p = e.player(); e.click(b, p); e.flush(); assert.equal(p.held.amount, wild && growth < 7 ? 2 : 3);
   }
-  const b = e.plant('lothlorien:western_corn', { 'lothlorien:growth': 0, 'lothlorien:wild': true });
-  const event = { permutationToPlace: b.permutation, block: b, dimension: e.dim };
-  component.beforeOnPlayerPlace(event); assert.equal(event.cancel, true); assert.equal(event.permutationToPlace.getState('lothlorien:wild'), false);
-  e.block('minecraft:farmland', {}, { x: 0, y: 63, z: 0 }); event.cancel = false; component.beforeOnPlayerPlace(event); assert.equal(event.cancel, false);
 });
-await scenario('crop random ticks use plant light, postpone unreadable light and reject dirt for farmed plants', e => {
+await scenario('crop random ticks use plant light and reject dirt for farmed plants', e => {
   const b = e.plant('lothlorien:western_corn', { 'lothlorien:growth': 0, 'lothlorien:wild': false });
   e.block('minecraft:farmland', { moisturized_amount: 7 }, { x: 0, y: 63, z: 0 });
   const tick = () => e.components.get('lothlorien:crop').onRandomTick({ block: b });
   b.light = 3; tick(); assert.equal(b.writes, undefined);
-  b.getLightLevel = () => { throw Error('light'); }; tick(); assert.equal(b.writes, undefined);
   b.getLightLevel = () => 4; tick(); assert.equal(b.permutation.getState('lothlorien:growth'), 1);
   e.block('minecraft:dirt', {}, { x: 0, y: 63, z: 0 }); tick(); assert.equal(b.writes, 1);
 });

@@ -1,7 +1,7 @@
 # M5 worn gifts
 
 Interaction review, owner decisions and current engine checklist (2026-10-18):
-[WEARABLE_INTERACTIONS.md](WEARABLE_INTERACTIONS.md). Correction 2026-10-21:
+[parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md). Correction 2026-10-21:
 the owner Content Log rejects `wearable.dispensable`; it was removed from both
 items and their generator. Native dispenser equipping still needs a game check.
 Cloak dyeing/trims are intentionally excluded to preserve selected artwork;

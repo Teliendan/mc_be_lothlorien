@@ -95,4 +95,4 @@ natural decay against oak leaves; confirm exactly one leaf and zero auxiliaries
 on collection; then check TNT/explosion drops and Content Log. Large samples are
 needed to evaluate random chances. These files must be deployed before testing.
 
-2026-10-19 interaction follow-up: harvest loot/probabilities are unchanged. Both leaf variants now have explicit same-ID native block items (30% composting), furnace-to-litter recipes and chest access. Ordinary custom decay also traverses recognized vanilla/golden leaf bridges to supported vanilla/Mallorn wood while preserving reach10, caps, cache and player persistence. Full dispositions/testing: [LEAF_TREE_INTERACTIONS.md](LEAF_TREE_INTERACTIONS.md).
+2026-10-19 interaction follow-up: harvest loot/probabilities are unchanged. Both leaf variants now have explicit same-ID native block items (30% composting), furnace-to-litter recipes and chest access. Ordinary custom decay also traverses recognized vanilla/golden leaf bridges to supported vanilla/Mallorn wood while preserving reach10, caps, cache and player persistence. Full dispositions/testing: [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md).

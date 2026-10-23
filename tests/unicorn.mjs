@@ -20,11 +20,10 @@ test("unicorn: native horse float/buoyancy settings retain drowning and lava dam
 });
 
 test("unicorn: offers need a calm Friend, an unfrightened unicorn and a pause between offers", () => {
-  const ok = { band: "friend", tame: false, alarmed: false, sinceLast: undefined };
+  const ok = { band: "friend", tame: false, sinceLast: undefined };
   assert.equal(UR.offerRefusal(ok), undefined);
   assert.equal(UR.offerRefusal({ ...ok, band: "guest" }), "untrusted");
   for (const band of ["uneasy", "shunned", "hated"]) assert.equal(UR.offerRefusal({ ...ok, band }), "restless", band);
-  assert.equal(UR.offerRefusal({ ...ok, alarmed: true }), "alarmed");
   assert.equal(UR.offerRefusal({ ...ok, tame: true }), "tame");
   assert.equal(UR.offerRefusal({ ...ok, sinceLast: UR.OFFER_GAP_TICKS - 1 }), "wait");
   assert.equal(UR.offerRefusal({ ...ok, sinceLast: UR.OFFER_GAP_TICKS }), undefined);

@@ -1,5 +1,6 @@
-import { world, system, BlockPermutation, EquipmentSlot, GameMode } from "@minecraft/server";
+import { world, system, BlockPermutation, GameMode } from "@minecraft/server";
 import { gateFacingAway, overlapsPlate, pairedDoorHinge, PLATE_RELEASE_TICKS } from "./control_rules.js";
+import { captureUse, liveUse, readBlock } from "./deferred_use.js";
 
 // Phase 3 custom block components for the Mallorn wood set.
 // Stripping logs and merging slabs are world events (see bottom), not block components: a block
@@ -11,15 +12,9 @@ import { gateFacingAway, overlapsPlate, pairedDoorHinge, PLATE_RELEASE_TICKS } f
 //   lothlorien:redstone_toggle {..}        trapdoor/gate/door open while powered (edge-detected)
 
 const NS = "lothlorien";
-const CLICK = "random.click";
-
-function mainhand(player) {
-  return player?.getComponent("equippable")?.getEquipmentSlot(EquipmentSlot.Mainhand);
-}
 
 function consumeHeldItem(player, slot) {
   if (player.getGameMode() === GameMode.Creative) return;
-  if (!slot?.hasItem()) return;
   if (slot.amount > 1) slot.amount -= 1;
   else slot.setItem(undefined);
 }
@@ -28,7 +23,7 @@ function setState(block, name, value) {
   block.setPermutation(block.permutation.withState(name, value));
 }
 
-// Same-facing neighboring doors form a pair. Full solid-face hinge selection remains open.
+// Same-facing neighboring doors form a pair. Vanilla's solid-neighbour hinge choice is not expressible (owner: cosmetic limit).
 const LEFT_OF_FACING = { north: [-1, 0], south: [1, 0], east: [0, -1], west: [0, 1] };
 
 // Two plank sets share these blocks: silver (from logs) and heartwood (from stripped logs).
@@ -36,9 +31,6 @@ const WOODS = ["mallorn", "mallorn_heartwood"];
 const GATES = new Set(WOODS.map(w => `${NS}:${w}_fence_gate`));
 const plateHoldUntil = new Map();
 const positionKey = (dimension, location) => `${dimension.id}:${location.x},${location.y},${location.z}`;
-const readBlock = (dimension, position) => {
-  try { return dimension.getBlock(position); } catch { return undefined; }
-};
 
 function updateGateWall(block) {
   if (!block || !GATES.has(block.typeId)) return;
@@ -80,18 +72,41 @@ function doublePartner(block) {
   return same && p.getState(`${NS}:hinge_right`) !== hingeRight ? other : undefined;
 }
 
+// Open/close actions, shared by the player components and the wind charge. `params` are the component parameters
+// of the block JSON ({ block_state, enable_sound, disable_sound }).
+function toggleOpen(block, params, playerLocation) {
+  const next = !block.permutation.getState(params.block_state);
+  let permutation = block.permutation;
+  if (next && block.typeId.endsWith("_fence_gate")) {
+    permutation = permutation.withState("minecraft:cardinal_direction",
+      gateFacingAway(permutation.getState("minecraft:cardinal_direction"), block.center(), playerLocation));
+  }
+  block.setPermutation(permutation.withState(params.block_state, next));
+  block.dimension.playSound(next ? params.enable_sound : params.disable_sound, block.center());
+}
+
+function toggleDoor(block, params) {
+  const next = !block.permutation.getState(params.block_state);
+  setDoorOpen(block, params.block_state, next);
+  const partner = doublePartner(block);
+  if (partner) setDoorOpen(partner, params.block_state, next);
+  block.dimension.playSound(next ? params.enable_sound : params.disable_sound, block.center());
+}
+
+function pressButton(block) {
+  if (block.permutation.getState(`${NS}:powered`)) return;
+  setState(block, `${NS}:powered`, true);
+  block.dimension.playSound("random.wood_click", block.center(), { pitch: 0.6 });
+}
+
+// Arrows and tridents keep a wooden button pressed while they stay stuck beside it.
+const PRESSERS = new Set(["minecraft:arrow", "minecraft:thrown_trident", `${NS}:galadhrim_arrow`]);
+const stuckProjectile = (block) =>
+  block.dimension.getEntities({ location: block.center(), maxDistance: 1 }).some((e) => PRESSERS.has(e.typeId));
+
 const components = {
   "lothlorien:toggleable": {
-    onPlayerInteract({ block, dimension, player }, { params }) {
-      const next = !block.permutation.getState(params.block_state);
-      let permutation = block.permutation;
-      if (next && block.typeId.endsWith("_fence_gate")) {
-        permutation = permutation.withState("minecraft:cardinal_direction",
-          gateFacingAway(permutation.getState("minecraft:cardinal_direction"), block.center(), player?.location));
-      }
-      block.setPermutation(permutation.withState(params.block_state, next));
-      dimension.playSound(next ? params.enable_sound : params.disable_sound, block.center());
-    },
+    onPlayerInteract({ block, player }, { params }) { toggleOpen(block, params, player?.location); },
   },
 
   "lothlorien:gate_wall": {
@@ -111,13 +126,7 @@ const components = {
       event.permutationToPlace = perm.withState(`${NS}:hinge_right`,
         pairedDoorHinge(facing, perm.type.id, leftBlock, rightBlock));
     },
-    onPlayerInteract({ block, dimension }, { params }) {
-      const next = !block.permutation.getState(params.block_state);
-      setDoorOpen(block, params.block_state, next);
-      const partner = doublePartner(block);
-      if (partner) setDoorOpen(partner, params.block_state, next);
-      dimension.playSound(next ? params.enable_sound : params.disable_sound, block.center());
-    },
+    onPlayerInteract({ block }, { params }) { toggleDoor(block, params); },
   },
 
   // Redstone opening. The engine also sends redstone updates on placement and chunk load, so the
@@ -137,19 +146,15 @@ const components = {
   },
 
   "lothlorien:button": {
-    onPlayerInteract({ block, dimension }) {
-      if (block.permutation.getState(`${NS}:powered`)) return;
-      setState(block, `${NS}:powered`, true);
-      dimension.playSound(CLICK, block.center(), { pitch: 0.6 });
-    },
+    onPlayerInteract({ block }) { pressButton(block); },
   },
   "lothlorien:button_release": {
-    // Powered-only native scheduled tick: no idle callbacks or lost JS timeout after reload.
-    // Native tick scheduling/persistence still needs the engine comparison in CONTROL_INTERACTIONS.md.
+    // Powered-only looping native tick (every 30 ticks): no idle callbacks or lost JS timeout after reload.
+    // A stuck arrow keeps the button pressed until the next tick finds it gone.
     onTick({ block, dimension }) {
-      if (!block.permutation.getState(`${NS}:powered`)) return;
+      if (stuckProjectile(block)) return;
       setState(block, `${NS}:powered`, false);
-      dimension.playSound(CLICK, block.center(), { pitch: 0.5 });
+      dimension.playSound("random.wood_click", block.center(), { pitch: 0.5 });
     },
   },
 
@@ -158,27 +163,16 @@ const components = {
     onTick({ block, dimension }) {
       const { x, y, z } = block.location;
       const pressed = dimension
-        .getEntities({ location: { x, y, z }, volume: { x: 1, y: 0.25, z: 1 } })
-        .some((e) => {
-          try {
-            if (e.typeId === "minecraft:player" && e.getGameMode() === GameMode.Spectator) return false;
-            return overlapsPlate(block.location, e.getAABB());
-          } catch { return false; } // entity removed during query
-        });
+        .getEntities({ location: { x, y, z }, volume: { x: 1, y: 0.25, z: 1 }, excludeGameModes: [GameMode.Spectator] })
+        .some((e) => overlapsPlate(block.location, e.getAABB()));
       const powered = block.permutation.getState(`${NS}:powered`);
       const key = positionKey(dimension, block.location);
       if (!pressed && powered && system.currentTick < (plateHoldUntil.get(key) ?? 0)) return;
       if (pressed === powered) return;
-      if (pressed) {
-        const deadline = system.currentTick + PLATE_RELEASE_TICKS;
-        plateHoldUntil.set(key, deadline);
-        // Finite bookkeeping cleanup, including plates removed/unloaded while active.
-        system.runTimeout(() => {
-          if (plateHoldUntil.get(key) === deadline) plateHoldUntil.delete(key);
-        }, PLATE_RELEASE_TICKS);
-      } else plateHoldUntil.delete(key);
+      if (pressed) plateHoldUntil.set(key, system.currentTick + PLATE_RELEASE_TICKS);
+      else plateHoldUntil.delete(key);
       setState(block, `${NS}:powered`, pressed);
-      dimension.playSound(CLICK, block.center(), { pitch: pressed ? 0.8 : 0.7 });
+      dimension.playSound(pressed ? "click_on.wooden_pressure_plate" : "click_off.wooden_pressure_plate", block.center());
     },
   },
 };
@@ -194,30 +188,9 @@ system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
   blockComponentRegistry.registerCustomComponent("lothlorien:gate_wall", components["lothlorien:gate_wall"]);
 });
 
-// Local wall edits wake only neighboring gates. Commands/reload use sparse random fallback.
-world.afterEvents.playerPlaceBlock.subscribe(({ block, dimension }) => updateGatesAround(dimension, block.location));
-world.afterEvents.playerBreakBlock.subscribe(({ block, dimension }) => updateGatesAround(dimension, block.location));
-world.afterEvents.blockExplode.subscribe(({ block, dimension }) => updateGatesAround(dimension, block.location));
-world.afterEvents.pistonActivate.subscribe(event => {
-  try {
-    const positions = event.piston.getAttachedBlocks().map(block => ({ ...block.location }));
-    // Probe source and destination neighbors after the finite movement has settled.
-    const axes = [[0, -1, 0], [0, 1, 0], [0, 0, -1], [0, 0, 1], [-1, 0, 0], [1, 0, 0]];
-    const axis = axes[event.block.permutation.getState("facing_direction")];
-    if (!axis) return;
-    for (const delay of [1, 8]) system.runTimeout(() => {
-      for (const position of positions) {
-        updateGatesAround(event.dimension, position);
-        for (const sign of [-1, 1]) updateGatesAround(event.dimension, {
-          x: position.x + sign * axis[0], y: position.y + sign * axis[1], z: position.z + sign * axis[2],
-        });
-      }
-    }, delay);
-  } catch { /* unloaded piston; sparse gate fallback remains */ }
-});
-
 // Buttons and plates have no support-loss handling of their own: when a block is broken, drop any
-// of ours that were attached to it.
+// of ours that were attached to it. A placed or broken block also re-checks the Mallorn gates beside it
+// (explosions and pistons are left to the gate's sparse random tick).
 const PLATE_SUPPORT = () => [0, -1, 0];
 const BUTTON_SUPPORT = (perm) =>
   ({ up: [0, -1, 0], down: [0, 1, 0], north: [0, 0, 1], south: [0, 0, -1], west: [1, 0, 0], east: [-1, 0, 0] })[
@@ -233,7 +206,9 @@ const NEIGHBOURS = [
   [0, 1, 0], [0, -1, 0], [1, 0, 0], [-1, 0, 0], [0, 0, 1], [0, 0, -1],
 ];
 
+world.afterEvents.playerPlaceBlock.subscribe(({ block, dimension }) => updateGatesAround(dimension, block.location));
 world.afterEvents.playerBreakBlock.subscribe(({ block, dimension }) => {
+  updateGatesAround(dimension, block.location);
   const { x, y, z } = block.location;
   for (const [dx, dy, dz] of NEIGHBOURS) {
     const n = dimension.getBlock({ x: x + dx, y: y + dy, z: z + dz });
@@ -245,59 +220,80 @@ world.afterEvents.playerBreakBlock.subscribe(({ block, dimension }) => {
   }
 });
 
+// --- Projectiles: the engine cannot tell our blocks from vanilla ones, so wind charges and arrows are handled here.
+// Wind charge = a small explosion that only toggles (vanilla minecraft:explode power 1.2, toggles_blocks): open or
+// close Mallorn doors, trapdoors and gates and press buttons within that radius of the impact.
+// Arrow/trident: a collisionless button lets the arrow hit the backing block; press the button on the face that was hit.
+// The projectile events take no filter, so each handler returns at once for other projectiles.
+const FACE_OFFSET = {
+  Up: [0, 1, 0], Down: [0, -1, 0], North: [0, 0, -1], South: [0, 0, 1], East: [1, 0, 0], West: [-1, 0, 0],
+};
+const WIND_CHARGES = new Set(["minecraft:wind_charge_projectile", "minecraft:breeze_wind_charge_projectile"]);
+const WIND_RADIUS = 1.2;
+const toggleParams = (open, close) => ({ block_state: `${NS}:open`, enable_sound: open, disable_sound: close });
+const WIND_TOGGLES = Object.fromEntries(WOODS.flatMap((w) => [
+  [`${NS}:${w}_door`, [toggleDoor, toggleParams("open.wooden_door", "close.wooden_door")]],
+  [`${NS}:${w}_trapdoor`, [toggleOpen, toggleParams("open.wooden_trapdoor", "close.wooden_trapdoor")]],
+  [`${NS}:${w}_fence_gate`, [toggleOpen, toggleParams("open.fence_gate", "close.fence_gate")]],
+]));
+const BUTTONS = new Set(WOODS.map((w) => `${NS}:${w}_button`));
+
+function windBurst(dimension, at) {
+  const reach = (cell, p) => Math.max(cell - p, p - (cell + 1), 0); // distance from the point to the cell's span
+  const done = new Set();
+  for (let x = Math.floor(at.x - WIND_RADIUS); x <= Math.floor(at.x + WIND_RADIUS); x++)
+    for (let y = Math.floor(at.y - WIND_RADIUS); y <= Math.floor(at.y + WIND_RADIUS); y++)
+      for (let z = Math.floor(at.z - WIND_RADIUS); z <= Math.floor(at.z + WIND_RADIUS); z++) {
+        if (Math.hypot(reach(x, at.x), reach(y, at.y), reach(z, at.z)) > WIND_RADIUS) continue;
+        const block = readBlock(dimension, { x, y, z });
+        if (!block) continue;
+        if (BUTTONS.has(block.typeId)) { pressButton(block); continue; }
+        const toggle = WIND_TOGGLES[block.typeId];
+        if (!toggle) continue;
+        // a door is two blocks (and may have a partner): toggle it once
+        const base = block.typeId.endsWith("_door") ? block.getParts()[0].location : block.location;
+        const key = `${base.x},${base.y},${base.z}`;
+        if (done.has(key)) continue;
+        done.add(key);
+        toggle[0](block, toggle[1]);
+      }
+}
+
+const FACE_NAME = { Up: "up", Down: "down", North: "north", South: "south", East: "east", West: "west" };
+function pressStruckButton({ block, face, faceLocation }) {
+  const [dx, dy, dz] = FACE_OFFSET[face], { x, y, z } = block.location;
+  const button = readBlock(block.dimension, { x: x + dx, y: y + dy, z: z + dz });
+  if (!BUTTONS.has(button?.typeId) || button.permutation.getState("minecraft:block_face") !== FACE_NAME[face]) return;
+  // the button covers the middle of the face (its 6 x 4 px footprint, either way round)
+  const u = face === "East" || face === "West" ? faceLocation.z : faceLocation.x;
+  const v = face === "Up" || face === "Down" ? faceLocation.z : faceLocation.y;
+  if (Math.abs(u - 0.5) <= 3 / 16 && Math.abs(v - 0.5) <= 3 / 16) pressButton(button);
+}
+
+world.afterEvents.projectileHitBlock.subscribe((event) => {
+  if (!event.projectile.isValid) return;
+  const id = event.projectile.typeId;
+  if (WIND_CHARGES.has(id)) windBurst(event.dimension, event.location);
+  else if (PRESSERS.has(id)) pressStruckButton(event.getBlockHit());
+});
+world.afterEvents.projectileHitEntity.subscribe((event) => {
+  if (event.projectile.isValid && WIND_CHARGES.has(event.projectile.typeId)) windBurst(event.dimension, event.location);
+});
+
 // --- Axe strips logs/wood; slabs merge. Done as world events so ordinary placement against these
-// blocks is untouched.
+// blocks is untouched. Adventure players are left to the engine (it enforces CanPlaceOn/CanDestroy).
 const STRIPPED = {
   [`${NS}:mallorn_log`]: `${NS}:mallorn_stripped_log`,
   [`${NS}:mallorn_wood`]: `${NS}:mallorn_stripped_wood`,
 };
 const DOUBLE_SLAB = Object.fromEntries(WOODS.map((w) => [`${NS}:${w}_slab`, `${NS}:${w}_double_slab`]));
-const FACE_OFFSET = {
-  Up: [0, 1, 0], Down: [0, -1, 0], North: [0, 0, -1], South: [0, 0, 1], East: [1, 0, 0], West: [-1, 0, 0],
-};
 
 const VANILLA_AXES = new Set(["wooden", "stone", "copper", "iron", "golden", "diamond", "netherite"]
   .map(material => `minecraft:${material}_axe`));
 const isAxe = item => VANILLA_AXES.has(item.typeId) || item.hasTag("minecraft:is_axe");
 
-// Non-stackable tools always return false from ItemStack.isStackableWith. Compare their exposed
-// mutable data instead; stackable slab items additionally use the engine's metadata comparison.
-function heldData(item) {
-  const durability = item.getComponent("durability");
-  return JSON.stringify({
-    type: item.typeId, amount: item.amount, name: item.nameTag, keep: item.keepOnDeath, lock: item.lockMode,
-    lore: item.getRawLore(), place: item.getCanPlaceOn(), destroy: item.getCanDestroy(),
-    dynamic: item.getDynamicPropertyIds().sort().map(id => [id, item.getDynamicProperty(id)]),
-    enchantments: (item.getComponent("enchantable")?.getEnchantments() ?? [])
-      .map(e => [e.type.id, e.level]).sort((a, b) => a[0].localeCompare(b[0])),
-    durability: durability && [durability.damage, durability.maxDurability, durability.unbreakable],
-  });
-}
-
-function heldSnapshot(player, item) {
-  return { index: player.selectedSlotIndex, item: item.clone(), data: heldData(item), mode: player.getGameMode() };
-}
-
-function originalHand(player, held, stackable) {
-  if (player.selectedSlotIndex !== held.index || player.getGameMode() !== held.mode) return undefined;
-  const slot = mainhand(player), item = slot?.getItem();
-  if (!item || heldData(item) !== held.data || (stackable && !item.isStackableWith(held.item))) return undefined;
-  return { slot, item };
-}
-
-function blockSnapshot(block) {
-  return { dimension: block.dimension, location: { ...block.location }, permutation: block.permutation,
-    water: block.isWaterlogged };
-}
-
-function originalBlock(snapshot) {
-  const block = readBlock(snapshot.dimension, snapshot.location);
-  return block?.typeId === snapshot.permutation.type.id && block.isWaterlogged === snapshot.water &&
-    snapshot.permutation.matches(block.typeId, block.permutation.getAllStates()) ? block : undefined;
-}
-
 // Calculate all wear before changing the block. Native axes use a fixed damage chance; a tagged
-// custom axe with a nonconstant chance range still needs engine comparison (WOOD_INTERACTIONS.md).
+// custom axe with a nonconstant chance range still needs engine comparison (docs/parity/BLOCKS_ITEMS.md).
 function toolWear(player, item) {
   if (player.getGameMode() === GameMode.Creative) return undefined;
   const durability = item.getComponent("durability");
@@ -311,40 +307,37 @@ function toolWear(player, item) {
   return { item, broken: false };
 }
 
-function mergeSlab(target, double, player, held) {
-  const snapshot = blockSnapshot(target);
+function mergeSlab(target, double, player, itemStack) {
+  const use = captureUse(target, itemStack);
   system.run(() => {
-    try {
-      const current = originalBlock(snapshot), hand = originalHand(player, held, true);
-      if (!current || !hand) return;
-      current.setPermutation(BlockPermutation.resolve(double));
-      consumeHeldItem(player, hand.slot);
-      current.dimension.playSound("use.wood", current.center(), { pitch: 0.8 });
-    } catch { /* unloaded block or departed player: no further mutation */ }
+    const live = liveUse(use, player);
+    if (!live) return;
+    live.block.setPermutation(BlockPermutation.resolve(double));
+    consumeHeldItem(player, live.slot);
+    live.block.dimension.playSound("dig.wood", live.block.center(), { pitch: 0.8 });
   });
 }
 
 world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
   const { block, player, itemStack, blockFace, faceLocation } = event;
-  if (!itemStack) return;
+  if (!itemStack || player.getGameMode() === GameMode.Adventure) return;
 
   const stripped = STRIPPED[block.typeId];
   if (stripped && isAxe(itemStack)) {
-    const snapshot = blockSnapshot(block), held = heldSnapshot(player, itemStack);
     event.cancel = true;
+    if (!event.isFirstEvent) return;
+    const use = captureUse(block, itemStack);
     system.run(() => {
-      try {
-        const current = originalBlock(snapshot), hand = originalHand(player, held, false);
-        if (!current || !hand) return;
-        const wear = toolWear(player, hand.item);
-        const face = current.permutation.getState("minecraft:block_face");
-        current.setPermutation(
-          BlockPermutation.resolve(stripped, face === undefined ? {} : { "minecraft:block_face": face })
-        );
-        if (wear) hand.slot.setItem(wear.item);
-        current.dimension.playSound("use.wood", current.center(), { pitch: 0.8 });
-        if (wear?.broken) player.playSound("random.break");
-      } catch { /* unloaded block, departed player or invalid tool data: abandon the queued action */ }
+      const live = liveUse(use, player);
+      if (!live) return;
+      const wear = toolWear(player, live.slot.getItem());
+      const face = live.block.permutation.getState("minecraft:block_face");
+      live.block.setPermutation(
+        BlockPermutation.resolve(stripped, face === undefined ? {} : { "minecraft:block_face": face })
+      );
+      if (wear) live.slot.setItem(wear.item);
+      live.block.dimension.playSound("use.wood", live.block.center(), { pitch: 0.8 });
+      if (wear?.broken) player.playSound("random.break");
     });
     return;
   }
@@ -361,7 +354,7 @@ world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
       half === "bottom" ? blockFace === "Up" || (side && upper) : blockFace === "Down" || (side && !upper);
     if (merges) {
       event.cancel = true;
-      mergeSlab(block, double, player, heldSnapshot(player, itemStack));
+      if (event.isFirstEvent) mergeSlab(block, double, player, itemStack);
     }
     return;
   }
@@ -377,6 +370,6 @@ world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
   const wanted = blockFace === "Up" ? "bottom" : blockFace === "Down" ? "top" : faceLocation.y >= 0.5 ? "top" : "bottom";
   if (wanted !== target.permutation.getState("minecraft:vertical_half")) {
     event.cancel = true;
-    mergeSlab(target, double, player, heldSnapshot(player, itemStack));
+    if (event.isFirstEvent) mergeSlab(target, double, player, itemStack);
   }
 });

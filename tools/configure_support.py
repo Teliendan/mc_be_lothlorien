@@ -119,12 +119,6 @@ def configure(block):
 
 
 def main():
-    # Accepted leaf/sapling interaction post-pass, before deriving support eligibility.
-    runpy.run_path(str(ROOT / "tools/configure_leaf_tree_interactions.py"))["configure"]()
-    runpy.run_path(str(ROOT / "tools/configure_flora_crop_interactions.py"))["configure"]()
-    runpy.run_path(str(ROOT / "tools/configure_cover_interactions.py"))["configure"]()
-    runpy.run_path(str(ROOT / "tools/configure_decor_rope_interactions.py"))["configure"]()
-    runpy.run_path(str(ROOT / "tools/configure_food_remedy_interactions.py"))["configure"]()
     policies = {}
     for name in ("elanor", "niphredil", "athelas", "nectar_bloom", "mallorn_blossom", "golden_fern"):
         path = BP / f"items/{name}.json"

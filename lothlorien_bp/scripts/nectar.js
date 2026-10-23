@@ -1,10 +1,8 @@
 import { world, system } from "@minecraft/server";
 import { MALLORN_LEAVES, nectarAfterTick, MAX_NECTAR } from "./nectar_rules.js";
 import { GLASS_BOTTLE, swapHeldBottle, newItem } from "./bottles.js";
-import { repeatedUse } from "./use_guard.js";
 import { noteDeed } from "./deeds.js";
-import { captureUse, liveUse, readBlock } from "./deferred_use.js";
-import { SUPPORT_POLICIES } from "./support_policies.js";
+import { captureUse, liveUse } from "./deferred_use.js";
 
 // Phase 14b: the nectar bloom hangs under Mallorn leaves. `lothlorien:nectar` 0-3 fills by random tick while Mallorn
 // leaves are directly above; a glass bottle on a full bloom gives Mallorn nectar and empties it. Shears or Silk Touch
@@ -36,19 +34,15 @@ world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
   if (block.typeId !== BLOOM || itemStack?.typeId !== GLASS_BOTTLE) return;
   if (block.permutation.getState(NECTAR) !== MAX_NECTAR) return;
   event.cancel = true;
-  if (repeatedUse(player, "nectar")) return;
-  const snapshot = captureUse(block, player, itemStack);
+  if (!event.isFirstEvent) return;
+  const use = captureUse(block, itemStack);
   system.run(() => {
-    const live = liveUse(snapshot, player);
+    const live = liveUse(use, player);
     if (!live) return;
-    const b = live.block, { dimension } = b;
-    const support = readBlock(dimension, { x: b.x, y: b.y + 1, z: b.z });
-    if (!SUPPORT_POLICIES[BLOOM].allowed.includes(support?.typeId)) return;
-    // Check the delivery path before changing either source or held stack.
-    try { if (!player.getComponent("inventory")?.container) return; } catch { return; }
-    if (!swapHeldBottle(player, newItem("lothlorien:mallorn_nectar"))) return;
+    const b = live.block;
+    swapHeldBottle(player, newItem("lothlorien:mallorn_nectar"));
     b.setPermutation(b.permutation.withState(NECTAR, 0));
-    try { noteDeed(player, "nectar"); } catch { /* optional feedback */ }
-    try { dimension.playSound("bucket.fill_water", b.center(), { pitch: 1.5 }); } catch { /* cosmetic */ }
+    noteDeed(player, "nectar");
+    b.dimension.playSound("bucket.fill_water", b.center(), { pitch: 1.5 });
   });
 });

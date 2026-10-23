@@ -36,7 +36,7 @@ async function load(name, context) {
   finally { delete globalThis.__decor; }
 }
 async function createWorld() {
-  const cells = new Map(), queue = [], components = new Map(), intervals = new Map(), spawned = [], drops = [], deeds = [];
+  const repeats = new Set(), cells = new Map(), queue = [], components = new Map(), intervals = new Map(), spawned = [], drops = [], deeds = [];
   const subscribers = { entity: [], block: [], breaks: [], explosions: [], leaves: [] };
   let unreadable = () => false, failWrite = () => false, afterWrite = () => {}, writeCount = 0, soundFails = false, deedFails = false;
   const key = p => `${p.x},${p.y},${p.z}`;
@@ -78,6 +78,7 @@ async function createWorld() {
       teleport(at) { this.teleports.push(at); this.location = at; },
       inputInfo: { getButtonState: () => p.jump ? 'Pressed' : 'Released', getMovementVector: () => ({ x: 0, y: p.forward }) },
       getComponent(id) {
+        if (!this.isValid) throw Error('left');
         if (id === 'riding') return this.vehicle ? { entityRidingOn: this.vehicle } : undefined;
         if (id === 'health') return { currentValue: this.health ?? 20 };
         if (id === 'equippable') return { getEquipmentSlot: () => ({ getItem: () => p.held?.clone(), hasItem: () => !!p.held,
@@ -89,7 +90,9 @@ async function createWorld() {
   }
   const context = { ...ropeRules, ...dewRules, ...nectarRules, SUPPORT_POLICIES, message,
     EquipmentSlot: { Mainhand: 'main' }, GameMode: { Creative: 'creative', Spectator: 'spectator' }, ItemStack: function(id, n) { return stack(id, n); },
-    BlockPermutation: { resolve: permutation }, repeatedUse: () => false,
+    BlockPermutation: { resolve: permutation },
+    // a held use button repeats within a tick: the second call of the same player and action is refused until the next flush
+    repeatedUse(p, action) { const k = `${p.id}:${action}`; if (repeats.has(k)) return true; repeats.add(k); return false; },
     noteDeed(p, id) { if (deedFails) throw Error('deed'); deeds.push(id); },
     system: { currentTick: 0, run: fn => queue.push(fn), runInterval(fn, ticks) { const id = serial++; intervals.set(id, { fn, ticks }); return id; },
       clearRun: id => intervals.delete(id), beforeEvents: { startup: { subscribe(fn) { fn({
@@ -99,15 +102,15 @@ async function createWorld() {
       beforeEvents: { playerInteractWithEntity: { subscribe: fn => subscribers.entity.push(fn) }, playerInteractWithBlock: { subscribe: fn => subscribers.block.push(fn) } },
       afterEvents: { playerBreakBlock: { subscribe: fn => subscribers.breaks.push(fn) }, blockExplode: { subscribe: fn => subscribers.explosions.push(fn) },
         playerLeave: { subscribe: fn => subscribers.leaves.push(fn) } } } };
-  for (const file of ['deferred_use.js', 'cover_use.js', 'interaction_use.js', 'bottles.js', 'firefly_bottle.js']) Object.assign(context, await load(file, context));
+  for (const file of ['deferred_use.js', 'bottles.js', 'firefly_bottle.js']) Object.assign(context, await load(file, context));
   const rope = await load('elven_rope.js', context);
   await load('fireflies.js', context); await load('nectar.js', context); await load('dew.js', context);
   const e = { block, fly, player, dimension, context, components, rope, spawned, drops, deeds, subscribers, intervals,
-    click(p, target, face = 'Up') { const event = { player: p, itemStack: p.held.clone(), block: target, blockFace: face };
+    click(p, target, face = 'Up') { const event = { player: p, itemStack: p.held.clone(), block: target, blockFace: face, isFirstEvent: true };
       subscribers.block.forEach(fn => fn(event)); return event; },
     catch(p, target) { const event = { player: p, itemStack: p.held.clone(), target }; subscribers.entity.forEach(fn => fn(event)); return event; },
     useRope(p, target, face = 'North', item = p.held.clone()) { components.get('lothlorien:rope').onUseOn({ source: p, block: target, blockFace: face, itemStack: item }); },
-    flush() { while (queue.length) queue.shift()(); },
+    flush() { repeats.clear(); while (queue.length) queue.shift()(); },
     unreadable(fn) { unreadable = fn; }, failWrite(fn) { failWrite = fn; }, badSound() { soundFails = true; }, badDeed() { deedFails = true; },
     afterWrite(fn) { afterWrite = fn; },
     get writes() { return writeCount; },

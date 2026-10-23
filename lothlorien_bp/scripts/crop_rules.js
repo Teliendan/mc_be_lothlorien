@@ -4,6 +4,8 @@ export const MAX_GROWTH = 7;
 // Preserve approved baseline rates at uncrowded fertility10 wet/4 dry;
 // wheat-like soil layout/crowding reduces packed corn's growth probability.
 // These are random-tick probabilities, not verified real-time growth durations.
+// Highest possible result (dry centre cell, all eight neighbours wet farmland): lets the caller roll before reading the 3x3.
+export const MAX_GROW_CHANCE = 0.4;
 export function growChance(light, moisture, layout = moisture > 0 ? 10 : 4) {
   let base = Math.min(1, (moisture > 0 ? 1 / 3 : 1 / 5) * layout / (moisture > 0 ? 10 : 4));
   if (light >= 9) return base;

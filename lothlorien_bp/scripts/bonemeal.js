@@ -3,7 +3,6 @@ import { BONEMEAL_TABLE, SPREAD_TRIES, pickWeighted } from "./flora_table.js";
 import { CROP, growCrop, isMature, validCropSoil } from "./crop.js";
 import { captureUse, liveUse, readBlock } from "./deferred_use.js";
 import { SUPPORT_POLICIES } from "./support_policies.js";
-import { repeatedUse } from "./use_guard.js";
 import { markOnGrass } from "./grass_overlay.js";
 
 // Bone meal in Lothlorien (the vanilla action is cancelled and replaced):
@@ -68,13 +67,13 @@ world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
     return;
   }
   event.cancel = true;
-  if (repeatedUse(player, "bonemeal")) return;
-  const snapshot = captureUse(block, player, itemStack);
+  if (!event.isFirstEvent) return;
+  const use = captureUse(block, itemStack);
   system.run(() => {
-    const live = liveUse(snapshot, player);
+    const live = liveUse(use, player);
     if (!live || !valid(live.block)) return;
     act(live.block);
-    if (snapshot.mode !== GameMode.Creative) {
+    if (player.getGameMode() !== GameMode.Creative) {
       if (live.slot.amount > 1) live.slot.amount -= 1;
       else live.slot.setItem(undefined);
     }

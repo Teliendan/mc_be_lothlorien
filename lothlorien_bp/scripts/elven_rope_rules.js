@@ -76,7 +76,7 @@ export function brakes(dy, downSpeed) {
 // failed: teleporting a small step every tick (jumpy, no way down) and steering the velocity with applyKnockback
 // (not worked out). The effects' HUD icons show whatever showParticles says: see the Phase 17b notes for what to do.
 export const CLIMB = {
-  effectTicks: 1, // expire naturally; never delete/replace an external grant
+  effectTicks: 4, // short, re-applied every tick and removed on leaving (only while this short: see elven_rope.js ours())
   // blocks per second; a vanilla ladder speeds up to about 4 both up and down (owner, tools/dev_scripts/ladder_speed.js)
   jumpSpeed: 4,
   forwardSpeed: 4,

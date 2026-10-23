@@ -1,5 +1,5 @@
 import { system } from "@minecraft/server";
-import { MAX_GROWTH, advanceGrowth, bonemealSteps, growChance, cropLayout, CORN_ORIGIN, cornSoilAllowed } from "./crop_rules.js";
+import { MAX_GROWTH, MAX_GROW_CHANCE, advanceGrowth, bonemealSteps, growChance, cropLayout, CORN_ORIGIN, cornSoilAllowed } from "./crop_rules.js";
 import { readBlock } from "./deferred_use.js";
 
 // Phase 7: Western Corn. `lothlorien:crop` (random tick) advances the state lothlorien:growth 0-7 on farmland;
@@ -8,14 +8,6 @@ import { readBlock } from "./deferred_use.js";
 export const CROP = "lothlorien:western_corn";
 const GROWTH = "lothlorien:growth";
 const FARMLAND = "minecraft:farmland";
-
-function lightAt(block) {
-  try {
-    return block.getLightLevel();
-  } catch {
-    return 0; // unreadable light postpones growth
-  }
-}
 
 export function growthOf(block) {
   const g = block.permutation.getState(GROWTH);
@@ -41,25 +33,20 @@ export function validCropSoil(block) {
 
 system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
   blockComponentRegistry.registerCustomComponent("lothlorien:crop", {
-    beforeOnPlayerPlace(event) {
-      event.permutationToPlace = event.permutationToPlace.withState(CORN_ORIGIN, false);
-      const { x, y, z } = event.block.location;
-      if (readBlock(event.dimension, { x, y: y - 1, z })?.typeId !== FARMLAND) event.cancel = true;
-    },
     onRandomTick({ block }) {
       const g = growthOf(block);
-      if (g >= MAX_GROWTH) return;
-      if (!validCropSoil(block)) return;
+      const roll = Math.random();
+      if (g >= MAX_GROWTH || roll >= MAX_GROW_CHANCE) return;
       const { x, y, z } = block.location;
       const soil = readBlock(block.dimension, { x, y: y - 1, z });
       if (soil?.typeId !== FARMLAND) return; // grows only when farmed
       const moisture = soil.permutation.getState("moisturized_amount");
-      const light = lightAt(block);
+      const light = block.getLightLevel();
       if (light < 4) return;
       const layout = cropLayout((dx, dz) => readBlock(block.dimension, { x: x + dx, y: y - 1, z: z + dz }),
         (dx, dz) => readBlock(block.dimension, { x: x + dx, y, z: z + dz }));
       const chance = growChance(light, typeof moisture === "number" ? moisture : 0, layout);
-      if (Math.random() >= chance) return;
+      if (roll >= chance) return;
       block.setPermutation(block.permutation.withState(GROWTH, g + 1));
     },
   });

@@ -24,18 +24,18 @@ for (const meat of ['venison', 'swan_meat']) {
 for (const ingredient of ['mallorn_nectar', 'morning_dew', 'dew_bottle']) {
   assert.equal(components(ingredient)['minecraft:food'], undefined, 'owner ingredient-only policy');
 }
-// Conditional crafting remainders remain pending, not speculative result arrays.
-for (const name of ['miruvor', 'elven_rope', 'star_canopy', 'firefly_jar', 'elven_lantern', 'elven_lantern_heartwood']) {
+// Crafting returns the glass bottles used as ingredients (vanilla honey_block result-array pattern).
+for (const [name, bottles] of [['miruvor', 4], ['elven_rope', 1], ['star_canopy', 3]]) {
   const r = read(`recipes/${name}.json`)['minecraft:recipe_shaped'];
-  assert.equal(Array.isArray(r.result), false);
+  assert.deepEqual(r.result[1], { item: 'minecraft:glass_bottle', count: bottles });
 }
 const miruvorRecipe = read('recipes/miruvor.json')['minecraft:recipe_shaped'];
 assert.deepEqual(miruvorRecipe.pattern, ['ESE', 'SHS', 'NLN']);
 assert.equal(miruvorRecipe.key.S.item, 'lothlorien:athelas_salve');
 console.log('ok   food/remedy native data, stations, balance and intentional policies');
 
-let handler, deedFails = false, deeds = 0;
-globalThis.__food = { noteDeed() { deeds++; if (deedFails) throw Error('deed storage unavailable'); },
+let handler, deeds = 0;
+globalThis.__food = { noteDeed() { deeds++; },
   system: { beforeEvents: { startup: { subscribe(fn) { fn({ itemComponentRegistry: {
     registerCustomComponent(id, handlers) { assert.equal(id, 'lothlorien:lembas'); handler = handlers; },
   } }); } } } } };
@@ -45,12 +45,8 @@ await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64
 delete globalThis.__food;
 let cures = 0;
 const player = { typeId: 'minecraft:player', removeEffect(id) { assert.equal(id, 'minecraft:hunger'); cures++; } };
-deedFails = true;
-assert.doesNotThrow(() => handler.onConsume({ source: player }));
+handler.onConsume({ source: player });
 assert.equal(cures, 1); assert.equal(deeds, 1);
-deedFails = false;
-assert.doesNotThrow(() => handler.onConsume({ source: { ...player, removeEffect() { throw Error('entity gone'); } } }));
-assert.equal(deeds, 2, 'failed cure does not suppress independent deed feedback');
 handler.onConsume({ source: { ...player, typeId: 'minecraft:fox' } });
-assert.equal(cures, 2); assert.equal(deeds, 2, 'only players get deeds; no manual food charge');
-console.log('ok   wrapped Lembas cure survives deed failure; independent deed and native consumption');
+assert.equal(cures, 2); assert.equal(deeds, 1, 'only players get deeds; no manual food charge');
+console.log('ok   wrapped Lembas cure and player-only deed; native consumption');

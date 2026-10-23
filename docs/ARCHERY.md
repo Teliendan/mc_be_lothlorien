@@ -2,7 +2,7 @@
 
 Implemented 2026-10-11 for Bedrock 1.26.52 / stable server API 2.8.0.
 Interaction review and owner decisions, 2026-10-18:
-[per-mechanic ledger](ARCHERY_INTERACTIONS.md). Same-elven-bow native repair and
+[per-mechanic ledger](parity/BLOCKS_ITEMS.md). Same-elven-bow native repair and
 10-second Bedrock fuel are now configured; custom ammunition explicitly permits
 offhand equipment. Owner excludes crafting a vanilla dispenser with this bow,
 and approves arrow activation/dispenser launch where supported. Existing native

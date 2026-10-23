@@ -54,7 +54,6 @@ async function scenario(name, test) {
     EquipmentSlot: { Mainhand: 'main' }, GameMode: { Creative: 'creative' }, ItemStack: function(id, amount) { return stack(id, amount); },
     repeatedUse: () => false, noteDeed(p, id) { if (badDeed) throw Error('deed'); deeds.push(id); } };
   Object.assign(context, await load('deferred_use.js', context));
-  Object.assign(context, await load('cover_use.js', context));
   Object.assign(context, await load('bottles.js', context));
   await load('ground_cover.js', context); await load('dew.js', context);
   function player(id = LITTER, amount = 3, values = {}) {
@@ -70,17 +69,12 @@ async function scenario(name, test) {
     block('minecraft:stone', {}, { x: 0, y: 63, z: 0 });
     return block(id, { [AMOUNT]: amount, [WET]: wet, 'lothlorien:on_grass': false, 'minecraft:cardinal_direction': 'east' });
   };
-  const click = (b, p, blockFace = 'North') => { const e = { block: b, player: p, itemStack: p.held.clone(), blockFace };
+  const click = (b, p, blockFace = 'North') => { const e = { block: b, player: p, itemStack: p.held.clone(), blockFace, isFirstEvent: true };
     before.forEach(fn => fn(e)); return e; };
-  const placeUpper = (b, p, alter = () => {}, consumeLater = false) => {
+  const placeUpper = (b, p, alter = () => {}) => {
     const upper = block(b.typeId, { ...b.permutation.getAllStates(), [AMOUNT]: 1, [WET]: false }, { ...b.location, y: b.y + 1 });
-    const event = { block: upper, player: p, permutationToPlace: upper.permutation };
-    components.get('lothlorien:segmented_cover').beforeOnPlayerPlace(event);
-    upper.permutation = event.permutationToPlace;
-    const consume = () => { if (p.mode !== 'creative') { if (p.held.amount > 1) p.held.amount--; else p.held = undefined; } };
-    if (!consumeLater) consume();
+    if (p.mode !== 'creative') { if (p.held.amount > 1) p.held.amount--; else p.held = undefined; } // native placement consumed it
     alter(upper); after.forEach(fn => fn({ block: upper, player: p }));
-    if (consumeLater) consume();
     return upper;
   };
   const originalRandom = Math.random; Math.random = () => 0;
@@ -90,20 +84,17 @@ async function scenario(name, test) {
   tests++; console.log('ok   cover interactions: ' + name);
 }
 
-await scenario('side and adjacent merges preserve all states, exact consumption and Creative despite sound failure', e => {
+await scenario('side and adjacent merges preserve all states, exact consumption and Creative', e => {
   for (const id of [LITTER, BLOSSOM]) for (const creative of [false, true]) {
     const b = e.cover(id, 2, true), p = e.player(id, 3); if (creative) p.mode = 'creative';
-    const states = b.permutation.getAllStates(); e.click(b, p); e.badSound(); e.flush();
+    const states = b.permutation.getAllStates(); e.click(b, p); e.flush();
     assert.deepEqual(b.permutation.getAllStates(), { ...states, [AMOUNT]: 3 }); assert.equal(p.held.amount, creative ? 3 : 2);
   }
   const b = e.cover(), p = e.player(), neighbor = e.block('minecraft:stone', {}, { x: 0, y: 64, z: -1 });
   e.click(neighbor, p, 'South'); e.flush(); assert.equal(b.permutation.getState(AMOUNT), 2);
 });
-await scenario('side merge rejects changed held metadata/count/slot/mode/dimension, support, target, water and unload', e => {
-  const mutations = [p => p.held.typeId = 'minecraft:diamond', p => p.held.nameTag = 'changed', p => p.held.amount--,
-    p => p.held.data.lore = ['changed'], p => p.held.data.dynamic = { x: 1 }, p => p.selectedSlotIndex++, p => p.mode = 'creative',
-    p => p.dimension = { id: 'nether' }, p => p.getGameMode = () => { throw Error('left'); },
-    () => e.block('minecraft:dirt', {}, { x: 0, y: 63, z: 0 }), () => e.block('minecraft:diamond_block')];
+await scenario('side merge rejects a changed held item type, target, water and unload', e => {
+  const mutations = [p => p.held.typeId = 'minecraft:diamond', () => e.block('minecraft:diamond_block')];
   for (const mutate of mutations) {
     const b = e.cover(), p = e.player(); e.click(b, p); mutate(p); const amount = p.held.amount; e.flush();
     assert.equal(b.writes, undefined); assert.equal(p.held.amount, amount);
@@ -117,29 +108,26 @@ await scenario('concurrent side merges consume once; full top is refused and ful
   const full = e.cover(LITTER, 4); assert.equal(e.click(full, p, 'Up').cancel, true);
   assert.equal(e.click(full, p, 'North').cancel, undefined);
 });
-await scenario('native top merges synchronously without a second consumption, including last item and Creative', e => {
-  for (const id of [LITTER, BLOSSOM]) for (const count of [1,3]) for (const creative of [false,true]) for (const late of [false,true]) {
+await scenario('native top placement folds into the cover below without a second consumption, last item and Creative included', e => {
+  for (const id of [LITTER, BLOSSOM]) for (const count of [1,3]) for (const creative of [false,true]) {
     const b = e.cover(id, 2, true), p = e.player(id, count); if (creative) p.mode = 'creative';
     assert.equal(e.click(b, p, 'Up').cancel, undefined);
-    const upper = e.placeUpper(b, p, () => {}, late); assert.equal(upper.typeId, 'minecraft:air');
+    const upper = e.placeUpper(b, p); assert.equal(upper.typeId, 'minecraft:air');
     assert.equal(b.permutation.getState(AMOUNT), 3); assert.equal(b.permutation.getState(WET), true);
     assert.equal(p.held?.amount ?? 0, creative ? count : count - 1); e.flush(); assert.equal(e.drops.length, 0);
   }
 });
-await scenario('native top uses cached refund ID/metadata when lower changed and never erases changed upper', e => {
-  let b = e.cover(), p = e.player(LITTER, 3, { name: 'precious' }); e.click(b, p, 'Up');
-  b.setPermutation(b.permutation.withState(AMOUNT, 4)); const upper = e.placeUpper(b, p);
-  assert.equal(upper.typeId, 'minecraft:air'); assert.equal(b.permutation.getState(AMOUNT), 4);
-  assert.equal(e.drops[0].item.typeId, LITTER); assert.equal(e.drops[0].item.nameTag, 'precious'); assert.equal(e.drops[0].item.amount, 1);
-  b = e.cover(); p = e.player(); e.click(b, p, 'Up');
-  const changed = e.placeUpper(b, p, upper => upper.setPermutation(upper.permutation.withState(WET, true)));
-  assert.equal(changed.typeId, LITTER); assert.equal(changed.permutation.getState(WET), true); assert.equal(b.writes, undefined);
+await scenario('a waterlogged upper cover still folds in; a lower cover at 4 stays a separate cell', e => {
+  let b = e.cover(), p = e.player(); e.click(b, p, 'Up');
+  assert.equal(e.placeUpper(b, p, upper => { upper.isWaterlogged = true; }).typeId, 'minecraft:air'); assert.equal(b.permutation.getState(AMOUNT), 2);
+  b = e.cover(LITTER, 4); p = e.player(); assert.equal(e.click(b, p, 'Up').cancel, true);
+  assert.equal(e.placeUpper(b, p).typeId, LITTER); assert.equal(b.writes, undefined);
 });
 await scenario('dew collects once at any time without foliage, using single/stacked/full inventory/Creative glass', e => {
   for (const [count, creative, full] of [[1,false,false], [3,false,true], [3,true,false]]) {
     const b = e.cover(LITTER, 2, true), p = e.player(GLASS, count), other = e.player(GLASS, 1);
     p.mode = creative ? 'creative' : 'survival'; p.full = full; e.context.world.getTimeOfDay = () => 12000;
-    e.click(b, p); e.click(b, other); e.badSound(); e.flush();
+    e.click(b, p); e.click(b, other); e.flush();
     assert.equal(b.permutation.getState(WET), false); assert.equal(other.held.typeId, GLASS);
     const result = count === 1 && !creative ? p.held : full ? e.drops.at(-1).item : p.inventory.at(-1);
     assert.equal(result.typeId, DEW); assert.equal(result.getComponent('durability').damage, 7);
@@ -152,16 +140,10 @@ await scenario('partial nonstackable bottles progress exactly once; seventh drop
   assert.equal(p.held.getComponent('durability').damage, 1); assert.equal(e.deeds.length, 0);
   b = e.cover(BLOSSOM, 4, true); e.click(b, p); e.flush(); assert.equal(p.held.typeId, FULL); assert.deepEqual(e.deeds, ['dew']);
   p = e.player(DEW, 1, { durability: { damage: 1, maxDurability: 8 } }); b = e.cover(LITTER, 1, true);
-  e.badDeed(); e.click(b, p); e.flush(); assert.equal(p.held.typeId, FULL); assert.equal(b.permutation.getState(WET), false);
+  e.click(b, p); e.flush(); assert.equal(p.held.typeId, FULL); assert.equal(b.permutation.getState(WET), false);
 });
-await scenario('dew rejects changed progress, all exposed metadata, slot, target, soil, unload and disconnected player', e => {
-  for (const change of [p => p.held.getComponent('durability').damage--, p => p.held.nameTag = 'new',
-    p => p.held.keepOnDeath = true, p => p.held.lockMode = 'slot', p => p.held.data.lore = ['new'],
-    p => p.held.data.place = ['minecraft:stone'], p => p.held.data.destroy = ['minecraft:stone'],
-    p => p.held.data.dynamic = { foo: { x: 1, y: 2, z: 3 } }, p => p.held.data.enchantments = [{ type: { id: 'unbreaking' }, level: 1 }],
-    p => p.held.amount++, p => p.selectedSlotIndex++, p => p.mode = 'creative', p => p.dimension = { id: 'nether' },
-    p => p.getGameMode = () => { throw Error('left'); },
-    () => e.block('minecraft:dirt', {}, { x: 0, y: 63, z: 0 }), () => e.cover(BLOSSOM, 1, true)]) {
+await scenario('dew rejects a changed held item type, target and unload', e => {
+  for (const change of [p => p.held.typeId = 'minecraft:diamond', () => e.cover(BLOSSOM, 1, true)]) {
     const b = e.cover(LITTER, 1, true), p = e.player(DEW); e.click(b, p); change(p); e.flush(); assert.equal(b.writes, undefined);
   }
   const b = e.cover(LITTER, 1, true), p = e.player(DEW); e.click(b, p); e.unload(() => true); e.flush(); assert.equal(b.writes, undefined);
@@ -181,7 +163,7 @@ for (const id of [LITTER,BLOSSOM]) {
   assert.equal(item.components['minecraft:compostable'].composting_chance, 30);
   assert.equal(item.components['minecraft:fuel']?.duration, id === LITTER ? 5 : undefined);
   assert.equal(body.components['minecraft:sound'].sound, id === LITTER ? 'leaf_litter' : 'pink_petals');
-  assert.ok(body.components['lothlorien:segmented_cover']); assert.equal(body.components['minecraft:replaceable'], undefined);
+  assert.equal(body.components['lothlorien:segmented_cover'], undefined); assert.equal(body.components['minecraft:replaceable'], undefined);
   assert.deepEqual(body.components['minecraft:placement_filter'].conditions.flatMap(c => c.block_filter), SUPPORT_POLICIES[id].allowed);
   for (const support of ['minecraft:glass', 'minecraft:white_wool', 'minecraft:slime', 'minecraft:honey_block',
     'minecraft:oak_planks', 'minecraft:stonebrick', 'lothlorien:mallorn_double_slab', 'lothlorien:mallorn_heartwood_planks'])

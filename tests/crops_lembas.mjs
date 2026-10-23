@@ -1,7 +1,7 @@
 // crops lembas regression tests; run independently or via tests/run.mjs.
 import { test, finish, bp } from './test_helpers.mjs';
 import assert from "node:assert/strict";
-import { MAX_GROWTH, growChance, bonemealSteps, advanceGrowth } from "../lothlorien_bp/scripts/crop_rules.js";
+import { MAX_GROWTH, MAX_GROW_CHANCE, growChance, bonemealSteps, advanceGrowth } from "../lothlorien_bp/scripts/crop_rules.js";
 
 
 
@@ -11,6 +11,11 @@ test("corn: wet soil grows faster than dry, dim light slower, darkness stalls", 
   assert.ok(growChance(7, 0) > growChance(4, 0));
   assert.equal(growChance(3, 7), 0);
   assert.ok(growChance(4, 0) > 0, "must tolerate the light wheat cannot (wheat needs 9)");
+});
+
+test("corn: no layout can beat the cap the random tick rolls against first", () => {
+  for (const [moisture, top] of [[0, 8], [7, 10]]) for (let layout = 0; layout <= top; layout += 0.25) assert.ok(growChance(15, moisture, layout) <= MAX_GROW_CHANCE);
+  assert.equal(growChance(15, 0, 8), MAX_GROW_CHANCE, "dry centre cell with eight wet neighbours");
 });
 
 test("corn: bone meal advances 2-5 stages and stops at maturity", () => {

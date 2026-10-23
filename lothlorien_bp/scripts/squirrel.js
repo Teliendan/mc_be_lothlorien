@@ -7,22 +7,19 @@ import { message } from "./messages.js";
 // group `lothlorien:state_guiding` (entities/squirrel.json), whose follow goal makes the engine's navigator walk it to the
 // nearest guide beacon; this script moves the beacon: to the away point, to the squirrel's feet while it digs, then onto
 // the player. The beacon is the white deer's invisible helper entity, so white_deer.js's stray sweep is told about ours.
-import { EquipmentSlot, GameMode, system, world } from "@minecraft/server";
+import { GameMode, system, world } from "@minecraft/server";
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
-import { repeatedUse } from "./use_guard.js";
 import { eatHeldFood, healAnimal, isInjured } from "./animal_food.js";
 import { noteDeed } from "./deeds.js";
-import { addBeaconSource, stand } from "./white_deer.js";
-import { withinReach } from "./interaction_use.js";
+import { addBeaconSource, consumeAcorn, stand } from "./white_deer.js";
 import { ACORN_ID, BEACON_ID } from "./white_deer_rules.js";
 import {
-  GIFT_TABLE, SQUIRREL_ID, SQUIRREL_TICKS, cooldownLeft, digTicks, horizontal, nextPhase, offerRefusal, pickAway, COOLDOWN_TICKS, GIFT_DIST, MAX_TICKS,
+  GIFT_TABLE, SQUIRREL_ID, SQUIRREL_TICKS, cooldownLeft, digTicks, horizontal, nextPhase, offerRefusal, pickAway, COOLDOWN_TICKS, GIFT_HEIGHT, MAX_TICKS,
 } from "./squirrel_rules.js";
 
 const READY_AT = "lothlorien:gift_ready_at"; // dynamic property on the squirrel: world time (ticks) of its next errand
 const sessions = new Map(); // squirrel id -> { playerId, beaconId, away, born, phase, phaseStart, digFor }
-const delivered = new Map(); // known deliveries whose persistent cooldown could not be confirmed
 let depthAt;
 let sessionTimer;
 function syncSessionTimer() {
@@ -53,22 +50,9 @@ const moveBeacon = (beacon, to) => beacon.teleport({ x: to.x, y: to.y, z: to.z }
 
 const living = entity => entity?.isValid && entity.getComponent("minecraft:health")?.currentValue > 0;
 const eligiblePlayer = player => living(player) && [GameMode.Survival, GameMode.Adventure, GameMode.Creative].includes(player.getGameMode());
-const distance3 = (a, b) => Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z);
-function readyAt(squirrel) {
-  const now = world.getAbsoluteTime(), remembered = delivered.get(squirrel.id);
-  if (remembered !== undefined && remembered <= now) delivered.delete(squirrel.id);
-  return Math.max(squirrel.getDynamicProperty(READY_AT) ?? 0, delivered.get(squirrel.id) ?? 0);
-}
-function spendAcorn(hand, mode) {
-  if (mode !== GameMode.Creative) {
-    if (hand.item.amount > 1) {
-      const remainder = hand.item.clone(); remainder.amount--;
-      hand.slot.setItem(remainder);
-    } else hand.slot.setItem(undefined);
-  }
-}
+const readyAt = (squirrel) => squirrel.getDynamicProperty(READY_AT) ?? 0;
 
-function offer(player, squirrel, hand, mode) {
+function offer(player, squirrel) {
   if (sessions.has(squirrel.id)) return;
   if (squirrel.getProperty("lothlorien:guiding")) return;
   // A lead wins over errands. It is still possible to feed a squirrel on a lead.
@@ -92,9 +76,7 @@ function offer(player, squirrel, hand, mode) {
   let beaconId;
   try {
     beaconId = dimension.spawnEntity(BEACON_ID, { x: away.x, y: away.y, z: away.z }).id;
-    // Acceptance and charging are synchronous; no player action can interleave
-    // the path query/helper spawn and this write. Preserve the accepted stack.
-    spendAcorn(hand, mode);
+    consumeAcorn(player);
     squirrel.triggerEvent("lothlorien:guide_start");
     healAnimal(squirrel);
     sessions.set(squirrel.id, { playerId: player.id, dimensionId: dimension.id, actor: squirrel, beaconId, away, born: system.currentTick, phase: "away", phaseStart: system.currentTick, digFor: 0 });
@@ -124,47 +106,18 @@ function end(squirrelId, squirrel, player, text) {
 }
 
 function sessionEligible(squirrel, player, s) {
-  if (!(living(squirrel) && eligiblePlayer(player) && squirrel.dimension.id === s.dimensionId &&
+  return living(squirrel) && eligiblePlayer(player) && squirrel.dimension.id === s.dimensionId &&
     player.dimension.id === s.dimensionId && bandOf(harmonyOf(player).harmony) === "friend" &&
     squirrel.getProperty("lothlorien:guiding") && !squirrel.getProperty("lothlorien:alarmed") &&
-    !squirrel.getComponent("minecraft:leashable")?.isLeashed)) return false;
-  const depth = depthAt(squirrel.dimension, squirrel.location);
-  if (depth.level > 0) return true;
-  return depth.level === 0 && depth.complete === true ? false : undefined;
-}
-function giftSpace(dimension, at) {
-  for (const y of [at.y, at.y + .25]) {
-    const block = dimension.getBlock({ ...at, y });
-    if (!block || block.isLiquid || block.isWaterlogged || (!block.isAir && block.isSolid !== false)) return false;
-  }
-  return true;
+    !squirrel.getComponent("minecraft:leashable")?.isLeashed && depthAt(squirrel.dimension, squirrel.location).level > 0;
 }
 function giveGift(squirrelId, squirrel, player) {
-  const s = sessions.get(squirrelId);
-  if (!s || cooldownLeft(world.getAbsoluteTime(), readyAt(squirrel)) > 0) return false;
   const { x, y, z } = squirrel.location, at = { x, y: y + .3, z };
-  const next = world.getAbsoluteTime() + COOLDOWN_TICKS;
-  try {
-    if (!giftSpace(squirrel.dimension, at)) return false;
-    const manager = world.getLootTableManager(), table = manager.getLootTable(GIFT_TABLE);
-    const items = table && manager.generateLootFromTable(table);
-    if (!items || items.length !== 1 || !(items[0].amount > 0)) {
-      end(squirrelId, squirrel, player, message("squirrel.abort")); return false;
-    }
-    // Eligibility/proximity were decided by this synchronous session step.
-    // Do not turn a thrown/ambiguous spawn into a speculative second attempt.
-    if (!squirrel.dimension.spawnItem(items[0], at)) throw Error("Item spawn did not confirm delivery");
-  } catch {
-    end(squirrelId, squirrel, player, message("squirrel.abort")); return false;
-  }
-  delivered.set(squirrelId, next); // known delivery, before any fallible persistent/cosmetic writes
-  try {
-    squirrel.setDynamicProperty(READY_AT, next);
-    if (squirrel.getDynamicProperty(READY_AT) === next) delivered.delete(squirrelId);
-  } catch { /* retain the runtime cooldown guard; separate engine writes are not atomic */ }
+  const manager = world.getLootTableManager();
+  for (const item of manager.generateLootFromTable(manager.getLootTable(GIFT_TABLE))) squirrel.dimension.spawnItem(item, at);
+  squirrel.setDynamicProperty(READY_AT, world.getAbsoluteTime() + COOLDOWN_TICKS);
   try { squirrel.dimension.spawnParticle("minecraft:heart_particle", { x, y: y + .6, z }); } catch { /* cosmetic only */ }
   end(squirrelId, squirrel, player, message("squirrel.gift"));
-  return true;
 }
 
 function tickSession(squirrelId, s) {
@@ -173,9 +126,7 @@ function tickSession(squirrelId, s) {
   if (!squirrel?.isValid || !player?.isValid) return end(squirrelId, squirrel, undefined, undefined);
   if (squirrel.getComponent("minecraft:leashable")?.isLeashed) return end(squirrelId, squirrel);
   if (squirrel.getProperty("lothlorien:alarmed")) return end(squirrelId, squirrel, player, message("squirrel.alarmed"));
-  const eligibility = sessionEligible(squirrel, player, s);
-  if (eligibility === undefined) return; // unknown biome read pauses only this paid, time-bounded session
-  if (!eligibility) return end(squirrelId, squirrel, player, message("squirrel.abort"));
+  if (!sessionEligible(squirrel, player, s)) return end(squirrelId, squirrel, player, message("squirrel.abort"));
   const now = system.currentTick;
   let beacon = world.getEntity(s.beaconId);
   if (!beacon?.isValid) {
@@ -190,7 +141,8 @@ function tickSession(squirrelId, s) {
     toPlayer: horizontal(squirrel.location, player.location),
     digFor: s.digFor,
   });
-  if (next === "gift" && distance3(squirrel.location, player.location) > GIFT_DIST) next = "return";
+  // Horizontally near but on another level (a platform the squirrel cannot climb to): keep trying until the time cap.
+  if (next === "gift" && Math.abs(squirrel.location.y - player.location.y) > GIFT_HEIGHT) next = "return";
   if (next === "abort") return end(squirrelId, squirrel, player, message("squirrel.abort"));
   if (next === "gift") return giveGift(squirrelId, squirrel, player);
   if (next !== s.phase) {
@@ -206,12 +158,14 @@ function tickSession(squirrelId, s) {
 
 function tickSessions() {
   for (const [squirrelId, s] of sessions) {
-    if (system.currentTick - s.born > MAX_TICKS) { end(squirrelId, s.actor); continue; }
+    if (system.currentTick - s.born > MAX_TICKS) {
+      end(squirrelId, s.actor, world.getPlayers().find((p) => p.id === s.playerId), message("squirrel.abort"));
+      continue;
+    }
     try {
       tickSession(squirrelId, s);
     } catch {
-      // An unreadable actor/biome/beacon does not authorize a gift or erase its
-      // tracking. Retry only within this existing, bounded errand lifetime.
+      // squirrel, player or beacon unloaded: retry until the time cap
     }
   }
 }
@@ -222,21 +176,13 @@ export function startSquirrels(depth = () => ({ level: 1 })) {
   world.afterEvents.playerInteractWithEntity.subscribe(({ player, target, beforeItemStack, itemStack }) => {
     try {
       if (target.typeId !== SQUIRREL_ID || (beforeItemStack ?? itemStack)?.typeId !== ACORN_ID) return;
-      if (!eligiblePlayer(player) || !living(target) || target.dimension.id !== player.dimension.id ||
-          !withinReach(player, target.location)) return;
-      const slot = player.getComponent("equippable")?.getEquipmentSlot(EquipmentSlot.Mainhand), item = slot?.getItem();
-      if (item?.typeId !== ACORN_ID) return;
-      const hand = { slot, item }, mode = player.getGameMode();
-      if (repeatedUse(player, "squirrel")) return;
-      const depth = depthAt(target.dimension, target.location);
-      if (depth.level === 0 && depth.complete === true) {
+      if (depthAt(target.dimension, target.location).level === 0) { // outside Lothlorien: an ordinary tame-by-feeding
         end(target.id, target);
         if (eatHeldFood(player, target, ACORN_ID)) target.triggerEvent("lothlorien:fed");
         return;
       }
-      if (!(depth.level > 0)) return;
       if (target.getProperty("lothlorien:alarmed")) return;
-      offer(player, target, hand, mode);
+      offer(player, target);
     } catch {
       // squirrel or player gone
     }

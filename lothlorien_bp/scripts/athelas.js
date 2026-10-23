@@ -21,38 +21,24 @@ const EFFECTS = {
 };
 
 function apply(source, effects) {
-  let outcome = false;
   for (const [effect, duration, amplifier] of effects) {
-    try {
-      if (effect !== "instant_health") {
-        const existing = source.getEffect(effect);
-        // Never downgrade, shorten or replace an infinite grant. Do not remove
-        // and replay it: that cannot preserve the engine's hidden effect stack.
-        if (existing && (existing.amplifier > amplifier || existing.duration < 0 || !Number.isFinite(existing.duration) ||
-            existing.duration >= duration)) { outcome = true; continue; }
-      }
-      source.addEffect(effect, duration, { amplifier, showParticles: true });
-      outcome = true; // addEffect may return undefined on a successful call.
-    } catch { /* one failed grant cannot discard another successful outcome */ }
+    if (effect !== "instant_health") {
+      // Never downgrade or shorten a stronger grant.
+      const existing = source.getEffect(effect);
+      if (existing && (existing.amplifier > amplifier || existing.duration >= duration)) continue;
+    }
+    source.addEffect(effect, duration, { amplifier, showParticles: true });
   }
-  try { if (source.removeEffect("poison")) outcome = true; } catch { /* entity gone/effect unavailable */ }
-  return outcome;
+  source.removeEffect("poison");
 }
 
-function skinProgress(item) {
-  if (item?.typeId !== MIRUVOR || item.amount !== 1) return undefined;
-  const durability = item.getComponent("minecraft:durability");
-  if (!durability || durability.maxDurability !== 4 || !Number.isInteger(durability.damage) ||
-      durability.damage < 0 || durability.damage >= durability.maxDurability) return undefined;
-  return durability;
-}
-
-function sipFromSkin(player, { slot, item }) {
+// One sip of the skin: the last one uses it up.
+function sip(player, slot) {
   if (player.getGameMode() === GameMode.Creative) return;
-  const durability = skinProgress(item);
+  const item = slot.getItem(), durability = item.getComponent("minecraft:durability");
   if (durability.damage + 1 >= durability.maxDurability) {
     slot.setItem(undefined);
-    try { player.playSound("random.break"); } catch { /* cosmetic only */ }
+    player.playSound("random.break");
   } else {
     durability.damage += 1;
     slot.setItem(item);
@@ -61,31 +47,16 @@ function sipFromSkin(player, { slot, item }) {
 
 system.beforeEvents.startup.subscribe(({ itemComponentRegistry }) => {
   itemComponentRegistry.registerCustomComponent("lothlorien:salve", {
-    onConsume({ source }) {
-      try {
-        apply(source, EFFECTS["lothlorien:salve"]);
-      } catch {
-        // entity gone mid-drink
-      }
-    },
+    onConsume({ source }) { apply(source, EFFECTS["lothlorien:salve"]); },
   });
   itemComponentRegistry.registerCustomComponent("lothlorien:miruvor", {
-    onCompleteUse({ source, itemStack }) {
-      try {
-        // The native completion callback is the authority for completed use.
-        // Global chargeable start/stop hooks are not established for this skin.
-        // Read the actual skin/slot once for charging. This callback does not
-        // yield; an immediate deep snapshot comparison adds no timing boundary.
-        if (!skinProgress(itemStack) || source.getItemCooldown(MIRUVOR_COOLDOWN_CATEGORY) > 0) return;
-        const slot = source.getComponent("equippable")?.getEquipmentSlot(EquipmentSlot.Mainhand), item = slot?.getItem();
-        if (!skinProgress(item)) return;
-        const hand = { slot, item };
-        if (!apply(source, EFFECTS["lothlorien:miruvor"])) return;
-        try { sipFromSkin(source, hand); }
-        finally { source.startItemCooldown(MIRUVOR_COOLDOWN_CATEGORY, MIRUVOR_COOLDOWN_TICKS); }
-      } catch {
-        // player gone mid-drink
-      }
+    // The native completion callback (mainhand only; the JSON category cooldown blocks use during the cooldown).
+    onCompleteUse({ source }) {
+      const slot = source.getComponent("equippable").getEquipmentSlot(EquipmentSlot.Mainhand);
+      if (slot.getItem()?.typeId !== MIRUVOR) return;
+      apply(source, EFFECTS["lothlorien:miruvor"]);
+      sip(source, slot);
+      source.startItemCooldown(MIRUVOR_COOLDOWN_CATEGORY, MIRUVOR_COOLDOWN_TICKS);
     },
   });
 });

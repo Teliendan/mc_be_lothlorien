@@ -13,15 +13,9 @@ baby growth instead. Breeding is optional. Explicit exceptions are sacred white-
 unicorn bonding and riding, and bottle-only fireflies. Use native entity behaviors
 where possible; scripts handle biome-dependent gifts and bottle inventory changes.
 
-Global accepted-heal policy clarified2026-10-20: once feeding/healing is accepted,
-later player status, held item, movement, dimension or availability must not
-revoke the heal. Initial access/food/gameplay eligibility still applies. Bonded
-unicorn care now uses native Elanor2HP healable/force_use:false beside rideable,
-removing its deferred hand-dependent food callback. Other animal food healing
-is synchronous or native; no further deferred path was found. Native owner
-heal/mount precedence remains acceptance work; see [NATIVE_ANIMAL_HEALING.md](../NATIVE_ANIMAL_HEALING.md).
-Follow-up deployed2026-10-20 after4 selected runners passed; all3 packs in sync.
-Shared global policy/current handoff: workspace commit `cfb84b3`.
+Accepted-heal policy (2026-10-20): once feeding/healing is accepted, later player status, held item, movement or
+dimension must not revoke it. Bonded unicorn care is the native Elanor `healable` (2 HP, `force_use:false`); other
+animal food healing is synchronous or native. Details: [parity/CREATURES.md](../parity/CREATURES.md).
 
 | Animal | Transport and food | Breeding / persistence |
 | --- | --- | --- |
@@ -34,14 +28,9 @@ Shared global policy/current handoff: workspace commit `cfb84b3`.
 | Butterfly | Lead plus native anchor; lure/feed with vanilla flowers and Lothlorien flowers | No breeding; feeding keeps it |
 | Firefly | Catch with empty bottle, preserving captured name/current health; use full bottle on a block face to release one and get plain empty glass back | Released firefly is persistent; wild ones retain normal despawn; no lead, lure, food or breeding |
 
-Group15 deployed2026-10-20 after5 selected runners passed; all3 packs in sync.
-Songbirds fly independently (no flocking); songbird/butterfly leads now include
-native anchors. Firefly bottles keep max16; healthy unnamed captures are plain,
-while captured name/current health use visible localized raw lore. Anvil bottle
-titles do not rename the animal; glass title/lore never transfers. No effects or
-arbitrary entity state are saved. Native lore persistence/merging and anchor/flap
-behavior remain acceptance work; no new game result was supplied.
-See [SMALL_FLYER_INTERACTIONS.md](../SMALL_FLYER_INTERACTIONS.md).
+Songbirds fly independently (no flocking); songbird/butterfly leads have native anchors. Firefly bottles keep max 16;
+healthy unnamed captures are plain, captured name/current health use localized raw lore. Anvil bottle titles do not
+rename the animal. See [parity/CREATURES.md](../parity/CREATURES.md).
 
 Grain means harvested wheat / Western Corn grain, not seeds. Swan luring follows
 existing calm/Friend wariness; alarms and negative Harmony still take precedence.
@@ -52,9 +41,8 @@ Persistence prevents ordinary despawn; it does not stop wandering or damage.
 Owner clarification2026-10-20: only domesticated squirrels stay. Preserve the
 existing outside/leashed feeding paths that add kept persistence. Inside wild
 healing and errand acceptance do not add it; already kept animals retain it.
-Group13 uses an ordinary synchronous food/eligibility decision before scripted use,
-with no additional food consumer for native breeders. Full interaction and
-acceptance record: [SWAN_SQUIRREL_INTERACTIONS.md](../SWAN_SQUIRREL_INTERACTIONS.md).
+Handlers use one ordinary food/eligibility decision, with no additional food consumer for native breeders. Decisions:
+[parity/CREATURES.md](../parity/CREATURES.md).
 
 Outside food is decided at the animal's location using the existing depth sampler
 (including rivers that run through Lothlorien). Unknown/unloaded samples do not

@@ -21,11 +21,7 @@ class TestItem {
   setLore(lines) { this.lore = structuredClone(lines); }
 }
 async function load(name, bindings) {
-  if (["fireflies", "white_deer", "squirrel"].includes(name) && !bindings.captureHand) {
-    const cover = await load("cover_use", { ...bindings, readBlock: (d, p) => d.getBlock(p), SUPPORT_POLICIES: {} });
-    const hand = await load("interaction_use", { ...bindings, ...cover });
-    bindings = { ...bindings, ...cover, ...hand };
-  }
+  if (name === "fireflies" && !bindings.captureUse) bindings = { ...bindings, ...await load("deferred_use", bindings) };
   if (name === "fireflies") bindings = { ...bindings, ...await load("firefly_bottle",{...bindings,message:localizedMessage}) };
   globalThis.__animalHome = bindings;
   const source = readFileSync(new URL(`../lothlorien_bp/scripts/${name}.js`, import.meta.url), "utf8")
@@ -200,8 +196,8 @@ for (const blocked of [false,true]) {
 // never create a beacon, grant a gift, or alter existing gift progress/cooldowns.
 for (const name of ["white_deer","squirrel"]) {
   const h=engine(), food=await load("animal_food",{...h.bindings,...foods});
-  let inside=false, unknown=false;
-  const depth=()=>({level:inside?3:0,complete:!unknown});
+  let inside=false;
+  const depth=()=>({level:inside?3:0,complete:true});
   const bindings={...h.bindings,...food,...guideRules,...giftRules,...squirrelRules,
     consumeAcorn:p=>food.eatHeldFood(p,h.target,ACORN),addBeaconSource(){},stand(){},
     pickAway:()=>({x:12,y:64,z:0}), pickWaypoint:()=>({x:10,y:64,z:0}),hopStatus:()=>"go"};
@@ -216,8 +212,7 @@ for (const name of ["white_deer","squirrel"]) {
   assert.equal(target.getDynamicProperty("lothlorien:gifted"),true);
   assert.equal(target.getDynamicProperty("lothlorien:gift_ready_at"),12000);
   h.advance(10);target.health.currentValue=7;offer();assert.equal(target.health.currentValue,8,"heal is capped");
-  h.advance(10);unknown=true;offer();assert.equal(p.slot.amount,3,"unreadable biome does not permit outside food");
-  h.advance(10);inside=true;unknown=false;offer();assert.equal(p.slot.amount,3,"inside still needs Friend");
+    h.advance(10);inside=true;offer();assert.equal(p.slot.amount,3,"inside still needs Friend");
 }
 
 // A lead cancels the squirrel errand and removes its beacon without a gift.

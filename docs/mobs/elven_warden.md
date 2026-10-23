@@ -1,10 +1,8 @@
 # Elven Warden (`lothlorien:elven_warden`) - design and plan, v1
 
-2026-10-20 Group16 approved/source fixes deployed: [NPC interactions](../NPC_INTERACTIONS.md).
-Native leads/anchors; first leash permanently retains even natural guards. While
-led, persistent with no home restriction; any release sets a new home/radius20.
-Untouched natural guards retain their lifecycle; accepted combat/rewards stay.
-Nine runners passed; native lead/reload/home/AI acceptance remains open.
+Parity (2026-10-20): [parity/CREATURES.md](../parity/CREATURES.md). Native leads/anchors; first leash permanently retains even natural guards. While
+led, persistent with no home restriction; any release sets a new home/radius 20. Untouched natural guards retain their
+lifecycle; accepted combat/rewards stay. Native lead/reload/home/AI behaviour still needs an in-game check.
 The opening status below is historical; later dated owner observations remain
 authoritative within their scope. No new in-game observations.
 

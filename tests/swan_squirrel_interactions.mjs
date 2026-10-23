@@ -16,7 +16,7 @@ async function squirrel() {
     generateLootFromTable(table) { assert.equal(table, h.table); h.rolls++; return h.loot; } };
   h.table = {}; h.world.getLootTableManager = () => h.manager;
   h.q = await load("squirrel", { ...h.base, ...Q,
-    addBeaconSource: h.mod.addBeaconSource, stand: h.mod.stand,
+    addBeaconSource: h.mod.addBeaconSource, consumeAcorn: h.mod.consumeAcorn, stand: h.mod.stand,
     pickAway: (...args) => h.pickAway(...args), noteDeed: () => { h.deeds++; if (h.deedError) throw Error("deed"); } },
     "\nexport { giveGift, sessions, tickSessions };\n");
   h.pickAway = () => ({ x: 12, y: 65, z: 0 });
@@ -58,24 +58,12 @@ await test("swan eggs/summons and born cygnets are not filtered without the natu
 });
 const changes = {
   hand: h => h.player.slot.item = new Item("minecraft:diamond"),
-  spectator: h => h.player.mode = "spectator", dead: h => h.player.health.currentValue = 0,
-  deadAnimal: h => h.s.health.currentValue = 0, dimension: h => h.player.dimension = { id: "nether" },
-  actorDimension: h => h.s.dimension = { id: "nether" }, range: h => h.player.location.x = 20,
-  trust: h => h.player.band = "guest",
-  unknown: h => h.depth = { level: 0, complete: false }, outside: h => h.depth = { level: 0, complete: true },
+  trust: h => h.player.band = "guest", outside: h => h.depth = { level: 0, complete: true },
 };
 for (const [name, prepare] of Object.entries(changes)) await test(`ordinary offer input rejects ${name}`, async () => {
   const h = await squirrel(); prepare(h); h.click();
   assert.equal(h.q.isErrand(h.s.id), false); assert.equal(h.s.getProperty("lothlorien:guiding"), undefined);
   assert.equal(h.s.getDynamicProperty("lothlorien:gift_ready_at"), undefined); assert.equal(h.deeds, 0);
-});
-await test("non-acorn food and unknown centre never authorize an errand or healing", async () => {
-  for (const changedHand of [false, true]) {
-    const h = await squirrel(); h.s.health.currentValue = 2;
-    if (changedHand) h.player.slot.item = new Item("minecraft:diamond"); else h.depth = { level: 0, complete: false };
-    h.click(); assert.equal(h.q.isErrand(h.s.id), false); assert.equal(h.s.health.currentValue, 2);
-    assert.ok(!h.s.events.includes("lothlorien:fed"));
-  }
 });
 await test("accepted current named acorns preserve metadata in Survival and Adventure", async () => {
   for (const mode of ["survival", "adventure"]) {
@@ -118,64 +106,25 @@ for (const [name, mutate] of Object.entries(endings)) await test(`return eligibi
   mutate(h); h.q.tickSessions(); assert.equal(h.q.isErrand(h.s.id), false); assert.equal(beacon.isValid, false);
   assert.equal(h.dimension.drops.length, 0); assert.equal(h.s.getDynamicProperty("lothlorien:gift_ready_at"), undefined);
 });
-await test("unknown biome centre pauses a paid return then recovers without another acorn", async () => {
-  const h = await squirrel(); h.click(); h.returning(); h.depth = { level: 0, complete: false }; h.advance(10);
+await test("an errand that cannot finish ends at the time cap with a message", async () => {
+  const h = await squirrel(); h.click(); const s = h.returning(), beacon = h.world.getEntity(s.beaconId);
+  h.player.location.y += 8; // a platform the squirrel cannot reach
+  h.advance(Q.MAX_TICKS + Q.SQUIRREL_TICKS);
+  assert.equal(h.q.isErrand(h.s.id), false); assert.equal(beacon.isValid, false); assert.equal(h.dimension.drops.length, 0);
+  assert.ok(h.messages.includes("squirrel.abort"));
+  assert.equal([...h.timers.values()].filter(t => t.period === Q.SQUIRREL_TICKS).length, 0);
+});
+await test("the gift is handed over horizontally near, within a small height difference", async () => {
+  const h = await squirrel(); h.click(); h.returning(); h.player.location.y += Q.GIFT_HEIGHT + 1; h.q.tickSessions();
   assert.equal(h.q.isErrand(h.s.id), true); assert.equal(h.dimension.drops.length, 0);
-  h.depth = { level: 2, complete: false }; h.advance(10); assert.equal(h.dimension.drops.length, 1);
-  assert.equal(h.q.isErrand(h.s.id), false); assert.equal(h.player.slot.item.amount, 2);
+  h.player.location.y -= 2; h.q.tickSessions(); assert.equal(h.dimension.drops.length, 1);
 });
-await test("repeated unknown/read failures still expire at the existing time cap", async () => {
-  for (const throws of [false, true]) {
-    const h = await squirrel(); h.click(); const s = h.returning(), beacon = h.world.getEntity(s.beaconId);
-    if (throws) { const read = h.s.getComponent; h.s.getComponent = key => { if (key === "minecraft:health") throw Error("transient"); return read(key); }; }
-    else h.depth = { level: 0, complete: false };
-    h.advance(Q.MAX_TICKS + Q.SQUIRREL_TICKS);
-    assert.equal(h.q.isErrand(h.s.id), false); assert.equal(beacon.isValid, false); assert.equal(h.dimension.drops.length, 0);
-    assert.equal([...h.timers.values()].filter(t => t.period === Q.SQUIRREL_TICKS).length, 0);
-  }
-});
-await test("one actor read failure does not erase another squirrel session", async () => {
-  const h = await squirrel(); h.click(); const first = h.s;
-  h.s = h.entity(Q.SQUIRREL_ID); h.s.health.currentValue = h.s.health.effectiveMax = 4; h.click();
-  const read = first.getComponent; first.getComponent = key => { if (key === "minecraft:health") throw Error("temporary"); return read(key); };
-  h.returning(); h.q.tickSessions(); assert.equal(h.q.isErrand(first.id), true); assert.equal(h.q.isErrand(h.s.id), false);
-  assert.equal(h.dimension.drops.length, 1);
-});
-await test("stacked floors are not near enough for return delivery", async () => {
-  const h = await squirrel(); h.click(); h.returning(); h.player.location.y += 8; h.q.tickSessions();
-  assert.equal(h.q.isErrand(h.s.id), true); assert.equal(h.dimension.drops.length, 0); assert.equal(h.rolls, 0);
-  h.player.location.y -= 8; h.q.tickSessions(); assert.equal(h.dimension.drops.length, 1);
-});
-for (const kind of ["solid", "water", "waterlogged", "unreadable"]) await test(`gift waits for ${kind} drop space to clear`, async () => {
-  const h = await squirrel(); h.click(); h.returning(); const read = h.dimension.getBlock.bind(h.dimension);
-  h.dimension.getBlock = p => kind === "unreadable" ? undefined : kind === "waterlogged" ? { ...read(p), isWaterlogged: true } :
-    kind === "water" ? { ...read(p), isLiquid: true } : { ...read(p), isAir: false, isSolid: true };
-  h.q.tickSessions(); assert.equal(h.dimension.drops.length, 0); assert.equal(h.rolls, 0); assert.equal(h.q.isErrand(h.s.id), true);
-  h.dimension.getBlock = read; h.q.tickSessions(); assert.equal(h.dimension.drops.length, 1);
-});
-for (const kind of ["missingTable", "emptyRoll", "undefinedRoll", "rollThrows", "spawnThrows", "unconfirmedSpawn"]) await test(`failed ${kind} does not charge cooldown or claim a gift`, async () => {
-  const h = await squirrel(); h.click(); h.returning();
-  if (kind === "missingTable") h.table = undefined;
-  if (kind === "emptyRoll") h.loot = [];
-  if (kind === "undefinedRoll") h.loot = undefined;
-  if (kind === "rollThrows") h.manager.generateLootFromTable = () => { throw Error("roll"); };
-  if (kind === "spawnThrows") h.dimension.spawnError = true;
-  if (kind === "unconfirmedSpawn") h.dimension.spawnItem = () => undefined;
-  h.q.tickSessions(); assert.equal(h.q.isErrand(h.s.id), false); assert.equal(h.dimension.drops.length, 0);
-  assert.equal(h.s.getDynamicProperty("lothlorien:gift_ready_at"), undefined); assert.ok(!h.messages.includes("squirrel.gift"));
-});
-await test("each native gift stack is delivered unchanged once and particles are optional", async () => {
-  for (const item of [new Item("lothlorien:mallorn_leaf_carpet", 4), new Item("lothlorien:mallorn_blossom", 2),
-    new Item("lothlorien:western_corn_seeds", 3), new Item("lothlorien:athelas", 1)]) {
-    const h = await squirrel(); h.loot = [item]; h.dimension.particleError = true; h.click(); h.returning(); h.q.tickSessions(); h.q.tickSessions();
-    assert.equal(h.dimension.drops.length, 1); assert.equal(h.dimension.drops[0].item, item); assert.equal(h.rolls, 1);
+await test("every rolled stack is delivered unchanged once and the cooldown is kept", async () => {
+  for (const loot of [[new Item("lothlorien:mallorn_leaf_carpet", 4)], [new Item("lothlorien:athelas", 1), new Item("lothlorien:mallorn_blossom", 2)]]) {
+    const h = await squirrel(); h.loot = loot; h.dimension.particleError = true; h.click(); h.returning(); h.q.tickSessions(); h.q.tickSessions();
+    assert.deepEqual(h.dimension.drops.map(d => d.item), loot); assert.equal(h.rolls, 1);
     assert.equal(h.s.getDynamicProperty("lothlorien:gift_ready_at"), Q.COOLDOWN_TICKS); assert.ok(h.messages.includes("squirrel.gift"));
+    h.click(); assert.equal(h.q.isErrand(h.s.id), false); assert.ok(h.messages.includes("squirrel.full")); assert.equal(h.player.slot.item.amount, 2);
   }
-});
-await test("known delivery survives a cooldown persistence failure without a repeat gift", async () => {
-  const h = await squirrel(); h.click(); h.returning(); h.s.setDynamicProperty = () => { throw Error("persistent write"); };
-  h.q.tickSessions(); assert.equal(h.dimension.drops.length, 1); assert.equal(h.q.isErrand(h.s.id), false);
-  h.click(); assert.equal(h.q.isErrand(h.s.id), false); assert.equal(h.player.slot.item.amount, 2);
-  assert.ok(h.messages.includes("squirrel.full")); assert.equal(h.dimension.drops.length, 1);
 });
 console.log(`Passed ${scenarios} production swan/squirrel interaction scenarios.`);

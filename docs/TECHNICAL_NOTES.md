@@ -7,7 +7,7 @@ Water update (2026-10-09): [WATER.md](WATER.md) supersedes the older missing-wat
 and water-flow-breaking notes below. All 44 blocks now declare a policy; actual engine
 flow, rendering and drops still need validation.
 
-Flora/crop interaction update (2026-10-19): [FLORA_CROP_INTERACTIONS.md](FLORA_CROP_INTERACTIONS.md)
+Flora/crop interaction update (2026-10-19): [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md)
 records approved recipes/soils, deferred-use snapshots, and corn's saved wild/farmed
 state. `tools/configure_support.py` runs the art-independent flora post-pass before
 deriving support lists. Native farmed permutation and support adapter agree;
@@ -15,7 +15,7 @@ worldgen explicitly writes wild=true. No legacy migration, extra wheat uses or
 bee workaround. Eight production handler scenarios are offline verified; native
 game acceptance and scripted permission/engine-write boundaries remain open.
 
-2026-10-19 decor/rope interaction follow-up: [DECOR_ROPE_INTERACTIONS.md](DECOR_ROPE_INTERACTIONS.md)
+2026-10-19 decor/rope interaction follow-up: [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md)
 records container source/context guards and limits, naturally expiring one-tick
 rope effects (never remove or replay external potions), actual dimension bounds,
 safe unknown supports and per-piece precharge/refund rules. Ambiguous engine-write
@@ -209,7 +209,7 @@ inside the open selection box. Both sets now use the `*` texture `mallorn_fence_
 (no new texture key). States, permutations, boxes, sounds, redstone and recipes unchanged. Test "gate: ...".
 
 - Tools: every wood block carries `minecraft:is_axe_item_destructible`; leaves use the hoe tag.
-- Logs and bark-covered wood: `block_face` trait + three-axis rotation permutations. Stripping is the guarded world interaction in `blocks.js`, using native/tagged axes and native durability chance; no registered `lothlorien:strippable` component is implied. See [WOOD_INTERACTIONS.md](WOOD_INTERACTIONS.md) for the 2026-10-18 owner-approved audit and pending engine cases.
+- Logs and bark-covered wood: `block_face` trait + three-axis rotation permutations. Stripping is the guarded world interaction in `blocks.js`, using native/tagged axes and native durability chance; no registered `lothlorien:strippable` component is implied. See [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md) for the 2026-10-18 owner-approved audit and pending engine cases.
 - Stairs: native corners. `placement_direction` with `minecraft:corner_and_cardinal_direction`
   gives `minecraft:cardinal_direction` + `minecraft:corner` (none/inner_left/inner_right/
   outer_left/outer_right), and the engine keeps `corner` updated when neighbours change; no script.
@@ -235,7 +235,7 @@ inside the open selection box. Both sets now use the `*` texture `mallorn_fence_
   every 4 ticks idle / 20 ticks powered with a finite minimum-hold guard (`minecraft:tick`). Buttons release through a powered-only native tick plus release component, not a transient JS timeout. East/west wall buttons use `mallorn_button_ew(_pressed)` (a 4x6 box; the
   z-axis tilt of the 6x4 box stood them upright; `uv_rotation` 90 keeps the plank grain horizontal). The plate has
   `minecraft:placement_filter` `allowed_faces: ["up"]`: placed only on top of a block, popped off when it goes. Support loss is handled in `blocks.js` (breaking the block they sit on).
-- 2026-10-18 controls follow-up: [CONTROL_INTERACTIONS.md](CONTROL_INTERACTIONS.md) records gate facing/wall lowering, precise door pairing, plate collision bounds and remaining projectile/AI/sculk/native-timing gaps. `tools/configure_controls.py` maintains the six changed block definitions without rewriting art. Synchronized double doors are owner-approved custom behavior, not vanilla equivalence.
+- 2026-10-18 controls follow-up: [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md) records gate facing/wall lowering, precise door pairing, plate collision bounds and remaining projectile/AI/sculk/native-timing gaps. `tools/configure_controls.py` maintains the six changed block definitions without rewriting art. Synchronized double doors are owner-approved custom behavior, not vanilla equivalence.
 - Left out (signs, shelf, ...): see `NOT_IMPLEMENTED.md` for reasons and retry notes.
 - **Icons (2026-09-30; owner confirmed in game 2026-10-01 that the menu icons look right, 1.26.52).** Owner saw the stairs and gate icons turned, the slab big and high, the fence turned. Every non-cube plank-family block now names an icon geometry in `minecraft:item_visual` whose `item_display_transforms.gui` sets rotation, scale 0.625 and `fit_to_frame: false`: stairs `mallorn_stairs_item` (straight stair, tall half east, `[30,135,0]`, written by `gen_stairs.py`), gate `fence_gate_closed` `[30,135,0]`, slab `slab_bottom`, trapdoor, pressure plate `[30,225,0]`, fence `fence_carried` `[30,225,0]` translation -1 scale 0.62, button `mallorn_button_item` `[30,225,0]` (Java's 6x4x4 box looked turned and too wide in game, 2026-10-01; now 2x4x6 with the long face east; owner confirmed it in game 2026-10-01). Placed blocks, permutations and boxes are unchanged. Door keeps its 2D icon; planks/logs/wood are cubes. Poses come from Kaioga's 1.26.50 templates; the rule is in `bedrock-block-families/references/families.md` "Item icons", the test is "icons: ..." in `tests/run.mjs`. Check in game next to vanilla oak: stairs (tall half back left), slab (low, vanilla size), fence and gate (same diagonal as vanilla), trapdoor, plate, button.
 - **Untested in game** (no game access while writing): everything above. Check first: door swing/hinge, gate open pose, slab merge, log rotation, redstone opening.
@@ -534,7 +534,7 @@ values are hardcoded in the engine (no JSON on disk); those rows come from the M
 checklist is in `GRAPHICS_TASKS.md` ("Open problem: cutout flicker"). Suspects: thin cutout silhouettes plus mipmaps, transparent-pixel
 colour bleed, `alpha_test` mode.
 
-Bone meal on our flora (`scripts/bonemeal.js`, `flora_table.js`) grows Elanor, Niphredil and golden fern with4 nearby tries, Athelas with2; every try requires grass and air. It works outside the biome and uses guarded deferred consumption. The old repeated-event bug was owner-observed; repeated uses remain debounced. **Owner2026-10-19 removed all bone-meal growth/duplication for BOTH leaf litter and blossoms**, which are fallen material. The old claim that vanilla litter duplicates was from memory and was not game verification; it is superseded. See [COVER_INTERACTIONS.md](COVER_INTERACTIONS.md) for guarded merging/dew, native5-second litter fuel, both30% compost, yellow blossom dye and expanded decorative support.
+Bone meal on our flora (`scripts/bonemeal.js`, `flora_table.js`) grows Elanor, Niphredil and golden fern with4 nearby tries, Athelas with2; every try requires grass and air. It works outside the biome and uses guarded deferred consumption. The old repeated-event bug was owner-observed; repeated uses remain debounced. **Owner2026-10-19 removed all bone-meal growth/duplication for BOTH leaf litter and blossoms**, which are fallen material. The old claim that vanilla litter duplicates was from memory and was not game verification; it is superseded. See [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md) for guarded merging/dew, native5-second litter fuel, both30% compost, yellow blossom dye and expanded decorative support.
 
 ## Phase 7 - Western Corn and Lembas
 
@@ -590,7 +590,7 @@ Commit: `fix(miruvor): start cooldown only after a completed sip`.
   Balance: one sip is a Healing II potion plus a run, so the skin is paid up front (about 10 items, 4 glass bottles' worth including nectar) and throttled by the cooldown.
   **Verified in game (was unverified):** `onCompleteUse` firing for a non-food item with `use_modifiers`, the old cooldown starting on use (replaced 2026-10-14), durability bar showing, `durability.damage`
   write-back via the mainhand slot. Preserve native completion authority; no fallback timer or unverified chargeable-hook dependency.
-- **Group10 owner approved2026-10-19:** [FOOD_REMEDY_INTERACTIONS.md](FOOD_REMEDY_INTERACTIONS.md) records current event/live-skin validation, Creative sip preservation, category duplicate guard, effect coexistence and partial-error/cooldown handling, independent wrapped-Lembas Hunger cure/deed feedback, plain Lembas compost85 and both meats' soul-campfire cooking. Offline production tests pass; these changes and native container/consumer acceptance are not new game observations. Run the art-independent `tools/configure_food_remedy_interactions.py` post-pass (also invoked by `configure_support.py`) to preserve data policies. Food balance, ingredient-only nectar, no extra corn uses and no raw-swan debuff remain intentional.
+- **Group10 owner approved2026-10-19:** [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md) records current event/live-skin validation, Creative sip preservation, category duplicate guard, effect coexistence and partial-error/cooldown handling, independent wrapped-Lembas Hunger cure/deed feedback, plain Lembas compost85 and both meats' soul-campfire cooking. Offline production tests pass; these changes and native container/consumer acceptance are not new game observations. Run the art-independent `tools/configure_food_remedy_interactions.py` post-pass (also invoked by `configure_support.py`) to preserve data policies. Food balance, ingredient-only nectar, no extra corn uses and no raw-swan debuff remain intentional.
 - Effects come from script because item-JSON food effects are not available in format 1.26.50 (not verified; scripts are the working pattern here).
 - **Test list:** items appear in the creative menu and recipe book (salve unlocks on picking up Athelas, Miruvor on getting a salve); drink
   animation and can-drink at full hunger; effects apply; numbers feel expensive but not silly (Phase 20 balance pass).
@@ -690,7 +690,7 @@ Replaces Disharmony (the Phase 9 section below is superseded). Spec, numbers and
 - Sex and antlers: enum property `lothlorien:sex` (client synced) picked by `minecraft:entity_spawned` / `entity_born`; the render
   controller shows bones `antler_*` only for `buck` adults (`part_visibility`). Loot differs by sex through two adult groups
   (`adult_doe`, `adult_buck`), because loot-table conditions cannot test a custom property; babies have no loot group.
-- Venison is classified as meat with the item tag `minecraft:is_meat`. Audit2026-10-19: the tag alone does not prove wolf healing/breeding/growth; installed26.50 wolf consumers list explicit vanilla IDs. Native recognition remains open in `FOOD_REMEDY_INTERACTIONS.md`. **Not** `is_meat` inside `minecraft:food`: item format 1.26.50 rejects that field (game log, 2026-09-30: "Failed to parse field minecraft:food -> is_meat"), and the items did not load. One furnace recipe carries furnace, smoker, campfire; newest installed vanilla `furnace_beef` also has soul_campfire, proposed for the food group.
+- Venison is classified as meat with the item tag `minecraft:is_meat`. Audit2026-10-19: the tag alone does not prove wolf healing/breeding/growth; installed26.50 wolf consumers list explicit vanilla IDs. Native recognition remains open in `parity/BLOCKS_ITEMS.md`. **Not** `is_meat` inside `minecraft:food`: item format 1.26.50 rejects that field (game log, 2026-09-30: "Failed to parse field minecraft:food -> is_meat"), and the items did not load. One furnace recipe carries furnace, smoker, campfire; newest installed vanilla `furnace_beef` also has soul_campfire, proposed for the food group.
 - Animations are procedural Molang (no keyframes): walk = `query.modified_distance_moved` diagonal legs; run = gallop pairs with
   weight `clamp((query.ground_speed - 3.5) / 2.5, 0, 1)`. **The 3.5 m/s threshold is a guess**; if the gallop never shows or shows
   when strolling, tune it in `entity/deer.entity.json` (and `run` weight). Bone rotation convention used by the preview and the
@@ -1040,37 +1040,16 @@ Design sheets: `docs/mobs/swan.md`, `docs/mobs/squirrel.md`. What to know when t
   Owner2026-10-20 requires a positive-readable forest sample; missing-only data does not authorize a natural swan.
 - **Squirrel errand = white deer machinery.** `squirrel.js` drives the engine's `follow_target_leader` with a moved
   `guide_beacon` (away point, dig, onto the player); `white_deer.js` exports `stand` and `addBeaconSource` for it
-  (the stray-beacon sweep would otherwise delete the squirrel's beacon). Group13 uses synchronous accepted-stack consumption
-  and LootTableManager/spawnItem for the unchanged four-entry gift table, with actual3D proximity and live clear drop space.
-  Cooldown follows known delivery; optional particles/deeds do not undo gameplay. No atomic engine transaction claimed.
+  (the stray-beacon sweep would otherwise delete the squirrel's beacon). Acceptance consumes the stack synchronously;
+  the unchanged four-entry gift table is rolled with LootTableManager and every stack is spawned at the squirrel's feet
+  (player within 2.5 blocks horizontally, 2 vertically). Cooldown is set at delivery; particles/deeds are optional.
 - **Owner2026-10-20 domestication:** outside/leashed squirrel feeding adds kept; inside wild healing/errands do not.
   Added native squirrel powder-snow walking/lead anchor and swan fall immunity, retaining air+water breathing.
-  Full evidence and native acceptance: [SWAN_SQUIRREL_INTERACTIONS.md](SWAN_SQUIRREL_INTERACTIONS.md).
-
-Owner-approved2026-10-20 [synchronous cleanup](SYNCHRONOUS_VALIDATION.md) removes
-redundant same-callback snapshots/revalidation from squirrel acceptance/gift,
-rope placement, Miruvor completion and white-deer completion duplication. Real
-yielded/deferred/ongoing checks and partial-write policies remain. Unicorn entity
-and source generator now match native1.26.50 horse float/buoyant data; generator
-not run, RP unchanged. Queued unicorn healing and remaining Group14 findings
-were not implemented in this batch. All14 selected runners passed, deployed and
-all3 packs confirmed in sync; native swimming/hazard acceptance remains pending.
-
-Subsequent accepted-healing follow-up2026-10-20 replaces the unicorn owner
-healing queue with bonded-only native healable Elanor2HP/force_use:false, keeping
-the foreign-owner gate and wild trust consumption/healing. Shared animal_food
-and other species are unchanged. Native heal/mount acceptance is separate from
-the4 passing selected runners. Current record: [NATIVE_ANIMAL_HEALING.md](NATIVE_ANIMAL_HEALING.md).
-
-Final unicorn owner batch2026-10-20 replaces Friend-state generic tempt with
-native follow_target_leader filtered by actual player+Harmony Friend tag+Elanor;
-the identical predicate is negated for standing/sneaking flight. Existing
-Harmony20-tick update synchronizes the band tag alongside Hated, with no new
-service. Global nearest-player wariness remains unchanged. Owner-only bonded
-naming and no equipment/inventory/shear/dispenser routes are intentional.
-Six selected runners passed and2 BP files deployed/all3 packs in sync; native
-filter retarget/range/naming acceptance remains open. Full policy/evidence:
-[UNICORN_INTERACTIONS.md](UNICORN_INTERACTIONS.md).
+  Decisions, limits and in-game checks for all creatures: [parity/CREATURES.md](parity/CREATURES.md).
+- **Unicorn (2026-10-20/23):** swimming data equals the installed 1.26.50 horse; bonded healing is native `healable`
+  (Elanor 2 HP, `force_use:false`); Friend-only lure is `follow_target_leader` filtered by the Friend tag + Elanor,
+  negated in the flight exemption, and the existing Harmony 20-tick update syncs the tag; owner-only naming, no
+  equipment; the owner is told when the bonded unicorn dies.
 - **Gifts need Friend of Lothlorien** (owner rule 2026-10-02): the squirrel's offer and, since the same day, the white deer's
   (`offerRefusal` in both `*_rules.js`). Luring and taming stay open to calm players.
 - **Verified in game 2026-10-02**: the squirrel errand (beacon following, `/loot spawn` from script) and the Friend gating work. The swan floats
@@ -1288,7 +1267,7 @@ Design: `design/elven_inhabitants.md` sections 2-3. Commits: 88dbbe2 (Renown + d
   a conditional "Hand over" prompt in each trader group, filter `has_tag` (subject `other`) on `lothlorien_deliver_<profession>`; `saveRenown` -> `syncDeliverTag` keeps exactly that player tag while the current request is of that profession (also on join).
 - **Forms:** `ActionFormData` screen loop; icons from this pack's items and vanilla `textures/ui/*`; no header / label / divider; the set-aside confirm is a two-button `ActionFormData` (not `MessageFormData`, whose button order is a trap). `UserBusy` retried 10 times every 10 ticks; answers apply only within 12 blocks of the Loremaster; a dropped answer sends a chat line.
 - **Delivery:** `tradersAround` = `getEntities({ type, location, maxDistance: 96 })` (live positions, loaded chunks only); none found -> the Loremaster takes the request himself (fallback line). Direction: 8 compass words, north = -Z, "close by" under 8 blocks.
-- **Firefly catch:** the prompt stays in `firefly.json`; `fireflies.js` owns the real before-event/deferred capture/release boundary. `firefly_bottle.js` prepares visible localized raw-lore name/current-health data before removal and restores it before release bottle exchange. Offhand bottles do not catch; stack16 retained, no stackable dynamic properties. Healthy unnamed bottles remain plain; bottle anvil title is not animal identity. Native raw-lore persistence/merging remains acceptance; see [SMALL_FLYER_INTERACTIONS.md](SMALL_FLYER_INTERACTIONS.md). Group15 deployed2026-10-20 with all5 selected runners passing and all3 packs in sync; no new native observation. Songbird follow_mob removed by owner choice; songbird/butterfly native lead anchors and silent insect flap game events added without art/spawn/sound retuning.
+- **Firefly catch:** the prompt stays in `firefly.json`; `fireflies.js` owns the real before-event/deferred capture/release boundary. `firefly_bottle.js` prepares visible localized raw-lore name/current-health data before removal and restores it before release bottle exchange. Offhand bottles do not catch; stack16 retained, no stackable dynamic properties. Healthy unnamed bottles remain plain; bottle anvil title is not animal identity. Native raw-lore persistence/merging remains an in-game check; see [parity/CREATURES.md](parity/CREATURES.md). Songbird follow_mob removed by owner choice; songbird/butterfly native lead anchors and silent insect flap game events added.
 - **Sapling request:** `afterEvents.playerPlaceBlock` with `lothlorien:mallorn_sapling`; inside the biome it is remembered as a distinct cell (checked at turn-in); outside it prints `lore.saplings.outside` ("does not count"), only while the task is the sapling request.
 - **Verified in game 2026-10-11 (owner):** dialog redesign (one task slot, turn-in, chat feedback, icons, two-line buttons); trader hand-over with the `has_tag`-gated "Hand over" prompt; directions; the missing-trader fallback line; script-owned firefly catch; Harmony nudge; the acorn request; time-shaped morning dew ("dew looks OK"); Niphredil round 5.
 - **Not verified in game:** the outside-sapling chat line; the Uneasy / Shunned / Hated dialog bands; a v1 save migrating; two players on one firefly; Czech and the other locales in the forms (all `ai-draft`); completing all 12 requests (the Elf-friend path).
@@ -1310,4 +1289,4 @@ Design and all approved prices: `design/elven_inhabitants.md` section 4.
 
 Plan corrections from source/doc review: add the separate native trading look goal; set price multipliers explicitly to zero (documented omitted default is 0.05); woodwright rank 2 stays unchanged until M5. Reusable evidence and sources: workspace `docs/bedrock-trading.md` (`.claude/` is read-only for this agent).
 
-2026-10-19 leaf/tree interaction group: see [LEAF_TREE_INTERACTIONS.md](LEAF_TREE_INTERACTIONS.md) for native item compost/smelting/fuel/pots, mixed canopy support, guarded deferred growth/use, above-block light/soil and remaining automation/nest/native checks. Art/harvest/worldgen distributions are unchanged. Regenerate data with `tools/configure_leaf_tree_interactions.py`; `configure_support.py` runs it before deriving policies. New explicit leaf items reuse existing translated block names and native cube rendering. Great structure obstacle scans remain yielded and nontransactional; no full-volume synchronous recheck was added.
+2026-10-19 leaf/tree interaction group: see [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md) for native item compost/smelting/fuel/pots, mixed canopy support, guarded deferred growth/use, above-block light/soil and remaining automation/nest/native checks. Art/harvest/worldgen distributions are unchanged. Regenerate data with `tools/configure_leaf_tree_interactions.py`; `configure_support.py` runs it before deriving policies. New explicit leaf items reuse existing translated block names and native cube rendering. Great structure obstacle scans remain yielded and nontransactional; no full-volume synchronous recheck was added.

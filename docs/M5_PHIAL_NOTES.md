@@ -78,7 +78,7 @@ deduplication; Spectator/shared-cell cleanup; crowded type fairness; failed
 queries and unreadable/invalid targets; post-query changes and nearest-live-holder
 fallback; helper emission/collision/water/no-drop and explicit neighbor policy.
 Group11 contains28 runtime scenarios plus the helper declaration contract;
-see [PHIAL_INTERACTIONS.md](PHIAL_INTERACTIONS.md) for decisions and native limits.
+see [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md) for decisions and native limits.
 
 Reference review: installed `reference/server-2.8.0.d.ts` confirms the stable
 `applyKnockback({ x, z }, verticalStrength)` signature (the older example in

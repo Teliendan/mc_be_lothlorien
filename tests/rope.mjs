@@ -78,7 +78,7 @@ test("Elven rope: block, item and recipe agree", () => {
   assert.ok("lothlorien:rope" in item.components);
   const recipe = readJson("../lothlorien_bp/recipes/elven_rope.json")["minecraft:recipe_shaped"];
   assert.deepEqual(Object.values(recipe.key).map((i) => i.item).sort(), ["lothlorien:golden_fern", "lothlorien:morning_dew"]);
-  assert.equal(recipe.result.count, 1);
+  assert.deepEqual(recipe.result, [{ item: "lothlorien:elven_rope", count: 1 }, { item: "minecraft:glass_bottle", count: 1 }]);
 });
 
 finish();

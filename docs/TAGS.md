@@ -22,7 +22,7 @@ Owner decisions, implemented 2026-10-13:
 
 Group16 exception2026-10-20: owner approved adding `wandering_trader` to civilian
 elves so ordinary zombie/illager targeting includes them while skeleton civilian
-targeting remains absent. See [NPC_INTERACTIONS.md](NPC_INTERACTIONS.md).
+targeting remains absent. See [parity/CREATURES.md](parity/CREATURES.md).
 Retain all other families and block tags/omissions. Animals already use distinct mod families plus `mob`; there is no need for a blanket `animal` family. Keep the Warden's intentional `irongolem` family, the arrow's `projectile`/`arrow`, boat families and existing helper classifications. Do not substitute vanilla prey families (`rabbit`, `chicken`, etc.). Keep both `leaves` and `minecraft:leaves`: local tree `may_replace` predicates still query the bare spelling, while current vanilla trees use the namespaced spelling. Leaf carpet remains a thin cover, not full leaves.
 
 Flowers now carry custom classification lothlorien:flower; approved membership and effects are below. Potting/composting are separate components; current pottable decisions, including stateful exclusions, are outside the proposed tag-only changes. No invented vanilla flower tag is recommended. Existing wood recipe item tags are listed below and must stay separate from block tags.
@@ -49,7 +49,7 @@ two standing/sneaking no-flight filters. Both require actual player + this tag
 + hand-domain Elanor; the exact predicate is negated for player avoidance.
 No mob family, Hated targeting, other species or Harmony scoring changes.
 Per-player filtering/retargeting native acceptance is tracked in
-[UNICORN_INTERACTIONS.md](UNICORN_INTERACTIONS.md).
+[parity/CREATURES.md](parity/CREATURES.md).
 
 ## Complete block inventory
 

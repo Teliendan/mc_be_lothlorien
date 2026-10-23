@@ -65,7 +65,7 @@ export function populateVillage(dimension, rect, at) {
   const byPlace = (a, b) => a.x - b.x || a.z - b.z || a.y - b.y;
   const lore = posts.filter((q) => q.kind === "loremaster").sort(byPlace)[0] ?? null;
   const assigned = assignHomes(posts.filter((q) => q.kind !== "loremaster"), lore ? [lore.x, lore.y, lore.z] : null);
-  const kept = new Set(), result = { spawned: 0, own: 0, reserve: 0, failed: 0 }, homes = [];
+  const failedPosts = new Set(), result = { spawned: 0, own: 0, reserve: 0, failed: 0 }, homes = [];
   const spawn = (post, p) => {
     try {
       const elf = dimension.spawnEntity(ELF_ID, post.entity.location, { spawnEvent: spawnEventOf(p) });
@@ -73,7 +73,7 @@ export function populateVillage(dimension, rect, at) {
       result.spawned++;
       return true;
     } catch (e) {
-      kept.add(post); // the post stays: a later run tries again
+      failedPosts.add(post); // only for the log and the loremaster record: every post is removed below (a populated village is not planned again)
       result.failed++;
       console.warn(`[lothlorien] elves: could not spawn the ${p} at ${post.x},${post.y},${post.z}: ${e?.message ?? e}`);
       return false;
@@ -88,16 +88,15 @@ export function populateVillage(dimension, rect, at) {
   }
   if (result.spawned > 0) {
     try {
-      world.setDynamicProperty(HOMES_PROPERTY, JSON.stringify(addHomes(parseHomes(world.getDynamicProperty(HOMES_PROPERTY)), { rect: { x0: rect.x0, x1: rect.x1, z0: rect.z0, z1: rect.z1 }, loremaster: lore && !kept.has(lore) ? [lore.x, lore.y, lore.z] : null, homes })));
+      world.setDynamicProperty(HOMES_PROPERTY, JSON.stringify(addHomes(parseHomes(world.getDynamicProperty(HOMES_PROPERTY)), { rect: { x0: rect.x0, x1: rect.x1, z0: rect.z0, z1: rect.z1 }, loremaster: lore && !failedPosts.has(lore) ? [lore.x, lore.y, lore.z] : null, homes })));
     } catch (e) {
       console.warn(`[lothlorien] elves: could not write the home record: ${e?.message ?? e}`);
     }
   }
   for (const post of posts) {
-    if (kept.has(post)) continue;
     try { post.entity.remove(); } catch { /* unloaded meanwhile */ }
   }
   const total = assigned.length;
-  console.warn(`[lothlorien] elves: village at ${at[0]},${at[1]}: ${lore ? (kept.has(lore) ? "loremaster FAILED" : "loremaster") : "no loremaster post"} + ${result.own} on own trees (${result.reserve} on reserves)${total < 4 ? `, only ${total} of 4 other professions found a post` : ""}${result.failed ? `, ${result.failed} failed` : ""}`);
+  console.warn(`[lothlorien] elves: village at ${at[0]},${at[1]}: ${lore ? (failedPosts.has(lore) ? "loremaster FAILED" : "loremaster") : "no loremaster post"} + ${result.own} on own trees (${result.reserve} on reserves)${total < 4 ? `, only ${total} of 4 other professions found a post` : ""}${result.failed ? `, ${result.failed} failed` : ""}`);
   return result;
 }

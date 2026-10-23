@@ -103,6 +103,7 @@ def item():
         "description": {"identifier": f"{NS}:nectar_bloom", "menu_category": {"category": "nature", "group": "minecraft:itemGroup.name.flower"}},
         "components": {"minecraft:block_placer": {"block": f"{NS}:nectar_bloom", "replace_block_item": True},
                        "minecraft:icon": f"{NS}:nectar_bloom",
+                       "minecraft:compostable": {"composting_chance": 65},
                        "minecraft:tags": {"tags": [f"{NS}:flower"]}}}}
 
 

@@ -28,26 +28,22 @@ there is no need to run both verify and deploy without an intervening reason.
 
 | Change | Relevant suite names |
 | --- | --- |
-| Small-flyer native policy and captured firefly identity/health | `small-flyers`, `animal-home`, `decor-rope`, `performance`, `suite-layout`:5 runners passed verify and deploy2026-10-20.12 new production/data scenarios; native raw-lore persistence/actual stack merge, anchors and flap output remain acceptance: [SMALL_FLYER_INTERACTIONS.md](SMALL_FLYER_INTERACTIONS.md). |
-| Unicorn per-player Friend luring/Harmony-tag lifecycle and matching no-flight predicate | `unicorn-luring`, `unicorn`, `harmony`, `animal-home`, `performance`, `suite-layout`:6 runners.8 production-tag/filter scenarios; native selection is not simulated: [UNICORN_INTERACTIONS.md](UNICORN_INTERACTIONS.md). |
-| Bonded unicorn native healing and owner interaction handoff | `unicorn`, `animal-home`, `performance`, `suite-layout`:4 runners. No native-healing simulation; bonded data/owner gate/no queued charge and original trust integration: [NATIVE_ANIMAL_HEALING.md](NATIVE_ANIMAL_HEALING.md). |
-| Synchronous interaction cleanup and unicorn swimming | `swan-squirrel-interactions`, `swan-squirrel`, `animal-home`, `deer-interactions`, `white-deer`, `performance`, `decor-rope`, `rope`, `food-remedy`, `unicorn`, `suite-layout`:14 runners. Actual timing/error cases and native water acceptance: [SYNCHRONOUS_VALIDATION.md](SYNCHRONOUS_VALIDATION.md). |
-| Swan/squirrel interaction policies, errands and native gift delivery | `swan-squirrel-interactions`; add `swan-squirrel` (including shedding), `animal-home`, `deer-interactions`, `white-deer`, `performance`, `suite-layout`.42 current production scenarios after synchronous evidence correction; exact owner1/5 choices and native acceptance: [SWAN_SQUIRREL_INTERACTIONS.md](SWAN_SQUIRREL_INTERACTIONS.md). |
-| Deer/shared wariness, deferred white-deer offers, lifetime gifts and gift-ground space | `deer-interactions`; add `deer`, `white-deer`, `animal-home`, `swan-squirrel`, `unicorn`, `performance`, `suite-layout` for integration.33 production scenarios; native acceptance: [DEER_INTERACTIONS.md](DEER_INTERACTIONS.md). |
-| Optimistic partial depth / natural rarity consumer interaction | `biome`, `deer-interactions`, `white-deer`, `wardens`, `animal-home`, `swan-squirrel`, `performance`, `suite-layout`.17 sampler tests; owner2026-10-20 prefers extra hearts to missing frontier encounters while keeping incomplete metadata. |
-| Phial holder eligibility, spider fairness/revalidation and helper neighbor policies | `phial`, `suite-layout`; source/offline coverage and native acceptance: [PHIAL_INTERACTIONS.md](PHIAL_INTERACTIONS.md). |
-| Food/remedy completion, coexistence, Creative, bottle/compost/cooking data | `food-remedy`; add `crops`, `flora-crop`, `deer`, `swan-squirrel`, `nectar-dew`, `suite-layout` as applicable. Native acceptance and pending consumers/remainders: [FOOD_REMEDY_INTERACTIONS.md](FOOD_REMEDY_INTERACTIONS.md). |
-| Firefly containers, rope context/effects/bounds/drops, chandelier recipe | `decor-rope`; add `rope`, `lamps`, `covers`, `nectar-dew`, `flora-crop`, `support`, `performance`, `suite-layout` for integration. See [DECOR_ROPE_INTERACTIONS.md](DECOR_ROPE_INTERACTIONS.md). |
-| Cover merging/dew/bottle progress, litter/blossom data and support families | `covers`; add `flora-crop`, `flora`, `nectar-dew`, `support`, `suite-layout` for integration. See [COVER_INTERACTIONS.md](COVER_INTERACTIONS.md). |
-| Flower/herb/bloom use; corn state/layout | `flora-crop`; add `crops`, `nectar-dew`, `flora`, `support` for integration. See [FLORA_CROP_INTERACTIONS.md](FLORA_CROP_INTERACTIONS.md); new terrain/testing world for wild corn state. |
+| Small flyers: firefly capture/release, native policy data | `small-flyers`, `animal-home`, `decor-rope`; native lore persistence, bottle merge, anchors and flap output are in-game checks: [parity/CREATURES.md](parity/CREATURES.md). |
+| Unicorn: Friend lure, Harmony tags, owner gate, death message | `unicorn-luring`, `unicorn`, `harmony`, `animal-home`. Native heal/mount, swimming and lure retarget are in-game checks. |
+| Deer, white deer, swan, squirrel: wariness, gift spot, errands, gift delivery, depth | `deer-interactions`, `swan-squirrel-interactions`, `deer`, `white-deer`, `swan-squirrel`, `animal-home`, `biome`, `wardens`, `performance`. |
+| Phial holder eligibility, spider fairness/revalidation and helper neighbor policies | `phial`, `suite-layout`; source/offline coverage and native acceptance: [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md). |
+| Food/remedy completion, coexistence, Creative, bottle/compost/cooking data | `food-remedy`; add `crops`, `flora-crop`, `deer`, `swan-squirrel`, `nectar-dew`, `suite-layout` as applicable. Native acceptance and pending consumers/remainders: [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md). |
+| Firefly containers, rope context/effects/bounds/drops, chandelier recipe | `decor-rope`; add `rope`, `lamps`, `covers`, `nectar-dew`, `flora-crop`, `support`, `performance`, `suite-layout` for integration. See [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md). |
+| Cover merging/dew/bottle progress, litter/blossom data and support families | `covers`; add `flora-crop`, `flora`, `nectar-dew`, `support`, `suite-layout` for integration. See [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md). |
+| Flower/herb/bloom use; corn state/layout | `flora-crop`; add `crops`, `nectar-dew`, `flora`, `support` for integration. See [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md); new terrain/testing world for wild corn state. |
 | Mallorn controls/barriers | `controls`; add `wood` and `support` for family/support integration |
-| Wood use, slab merging/fuel, wood axes, stair chest access | `wood-interactions`; add `wood`, `controls`, `support` for shared-handler/family changes; see [WOOD_INTERACTIONS.md](WOOD_INTERACTIONS.md) |
+| Wood use, slab merging/fuel, wood axes, stair chest access | `wood-interactions`; add `wood`, `controls`, `support` for shared-handler/family changes; see [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md) |
 | Cloak/belt; bow/arrows; phial; Miruvor | `worn-gifts`, `archery`, `phial`, `miruvor`; aggregate `equipment` or `gifts` |
 | Biome depth / plants / crops / wood | `biome`, `flora`, `crops`, `wood` |
 | Giant tree generation and nut growth | `giant-trees` |
 | Harmony, Renown, shops, healing | `harmony`, `renown`, `trade`, `healer` |
 | Animals and transport | `deer`, `antlers`, `white-deer`, `swan-squirrel`, `unicorn`, `animal-home`, `small-flyers` |
-| Mallorn boats and chest boats | `boats` (native source contracts and item/recipe/drop bindings; runtime cases in [BOAT_INTERACTIONS.md](BOAT_INTERACTIONS.md)) |
+| Mallorn boats and chest boats | `boats` (native source contracts and item/recipe/drop bindings; runtime cases in [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md)) |
 | Nectar / dew / rope / lamps | `nectar-dew`, `rope`, `lamps` |
 | Support and performance / diagnostics | `support`, `performance`, `diagnostics` |
 | Warden / civilian elf behavior | `wardens`, `elves`; add `village-residents` for baked resident placement |

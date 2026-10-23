@@ -1,22 +1,12 @@
 # Unicorn (`lothlorien:unicorn`) - design sheet
 
-2026-10-20 approved swimming update is implemented/deployed: current native horse
-float/buoyant data in both entity and source generator, without running art
-generation. New native water tests remain pending. Group14 owner review/source
-fixes are complete, including actual per-player Friend filtering for native
-following/no-flight exemption, owner-only bonded naming and no equipment routes.
-The accepted-healing follow-up adds bonded-only native Elanor
-healing2HP/force_use:false and removes the owner healing queue; deployed with4
-selected runners passing and all3 packs in sync. Native heal/mount acceptance
-is pending. [Current review](../UNICORN_INTERACTIONS.md).
+Parity decisions (2026-10-20, death message 2026-10-23): [parity/CREATURES.md](../parity/CREATURES.md). Summary: swimming copies the installed horse
+float/buoyant data; Friend-only lure by native `follow_target_leader`; owner-only bonded naming; no equipment; bonded
+healing is native `healable` (Elanor 2 HP, `force_use:false`), full-health Elanor mounts; the owner is told when the
+bonded unicorn dies. Native heal/mount precedence and swimming still need an in-game check.
 
-2026-10-11 care update (source/offline evidence; Bedrock 1.26.52; owner accepted as done; no new game test results supplied): Accepted Elanor trust offerings restore 2 HP. A bonded owner can heal an injured unicorn with Elanor instead of mounting on that use. Full-health mounting, Friend-only bonding, owner restriction, no lead and no breeding remain unchanged.
-See [Bringing wildlife home](BRINGING_HOME.md) for current policy and acceptance checks.
-
-2026-10-20 accepted-healing policy supersedes the earlier hand-dependent queued
-implementation: owners proceed to native bonded healable/rideable behavior,
-stranger gate unchanged, wild trust offers remain synchronous. Full-health
-mounting/no forced Elanor use is intended. [Implementation/tests](../NATIVE_ANIMAL_HEALING.md).
+2026-10-11 care update (owner accepted as done): accepted Elanor trust offerings restore 2 HP; full-health mounting,
+Friend-only bonding, owner restriction, no lead and no breeding unchanged. See [Bringing wildlife home](BRINGING_HOME.md).
 
 Archetype: rare, timid horse that only a Friend of Lothlorien can approach and bond with (Phase 15). Built 2026-10-02 from the
 vanilla horse (body, walk and look animations) and the deer's Harmony wariness. **Tried in game 2026-10-02 and accepted by the owner**: spawning, taming, riding without a saddle, one-block steps

@@ -37,9 +37,9 @@ function engine() {
     getTopmostBlock(p) { return this.getBlock({ ...p, y: this.top ?? 64 }); },
     getEntities({ type }) { return [...entities.values()].filter(e => e.typeId === type && e.isValid); },
     spawnParticle() { this.particles++; if (this.particleError) throw Error("particle"); },
-    spawnItem(item, at) { if (this.spawnError) throw Error("spawn"); this.drops.push({ item, at }); return {}; },
+    spawnItem(item, at) { this.drops.push({ item, at }); return {}; },
     spawnEntity(typeId, at) { return entity(typeId, at); } };
-  const world = { afterEvents: events, players: [], getPlayers() { return this.players; },
+  const world = { afterEvents: events, beforeEvents: events, players: [], getPlayers() { return this.players; },
     getDimension: () => dimension, getEntity: key => entities.get(key) };
   function entity(typeId, location = { x: 0, y: 65, z: 0 }) {
     const props = new Map(), dyn = new Map(), health = { currentValue: 14, effectiveMax: 14, setCurrentValue(n) { this.currentValue = n; } };
@@ -69,10 +69,8 @@ async function setup() {
     EntityInitializationCause: { Loaded: "Loaded" }, ItemStack: Item, harmonyOf: e => ({ harmony: e.band }), bandOf: b => b,
     message: s => s, repeatedUse: () => false, isGuiding: () => false, isErrand: () => false,
     pickWaypoint: () => ({ x: 14, y: 65, z: 0, final: false }), hopStatus: () => "go" };
-  const cover = await load("cover_use", base);
-  const hand = await load("interaction_use", { ...base, ...cover });
   const food = await load("animal_food", { ...base, FOOD_HEALTH: 2, FLOWER_ITEMS: [], GRAIN_ITEMS: [] });
-  h.base = { ...base, ...hand, ...food }; h.depth = { level: 3, complete: true };
+  h.base = { ...base, ...food }; h.depth = { level: 3, complete: true };
   h.biome = { id: "lothlorien", transparent: new Set(), at: () => "lothlorien" };
   h.mod = await load("white_deer", h.base, "\nexport { groundFeet, giveGift, sessions, tickSessions, judgeNaturalSpawn };\n");
   h.mod.startWhiteDeer(() => h.depth, h.biome);

@@ -9,7 +9,7 @@ Four boats: `lothlorien:mallorn_boat`, `mallorn_chest_boat`, `mallorn_heartwood_
 leaving and ordinary self-drop work well. The report does not enumerate variants,
 mob species or chest-content spilling. All four items now declare 60-second fuel;
 the remaining native dispenser/environment/chest checks are distinguished from
-verified behavior in [BOAT_INTERACTIONS.md](../BOAT_INTERACTIONS.md).
+verified behavior in [../parity/BLOCKS_ITEMS.md](../parity/BLOCKS_ITEMS.md).
 **One command regenerates every file**: `python -B tools/make_mallorn_boat_family.py` (runs both model generators;
 heartwood art = recolour of the silver art; chest geometry; icons; BP entities, items, recipes, loot; RP client
 entities; lang and item_texture entries). Do not hand-edit the generated files.

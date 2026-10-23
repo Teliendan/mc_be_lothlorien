@@ -11,7 +11,6 @@ import { BlockPermutation, EquipmentSlot, GameMode, ItemStack, system, world } f
 import { brakes, CLIMB, columnBounds, dropStacks, isUnsupported, levitationStep, pieceOffset, planRope, wallOffset } from "./elven_rope_rules.js";
 import { repeatedUse } from "./use_guard.js";
 import { noteDeed } from "./deeds.js";
-import { withinReach } from "./interaction_use.js";
 import { readBlock } from "./deferred_use.js";
 
 const ROPE_ID = "lothlorien:elven_rope";
@@ -27,26 +26,16 @@ const faceOf = (block) => (block && ROPE_IDS.has(block.typeId) ? permFace(block.
 
 function hasWall(dimension, { x, y, z }, face) {
   const w = wallOffset(face);
-  if (!w) return false;
   const wall = readBlock(dimension, { x: x + w.x, y, z: z + w.z });
   return wall ? !isUnsupported({ isAir: wall.isAir, isLiquid: wall.isLiquid }) : undefined;
 }
 
-function dimensionBounds(dimension) {
-  try {
-    const { min, max } = dimension.heightRange;
-    return Number.isFinite(min) && Number.isFinite(max) && min <= max ? { minY: Math.ceil(min), maxY: Math.floor(max) } : undefined;
-  } catch { return undefined; }
-}
+const heightBounds = (dimension) => ({ minY: dimension.heightRange.min, maxY: dimension.heightRange.max });
 
+// The rope item is used on a block: hang pieces downwards first, then upwards, one per item in the hand.
 function useRope(player, block, blockFace, itemStack) {
-  if (itemStack?.typeId !== ROPE_ID) return;
-  const slot = player.getComponent("equippable")?.getEquipmentSlot(EquipmentSlot.Mainhand), item = slot?.getItem();
-  if (player.isValid === false || item?.typeId !== ROPE_ID || !withinReach(player, block.center())) return;
   const dimension = block.dimension;
-  if (dimension.id !== player.dimension.id) return;
-  const bounds = dimensionBounds(dimension), count = item.amount;
-  if (!bounds || count < 1) return;
+  const bounds = heightBounds(dimension), count = itemStack.amount;
   const clickedFace = faceOf(block);
   let { x, y: y0, z } = block.location;
   let face;
@@ -71,52 +60,27 @@ function useRope(player, block, blockFace, itemStack) {
   }
   if (!plan.length) return;
   const permutation = BlockPermutation.resolve(ROPE_ID, { [FACE_STATE]: face });
-  const creative = player.getGameMode() === GameMode.Creative;
-  let remaining = item;
-  let placed = 0;
-  for (const y of plan) {
-    if (!rowFree(face)(y)) break;
-    const cell = readBlock(dimension, { x, y, z });
-    if (!cell) break;
-    const before = remaining;
-    let charged = before;
-    // Charge BEFORE each world write. On failure restore only when the cell is
-    // readable and demonstrably unchanged. Unknown outcomes never make free rope.
-    if (!creative) {
-      if (before.amount === 1) { charged = null; slot.setItem(undefined); }
-      else { charged = before.clone(); charged.amount--; slot.setItem(charged); }
-    }
-    try { cell.setPermutation(permutation); }
-    catch {
-      if (!creative && readBlock(dimension, { x, y, z })?.isAir) slot.setItem(before);
-      break;
-    }
-    placed++;
-    if (!creative) {
-      if (before.amount === 1) break;
-      remaining = charged;
-    }
+  for (const y of plan) dimension.getBlock({ x, y, z }).setPermutation(permutation);
+  if (player.getGameMode() !== GameMode.Creative) {
+    const slot = player.getComponent("equippable").getEquipmentSlot(EquipmentSlot.Mainhand);
+    if (plan.length >= count) slot.setItem(undefined);
+    else slot.amount = count - plan.length;
   }
-  if (!placed) return;
-  try { noteDeed(player, "rope"); } catch { /* optional feedback */ }
-  try {
-    dimension.playSound("dig.grass", { x: x + 0.5, y: plan[0], z: z + 0.5 });
-  } catch {
-    // sound is decoration
-  }
+  noteDeed(player, "rope");
+  dimension.playSound("dig.grass", { x: x + 0.5, y: plan[0], z: z + 0.5 });
 }
 
 // Removes every piece of the rope in column (x, z) that is connected to row y and drops all of them, plus one when
 // the piece at y is already gone (`gone`), as stacks at row y.
 export function dropWholeRope(dimension, { x, y, z }, face, { creative = false, gone = false } = {}) {
-  const bounds = dimensionBounds(dimension);
-  if (!bounds || !wallOffset(face)) return;
+  const bounds = heightBounds(dimension);
   const { bottom, top } = columnBounds((row) => faceOf(readBlock(dimension, { x, y: row, z })) === face, y, bounds.minY, bounds.maxY);
   let total = gone ? 1 : 0;
   for (let row = bottom; row <= top; row++) {
     const piece = readBlock(dimension, { x, y: row, z });
     if (faceOf(piece) !== face) continue;
-    try { piece.setType("minecraft:air"); total++; } catch { /* retain unreadable/failed piece */ }
+    piece.setType("minecraft:air");
+    total++;
   }
   if (creative || world.gameRules.doTileDrops !== true) return;
   for (const amount of dropStacks(total)) dimension.spawnItem(new ItemStack(ROPE_ID, amount), { x: x + 0.5, y: y + 0.5, z: z + 0.5 });
@@ -125,54 +89,38 @@ export function dropWholeRope(dimension, { x, y, z }, face, { creative = false, 
 // The block at `location` was broken or blown up: pieces beside it that hung on it lose their wall and drop
 function checkWalls(dimension, { x, y, z }) {
   for (const [dx, dz] of HORIZONTAL) {
-    try {
-      const cell = dimension.getBlock({ x: x + dx, y, z: z + dz });
-      const face = faceOf(cell);
-      if (!face) continue;
-      const w = wallOffset(face);
-      if (cell.location.x + w.x !== x || cell.location.z + w.z !== z) continue;
-      if (hasWall(dimension, cell.location, face) !== false) continue;
-      dropWholeRope(dimension, cell.location, face);
-    } catch {
-      // chunk unloaded meanwhile
-    }
+    const cell = readBlock(dimension, { x: x + dx, y, z: z + dz });
+    const face = faceOf(cell);
+    if (!face) continue;
+    const w = wallOffset(face);
+    if (cell.location.x + w.x !== x || cell.location.z + w.z !== z) continue;
+    if (hasWall(dimension, cell.location, face) !== false) continue;
+    dropWholeRope(dimension, cell.location, face);
   }
 }
 
 system.beforeEvents.startup.subscribe(({ itemComponentRegistry }) => {
   itemComponentRegistry.registerCustomComponent("lothlorien:rope", {
     onUseOn({ source, block, blockFace, itemStack }) {
-      try {
-        if (repeatedUse(source, "elven_rope")) return;
-        useRope(source, block, blockFace, itemStack);
-      } catch {
-        // block or player gone meanwhile
-      }
+      if (repeatedUse(source, "elven_rope")) return;
+      useRope(source, block, blockFace, itemStack);
     },
   });
 });
 
 // Breaking a piece breaks the whole rope: the piece is already gone, the rest is removed and everything drops here
 world.afterEvents.playerBreakBlock.subscribe(({ block, brokenBlockPermutation, player }) => {
-  try {
-    if (ROPE_IDS.has(brokenBlockPermutation.type.id)) {
-      const creative = player.getGameMode() === GameMode.Creative;
-      dropWholeRope(block.dimension, block.location, permFace(brokenBlockPermutation), { creative });
-    }
-    checkWalls(block.dimension, block.location);
-  } catch {
-    // chunk unloaded meanwhile
+  if (ROPE_IDS.has(brokenBlockPermutation.type.id)) {
+    const creative = player.getGameMode() === GameMode.Creative;
+    dropWholeRope(block.dimension, block.location, permFace(brokenBlockPermutation), { creative });
   }
+  checkWalls(block.dimension, block.location);
 });
 world.afterEvents.blockExplode.subscribe(({ block, dimension, explodedBlockPermutation }) => {
-  try {
-    if (ROPE_IDS.has(explodedBlockPermutation?.type.id)) {
-      dropWholeRope(dimension, block.location, permFace(explodedBlockPermutation));
-    }
-    checkWalls(dimension, block.location);
-  } catch {
-    // chunk unloaded meanwhile
+  if (ROPE_IDS.has(explodedBlockPermutation.type.id)) {
+    dropWholeRope(dimension, block.location, permFace(explodedBlockPermutation));
   }
+  checkWalls(dimension, block.location);
 });
 
 // WORKAROUND (docs/workarounds.md in the workspace; re-check after every game update): no component makes a custom block
@@ -187,8 +135,8 @@ export function climbSpeed(player) {
   return inputInfo.getMovementVector().y > CLIMB.forwardThreshold ? CLIMB.forwardSpeed / 20 : 0;
 }
 export function inRope(player) {
-  if (player.isValid === false || player.isGliding || player.isFlying || player.getComponent("riding")?.entityRidingOn ||
-      player.getComponent("health")?.currentValue <= 0 || player.getGameMode() === GameMode.Spectator) return false;
+  if (player.isGliding || player.isFlying || player.getComponent("riding")?.entityRidingOn ||
+      player.getGameMode() === GameMode.Spectator) return false;
   const { x, y, z } = player.location;
   const cx = Math.floor(x);
   const cz = Math.floor(z);
@@ -205,10 +153,17 @@ const climbing = new Map();
 const ENTRY_TICKS = 4; // no pass-through contact callback for a collision-free rope
 let climbingTimer;
 
-function leaveRope(id) {
+// The API has no effect-source token, so ownership is told by duration: our grants last at most CLIMB.effectTicks,
+// a potion's (slow falling) or a shulker bullet's levitation lasts longer and is left alone.
+const ours = (player, effect) => player.getEffect(effect)?.duration <= CLIMB.effectTicks;
+const foreign = (player, effect) => player.getEffect(effect)?.duration > CLIMB.effectTicks;
+function clearOurs(player, ...effects) {
+  for (const effect of effects) if (ours(player, effect)) player.removeEffect(effect);
+}
+
+function leaveRope(id, player) {
   climbing.delete(id);
-  // Never remove a grant: stable API has no effect-source token. Our one-tick
-  // effects expire naturally, including on leave, water entry and dimension travel.
+  if (player) clearOurs(player, "levitation", "slow_falling");
 }
 
 function syncClimbingTimer() {
@@ -219,14 +174,13 @@ function syncClimbingTimer() {
 function updateClimber(player) {
   try {
     if (!inRope(player)) {
-      leaveRope(player.id);
+      leaveRope(player.id, player);
       return;
     }
     const y = player.location.y;
     const last = climbing.get(player.id);
-    // Any live effect may be external (even one matching our last amplifier).
-    // Give it priority without refreshing it or replaying an old saved duration.
-    if (player.getEffect("levitation") || player.getEffect("slow_falling")) {
+    // A potion's or shulker's effect has priority: do not touch it.
+    if (foreign(player, "levitation") || foreign(player, "slow_falling")) {
       climbing.set(player.id, { player, v: null, y });
       return;
     }
@@ -234,6 +188,7 @@ function updateClimber(player) {
       // A custom block has no ladder's built-in crouch grip. Hold the first crouched height without changing
       // horizontal movement or the direction the player is facing.
       const holdY = last?.holdY ?? y;
+      clearOurs(player, "levitation", "slow_falling");
       player.teleport({ x: player.location.x, y: holdY, z: player.location.z });
       climbing.set(player.id, { player, v: null, y: holdY, holdY });
       return;
@@ -247,15 +202,17 @@ function updateClimber(player) {
       const step = levitationStep(last?.v ?? player.getVelocity().y, target);
       v = step.v;
       level = step.amplifier;
+      clearOurs(player, "slow_falling");
     } else {
       // sliding down: slow falling, braked by a tick of levitation when faster than a ladder
       player.addEffect("slow_falling", CLIMB.effectTicks, { amplifier: 0, showParticles: false });
       if (last && brakes(y - last.y, CLIMB.downSpeed / 20)) level = 0;
     }
     climbing.set(player.id, { player, v, y });
+    clearOurs(player, "levitation"); // a lower level would not replace a higher one still running
     if (level !== undefined) player.addEffect("levitation", CLIMB.effectTicks, { amplifier: level, showParticles: false });
   } catch {
-    leaveRope(player.id); // player gone or chunk unloaded this tick
+    leaveRope(player.id); // player gone this tick
   }
 }
 
@@ -268,7 +225,7 @@ export function startRopeClimbing() {
   system.runInterval(() => {
     for (const player of world.getPlayers()) {
       if (climbing.has(player.id)) continue;
-      try { if (inRope(player)) updateClimber(player); } catch { /* unloaded */ }
+      if (inRope(player)) updateClimber(player);
     }
     syncClimbingTimer();
   }, ENTRY_TICKS);

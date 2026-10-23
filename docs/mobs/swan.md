@@ -5,12 +5,8 @@ Script API 2.8.0. Feature commit: `2810ce3` (`Finish swan drops and visible
 feather shedding`). Final art/cleanup commit: `Finalize swan art and remove
 runtime diagnostics`.
 
-Group13 owner decision2026-10-20: natural swans still require a positive-readable
-Lothlorien sample nearby; missing-only data does not authorize them. Added
-native chicken-style fall immunity while intentionally retaining explicit
-air+water breathing. Offline data/production tests pass; new native acceptance
-pending. Art, navigation, care, shedding timing/animation and natural settings
-are unchanged. See [interaction ledger](../SWAN_SQUIRREL_INTERACTIONS.md).
+Owner decision 2026-10-20: natural swans still require a readable Lothlorien sample nearby; missing-only data does not
+authorize them. Native chicken-style fall immunity added; explicit air+water breathing kept. Details: [parity/CREATURES.md](../parity/CREATURES.md).
 
 | Area | Final decision |
 | --- | --- |

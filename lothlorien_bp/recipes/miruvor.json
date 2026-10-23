@@ -34,9 +34,15 @@
         "item": "lothlorien:athelas_salve"
       }
     ],
-    "result": {
-      "item": "lothlorien:miruvor",
-      "count": 1
-    }
+    "result": [
+      {
+        "item": "lothlorien:miruvor",
+        "count": 1
+      },
+      {
+        "item": "minecraft:glass_bottle",
+        "count": 4
+      }
+    ]
   }
 }

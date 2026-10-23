@@ -23,22 +23,11 @@ Art: `tools/make_firefly.py` (generated; green abdomen glows). Feature commit: `
 
 1. Do the wings flutter in the right plane; is the model visible at size 0.2?
 
-## Group15 follow-up2026-10-20
+## Vanilla parity
 
-Source/offline verified and deployed after small-flyers, animal-home, decor-rope,
-performance and suite-layout passed; all3 packs in sync. No new native observation.
-The older glow/icon/spawn/catch observation above does not verify new metadata.
-
-Bottle max16 retained. Healthy unnamed captures stay plain. Captured name and
-injured current health use visible localized RawMessage lore; stackable item
-dynamic properties are unsupported and unused. Captured name is canonical lore:
-an anvil bottle title does not rename the animal, and empty-glass name/lore never
-transfers. Only name/current health are saved, no effects or other entity state;
-health above a restored actor's effective maximum is clamped. Restoration failure
-attempts cleanup before charging; operations remain nontransactional.
-
-Check named/injured/fractional-health capture/release, raw-lore persistence across
-save/reload/locale switching and actual bottle merging, plus full inventory and
-Creative. Check insect flap events at sculk while audio stays silent. Fireflies
-remain bottle-only with no leads, food, breeding, hive or colony systems.
-[Full policy and limitations](../SMALL_FLYER_INTERACTIONS.md).
+Bottle max 16. Healthy unnamed captures stay plain; captured name and injured current health use visible localized
+RawMessage lore (stackable items cannot hold dynamic properties). An anvil bottle title does not rename the animal;
+empty-glass name/lore never transfers. Only name/current health are saved; health above the restored actor's maximum is
+clamped. Check in game: named/injured/fractional-health capture and release, lore persistence across save/reload/locale
+switch, bottle merging, full inventory, Creative, insect flap events at sculk (silent). Fireflies stay bottle-only: no
+leads, food, breeding; no dispenser capture. Decisions: [parity/CREATURES.md](../parity/CREATURES.md)

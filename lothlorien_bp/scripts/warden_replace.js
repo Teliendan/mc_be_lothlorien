@@ -10,7 +10,7 @@ const done = new Set(); // ids of wardens already handled (or being replaced)
 
 function check(entity) {
   try {
-    if (!entity.isValid || entity.typeId !== WARDEN_ID || done.has(entity.id)) return;
+    if (!entity.isValid || done.has(entity.id)) return;
     const movement = entity.getComponent("minecraft:movement")?.currentValue;
     if (!needsReplacement(movement)) return;
     done.add(entity.id);
@@ -25,7 +25,7 @@ function check(entity) {
 }
 
 // One tick later: attributes are surely applied, and the writes run outside any read-only context.
-const later = (entity) => system.runTimeout(() => check(entity), 1);
+const later = (entity) => { if (entity.typeId === WARDEN_ID) system.runTimeout(() => check(entity), 1); };
 
 world.afterEvents.worldLoad.subscribe(() => {
   world.afterEvents.entitySpawn.subscribe(({ entity }) => later(entity));

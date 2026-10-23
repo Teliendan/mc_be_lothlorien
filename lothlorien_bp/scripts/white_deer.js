@@ -13,9 +13,7 @@ import { message } from "./messages.js";
 import { EntityInitializationCause, EquipmentSlot, GameMode, ItemStack, system, world } from "@minecraft/server";
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
-import { repeatedUse } from "./use_guard.js";
 import { eatHeldFood, healAnimal, isInjured } from "./animal_food.js";
-import { captureHand, liveHand, withinReach } from "./interaction_use.js";
 import {
   ACORN_ID, BEACON_ID, GUIDE_TICKS, WHITE_DEER_ID, canBeGuided, hopStatus, horizontal, keepNaturalSpawn,
   newHop, offerRefusal, phase, pickWaypoint, trackProgress,
@@ -25,7 +23,6 @@ import { NUT_ID, borderGrid, giftCandidates, pickGiftSpot } from "./great_mallor
 // session: { playerId, beaconId, target, bestDist, stuck, born, phase, hop, skip, bias, waiting }
 const sessions = new Map(); // deer id -> session
 const searching = new Set(); // deer ids with a gift spot search in progress
-const deliveredGifts = new Set(); // known deliveries whose persistent completion is not confirmed
 const GIFT_SPOT = "lothlorien:gift_spot"; // dynamic property on the deer: JSON {x, y, z, dim} until the gift is given
 const GIFTED = "lothlorien:gifted"; // dynamic property on the deer: true once the nut was laid
 let depthAt; // (dimension, location) -> { level }, from main.js
@@ -121,21 +118,19 @@ function storedSpot(deer) {
   }
 }
 
-// Lay one nut at a still-clear spot, then record lifetime completion.
+// Lay one nut at the spot, then record lifetime completion. A spot that is no longer clear (or no longer inside Lothlorien)
+// is forgotten, so the next acorn searches a new one.
 function giveGift(deer, s) {
   const spot = s.spot;
-  if (!deer.isValid || !(deer.getComponent("minecraft:health")?.currentValue > 0)) return false;
-  if (deer.getDynamicProperty(GIFTED) || deliveredGifts.has(deer.id)) return false;
-  if (!giftSpace(deer.dimension, spot) || !insideGift(deer.dimension, spot)) return false;
+  if (!giftSpace(deer.dimension, spot) || !insideGift(deer.dimension, spot)) {
+    deer.setDynamicProperty(GIFT_SPOT, undefined);
+    return false;
+  }
   const at = { x: spot.x + 0.5, y: spot.y + 0.2, z: spot.z + 0.5 };
   const nut = new ItemStack(NUT_ID, 1);
   nut.setLore([message("nut.lore.tree"), message("nut.lore.space"), message("nut.lore.plant")]);
-  // No fallback: a thrown spawn has an uncertain outcome. Remember a known
-  // successful delivery before persistent writes or optional visual effects.
   deer.dimension.spawnItem(nut, at);
-  deliveredGifts.add(deer.id);
   deer.setDynamicProperty(GIFTED, true);
-  if (deer.getDynamicProperty(GIFTED) === true) deliveredGifts.delete(deer.id);
   deer.setDynamicProperty(GIFT_SPOT, undefined);
   try { deer.dimension.spawnParticle("minecraft:totem_particle", at); } catch { /* cosmetic only */ }
   return true;
@@ -189,19 +184,16 @@ function activePlayer(player) {
   return player?.isValid && player.getGameMode() !== GameMode.Spectator &&
     player.getComponent("minecraft:health")?.currentValue > 0;
 }
-function validOffer(player, deer, snapshot) {
+// A few ticks after the click (the gift spot search is a job): the deer and player are still there, the same acorn is in
+// the selected slot.
+function stillOffering(player, deer, offered) {
   try {
-    if (!activePlayer(player) || !deer.isValid || !(deer.getComponent("minecraft:health")?.currentValue > 0) || deer.typeId !== WHITE_DEER_ID ||
-        deer.dimension.id !== snapshot?.dimension.id || !liveHand(snapshot, player) ||
-        !withinReach(player, deer.location) || !canBeGuided(bandOf(harmonyOf(player).harmony)) ||
-        isLeashed(deer) || deer.getProperty("lothlorien:alarmed") ||
-        deer.getProperty("lothlorien:guiding") || deer.getDynamicProperty(GIFTED) || deliveredGifts.has(deer.id) || sessions.has(deer.id) ||
-        deer.id !== snapshot.deerId || deer.getDynamicProperty(GIFT_SPOT) !== snapshot.giftSpot) return false;
-    const depth = depthAt(deer.dimension, deer.location);
-    return depth.level > 0; // positive partial depth is still confirmed inside
+    if (!player.isValid || !deer.isValid || !(deer.getComponent("minecraft:health")?.currentValue > 0) ||
+        deer.dimension.id !== offered.dimension.id || player.selectedSlotIndex !== offered.index) return false;
+    return player.getComponent("equippable")?.getEquipmentSlot(EquipmentSlot.Mainhand).typeId === ACORN_ID;
   } catch { return false; }
 }
-function offer(player, deer, snapshot) {
+function offer(player, deer) {
   if (sessions.has(deer.id) || searching.has(deer.id)) return;
   const refusal = offerRefusal({ band: bandOf(harmonyOf(player).harmony), leashed: isLeashed(deer) });
   if (refusal === "leashed") {
@@ -221,24 +213,26 @@ function offer(player, deer, snapshot) {
     eatHeldFood(player, deer, ACORN_ID);
     return;
   }
-  if (deer.getDynamicProperty(GIFTED) || deliveredGifts.has(deer.id)) {
+  if (deer.getDynamicProperty(GIFTED)) {
     say(player, message("deer.gifted"));
     return;
   }
+  const offered = { dimension: deer.dimension, index: player.selectedSlotIndex };
   const kept = storedSpot(deer);
   if (kept) {
-    lead(player, deer, kept, snapshot);
-    return;
+    if (giftSpace(deer.dimension, kept) && insideGift(deer.dimension, kept)) {
+      lead(player, deer, kept);
+      return;
+    }
+    deer.setDynamicProperty(GIFT_SPOT, undefined); // blocked, flooded or unreadable meanwhile: search a new spot
   }
   searching.add(deer.id);
-  findGiftSpot(snapshot.dimension, deer.location, (spot) => {
+  findGiftSpot(offered.dimension, deer.location, (spot) => {
     searching.delete(deer.id);
     try {
-      if (!spot) {
-        if (validOffer(player, deer, snapshot)) say(player, message("deer.no_spot"));
-        return;
-      }
-      lead(player, deer, spot, snapshot);
+      if (!stillOffering(player, deer, offered)) return;
+      if (spot) lead(player, deer, spot);
+      else say(player, message("deer.no_spot"));
     } catch {
       // deer or player gone
     }
@@ -246,10 +240,9 @@ function offer(player, deer, snapshot) {
 }
 
 // Start a guidance session to `spot` ({x, y, z}).
-function lead(player, deer, spot, snapshot) {
+function lead(player, deer, spot) {
   let beaconId;
   try {
-    if (!validOffer(player, deer, snapshot) || !giftSpace(deer.dimension, spot) || !insideGift(deer.dimension, spot)) return;
     const dimension = deer.dimension;
     const target = { x: spot.x + 0.5, z: spot.z + 0.5 };
     const wp = pickWaypoint(deer.location, target, standIn(dimension));
@@ -257,9 +250,7 @@ function lead(player, deer, spot, snapshot) {
       say(player, message("deer.no_path"));
       return;
     }
-    // Entry validated the returned job context. The path query above is
-    // synchronous; retain the original dimension without a duplicate hand check.
-    deer.setDynamicProperty(GIFT_SPOT, JSON.stringify({ ...spot, dim: snapshot.dimension.id }));
+    deer.setDynamicProperty(GIFT_SPOT, JSON.stringify({ ...spot, dim: dimension.id }));
     const beacon = dimension.spawnEntity(BEACON_ID, { x: wp.x, y: wp.y, z: wp.z });
     beaconId = beacon.id;
     deer.triggerEvent("lothlorien:become_tame"); // fed: persistent, and after guiding it comes back as state_tame
@@ -440,7 +431,6 @@ export function startWhiteDeer(depth, biomeInfo) {
   world.afterEvents.entityLoad.subscribe(({ entity }) => cleanLoadedBeacon(entity));
   world.afterEvents.entitySpawn.subscribe(({ entity, cause }) => {
     try {
-      cleanLoadedBeacon(entity);
       if (cause === EntityInitializationCause.Loaded || entity.typeId !== WHITE_DEER_ID) return;
       // one tick later: the spawn event's property is surely applied by then
       system.runTimeout(() => judgeNaturalSpawn(entity, depthAt), 1);
@@ -451,12 +441,7 @@ export function startWhiteDeer(depth, biomeInfo) {
   world.afterEvents.playerInteractWithEntity.subscribe(({ player, target, beforeItemStack, itemStack }) => {
     try {
       if (target.typeId !== WHITE_DEER_ID || (beforeItemStack ?? itemStack)?.typeId !== ACORN_ID) return;
-      if (!activePlayer(player)) return;
-      if (repeatedUse(player, "white_deer")) return;
-      const depth = depthAt(target.dimension, target.location);
-      if (depth.level === 0 && depth.complete !== true) return;
-      if (!(target.getComponent("minecraft:health")?.currentValue > 0)) return;
-      if (depth.level === 0 && depth.complete === true) {
+      if (depthAt(target.dimension, target.location).level === 0) { // outside Lothlorien: an ordinary tame-by-feeding
         end(target.id, target);
         if (eatHeldFood(player, target, ACORN_ID)) {
           target.triggerEvent("lothlorien:become_tame");
@@ -467,13 +452,8 @@ export function startWhiteDeer(depth, biomeInfo) {
         }
         return;
       }
-      if (!(depth.level > 0)) return;
       if (target.getProperty("lothlorien:alarmed")) return;
-      const snapshot = captureHand(player, beforeItemStack ?? itemStack);
-      if (!snapshot || !liveHand(snapshot, player) || !withinReach(player, target.location)) return;
-      snapshot.deerId = target.id;
-      snapshot.giftSpot = target.getDynamicProperty(GIFT_SPOT);
-      offer(player, target, snapshot);
+      offer(player, target);
     } catch {
       // entity gone
     }

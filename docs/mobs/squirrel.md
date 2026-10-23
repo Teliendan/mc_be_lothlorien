@@ -1,8 +1,6 @@
 # Ground squirrel (`lothlorien:squirrel`) - design sheet
 
-Group13 owner decisions implemented offline2026-10-20; new native acceptance
-pending. [Interaction ledger](../SWAN_SQUIRREL_INTERACTIONS.md) records guarded
-offers/sessions/gifts, native powder-snow walking and lead-anchor support.
+Parity decisions and limits (offers, sessions, gifts, powder-snow walking, lead anchor): [parity/CREATURES.md](../parity/CREATURES.md).
 Only domesticated squirrels stay: existing outside/leashed feeding adds kept
 persistence, while inside wild healing and errands do not. No new pet ownership.
 Earlier dated observations below retain their exact historical scope.
@@ -28,10 +26,10 @@ Files: BP `entities/squirrel.json`, `spawn_rules/squirrel.json`, `loot_tables/gi
 | Despawn | standard `despawn_from_distance`; name tag or existing outside/leashed feeding keeps it. Inside wild healing/errands intentionally do not add persistence (owner2026-10-20); existing kept animals retain their group |
 | Behaviour | 0 float, 1 panic (x1.5), 3 tempt (Mallorn acorn, calm and Friend states only), 4 avoid (Harmony wariness states), 6 stroll, 7 look at player, 8 look around |
 | Harmony | the deer's states and distances by band (see `swan.md`), via `deer.js`; a player holding a Mallorn acorn does not scare it in calm and Friend states. A player kill costs 3 Harmony (an animal) |
-| The offer | right-click holding a Mallorn acorn (`minecraft:interact` entry, "Offer Acorn"). One current food/actor/mode/dimension/reach decision precedes synchronous acceptance and charge; preserve accepted stack metadata without deep same-callback snapshots. Refused, acorn kept: Harmony below0, not Friend, cooldown or no standable spot10-14 blocks away. Unknown biome centre starts neither outside feeding nor an errand; positive partial is inside. Creative Friend incurs no food charge |
-| The errand | Friend only. The acorn is eaten when the errand starts. `state_guiding` follows a moved guide_beacon: away10-14 blocks (20s at most), dig3-5s, return. Within actual3D2.5 blocks, a readable dry passable drop position permits one native LootTableManager roll/stack spawn, then cooldown, optional hearts and chat. No terrain clearing or teleport |
-| Endings | player40+ horizontal blocks away,2min, lost Friend/dead/invalid/Spectator player, dead/invalid squirrel, original-dimension departure, lead or alarm end it without a gift; acorn is gone. Unknown biome/transient reads pause without reward only within the existing2min cap. Optional deed errors do not interrupt accepted errands |
-| Cooldown | 10 minutes of world time after known delivery (`lothlorien:gift_ready_at`). Roll/spawn failure does not spend it or announce a gift. Known delivery has a runtime guard if persistence fails; separate native writes/reload cannot guarantee atomic delivery. No speculative fallback spawn |
+| The offer | right-click holding a Mallorn acorn (`minecraft:interact` entry, "Offer Acorn"). Refused, acorn kept: Harmony below 0, not Friend, cooldown or no standable spot 10-14 blocks away. Outside Lothlorien (depth 0) the acorn is ordinary food. Creative Friend incurs no food charge |
+| The errand | Friend only. The acorn is eaten when the errand starts. `state_guiding` follows a moved guide_beacon: away10-14 blocks (20s at most), dig3-5s, return. Within 2.5 blocks horizontally (and 2 vertically) of the player, every stack rolled from the table is spawned at its feet, then cooldown, optional hearts and chat. No terrain clearing or teleport |
+| Endings | player40+ horizontal blocks away,2min, lost Friend/dead/invalid/Spectator player, dead/invalid squirrel, original-dimension departure, lead or alarm end it without a gift; acorn is gone. An errand that cannot finish (for example the player stands on an unreachable platform) ends at the 2 min cap with the abort message. Optional deed errors do not interrupt accepted errands |
+| Cooldown | 10 minutes of world time after known delivery (`lothlorien:gift_ready_at`). Set when the gift is spawned |
 | Gift table | `loot_tables/gifts/squirrel.json`, one roll; unchanged four entries: leaf litter28 x2-4, Mallorn blossom28 x2-4, Western Corn seeds14 x1-3, athelas8 x1-2. Earlier extra flowers/acorn list was stale; none restored. Balance source is the loot table |
 | Drops | none (XP 1-2 on player kill) |
 | Animations | procedural Molang: `idle` (tail and head sway), `walk` (diagonal legs, body bob, tail), vanilla `look_at_target` |

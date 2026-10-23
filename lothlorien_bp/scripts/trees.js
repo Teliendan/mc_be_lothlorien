@@ -1,6 +1,6 @@
-import { world, system, BlockPermutation, GameMode, EquipmentSlot } from "@minecraft/server";
+import { world, system, BlockPermutation, GameMode } from "@minecraft/server";
 import { makeRandom, buildSmallMallorn, buildBigMallorn } from "./mallorn_tree.js";
-import { repeatedUse } from "./use_guard.js";
+import { captureUse, liveUse } from "./deferred_use.js";
 import { hangBloom } from "./nectar.js";
 import { treeBloomCount } from "./nectar_rules.js";
 import { TREE_WOOD, TREE_LEAVES, readTreeBlock, validSaplingSoil, saplingSoil, saplingLight } from "./tree_interaction_rules.js";
@@ -50,7 +50,6 @@ export function growTree(base, seed, big = false) {
   const saplings = (big ? [[0, 0], [1, 0], [0, 1], [1, 1]] : [[0, 0]])
     .map(([dx, dz]) => at({ x: dx, y: 0, z: dz }));
   if (saplings.some(b => b?.typeId !== SAPLING || !validSaplingSoil(b) || growing.has(positionKey(dim, b.location)))) return false;
-  const snapshots = saplings.map(b => ({ location: { ...b.location }, permutation: b.permutation }));
 
   for (const c of tree.logs) {
     const trunk = c.face === "up" && c.x >= 0 && c.x <= 1 && c.z >= 0 && c.z <= 1;
@@ -60,10 +59,10 @@ export function growTree(base, seed, big = false) {
   for (const b of saplings) growing.add(positionKey(dim, b.location));
   const job = (function* () {
     try {
-      // A job starts later: do not grow from a removed/replaced sapling or changed soil.
-      if (snapshots.some(s => {
-        const b = readTreeBlock(dim, s.location);
-        return b?.typeId !== SAPLING || !s.permutation.matches(b.typeId, b.permutation.getAllStates()) || !validSaplingSoil(b);
+      // A job starts later: do not grow from a removed sapling or changed soil.
+      if (saplings.some(b => {
+        const now = readTreeBlock(dim, b.location);
+        return now?.typeId !== SAPLING || !validSaplingSoil(now);
       })) return;
       for (const c of tree.logs) {
         const trunk = c.face === "up" && c.x >= 0 && c.x <= 1 && c.z >= 0 && c.z <= 1;
@@ -90,12 +89,12 @@ export function growTree(base, seed, big = false) {
         if (hangBloom(at({ x: c.x, y: c.y - 1, z: c.z }))) left--;
       }
     } finally {
-      for (const s of snapshots) growing.delete(positionKey(dim, s.location));
+      for (const b of saplings) growing.delete(positionKey(dim, b.location));
     }
   })();
   try { system.runJob(job); }
   catch {
-    for (const s of snapshots) growing.delete(positionKey(dim, s.location));
+    for (const b of saplings) growing.delete(positionKey(dim, b.location));
     return false;
   }
   return true;
@@ -207,37 +206,19 @@ system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
 world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
   const { block, player, itemStack } = event;
   if (block.typeId !== SAPLING || itemStack?.typeId !== "minecraft:bone_meal") return;
-  const { location, dimension } = block;
   // read-only in the before event: cancel, then do the work next tick
   event.cancel = true;
-  if (repeatedUse(player, "sapling")) return;
-  const held = itemStack.clone(), index = player.selectedSlotIndex, mode = player.getGameMode();
-  const target = block.permutation;
+  if (!event.isFirstEvent) return;
+  const use = captureUse(block, itemStack);
   system.run(() => {
-    // A queued use can outlive its player. Validate every entity/slot read before any mutation.
-    let b, slot;
-    try {
-      b = readTreeBlock(dimension, location);
-      if (b?.typeId !== SAPLING || !target.matches(b.typeId, b.permutation.getAllStates()) || !validSaplingSoil(b) ||
-          growing.has(positionKey(dimension, location)) || player.selectedSlotIndex !== index || player.getGameMode() !== mode) return;
-      slot = player.getComponent("equippable")?.getEquipmentSlot(EquipmentSlot.Mainhand);
-      const current = slot?.getItem();
-      if (!current || current.typeId !== held.typeId || current.amount !== held.amount || !current.isStackableWith(held)) return;
-      const origin = bigGroupOrigin(b);
-      if (origin) {
-        const { x, y, z } = origin.location;
-        for (const [dx, dz] of [[0, 0], [1, 0], [0, 1], [1, 1]]) {
-          const member = readTreeBlock(dimension, { x: x + dx, y, z: z + dz });
-          if (!member || !validSaplingSoil(member)) return;
-        }
-      }
-    } catch { return; }
-    if (mode !== GameMode.Creative) {
-      if (slot.amount > 1) slot.amount -= 1;
-      else slot.setItem(undefined);
+    const live = liveUse(use, player);
+    if (!live) return;
+    if (player.getGameMode() !== GameMode.Creative) {
+      if (live.slot.amount > 1) live.slot.amount -= 1;
+      else live.slot.setItem(undefined);
     }
-    if (Math.random() < BONE_MEAL_CHANCE) advance(b);
-    try { dimension.spawnParticle("minecraft:crop_growth_emitter", { x: location.x + 0.5, y: location.y + 0.5, z: location.z + 0.5 }); }
-    catch { /* A cosmetic particle failure must not prevent the completed growth step. */ }
+    if (Math.random() < BONE_MEAL_CHANCE) advance(live.block);
+    const { x, y, z } = live.block.location;
+    live.block.dimension.spawnParticle("minecraft:crop_growth_emitter", { x: x + 0.5, y: y + 0.5, z: z + 0.5 });
   });
 });

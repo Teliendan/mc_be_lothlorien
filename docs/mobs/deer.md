@@ -2,8 +2,7 @@
 
 Archetype: skittish prey (herd grazer). Analogues: rabbit (avoid player, panic), cow/sheep (breed, baby,
 tempt). Phase11, built2026-09-30. The Tested column records only the explicitly
-reported game observations; all other rows remain unverified in game. Group12
-source/offline fixes and deployment2026-10-19: [DEER_INTERACTIONS.md](../DEER_INTERACTIONS.md).
+reported game observations; all other rows remain unverified in game. Parity decisions: [parity/CREATURES.md](../parity/CREATURES.md).
 Files: BP `entities/deer.json` (generated once from a throw-away script, now edited by hand), `spawn_rules/deer.json`,
 `loot_tables/entities/deer.json` + `deer_buck.json`, `items/venison_raw|venison_cooked|deer_antler.json`,
 `recipes/furnace_venison.json`, `scripts/deer.js` + `deer_rules.js`. RP `entity/deer.entity.json`,
@@ -93,9 +92,9 @@ reacts to a Hated player also scares it.
 | Question | Decision | Tested |
 | --- | --- | --- |
 | Drops | doe: leather 0-2, raw venison 1-3 (cooked if killed burning), looting +0-1. Buck: the same + **deer antler** 30 % (+5 % per looting level), player kills only. Fawns drop nothing | no |
-| Venison | raw: 3 hunger, 1.8 saturation; cooked: 8 hunger, 12.8 saturation (steak level); tagged `minecraft:is_meat`, which alone does not prove wolf feeding. Furnace, smoker, campfire and soul campfire configured; native wolf-consumer acceptance pending in [FOOD_REMEDY_INTERACTIONS.md](../FOOD_REMEDY_INTERACTIONS.md),2026-10-19 | no |
+| Venison | raw: 3 hunger, 1.8 saturation; cooked: 8 hunger, 12.8 saturation (steak level); tagged `minecraft:is_meat`, which alone does not prove wolf feeding. Furnace, smoker, campfire and soul campfire configured; native wolf-consumer acceptance pending in [../parity/BLOCKS_ITEMS.md](../parity/BLOCKS_ITEMS.md),2026-10-19 | no |
 | XP | 1-3 on player kill, 1-7 on breeding | no |
-| Antler use | Placeable floor/wall trophy, rare natural biome drop and one in flet chests. Current chandelier recipe uses1 antler +4 silver/gold lanterns, including mixed colors; [DECOR_ROPE_INTERACTIONS.md](../DECOR_ROPE_INTERACTIONS.md), owner2026-10-19 | - |
+| Antler use | Placeable floor/wall trophy, rare natural biome drop and one in flet chests. Current chandelier recipe uses1 antler +4 silver/gold lanterns, including mixed colors; [../parity/BLOCKS_ITEMS.md](../parity/BLOCKS_ITEMS.md), owner2026-10-19 | - |
 
 ## G. Look and sound
 

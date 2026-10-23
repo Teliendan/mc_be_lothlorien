@@ -6,7 +6,6 @@ import { message } from "./messages.js";
 import { EquipmentSlot, GameMode, system, world } from "@minecraft/server";
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
-import { repeatedUse } from "./use_guard.js";
 import { healAnimal } from "./animal_food.js";
 import { setEventFor } from "./deer_rules.js";
 import { ELANOR_ID, UNICORN_ID, mayRide, nextTrust, offerRefusal, ticksSince } from "./unicorn_rules.js";
@@ -33,7 +32,6 @@ function consumeElanor(player) {
 const REFUSALS = {
   restless: message("unicorn.restless"),
   untrusted: message("unicorn.untrusted"),
-  alarmed: message("unicorn.alarmed"),
   wait: message("unicorn.wait"),
 };
 
@@ -68,7 +66,6 @@ function offer(player, unicorn) {
   const refusal = offerRefusal({
     band,
     tame: !!unicorn.getProperty("lothlorien:tame"),
-    alarmed: !!unicorn.getProperty("lothlorien:alarmed"),
     sinceLast: ticksSince(now, unicorn.getDynamicProperty(LAST_OFFER)),
   });
   if (refusal === "tame") return;
@@ -90,6 +87,15 @@ function offer(player, unicorn) {
 }
 
 export function startUnicorns() {
+  // Like a tamed wolf or horse: the bonded owner is told when their unicorn dies.
+  world.afterEvents.entityDie.subscribe(({ deadEntity }) => {
+    try {
+      const owner = world.getPlayers().find((p) => p.id === deadEntity.getDynamicProperty(OWNER));
+      if (owner) say(owner, message("unicorn.died"));
+    } catch {
+      // owner or unicorn unreadable
+    }
+  }, { entityTypes: [UNICORN_ID] });
   // Only the owner mounts a bonded unicorn: the interaction is cancelled for everyone else (before the engine mounts).
   world.beforeEvents.playerInteractWithEntity.subscribe((event) => {
     const { player, target } = event;
@@ -103,7 +109,6 @@ export function startUnicorns() {
   world.afterEvents.playerInteractWithEntity.subscribe(({ player, target, beforeItemStack, itemStack }) => {
     try {
       if (target.typeId !== UNICORN_ID || (beforeItemStack ?? itemStack)?.typeId !== ELANOR_ID) return;
-      if (repeatedUse(player, "unicorn")) return;
       offer(player, target);
     } catch {
       // entity gone

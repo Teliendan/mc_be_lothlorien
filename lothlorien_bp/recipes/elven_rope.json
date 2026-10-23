@@ -24,9 +24,15 @@
         "item": "lothlorien:morning_dew"
       }
     ],
-    "result": {
-      "item": "lothlorien:elven_rope",
-      "count": 1
-    }
+    "result": [
+      {
+        "item": "lothlorien:elven_rope",
+        "count": 1
+      },
+      {
+        "item": "minecraft:glass_bottle",
+        "count": 1
+      }
+    ]
   }
 }

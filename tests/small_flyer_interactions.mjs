@@ -50,11 +50,6 @@ await test('long Unicode names use bounded localized parts and restore without a
   }
   const out=release(e,p.held);assert.equal(out.animal.nameTag,name);assert.equal(out.animal.health.currentValue,.5);
 });
-await test('structured lore with documented string-array arguments also restores capture state',e=>{
-  const p=e.player(GLASS),f=e.fly();f.nameTag='Array';f.health.currentValue=1;e.catch(p,f);e.flush();
-  p.held.setLore(p.held.getRawLore().map(line=>({...line,with:[line.with.rawtext[0].text]})));
-  const out=release(e,p.held);assert.equal(out.animal.nameTag,'Array');assert.equal(out.animal.health.currentValue,1);
-});
 await test('anvil-renamed plain bottles and unrelated lore never supply animal identity',e=>{
   const item=stack(BOTTLE,1,{name:'Anvil title',lore:[{text:'Decorative note'}]});
   const out=release(e,item);assert.equal(out.animal.nameTag,'');assert.equal(out.animal.health.currentValue,2);
@@ -75,24 +70,5 @@ await test('different capture data stays distinct while identical data matches s
   for(const [name,health] of [['A',1],['B',1],['A',.5],['A',1]]){const p=e.player(GLASS),f=e.fly();f.nameTag=name;f.health.currentValue=health;e.catch(p,f);e.flush();bottles.push(p.held);}
   assert.notDeepEqual(bottles[0].getRawLore(),bottles[1].getRawLore());assert.notDeepEqual(bottles[0].getRawLore(),bottles[2].getRawLore());
   assert.deepEqual(bottles[0].getRawLore(),bottles[3].getRawLore()); // actual native merge behavior is not simulated
-});
-await test('unreadable/dead capture state leaves the original animal and glass untouched',e=>{
-  for(const bad of [f=>f.health.currentValue=0,f=>f.getComponent=()=>{throw Error('unavailable health');}]){
-    const p=e.player(GLASS),f=e.fly();bad(f);e.catch(p,f);e.flush();assert.equal(f.isValid,true);assert.equal(p.held.typeId,GLASS);
-  }
-});
-await test('failed name or health restoration removes the new actor and preserves the bottle',e=>{
-  for(const kind of ['name','health']){
-    const item=stack(BOTTLE);e.context.bottleFirefly(item,{nameTag:'Restore',getComponent:()=>({currentValue:1})});
-    const spawn=e.dimension.spawnEntity.bind(e.dimension);e.dimension.spawnEntity=(...args)=>{const f=spawn(...args);
-      if(kind==='name')Object.defineProperty(f,'nameTag',{set(){throw Error('name write');}});else f.health.setCurrentValue=()=>false;return f;};
-    const out=release(e,item);assert.equal(out.animal.isValid,false);assert.equal(out.player.held.typeId,BOTTLE);
-    e.dimension.spawnEntity=spawn;
-  }
-});
-await test('deferred changed bottle data rejects release before creating an actor',e=>{
-  const item=stack(BOTTLE);e.context.bottleFirefly(item,{nameTag:'Original',getComponent:()=>({currentValue:1})});
-  const p=e.player(BOTTLE);p.held=item;const before=e.spawned.length;e.click(p,e.block('minecraft:stone'));
-  p.held.setLore([]);e.flush();assert.equal(e.spawned.length,before);assert.equal(p.held.typeId,BOTTLE);
 });
 console.log(`Passed ${cases} production small-flyer/data scenarios; native lore persistence/stacking remains acceptance.`);

@@ -301,8 +301,8 @@ lothlorien.message.unicorn.trust2=§fJednorožec vám vezme elanor z ruky.
 lothlorien.message.unicorn.trust1=§fJednorožec očichává elanor a pozoruje vás.
 ## Context: Less than ten seconds since previous offer; flower is kept. Turning over means examining, not rotating a block.
 lothlorien.message.unicorn.wait=§7Jednorožec si ještě prohlíží květinu. Dopřejte mu chvilku.
-## Context: Unicorn is alarmed and refuses the offer; flower is kept.
-lothlorien.message.unicorn.alarmed=§7Jednorožec je příliš vystrašený, aby si cokoli vzal.
+## Context: A bonded unicorn has died; its owner is told, like the owner of a tamed wolf or horse.
+lothlorien.message.unicorn.died=§7Váš jednorožec zemřel.
 ## Context: Player lacks Friend status (is a Guest, Harmony 0 to +9); flower is kept.
 lothlorien.message.unicorn.untrusted=§7Jednorožec pozoruje květinu i vás, ale zatím vám nedůvěřuje.
 ## Context: Elanor offer refused because the player's Harmony is below 0 (Uneasy, Shunned or Hated band); flower is kept.

@@ -115,4 +115,14 @@ await test("lure stays in Friend state with bounded native search and unchanged 
   assert.equal(entity.component_groups["lothlorien:bonded"]["minecraft:inventory"],undefined);
   assert.equal(entity.component_groups["lothlorien:bonded"]["minecraft:equippable"],undefined);
 });
+await test("a bonded unicorn's death is reported to its owner only", async () => {
+  const h = await setup(), mod = await load("unicorn", { ...h.base, ELANOR_ID, UNICORN_ID, mayRide: () => true, nextTrust: () => ({}),
+    offerRefusal: () => undefined, ticksSince: () => undefined, setEventFor: () => "", healAnimal() {} });
+  const other = h.entity("minecraft:player"); h.world.players.push(other);
+  const sent = []; h.player.sendMessage = m => sent.push(["owner", m]); other.sendMessage = m => sent.push(["other", m]);
+  mod.startUnicorns();
+  const unicorn = h.entity(UNICORN_ID); unicorn.setDynamicProperty("lothlorien:owner", h.player.id);
+  h.fire("entityDie", { deadEntity: unicorn }); assert.deepEqual(sent, [["owner", "unicorn.died"]]);
+  sent.length = 0; h.fire("entityDie", { deadEntity: h.entity(UNICORN_ID) }); assert.deepEqual(sent, []);
+});
 console.log(`Passed ${cases} unicorn luring/Harmony production and filter scenarios.`);

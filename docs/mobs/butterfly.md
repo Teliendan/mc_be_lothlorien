@@ -23,16 +23,9 @@ Art: `tools/make_butterfly.py` (generated; add a colour by adding it to `COLOURS
 2. Do the wings flap up/down (not twist), is the wing outline right side up on top and underneath, is the size good at 0.3?
 3. Daytime density and height versus songbirds; should they stay lower / rarer?
 
-## Group15 follow-up2026-10-20
+## Vanilla parity
 
-Existing leads now have native leashable_to anchors. Native movement tracking
-emits flap game events while audio remains silent. No bee hives, honey, stinging,
-colony/breeding/pollination/growth or poisonous-flower rules; no butterfly bottle,
-extra food or variant. Accepted food remains the explicit27 vanilla and4 custom
-plant items, not every tagged plant. Art generator is art-only and was not run.
-
-Source/offline verified and deployed after small-flyers, animal-home, decor-rope,
-performance and suite-layout passed; all3 packs in sync. No new native observation.
-Check lead anchors/cutting/towing, flap events at sculk without sound, native
-food/healing/persistence and reload alongside the visual checks above. Full ledger:
-[SMALL_FLYER_INTERACTIONS.md](../SMALL_FLYER_INTERACTIONS.md).
+Leads have native `leashable_to` anchors; movement tracking emits flap game events while audio stays silent. No bee
+hives, honey, stinging, colony/breeding/pollination/growth or poisonous-flower rules; no butterfly bottle, extra food or
+variant. Accepted food: the explicit 27 vanilla and 4 custom plant items. Check in game: lead anchors/cutting/towing,
+flap events at sculk without sound, native food/healing/persistence. Decisions: [parity/CREATURES.md](../parity/CREATURES.md).

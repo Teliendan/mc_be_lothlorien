@@ -8364,12 +8364,12 @@
             }
           }
         },
-        "lothlorien.message.unicorn.alarmed": {
-          "source": "§7The unicorn is too frightened to take anything.",
+        "lothlorien.message.unicorn.died": {
+          "source": "§7Your unicorn has died.",
           "context": {
-            "meaning": "Unicorn is alarmed and refuses the offer; flower is kept.",
+            "meaning": "A bonded unicorn has died; its owner is told, like the owner of a tamed wolf or horse.",
             "location": "lothlorien_rp: chat or action bar",
-            "trigger": "Unicorn is alarmed and refuses the offer; flower is kept.",
+            "trigger": "The bonded unicorn dies; sent to the owning player if online.",
             "tone": "Gentle woodland narration",
             "grammar": "Complete sentence; address the player without assuming gender.",
             "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
@@ -8380,43 +8380,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "§7Jednorožec je příliš vystrašený, aby si cokoli vzal.",
-              "based_on": "aab30be46506fd8fda7a5661d0f23ca0d286ff8a33d7b24351cd1dd93bea735e",
+              "text": "§7Váš jednorožec zemřel.",
+              "based_on": "ff35bae62a7a7a54f347b9e5034a0642a9ac89ad2a9319c3ccc1095a66fe81cb",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "§7El unicornio está demasiado asustado para aceptar nada.",
-              "based_on": "aab30be46506fd8fda7a5661d0f23ca0d286ff8a33d7b24351cd1dd93bea735e",
+              "text": "§7Tu unicornio ha muerto.",
+              "based_on": "ff35bae62a7a7a54f347b9e5034a0642a9ac89ad2a9319c3ccc1095a66fe81cb",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "§7El unicornio está demasiado asustado para aceptar algo.",
-              "based_on": "aab30be46506fd8fda7a5661d0f23ca0d286ff8a33d7b24351cd1dd93bea735e",
+              "text": "§7Tu unicornio ha muerto.",
+              "based_on": "ff35bae62a7a7a54f347b9e5034a0642a9ac89ad2a9319c3ccc1095a66fe81cb",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "§7O unicórnio está demasiado assustado para aceitar seja o que for.",
-              "based_on": "aab30be46506fd8fda7a5661d0f23ca0d286ff8a33d7b24351cd1dd93bea735e",
+              "text": "§7O teu unicórnio morreu.",
+              "based_on": "ff35bae62a7a7a54f347b9e5034a0642a9ac89ad2a9319c3ccc1095a66fe81cb",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "§7O unicórnio está assustado demais para aceitar qualquer coisa.",
-              "based_on": "aab30be46506fd8fda7a5661d0f23ca0d286ff8a33d7b24351cd1dd93bea735e",
+              "text": "§7Seu unicórnio morreu.",
+              "based_on": "ff35bae62a7a7a54f347b9e5034a0642a9ac89ad2a9319c3ccc1095a66fe81cb",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "§7Das Einhorn ist zu verängstigt, um etwas anzunehmen.",
-              "based_on": "aab30be46506fd8fda7a5661d0f23ca0d286ff8a33d7b24351cd1dd93bea735e",
+              "text": "§7Dein Einhorn ist gestorben.",
+              "based_on": "ff35bae62a7a7a54f347b9e5034a0642a9ac89ad2a9319c3ccc1095a66fe81cb",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "§7La licorne est trop effrayée pour accepter quoi que ce soit.",
-              "based_on": "aab30be46506fd8fda7a5661d0f23ca0d286ff8a33d7b24351cd1dd93bea735e",
+              "text": "§7Ta licorne est morte.",
+              "based_on": "ff35bae62a7a7a54f347b9e5034a0642a9ac89ad2a9319c3ccc1095a66fe81cb",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "§7Jednorożec jest zbyt przerażony, by cokolwiek przyjąć.",
-              "based_on": "aab30be46506fd8fda7a5661d0f23ca0d286ff8a33d7b24351cd1dd93bea735e",
+              "text": "§7Twój jednorożec zginął.",
+              "based_on": "ff35bae62a7a7a54f347b9e5034a0642a9ac89ad2a9319c3ccc1095a66fe81cb",
               "status": "ai-draft"
             }
           }

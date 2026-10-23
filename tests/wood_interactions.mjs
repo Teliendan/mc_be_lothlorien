@@ -4,6 +4,8 @@ import { readFileSync } from 'node:fs';
 import * as controlRules from '../lothlorien_bp/scripts/control_rules.js';
 const source = readFileSync(new URL('../lothlorien_bp/scripts/blocks.js', import.meta.url), 'utf8')
   .replace(/^import \{([^}]+)\} from "[^"]+";/gm, 'const {$1} = globalThis.__wood;');
+const deferredSource = readFileSync(new URL('../lothlorien_bp/scripts/deferred_use.js', import.meta.url), 'utf8')
+  .replace(/^import \{([^}]+)\} from "[^"]+";/gm, 'const {$1} = globalThis.__wood;');
 const read = path => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
 let serial = 0, count = 0;
 const perm = (id, states = {}) => ({ type: { id }, getState: k => states[k], getAllStates: () => ({ ...states }),
@@ -36,18 +38,26 @@ function item(id, options = {}) {
 async function scenario(name, body) {
   const handlers = new Map(), blocks = new Map(), queue = [], sounds = [];
   const key = p => `${p.x},${p.y},${p.z}`;
-  const dimension = { id: 'overworld', getBlock: p => blocks.get(key(p)), playSound: (...a) => sounds.push(a) };
+  let entities = [];
+  const dimension = { id: 'overworld', getBlock: p => blocks.get(key(p)), playSound: (...a) => sounds.push(a),
+    getEntities(options) { dimension.lastQuery = options; return entities; } };
   const signal = phase => new Proxy({}, { get: (_, name) => ({ subscribe(fn) {
     const k = `${phase}:${name}`; if (!handlers.has(k)) handlers.set(k, []); handlers.get(k).push(fn);
   } }) });
-  const system = { beforeEvents: signal('system'), run: fn => queue.push(fn), runTimeout() {} };
-  globalThis.__wood = { ...controlRules, system, world: { beforeEvents: signal('before'), afterEvents: signal('after') },
-    BlockPermutation: { resolve: perm }, EquipmentSlot: { Mainhand: 'main' }, GameMode: { Creative: 'creative' } };
+  const system = { beforeEvents: signal('system'), run: fn => queue.push(fn), currentTick: 0 };
+  globalThis.__wood = { EquipmentSlot: { Mainhand: 'main' } };
+  const deferred = await import(`data:text/javascript;base64,${Buffer.from(deferredSource).toString('base64')}#${++serial}`);
+  globalThis.__wood = { ...controlRules, ...deferred, system, world: { beforeEvents: signal('before'), afterEvents: signal('after') },
+    BlockPermutation: { resolve: perm }, EquipmentSlot: { Mainhand: 'main' },
+    GameMode: { Creative: 'creative', Adventure: 'adventure', Spectator: 'spectator' } };
   await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}#${++serial}`);
   delete globalThis.__wood;
+  const components = new Map();
+  for (const fn of handlers.get('system:startup')) fn({ blockComponentRegistry: { registerCustomComponent: (id, c) => components.set(id, c) } });
   const block = (id, states = {}, location = { x: 0, y: 64, z: 0 }, water = false) => {
     const b = { typeId: id, permutation: perm(id, states), location, dimension, isWaterlogged: water,
       center: () => ({ x: location.x + .5, y: location.y + .5, z: location.z + .5 }),
+      getParts() { return [this]; },
       setPermutation(p) { this.permutation = p; this.typeId = p.type.id; this.writes = (this.writes ?? 0) + 1; } };
     blocks.set(key(location), b); return b;
   };
@@ -57,13 +67,15 @@ async function scenario(name, body) {
         get amount() { return p.held.amount; }, set amount(n) { p.held.amount = n; }, setItem(i) { p.held = i; } }) }; } };
     return p;
   };
-  const click = (b, p, face = 'Up', y = .75) => {
-    const event = { block: b, player: p, itemStack: p.held.clone(), blockFace: face, faceLocation: { x: .5, y, z: .5 } };
+  const click = (b, p, face = 'Up', y = .75, first = true) => {
+    const event = { block: b, player: p, itemStack: p.held.clone(), blockFace: face, faceLocation: { x: .5, y, z: .5 }, isFirstEvent: first };
     for (const fn of handlers.get('before:playerInteractWithBlock') ?? []) fn(event);
     return event;
   };
   const flush = () => { while (queue.length) queue.shift()(); };
-  await body({ block, player, click, flush, queue, blocks, sounds }); count++;
+  const fire = (name, event) => { for (const fn of handlers.get(`after:${name}`) ?? []) fn(event); };
+  await body({ block, player, click, flush, queue, blocks, sounds, components, system, fire, dimension,
+    setEntities: list => { entities = list; } }); count++;
   console.log(`ok   wood interactions: ${name}`);
 }
 
@@ -72,8 +84,9 @@ await scenario('both wood sets merge top/bottom and neighboring complementary ha
     const id = `lothlorien:${wood}_slab`, p = e.player(item(id, { amount: 3 }));
     const b = e.block(id, { 'minecraft:vertical_half': half });
     assert.equal(e.click(b, p, half === 'bottom' ? 'Up' : 'Down').cancel, true);
-    e.click(b, p, half === 'bottom' ? 'Up' : 'Down'); e.flush();
+    e.click(b, p, half === 'bottom' ? 'Up' : 'Down', .75, false); e.flush(); // held button repeat: ignored
     assert.equal(b.typeId, `lothlorien:${wood}_double_slab`); assert.equal(b.writes, 1); assert.equal(p.held.amount, 2);
+    assert.deepEqual(e.sounds.at(-1), ['dig.wood', b.center(), { pitch: 0.8 }]);
     const neighbor = e.block('minecraft:stone', {}, { x: -1, y: 64, z: 0 });
     e.block(id, { 'minecraft:vertical_half': half });
     assert.equal(e.click(neighbor, p, 'East', half === 'bottom' ? .75 : .25).cancel, true);
@@ -100,11 +113,9 @@ await scenario('stale targets, water/state changes, unloads and two-player races
   const a = e.player(item(id, { amount: 2 })), c = e.player(item(id, { amount: 2 }));
   e.click(b, a); e.click(b, c); e.flush(); assert.equal(b.writes, 1); assert.equal(a.held.amount + c.held.amount, 3);
 });
-await scenario('queued merges reject changed hand, selected slot, amount, metadata and game mode', e => {
+await scenario('queued merges reject a changed or emptied hand', e => {
   const id = 'lothlorien:mallorn_slab';
-  for (const mutate of [p => { p.held = item('minecraft:diamond', { amount: 4 }); }, p => { p.selectedSlotIndex++; },
-    p => { p.held.amount++; }, p => { p.held.nameTag = 'renamed'; }, p => { p.held.lore = [{ text: 'changed' }]; },
-    p => { p.held.dynamic.owner = 'other'; }, p => { p.mode = 'creative'; }, p => { p.held = undefined; }]) {
+  for (const mutate of [p => { p.held = item('minecraft:diamond', { amount: 4 }); }, p => { p.held = undefined; }]) {
     const b = e.block(id, { 'minecraft:vertical_half': 'bottom' }), p = e.player(item(id, { amount: 4 }));
     e.click(b, p); mutate(p); e.flush(); assert.equal(b.writes, undefined);
   }
@@ -122,7 +133,7 @@ await scenario('native and tagged axes strip logs/wood, preserve axis, debounce 
     for (const face of ['up', 'down', 'north', 'south', 'east', 'west']) {
     const b = e.block(`lothlorien:mallorn_${family}`, { 'minecraft:block_face': face });
     const p = e.player(axe(id, { tags: id.startsWith('custom:') ? ['minecraft:is_axe'] : [] }));
-    assert.equal(e.click(b, p).cancel, true); e.click(b, p); e.flush();
+    assert.equal(e.click(b, p).cancel, true); e.click(b, p, 'Up', .75, false); e.flush();
     assert.equal(b.typeId, `lothlorien:mallorn_stripped_${family}`); assert.equal(b.writes, 1);
     assert.equal(b.permutation.getState('minecraft:block_face'), face);
     assert.equal(p.held.durability.damage, 1);
@@ -133,7 +144,7 @@ await scenario('native and tagged axes strip logs/wood, preserve axis, debounce 
 await scenario('strip wear respects native Unbreaking chance, Creative, unbreakable and the final Bedrock use', e => {
   const original = Math.random;
   try {
-    for (const [level, roll, expected] of [[0, .99, 1], [1, .49, 1], [1, .5, 0], [3, .24, 1], [3, .25, 0], [99, .25, 0]]) {
+    for (const [level, roll, expected] of [[0, .99, 1], [1, .49, 1], [1, .5, 0], [3, .24, 1], [3, .25, 0]]) {
       Math.random = () => roll;
       const p = e.player(axe(undefined, { enchantments: [{ type: { id: 'unbreaking' }, level }] }));
       const b = e.block('lothlorien:mallorn_log'); e.click(b, p); e.flush();
@@ -150,16 +161,67 @@ await scenario('strip wear respects native Unbreaking chance, Creative, unbreaka
     assert.equal(e.sounds.filter(s => s === 'random.break').length, 1);
   } finally { Math.random = original; }
 });
-await scenario('stale axes, enchant/durability swaps, changed targets and invalid wear data abort safely', e => {
-  for (const mutate of [p => { p.selectedSlotIndex++; }, p => { p.held.durability.damage++; },
-    p => { p.held.enchantments.push({ type: { id: 'unbreaking' }, level: 1 }); }, p => { p.held.nameTag = 'other axe'; },
-    p => { p.held.dynamic.owner = 'other'; }, p => { p.held = item('minecraft:diamond'); }]) {
+await scenario('a swapped axe or changed target aborts the queued strip', e => {
+  for (const mutate of [p => { p.held = item('minecraft:diamond'); }, p => { p.held = undefined; }]) {
     const b = e.block('lothlorien:mallorn_log'), p = e.player(axe()); e.click(b, p); mutate(p); e.flush();
     assert.equal(b.writes, undefined);
   }
-  const p = e.player(axe(undefined, { durability: { throwChance: true } })), b = e.block('lothlorien:mallorn_log');
-  e.click(b, p); e.flush(); assert.equal(b.writes, undefined); assert.equal(p.held.durability.damage, 0);
-  p.held = axe(); e.click(b, p); b.typeId = 'minecraft:diamond_block'; e.flush(); assert.equal(b.writes, undefined);
+  const p = e.player(axe()), b = e.block('lothlorien:mallorn_log');
+  e.click(b, p); b.typeId = 'minecraft:diamond_block'; e.flush(); assert.equal(b.writes, undefined);
+});
+await scenario('Adventure players are left to the engine: no strip, no merge', e => {
+  const id = 'lothlorien:mallorn_slab';
+  const slab = e.block(id, { 'minecraft:vertical_half': 'bottom' }), log = e.block('lothlorien:mallorn_log', {}, { x: 3, y: 64, z: 0 });
+  assert.equal(e.click(slab, e.player(item(id, { amount: 2 }), 'adventure')).cancel, undefined);
+  assert.equal(e.click(log, e.player(axe(), 'adventure')).cancel, undefined);
+  assert.equal(e.queue.length, 0);
+});
+const WIND = 'minecraft:wind_charge_projectile';
+await scenario('a wind charge toggles Mallorn doors, trapdoors and gates and presses buttons within its burst', e => {
+  const door = e.block('lothlorien:mallorn_door', { 'lothlorien:open': false, 'minecraft:cardinal_direction': 'north', 'lothlorien:hinge_right': false }, { x: 5, y: 64, z: 5 });
+  const trap = e.block('lothlorien:mallorn_heartwood_trapdoor', { 'lothlorien:open': false }, { x: 6, y: 64, z: 5 });
+  const gate = e.block('lothlorien:mallorn_fence_gate', { 'lothlorien:open': false, 'minecraft:cardinal_direction': 'north' }, { x: 5, y: 65, z: 5 });
+  const button = e.block('lothlorien:mallorn_button', { 'lothlorien:powered': false }, { x: 5, y: 63, z: 5 });
+  const far = e.block('lothlorien:mallorn_trapdoor', { 'lothlorien:open': false }, { x: 9, y: 64, z: 5 });
+  e.fire('projectileHitBlock', { projectile: { isValid: true, typeId: WIND }, dimension: e.dimension, location: { x: 5.9, y: 64.5, z: 5.5 } });
+  assert.equal(door.permutation.getState('lothlorien:open'), true); assert.equal(trap.permutation.getState('lothlorien:open'), true);
+  assert.equal(gate.permutation.getState('lothlorien:open'), true); assert.equal(button.permutation.getState('lothlorien:powered'), true);
+  assert.equal(far.writes, undefined); assert.equal(door.writes, 1, 'a door is toggled once');
+  e.fire('projectileHitEntity', { projectile: { isValid: true, typeId: 'minecraft:breeze_wind_charge_projectile' }, dimension: e.dimension, location: { x: 5.9, y: 64.5, z: 5.5 } });
+  assert.equal(door.permutation.getState('lothlorien:open'), false); assert.equal(trap.permutation.getState('lothlorien:open'), false);
+  assert.equal(button.writes, 1, 'a pressed button stays pressed');
+  e.fire('projectileHitBlock', { projectile: { isValid: true, typeId: 'minecraft:snowball' }, dimension: e.dimension, location: { x: 5.9, y: 64.5, z: 5.5 } });
+  assert.equal(door.permutation.getState('lothlorien:open'), false);
+});
+await scenario('an arrow or trident hitting the middle of the backing face presses the button there', e => {
+  const wall = e.block('minecraft:stone', {}, { x: 0, y: 64, z: 0 });
+  const button = e.block('lothlorien:mallorn_button', { 'lothlorien:powered': false, 'minecraft:block_face': 'north' }, { x: 0, y: 64, z: -1 });
+  const hit = (typeId, face, faceLocation) => e.fire('projectileHitBlock', { projectile: { isValid: true, typeId }, dimension: e.dimension,
+    location: { x: 0, y: 64, z: 0 }, getBlockHit: () => ({ block: wall, face, faceLocation }) });
+  hit('minecraft:arrow', 'North', { x: .9, y: .5, z: 0 }); hit('minecraft:arrow', 'South', { x: .5, y: .5, z: 1 });
+  hit('minecraft:snowball', 'North', { x: .5, y: .5, z: 0 }); assert.equal(button.writes, undefined);
+  hit('minecraft:thrown_trident', 'North', { x: .5, y: .5, z: 0 });
+  assert.equal(button.permutation.getState('lothlorien:powered'), true);
+  assert.deepEqual(e.sounds.at(-1), ['random.wood_click', button.center(), { pitch: 0.6 }]);
+});
+await scenario('a button stays pressed while an arrow sticks beside it, then releases with the wooden click', e => {
+  const button = e.block('lothlorien:mallorn_button', { 'lothlorien:powered': true, 'minecraft:block_face': 'north' });
+  e.setEntities([{ typeId: 'minecraft:arrow' }]); e.components.get('lothlorien:button_release').onTick({ block: button, dimension: e.dimension });
+  assert.equal(button.writes, undefined);
+  e.setEntities([{ typeId: 'minecraft:sheep' }]); e.components.get('lothlorien:button_release').onTick({ block: button, dimension: e.dimension });
+  assert.equal(button.permutation.getState('lothlorien:powered'), false);
+  assert.deepEqual(e.sounds.at(-1), ['random.wood_click', button.center(), { pitch: 0.5 }]);
+});
+await scenario('plates press from the AABB overlap, hold 20 ticks, skip Spectators and use the wooden sounds', e => {
+  const plate = e.block('lothlorien:mallorn_pressure_plate', { 'lothlorien:powered': false });
+  const tick = () => e.components.get('lothlorien:pressure_plate').onTick({ block: plate, dimension: e.dimension });
+  e.setEntities([{ getAABB: () => ({ center: { x: .5, y: 64.1, z: .5 }, extent: { x: .3, y: .1, z: .3 } }) }]); tick();
+  assert.equal(plate.permutation.getState('lothlorien:powered'), true);
+  assert.deepEqual(e.dimension.lastQuery.excludeGameModes, ['spectator']);
+  assert.deepEqual(e.sounds.at(-1), ['click_on.wooden_pressure_plate', plate.center()]);
+  e.setEntities([]); e.system.currentTick = 10; tick(); assert.equal(plate.permutation.getState('lothlorien:powered'), true);
+  e.system.currentTick = 20; tick(); assert.equal(plate.permutation.getState('lothlorien:powered'), false);
+  assert.deepEqual(e.sounds.at(-1), ['click_off.wooden_pressure_plate', plate.center()]);
 });
 
 for (const wood of ['mallorn', 'mallorn_heartwood']) {

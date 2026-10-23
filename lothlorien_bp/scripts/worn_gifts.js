@@ -72,7 +72,6 @@ export function startWornGifts() {
   started = true;
   world.afterEvents.playerSpawn.subscribe(({ player }) => { still.delete(player.id); wake(); });
   world.afterEvents.playerLeave.subscribe(({ playerId }) => still.delete(playerId));
-  world.afterEvents.entityDie.subscribe(({ deadEntity }) => still.delete(deadEntity.id));
   pulse();
   if (world.getPlayers().length) wake();
 }

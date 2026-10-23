@@ -96,14 +96,15 @@ def main():
         "description": {"identifier": f"{NS}:star_canopy", "menu_category": {"category": "construction"}},
         "components": {"minecraft:block_placer": {"block": f"{NS}:star_canopy", "aligned_placement": True,
                                                   "replace_block_item": True}}}})
-    # leaves on top, dew in the middle, stone below (owner, 2026-10-02); the glass bottles are used up
+    # leaves on top, dew in the middle, stone below (owner, 2026-10-02); the three dew bottles come back as glass bottles (vanilla honey_block pattern)
     dump(BP / "recipes/star_canopy.json", {"format_version": "1.20.30", "minecraft:recipe_shaped": {
         "description": {"identifier": f"{NS}:star_canopy"}, "tags": ["crafting_table"],
         "pattern": ["LLL", "DDD", "TTT"],
         "key": {"L": {"item": f"{NS}:mallorn_leaves"}, "D": {"item": f"{NS}:morning_dew"},
                 "T": {"item": "minecraft:deepslate_tiles"}},
         "unlock": [{"item": f"{NS}:morning_dew"}],
-        "result": {"item": f"{NS}:star_canopy", "count": 9}}})
+        "result": [{"item": f"{NS}:star_canopy", "count": 9},
+                   {"item": "minecraft:glass_bottle", "count": 3}]}})
     print("star canopy written")
 
 

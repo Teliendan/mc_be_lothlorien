@@ -318,7 +318,7 @@
               30,
               30
             ],
-            "looping": false
+            "looping": true
           },
           "lothlorien:button_release": {}
         }

@@ -28,9 +28,15 @@
         "item": "lothlorien:morning_dew"
       }
     ],
-    "result": {
-      "item": "lothlorien:star_canopy",
-      "count": 9
-    }
+    "result": [
+      {
+        "item": "lothlorien:star_canopy",
+        "count": 9
+      },
+      {
+        "item": "minecraft:glass_bottle",
+        "count": 3
+      }
+    ]
   }
 }

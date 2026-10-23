@@ -1,10 +1,14 @@
 // Source contracts for native boat interactions; these do not simulate the engine.
 import assert from 'node:assert/strict';
+import { existsSync } from 'node:fs';
 import { test, finish, bp, readJson } from './test_helpers.mjs';
 
 const variants = ['mallorn', 'mallorn_heartwood'].flatMap((wood) =>
   ['boat', 'chest_boat'].map((kind) => ({ wood, kind, id: `lothlorien:${wood}_${kind}`, file: `${wood}_${kind}` })));
-const native = (kind) => readJson(`../../../reference/vanilla/current/behavior_packs/vanilla_1.26.30/entities/${kind}.json`)['minecraft:entity'];
+const nativePath = (kind) => `../../../reference/vanilla/current/behavior_packs/vanilla_1.26.30/entities/${kind}.json`;
+// The vanilla reference is git-ignored: without it the byte-for-byte comparison is skipped.
+const haveReference = existsSync(new URL(nativePath('boat'), import.meta.url));
+const native = (kind) => readJson(nativePath(kind))['minecraft:entity'];
 
 test('all four boat items preserve water placement and provide six furnace smelts of fuel', () => {
   for (const { id, file } of variants) {
@@ -18,6 +22,7 @@ test('all four boat items preserve water placement and provide six furnace smelt
 });
 
 test('boat entities retain the installed native physics, bubble state machine, passenger and inventory behavior', () => {
+  if (!haveReference) return console.log('skip vanilla reference missing (tools/refresh_vanilla_ref.ps1)');
   for (const { kind, id, file } of variants) {
     const expected = native(kind);
     const actual = bp(`entities/${file}.json`)['minecraft:entity'];

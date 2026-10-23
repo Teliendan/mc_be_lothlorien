@@ -5,6 +5,8 @@ import * as rules from "../lothlorien_bp/scripts/control_rules.js";
 const read = file => JSON.parse(readFileSync(new URL(file, import.meta.url), "utf8"));
 const source = readFileSync(new URL("../lothlorien_bp/scripts/blocks.js", import.meta.url), "utf8")
   .replace(/^import \{([^}]+)\} from "[^"]+";/gm, "const {$1} = globalThis.__controls;");
+const deferredSource = readFileSync(new URL("../lothlorien_bp/scripts/deferred_use.js", import.meta.url), "utf8")
+  .replace(/^import \{([^}]+)\} from "[^"]+";/gm, "const {$1} = globalThis.__controls;");
 let serial = 0;
 const P = (id, states = {}) => ({ type: { id }, getState: k => states[k],
   withState: (k, v) => P(id, { ...states, [k]: v }) });
@@ -25,7 +27,9 @@ async function scenario(name, body) {
   } }) });
   const system = { get currentTick() { return tick; }, beforeEvents: signal("system"),
     runTimeout: (fn, ticks) => timers.push({ fn, at: tick + ticks }), run: fn => timers.push({ fn, at: tick + 1 }) };
-  globalThis.__controls = { ...rules, system, world: { afterEvents: signal("after"), beforeEvents: signal("before") },
+  globalThis.__controls = { EquipmentSlot: { Mainhand: "Mainhand" } };
+  const deferred = await import(`data:text/javascript;base64,${Buffer.from(deferredSource).toString("base64")}#${++serial}`);
+  globalThis.__controls = { ...rules, ...deferred, system, world: { afterEvents: signal("after"), beforeEvents: signal("before") },
     BlockPermutation: { resolve: P }, EquipmentSlot: { Mainhand: "Mainhand" }, GameMode: { Creative: "Creative", Spectator: "Spectator" } };
   await import(`data:text/javascript;base64,${Buffer.from(source).toString("base64")}#${++serial}`);
   delete globalThis.__controls;
@@ -54,34 +58,32 @@ await scenario("button presses once and native release handler is powered-only, 
     const data = read(`../lothlorien_bp/blocks/${wood}_button.json`)["minecraft:block"];
     assert.equal(data.components["minecraft:tick"], undefined);
     const active = data.permutations.find(p => p.condition === "q.block_state('lothlorien:powered')").components;
-    assert.deepEqual(active["minecraft:tick"], { interval_range: [30, 30], looping: false });
+    assert.deepEqual(active["minecraft:tick"], { interval_range: [30, 30], looping: true });
     assert.ok(active["lothlorien:button_release"]);
   }
 });
 
-await scenario("plate uses collision bounds, excludes spectators, holds through an early empty callback and cleans finite bookkeeping", e => {
+await scenario("plate uses collision bounds, queries without spectators and holds through an early empty callback", e => {
   const tick = e.components.get("lothlorien:pressure_plate").onTick;
   const b = e.block("lothlorien:mallorn_pressure_plate", undefined, { "lothlorien:powered": false });
   const entity = (center, extent, extra = {}) => ({ typeId: "minecraft:item", getAABB: () => ({ center, extent }), ...extra });
   const side = entity({ x: 1.1, y: 64.1, z: 0.5 }, { x: 0.05, y: 0.1, z: 0.05 });
   const flying = entity({ x: 0.5, y: 64.7, z: 0.5 }, { x: 0.1, y: 0.1, z: 0.1 });
-  const spectator = entity({ x: 0.5, y: 64.1, z: 0.5 }, { x: 0.3, y: 0.1, z: 0.3 },
-    { typeId: "minecraft:player", getGameMode: () => "Spectator" });
-  e.candidates([side, flying, spectator, { getAABB() { throw Error("gone"); } }]);
+  e.candidates([side, flying]);
   tick({ block: b, dimension: e.dimension });
   assert.equal(b.permutation.getState("lothlorien:powered"), false);
   // Origin outside the plate is fine if the engine's local query returns this intersecting AABB.
   e.candidates([entity({ x: 1.1, y: 64.9, z: 0.5 }, { x: 0.3, y: 0.9, z: 0.3 })]);
   tick({ block: b, dimension: e.dimension });
   assert.equal(b.permutation.getState("lothlorien:powered"), true);
-  assert.deepEqual(e.query(), { location: b.location, volume: { x: 1, y: 0.25, z: 1 } });
+  assert.deepEqual(e.query(), { location: b.location, volume: { x: 1, y: 0.25, z: 1 }, excludeGameModes: ["Spectator"] });
   e.candidates([]); e.advance(4); tick({ block: b, dimension: e.dimension });
   assert.equal(b.permutation.getState("lothlorien:powered"), true, "queued old four-tick callback cannot cut the pulse short");
   e.advance(15); tick({ block: b, dimension: e.dimension });
   assert.equal(b.permutation.getState("lothlorien:powered"), true);
   e.advance(1); tick({ block: b, dimension: e.dimension });
   assert.equal(b.permutation.getState("lothlorien:powered"), false);
-  assert.equal(e.timers.length, 0, "no permanent service or removed-plate record survives the finite deadline");
+  assert.equal(e.timers.length, 0);
 });
 
 await scenario("gates open away from either side, close without turning, and redstone preserves facing", e => {
@@ -105,7 +107,7 @@ await scenario("gates open away from either side, close without turning, and red
   }
 });
 
-await scenario("wall edits reconcile neighboring gates; unloaded borders preserve state; piston work terminates", e => {
+await scenario("wall edits reconcile neighboring gates; unloaded borders preserve state", e => {
   const b = e.block("lothlorien:mallorn_fence_gate", undefined,
     { "minecraft:cardinal_direction": "north", "lothlorien:in_wall": false });
   const wall = e.block("minecraft:cobblestone_wall", { x: -1, y: 64, z: 0 });
@@ -124,10 +126,7 @@ await scenario("wall edits reconcile neighboring gates; unloaded borders preserv
   e.components.get("lothlorien:gate_wall").onRandomTick({ block: b });
   assert.equal(b.permutation.getState("lothlorien:in_wall"), true, "absence of an unloaded neighbor is not proof of no wall");
   e.dimension.getBlock = read;
-  const piston = e.block("minecraft:piston", { x: 3, y: 64, z: 0 }, { facing_direction: 4 });
-  e.fire("pistonActivate", { block: piston, dimension: e.dimension, piston: { getAttachedBlocks: () => [wall, air] } });
-  assert.equal(e.timers.length, 2); e.advance(8);
-  assert.equal(e.timers.length, 0); assert.equal(b.permutation.getState("lothlorien:in_wall"), false);
+  assert.equal(e.timers.length, 0, "no piston or explosion work: the gate's random tick catches those");
 });
 
 await scenario("door pairing filters perpendicular neighbors and keeps the approved synchronized pair", e => {

@@ -9,8 +9,6 @@ export const FIREFLY_HEALTH = 2;
 
 export function bottleFirefly(item, entity) {
   const health = entity.getComponent("minecraft:health"), name = entity.nameTag ?? "";
-  if (!health || !Number.isFinite(health.currentValue) || health.currentValue <= 0) throw Error("Firefly is not living");
-  if (name.length > 255) throw Error("Firefly name exceeds supported length");
   const lore = [];
   // Keep UTF-16 length <=24 per name part without splitting surrogate pairs;
   // localized prefixes fit the documented50-character lore line limit.
@@ -25,12 +23,7 @@ export function bottleFirefly(item, entity) {
   return item;
 }
 
-function argument(line) {
-  const args = line.with;
-  const value = Array.isArray(args) ? args[0] : args?.rawtext?.[0]?.text;
-  if (typeof value !== "string") throw Error("Invalid captured firefly lore");
-  return value;
-}
+const argument = (line) => line.with.rawtext[0].text; // message() writes the one text argument
 
 export function fireflyInBottle(item) {
   let name = "", health;
@@ -38,10 +31,8 @@ export function fireflyInBottle(item) {
     if (line.translate === NAME || line.translate === MORE_NAME) name += argument(line);
     else if (line.translate === HEALTH) {
       health = Number(argument(line));
-      if (!Number.isFinite(health) || health <= 0) throw Error("Invalid captured firefly health");
     }
   }
-  if (name.length > 255) throw Error("Invalid captured firefly name");
   // Bottle title/anvil renaming and unrelated lore are not animal identity.
   return { name, health };
 }
@@ -50,7 +41,6 @@ export function restoreFirefly(entity, state) {
   entity.nameTag = state.name;
   if (state.health !== undefined) {
     const health = entity.getComponent("minecraft:health");
-    if (!health || health.setCurrentValue(Math.min(state.health, health.effectiveMax)) === false)
-      throw Error("Captured firefly health could not be restored");
+    health.setCurrentValue(Math.min(state.health, health.effectiveMax));
   }
 }

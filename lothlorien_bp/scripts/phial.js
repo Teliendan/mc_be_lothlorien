@@ -12,27 +12,10 @@ import {
 const keyOf = ({ d, x, y, z }) => `${d}|${x}|${y}|${z}`;
 let started = false;
 
-const finitePosition = (entity) => {
-    const { x, y, z } = entity.location;
-    return [x, y, z].every(Number.isFinite) ? { x, y, z } : undefined;
-};
-function holderState(player) {
-    if (!player.isValid || player.getGameMode() === "Spectator"
-        || player.getComponent("minecraft:equippable")?.getEquipment("Offhand")?.typeId !== PHIAL_ID) return undefined;
-    const health = player.getComponent("minecraft:health");
-    if (health && health.currentValue <= 0) return undefined;
-    const p = finitePosition(player), dimension = player.dimension;
-    return p ? { p, dimension, d: dimension.id } : undefined;
-}
-function targetState(spider, holder) {
-    if (!spider.isValid || !PHIAL_SPIDER_TYPES.includes(spider.typeId) || spider.dimension.id !== holder.d) return undefined;
-    const health = spider.getComponent("minecraft:health");
-    if (health && health.currentValue <= 0) return undefined;
-    const q = finitePosition(spider);
-    if (!q) return undefined;
-    const dx = q.x - holder.p.x, dz = q.z - holder.p.z;
-    const distance = dx * dx + dz * dz + (q.y - holder.p.y) ** 2;
-    return distance <= PHIAL_SPIDER_RADIUS ** 2 ? { dx, dz, distance } : undefined;
+// A holder keeps the Phial in the offhand, is alive and is not a Spectator (who keeps its items but is not there).
+function holdsPhial(player) {
+    return player.getGameMode() !== "Spectator" && player.getComponent("minecraft:health").currentValue > 0
+        && player.getComponent("minecraft:equippable")?.getEquipment("Offhand")?.typeId === PHIAL_ID;
 }
 
 export function startPhial() {
@@ -67,56 +50,40 @@ export function startPhial() {
         const firstType = spiderTypeCursor;
         spiderTypeCursor = (spiderTypeCursor + 1) % PHIAL_SPIDER_TYPES.length;
         for (const player of world.getAllPlayers()) {
-            try {
-                const holder = holderState(player);
-                if (!holder) continue;
-                const { p, d, dimension } = holder;
-                for (const offset of PHIAL_LIGHT_OFFSETS) {
-                    const loc = { d, x: Math.floor(p.x) + offset.x, y: Math.floor(p.y) + offset.y, z: Math.floor(p.z) + offset.z };
-                    const block = blockAt(loc);
-                    if (block && (block.isAir || block.typeId === PHIAL_LIGHT_BLOCK)) { desired.set(keyOf(loc), loc); break; }
+            if (!holdsPhial(player)) continue;
+            const p = player.location, dimension = player.dimension, d = dimension.id;
+            for (const offset of PHIAL_LIGHT_OFFSETS) {
+                const loc = { d, x: Math.floor(p.x) + offset.x, y: Math.floor(p.y) + offset.y, z: Math.floor(p.z) + offset.z };
+                const block = blockAt(loc);
+                if (block && (block.isAir || block.typeId === PHIAL_LIGHT_BLOCK)) { desired.set(keyOf(loc), loc); break; }
+            }
+            let remaining = PHIAL_MAX_SPIDERS;
+            for (let i = 0; i < PHIAL_SPIDER_TYPES.length && remaining; i++) {
+                const type = PHIAL_SPIDER_TYPES[(firstType + i) % PHIAL_SPIDER_TYPES.length];
+                const nearby = dimension.getEntities({ type, location: p, maxDistance: PHIAL_SPIDER_RADIUS, closest: remaining });
+                remaining -= nearby.length;
+                for (const spider of nearby) {
+                    const q = spider.location, dx = q.x - p.x, dz = q.z - p.z;
+                    const distance = dx * dx + dz * dz + (q.y - p.y) ** 2;
+                    // pushed away from the nearest holder
+                    if (distance < (spiders.get(spider.id)?.distance ?? Infinity)) spiders.set(spider.id, { spider, dx, dz, distance });
                 }
-                let remaining = PHIAL_MAX_SPIDERS;
-                for (let i = 0; i < PHIAL_SPIDER_TYPES.length; i++) {
-                    if (!remaining) break;
-                    const type = PHIAL_SPIDER_TYPES[(firstType + i) % PHIAL_SPIDER_TYPES.length];
-                    let nearby;
-                    try {
-                        nearby = dimension.getEntities({ type, location: p, maxDistance: PHIAL_SPIDER_RADIUS, closest: remaining }).slice(0, remaining);
-                    } catch { continue; } // A failed type query must not discard the other type.
-                    remaining -= nearby.length; // Invalid candidates still spend the bounded inspection budget.
-                    for (const spider of nearby) {
-                        try {
-                            const target = targetState(spider, holder);
-                            if (!target) continue;
-                            const prior = spiders.get(spider.id);
-                            if (prior) prior.players.push(player);
-                            else spiders.set(spider.id, { spider, players: [player] });
-                        } catch { /* One unreadable entity must not skip healthy following candidates. */ }
-                    }
-                }
-            } catch { /* A player may leave or change dimension during the pass. */ }
+            }
         }
 
         // Round robin prevents unloaded older records starving newer cleanup.
         const old = [...lights.entries()];
-        let changed = false;
         const checks = Math.min(old.length, PHIAL_CLEANUP_PER_PASS);
         for (let i = 0; i < checks; i++) {
             const [key, loc] = old[(cursor + i) % old.length];
             if (desired.has(key)) continue;
             const block = blockAt(loc);
             if (!block) continue;
-            try {
-                if (block.typeId === PHIAL_LIGHT_BLOCK) block.setType("minecraft:air");
-                lights.delete(key); changed = true;
-            } catch { /* Keep the persisted record until removal succeeds. */ }
+            if (block.typeId === PHIAL_LIGHT_BLOCK) block.setType("minecraft:air");
+            lights.delete(key); dirty = true;
         }
         cursor = old.length ? (cursor + checks) % old.length : 0;
-        if (changed) dirty = true;
-        if (dirty) {
-            try { persist(); } catch { /* Retry even if the in-memory ledger is now empty. */ }
-        }
+        if (dirty) persist();
 
         for (const [key, loc] of desired) {
             const block = blockAt(loc);
@@ -124,29 +91,16 @@ export function startPhial() {
             if (!lights.has(key)) {
                 if (lights.size >= PHIAL_MAX_PENDING_LIGHTS) continue;
                 lights.set(key, loc);
-                try { persist(); } catch { lights.delete(key); continue; }
+                persist(); // the ledger survives a process/world stop between these operations
             }
-            // The ledger survives a process/world stop between these operations.
-            try { if (block.isAir) block.setType(PHIAL_LIGHT_BLOCK); } catch { /* Retry next pass. */ }
+            if (block.isAir) block.setType(PHIAL_LIGHT_BLOCK);
         }
-        for (const { spider, players } of spiders.values()) {
-            try {
-                // Query snapshots can become stale before cleanup/placement finishes.
-                let target;
-                for (const player of players) {
-                    try {
-                        const holder = holderState(player);
-                        const candidate = holder && targetState(spider, holder);
-                        if (candidate && (!target || candidate.distance < target.distance)) target = candidate;
-                    } catch { /* A departing holder must not discard another eligible holder. */ }
-                }
-                if (!target) continue;
-                const { dx, dz } = target, length = Math.hypot(dx, dz);
-                spider.applyKnockback({
-                    x: length ? dx / length * PHIAL_SPIDER_FORCE : PHIAL_SPIDER_FORCE,
-                    z: length ? dz / length * PHIAL_SPIDER_FORCE : 0,
-                }, 0); // Native collision handles walls; never teleport through terrain.
-            } catch { /* Entity may unload between query and impulse. */ }
+        for (const { spider, dx, dz } of spiders.values()) {
+            const length = Math.hypot(dx, dz);
+            spider.applyKnockback({
+                x: length ? dx / length * PHIAL_SPIDER_FORCE : PHIAL_SPIDER_FORCE,
+                z: length ? dz / length * PHIAL_SPIDER_FORCE : 0,
+            }, 0); // Native collision handles walls; never teleport through terrain.
         }
     }
     system.run(update);

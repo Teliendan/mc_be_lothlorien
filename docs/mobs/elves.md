@@ -61,7 +61,7 @@ Closest vanilla analogues: `villager_v2` (1.26.20) and `wandering_trader`, witho
 
 ## Not yet verified / open
 
-- Group16 approved/source fixes deployed2026-10-20: [NPC interactions](../NPC_INTERACTIONS.md). Native cut handoff and matching prompts; ordinary idle-shears dialogs retained; wandering_trader civilian target family added. Existing lead/rehome, shops/healing and fixed professions retained; nine runners passed, native game acceptance pending.
+- Group16 approved/source fixes deployed2026-10-20: [parity/CREATURES.md](../parity/CREATURES.md). Native cut handoff and matching prompts; ordinary idle-shears dialogs retained; wandering_trader civilian target family added. Existing lead/rehome, shops/healing and fixed professions retained; nine runners passed, native game acceptance pending.
 - The pillar ivy start fix (6b97311): deployed, not yet seen in game.
 - Whether Bedrock's stroll picks only standable targets or any (affects how far the healer wanders; behaviour looked right in game).
 - `blocks_to_avoid` with `{ "name": ... }` on custom blocks (rope); walking speed 0.3 x 0.6 (measure with `/scriptevent lothlorien:speed`).

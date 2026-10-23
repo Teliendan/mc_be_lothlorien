@@ -26,13 +26,10 @@ Art: `tools/make_songbird.py` (art-only generated box model, three plumages; sam
 | Animations | procedural Molang: `idle` (tail and head tilt), `hop` (on ground), `fly` (wing flap, legs tucked, only while not on ground), vanilla `look_at_target` on bone `head` |
 | Sounds | Owner accepted woodland-song versions 2/3 on 2026-10-16; version 1 removed as weak. Two random ambient phrases, neutral category, event gain 0.45, pitch 0.96-1.04, native configured interval 14-36 s. Existing parrot hurt/death/step/fly retained. Owner confirmed deployed sounds work and are liked in game on 2026-10-16; see `../BIRDSONG.md` |
 
-## Group15 follow-up and native acceptance
+## Vanilla parity
 
-Owner chose no flocking2026-10-20. Source/offline verified and deployed after
-small-flyers, animal-home, decor-rope, performance and suite-layout passed;
-all3 packs in sync. No new game observation. Three plumages, spawn balance,
-remaining goal priorities, care, art and accepted sounds are unchanged.
-See [SMALL_FLYER_INTERACTIONS.md](../SMALL_FLYER_INTERACTIONS.md).
+Owner chose no flocking (2026-10-20): `follow_mob` removed, songbirds fly independently. Songbirds have a native
+`leashable_to` anchor. Three plumages, spawn balance, care, art and sounds unchanged. Decisions: [parity/CREATURES.md](../parity/CREATURES.md)
 
 1. Observe blue/yellow/pink birds on existing suitable terrain; no worldgen change.
 2. Check independent flight without following other species, ground landing and

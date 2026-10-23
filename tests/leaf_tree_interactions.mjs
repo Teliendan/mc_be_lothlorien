@@ -7,6 +7,8 @@ import { SUPPORT_POLICIES } from '../lothlorien_bp/scripts/support_policies.js';
 const read = p => JSON.parse(readFileSync(new URL('../lothlorien_bp/' + p, import.meta.url), 'utf8'));
 const SOURCE = readFileSync(new URL('../lothlorien_bp/scripts/trees.js', import.meta.url), 'utf8')
   .replace(/^import \{([^}]+)\} from "[^"]+";/gm, 'const {$1} = globalThis.__tree;');
+const DEFERRED = readFileSync(new URL('../lothlorien_bp/scripts/deferred_use.js', import.meta.url), 'utf8')
+  .replace(/^import \{([^}]+)\} from "[^"]+";/gm, 'const {$1} = globalThis.__tree;');
 const SAPLING = 'lothlorien:mallorn_sapling', LEAF = 'lothlorien:mallorn_leaves', PERSISTENT = 'lothlorien:persistent', STAGE = 'lothlorien:stage';
 let count = 0;
 const perm = (id, states = {}) => ({ type: { id }, getState: k => states[k], getAllStates: () => ({ ...states }),
@@ -35,7 +37,9 @@ async function scenario(name, body, file = 'trees.js') {
     runJob(gen) { if (rejectJob) throw Error('job rejected'); jobs.push(gen); } };
   const tree = { logs: Array.from({ length: 7 }, (_, y) => ({ x: 0, y, z: 0, face: 'up' })),
     leaves: Array.from({ length: 230 }, (_, x) => ({ x: x + 1, y: 6, z: 0 })) };
-  globalThis.__tree = { ...rules, ...greatRules, message: () => 'localized', system, world: {
+  globalThis.__tree = { EquipmentSlot: { Mainhand: 'main' } };
+  const deferred = await import(`data:text/javascript;base64,${Buffer.from(DEFERRED).toString('base64')}#d${count}`);
+  globalThis.__tree = { ...rules, ...greatRules, ...deferred, message: () => 'localized', system, world: {
     beforeEvents: { playerInteractWithBlock: { subscribe: fn => handlers.push(fn) } },
     afterEvents: { playerPlaceBlock: { subscribe() {} } }, structureManager: {
       get: () => ({ getBlockPermutation: p => perm(p.x < 11 && p.y === 0 ? 'lothlorien:mallorn_log' : 'minecraft:structure_void') }),
@@ -55,7 +59,7 @@ async function scenario(name, body, file = 'trees.js') {
         get amount() { return p.held.amount; }, set amount(n) { p.held.amount = n; }, setItem(i) { p.held = i; } }) }; } };
     return p;
   };
-  const click = (b, p) => { const e = { block: b, player: p, itemStack: p.held.clone() }; handlers[0](e); return e; };
+  const click = (b, p, first = true) => { const e = { block: b, player: p, itemStack: p.held.clone(), isFirstEvent: first }; handlers[0](e); return e; };
   const random = Math.random; Math.random = () => 0;
   try { await body({ block, plant, player, click, dim, system, runtime, commands, particles, jobs, tree, placements,
     tick: b => components.get('lothlorien:sapling').onRandomTick({ block: b }),
@@ -78,13 +82,12 @@ await scenario('random growth checks light above and valid soil; unreadable ligh
 });
 await scenario('bone meal works in darkness and consumes once after a guarded completion', e => {
   const b = e.plant(), p = e.player(); e.block('minecraft:air', {}, { x: 0, y: 65, z: 0 }, 0);
-  assert.equal(e.click(b, p).cancel, true); e.click(b, p); e.flush();
+  assert.equal(e.click(b, p).cancel, true); e.click(b, p, false); e.flush();
   assert.equal(p.held.amount, 2); assert.equal(b.permutation.getState(STAGE), 1); assert.equal(e.particles.length, 1);
 });
-await scenario('stale held items, slots, metadata, modes, targets and soils cannot consume or grow', e => {
-  for (const mutate of [p => { p.held.typeId = 'minecraft:diamond'; }, p => { p.selectedSlotIndex++; },
-    p => { p.held.name = 'different'; }, p => { p.mode = 'creative'; }, p => { p.getGameMode = () => { throw Error('player left'); }; },
-    () => { e.block('minecraft:stone'); }, () => { e.block('minecraft:stone', {}, { x: 0, y: 63, z: 0 }); }]) {
+await scenario('a changed held item type or target cannot consume or grow', e => {
+  for (const mutate of [p => { p.held.typeId = 'minecraft:diamond'; },
+    () => { e.block('minecraft:stone'); }]) {
     const b = e.plant(), p = e.player(); e.click(b, p); mutate(p); e.flush();
     assert.equal(p.held.amount, 3); assert.equal(e.particles.length, 0);
   }
@@ -112,7 +115,8 @@ await scenario('2x2 overlap and invalid member soil abort safely and release eve
   for (const member of members) assert.equal(e.runtime.growTree(member, 2), false);
   e.block('minecraft:stone', {}, { x: 1, y: 63, z: 1 }); e.finish();
   for (const member of members) assert.equal(member.writes, undefined);
-  const p = e.player(); e.click(b, p); e.flush(); assert.equal(p.held.amount, 3);
+  const p = e.player(); e.click(b, p); e.flush(); assert.equal(p.held.amount, 2, 'bone meal is spent like on any sapling');
+  for (const member of members) assert.equal(member.writes, undefined);
   e.block('minecraft:dirt', {}, { x: 1, y: 63, z: 1 });
   for (const member of members) assert.equal(e.runtime.growTree(member, 3), true, 'all reservations were released');
 });

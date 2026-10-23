@@ -334,8 +334,8 @@ await scenario("elves: with only 2 home posts the other 2 professions stand on t
   assert.equal(postsLeft(), 0);
 });
 
-await scenario("elves: a spawn error for one elf keeps its post, the planner still finishes, nothing throws", async () => {
-  const markers = setupV2(), { home } = addPosts(5);
+await scenario("elves: a spawn error for one elf is logged, no post is left behind, the planner still finishes", async () => {
+  const markers = setupV2(); addPosts(5);
   mock.onSpawn = (e, opts) => { if (opts.spawnEvent === EL.spawnEventOf("gardener")) throw new Error("boom"); };
   await loadScript("loop_marker.js");
   mock.fire("entityLoad", { entity: markers[0] });
@@ -343,9 +343,8 @@ await scenario("elves: a spawn error for one elf keeps its post, the planner sti
   assert.equal(grep(/planner: village at/).length, 1, "the planner summary line still comes");
   assert.equal(markersLeft(), 0, "markers removed as always");
   assert.equal(grep(/could not spawn the gardener/).length, 1); assert.match(grep(/elves: village at/)[0], /1 failed/);
-  assert.equal(postsLeft(), 1, "only the failed post is kept");
+  assert.equal(postsLeft(), 0, "every post is removed, also the failed one");
   assert.equal(homeRecords()[0].homes.length, 3, "the record lists the three elves that exist");
-  assert.ok(home.some((h) => h.isValid), "the kept post is one of the home posts");
 });
 
 await scenario("elf.js: a hit on an elf charges a fight per 60 s window and tags the player as foe for 60 s after the LAST hit; other mobs and stale tags", async () => {

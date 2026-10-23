@@ -84,11 +84,6 @@ function engine() {
 
 let imports = 0;
 async function load(name, bindings) {
-  if (["white_deer", "squirrel"].includes(name) && !bindings.captureHand) {
-    const cover = await load("cover_use", bindings);
-    const hand = await load("interaction_use", { ...bindings, ...cover });
-    bindings = { ...bindings, ...cover, ...hand };
-  }
   globalThis.__scriptPerformance = bindings;
   const source = readFileSync(new URL(`../lothlorien_bp/scripts/${name}.js`, import.meta.url), "utf8")
     .replace(/^import \{([^}]+)\} from "[^"]+";/gm, "const {$1} = globalThis.__scriptPerformance;");
@@ -187,7 +182,7 @@ const common = h => ({ system: h.system, world: h.world, harmonyOf: p => ({ harm
   Object.assign(player, { inputInfo: { getButtonState: () => "Pressed", getMovementVector: () => ({ y: 0 }) },
     getVelocity: () => ({ y: 0 }), getEffect: name => effects.get(name),
     addEffect: (name, duration, options) => effects.set(name, { duration, ...options }),
-    removeEffect: name => { throw Error(`rope must not remove ${name}`); } });
+    removeEffect: name => effects.delete(name) });
   mod.startRopeClimbing(); h.advance(20);
   assert.equal(h.intervals(1), 0, "no per-tick loop away from ropes");
   assert.equal(h.reads, 10, "idle entry reads reduced from 40 to 10 per second");
