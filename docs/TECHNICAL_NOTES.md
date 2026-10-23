@@ -27,12 +27,6 @@ item-tag membership and one-antler/four-lantern recipe. The lamp art generator
 also writes the same tags/stack/recipe; accepted assets were not rebuilt.
 15 new production-handler scenarios and10 selected feature runners pass offline.
 
-## Stale generators (2026-10-23)
-
-`tools/make_nectar_bloom.py` and `tools/make_elven_lamps.py` lag behind the committed block JSON: re-running them
-drops later hand/patch edits (`lava_flammable`, `movable`, `motion_support`, ...). Do not re-run them as is; first
-fold the committed components into the generator and diff its output against `lothlorien_bp/blocks/`.
-
 ## Biome (Phase 1)
 
 Files:

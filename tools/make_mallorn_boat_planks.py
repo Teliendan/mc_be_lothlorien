@@ -203,7 +203,7 @@ def main():
         paths = [os.path.join(stepped.RP, "models", "entity", "mallorn_boat.geo.json"),
                  os.path.join(stepped.RP, "textures", "entity", "mallorn_boat.png")]
     with open(paths[0], "w", encoding="utf-8", newline="\n") as f:
-        json.dump(geo, f, indent=1)
+        json.dump(geo, f, indent=2)
         f.write("\n")
     tex.save(paths[1])
     print(f"{n} cubes, texture {tex.size[0]}x{tex.size[1]} ->", os.path.dirname(paths[0]))

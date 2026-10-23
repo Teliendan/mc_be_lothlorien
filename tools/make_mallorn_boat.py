@@ -386,7 +386,7 @@ def main():
                  os.path.join(RP, "textures", "entity", "mallorn_boat_pretty.png"),
                  os.path.join(RP, "textures", "items", "mallorn_boat.png")]
     with open(paths[0], "w", encoding="utf-8", newline="\n") as f:
-        json.dump(geo, f, indent=1)
+        json.dump(geo, f, indent=2)
         f.write("\n")
     tex.save(paths[1])
     icon().save(paths[2])

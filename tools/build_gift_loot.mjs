@@ -5,10 +5,13 @@ const file = new URL("../lothlorien_bp/loot_tables/chests/mallorn_flet.json", im
 const existing = readFileSync(file, "utf8");
 const loot = JSON.parse(existing);
 const entries = loot.pools[1].entries;
-loot.pools[1].entries = [...entries.filter((entry) => entry.name !== ARROW_ID), {
+const arrow = {
   type: "item", name: ARROW_ID, weight: ARROW.lootWeight,
   functions: [{ function: "set_count", count: ARROW.lootCount }],
-}];
+};
+// Replace in place so the committed entry order survives a re-run; append only when missing.
+const at = entries.findIndex((entry) => entry.name === ARROW_ID);
+loot.pools[1].entries = at < 0 ? [...entries, arrow] : entries.map((entry, i) => (i === at ? arrow : entry));
 const output = (JSON.stringify(loot, null, 2) + "\n").replaceAll("\n", existing.includes("\r\n") ? "\r\n" : "\n");
 if (process.argv.includes("--check")) {
   if (output !== existing) throw Error("Great Mallorn arrow loot needs rebuilding.");

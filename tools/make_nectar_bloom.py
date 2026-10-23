@@ -80,20 +80,26 @@ def block():
         "description": {"identifier": f"{NS}:nectar_bloom", "menu_category": {"category": "none"},
                         "states": {f"{NS}:nectar": list(range(STAGES))}},
         "components": {
-            "minecraft:tags": [f"{NS}:flower"],
             "minecraft:collision_box": False,
             "minecraft:light_dampening": 0,
             "minecraft:selection_box": {"origin": [-5, 2, -5], "size": [10, 14, 10]},
             "minecraft:destructible_by_mining": {"seconds_to_destroy": 0},
             "minecraft:destructible_by_explosion": {"explosion_resistance": 0},
-            "minecraft:flammable": {"catch_chance_modifier": 60, "destroy_chance_modifier": 100},
+            "minecraft:flammable": {"catch_chance_modifier": 60, "destroy_chance_modifier": 100,
+                                   "lava_flammable": "never"},
             "minecraft:sound": {"sound": "grass"},
             "minecraft:map_color": "#e8a828",
             "minecraft:geometry": {"identifier": f"geometry.{NS}.plant_cross"},
             "minecraft:material_instances": material(0),
             "minecraft:loot": "loot_tables/blocks/nectar_bloom.json",
             "minecraft:placement_filter": {"conditions": [{"allowed_faces": ["down"], "block_filter": HANG_ON}]},
-            f"{NS}:nectar_bloom": {}},
+            f"{NS}:nectar_bloom": {},
+            # key order of the committed file; configure_support fills the values (movable, motion_support,
+            # liquid_detection) and appends nothing because the tag is already present
+            "minecraft:movable": {"movement_type": "popped"},
+            f"{NS}:motion_support": {},
+            "minecraft:liquid_detection": {},
+            "minecraft:tags": [f"{NS}:flower"]},
         "permutations": [{"condition": f"query.block_state('{NS}:nectar') == {s}",
                           "components": {"minecraft:material_instances": material(s)}} for s in range(1, STAGES)]}}
 
@@ -103,8 +109,8 @@ def item():
         "description": {"identifier": f"{NS}:nectar_bloom", "menu_category": {"category": "nature", "group": "minecraft:itemGroup.name.flower"}},
         "components": {"minecraft:block_placer": {"block": f"{NS}:nectar_bloom", "replace_block_item": True},
                        "minecraft:icon": f"{NS}:nectar_bloom",
-                       "minecraft:compostable": {"composting_chance": 65},
-                       "minecraft:tags": {"tags": [f"{NS}:flower"]}}}}
+                       "minecraft:tags": {"tags": [f"{NS}:flower"]},
+                       "minecraft:compostable": {"composting_chance": 65}}}}
 
 
 def loot():

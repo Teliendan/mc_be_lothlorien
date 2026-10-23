@@ -15,6 +15,7 @@ by direction, so the texture carries no baked face shading. The glass parts use 
 """
 import json
 import random
+import re
 from pathlib import Path
 from PIL import Image
 from make_mallorn_wood import BARK as MALLORN_BARK, recolour, to_gold
@@ -639,7 +640,12 @@ def dump(path, obj):
         from configure_support import configure
         configure(obj)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(obj, indent=2) + "\n", newline="\n")
+    text = json.dumps(obj, indent=2) + "\n"
+    if "minecraft:block" in obj:  # committed block files keep the tag list on one line
+        text = re.sub(r'("minecraft:tags": \[)\s+("[^"\n]*")\s+\]', r"\1\2]", text)
+    # keep the line endings of the committed file (terrain_texture.json is CRLF)
+    crlf = path.exists() and b"\r\n" in path.read_bytes()
+    path.write_bytes((text.replace("\n", "\r\n") if crlf else text).encode("utf8"))
 
 
 def merge_atlas(path, entries, key="texture_data"):
@@ -677,10 +683,10 @@ def lamp_block(ident, light, geometry, placement_faces, boxes, extra_perms=None,
     glass = ident == "firefly_jar"
     strength = 0.3 if glass else 3.5
     comps = {
-        "minecraft:tags": [] if glass else ["minecraft:is_pickaxe_item_destructible"],
+        **({} if glass else {"minecraft:tags": ["minecraft:is_pickaxe_item_destructible"]}),
+        "minecraft:flammable": False,
         "minecraft:destructible_by_mining": {"seconds_to_destroy": strength if seconds is None else seconds},
         "minecraft:destructible_by_explosion": {"explosion_resistance": strength},
-        "minecraft:flammable": False,
         "minecraft:sound": {"sound": sound},
         "minecraft:light_emission": light,
         "minecraft:light_dampening": 0,
@@ -691,6 +697,9 @@ def lamp_block(ident, light, geometry, placement_faces, boxes, extra_perms=None,
         "lothlorien:lamp_support": {},
     }
     comps.update(boxes)
+    # key order of the committed files; configure_support fills the values, liquid_detection follows
+    comps["minecraft:movable"] = {"movement_type": "popped"}
+    comps["lothlorien:motion_support"] = {}
     block = {"description": {"identifier": f"{NS}:{ident}", "traits": {
         "minecraft:placement_position": {"enabled_states": ["minecraft:block_face"]}}},
         "components": comps}

@@ -10,6 +10,7 @@ blue, each star on its own phase so they twinkle slowly. Under Vibrant Visuals t
 """
 import json
 import random
+import re
 from pathlib import Path
 from PIL import Image
 
@@ -59,8 +60,16 @@ def strip():
 
 
 def dump(path, obj):
+    if "minecraft:block" in obj:  # water policy etc. (tools/configure_support.py)
+        from configure_support import configure
+        configure(obj)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(obj, indent=2) + "\n", newline="\n")
+    text = json.dumps(obj, indent=2) + "\n"
+    if "minecraft:block" in obj:  # the committed block file keeps the tag list on one line
+        text = re.sub(r'("minecraft:tags": \[)\s+("[^"\n]*")\s+\]', r"\1\2]", text)
+    # keep the line endings of the committed file
+    crlf = path.exists() and b"\r\n" in path.read_bytes()
+    path.write_bytes((text.replace("\n", "\r\n") if crlf else text).encode("utf8"))
 
 
 def main():
@@ -73,9 +82,14 @@ def main():
 
     flip = RP / "textures/flipbook_textures.json"
     entries = json.loads(flip.read_text()) if flip.exists() else []
-    entries = [e for e in entries if e.get("atlas_tile") != f"{NS}:star_canopy"]
-    entries.append({"flipbook_texture": "textures/blocks/star_canopy", "atlas_tile": f"{NS}:star_canopy",
-                    "ticks_per_frame": TICKS_PER_FRAME, "frames": list(range(FRAMES)), "blend_frames": True})
+    entry = {"flipbook_texture": "textures/blocks/star_canopy", "atlas_tile": f"{NS}:star_canopy",
+             "ticks_per_frame": TICKS_PER_FRAME, "frames": list(range(FRAMES)), "blend_frames": True}
+    for i, e in enumerate(entries):  # replace in place so the committed entry order survives a re-run
+        if e.get("atlas_tile") == f"{NS}:star_canopy":
+            entries[i] = entry
+            break
+    else:
+        entries.append(entry)
     dump(flip, entries)
 
     dump(BP / "blocks/star_canopy.json", {"format_version": "1.26.50", "minecraft:block": {
@@ -83,9 +97,9 @@ def main():
         "components": {
             "minecraft:loot": "loot_tables/blocks/star_canopy.json",
             "minecraft:tags": ["minecraft:is_pickaxe_item_destructible"],
+            "minecraft:flammable": False,
             "minecraft:destructible_by_mining": {"seconds_to_destroy": 3.5},
             "minecraft:destructible_by_explosion": {"explosion_resistance": 6},
-            "minecraft:flammable": False,
             "minecraft:sound": {"sound": "stone"},
             "minecraft:light_emission": 6,
             "minecraft:map_color": "#161e48",
