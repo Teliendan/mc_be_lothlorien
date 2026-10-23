@@ -1,6 +1,7 @@
 # Vanilla interaction ledger
 
-2026-10-18; target Bedrock **1.26.52** / Script API **2.8.0**.
+2026-10-18 inventory; reconciled2026-10-23.
+Target Bedrock **1.26.52** / Script API **2.8.0**.
 Source/documentation audit; **no new agent-run engine tests**. Feature follow-ups
 include pack changes and explicit owner decisions on 2026-10-18/19. The owner's
 boat observations are recorded with their exact scope in the vehicle row and
@@ -101,7 +102,7 @@ No new native observations or worldgen change.
 | Armor | Armor/Item repair; [WEARABLE_INTERACTIONS.md](WEARABLE_INTERACTIONS.md), `M5_WORN_GIFTS_NOTES.md`, `elven_cloak.json` | **Owner 2026-10-18:** native use/swap/dispenser; stand/mob support through straightforward data; no cloak dyeing/trims to retain art; audit protection/wear/repair/curses/effects. Full freezing protection remains **pending by owner choice**, without a partial replacement; no verified simple item/API path found. **Configured:** chest protection 3/durability 80, armor_torso enchanting/string+self repair. **2026-10-21 correction:** removed `wearable.dispensable` after owner-reported schema rejection. **Owner confirmed 2026-10-21:** parsing error is gone after deployment. **OPEN:** exact native dispenser/equip/stand/mob/repair/curse/game outcomes. Detailed lifecycle and effect evidence in linked ledger. |
 | Gifts | Native offhand/consumable/light analogues by aspect; [WEARABLE_INTERACTIONS.md](WEARABLE_INTERACTIONS.md), [PHIAL_INTERACTIONS.md](PHIAL_INTERACTIONS.md), `M5_WORN_GIFTS_NOTES.md`, `M5_PHIAL_NOTES.md` | **Intentional:** belt stays offhand and without durability/enchant/repair, player-only magic effects; phial retains its separate established design. Rejected `wearable.dispensable` removed 2026-10-21; native dispenser/actor support needs game checks. Existing bounded player effect service preserves potions; added external-effect-clearing regression. Phial Group11 approved/implemented: Spectator exclusion, bounded fair type queries, isolated failures/live target revalidation and explicit helper neighbor policies. **OPEN:** remaining native item/display/death/multiplayer and helper support/fluid/light ecology/observer checks. |
 | Food/resources | Food and actual recipe inputs; [FOOD_REMEDY_INTERACTIONS.md](FOOD_REMEDY_INTERACTIONS.md), harvest/care notes, `TAGS.md`, recipes in pack | Group10 owner approved and implemented2026-10-19: native salve bottle return, guarded Miruvor completion/Creative/effect policy, sound/deed/partial-effect error isolation, plain Lembas compost85 and soul-campfire meat cooking. Offline production scenarios pass; engine acceptance pending. Preserve ingredient-only nectar, dew resource use, no extra corn uses, existing food balance and no raw-swan debuff. **Intentional:** Great Mallorn nut noncompostable, owner2026-10-13. **OPEN:** supported crafting remainders, full-inventory/Creative/cancel outcomes, native wolf/fox/villager consumers and environment/automation. Meat tags alone do not prove wolf feeding. |
-| Animals | Cow/Rabbit/Horse/Parrot and archetype-specific Wiki; `mobs/*.md` | Existing sheets/care decisions retained. Deer grazing omitted to protect floor; no vanilla prey families. Unicorn Group14 owner decisions/source fixes complete: no lead, saddle-free owner riding, no breeding/foals, owner-only bonded naming and explicit no armor/equipment/inventory/shear/dispenser routes; swimming/healing/Friend-only lure implemented/deployed. Songbird no breeding/baby/taming/riding per owner simplicity request. **OPEN:** remaining analogue-specific native usable-item/hazard/potion/reciprocal-target/persistence/transport/gamerule comparisons; Group15 small-flyer owner review/source fixes are complete and deployed; review continues at Group17 helpers. Horse grazing animation does not consume grass: do not generalize eat_block's effect to every grazing implementation. |
+| Animals | Cow/Rabbit/Horse/Parrot and archetype-specific Wiki; `mobs/*.md` | Existing sheets/care decisions retained. Deer grazing omitted to protect floor; no vanilla prey families. Unicorn Group14 owner decisions/source fixes complete: no lead, saddle-free owner riding, no breeding/foals, owner-only bonded naming and explicit no armor/equipment/inventory/shear/dispenser routes; swimming/healing/Friend-only lure implemented/deployed. Songbird no breeding/baby/taming/riding per owner simplicity request. **OPEN:** remaining analogue-specific native usable-item/hazard/potion/reciprocal-target/persistence/transport/gamerule comparisons; Group15 small-flyer owner review/source fixes are complete and deployed; Group17 helper review/source fixes are also complete, with native acceptance open. Horse grazing animation does not consume grass: do not generalize eat_block's effect to every grazing implementation. |
 | NPCs | Villager/Iron Golem by aspect; [NPC_INTERACTIONS.md](NPC_INTERACTIONS.md), NPC sheets, trading/healer notes | Group16 owner-approved/source fixes complete and deployed2026-10-20. Elf native-cut handoff; wardens lead/anchor, permanent from first leash and home20 on release; elf civilian target family; intentional counterpart exclusions. Nine runners passed,6 BP files copied, all3 packs in sync. Fixed professions/shops/Harmony/Renown/healer/nonrenewability/combat retained. **OPEN:** native targeting/leash/reload/transport/equipment/hazards/gamerules and exact UI outcomes; source configuration does not prove engine acceptance. |
 | Vehicles | Boat / Boat with Chest / Dispenser Wiki; [BOAT_INTERACTIONS.md](BOAT_INTERACTIONS.md), `mobs/mallorn_boat.md` | **Owner 2026-10-18:** leads, boarding, steering, leaving and ordinary self-drop work well; report does not enumerate every variant or chest contents. Fuel and remaining native audits approved. **Configured:** all four items burn for 60 seconds; complete entity source parity retains native physics/bubbles/passengers and siphonable 27-slot chest inventory, with established art/seat/loot adaptations. **OPEN game checks:** exact dispenser conditions, environmental/dimension behavior, passenger edge cases, hopper transfer, stored-content drops and piglin recognition. Direct comparator applicability is not established. Correct Boat with Chest Wiki/archive pages are readable; detailed confidence/source/version evidence in linked ledger. |
 | Helpers | Functional guide/post/loop/rail/light helpers; [HELPER_INTERACTIONS.md](HELPER_INTERACTIONS.md), `mobs/*.md`, `BLOCK_MATERIALS.md` | Group17 review/approved source work complete2026-10-21. Timeout ownership cleanup2 verified/deployed;3 runners passed,1 BP copied, all3 packs in sync. Owner accepted withdrawing1/leaving3 unchanged without a real recoverable spawn failure/native helper attack. Population/attack behavior retained. Biological rows inapplicable; retain beacon cleanup/expiry, unfinished work and Group11 light policies. **OPEN:** native hit selection/projectiles, targeting, collision/spawn obstruction/caps, transport/triggers and reload acceptance. No observed native failure claimed. |
@@ -116,6 +117,10 @@ natural chance tables. Sampler deployed2026-10-20; all three packs confirmed in
 sync after9 selected runners passed. Native acceptance remains OPEN.
 
 ## Corrections to historical notes
+
+The dated implementation/handoff records below preserve their original sequence.
+Groups1-17 are now reviewed; use the current reconciliation above the inventory
+and the all-mod final report for remaining work, rather than their old next-group pointers.
 
 Group13 swans/squirrels owner decisions implemented/deployed2026-10-20; complete counterpart
 dispositions: [SWAN_SQUIRREL_INTERACTIONS.md](SWAN_SQUIRREL_INTERACTIONS.md).
@@ -157,6 +162,11 @@ Preserve owner omissions; this ledger does not silently promote weak rationale
 or a stale implementation note to owner approval.
 
 ## Exact authored inventory
+
+Reconciled2026-10-23:45 blocks,64 explicit items and19 entities; all definitions
+have an inventory row and valid source link. Groups1-17 owner review is complete;
+supported-path investigations, native acceptance and owner-deferred bees/full
+cloak freezing remain open. [Final all-mod coverage and test index](../../../docs/vanilla-interactions-final-2026-10-23.md).
 
 ### Blocks (45)
 
@@ -205,7 +215,7 @@ or a stale implementation note to owner approval.
 | `lothlorien:nectar_bloom` | Flora/crops | [lothlorien_bp](../lothlorien_bp/blocks/nectar_bloom.json) |
 | `lothlorien:niphredil` | Flora/crops | [lothlorien_bp](../lothlorien_bp/blocks/niphredil.json) |
 | `lothlorien:phial_light` | Helpers | [lothlorien_bp](../lothlorien_bp/blocks/phial_light.json) |
-| `lothlorien:star_canopy` | Flora/crops | [lothlorien_bp](../lothlorien_bp/blocks/star_canopy.json) |
+| `lothlorien:star_canopy` | Lights/rope/decor | [lothlorien_bp](../lothlorien_bp/blocks/star_canopy.json) |
 | `lothlorien:western_corn` | Flora/crops | [lothlorien_bp](../lothlorien_bp/blocks/western_corn.json) |
 
 ### Items (64)
@@ -269,7 +279,7 @@ or a stale implementation note to owner approval.
 | `lothlorien:niphredil` | Flora/crops | [lothlorien_bp](../lothlorien_bp/items/niphredil.json) |
 | `lothlorien:phial_of_galadriel` | Gifts | [lothlorien_bp](../lothlorien_bp/items/phial_of_galadriel.json) |
 | `lothlorien:silver_belt` | Gifts | [lothlorien_bp](../lothlorien_bp/items/silver_belt.json) |
-| `lothlorien:star_canopy` | Flora/crops | [lothlorien_bp](../lothlorien_bp/items/star_canopy.json) |
+| `lothlorien:star_canopy` | Lights/rope/decor | [lothlorien_bp](../lothlorien_bp/items/star_canopy.json) |
 | `lothlorien:swan_meat_cooked` | Food/resources | [lothlorien_bp](../lothlorien_bp/items/swan_meat_cooked.json) |
 | `lothlorien:swan_meat_raw` | Food/resources | [lothlorien_bp](../lothlorien_bp/items/swan_meat_raw.json) |
 | `lothlorien:venison_cooked` | Food/resources | [lothlorien_bp](../lothlorien_bp/items/venison_cooked.json) |
