@@ -174,9 +174,6 @@
     "landscape-probe": [
       "landscape_probe.mjs"
     ],
-    "constrained-feature-probe": [
-      "constrained_feature_probe.mjs"
-    ],
     "suite-layout": [
       "suite_layout.mjs"
     ],
