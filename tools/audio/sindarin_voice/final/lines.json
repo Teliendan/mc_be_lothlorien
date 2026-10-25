@@ -1,0 +1,682 @@
+{
+  "status": "Owner-approved final set, 2026-10-25. WAV = exact audition audio (24 kHz mono PCM16); OGG = Vorbis encode of it for the pack.",
+  "engine": "Chatterbox multilingual t3_mtl23ls_v2, snapshot 5bb1f6ee58e50c3b8d408bc82a6d3740c2db6e18, default PerTh watermark",
+  "lines": [
+    {
+      "file": "mae_govannen",
+      "sindarin": "Mae govannen.",
+      "english": "Well met.",
+      "pools": [
+        "opening_neutral"
+      ],
+      "generator_text": "Mai govánnen.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102026,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch2/mae_govannen_s1",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 1.11,
+      "sha256": "af4c54479dbfa52e364c281bc7873515a8583b1c6a695f8f5c95bbbb2e723d89"
+    },
+    {
+      "file": "suilad",
+      "sindarin": "Suilad.",
+      "english": "Greetings.",
+      "pools": [
+        "opening_neutral"
+      ],
+      "generator_text": "Súilad, mélon.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102026,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch2/suilad_mellon_s1",
+      "edit": "Splice: first 0.515 s (\"Suila\") of batch 2 suilad_mellon_s1 after the cut, joined with a 10 ms crossfade to batch 9 suilade_5 (input \"Súilade.\") from 0.415 s to 20 ms after its D release (0.46 s); 10 ms fade-out.",
+      "seconds": 0.57,
+      "sha256": "2f3e6c4187b78346f342a21cab875008180718828d885d57d31d6c9a9ea47443"
+    },
+    {
+      "file": "tolo",
+      "sindarin": "Tolo.",
+      "english": "Come.",
+      "pools": [
+        "opening_neutral"
+      ],
+      "generator_text": "Tólo.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102031,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch5/tolo_6",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.43,
+      "sha256": "faf49a384e37a495a28acb429cafb7ef9e726b1a339bc85783807af357b46b76"
+    },
+    {
+      "file": "mae_govannen_mellon",
+      "sindarin": "Mae govannen, mellon.",
+      "english": "Well met, friend.",
+      "pools": [
+        "opening_warm"
+      ],
+      "generator_text": "Mai govánnen mélon.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102029,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch6/mae_govannen_mellon_nc_4",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 1.53,
+      "sha256": "2135e725eeeeb553f1c00d7dd1f68b6a532106f0231e20da30f6a0b78f71915a"
+    },
+    {
+      "file": "suilad_mellon_1",
+      "sindarin": "Suilad, mellon.",
+      "english": "Greetings, friend.",
+      "pools": [
+        "opening_warm"
+      ],
+      "generator_text": "Súilad, mélon.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102026,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch2/suilad_mellon_s1",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 1.2,
+      "sha256": "37b2659dc0acd68c44346d1f051b5698836a1dbfdbad8ae3096bdc3bcd8d1b82"
+    },
+    {
+      "file": "suilad_mellon_2",
+      "sindarin": "Suilad, mellon.",
+      "english": "Greetings, friend.",
+      "pools": [
+        "opening_warm"
+      ],
+      "generator_text": "Súylad, mélon.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102026,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch2/suylad_mellon_s1",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 1.24,
+      "sha256": "f484673ee1595f705ccb483dc896e08c2e0e289f59a225c50a420a3fe2b53470"
+    },
+    {
+      "file": "tolo_mellon",
+      "sindarin": "Tolo, mellon.",
+      "english": "Come, friend.",
+      "pools": [
+        "opening_warm"
+      ],
+      "generator_text": "Tólo, mélon.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102026,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch2/tolo_mellon_s1",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.86,
+      "sha256": "157e4839cdc10212ffc28ca3d2e9f391ae1fc9440f77d13243194ffd0cc17e68"
+    },
+    {
+      "file": "ma_1",
+      "sindarin": "Ma!",
+      "english": "Good!",
+      "pools": [
+        "trade_positive",
+        "completion"
+      ],
+      "generator_text": "¡Ma!",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102027,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch2/ma_s2",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.6,
+      "sha256": "7f2f41614a98e22788fe752c1b728c5c9b7b70a88947c2fa83de9ad7f136d3d1"
+    },
+    {
+      "file": "ma_2",
+      "sindarin": "Ma!",
+      "english": "Good!",
+      "pools": [
+        "trade_positive",
+        "completion"
+      ],
+      "generator_text": "¡Ma!",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102028,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch2/ma_s3",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.35,
+      "sha256": "e781909e04ab8906c22a91835971a2a64eb56beeec5737857d6aacec42505266"
+    },
+    {
+      "file": "mae_1",
+      "sindarin": "Mae.",
+      "english": "Excellent.",
+      "pools": [
+        "trade_positive",
+        "completion"
+      ],
+      "generator_text": "Máe.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102030,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch5/mae_5",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.56,
+      "sha256": "fef9c7625bc073368df556d3e82960c3514c9140604d28d52ae16207d4f25679"
+    },
+    {
+      "file": "mae_2",
+      "sindarin": "Mae.",
+      "english": "Excellent.",
+      "pools": [
+        "trade_positive",
+        "completion"
+      ],
+      "generator_text": "Máe.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102031,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch5/mae_6",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.49,
+      "sha256": "b9c049e4affb440c70e722976d33aaaafae3c0f0054b18d88f03e6fbfaf02d4f"
+    },
+    {
+      "file": "lasto_1",
+      "sindarin": "Lasto.",
+      "english": "Listen.",
+      "pools": [
+        "explain"
+      ],
+      "generator_text": "Lásto.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102027,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch5/lasto_2",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.67,
+      "sha256": "97f645ce71ba84b0701f4047cee93865543c1c6851f94ab4d62fe4768a7c754a"
+    },
+    {
+      "file": "lasto_2",
+      "sindarin": "Lasto.",
+      "english": "Listen.",
+      "pools": [
+        "explain"
+      ],
+      "generator_text": "Lásto.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102031,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch5/lasto_6",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.55,
+      "sha256": "f9bbed5efb4507ba7aa15f44d7c25f61e6a9a6e22041b8ec43fe7803318556a4"
+    },
+    {
+      "file": "lasto_beth_lammen",
+      "sindarin": "Lasto beth lammen.",
+      "english": "Listen to the word of my tongue.",
+      "pools": [
+        "explain"
+      ],
+      "generator_text": "Lasto beth lámmen.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102027,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch5/lasto_beth_lammen_2",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 1.32,
+      "sha256": "0ba37d2c383d95254f35e8f78245170d3f93ce8ff5a67a9b38315c53d54b2824"
+    },
+    {
+      "file": "tolo_a_lasto",
+      "sindarin": "Tolo a lasto.",
+      "english": "Come and listen.",
+      "pools": [
+        "explain"
+      ],
+      "generator_text": "Tólo a lásto.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102029,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch2/tolo_a_lasto_s4",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 1.14,
+      "sha256": "6f09f8906cbae981c0dd94e43088a14a3114599fdc6a351e06703f3ab0b69a61"
+    },
+    {
+      "file": "caro_mae",
+      "sindarin": "Caro mae.",
+      "english": "Do well.",
+      "pools": [
+        "task_taken"
+      ],
+      "generator_text": "Caro máe.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102027,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch5/caro_mae_2",
+      "edit": "Hand cut: raw 0.06-0.76 s (the words end before 0.7 s of quiet breath), 10 ms fade-in, 50 ms fade-out.",
+      "seconds": 0.7,
+      "sha256": "84358e3a94cef1ceda485aba531aa6826e1aa4d507de07e3722a905f4f460186"
+    },
+    {
+      "file": "dandolo_1",
+      "sindarin": "Dandolo.",
+      "english": "Come back.",
+      "pools": [
+        "task_taken"
+      ],
+      "generator_text": "Dándolo.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102027,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch2/dandolo_s2",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.68,
+      "sha256": "eeb1b1740a647f30d436910622ce61bca5f116deebd47ff5da723b919d7baf3a"
+    },
+    {
+      "file": "dandolo_2",
+      "sindarin": "Dandolo.",
+      "english": "Come back.",
+      "pools": [
+        "task_taken"
+      ],
+      "generator_text": "Dándolo.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102029,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch2/dandolo_s4",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.62,
+      "sha256": "1af2aeb01234796c2d9f43aedeb222dfb569f90712ead0776e183cf1699663ab"
+    },
+    {
+      "file": "mae_garnen",
+      "sindarin": "Mae garnen.",
+      "english": "Well done.",
+      "pools": [
+        "completion"
+      ],
+      "generator_text": "Mai gárnen.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102028,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch2/mae_garnen_s3",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 1.12,
+      "sha256": "ded4684f8bff8d31b0882adbb60575e2a4c9f23df5a1a51e63b542f5fd5b6e5a"
+    },
+    {
+      "file": "avon_1",
+      "sindarin": "Avon.",
+      "english": "I will not.",
+      "pools": [
+        "refuse_speak"
+      ],
+      "generator_text": "Ávon.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102026,
+      "params": {
+        "exaggeration": 0.7,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch2/avon_firm",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.48,
+      "sha256": "fa24a521c3d334eeccb7242d863b3ab4b75d1c1315d3a68690cb96e825251c6a"
+    },
+    {
+      "file": "avon_2",
+      "sindarin": "Avon.",
+      "english": "I will not.",
+      "pools": [
+        "refuse_speak"
+      ],
+      "generator_text": "Ávon.",
+      "language": "es",
+      "guide": "guides/command_ref_2.wav",
+      "seed": 24102026,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch3/avon_5",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.53,
+      "sha256": "6eb0c80828f3c85cabd53831c15c87e631d58139502608da5ae3b9998a629a8f"
+    },
+    {
+      "file": "avam",
+      "sindarin": "Avam.",
+      "english": "We will not.",
+      "pools": [
+        "refuse_speak"
+      ],
+      "generator_text": "Ávam.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102027,
+      "params": {
+        "exaggeration": 0.7,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch5/avam_5",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.69,
+      "sha256": "a4183327f6b8570ea00c3f724e42505c45aa27407c45112787088b32aa2e848e"
+    },
+    {
+      "file": "daro",
+      "sindarin": "Daro!",
+      "english": "Halt!",
+      "pools": [
+        "combat_start"
+      ],
+      "generator_text": "¡Dáro!",
+      "language": "es",
+      "guide": "guides/shout_vg_1.wav",
+      "seed": 25102027,
+      "params": {
+        "exaggeration": 1.0,
+        "cfg_weight": 0.5,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch4/daro_4",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.66,
+      "sha256": "a693fcfc86eb3428ad9c4c279cee7d1a780ea854f2032e0e766e067fbb7228e4"
+    },
+    {
+      "file": "baw",
+      "sindarin": "Baw!",
+      "english": "Don't!",
+      "pools": [
+        "combat_start"
+      ],
+      "generator_text": "¡Bau!",
+      "language": "es",
+      "guide": "guides/shout_vg_1.wav",
+      "seed": 25102027,
+      "params": {
+        "exaggeration": 1.0,
+        "cfg_weight": 0.5,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch4/baw_4",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.71,
+      "sha256": "8457e2ffdb9c6872bacf527f7b7a7831feab0e60980e76880d9b5989e6e0dfbb"
+    },
+    {
+      "file": "avo_garo",
+      "sindarin": "Avo garo!",
+      "english": "Don't do it!",
+      "pools": [
+        "combat_start"
+      ],
+      "generator_text": "¡Ávo gáro!",
+      "language": "es",
+      "guide": "guides/shout_vg_2.wav",
+      "seed": 25102027,
+      "params": {
+        "exaggeration": 1.0,
+        "cfg_weight": 0.5,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch4/avo_garo_6",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.93,
+      "sha256": "a072852a5902d0906b5044d1c3c504c467779ab9d1ea369075161dcfd34c2842"
+    },
+    {
+      "file": "cuio_mae_1",
+      "sindarin": "Cuio mae.",
+      "english": "Live well.",
+      "pools": [
+        "healing"
+      ],
+      "generator_text": "Cúyo máe.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102027,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch3/cuio_mae_2",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.88,
+      "sha256": "dbd761944275dbc05784e69cb21dd0e161a8e78d209805df1e58c86fa9daabdb"
+    },
+    {
+      "file": "cuio_mae_2",
+      "sindarin": "Cuio mae.",
+      "english": "Live well.",
+      "pools": [
+        "healing"
+      ],
+      "generator_text": "Cúyo máe.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102028,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch3/cuio_mae_3",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.9,
+      "sha256": "4e0307f29cec9c635f75687bf682c6ac375c9c1aaa482afdb21951fecdc153b2"
+    },
+    {
+      "file": "cuio_mae_3",
+      "sindarin": "Cuio mae.",
+      "english": "Live well.",
+      "pools": [
+        "healing"
+      ],
+      "generator_text": "Cúyo mae.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 19102027,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "batch3/cuio_mae_b_2",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.84,
+      "sha256": "0930436d89aa30e0c44ab327d0916bb6d3daafeb0d5ae411003a50eb013932ed"
+    }
+  ]
+}
