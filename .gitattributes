@@ -1,2 +1,21 @@
-# Store every file byte for byte: packs are deployed verbatim, so no line-ending conversion.
-* -text
+# Git stores text with LF line endings, whatever a tool writes, so a rewrite by
+# an editor, generator or agent never shows up as a whole-file change.
+* text=auto eol=lf
+# Windows shell scripts keep CRLF in the working tree.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+# Assets are stored byte for byte.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.tga binary
+*.ogg binary
+*.wav binary
+*.fsb binary
+*.mcpack binary
+*.mcaddon binary
+*.mcworld binary
+*.mcstructure binary
+*.zip binary
+*.gz binary
