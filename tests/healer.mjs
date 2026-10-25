@@ -7,7 +7,7 @@ const { __mock: mock } = await import("@minecraft/server");
 const { ELF_ID } = await import("../lothlorien_bp/scripts/elf_rules.js");
 const { WARDEN_ID } = await import("../lothlorien_bp/scripts/elven_warden_rules.js");
 const R = await import("../lothlorien_bp/scripts/healer_rules.js");
-let run = 0, calls, queries, rays, bands;
+let run = 0, calls, queries, rays, bands, sounds;
 
 function dimension(id = "overworld") {
   const d = mock.dimension(id);
@@ -16,6 +16,7 @@ function dimension(id = "overworld") {
   const query = d.getEntities.bind(d);
   d.getEntities = (q) => { queries.push(q); return query(q); };
   d.spawnParticle = (...args) => calls.push({ particle: args });
+  d.playSound = (id, location, options) => sounds.push({ id, location, options });
   d.getBlockFromRay = (from, direction, options) => {
     rays.push({ from, direction, options });
     if (d.unreadable) throw Error("unloaded sight line");
@@ -53,7 +54,7 @@ async function start() {
   startHealers({ bandOf: (p) => { bands++; return p.band; } });
 }
 async function scenario(name, body) {
-  mock.reset(); calls = []; queries = []; rays = []; bands = 0;
+  mock.reset(); calls = []; queries = []; rays = []; bands = 0; sounds = [];
   for (const id of ["overworld", "nether", "the_end"]) dimension(id);
   await body();
   assert.deepEqual(mock.errors, []);
@@ -75,6 +76,27 @@ await scenario("self, civilians, both warden kinds and Friends get the planned p
   assert.equal(calls.length, 5, "one particle per blessed patient, self is not doubled");
   assert.ok(rays.every(r => Math.abs(Math.hypot(...Object.values(r.direction)) - 1) < 1e-9));
   assert.ok(rays.every(r => !r.options.includeLiquidBlocks && !r.options.includePassableBlocks));
+});
+
+await scenario("the healer speaks only when it blessed someone other than itself (owner), at most every 30 s", async () => {
+  const lone = healer(0);
+  await start(); await mock.advance(R.CHECK_TICKS * 3);
+  assert.equal(lone.applications.length, 1, "it blessed itself");
+  assert.equal(sounds.length, 0, "self-care is silent");
+  const patient = entity(ELF_ID, 3, 70, 0);
+  await mock.advance(R.CHECK_TICKS);
+  assert.equal(patient.applications.length, 1);
+  assert.equal(sounds.length, 1);
+  assert.equal(sounds[0].id, "lothlorien.voice.healing");
+  patient.effect = undefined; patient.health.currentValue = 10;
+  await mock.advance(R.CHECK_TICKS * 3);
+  assert.equal(patient.applications.length, 2);
+  assert.equal(sounds.length, 1, "30 s per healer");
+  const friend = player(2);
+  patient.health.currentValue = 20;
+  await mock.advance(600);
+  assert.ok(friend.applications.length >= 1);
+  assert.equal(sounds.length, 2, "blessing a Friend speaks too, after the gap");
 });
 
 await scenario("injury, Harmony, radius, height and dimension gates are independent", async () => {

@@ -2,6 +2,7 @@
 // Two local patient queries per healer per second; no per-tick work or recurring world-wide discovery.
 import { system, world } from "@minecraft/server";
 import { ELF_ID, PROFESSIONS, spawnEventOf } from "./elf_rules.js";
+import { speak } from "./voice.js";
 import {
   HEALER_VARIANT, PATIENT_TYPES, CHECK_TICKS, EFFECT, EFFECT_TICKS, ELF_CARE, FRIEND_CARE,
   BLESSING, injured, inRange, needsRegeneration,
@@ -77,10 +78,13 @@ function blessNearby() {
   for (const [id, healer] of loaded) {
     try {
       if (!isHealer(healer)) { loaded.delete(id); continue; }
-      let blessed = care(healer, healer, ELF_CARE, renewed);
+      let blessed = care(healer, healer, ELF_CARE, renewed), blessedOther = false; // the voice speaks only for others
       for (const type of PATIENT_TYPES) {
         for (const patient of healer.dimension.getEntities({ type, location: healer.location, maxDistance: ELF_CARE.radius })) {
-          if (care(healer, patient, ELF_CARE, renewed)) blessed = true;
+          if (care(healer, patient, ELF_CARE, renewed)) {
+            blessed = true;
+            if (patient.id !== healer.id) blessedOther = true; // PATIENT_TYPES includes the healer's own type
+          }
         }
       }
       for (const player of players) {
@@ -89,12 +93,13 @@ function blessNearby() {
             || !inRange(healer.location, player.location, FRIEND_CARE.radius)
             || !injured(player.getComponent("minecraft:health"))) continue;
           if (!bands.has(player.id)) bands.set(player.id, bandOf(player));
-          if (bands.get(player.id) === "friend" && care(healer, player, FRIEND_CARE, renewed)) blessed = true;
+          if (bands.get(player.id) === "friend" && care(healer, player, FRIEND_CARE, renewed)) blessed = blessedOther = true;
         } catch { /* player left */ }
       }
       if (blessed) {
         try { healer.playAnimation(BLESSING.animation, { blendOutTime: BLESSING.blendOutSeconds }); } catch { /* cosmetic */ }
         if (!renewed.has(healer.id)) particles(healer);
+        if (blessedOther) speak(healer, "healing"); // once per batch, others only (owner), 30 s per healer
       }
     } catch { if (!healer.isValid) loaded.delete(id); }
   }

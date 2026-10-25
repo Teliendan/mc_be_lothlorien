@@ -14,6 +14,7 @@ import { system, world } from "@minecraft/server";
 import { ActionFormData } from "@minecraft/server-ui";
 import { ELF_ID, PROFESSIONS } from "./elf_rules.js";
 import { nativeElfUse } from "./elf_native_use.js";
+import { greet, speak } from "./voice.js";
 import { bandOf } from "./harmony.js";
 import { harmonyOf } from "./harmony_game.js";
 import { repeatedUse } from "./use_guard.js";
@@ -98,6 +99,11 @@ const say = (player, key) => {
     // player left
   }
 };
+
+// The opening of one dialog session (Loremaster or a trader's delivery form); never on Back, retries or later screens.
+function greetOnce(player, elf) {
+  try { greet(elf, player, bandOf(harmonyOf(player).harmony)); } catch { /* speech is decoration */ }
+}
 
 // Shows a form; "UserBusy" (another screen open, or the interaction itself still closing) is retried.
 // Resolves to the response, undefined (closed) or BUSY (gave up).
@@ -267,6 +273,7 @@ async function lessonScreen(ctx, { id, from }) {
   const { state, menu } = view(ctx);
   const lesson = lessonById(id);
   if (!lesson) return step("main");
+  speak(ctx.elf, "explain", player);
   const readOnly = menu.mode !== "full" || lessonDone(state, id);
   const parts = [t(`lore.lesson.${id}.text`)];
   const buttons = [];
@@ -277,7 +284,10 @@ async function lessonScreen(ctx, { id, from }) {
   buttons.push(back(from));
   const next = await choose(ctx, lines(parts), buttons);
   if (next?.[0] === "takeLesson") {
-    if (takeLesson(state, id, system.currentTick)) saveRenown(player);
+    if (takeLesson(state, id, system.currentTick)) {
+      saveRenown(player);
+      speak(ctx.elf, "task_taken", player);
+    }
     return step("main");
   }
   if (next?.[0] === "learn") {
@@ -285,6 +295,7 @@ async function lessonScreen(ctx, { id, from }) {
     if (!result) return step(from);
     saveRenown(player);
     celebrate(player, [result], ctx.elf);
+    speak(ctx.elf, "completion", player);
     const notice = result.chapterOpened ? join(t("lore.result.learned", t(`lore.lesson.${id}.name`)), "\n", t("lore.chapter.opened")) : t("lore.result.learned", t(`lore.lesson.${id}.name`));
     return step("teaching", notice);
   }
@@ -330,12 +341,16 @@ async function kinOfferScreen(ctx) {
   const offer = currentOffer(state);
   saveRenown(player); // a new pull changes the state
   if (!offer) return step("main");
+  speak(ctx.elf, "explain", player);
   const next = await choose(ctx, lines([t(`lore.req.${offer.id}.text`), whereLine(offer.profession, placeFor(ctx, offer.profession))]), [
     { text: t("lore.btn.accept"), icon: ICON.ready, next: step("accept") },
     { text: t("lore.btn.notnow"), icon: ICON.back, next: step("main") }, // "Not now" keeps the offer for next time
   ]);
   if (next?.[0] === "accept") {
-    if (accept(state)) saveRenown(player);
+    if (accept(state)) {
+      saveRenown(player);
+      speak(ctx.elf, "task_taken", player);
+    }
     return step("main");
   }
   return next;
@@ -409,6 +424,7 @@ async function openDialog(player, elf, profession) {
   const token = {};
   open.set(player.id, token);
   try {
+    greetOnce(player, elf);
     if (profession) return await traderDialog(makeContext(player, elf, token), profession);
     await dialog(makeContext(player, elf, token));
   } catch {

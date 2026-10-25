@@ -3,8 +3,9 @@
 ## Status
 
 Final, owner-accepted 2026-10-25 by listening (audition rounds 2026-10-16 and
-2026-10-23..25). 28 files cover all 20 texts. They are **not yet bound in the
-resource pack, deployed or heard in game**. Game integration is future work:
+2026-10-23..25). 28 files cover all 20 texts. They are bound in the
+pack by `tools/install_sindarin_voice.py` (`--check` verifies it) and wired in
+script (2026-10-25), **not yet heard in game**; the owner's game test is pending:
 [`SINDARIN_VOICE_EVENTS.md`](SINDARIN_VOICE_EVENTS.md). Language provenance:
 [`SINDARIN_VOICE_PHRASES.md`](SINDARIN_VOICE_PHRASES.md).
 

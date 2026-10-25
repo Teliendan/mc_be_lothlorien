@@ -116,6 +116,10 @@
     "healer": [
       "healer.mjs"
     ],
+    "voice": [
+      "voice.mjs",
+      "voice_glue.mjs"
+    ],
     "archery": [
       "archery.mjs"
     ],

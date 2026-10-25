@@ -157,6 +157,15 @@
             ]
           }
         }
+      },
+      "lothlorien:elf": {
+        "events": {
+          "haggle.yes": {
+            "sound": "lothlorien.voice.trade_positive",
+            "volume": 0.7,
+            "pitch": 1.0
+          }
+        }
       }
     }
   }
