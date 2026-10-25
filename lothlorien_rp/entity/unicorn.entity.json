@@ -33,8 +33,7 @@
         "controller.render.lothlorien.unicorn"
       ],
       "spawn_egg": {
-        "base_color": "#f3f1f7",
-        "overlay_color": "#b9a6d6"
+        "texture": "lothlorien:spawn_egg_unicorn"
       }
     }
   }

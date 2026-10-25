@@ -31,8 +31,7 @@
         "controller.render.lothlorien.butterfly"
       ],
       "spawn_egg": {
-        "base_color": "#f0589e",
-        "overlay_color": "#38c8f0"
+        "texture": "lothlorien:spawn_egg_butterfly"
       }
     }
   }

@@ -24,8 +24,7 @@
         "controller.render.lothlorien.firefly"
       ],
       "spawn_egg": {
-        "base_color": "#3a2e24",
-        "overlay_color": "#e2f66e"
+        "texture": "lothlorien:spawn_egg_firefly"
       }
     }
   }

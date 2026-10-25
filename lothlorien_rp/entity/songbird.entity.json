@@ -36,8 +36,7 @@
         "controller.render.lothlorien.songbird"
       ],
       "spawn_egg": {
-        "base_color": "#7ab8e6",
-        "overlay_color": "#ecd048"
+        "texture": "lothlorien:spawn_egg_songbird"
       }
     }
   }

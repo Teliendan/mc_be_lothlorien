@@ -851,7 +851,7 @@ cube: renders nothing but passes the verifier's "geometry has no cubes" check), 
 
 **Decisions (change any of them if the owner wants otherwise):**
 
-- **Separate entity `lothlorien:white_deer`, "White Deer"**, spawn egg (white `#e3e7ee` / grey `#a6adbb`). A **loner**: the deer has no herd
+- **Separate entity `lothlorien:white_deer`, "White Deer"**, spawn egg (drawn icon since 2026-10-25, `tools/make_spawn_eggs.py`; first colours white `#e3e7ee` / grey `#a6adbb`). A **loner**: the deer has no herd
   goal in its entity (its groups come from the spawn rule's `herd` and its breeding), so the white deer simply has neither: spawn herd 1-1, no
   `breedable`/`behavior.breed`/`offspring`, no baby group, no `ageable`/`follow_parent`, no `spawn_egg_interaction` (an egg on it makes no fawn),
   not tamable. **Leashable** since the owner's second round (2026-09-30, "I would like lead to work on him"): `minecraft:leashable {}` in

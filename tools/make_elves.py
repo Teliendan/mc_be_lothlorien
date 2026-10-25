@@ -424,7 +424,7 @@ def build_gardener():
     LEAF = R("#2c4a2a #3f6b38 #5f8f4c #86b46a")
     TR = R("#3a352c #504a3c #6a6250 #857c66")                   # trousers, earthy grey-brown
     ST = R("#2d2e29 #46463e #6a6a5e #8a8a7c")                   # trowel steel (dull)
-    P = dict(id="gardener", variant=0, hair=HAIR, eye=W.hexc("#5b7a4a"), band=LEAF, egg=("#5f7640", "#f0e6a8"))
+    P = dict(id="gardener", variant=0, hair=HAIR, eye=W.hexc("#5b7a4a"), band=LEAF)
     P["r"] = dict(moss=M, leather=LE, flower=FL, leaf=LEAF, steel=ST, wood=LE, silver=SILVER)
     dabs = {k: mottle(seed_for("gtunic", k), 8, 12) for k in ("north", "south", "east", "west")}
 
@@ -537,7 +537,7 @@ def build_healer():
     G = R("#2f5a33 #4c8a46 #7bb865 #b0dc8c")                  # athelas
     LE = R("#3a2a1f #57412c #77593a #977450")
     HAIR = R("#66737f #8d9bab #b7c4d2 #e2eaf1")               # long silver, cooler than the robe
-    P = dict(id="healer", variant=1, hair=HAIR, eye=W.hexc("#5a7f93"), band=None, egg=("#cfd9dc", "#4c8a46"))
+    P = dict(id="healer", variant=1, hair=HAIR, eye=W.hexc("#5a7f93"), band=None)
     P["r"] = dict(robe=S, sash=SA, athelas=G, leather=LE, silver=SILVER)
     FL_ = W.FACE_LIGHT
 
@@ -654,7 +654,7 @@ def build_woodwright():
     ST = R("#4b535a #7a858c #aab4b9 #d6dde0")                 # tool steel
     TR = R("#2c2a24 #3e3b32 #54503f #6d6852")
     GR = R("#2f3b22 #44562f #5f7640 #7d9654")                 # a moss-green neckerchief: the one accent
-    P = dict(id="woodwright", variant=2, hair=HAIR, eye=W.hexc("#7a6a3a"), band=None, egg=("#56402a", "#bf6a38"))
+    P = dict(id="woodwright", variant=2, hair=HAIR, eye=W.hexc("#7a6a3a"), band=None)
     P["r"] = dict(brown=B, leather=LE, wood=WD, steel=ST, tie=GR, moss=GR)
     FL_ = W.FACE_LIGHT
     dabs = {k: mottle(seed_for("wtunic", k), 8, 12, 40, 70) for k in ("north", "south", "east", "west")}
@@ -787,7 +787,7 @@ def build_lamplighter():
     TR = R("#232b3d #2f394f #404c66 #55637f")
     GL = R("#8a6a2a #c9a24a #f0d27a #fff0b0")                 # lantern glass, pale gold
     HAIR = W.HAIR                                             # fair, pale gold (same ramp as the warden)
-    P = dict(id="lamplighter", variant=3, hair=HAIR, eye=W.hexc("#4a6f86"), band=SILVER, egg=("#3f5a8a", "#bdc8ce"))
+    P = dict(id="lamplighter", variant=3, hair=HAIR, eye=W.hexc("#4a6f86"), band=SILVER)
     P["r"] = dict(coat=C, silver=SILVER, glass=GL, leather=LEATHER)
     FL_ = W.FACE_LIGHT
 
@@ -908,7 +908,7 @@ def build_loremaster():
     HAIR = R("#7c8890 #a4b0b8 #cfd8dd #eef2f4")               # very long silver
     BK = R("#2a1c16 #43301f #5f4429 #7f5c37")                 # scroll-case leather
     GEM = R("#2f5a50 #4c8f7c #86c9b0 #d8fff0")                # pale green star-gem
-    P = dict(id="loremaster", variant=4, hair=HAIR, eye=W.hexc("#6a7f8a"), band=SILVER, egg=("#8f999f", "#2f5240"))
+    P = dict(id="loremaster", variant=4, hair=HAIR, eye=W.hexc("#6a7f8a"), band=SILVER)
     P["r"] = dict(robe=S, mantle=MA, gold=GO, leather=BK, silver=SILVER)
     FL_ = W.FACE_LIGHT
 
@@ -1084,7 +1084,7 @@ def render_controller():
     }
 
 
-def client_entity(eggs):
+def client_entity():
     return {
         "format_version": "1.10.0",
         "minecraft:client_entity": {"description": {
@@ -1105,7 +1105,7 @@ def client_entity(eggs):
             },
             "render_controllers": ["controller.render.lothlorien.elf"],
             "enable_attachables": True,
-            "spawn_egg": {"base_color": eggs[0], "overlay_color": eggs[1]},
+            "spawn_egg": {"texture": "lothlorien:spawn_egg_elf"},  # icon drawn by make_spawn_eggs.py
         }},
     }
 
@@ -1124,7 +1124,7 @@ def review_sheet(geos, out_dir):
 
 
 def main():
-    geos, eggs = {}, {}
+    geos = {}
     tex_dir = RP / "textures/entity/elf"
     tex_dir.mkdir(parents=True, exist_ok=True)
     for p in PROFESSIONS:
@@ -1135,13 +1135,12 @@ def main():
         geos[p] = geometry_entry(p, cubes, uvs, height, None)
         img = paint_texture(P, cubes, uvs, height)
         img.save(tex_dir / f"{p}.png")
-        eggs[p] = P["egg"]
         used = sum(1 for v in img.getchannel("A").tobytes() if v)
         print(f"{p}: {len(cubes)} cubes, texture 64x{height}, opaque texels {used}")
     W.write(RP / "models/entity/elf.geo.json", {"format_version": "1.12.0", "minecraft:geometry": [geos[p] for p in PROFESSIONS]})
     W.write(RP / "animations/elf.animation.json", animations())
     W.write(RP / "render_controllers/elf.render_controllers.json", render_controller())
-    W.write(RP / "entity/elf.entity.json", client_entity(eggs["gardener"]))
+    W.write(RP / "entity/elf.entity.json", client_entity())
     if "--sheet" in sys.argv:
         review_sheet(geos, WS / "temp" / "elves")
 

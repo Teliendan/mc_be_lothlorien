@@ -37,8 +37,7 @@
         "controller.render.lothlorien.swan"
       ],
       "spawn_egg": {
-        "base_color": "#f2f4f8",
-        "overlay_color": "#e0702a"
+        "texture": "lothlorien:spawn_egg_swan"
       }
     }
   }

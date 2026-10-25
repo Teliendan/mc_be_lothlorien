@@ -39,8 +39,7 @@
       ],
       "enable_attachables": true,
       "spawn_egg": {
-        "base_color": "#6f7f66",
-        "overlay_color": "#c9d1d6"
+        "texture": "lothlorien:spawn_egg_elven_warden"
       }
     }
   }

@@ -38,8 +38,7 @@
         "controller.render.lothlorien.deer"
       ],
       "spawn_egg": {
-        "base_color": "#9a6a3e",
-        "overlay_color": "#f1e4c3"
+        "texture": "lothlorien:spawn_egg_deer"
       }
     }
   }

@@ -224,7 +224,7 @@ Spec: tall slim humanoid ~1.95 blocks, hooded grey-green Lorien cloak (cloak bon
 with skeleton's bone names (`body, waist, head, hat, rightArm, rightItem, leftArm, leftItem, rightLeg, leftLeg`; `rightItem` pivot `[-6,15,1]`) **[V]**, one geometry only (no `head`-locator clash,
 `bedrock-mobs/references/client.md`), 64x64 texture `textures/entity/elven_warden/elven_warden.png`, `entity/elven_warden.entity.json` (`enable_attachables: true`, materials `entity_alphatest`
 for hood fringe, animations `animation.humanoid.move/look_at_target.default/holding/bow_and_arrow` plus a short own `walk_cloak` animation, `scripts.animate` list, skeleton's `pre_animation`),
-`render_controllers/elven_warden.render_controllers.json`, spawn egg (grey-green `#6f7f66` / silver `#c9d1d6`). Use `bedrock-art` skill, Blockbench, no hand-written geometry. Sounds: none in v1 (owner).
+`render_controllers/elven_warden.render_controllers.json`, spawn egg (drawn icon since 2026-10-25, `tools/make_spawn_eggs.py`; first colours grey-green `#6f7f66` / silver `#c9d1d6`). Use `bedrock-art` skill, Blockbench, no hand-written geometry. Sounds: none in v1 (owner).
 Check: bow visible in hand and raised when `query.has_target`; arrow flies from the bow height.
 
 ### C. Verify, deploy, docs

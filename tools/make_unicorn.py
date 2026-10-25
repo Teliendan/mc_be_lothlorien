@@ -256,7 +256,7 @@ def client_entity():
                     "animate": ["walk", "look_at_player"],
                 },
                 "render_controllers": ["controller.render.lothlorien.unicorn"],
-                "spawn_egg": {"base_color": "#f3f1f7", "overlay_color": "#b9a6d6"},
+                "spawn_egg": {"texture": "lothlorien:spawn_egg_unicorn"},  # icon drawn by make_spawn_eggs.py
             }
         },
     }
