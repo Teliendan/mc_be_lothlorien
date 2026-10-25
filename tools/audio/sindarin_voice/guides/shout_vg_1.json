@@ -1,0 +1,16 @@
+{
+  "text": "Halt! Stop right there! Get back! Not one step closer!",
+  "instruction": "A noble adult male elf with a refined light baritone, warm resonance and clear diction. He is a warden of the forest shouting sharp battle commands at an intruder: loud, projected, urgent commands at full voice, each word hurled out with force, a hard attack and a sharp falling ending. Raised pitch, strong breath, no calm. An elegant British English accent. Shouted spoken dialogue, not singing; no growl, gravel, screaming distortion or background sound.",
+  "model": "MOSS-VoiceGenerator",
+  "seed": 25102026,
+  "params": {
+    "max_new_tokens": 256,
+    "audio_temperature": 1.5,
+    "audio_top_p": 0.6,
+    "audio_top_k": 50,
+    "audio_repetition_penalty": 1.1
+  },
+  "seconds": 6.64,
+  "generation_seconds": 33.52,
+  "status": "owner accepted 2026-10-25 as the shouted warden guide (not a clone of the actor)"
+}

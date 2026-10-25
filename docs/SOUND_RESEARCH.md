@@ -45,6 +45,6 @@ scratch and are removed on acceptance; original sources remain linked above.
 3. Sparse squirrel contact chatter; current rabbit placeholders remain.
 4. Dedicated fawn/cygnet voices if finer animal polish is wanted later.
 
-The unicorn's current horse sounds remain a low priority. Sindarin planning
-already exists separately in `SINDARIN_VOICE_PHRASES.md`; generation and
-pronunciation review are still a separate step.
+The unicorn's current horse sounds remain a low priority. Sindarin elf voice
+lines are recorded and owner-accepted (2026-10-25) but not yet in the pack; see
+[`SINDARIN_VOICE.md`](SINDARIN_VOICE.md).

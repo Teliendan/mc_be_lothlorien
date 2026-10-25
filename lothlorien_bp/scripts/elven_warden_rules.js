@@ -9,6 +9,7 @@ export const WARDEN_ID = "lothlorien:elven_warden";
 export const WARDEN_FAMILY = "lothlorien_warden";
 export const VILLAGE_GROUP = "lothlorien:village_warden";
 export const BOW_ID = "minecraft:bow";
+export const ANGRY_EVENT = "lothlorien:become_angry"; // entities/elven_warden.json minecraft:on_target_acquired
 
 // ---- Natural spawns by depth: THE place to tune how often wardens are met. ----
 // spawn_rules/elven_warden.json has two conditions (ground in the biome, weight SPAWN_WEIGHT_GROUND; mallorn-plank decks,

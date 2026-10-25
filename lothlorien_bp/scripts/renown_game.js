@@ -13,6 +13,7 @@ import {
   serialize, newState, tagSync, takeLesson, turnIn,
 } from "./renown_rules.js";
 import { harmonyOf } from "./harmony_game.js";
+import { speak } from "./voice.js";
 
 const PROPERTY = "lothlorien:renown";
 const PLAYER_ID = "minecraft:player";
@@ -85,6 +86,7 @@ export function turnInLesson(player, state, at) {
   saveRenown(player);
   turnInChat(player, message("lore.done.lesson", message(`lore.lesson.${result.lesson}.name`)), result, state);
   celebrate(player, [result], at);
+  speak(at, "completion", player); // one owner per result; a rank-up adds no second line
   return true;
 }
 
@@ -112,6 +114,7 @@ export function handOver(player, state, at) {
   if (!result) return false;
   turnInChat(player, message("lore.deliver.ok"), result, state);
   celebrate(player, [result], at);
+  speak(at, "completion", player); // one owner per result; a rank-up adds no second line
   return true;
 }
 

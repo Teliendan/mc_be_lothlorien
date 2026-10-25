@@ -1,0 +1,18 @@
+{
+  "text": "Halt! Stand where you are. Lower your weapon, and come no closer to the trees.",
+  "instruction": "Use the reference speaker's voice. Speak as an elven warden giving a firm command to an intruder: clear, strong and authoritative, projected but controlled. Short, decisive phrases with crisp consonants and a hard, falling, final pitch on each command. Steady and certain; not shouting, not growling, not angry, not rushed. A guard of the forest who expects to be obeyed. Natural spoken dialogue.",
+  "reference": "../original_actor_reference.wav",
+  "model": "MOSS-TTS-Local-v1.5 English reference clone",
+  "seed": 24102027,
+  "params": {
+    "max_new_tokens": 256,
+    "do_sample": true,
+    "audio_temperature": 1.2,
+    "audio_top_p": 0.8,
+    "audio_top_k": 25,
+    "audio_repetition_penalty": 1.0
+  },
+  "seconds": 8.16,
+  "generation_seconds": 48.99,
+  "status": "owner accepted 2026-10-24 as a guide for curt refusals (final avon_2)"
+}

@@ -21,6 +21,179 @@
         "sounds/mob/lothlorien/swan/ambient1",
         "sounds/mob/lothlorien/swan/ambient2"
       ]
+    },
+    "lothlorien.voice.opening_neutral": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/voice/lothlorien/mae_govannen",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/suilad",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/tolo",
+          "weight": 1
+        }
+      ]
+    },
+    "lothlorien.voice.opening_warm": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/voice/lothlorien/mae_govannen_mellon",
+          "weight": 2
+        },
+        {
+          "name": "sounds/voice/lothlorien/suilad_mellon_1",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/suilad_mellon_2",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/tolo_mellon",
+          "weight": 2
+        }
+      ]
+    },
+    "lothlorien.voice.trade_positive": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/voice/lothlorien/ma_1",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/ma_2",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/mae_1",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/mae_2",
+          "weight": 1
+        }
+      ]
+    },
+    "lothlorien.voice.explain": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/voice/lothlorien/lasto_1",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/lasto_2",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/lasto_beth_lammen",
+          "weight": 2
+        },
+        {
+          "name": "sounds/voice/lothlorien/tolo_a_lasto",
+          "weight": 2
+        }
+      ]
+    },
+    "lothlorien.voice.task_taken": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/voice/lothlorien/caro_mae",
+          "weight": 2
+        },
+        {
+          "name": "sounds/voice/lothlorien/dandolo_1",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/dandolo_2",
+          "weight": 1
+        }
+      ]
+    },
+    "lothlorien.voice.completion": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/voice/lothlorien/ma_1",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/ma_2",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/mae_1",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/mae_2",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/mae_garnen",
+          "weight": 2
+        }
+      ]
+    },
+    "lothlorien.voice.refuse_speak": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/voice/lothlorien/avon_1",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/avon_2",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/avam",
+          "weight": 2
+        }
+      ]
+    },
+    "lothlorien.voice.combat_start": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/voice/lothlorien/daro",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/baw",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/avo_garo",
+          "weight": 1
+        }
+      ]
+    },
+    "lothlorien.voice.healing": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/voice/lothlorien/cuio_mae_1",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/cuio_mae_2",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/cuio_mae_3",
+          "weight": 1
+        }
+      ]
     }
   }
 }

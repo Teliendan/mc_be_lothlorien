@@ -229,7 +229,7 @@ world.afterEvents.worldLoad.subscribe(() => {
     transparent: DEPTH_TRANSPARENT,
     at: (dimension, x, z) => surfaceSampler(dimension, { x, z })(0, 0),
   });
-  startElvenWardens(depthAt);
+  startElvenWardens(depthAt, (player) => bandOf(harmonyOf(player).harmony));
   startElves({ recordFight: recordElfFight });
   startHealers({ bandOf: (player) => bandOf(harmonyOf(player).harmony) });
   startArchery();

@@ -3,12 +3,16 @@
 //  - entitySpawn (one subscriber): natural spawns are judged once (kept or removed by depth / deck), and a warden whose
 //    hand is empty gets its bow (structure-placed village wardens may not run the equipment table).
 //  - beforeEvents.entityHurt: cancels friendly fire from a warden's arrows (read-only decision, restricted privilege).
+//  - afterEvents.dataDrivenEntityTrigger: a warden that acquires a target shouts (voice.js; no polling).
+//  - beforeEvents.playerInteractWithEntity: a click greets by Harmony band (never cancelled; silent while fighting that player).
 //  - afterEvents.entityHurt: remembers which player hurt a warden, so that player's retaliation target is not shielded;
 //    the first hit after PROVOKE_MS without one is a new fight and costs the player harmony (harmony_game.js).
 import { EntityInitializationCause, EquipmentSlot, ItemStack, system, world } from "@minecraft/server";
-import { BOW_ID, DECK_BLOCKS, WARDEN_ID, isFriendlyFire, isNewFight, keepNaturalSpawn, PLAYER_ID } from "./elven_warden_rules.js";
+import { ANGRY_EVENT, BOW_ID, DECK_BLOCKS, WARDEN_ID, isFriendlyFire, isNewFight, keepNaturalSpawn, PLAYER_ID } from "./elven_warden_rules.js";
 import { HATED_TAG, recordWardenFight } from "./harmony_game.js";
 import { FOE_TAG } from "./elf_rules.js";
+import { nativeElfUse } from "./elf_native_use.js";
+import { greet, speak } from "./voice.js";
 
 const provoked = new Map(); // player id -> Date.now() of the last hit on a warden (Date: readable in restricted mode)
 
@@ -52,8 +56,14 @@ function ensureBow(warden) {
   }
 }
 
-// depth(dimension, location) -> { level } from scripts/depth.js (main.js supplies it).
-export function startElvenWardens(depthAt) {
+// A player who hurt a warden within PROVOKE_MS, or hurt an elf, is being fought: the warden does not greet that player.
+function fighting(player) {
+  const at = provoked.get(player.id);
+  return (at !== undefined && !isNewFight(Date.now() - at)) || player.hasTag(FOE_TAG);
+}
+
+// depth(dimension, location) -> { level } from scripts/depth.js (main.js supplies it); bandOf(player) -> Harmony band.
+export function startElvenWardens(depthAt, bandOf) {
   world.afterEvents.entitySpawn.subscribe(({ entity, cause }) => {
     try {
       if (entity.typeId !== WARDEN_ID) return;
@@ -78,6 +88,15 @@ export function startElvenWardens(depthAt) {
     }
   });
   world.afterEvents.playerLeave.subscribe(({ playerId }) => provoked.delete(playerId));
+  world.beforeEvents.playerInteractWithEntity.subscribe(({ player, target, itemStack }) => {
+    try {
+      if (target.typeId !== WARDEN_ID || nativeElfUse(target, itemStack) || fighting(player)) return;
+      const band = bandOf(player);
+      system.run(() => greet(target, player, band)); // sound needs privilege; the click itself is left alone
+    } catch {
+      // entity gone
+    }
+  });
   world.beforeEvents.entityHurt.subscribe((event) => {
     try {
       const shooter = event.damageSource.damagingEntity;
@@ -91,4 +110,11 @@ export function startElvenWardens(depthAt) {
       // entity gone
     }
   });
+  // Combat shout when a warden acquires a target (hostiles, retaliation, broadcast anger); Hated players included.
+  // voice_rules.js debounces re-targeting (15 s) and group combat. Not hurt or arrow events.
+  world.afterEvents.dataDrivenEntityTrigger.subscribe(({ entity, eventId }) => {
+    try {
+      if (eventId === ANGRY_EVENT && entity.typeId === WARDEN_ID) speak(entity, "combat_start");
+    } catch { /* entity gone */ }
+  }, { entityTypes: [WARDEN_ID], eventTypes: [ANGRY_EVENT] });
 }

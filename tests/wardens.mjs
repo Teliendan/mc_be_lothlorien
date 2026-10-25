@@ -104,7 +104,7 @@ test("elven warden: natural spawns - always at the edge and on decks, 30 % elsew
   const src = readFileSync(new URL("../lothlorien_bp/scripts/elven_warden.js", import.meta.url), "utf8");
   assert.ok(src.includes("EntityInitializationCause.Loaded") && src.includes('setProperty("lothlorien:natural", false)'), "judged once, not on reload");
   assert.ok(!src.includes("runInterval"), "event-driven, no polling");
-  assert.ok(readFileSync(new URL("../lothlorien_bp/scripts/main.js", import.meta.url), "utf8").includes("startElvenWardens(depthAt)"));
+  assert.ok(readFileSync(new URL("../lothlorien_bp/scripts/main.js", import.meta.url), "utf8").includes("startElvenWardens(depthAt, "));
 });
 
 test("elven warden: friendly fire - never on wardens, own creatures, animals; players only after hitting a warden", () => {

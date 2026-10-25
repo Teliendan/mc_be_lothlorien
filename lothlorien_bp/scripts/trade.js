@@ -3,6 +3,7 @@
 import { system, world } from "@minecraft/server";
 import { ELF_ID } from "./elf_rules.js";
 import { nativeElfUse } from "./elf_native_use.js";
+import { greet } from "./voice.js";
 import { message } from "./messages.js";
 import {
   TRADERS, NO_TABLE, TABLE_PROPERTY, SWAP_RADIUS, SWAP_INTERVAL_TICKS, TRADE_PASS_TICKS,
@@ -120,9 +121,10 @@ function onInteract(event) {
   const pass = passes.get(player.id);
   const passValid = pass?.elfId === target.id && (pass.usedAt === undefined
     ? now < pass.until : now - pass.usedAt < PASS_REPEAT_TICKS);
-  let decision;
+  let decision, band;
   try {
-    decision = clickDecision({ profession, band: deps.bandOf(player), rank: deps.rankOf(player),
+    band = deps.bandOf(player);
+    decision = clickDecision({ profession, band, rank: deps.rankOf(player),
       requestProfession: deps.requestProfession(player), passValid, currentKey: target.getProperty(TABLE_PROPERTY) });
   } catch { return; }
   if (decision.action === "trade") {
@@ -131,6 +133,9 @@ function onInteract(event) {
       pass.usedAt = now; // Anchor once: held-click repeats must never extend this pass.
       system.runTimeout(() => endPass(player.id, pass), PASS_REPEAT_TICKS);
     }
+    // The approved native-trade click opens with a greeting (next tick: sound needs privilege). A pass click comes from the
+    // delivery form, which already greeted: one opening spans form -> trade. Held-click repeats fall to the 30 s pair cooldown.
+    if (!passValid) system.run(() => greet(target, player, band));
     return;
   }
   event.cancel = true;
@@ -141,6 +146,7 @@ function onInteract(event) {
     if (decision.action === "refuse") {
       applyKey(target, NO_TABLE);
       sayKey(player, decision.line);
+      greet(target, player, band); // a refusal means Shunned (refuse_speak) or Hated (silence)
     } else if (decision.action === "form") {
       openForm(player, target, profession);
     } else if (decision.action === "swap") {

@@ -1,190 +1,204 @@
-# Sindarin voice event mapping proposal
+# Sindarin voice event mapping
 
-2026-10-16. Owner liked the phrase candidates and requested a small systematic
-mapping to existing game interactions. This is a source-audited proposal for
-Bedrock 1.26.52 / Script API 2.8.0, not an implemented or in-game-tested feature.
-Phrases and T/E/N language labels remain in
+**Implemented 2026-10-25, not yet heard in game.** Design and source audit for
+Bedrock 1.26.52 / Script API 2.8.0, written 2026-10-16; the binding is in
+[Binding](#binding). The recorded lines are final (owner-accepted 2026-10-25):
+[`SINDARIN_VOICE.md`](SINDARIN_VOICE.md). Language labels:
 [`SINDARIN_VOICE_PHRASES.md`](SINDARIN_VOICE_PHRASES.md).
 
 ## Design
 
-Use a few named pools, not individual lines for every lesson, request, item,
-rank or menu button. Owner decision 2026-10-16: one shared voice actor is enough.
-The selected actor/delivery is Spanish Chatterbox F, "Gentle, a little more
-inflection"; use the preserved reference and settings in
-[`SINDARIN_VOICE_SETUP.md`](SINDARIN_VOICE_SETUP.md).
-All four traders get the same three neutral openings, three warm openings and
-two native trade-approval lines. Conversation and trade use the same opening
-pools; this replaces the earlier separate trade-opening pool.
+A few named pools, not one line per lesson, request, item, rank or button.
+One shared voice actor for all elves (owner, 2026-10-16). All four traders share
+the opening and trade-approval pools. Conversation and trade use the same
+opening pools.
 
 Greeting means an actual use/click, not walking into a radius. One opening
-covers either conversation or trading. Repeated use events, retries and menu navigation
-do not create extra conversation. The player accepting a task and an elf
-accepting its completion are different commits and both have explicit hooks.
+covers conversation or trading. Repeated use events, retries and menu navigation
+do not add speech. The player accepting a task and an elf accepting its
+completion are separate commits with their own hooks.
 
-## Pools and real trigger points
+## Pools and trigger points
 
-Counts are proposed recording slots. Nine pools cover the interactions below.
-The lesson and quest-offer rows deliberately share one explanatory pool. Shared
-phrases can reuse the same audio asset within a voice, giving 22 pool slots but
-20 distinct texts. Wording remains subject to pronunciation and language review.
-The one-voice pronunciation sheet is
-[`SINDARIN_VOICE_PRONUNCIATION.md`](SINDARIN_VOICE_PRONUNCIATION.md).
+Nine pool rows; `explain` covers lessons and quest offers. Each pool is one
+sound event whose files are random variants. Files are in
+`tools/audio/sindarin_voice/final/` (`.ogg` for the pack); `ma_*` and `mae_*`
+serve two pools.
 
-| Pool | Who | Existing event/action | Slots | Suggested wording |
-| --- | --- | --- | --- | --- |
-| `opening_neutral` | Any eligible elf, including all four traders | First handled conversation use or approved native-trade click; Guest or Uneasy band | 3 each, shared | Mae govannen (T); Suilad (N); Tolo (T) |
-| `opening_warm` | Any eligible elf, including all four traders | Same opening event, but Friend band | 3 each, shared | Mae govannen, mellon (N); Suilad, mellon (N); Tolo, mellon (N) |
-| `trade_positive` | All four traders | Native RP sound event `haggle.yes`, mapped for `lothlorien:elf`; exact custom-elf firing conditions need an engine test | 2 each, shared | Ma! (T); Mae. (T) |
-| `explain` | Loremaster | Entering `lessonScreen` for a selected lesson | 3, shared with quest offers | Lasto (T); Lasto beth lammen (E); Tolo a lasto (N) |
-| `explain` | Loremaster | Entering `kinOfferScreen` after a valid request offer is resolved | Same 3 | Same explanatory openings; no per-request lines |
-| `task_taken` | Loremaster | A successful `takeLesson(...)` or `accept(...)`, after saving the changed state | 2 | Caro mae (N); Dandolo (N) |
-| `completion` | Receiving trader or loremaster | `handOver(...)` or `turnInLesson(...)` returns true after completing the task; also successful `completeLore(...)` for "I understand" | 3, shared | Ma! (T); Mae. (T); Mae garnen (N) |
-| `refuse_speak` | Traders or loremaster | Existing Shunned refusal branch; Hated civilian silence remains | 2 | Avon (T, "I will not"); Avam (T, "We will not") |
-| `combat_start` | Warden | Existing `minecraft:on_target_acquired` -> `lothlorien:become_angry`; fires for hostile targets, retaliation and joining combat, not only the player-hurts-warden script path | 3 | Daro! (T); Baw! (T); Avo garo! (T) |
-| `healing` | Healer | Existing `blessNearby()` batch has `blessed === true` and plays the blessing animation | 1 | Cuio mae (N) |
+| Pool | Who | Existing event/action | Files |
+| --- | --- | --- | --- |
+| `opening_neutral` | Any eligible elf, incl. all four traders | First handled conversation use or approved native-trade click; Guest or Uneasy band | mae_govannen, suilad, tolo |
+| `opening_warm` | Same | Same opening event, Friend band | mae_govannen_mellon, suilad_mellon_1, suilad_mellon_2, tolo_mellon |
+| `trade_positive` | All four traders | Native RP sound event `haggle.yes` for `lothlorien:elf`; firing conditions on a custom elf need an engine test | ma_1, ma_2, mae_1, mae_2 |
+| `explain` | Loremaster | Entering `lessonScreen` for a selected lesson, or `kinOfferScreen` after a valid request offer resolves | lasto_1, lasto_2, lasto_beth_lammen, tolo_a_lasto |
+| `task_taken` | Loremaster | Successful `takeLesson(...)` or `accept(...)`, after saving state | caro_mae, dandolo_1, dandolo_2 |
+| `completion` | Receiving trader or loremaster | `handOver(...)` or `turnInLesson(...)` returns true; also successful `completeLore(...)` ("I understand") | ma_1, ma_2, mae_1, mae_2, mae_garnen |
+| `refuse_speak` | Traders or loremaster | Existing Shunned refusal branch; Hated stays silent | avon_1, avon_2, avam |
+| `combat_start` | Warden | `minecraft:on_target_acquired` -> `lothlorien:become_angry` (hostile targets, retaliation, joining combat) | daro, baw, avo_garo |
+| `healing` | Healer | `blessNearby()` batch with `blessed === true` (blessing animation) | cuio_mae_1, cuio_mae_2, cuio_mae_3 |
 
-`completion` uses generic approval, so it also fits understanding a lore lesson.
-No separate rank-up, chapter-opened, task-ready-in-the-wilderness, or item-specific
-voice pools. Existing UI/chat/sound feedback continues to explain those results.
-If a request completion and a rank-up occur together, the elf speaks once.
+`completion` is generic approval, so it also fits understanding a lore lesson.
+No rank-up, chapter-opened, task-ready or item-specific pools; existing UI, chat
+and sounds explain those. A request completion plus rank-up speaks once.
+
+Variants are picked per file, so a text with two recordings would play twice as
+often as one with a single file. When binding, give each file a `weight` in
+`sound_definitions.json` so every text in a pool is equally likely (vanilla uses
+per-file `weight`; not yet tested on these assets).
 
 ### Harmony selects the opening
 
-Use the existing `bandOf` in `scripts/harmony.js`, in this order:
+Use `bandOf` in `scripts/harmony.js`, in this order:
 
-1. Hated (-60..-30): civilian silence; wardens can still speak on combat start.
-2. Shunned (-29..-15): `refuse_speak` and return, with no greeting or invitation.
-   Calm, curt refusal is distinct from warden warnings and native `haggle.no`.
+1. Hated (-60..-30): civilian silence; wardens still speak on combat start.
+2. Shunned (-29..-15): `refuse_speak` and return, no greeting. A calm, curt
+   refusal, distinct from warden warnings and native `haggle.no`.
 3. Friend (+10, the current maximum): `opening_warm`.
-4. Guest (0..+9) or Uneasy (-14..-1): `opening_neutral`. Uneasy retains the
-   existing limited access; negative Harmony does not always mean total refusal.
+4. Guest (0..+9) or Uneasy (-14..-1): `opening_neutral`. Uneasy keeps its
+   existing limited access.
 
-Both ordinary conversation and actual approved native-trade use choose from
-these pools. Pass granting/table-swap retries do not add another opening.
-Keep one opening across a delivery-form-to-trade transition. No new interaction
-type or proximity scan is needed.
+Conversation and approved native-trade use both choose from these pools. Pass
+granting and table-swap retries add no second opening; one opening spans a
+delivery-form-to-trade transition. No new interaction type or proximity scan.
+A later delivery-only "thank you" (*Annon allen*) would replace a completion
+variant only where gratitude fits, never for merely reading a lesson.
 
-For a later quest-delivery-only "thank you", replace one completion slot only
-where gratitude fits. Do not say "I thank you" when the player merely reads a
-lesson. This is a reason to keep the initial shared pool generic.
+## Binding
 
-## Event audit and important limits
+Implemented 2026-10-25; offline tests only (`tests/run.mjs --suite voice`, healer glue), nothing heard in game yet.
+
+- Assets: `tools/install_sindarin_voice.py` copies the 28 OGGs to `lothlorien_rp/sounds/voice/lothlorien/` and writes one
+  sound event per pool, `lothlorien.voice.<pool>` (category `neutral`, files of one text share its weight), into
+  `sounds/sound_definitions.json`. `--check` reproduces both without writing.
+- `trade_positive` is native: `lothlorien_rp/sounds.json`, `lothlorien:elf`, `haggle.yes` -> volume 0.7, pitch 1.0 (no
+  vanilla pitch wobble). The script never plays it; there is no `haggle` / `haggle.no` binding.
+- Every other pool is played by `scripts/voice.js` (`Dimension.playSound` at the elf's mouth, 1.6 above its feet, heard by
+  everyone nearby). Rules, volumes (menu 0.7, healing 0.8, combat 1.0) and all cooldown constants are in
+  `scripts/voice_rules.js`; that file is the place to tune.
+- Hooks: `trade.js` (native-trade click opening, refusal), `loremaster.js` (one opening per dialog session, lesson and offer
+  explain, task taken, lesson learned), `renown_game.js` (hand-in completion), `healer.js` (blessing), `elven_warden.js`
+  (target shout, click greeting).
+- Accepted deviations from the restraint rules: `task_taken` skips the 4 s wait (it may follow "Lasto"); the combat shout
+  is one per fight within 16 blocks / 3 s, plus 15 s per warden.
+- Owner decisions 2026-10-25: menu speech is heard by everyone nearby at 0.7; wardens greet on click (silent for Hated, a
+  fought player, lead / name tag); the healer speaks only when it blessed someone other than itself.
+- Open for the game test: whether `haggle.yes` fires only on a completed trade (Q4) and loudness tuning (Q6).
+
+### Owner in-game checks
+
+Set Harmony with `/scriptevent lothlorien:harmony <n>`: 10 Friend, 5 Guest, -5 Uneasy, -20 Shunned, -40 Hated.
+
+- SV1 haggle.yes: at a Guest trader browse, select an offer, pay too little then enough, take one, shift-take many, close
+  without buying. Note when "Ma!/Mae." plays. Expected: only on a completed trade. Never: trade_positive inactive (report).
+  On selection or payment: owner decides Q4.
+- SV2 trader opening: Guest/Uneasy/Friend give one neutral (warm for Friend) line and the trade screen still opens; a
+  re-click within 30 s is silent; lead / name tag click silent.
+- SV3 trader refusal: Shunned gives "Avon/Avam" plus chat, repeats within 30 s silent; Hated chat only.
+- SV4 delivery form: one opening on form open; choosing Trade and clicking again adds no greeting; Hand over gives one
+  completion line, also with a rank-up; items missing, no voice.
+- SV5 Loremaster: opening on use (none on Back); lesson "Lasto..."; Back / chapter list silent; Take this task "Caro
+  mae/Dandolo"; I understand completion; kin offer explain, I will task_taken; not-ready hand-in silent; Shunned refusal
+  voice plus chat; Hated nothing. Note any "Lasto" without a visible screen.
+- SV6 wardens: a zombie at a camp of 3+ gives one shout, not three; the same warden again only after 15 s; hitting a warden
+  shouts; Hated: shout on sight. Never a shout: dataDrivenEntityTrigger is not dispatched (report; fall back to the options
+  in the audit above).
+- SV7 warden greeting: click a warden as Guest/Friend for the neutral/warm opening; again within 30 s silent; Shunned
+  refusal; Hated or while fighting it silent; lead / name tag silent. Never a greeting: the click is not dispatched for the
+  warden (report; no proximity sensors).
+- SV8 healer: an injured Friend near a healer gives one "Cuio mae" with the blessing, then at most every 30 s; a healer
+  healing only itself stays silent.
+- SV9 levels: loudness against a villager; menu lines audible but quiet; shouts carry; no pitch wobble on haggle.yes; elf
+  hurt / death sounds unchanged; 24 kHz files play cleanly.
+
+## Event audit and limits
 
 ### Native trading
 
 - `scripts/trade.js:onInteract` distinguishes `trade`, `form`, `swap` and
   `refuse`. Only `trade` is the approved native-use path. `grantPass` and
-  `decision.action === "swap"` can ask for another click; they are not evidence
-  that the trade screen opened. A spoken invitation at the approved click is
-  feasible, but this is not a confirmed screen-open callback.
-- The pinned `reference/server-2.8.0.d.ts` has no trading callback/component or
-  native trade-screen-close callback. Do not infer completed purchases or UI
-  closure from the 30-second table pin, distance, inventory diffs or a timer.
-- Installed vanilla `resource_packs/vanilla/sounds.json` binds `haggle`,
-  `haggle.yes`, `haggle.no` for villagers and wandering traders. The sound
-  vocabulary is not `trade` / `yes` / `no`.
-- Bind native `haggle.yes` to short, neutral approval. The local reference proves
-  the event names and vanilla bindings, not whether a custom elf emits them
-  only on completed exchanges or also on valid offer/payment states. Test the
-  existing economy-table custom elf before advertising exact semantics.
-- Do not bind `haggle` to an opening pool: browsing/haggling is not a single
-  screen-open event. Do not play greetings repeatedly through ambient sounds.
-- "Finishing trade" therefore means native positive feedback around an exchange,
-  subject to the above check. Closing the window gets no dedicated farewell.
-  If custom native haggling does not fire, leave this pool inactive and report
-  that limit; do not build a synthetic transaction tracker.
+  `swap` can ask for another click; they do not prove the screen opened. Speech
+  at the approved click is feasible, but it is not a screen-open callback.
+- `reference/server-2.8.0.d.ts` has no trading or trade-screen-close callback.
+  Do not infer purchases or closure from the 30-second table pin, distance,
+  inventory diffs or a timer.
+- Vanilla `sounds.json` binds `haggle`, `haggle.yes`, `haggle.no` for villagers
+  and wandering traders (not `trade`/`yes`/`no`). Whether a custom elf emits
+  `haggle.yes` only on completed exchanges or also on valid offer/payment states
+  is untested.
+- Do not bind `haggle` to an opening pool: browsing is not one screen-open
+  event. Closing the window gets no farewell. If custom haggling does not fire,
+  leave `trade_positive` inactive and report it; no synthetic transaction tracker.
 
 ### Forms, tasks and refusal
 
-- `scripts/loremaster.js` owns `lessonScreen`, `kinOfferScreen`, successful
-  `takeLesson`, `accept` and `completeLore`. `scripts/renown_game.js` owns
-  `handOver` and `turnInLesson` and already receives the speaking elf as `at`.
-- Play explanations once on entering a selected content screen, not on the
-  chapter list, every Back/Continue button, or a UserBusy retry. The existing
-  form promise returns on response, not at confirmed display time. Explain audio
-  can accompany an admitted screen attempt, with a once-per-transition guard;
-  do not describe this as an exact rendered-form notification. If engine tests
-  expose frequent busy-screen speech, defer content audio to successful user
-  selection/acceptance rather than adding a polling display detector.
-- `task_taken` fires only after successful acceptance, not while previewing an
-  offer. Completion fires only after successful validation/commit, never because
-  a hand-over button was clicked. Route success through one owner; do not add
-  both a caller sound and a `celebrate` sound for the same result.
-- `traderDialog` has an explicit Farewell button, but ordinary closure does not
-  distinguish a polite departure from Escape, a busy form or walking away.
-  A separate farewell family would give uneven coverage, so omit it initially.
-- Existing Shunned text refusals can speak. Hated loremaster silence remains;
-  treat hated trader refusals as silent too, rather than adding friendly openings.
-  The always-available Harmony reminder for Uneasy uses normal explanation audio.
+- `scripts/loremaster.js` owns `lessonScreen`, `kinOfferScreen`, `takeLesson`,
+  `accept` and `completeLore`. `scripts/renown_game.js` owns `handOver` and
+  `turnInLesson` and already receives the speaking elf as `at`.
+- Explain once on entering a selected content screen, not on the chapter list,
+  Back/Continue or a UserBusy retry. The form promise resolves on response, not
+  on display, so this accompanies an admitted screen attempt with a
+  once-per-transition guard. If busy-screen speech is frequent in tests, move it
+  to successful selection rather than polling for display.
+- `task_taken` only after successful acceptance, not on preview. Completion
+  only after a successful commit, never on the button click. One owner per
+  result; no caller sound plus a `celebrate` sound.
+- `traderDialog` has a Farewell button, but ordinary closure cannot tell it from
+  Escape, a busy form or walking away, so no farewell pool.
+- Shunned text refusals speak. Hated loremaster and trader refusals stay silent.
+  The Harmony reminder for Uneasy uses normal explain audio.
 
 ### Wardens and greetings
 
-- Source hook: `entities/elven_warden.json`, `minecraft:on_target_acquired` and
-  `events.lothlorien:become_angry`. Subscribe to the resulting data-driven event
-  or add a guarded native sound response. Do not use arrow-shot/hurt events as
-  fight-start substitutes. Debounce target reacquisition and group combat.
-- The three warning lines must fit any enemy. Do not use "Run!" as the default
-  attack cry, or the Orc-specific *Gurth an Glamhoth* against every target.
-- Wardens currently have no greeting interaction branch. A minimal use handler
-  can consume the same `playerInteractWithEntity` event if the engine dispatches
-  it; verify this on the custom warden before including greeting coverage.
-  If the guard's ordinary click does not arrive, omit its greeting in the first
-  pass instead of adding proximity sensors or a new conversation mechanic.
-- Civilian greeting belongs at session admission. Use the same Harmony-selected
-  opening for ordinary trading; do not add a second shop greeting for that use.
-  Existing skipped lead/name-tag interactions stay silent.
+- Hook: `entities/elven_warden.json`, `minecraft:on_target_acquired` and
+  `events.lothlorien:become_angry`. Subscribe to that event or add a guarded
+  native sound response. Not arrow-shot or hurt events. Debounce target
+  reacquisition and group combat.
+- The warnings must fit any enemy: no "Run!" default and no Orc-specific
+  *Gurth an Glamhoth* against every target.
+- Wardens have no greeting branch. A minimal handler may use
+  `playerInteractWithEntity` if the engine dispatches it for the custom warden;
+  if not, omit warden greetings rather than add proximity sensors.
+- Civilian greeting belongs at session admission; no second shop greeting.
+  Skipped lead/name-tag interactions stay silent.
 
 ### Healing
 
-- `scripts/healer.js:blessNearby` already aggregates successful care into one
-  `blessed` flag and plays one animation per batch. Speak at that point once,
-  not from each `care` call or every refreshed regeneration effect. Use a longer
-  voice cooldown so sustained injuries do not produce speech every few seconds.
-- *Cuio mae* is a blessing while healing is applied, not a claim the patient's
-  health is full. No separate completed-healing detector is required.
+- `scripts/healer.js:blessNearby` aggregates care into one `blessed` flag and
+  one animation per batch. Speak there once, not per `care` call or effect
+  refresh, with a long cooldown for sustained injuries.
+- *Cuio mae* is a blessing while healing, not a claim of full health.
 
-## Proposed restraint rules
+## Restraint rules (proposed)
 
-- One line per accepted interaction. Select the opening by Harmony;
-  completion/refusal replaces any greeting for a ready turn-in
-  or refused interaction. No queues of obsolete lines.
-- Retain the existing repeated-use guards. Add only small event-local voice
-  cooldown maps; no world scans or additional recurring discovery loop.
-- Start with a 4-second ordinary per-elf speech cooldown, 30 seconds for repeat
-  greetings to the same elf/player, 15 seconds for combat warnings and 30 seconds
-  for healing. These are proposed tuning values, not engine facts. Completion
-  and combat may bypass the ordinary waiting period but should drop or replace
-  lower-priority pending speech rather than layering clips. Final timings must
-  account for recorded clip length.
-- Native `haggle.yes` happens outside script dispatch; script cooldowns cannot
-  throttle or cancel it. Keep its two approval clips especially short. Test
-  rapid trade clicks and immediate transition from delivery to native trading;
-  do not promise global overlap prevention for engine-generated audio.
-- Use the entity as the positional sound source for world speech. Menu chatter
-  should be quiet. Use one fixed actor/reference across professions and pools;
-  warm, neutral, curt and urgent delivery vary performance, not identity.
+- One line per accepted interaction. Completion or refusal replaces the greeting.
+  No queues of obsolete lines.
+- Keep existing repeated-use guards; add only small event-local cooldown maps,
+  no world scans or recurring loops.
+- Starting cooldowns (tuning values, not engine facts): 4 s per elf, 30 s for a
+  repeat greeting to the same elf/player, 15 s combat, 30 s healing. Completion
+  and combat may bypass the ordinary wait but drop lower-priority speech instead
+  of layering. Recorded clips are 0.35-1.53 s.
+- Native `haggle.yes` is outside script dispatch; script cooldowns cannot
+  throttle it. Its clips (Ma, Mae) are 0.35-0.6 s. Test rapid trade clicks and
+  delivery-to-trade transitions; no promise of global overlap prevention.
+- Play world speech from the entity position; menu chatter quiet. One actor for
+  all professions and pools; delivery varies, identity does not.
 
-## Validation before audio rollout
+## Validation before rollout
 
 1. Confirm native `haggle.yes` on a custom elf: browse, select an offer, insert
-   insufficient/sufficient payment, complete one/many trades, then close without
-   buying. Record exactly which actions emit `haggle`, `.yes` and `.no`.
-2. Confirm approved trade click and warden ordinary use callbacks in game.
+   insufficient/sufficient payment, complete one/many trades, close without
+   buying. Record which actions emit `haggle`, `.yes` and `.no`.
+2. Confirm the approved trade click and warden ordinary-use callbacks in game.
 3. Check held use, UserBusy retries, Back navigation, delivery plus rank-up,
-   depleted inventory at hand-in, multi-warden combat, and sustained healing.
-4. Finalise wording and prepare pronunciation/voice takes only
-   after these source/engine distinctions are accepted. Pack changes will require
-   shared verification and deployment before owner testing.
+   depleted inventory at hand-in, multi-warden combat and sustained healing.
+4. Bind the pools as sound events in the resource pack, run `.\mods verify` and
+   deploy before owner testing.
 
-Official review on 2026-10-16: the
-[26.50 changelog](https://feedback.minecraft.net/hc/en-us/articles/48826825649933-Minecraft-Bedrock-Edition-26-50-Changelog-Wilderness-Bound)
-and [26.52 hotfix](https://feedback.minecraft.net/hc/en-us/articles/49175370527501-Minecraft-Bedrock-Edition-26-52-Hotfix-Changelog)
-do not establish new native trade-result/close callbacks or custom haggling
-semantics. The current
-[economy component reference](https://learn.microsoft.com/en-us/minecraft/creator/reference/content/entityreference/examples/entitycomponents/minecraftcomponent_economy_trade_table?view=minecraft-bedrock-stable)
-documents trading UI/table configuration, not those missing script callbacks.
-No engine bug or workaround is asserted here.
-
-Additional attested refusal form: *avam* "we won't", PE17/143 and WJ/371,
-via [Eldamo: ava-](https://eldamo.org/content/words/word-3865426267.html).
+Official review 2026-10-16: the
+[26.50 changelog](https://feedback.minecraft.net/hc/en-us/articles/48826825649933-Minecraft-Bedrock-Edition-26-50-Changelog-Wilderness-Bound),
+[26.52 hotfix](https://feedback.minecraft.net/hc/en-us/articles/49175370527501-Minecraft-Bedrock-Edition-26-52-Hotfix-Changelog)
+and the
+[economy trade table reference](https://learn.microsoft.com/en-us/minecraft/creator/reference/content/entityreference/examples/entitycomponents/minecraftcomponent_economy_trade_table?view=minecraft-bedrock-stable)
+add no trade-result/close callbacks or custom haggling semantics. No engine bug
+or workaround is asserted.
