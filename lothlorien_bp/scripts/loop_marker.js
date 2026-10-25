@@ -14,7 +14,8 @@
 // most AREA.maxTries times per marker. `/scriptevent lothlorien:village plan` re-runs it by hand for the nearest marker (see planNearest).
 import { BlockPermutation, system, world } from "@minecraft/server";
 import { MARKER_ID, finalBlocks } from "./village_loop.js";
-import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, chunksIn, describePick, describeMerge, VILLAGE_PLANS } from "./village_planner.js";
+import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, growRect, hullOf, chunksIn, describePick, describeMerge, VILLAGE_PLANS } from "./village_planner.js";
+import { rememberVillageArea } from "./village_area.js";
 import { describeRepair } from "./village_repair.js";
 import { missingLinks } from "./rail_mender_rules.js";
 import { mendAround } from "./rail_connections.js";
@@ -140,6 +141,7 @@ async function planVillageAt(entity, force, trigger) {
   let found = null;
   try {
     found = await discoverVillage(env, first, base);
+    if (dimension.id === "minecraft:overworld") rememberVillageArea(found.rect);
     dlog(`discovery done: ${found.rounds} round(s) in ${ms(t0)} ms since the start`);
     const tSettle = Date.now();
     await sleep(SETTLE_TICKS); // neighbouring chunks of a fresh village finish their decoration
@@ -198,6 +200,9 @@ async function drain() {
 function onMarker(entity, trigger) {
   if (!entity || entity.typeId !== MARKER_ID) return;
   if (seen.has(entity.id)) { dlog(`marker ${entity.id} already seen this session (${trigger})`); return; }
+  // Recognize the first loaded village piece immediately, even while queued or if
+  // loading/planning fails. The normal discovery margin covers the marker's platform.
+  if (entity.dimension.id === "minecraft:overworld") rememberVillageArea(growRect(hullOf([cellOf(entity)]), AREA.margins[0]));
   seen.add(entity.id);
   dlog(`marker ${entity.id} noticed (${trigger}), queued in ${START_DELAY_TICKS} ticks`);
   system.runTimeout(() => { try { if (entity.isValid) { queue.push({ entity, trigger }); drain(); } else dlog(`marker ${entity.id} gone before its turn`); } catch { /* unloaded */ } }, START_DELAY_TICKS);

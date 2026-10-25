@@ -25,7 +25,8 @@ Target: tester build on the weekend of 2026-10-24/25.
   - `verification_exceptions.json`, a dev-only file that ships
 - [ ] **Owner game checks L1-L17** in the workspace `docs/game-checks.md`. L1-L8 cover code
   changed in the parity cleanup, so do those first.
-- [ ] **Snow on blocks.** Decide on snowlogging (`NOT_IMPLEMENTED.md:21`).
+- [x] **Snow on blocks.** Native snowlogging enabled for Elanor, Niphredil, Athelas and Golden Fern
+  (2026-10-25); counterpart scope and remaining game checks: `SNOW.md`.
 - [ ] **Elf and Elven Warden sounds.** They have no `entity_sounds` entry, so they use the player
   hurt and death sounds (`mobs/elves.md:60`). Sindarin voice lines cover talking only.
 - [ ] **Check the borrowed mob sounds** (`lothlorien_rp/sounds.json`). The ambient calls for deer,

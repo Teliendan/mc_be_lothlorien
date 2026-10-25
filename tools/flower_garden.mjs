@@ -1,10 +1,11 @@
 // Small, open woodland garden; only existing blocks and native deferred container loot.
 import { addSoilSkirt, SKIRT } from "./ground_skirt.mjs";
 
-// start: the jigsaw start height. The buried anchor (template y -2) lands on the terrain's top block, so the garden's grass is one above
-// the terrain (owner, Test G 2026-10-20: a raised garden cannot flood, a garden in a lake was flooded at -2).
+// start offsets the template bottom from world_surface, not the named jigsaw's Y.
+// Grass is at encoded y SKIRT.depth - 1: bury the foundation so grass replaces the terrain top
+// (owner, 2026-10-24). The named jigsaw centres horizontal placement/rotation.
 export const GARDEN = Object.freeze({
-  id: "lothlorien:flower_garden_01", size: [15, 4 + SKIRT.depth, 15], offset: [7, SKIRT.depth, 7], start: 0, clear: 4,
+  id: "lothlorien:flower_garden_01", size: [15, 4 + SKIRT.depth, 15], offset: [7, SKIRT.depth, 7], start: 1 - SKIRT.depth, clear: 4,
   loot: "loot_tables/chests/flower_garden.json", barrel: [4, 0, 5],
   anchor: "lothlorien:garden_ground",
 });

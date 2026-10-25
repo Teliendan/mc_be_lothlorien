@@ -735,8 +735,11 @@ Replaces Disharmony (the Phase 9 section below is superseded). Spec, numbers and
   `may_replace: [air]`. Leaf carpet or a blossom in the target cell blocks the placement (cell not air), and a cell above litter has litter
   below (not in the list), so an antler can never float on litter. The price is that about a third of the floor is excluded, so the real
   frequency is lower than the 1/16 per chunk on paper. (An earlier version replaced the litter; the user did not want antlers to look like they float.)
-- **Natural drop**: rule `deer_antler_drop_feature_rules` (after surface pass, biome tag, `scatter_chance` 1/16 per chunk) -> scatter of 3
-  tries within about 3 blocks -> weighted pick of four facings, all `up`. Was 1/64 (between giants, ~1/36, and lookout trees,
+- **Natural drop (owner decision 2026-10-24: solo antlers, no batches)**: rule `deer_antler_drop_feature_rules` (after surface pass,
+  biome tag, `scatter_chance` 1/16 per chunk) -> one placement attempt within about 3 blocks -> weighted pick of four facings,
+  all `up`. Reduced from three attempts after the owner found three neighbouring antlers. Each site now places at most one;
+  independent sites have no minimum-distance guarantee. Existing generated antlers remain; check the change in a new world.
+  Source regression checked for Bedrock 1.26.52; updated worldgen not yet verified in game. Was 1/64 (between giants, ~1/36, and lookout trees,
   ~1/144); raised to 1/16 on 2026-10-02, see below; a test pins it. Real frequency will be lower (tries on leaves, water or off-biome fail): tune
   the denominator after walking around.
 - **Worldgen verified in a save (2026-10-02, 1.26.5x, `tools/world_scan.py`)**: world "T" had 97 Lothlorien chunks saved and antlers in

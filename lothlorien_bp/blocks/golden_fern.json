@@ -95,6 +95,9 @@
             "on_liquid_touches": "popped"
           }
         ]
+      },
+      "minecraft:precipitation_interactions": {
+        "precipitation_behavior": "snowlogging"
       }
     },
     "permutations": [

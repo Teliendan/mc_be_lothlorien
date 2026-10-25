@@ -2,10 +2,11 @@
 import { SILVER_WATCH } from "./watch_camp_rules.mjs";
 import { addSoilSkirt, SKIRT } from "./ground_skirt.mjs";
 
-// start: the jigsaw start height; the deck stands one above the terrain's top block (owner, Test G 2026-10-20: raised like the garden,
-// with the same deep soil and ragged shoulder; clear: the free cells above the deck and apron).
+// start offsets the template bottom from world_surface. Deck planks are at encoded y SKIRT.depth:
+// bury all the soil beneath them so the deck replaces the terrain top (owner, 2026-10-24).
+// clear: the free cells above the deck and apron.
 export const MEMORIAL = Object.freeze({
-  id: "lothlorien:memorial_leaf_01", size: [15, 6 + SKIRT.depth, 18], offset: [7, SKIRT.depth, 8], start: -1, clear: 4,
+  id: "lothlorien:memorial_leaf_01", size: [15, 6 + SKIRT.depth, 18], offset: [7, SKIRT.depth, 8], start: -SKIRT.depth, clear: 4,
   anchor: "lothlorien:memorial_ground",
 });
 const L = "lothlorien:", M = "minecraft:";

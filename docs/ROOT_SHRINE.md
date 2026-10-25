@@ -27,6 +27,14 @@ choice explicitly left to the implementer by the owner.
 Leaves are persistent. Unused template cells are structure void; explicit air
 only carves the small recess, approach and display/hanging clearance.
 
+Owner correction, 2026-10-24 (Bedrock 1.26.52): hills can expose the roots and
+the thin interior floor. Dirt now fills beneath the existing moss/flower floor
+and short approach down to the roots' lowest layer (local y -5), preserving
+buried wood. The visible floor, roots and placement height are unchanged.
+This supplies a solid interior foundation; it does not fit the whole tree to a
+slope or extend roots farther down. Offline geometry/asset checks passed;
+the hillside result still needs an in-game check.
+
 ## Generation and placement
 
 **Natural generation: 25% of Great Mallorn placements in Lothlorien**, requested by

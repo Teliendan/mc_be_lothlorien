@@ -1,0 +1,90 @@
+[
+  {
+    "featureId": "lothlorien:elven_rope",
+    "id": "lothlorien:elven_rope/status-icons",
+    "text": "Climbing or descending rope can show Levitation or Slow Falling status icons while you use it.",
+    "evidence": [
+      {
+        "path": "lothlorien_bp/blocks/elven_rope.json",
+        "sha256": "557616875bd60c2e11a1f12bb4de1e2437403b5f463c610ca47600a22f73b5a2"
+      },
+      {
+        "path": "lothlorien_bp/blocks/elven_rope_hanging.json",
+        "sha256": "928ad1f6c763a0a920e5629958211fd2e3eff9540d8264be03cfdb64820bfbb4"
+      },
+      {
+        "path": "lothlorien_bp/items/elven_rope.json",
+        "sha256": "8f279fedc830a011d347ee3f632fc636e7773facd6af2c319dcd7455f6f876aa"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elven_rope.js",
+        "sha256": "28262b9a94fc98b3c2f246ea3ba5e8eeb23b6d628b20dadbee41c87fb91debc7"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elven_rope_rules.js",
+        "sha256": "f4974feba45f39c0692fadda5c8e2ddc30076cb31c98a10ee21fba67bf5714f0"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:unicorn",
+    "id": "lothlorien:unicorn/fall-damage",
+    "text": "A unicorn takes ordinary fall damage. Choose a safe route down.",
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+      },
+      {
+        "path": "lothlorien_bp/entities/unicorn.json",
+        "sha256": "68dd72d60ef5da8db4b0e9f85a7db67e232db0c80bc44ed297fa0c0402e29f0a"
+      },
+      {
+        "path": "lothlorien_bp/scripts/unicorn.js",
+        "sha256": "de14953f0d475a053a87479cd96496e65efdddf173eb743d0d95918cfe41ca37"
+      },
+      {
+        "path": "lothlorien_bp/scripts/unicorn_rules.js",
+        "sha256": "dfcdccc3138b8544a47afc7171eef2834a50a3571367f408e5b51e96c677a971"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_blossom",
+    "id": "lothlorien:mallorn_blossom/bone-meal",
+    "text": "Bone meal does not add segments to blossoms. Add the matching blossom item to fill the patch.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_blossom.json",
+        "sha256": "004d84de1eacadf72a9fc1fff95dda4a88abc9ad1d998bf735827627ae2e6a41"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_blossom.json",
+        "sha256": "4e399f576fe101ddbe9ce4d3f9c4f439828a9875e217cb832be43c76581d1672"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_leaf_carpet",
+    "id": "lothlorien:mallorn_leaf_carpet/bone-meal",
+    "text": "Bone meal has no effect on leaf litter. Add the matching item to fill the patch.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_leaf_carpet.json",
+        "sha256": "b5f778b5522a2072bd954350f7c3d67501cbdab3af03e0a7f2763a8559dd15e9"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_leaf_carpet.json",
+        "sha256": "bfba5d314dabe4e32ffb7130261c2eb906455db6daab26c1ee1d406f7eb09490"
+      }
+    ]
+  }
+]

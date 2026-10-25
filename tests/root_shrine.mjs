@@ -41,6 +41,21 @@ assert.equal(get(-1, 1, -2)?.name, "minecraft:air", "standing headroom beside ca
 
 // Every new above-ground root is continuously connected to the original trunk (face adjacency).
 const isWood = (b) => ["lothlorien:mallorn_log", "lothlorien:mallorn_wood"].includes(b?.name);
+const lowestRoot = Math.min(...[...blocks].filter(([, b]) => isWood(b)).map(([k]) => Number(k.split(",")[1])));
+for (const [k, b] of blocks) {
+  const [x, y, z] = k.split(",").map(Number);
+  if (y === -1 && ["minecraft:moss_block", "minecraft:grass_block"].includes(b.name)) {
+    for (let below = y - 1; below >= lowestRoot; below--)
+      assert.ok(get(x, below, z)?.name === "minecraft:dirt" || isWood(get(x, below, z)),
+        `solid soil/root foundation beneath the shrine floor at ${x},${below},${z}`);
+  }
+  if (b.name === "minecraft:dirt") {
+    assert.ok(y >= lowestRoot && y < -1, "dirt stays between floor and root depth");
+    assert.ok(["minecraft:moss_block", "minecraft:grass_block"].includes(get(x, -1, z)?.name),
+      "foundation stays beneath the existing floor footprint");
+  }
+}
+assert.equal(get(-3, lowestRoot, -2)?.name, "lothlorien:mallorn_log", "buried buttress roots remain wood");
 const seen = new Set([key(1, 7, 1)]), queue = [[1, 7, 1]];
 for (let i = 0; i < queue.length; i++) {
   const [x, y, z] = queue[i];

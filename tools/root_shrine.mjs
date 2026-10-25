@@ -56,6 +56,10 @@ export function buildRootShrine() {
     if (z < -4 && (x < 0 || x > 2)) continue;
     if (blocks.get(key(x, -1, z))?.name === B.log && !(x >= -1 && x <= 3 && z <= -1)) continue;
     put(x, -1, z, "minecraft:moss_block");
+    // Carry the interior/approach soil down to the root tips on a hillside.
+    // Keep existing buried roots; only fill the template's otherwise empty cells.
+    for (let y = -ROOT_DEPTH; y < -1; y++)
+      if (!blocks.has(key(x, y, z))) put(x, y, z, "minecraft:dirt");
   }
 
   // Two bark supports and three silver slabs; the centre golden inset carries an ordinary vanilla pot.

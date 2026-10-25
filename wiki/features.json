@@ -1,0 +1,3355 @@
+{
+  "features": [
+    {
+      "id": "lothlorien:athelas",
+      "slug": "athelas",
+      "name": "Athelas",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:athelas"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:athelas/obtain",
+          "kind": "gathering",
+          "text": "Bone meal an existing plant to spread more onto suitable nearby ground. Bone meal on grass in Lothlorien can also place woodland flora. Found among the natural vegetation and materials of Lothlorien. Use the gathering tools and conditions described here.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/athelas.json",
+          "sha256": "c35d85df7c03a78a565e221624f8093eea4465347053f5067d2482e246a484a6"
+        },
+        {
+          "path": "lothlorien_bp/items/athelas.json",
+          "sha256": "b1e2ad30bfd4679d7766b9aacf0b4df3b52f7ea57d88660457590a3a1a966fc9"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:athelas_salve",
+      "slug": "athelas_salve",
+      "name": "Athelas Salve",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:athelas_salve"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:athelas_salve/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/athelas_salve.json",
+          "sha256": "3941ce08c87b0636090ccea11f6d366bddd31ea526a30422d71b1930bc64f763"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:bottle_of_fireflies",
+      "slug": "bottle_of_fireflies",
+      "name": "Bottle of Fireflies",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:bottle_of_fireflies"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:bottle_of_fireflies/obtain",
+          "kind": "capture",
+          "text": "Use an empty glass bottle on a living Firefly to catch it. This is capture, not a death drop.",
+          "related": []
+        }
+      ],
+      "relations": [
+        {
+          "kind": "capture",
+          "target": "lothlorien:firefly"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/bottle_of_fireflies.json",
+          "sha256": "8e50e5aa93d5529824a8bf6f4689c7939a64991406a88d22d9d07e51e5e77525"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:bow",
+      "slug": "bow",
+      "name": "Bow of the Galadhrim",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:bow"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:bow/obtain",
+          "kind": "gathering",
+          "text": "Obtain through the trades, rewards or gathering routes listed here.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/bow.json",
+          "sha256": "211926708c96497ce2356ce1463a38dc874f2037289dc71991c49fc79ba5407f"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:deer_antler",
+      "slug": "deer_antler",
+      "name": "Deer Antler",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:deer_antler"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:deer_antler/obtain",
+          "kind": "gathering",
+          "text": "Find and collect antlers lying on the ground in Lothlorien. They can be collected from the forest floor.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/deer_antler.json",
+          "sha256": "1532cab392c1f9b1e79c1498990e369b9d9eafa52d45c8c8aea444b9046ddbd9"
+        },
+        {
+          "path": "lothlorien_bp/items/deer_antler.json",
+          "sha256": "5b945a48b012f7eb44ea24a251dffe2bf099080a309338730b192a92f01fbba5"
+        },
+        {
+          "path": "lothlorien_bp/scripts/antler.js",
+          "sha256": "5d090749e720ff761a2dd515cf65596f33d6faa5bcc1149442995dde613f12fc"
+        },
+        {
+          "path": "lothlorien_bp/scripts/antler_rules.js",
+          "sha256": "e8f930bd2e5932119e07b59668b030c8667c400dfe539f6e887441ca730e9ccc"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:dew_bottle",
+      "slug": "dew_bottle",
+      "name": "Dew Bottle",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:dew_bottle"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:dew_bottle/obtain",
+          "kind": "gathering",
+          "text": "Use an empty glass bottle on visibly dewy Mallorn Leaf Carpet or Mallorn Blossom. The first drop starts a partial bottle; {{lothlorien:rule/dew-drops}} drops fill it.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/dew_bottle.json",
+          "sha256": "724bdaab7c8fa459ab3e953733c5b24384647b94dc3afe37b27a8dd64b74e71a"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:elanor",
+      "slug": "elanor",
+      "name": "Elanor",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:elanor"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:elanor/obtain",
+          "kind": "gathering",
+          "text": "Bone meal an existing plant to spread more onto suitable nearby ground. Bone meal on grass in Lothlorien can also place woodland flora. Found among the natural vegetation and materials of Lothlorien. Use the gathering tools and conditions described here.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/elanor.json",
+          "sha256": "76106a1d516e933ff9d99beb7edc056156f34cd730a8d2c800447639d35defdf"
+        },
+        {
+          "path": "lothlorien_bp/items/elanor.json",
+          "sha256": "ea0e12e19ef0d64e44b786761ab263d123cc8a53e6f6a29453b188d5a259af54"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:elven_chandelier",
+      "slug": "elven_chandelier",
+      "name": "Elven Chandelier",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:elven_chandelier"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:elven_chandelier/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/elven_chandelier.json",
+          "sha256": "63783d9cc5b8db512fa4490a20bb87bd985019ded3ea2e56fa2862a1e254a76b"
+        },
+        {
+          "path": "lothlorien_bp/items/elven_chandelier.json",
+          "sha256": "ee2b18b6e1097bcc955d8171a1fb8acfccae08174097ebc520642c1842639ddd"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:elven_cloak",
+      "slug": "elven_cloak",
+      "name": "Elven cloak",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:elven_cloak"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:elven_cloak/obtain",
+          "kind": "gathering",
+          "text": "Obtain through the trades, rewards or gathering routes listed here.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/elven_cloak.json",
+          "sha256": "34128395fdc282079b0f209b04a5d85be64d4a2a9461d512566d336063bcde76"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:elven_lantern",
+      "slug": "elven_lantern",
+      "name": "Elven Lantern",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:elven_lantern"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:elven_lantern/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/elven_lantern.json",
+          "sha256": "6b6cfb49938985860d745802a2102b1b0b8be165ded8c5ddfd0a455ae8db1819"
+        },
+        {
+          "path": "lothlorien_bp/items/elven_lantern.json",
+          "sha256": "f6390da1b6b56c22d63a396891472587d455f99eae9941d07e2998d7a8ab32d0"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:elven_lantern_heartwood",
+      "slug": "elven_lantern_heartwood",
+      "name": "Heartwood Elven Lantern",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:elven_lantern_heartwood"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:elven_lantern_heartwood/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/elven_lantern_heartwood.json",
+          "sha256": "04d4a6104bc9a6a22c113fe92f59653bc84f2497770abdd1d22690bfb228da7c"
+        },
+        {
+          "path": "lothlorien_bp/items/elven_lantern_heartwood.json",
+          "sha256": "e0e9460885a4a2a3a5abbcf91503db6b3b79d8333d33ff139cb214f87995a3fd"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:elven_rope",
+      "slug": "elven_rope",
+      "name": "Elven Rope",
+      "kind": "item",
+      "aliases": [
+        "lothlorien:elven_rope_hanging"
+      ],
+      "nativeIds": [
+        "lothlorien:elven_rope"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:elven_rope/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/elven_rope.json",
+          "sha256": "557616875bd60c2e11a1f12bb4de1e2437403b5f463c610ca47600a22f73b5a2"
+        },
+        {
+          "path": "lothlorien_bp/blocks/elven_rope_hanging.json",
+          "sha256": "928ad1f6c763a0a920e5629958211fd2e3eff9540d8264be03cfdb64820bfbb4"
+        },
+        {
+          "path": "lothlorien_bp/items/elven_rope.json",
+          "sha256": "8f279fedc830a011d347ee3f632fc636e7773facd6af2c319dcd7455f6f876aa"
+        },
+        {
+          "path": "lothlorien_bp/scripts/elven_rope.js",
+          "sha256": "28262b9a94fc98b3c2f246ea3ba5e8eeb23b6d628b20dadbee41c87fb91debc7"
+        },
+        {
+          "path": "lothlorien_bp/scripts/elven_rope_rules.js",
+          "sha256": "f4974feba45f39c0692fadda5c8e2ddc30076cb31c98a10ee21fba67bf5714f0"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:firefly_jar",
+      "slug": "firefly_jar",
+      "name": "Firefly Jar",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:firefly_jar"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:firefly_jar/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/firefly_jar.json",
+          "sha256": "b5608ee67fd5ad023d4e1175638227375cc393c1c5f9f7d18d18c93b945eed93"
+        },
+        {
+          "path": "lothlorien_bp/items/firefly_jar.json",
+          "sha256": "8ab663c677997b9eb64c31dea5ef199de7a2389e8f3206cc8ccc2cd0c5e6daec"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:galadhrim_arrow",
+      "slug": "galadhrim_arrow",
+      "name": "Galadhrim arrow",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:galadhrim_arrow"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:galadhrim_arrow/obtain",
+          "kind": "gathering",
+          "text": "Obtain through the trades, rewards or gathering routes listed here.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/entities/galadhrim_arrow.json",
+          "sha256": "579e99a8eb11f643a2982a874eef7dd6d011fd047958c4cdcb0ffd528593f83c"
+        },
+        {
+          "path": "lothlorien_bp/items/galadhrim_arrow.json",
+          "sha256": "6a7d2bd68dc53b49d4e617194ec2b2f4c5d107d626caa2010e40cd06f0483ff5"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:golden_fern",
+      "slug": "golden_fern",
+      "name": "Golden Fern",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:golden_fern"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:golden_fern/obtain",
+          "kind": "gathering",
+          "text": "Bone meal an existing plant to spread more onto suitable nearby ground. Bone meal on grass in Lothlorien can also place woodland flora. Found among the natural vegetation and materials of Lothlorien. Use the gathering tools and conditions described here.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/golden_fern.json",
+          "sha256": "ce591b0c92d21f984187f73978fd9a036adbe1534a0da08078e676899b4109f7"
+        },
+        {
+          "path": "lothlorien_bp/items/golden_fern.json",
+          "sha256": "d8cdfb7b5dbd63e6470d1d2fe15780b88efb0efb9da09bee7559b4ca6e436926"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:great_mallorn_nut",
+      "slug": "great_mallorn_nut",
+      "name": "Great Mallorn Nut",
+      "kind": "item",
+      "aliases": [
+        "lothlorien:great_mallorn_sprout"
+      ],
+      "nativeIds": [
+        "lothlorien:great_mallorn_nut"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:great_mallorn_nut/obtain",
+          "kind": "gift",
+          "text": "At Friend Harmony (+{{lothlorien:rule/friend-harmony}}), offer a Mallorn Acorn to an unleashed White Deer inside Lothlorien and follow its guidance. Each deer gives one nut in its lifetime.",
+          "related": []
+        }
+      ],
+      "relations": [
+        {
+          "kind": "gift-from",
+          "target": "lothlorien:white_deer"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/great_mallorn_sprout.json",
+          "sha256": "c6e4e79cd69c6380d33bfd8812b808b3f142e2094682a4338299b7b9f26178df"
+        },
+        {
+          "path": "lothlorien_bp/items/great_mallorn_nut.json",
+          "sha256": "29db314c99880f23014629783cc013b9ecb52b9b80221fcc102a378eea4690e7"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:lembas_cake",
+      "slug": "lembas_cake",
+      "name": "Lembas Cake",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:lembas_cake"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:lembas_cake/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/lembas_cake.json",
+          "sha256": "5b019441ba12f5f207aa77b237b897b79a8d868bbbf3b5d7f454e9aeeb727f2e"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:lembas_dough",
+      "slug": "lembas_dough",
+      "name": "Lembas Dough",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:lembas_dough"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:lembas_dough/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/lembas_dough.json",
+          "sha256": "f6f5eb8c36ff75539040167d40dd5e962d55586d3dfa2146b142479185e62e97"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:lembas_wrapped",
+      "slug": "lembas_wrapped",
+      "name": "Lembas",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:lembas_wrapped"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:lembas_wrapped/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/lembas_wrapped.json",
+          "sha256": "a85a3e29508c182f5d4ef0174e46ad17934174cf08ada2313c860e847dce722b"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_acorn",
+      "slug": "mallorn_acorn",
+      "name": "Mallorn Acorn",
+      "kind": "item",
+      "aliases": [
+        "lothlorien:mallorn_sapling"
+      ],
+      "nativeIds": [
+        "lothlorien:mallorn_acorn"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_acorn/obtain",
+          "kind": "gathering",
+          "text": "Break ordinary Mallorn leaves without shears or Silk Touch for a chance of acorns. Fortune changes the chance; every native condition is listed below.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_sapling.json",
+          "sha256": "d1272e89dad858ecc5d90316412f9cbcab7c86305d19effb7e6f0c45b9438e20"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_acorn.json",
+          "sha256": "5906937f40d5ca9c8171df1563ef1948eb821ab6d00e78621bd46f3ac1125c1e"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_blossom",
+      "slug": "mallorn_blossom",
+      "name": "Mallorn Blossom",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_blossom"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_blossom/obtain",
+          "kind": "gathering",
+          "text": "Found among the natural vegetation and materials of Lothlorien. Use the gathering tools and conditions described here.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_blossom.json",
+          "sha256": "004d84de1eacadf72a9fc1fff95dda4a88abc9ad1d998bf735827627ae2e6a41"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_blossom.json",
+          "sha256": "4e399f576fe101ddbe9ce4d3f9c4f439828a9875e217cb832be43c76581d1672"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_boat",
+      "slug": "mallorn_boat",
+      "name": "Mallorn Boat",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_boat"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_boat/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/entities/mallorn_boat.json",
+          "sha256": "0c893668982e8e78358bdbd7b993fe89dcc1f4ff2a133150382b42d0f4493031"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_boat.json",
+          "sha256": "c4454c9b02700625d266084c19e370f572280065cd5bf8505d5f4a473f8faba8"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_button",
+      "slug": "mallorn_button",
+      "name": "Mallorn Button",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_button"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_button/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_button.json",
+          "sha256": "a375727c631d7d2b328cbd8836023cebe7c4262f1c91fed577d7a132ebcfb724"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_button.json",
+          "sha256": "f85ba72aec50183582d979b5b9ee3a413b3a206e209afc472fea513a882341b9"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_chest_boat",
+      "slug": "mallorn_chest_boat",
+      "name": "Mallorn Boat with Chest",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_chest_boat"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_chest_boat/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/entities/mallorn_chest_boat.json",
+          "sha256": "2246006117a7bc0c8daa433f961b1f3e93816668c9d3fde8601ba9e79996a1f8"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_chest_boat.json",
+          "sha256": "0088ede485dd1456897b3bb34299ed215512c6259c0c9e83b19eac401db8c50c"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_door",
+      "slug": "mallorn_door",
+      "name": "Mallorn Door",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_door"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_door/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_door.json",
+          "sha256": "4198af83fb00912cf3ea7381b3aacbf213a5c6155cb9e78ec7215a3c66206247"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_door.json",
+          "sha256": "d8b9c4f4e1faf7e1bfede278b8607ac5ac643c47881585b47bc028853ed71567"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_fence",
+      "slug": "mallorn_fence",
+      "name": "Mallorn Fence",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_fence"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_fence/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_fence.json",
+          "sha256": "8baa979a6a8c501117638798622d5241a404235c278b071fffea6bf11bc36e8d"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_fence.json",
+          "sha256": "ef01a324ae2bfdc522f328b4789da6fc452f3a1888e127b73e671acd77c71e03"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_fence_gate",
+      "slug": "mallorn_fence_gate",
+      "name": "Mallorn Fence Gate",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_fence_gate"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_fence_gate/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_fence_gate.json",
+          "sha256": "fc4c2c24ebc8c1872f6317b96d3223aa64741586369754f7867c873ce1951ed2"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_fence_gate.json",
+          "sha256": "b7d03c6dc43e5bdc477617ce2d2d05dabec5513310e8bdeea21abdc0f4696134"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_golden_leaves",
+      "slug": "mallorn_golden_leaves",
+      "name": "Golden Mallorn Leaves",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_golden_leaves"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_golden_leaves/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_golden_leaves.json",
+          "sha256": "9014601b2e76732d205af73f9c444e49d031b0364145c16526aa83d0b576ae71"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_golden_leaves.json",
+          "sha256": "4ad84445ef00083878397c25300ae1202f55d3e00381b9ccb92f14c336de3ab8"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_heartwood_boat",
+      "slug": "mallorn_heartwood_boat",
+      "name": "Mallorn Heartwood Boat",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_heartwood_boat"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_heartwood_boat/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/entities/mallorn_heartwood_boat.json",
+          "sha256": "5f5f47e81bb2e2c6c46b58fc817b034c162919edf955d1c1c8ec7ae28fd6356a"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_heartwood_boat.json",
+          "sha256": "2fe57eeffe50c94051f51d163db56068a99f09ca5a9c3560244cc2f7d3141bd9"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_heartwood_button",
+      "slug": "mallorn_heartwood_button",
+      "name": "Mallorn Heartwood Button",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_heartwood_button"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_heartwood_button/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_heartwood_button.json",
+          "sha256": "afea299d8043b14052af05153f759c304e81fd18d419a665c53f44155f4fa6fa"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_heartwood_button.json",
+          "sha256": "5b51236812a48c9030c1fe73a2d2a70a29d8fa441942906ee56ade32fc9f2bad"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_heartwood_chest_boat",
+      "slug": "mallorn_heartwood_chest_boat",
+      "name": "Mallorn Heartwood Boat with Chest",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_heartwood_chest_boat"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_heartwood_chest_boat/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/entities/mallorn_heartwood_chest_boat.json",
+          "sha256": "0c3451c9734881db97834004eb72ed61192de575bab111f6c70167328bd1485a"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_heartwood_chest_boat.json",
+          "sha256": "a5e7f8e1263906cde617d24e57707c20b34de2137c901a46532be64f355f63e8"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_heartwood_door",
+      "slug": "mallorn_heartwood_door",
+      "name": "Mallorn Heartwood Door",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_heartwood_door"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_heartwood_door/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_heartwood_door.json",
+          "sha256": "a8bd88f10e305f04d5a57e5f968cb67b082969b14c991356efcd8ce9f0b62ae6"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_heartwood_door.json",
+          "sha256": "044ca31e4c2e51a475c83d2498b32b1f6f6dfe78952c5e9fc3e3efcb4a590f6b"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_heartwood_fence",
+      "slug": "mallorn_heartwood_fence",
+      "name": "Mallorn Heartwood Fence",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_heartwood_fence"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_heartwood_fence/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_heartwood_fence.json",
+          "sha256": "803ff1e47e529c0286e861b3c49bf6cbff2830ed41b090198fc3ecf8e645e0ae"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_heartwood_fence.json",
+          "sha256": "06602ce034fce7926267af325a9f14c89906e425d120a75ab45f9ac682464992"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_heartwood_fence_gate",
+      "slug": "mallorn_heartwood_fence_gate",
+      "name": "Mallorn Heartwood Fence Gate",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_heartwood_fence_gate"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_heartwood_fence_gate/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_heartwood_fence_gate.json",
+          "sha256": "032abecbe9ddaa27bbed69b01445ad142608c49825a39b073be58a466c7ca11d"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_heartwood_fence_gate.json",
+          "sha256": "3a4ddaf1e6e953c8983ba91e2c6845cf54e708ff80b823e274f0e22f0a8ac85c"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_heartwood_planks",
+      "slug": "mallorn_heartwood_planks",
+      "name": "Mallorn Heartwood Planks",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_heartwood_planks"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_heartwood_planks/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_heartwood_planks.json",
+          "sha256": "1953254fae199157b6e20627fa6ba275f9c1b30a24ca408b01e6609739cd1bbe"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_heartwood_planks.json",
+          "sha256": "a9735c11a457793204014f00b8701ba67563d66caeec46b6e28b400c81473c64"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_heartwood_pressure_plate",
+      "slug": "mallorn_heartwood_pressure_plate",
+      "name": "Mallorn Heartwood Pressure Plate",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_heartwood_pressure_plate"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_heartwood_pressure_plate/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_heartwood_pressure_plate.json",
+          "sha256": "5a3007ceb5958e4047f89317eb5995237cf86ecba81885ea550c0543ea6050fc"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_heartwood_pressure_plate.json",
+          "sha256": "742df43194b61e9adea6298c64fe7f186a91ad1defa0c2f383c8be3c745b40cd"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_heartwood_slab",
+      "slug": "mallorn_heartwood_slab",
+      "name": "Mallorn Heartwood Slab",
+      "kind": "item",
+      "aliases": [
+        "lothlorien:mallorn_heartwood_double_slab"
+      ],
+      "nativeIds": [
+        "lothlorien:mallorn_heartwood_slab"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_heartwood_slab/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_heartwood_double_slab.json",
+          "sha256": "d38987f624fc92584a2587a39b5ea477c15f51764bf4389fa57bb491ad6b4865"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_heartwood_slab.json",
+          "sha256": "3c56c93ec45f52d2ae94c03e3e3a834074c192afc7f0a7f285997f502e1605fa"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_heartwood_slab.json",
+          "sha256": "2b5e151533281745e253048e05c318ded59c25f4c01aac96f44bc119b3234b88"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_heartwood_stairs",
+      "slug": "mallorn_heartwood_stairs",
+      "name": "Mallorn Heartwood Stairs",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_heartwood_stairs"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_heartwood_stairs/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_heartwood_stairs.json",
+          "sha256": "5140b024f5c45812ee0c16d14e5b8acef3ab2ffb3f582b1a36ec993e672727a2"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_heartwood_stairs.json",
+          "sha256": "319cc2ff5d0df1dd23945ad7a802334486ee8e6a523c383bfee8d256a7bd45ee"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_heartwood_trapdoor",
+      "slug": "mallorn_heartwood_trapdoor",
+      "name": "Mallorn Heartwood Trapdoor",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_heartwood_trapdoor"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_heartwood_trapdoor/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_heartwood_trapdoor.json",
+          "sha256": "3ebe9b469e4bf217e96f752ff38a6b8af8eb7460a0fc4ca996a6ffebb4f2b4e3"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_heartwood_trapdoor.json",
+          "sha256": "3c087894cdb74318cdacbfc1d5fbc6000eebace8f1a3449817b006256740b3c9"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_leaf_carpet",
+      "slug": "mallorn_leaf_carpet",
+      "name": "Mallorn Leaf Litter",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_leaf_carpet"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_leaf_carpet/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_leaf_carpet.json",
+          "sha256": "b5f778b5522a2072bd954350f7c3d67501cbdab3af03e0a7f2763a8559dd15e9"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_leaf_carpet.json",
+          "sha256": "bfba5d314dabe4e32ffb7130261c2eb906455db6daab26c1ee1d406f7eb09490"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_leaves",
+      "slug": "mallorn_leaves",
+      "name": "Mallorn Leaves",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_leaves"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_leaves/obtain",
+          "kind": "gathering",
+          "text": "Grow Mallorn trees from acorns and gather their wood or foliage. Ordinary leaves require shears or Silk Touch to collect the leaf block. Found among the natural vegetation and materials of Lothlorien. Use the gathering tools and conditions described here.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_leaves.json",
+          "sha256": "6a2fac9ceadb79f9996871cd763653c85895b253254a52629c3485a2b67b10e4"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_leaves.json",
+          "sha256": "23c07ca000db20b358bdc69c08b837adc311a6af860d8561089ed236c3697261"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_log",
+      "slug": "mallorn_log",
+      "name": "Mallorn Log",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_log"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_log/obtain",
+          "kind": "gathering",
+          "text": "Grow Mallorn trees from acorns and gather their wood or foliage. Ordinary leaves require shears or Silk Touch to collect the leaf block. Found among the natural vegetation and materials of Lothlorien. Use the gathering tools and conditions described here.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_log.json",
+          "sha256": "4a8d056693c29d4f9d792ce1be0a20ff73df7149a0dcc6a54d976bb7477f67e5"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_log.json",
+          "sha256": "b0e230f42ca81d8cae7876758f7728f6da1c1692d815ecfc25e0a89a75717cb8"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_nectar",
+      "slug": "mallorn_nectar",
+      "name": "Mallorn Nectar",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_nectar"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_nectar/obtain",
+          "kind": "gathering",
+          "text": "Use an empty glass bottle on a fully filled Nectar Bloom (stage {{lothlorien:rule/nectar-stage}}). It yields one nectar and empties the bloom. Blooms refill on random ticks with Mallorn leaves directly above.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_nectar.json",
+          "sha256": "25e1c3aff3dfc2a6873c26b29d54b928f2019087e37b899c3160df96db0f1dde"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_planks",
+      "slug": "mallorn_planks",
+      "name": "Mallorn Planks",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_planks"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_planks/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_planks.json",
+          "sha256": "743d84c1fb71768fbfea44aa044baac33e71dc75e6785f8594649db95d3df57a"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_planks.json",
+          "sha256": "10d100c8bf72f0080de5430805fcd8fd8133f7717c1a4dba4117cc3574800c9b"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_pressure_plate",
+      "slug": "mallorn_pressure_plate",
+      "name": "Mallorn Pressure Plate",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_pressure_plate"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_pressure_plate/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_pressure_plate.json",
+          "sha256": "2b549bac264beb10b68f67d6fe5e0f5e3d02772d917cdc5e37f502b2457d7cfa"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_pressure_plate.json",
+          "sha256": "29be78b46cdf6b3810fde20f60a9fdf4fca6df99777b00b4cee144479434b22d"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_slab",
+      "slug": "mallorn_slab",
+      "name": "Mallorn Slab",
+      "kind": "item",
+      "aliases": [
+        "lothlorien:mallorn_double_slab"
+      ],
+      "nativeIds": [
+        "lothlorien:mallorn_slab"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_slab/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_double_slab.json",
+          "sha256": "cb281abae340f08a27b3cc90c7516e6006c72785d5a473ec0417e362f672057a"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_slab.json",
+          "sha256": "4d6f576ee01d29ceffe584ecf7cfb415f3bfedf1826da71afc6b1eb7380e2a35"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_slab.json",
+          "sha256": "0b74357dcad62401a17a021ab03dd37b1715cc61561bda0040477798fd9e729e"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_stairs",
+      "slug": "mallorn_stairs",
+      "name": "Mallorn Stairs",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_stairs"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_stairs/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_stairs.json",
+          "sha256": "05921873057290b06961ad5816787a61ded492df0118c47881abfbd97ed519c9"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_stairs.json",
+          "sha256": "589415a8d1a2569ad92496be94432fff57b3734a7bbc1203b6d70f51f74019ac"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_stripped_log",
+      "slug": "mallorn_stripped_log",
+      "name": "Stripped Mallorn Log",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_stripped_log"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_stripped_log/obtain",
+          "kind": "gathering",
+          "text": "Use an axe on Mallorn Log, then collect the stripped block.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_stripped_log.json",
+          "sha256": "9a80666ecfae9b899c3b19b927f6c72ffe4d070776fbb563164b168c6e4dd640"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_stripped_log.json",
+          "sha256": "2f60576ee9dae6516ff05aadadb364557e927c40fe80d2f8f40efdef029ffc09"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_stripped_wood",
+      "slug": "mallorn_stripped_wood",
+      "name": "Stripped Mallorn Wood",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_stripped_wood"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_stripped_wood/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_stripped_wood.json",
+          "sha256": "dea42e6ecdcf6d3b871c56362b9242050decf9be5c74bb8115e279c1520a8e6b"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_stripped_wood.json",
+          "sha256": "8a47a946da4fd6538d04fbc27c5d3f96bf504e00511bb9fc6cba905b9172dfde"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_trapdoor",
+      "slug": "mallorn_trapdoor",
+      "name": "Mallorn Trapdoor",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_trapdoor"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_trapdoor/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_trapdoor.json",
+          "sha256": "1a8d562e745541f14cd03bf5da212db9e52a3cfd5672aaf3253b5c855bcff304"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_trapdoor.json",
+          "sha256": "4f0699e1dff3d4efd4d8f311524e9f9da23877760564852d120ff41f751e8930"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:mallorn_wood",
+      "slug": "mallorn_wood",
+      "name": "Mallorn Wood",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:mallorn_wood"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:mallorn_wood/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/mallorn_wood.json",
+          "sha256": "dd90daa74c2da3e8a042e81181c1dff22c97a71dc3d0a25408e5586901a54956"
+        },
+        {
+          "path": "lothlorien_bp/items/mallorn_wood.json",
+          "sha256": "c267e3947d8d4efeb7bcc85b783aa780a75a21e0bf85b4d04b586bb00d4be746"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:miruvor",
+      "slug": "miruvor",
+      "name": "Miruvor Skin",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:miruvor"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:miruvor/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/miruvor.json",
+          "sha256": "9e9ecc5c5e05813b24a316c861b0b9dc5ff4ef53bc979f1cf0770f40507c6b77"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:morning_dew",
+      "slug": "morning_dew",
+      "name": "Bottle of Morning Dew",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:morning_dew"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:morning_dew/obtain",
+          "kind": "gathering",
+          "text": "Collect {{lothlorien:rule/dew-drops}} drops from dewy Mallorn Leaf Carpet or Mallorn Blossom. Dew forms late at night and early in the morning (time {{lothlorien:rule/dew-start}} until before {{lothlorien:rule/dew-end}}) under Mallorn foliage near players. Visible dew remains collectible until it dries.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/morning_dew.json",
+          "sha256": "fdf75991347c6226d75d30775e3dd539c32092c3a3da14fe98f8d364e4355954"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:nectar_bloom",
+      "slug": "nectar_bloom",
+      "name": "Nectar Bloom",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:nectar_bloom"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:nectar_bloom/obtain",
+          "kind": "gathering",
+          "text": "Gather a natural or tree-grown Nectar Bloom with shears or Silk Touch. Ordinary breaking does not supply the bloom. Found among the natural vegetation and materials of Lothlorien. Use the gathering tools and conditions described here.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/nectar_bloom.json",
+          "sha256": "2852a63a40161e2200cc080e30e1e759476c4f206ccf6f0386ddc142ba8711e4"
+        },
+        {
+          "path": "lothlorien_bp/items/nectar_bloom.json",
+          "sha256": "59da322c3f06e104e3d76bac46e6b8d88f814be90480b2a76808b1882ff75083"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:niphredil",
+      "slug": "niphredil",
+      "name": "Niphredil",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:niphredil"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:niphredil/obtain",
+          "kind": "gathering",
+          "text": "Bone meal an existing plant to spread more onto suitable nearby ground. Bone meal on grass in Lothlorien can also place woodland flora. Found among the natural vegetation and materials of Lothlorien. Use the gathering tools and conditions described here.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/niphredil.json",
+          "sha256": "0e3216ef4f082588284340b557f96abee6b1b3b79f4a56915221cae160ed6bae"
+        },
+        {
+          "path": "lothlorien_bp/items/niphredil.json",
+          "sha256": "45c863bb44a557e54e87cbe35ca4c81d7919086a9d931076c2f5d050ba4673f5"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:phial_of_galadriel",
+      "slug": "phial_of_galadriel",
+      "name": "Phial of Galadriel",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:phial_of_galadriel"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:phial_of_galadriel/obtain",
+          "kind": "gathering",
+          "text": "Obtain through the trades, rewards or gathering routes listed here.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/phial_of_galadriel.json",
+          "sha256": "94688cef581b10ad597c51f40d71915ad9378f25eee6f1acce070860cf199a37"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:silver_belt",
+      "slug": "silver_belt",
+      "name": "Silver belt",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:silver_belt"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:silver_belt/obtain",
+          "kind": "gathering",
+          "text": "Obtain through the trades, rewards or gathering routes listed here.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/silver_belt.json",
+          "sha256": "35c34e318ad827c2f0b3e3fbc64b0b6e77c2abe26e4499657180492b1b639153"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:star_canopy",
+      "slug": "star_canopy",
+      "name": "Star Canopy",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:star_canopy"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:star_canopy/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/star_canopy.json",
+          "sha256": "e1a43b201c6435b39863820b4b1aa68476da2daba20e4645b5e0f44ebf5c6455"
+        },
+        {
+          "path": "lothlorien_bp/items/star_canopy.json",
+          "sha256": "7fe7ad4add7c1d5c2aa46408d351e5c8e1f4a53a77927c92fb8ddfefbbd2ae46"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:swan_meat_cooked",
+      "slug": "swan_meat_cooked",
+      "name": "Cooked Swan Meat",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:swan_meat_cooked"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:swan_meat_cooked/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/swan_meat_cooked.json",
+          "sha256": "2ca9e0633168499777db162d1693cd205bae050ffcacb27db89a4a32cf9774b0"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:swan_meat_raw",
+      "slug": "swan_meat_raw",
+      "name": "Raw Swan Meat",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:swan_meat_raw"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:swan_meat_raw/obtain",
+          "kind": "gathering",
+          "text": "Obtain from adult swans.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/swan_meat_raw.json",
+          "sha256": "254b762ae83a6236283448cbc279c77ffa2b115dc9302fb41ba77f3bdae8153a"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:venison_cooked",
+      "slug": "venison_cooked",
+      "name": "Cooked Venison",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:venison_cooked"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:venison_cooked/obtain",
+          "kind": "crafting",
+          "text": "Craft or process it using the recipes shown for this item.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/venison_cooked.json",
+          "sha256": "c7e337349d4ba702d4315c7ec0712d4600cc809011c3f253c0515af26d4e0558"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:venison_raw",
+      "slug": "venison_raw",
+      "name": "Raw Venison",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:venison_raw"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:venison_raw/obtain",
+          "kind": "gathering",
+          "text": "Obtain from adult deer.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/venison_raw.json",
+          "sha256": "c01beac26e5d57c51cbb118e54b3e3c5f7971dae359a07fa3b9254ae426fe9a7"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:western_corn_grain",
+      "slug": "western_corn_grain",
+      "name": "Western Corn Grain",
+      "kind": "item",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:western_corn_grain"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:western_corn_grain/obtain",
+          "kind": "gathering",
+          "text": "Harvest fully grown Western Corn for grain. Young crops supply seeds instead.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/items/western_corn_grain.json",
+          "sha256": "4b416a29da855ef75fe9cd260636f00f230081d8b0f914cde592060d8482d780"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:western_corn_seeds",
+      "slug": "western_corn_seeds",
+      "name": "Western Corn Seeds",
+      "kind": "item",
+      "aliases": [
+        "lothlorien:western_corn"
+      ],
+      "nativeIds": [
+        "lothlorien:western_corn_seeds"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:western_corn_seeds/obtain",
+          "kind": "gathering",
+          "text": "Harvest Western Corn. Young crops return seeds; fully grown crops provide grain and independent chances of extra seeds. Fortune adds seed rolls; a mature crop can give no seeds. Find wild corn in Lothlorien and replant it on farmland.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "lothlorien_bp/blocks/western_corn.json",
+          "sha256": "746d4b4ec6d23b552edf416ff4e1565aaa8a716c055053abdf90d8a9892fa8f3"
+        },
+        {
+          "path": "lothlorien_bp/items/western_corn_seeds.json",
+          "sha256": "6ee1ab94280e3bf6b15ac3149e762a41b084011a908011cf6fe7639a420853d8"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:butterfly",
+      "slug": "butterfly",
+      "name": "Butterfly",
+      "kind": "mob",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:butterfly"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:butterfly/obtain",
+          "kind": "encounter",
+          "text": "Encounter in the LothlÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³rien forest.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/entities/butterfly.json",
+          "sha256": "8bfc50f97dcbf2364de42cb77028bf24885fb4d4ac4545131f8b114e98e9f5df"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:deer",
+      "slug": "deer",
+      "name": "Deer",
+      "kind": "mob",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:deer"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:deer/obtain",
+          "kind": "encounter",
+          "text": "Encounter in the LothlÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³rien forest.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/entities/deer.json",
+          "sha256": "5a4c2b67f418c9e30dc2b6bf9f9e5bb8b3c1c77ceef12b96c616cbd8818cefe4"
+        },
+        {
+          "path": "lothlorien_bp/scripts/deer.js",
+          "sha256": "4a5250f2dfd3f173b71e78e282010c4b37d9d33e9c270dbc2250cb47e2825865"
+        },
+        {
+          "path": "lothlorien_bp/scripts/deer_rules.js",
+          "sha256": "f6acdcc7f8e8d1434eea289ff5f956446b441f090802bf8775bd40acffbc9287"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:elf",
+      "slug": "elf",
+      "name": "Elf",
+      "kind": "mob",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:elf"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:elf/obtain",
+          "kind": "encounter",
+          "text": "Encounter in the LothlÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³rien forest.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/entities/elf.json",
+          "sha256": "648c9e1e87015f655229a9025a9c8c41ef9ecfa54a04fd18b06a9107bc1dd94f"
+        },
+        {
+          "path": "lothlorien_bp/scripts/elf.js",
+          "sha256": "73ab6d4b93bb37ff8dbabcf9f69747530977d24ea306702cb9455919863f4d49"
+        },
+        {
+          "path": "lothlorien_bp/scripts/elf_native_use.js",
+          "sha256": "432f2aaff647406d23154a05791598c4769b3100e8b7f59405b3e0e6d6c62891"
+        },
+        {
+          "path": "lothlorien_bp/scripts/elf_rules.js",
+          "sha256": "96f37be2215d690d5da64464b14aab6fc60a6efd1df7b6f5e707ec9b43b94711"
+        },
+        {
+          "path": "lothlorien_bp/scripts/elf_village.js",
+          "sha256": "c78dfd2f26767d428edea314d6f9a07e4295786b09696f4db7b0d22b5e9b640d"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:elven_warden",
+      "slug": "elven_warden",
+      "name": "Elven Warden",
+      "kind": "mob",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:elven_warden"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:elven_warden/obtain",
+          "kind": "encounter",
+          "text": "Encounter in the LothlÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³rien forest.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/entities/elven_warden.json",
+          "sha256": "44d6f7711cdc8cded52a87701f19720b24e03a88751f33b0303d6b8582f8a0a9"
+        },
+        {
+          "path": "lothlorien_bp/scripts/elven_warden.js",
+          "sha256": "86dedf583cb7c8d59d08e48704d07927b27fc35370cff153eca325a8768ec19d"
+        },
+        {
+          "path": "lothlorien_bp/scripts/elven_warden_rules.js",
+          "sha256": "d45b33ed0da0a0be567818178b8afbce1e4e16d22bde7e464b59a18a2f1ca8db"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:firefly",
+      "slug": "firefly",
+      "name": "Firefly",
+      "kind": "mob",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:firefly"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:firefly/obtain",
+          "kind": "encounter",
+          "text": "Encounter in the LothlÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³rien forest.",
+          "related": []
+        }
+      ],
+      "relations": [
+        {
+          "kind": "captured-as",
+          "target": "lothlorien:bottle_of_fireflies"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/entities/firefly.json",
+          "sha256": "b9357b0d667c0172b85392aa7b630badb067637ba0e41ee951f381560b4aeafa"
+        },
+        {
+          "path": "lothlorien_bp/scripts/firefly_bottle.js",
+          "sha256": "60f1eadf80a92a0391e0a1e35bca4b52c3d1a9f8c8054faee6422cf692ffb50c"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:songbird",
+      "slug": "songbird",
+      "name": "Songbird",
+      "kind": "mob",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:songbird"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:songbird/obtain",
+          "kind": "encounter",
+          "text": "Encounter in the LothlÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³rien forest.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/entities/songbird.json",
+          "sha256": "a18aa29e4ac0a2363dfd24a781bf7780eb0e5cf1b4b9d9eab3be590e5e72e2c8"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:squirrel",
+      "slug": "squirrel",
+      "name": "Ground Squirrel",
+      "kind": "mob",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:squirrel"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:squirrel/obtain",
+          "kind": "encounter",
+          "text": "Encounter in the LothlÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³rien forest.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/entities/squirrel.json",
+          "sha256": "33dd4ba501f0bb1ac5f2a792b32e261244ea8ce89c6c430458ef1aadd5f3a67e"
+        },
+        {
+          "path": "lothlorien_bp/scripts/squirrel.js",
+          "sha256": "739f00c776f8fb0bd38c7f0265d5cafcb43f8f031c06707e245c1fefc2f49e38"
+        },
+        {
+          "path": "lothlorien_bp/scripts/squirrel_rules.js",
+          "sha256": "56300ce0bc4119062f4c47e41bce3d9f654f142b353c15b83a2ea7b9cf92880f"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:swan",
+      "slug": "swan",
+      "name": "Swan",
+      "kind": "mob",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:swan"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:swan/obtain",
+          "kind": "encounter",
+          "text": "Encounter in the LothlÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³rien forest.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/entities/swan.json",
+          "sha256": "6d68a043fc74f27c103deeb6449752be22529b2ff5b3e34dd9c6d7d0314b7b72"
+        },
+        {
+          "path": "lothlorien_bp/scripts/swan.js",
+          "sha256": "d4eb5d0bbd1135b16d7822e4e2afbba3ffaae2c9a70f3dd329490c8871e99f8e"
+        },
+        {
+          "path": "lothlorien_bp/scripts/swan_rules.js",
+          "sha256": "23b6a1bcf30b3cd688aed79ef8014b2946c42cfd86adaaee4d217628646aca4d"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:unicorn",
+      "slug": "unicorn",
+      "name": "Unicorn",
+      "kind": "mob",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:unicorn"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:unicorn/obtain",
+          "kind": "encounter",
+          "text": "Encounter in the LothlÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³rien forest.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/entities/unicorn.json",
+          "sha256": "68dd72d60ef5da8db4b0e9f85a7db67e232db0c80bc44ed297fa0c0402e29f0a"
+        },
+        {
+          "path": "lothlorien_bp/scripts/unicorn.js",
+          "sha256": "de14953f0d475a053a87479cd96496e65efdddf173eb743d0d95918cfe41ca37"
+        },
+        {
+          "path": "lothlorien_bp/scripts/unicorn_rules.js",
+          "sha256": "dfcdccc3138b8544a47afc7171eef2834a50a3571367f408e5b51e96c677a971"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:white_deer",
+      "slug": "white_deer",
+      "name": "White Deer",
+      "kind": "mob",
+      "aliases": [],
+      "nativeIds": [
+        "lothlorien:white_deer"
+      ],
+      "obtaining": [
+        {
+          "id": "lothlorien:white_deer/obtain",
+          "kind": "encounter",
+          "text": "Encounter in the LothlÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³rien forest.",
+          "related": []
+        }
+      ],
+      "relations": [
+        {
+          "kind": "gives",
+          "target": "lothlorien:great_mallorn_nut"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/entities/white_deer.json",
+          "sha256": "43faecd61fff80f3642265500e9969fb5f49b5b12f4cd03c391837b51ac8edd3"
+        },
+        {
+          "path": "lothlorien_bp/scripts/white_deer.js",
+          "sha256": "87b7d8bc9cfe04630399947601c0379c2d0e075b14d67bfe1e3e9905403beb45"
+        },
+        {
+          "path": "lothlorien_bp/scripts/white_deer_rules.js",
+          "sha256": "49c58eb000687cf57396ffcf7e55273d9cb3af72c893425949ba54ed7d0f2ced"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:harmony",
+      "slug": "harmony",
+      "name": "Harmony",
+      "kind": "system",
+      "aliases": [],
+      "nativeIds": [],
+      "obtaining": [
+        {
+          "id": "lothlorien:harmony/obtain",
+          "kind": "system",
+          "text": "Your actions towards the forest and its inhabitants change how they respond to you.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/scripts/harmony.js",
+          "sha256": "cb13b3d41b65ecb7cbda03ecb2000652ced54d5c1a3e9aa8cbad5b5540564bce"
+        },
+        {
+          "path": "lothlorien_bp/scripts/harmony_game.js",
+          "sha256": "5dc81335d94c24f7688f513a21e3f6dab3761ec82333d9bf569a80f25b73ef89"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:renown",
+      "slug": "renown",
+      "name": "Renown",
+      "kind": "system",
+      "aliases": [],
+      "nativeIds": [],
+      "obtaining": [
+        {
+          "id": "lothlorien:renown/obtain",
+          "kind": "system",
+          "text": "Complete Loremaster lessons and requests to improve your Renown. It is separate from Harmony.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/scripts/renown_game.js",
+          "sha256": "3f3178efcfe8d40286371eed3c1ad6a4d9340e1a2343d8eee7c22cf10b91e8f5"
+        },
+        {
+          "path": "lothlorien_bp/scripts/renown_rules.js",
+          "sha256": "c34bf63799a3650a5edc77364c1d4c880d82d3907abebbbee4c271e8571d2b3e"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:quests",
+      "slug": "quests",
+      "name": "Lessons and requests",
+      "kind": "system",
+      "aliases": [],
+      "nativeIds": [],
+      "obtaining": [
+        {
+          "id": "lothlorien:quests/obtain",
+          "kind": "system",
+          "text": "Visit a Loremaster to receive lessons and profession requests. Complete the requested handover to earn progress.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:trading",
+      "slug": "trading",
+      "name": "Village trading",
+      "kind": "system",
+      "aliases": [],
+      "nativeIds": [],
+      "obtaining": [
+        {
+          "id": "lothlorien:trading/obtain",
+          "kind": "system",
+          "text": "Trade with gardeners, healers, woodwrights and lamplighters. Harmony changes prices and access; Renown unlocks stock.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/scripts/trade.js",
+          "sha256": "b1e4219d8a06a460ecaaf0d4a98a227099eb91ec0ca4da439a3836844f3e49e9"
+        },
+        {
+          "path": "lothlorien_bp/scripts/trade_rules.js",
+          "sha256": "fc63dc186136de45a67e65efeb3c94027fd77f12990bd569753cddfb5f4ac3fc"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:growing",
+      "slug": "growing",
+      "name": "Growing and gathering",
+      "kind": "system",
+      "aliases": [],
+      "nativeIds": [],
+      "obtaining": [
+        {
+          "id": "lothlorien:growing/obtain",
+          "kind": "system",
+          "text": "Plant Mallorn Acorns for trees, grow Western Corn on farmland, and collect dew and nectar for supplies.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/scripts/animal_food.js",
+          "sha256": "f0d01fe55718a62257441890a80181d8def071a556723f4379f5e3c10f8c37cb"
+        },
+        {
+          "path": "lothlorien_bp/scripts/animal_food_rules.js",
+          "sha256": "f5826219fbfd8343c87394fde84958b817793b223762e8dad12f88e0ccb91046"
+        },
+        {
+          "path": "lothlorien_bp/scripts/archery.js",
+          "sha256": "d0db1dc6817088b7b1a9412e200adea08dd1332c72066a2f74b52b595bec29c5"
+        },
+        {
+          "path": "lothlorien_bp/scripts/athelas.js",
+          "sha256": "9296acc32e92ba67308c0cd94ea8ba6da25d8fa95855ba0e018ed10d6799ac28"
+        },
+        {
+          "path": "lothlorien_bp/scripts/blocks.js",
+          "sha256": "c22cc6d57f9e99ba20f3f94378cf03c17774c99e5e9344f5b3d6ad9e67660528"
+        },
+        {
+          "path": "lothlorien_bp/scripts/bonemeal.js",
+          "sha256": "a515048ce49ebe4da94a76851e67e3d0c5a80032b55acedef745e5cf7001f314"
+        },
+        {
+          "path": "lothlorien_bp/scripts/bottles.js",
+          "sha256": "7c5fa56097e82d5e6d061850e85ee10625af2598714426bd05ace7684b9f5658"
+        },
+        {
+          "path": "lothlorien_bp/scripts/control_rules.js",
+          "sha256": "9986d8b39d57629dcaf2973d8f57177f8096a97dcadb58212b1214498a9ff695"
+        },
+        {
+          "path": "lothlorien_bp/scripts/crop.js",
+          "sha256": "1ac8c635313543ee86a5d118d70b7f90c4476aa4778b3554962ea467cb083964"
+        },
+        {
+          "path": "lothlorien_bp/scripts/crop_rules.js",
+          "sha256": "1891c327a6993984abd4efefca602d1b1a8ea7a8c38308e6034967dc7735a97d"
+        },
+        {
+          "path": "lothlorien_bp/scripts/deeds.js",
+          "sha256": "de2add819e84b777ae9d096c1e66bcea9cc29ea039208a899482da46bf7b61c9"
+        },
+        {
+          "path": "lothlorien_bp/scripts/deferred_use.js",
+          "sha256": "6e83af81d30a8429160fc62275d5c50b03329b5c2521666b148901290544a7c0"
+        },
+        {
+          "path": "lothlorien_bp/scripts/depth.js",
+          "sha256": "2aad59f1e925d2e2bc6b0379f09caa8510f26342eb1643632c1806a74a3cd9ad"
+        },
+        {
+          "path": "lothlorien_bp/scripts/dew.js",
+          "sha256": "6098adfc8e87567e88a0659805864844d51f94ec6fe626ad8825f742d4a8085c"
+        },
+        {
+          "path": "lothlorien_bp/scripts/dew_rules.js",
+          "sha256": "e7d6cbb6b9e4a177d4a3c2d45572079b7121d93645627df1d19c85be176a166d"
+        },
+        {
+          "path": "lothlorien_bp/scripts/fireflies.js",
+          "sha256": "b64c96cc9502c5aa1bc7c93434a120539113ce91ddb1ed29a05a477b0840773c"
+        },
+        {
+          "path": "lothlorien_bp/scripts/flora_table.js",
+          "sha256": "2b19dc6fea4c89faba08fa68f82dce792e81c6011fb0859c59e6c55a72d060bd"
+        },
+        {
+          "path": "lothlorien_bp/scripts/gift_rules.js",
+          "sha256": "258393605b810b7e87237e5b9d406bf228d39ff264a062f8d6ea226cd7881271"
+        },
+        {
+          "path": "lothlorien_bp/scripts/grass_overlay.js",
+          "sha256": "290dbf1112fb3b996e709d81fd7958c44dfd8058cfd63462b7402d023886aa87"
+        },
+        {
+          "path": "lothlorien_bp/scripts/great_mallorn.js",
+          "sha256": "4c2629b83be76171b4769430a98ad5c3395cfcd2ad8af827ab8dddce90c3cc02"
+        },
+        {
+          "path": "lothlorien_bp/scripts/great_mallorn_rules.js",
+          "sha256": "20cbc7774cec3071840edcaef8e77c1fdc65af423e197a12f90777b6fe45f6e4"
+        },
+        {
+          "path": "lothlorien_bp/scripts/ground_cover.js",
+          "sha256": "9794ddc679b379303853a809c13d17e0fc8aec511c26a8fa51ec3e70c1f84b3b"
+        },
+        {
+          "path": "lothlorien_bp/scripts/healer.js",
+          "sha256": "a53ab54dc3549883ee8174d6723c7a8b7d4ce951fad6aae74c7f14e7a3c9895e"
+        },
+        {
+          "path": "lothlorien_bp/scripts/healer_rules.js",
+          "sha256": "5a069c2ba3471311b42c96c9c0ce7c5ab18351be4b25fe10ed4580de445c95a7"
+        },
+        {
+          "path": "lothlorien_bp/scripts/home_furnish.js",
+          "sha256": "5aaad547a621fb6a2c6718e8e6050429e63ff951b5b6aa3ac0dac3b2abba1eee"
+        },
+        {
+          "path": "lothlorien_bp/scripts/leaf_fall.js",
+          "sha256": "9704d9d05d62f6b2a99ec80d0df6cde611ed90f36823419cc30e56e8699bcc5e"
+        },
+        {
+          "path": "lothlorien_bp/scripts/lembas.js",
+          "sha256": "b2bfef689299a6f86757c8b0a46a825847a7ae3e5fab1ce2c138f31bf7c6375b"
+        },
+        {
+          "path": "lothlorien_bp/scripts/loop_marker.js",
+          "sha256": "16f733769f0f2ae329a14ee619c6b98553ce60ef37b6f0a950da0d1654aca2b8"
+        },
+        {
+          "path": "lothlorien_bp/scripts/loremaster.js",
+          "sha256": "0b343af95dd868157ae51c2cb652f14f485171050e553b47d5a58222677d4259"
+        },
+        {
+          "path": "lothlorien_bp/scripts/main.js",
+          "sha256": "d3d6d45ea35c6e5b0ca326f3e5790fe568d052c57cab5d57b03fd9652d4393a7"
+        },
+        {
+          "path": "lothlorien_bp/scripts/mallorn_tree.js",
+          "sha256": "7d4be00d4466a590b83f188b26efeb2fc23335adb71cfd6be6f8d9d61f51dc18"
+        },
+        {
+          "path": "lothlorien_bp/scripts/messages.js",
+          "sha256": "2b30fd6ee98bb095348356171e129c79ee4c1e7c59a1f86c1c908b28bc48f28f"
+        },
+        {
+          "path": "lothlorien_bp/scripts/nectar.js",
+          "sha256": "ce39223dc22250ad68fcc40652b29d38c249ce3b45a19e7dea68a12304375ef3"
+        },
+        {
+          "path": "lothlorien_bp/scripts/nectar_rules.js",
+          "sha256": "55f74bf0e31719e8beb62e179efbe005bb0fe26597e79c73ceefa54c734499b1"
+        },
+        {
+          "path": "lothlorien_bp/scripts/phial.js",
+          "sha256": "f3f8337074bc0d333e2b357b54e4ebc7877dd1810fcbf4af14ff4a77358d4d64"
+        },
+        {
+          "path": "lothlorien_bp/scripts/planter_panels.js",
+          "sha256": "174fc800c3e92e0f8d45884e7409d08c4b6309bf19df83e280e0053d9aa42a9b"
+        },
+        {
+          "path": "lothlorien_bp/scripts/rail_connections.js",
+          "sha256": "062e03beedbf44ce559b9117e3bbe43733304d9a0f55042aef549164bb024e96"
+        },
+        {
+          "path": "lothlorien_bp/scripts/rail_mender.js",
+          "sha256": "974dc70416bc1b0830df2827e002358d2d164b701ccae117a9ec5961b2332540"
+        },
+        {
+          "path": "lothlorien_bp/scripts/rail_mender_rules.js",
+          "sha256": "6118bd6509889630e9fee4827198cbcf0f866137060e63fb20cdeb8d21443fe1"
+        },
+        {
+          "path": "lothlorien_bp/scripts/speed_probe.js",
+          "sha256": "7a47174be3159cfeed9afcffbb3f0e9a922f87eb9b8ccfa71491880d898e659b"
+        },
+        {
+          "path": "lothlorien_bp/scripts/speed_stats.js",
+          "sha256": "377eb46fe20cec8e72ab6975b6bcc9d013869991f7d886008df8bac6e7a5182c"
+        },
+        {
+          "path": "lothlorien_bp/scripts/support_motion.js",
+          "sha256": "cd79233bd9b62247b4dce961fd20b524e7f18ac4d40442496b0f29e98859c505"
+        },
+        {
+          "path": "lothlorien_bp/scripts/support_motion_service.js",
+          "sha256": "32addb6d0db9a94724f80aa8eca42d86c2fd02c502d7854f11f577d52a8a75a7"
+        },
+        {
+          "path": "lothlorien_bp/scripts/support_policies.js",
+          "sha256": "5a0d3b0092591a65257751fb5db4ae42af92d8f1a647a295e1aaa9f213498125"
+        },
+        {
+          "path": "lothlorien_bp/scripts/tick_rate.js",
+          "sha256": "04514ae451878f7d0a1f5796f6dbf347ebd840f91fbfe4629e12671936257fcc"
+        },
+        {
+          "path": "lothlorien_bp/scripts/tick_rate_rules.js",
+          "sha256": "2bd0529c862bc78b9ab9b41c93bd963574bb33d049eb7f6ca6b673e6b6ada1e0"
+        },
+        {
+          "path": "lothlorien_bp/scripts/tree_interaction_rules.js",
+          "sha256": "9d80ce2844049fbb9200d97c17cc4273a9de934969c5d5a099cff90ad1471bde"
+        },
+        {
+          "path": "lothlorien_bp/scripts/trees.js",
+          "sha256": "ce1e6709f9d349a18c3349625dd66c5bbff50fefd7af46e0ab229643d2fdcfbd"
+        },
+        {
+          "path": "lothlorien_bp/scripts/use_guard.js",
+          "sha256": "35953fdcbf6e77847bb661d5cbe664fdc753a36e2a239d7be1ad5954241f2a5c"
+        },
+        {
+          "path": "lothlorien_bp/scripts/village_bridge.js",
+          "sha256": "860988ea350d020ffde9ed8632e761ae786fa37276cfd0411966513aeae5036e"
+        },
+        {
+          "path": "lothlorien_bp/scripts/village_loop.js",
+          "sha256": "4c5f41343425e682c91858d7b0e3bfed6bdc425db618ea0ff330cf7aeb260734"
+        },
+        {
+          "path": "lothlorien_bp/scripts/village_planner.js",
+          "sha256": "b8897bc99b7f617cb7de7205d6c153496d461badf78b557aaa06b4ed729ed0be"
+        },
+        {
+          "path": "lothlorien_bp/scripts/village_repair.js",
+          "sha256": "0b94583f6acd604a0b5930d7b8dc79be435d978b919b4e3599eb23b5c8070474"
+        },
+        {
+          "path": "lothlorien_bp/scripts/warden_replace.js",
+          "sha256": "cc1672789e219a1a280aaa716f3a95d4fa03c23c5cda52929245a3c287d711c0"
+        },
+        {
+          "path": "lothlorien_bp/scripts/warden_replace_rules.js",
+          "sha256": "7e1c608551efaf376bc0d989122caa12eb282024282bc8258371a4d2307a4ee8"
+        },
+        {
+          "path": "lothlorien_bp/scripts/worn_gifts.js",
+          "sha256": "8252fc1fd824aa582d7a4d729eba4aab6dde6bb9815561e258a5714dbdb823e7"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:root_shrine",
+      "slug": "root_shrine",
+      "name": "Root Shrine",
+      "kind": "structure",
+      "aliases": [],
+      "nativeIds": [],
+      "obtaining": [
+        {
+          "id": "lothlorien:root_shrine/obtain",
+          "kind": "encounter",
+          "text": "Find the shrine beneath a Great Mallorn. Its west-root chest and decorated pot supply treasure and provisions.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_shrine.mcstructure",
+          "sha256": "a2b6916b1180de3704bc276f82f23fb24bda7db003c03370fc3cc28d679c7b46"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/root_shrine_01.mcstructure",
+          "sha256": "aff8960bf7bab4681e0e151ccaa453acec5ebd151608609bbf67a9194e9b4494"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:flower_garden",
+      "slug": "flower_garden",
+      "name": "Flower Garden",
+      "kind": "structure",
+      "aliases": [],
+      "nativeIds": [],
+      "obtaining": [
+        {
+          "id": "lothlorien:flower_garden/obtain",
+          "kind": "encounter",
+          "text": "Find woodland flowers, a supply barrel and a place to gather plants.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/flower_garden_01.mcstructure",
+          "sha256": "6a4d0770d82d1973dabc42de8e5168311800d00ffb7d70148dfc496de63c9da6"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:memorial",
+      "slug": "memorial",
+      "name": "Forest Memorial",
+      "kind": "structure",
+      "aliases": [],
+      "nativeIds": [],
+      "obtaining": [
+        {
+          "id": "lothlorien:memorial/obtain",
+          "kind": "encounter",
+          "text": "Explore a forest memorial and its surroundings.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/memorial.mcstructure",
+          "sha256": "89409ff1143ff1dbb0162ffe274f28f780c7de15f7bf9c3df939a9933b098f4d"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/memorial_leaf_01.mcstructure",
+          "sha256": "e2de3e8fed31b3e100582a25fed6262e4a4ce02b72daefe4bd435b4d25d3d9e5"
+        }
+      ]
+    },
+    {
+      "id": "lothlorien:great_mallorn",
+      "slug": "great_mallorn",
+      "name": "Great Mallorn",
+      "kind": "structure",
+      "aliases": [],
+      "nativeIds": [],
+      "obtaining": [
+        {
+          "id": "lothlorien:great_mallorn/obtain",
+          "kind": "encounter",
+          "text": "Explore naturally generated Great Mallorns and their furnished flet platforms.",
+          "related": []
+        }
+      ],
+      "relations": [],
+      "evidence": [
+        {
+          "path": "docs/parity/BLOCKS_ITEMS.md",
+          "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+        },
+        {
+          "path": "docs/parity/CREATURES.md",
+          "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/banner_healer_east.mcstructure",
+          "sha256": "ff22b55884c4e7e21eb2edff269440e6a90d4e393d98941936128cba2b9ad788"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/banner_healer_north.mcstructure",
+          "sha256": "c38bde7ed4d98aefbf92cbcdb0a500b8054969fa9aa04c39a9723876b643b1ee"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/banner_healer_south.mcstructure",
+          "sha256": "28901ca5ae4780c5ca8e1dd4cbd5cc547172e604ab12a1532822c25d8d00890a"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/banner_healer_west.mcstructure",
+          "sha256": "c891d490dffae8e51e97a60fabb9cc3aefb93de689b132564fcf9e15be316dae"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/banner_lightblue_east.mcstructure",
+          "sha256": "274a7f55479667b59d70b35171827a3d0e2015ef804162abd5b31d2fa30ffc76"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/banner_lightblue_north.mcstructure",
+          "sha256": "fd679398ac340b747c09b260c61eb0695270b41c6df8f4deecb30a67ea9647d0"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/banner_lightblue_south.mcstructure",
+          "sha256": "947e48518a5350fbf875e5643d5216c9203aa99680045fa2a28c650e1e2b3c7b"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/banner_lightblue_west.mcstructure",
+          "sha256": "c5afb5f0ccf53f94937d46881fcff27bbb9d8bf514e830fb34c8c363afb281d7"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/banner_watch_east.mcstructure",
+          "sha256": "6ec20c1b35619198c696fb5fddd2261e8b7b6209b5f0def10c3f20f73e18c883"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/banner_watch_north.mcstructure",
+          "sha256": "4275a12d40a51df183be23b0b5291d8979ccef6baa2f9f0e7d0ebc0515284792"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/banner_watch_south.mcstructure",
+          "sha256": "b758242ac2a40bdf1cf8b06ca38e88c624574ebebcd37d651d724d08fe524b22"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/banner_watch_west.mcstructure",
+          "sha256": "feb685852591876216e63c2572ce06d04bb21f85318f1465a1f44fe1e58cdecf"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/banner_white_east.mcstructure",
+          "sha256": "f39695a25592c4b5b2839f62d407e57f675378e2014340405a314d2d7747aa7d"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/banner_white_north.mcstructure",
+          "sha256": "86d89da2bbb60f5bcfd911f6d7c8307ce06d1babca1b2ba65d7b1aa10094f74a"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/banner_white_south.mcstructure",
+          "sha256": "9de6d81bcd819dcc775514f6c2788b8d5be1b747495dd55288a9ea08b0b528d7"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/banner_white_west.mcstructure",
+          "sha256": "b2687b71eb6bf9cca1eaece2187dca1ede09ff60222913083cd7444d7befed29"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/cushion_11.mcstructure",
+          "sha256": "acb3b5fd2e44ec2b91e51dc75e1549b3e646bb24f4678068a36ba11d71d4e2d5"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/cushion_12.mcstructure",
+          "sha256": "36d4b157eb22cce816647a229dcb5b73845c3140935f4974203433572c4b037f"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/cushion_15.mcstructure",
+          "sha256": "d8fbbea944120be2ec429ad1c778fcaa66322ea006b61299021829f5fd6a1434"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/cushion_2.mcstructure",
+          "sha256": "a0e1498e5e7b76007e3644c9daee47ccbc135ddb6881906ae6e3974a1868d324"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/cushion_7.mcstructure",
+          "sha256": "4ec3bb6ebfcbc825339126d08c3a6810a89012f29d33783ac394e01e23213414"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/pot_allium.mcstructure",
+          "sha256": "3ad26b65649d5fa542b74ac4742838de2aff8c0d34f5429f45d7ebd0fc501c62"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/pot_athelas.mcstructure",
+          "sha256": "70370ef28477f15ac817c2a8a79f61bc25f6c620c5f1057e3426b5265717f50d"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/pot_azure_bluet.mcstructure",
+          "sha256": "30f3132e38e8e25d7dd89bd08f0503697b5c5d7eadfa09315b3659f5b37b97f9"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/pot_blue_orchid.mcstructure",
+          "sha256": "9b4f758cf2f37c9ac9fc69601d5aa71a2a6dc3c9d23fd4f485b905e1c8319163"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/pot_cornflower.mcstructure",
+          "sha256": "b7bc5cc0451acb8b0eaf58fe8af65c1216b990fc8359bc3af37be782f20543d8"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/pot_elanor.mcstructure",
+          "sha256": "50b9afaaa2548a98fbfed5f7b29f674db3cf9b1e870c7b05d5e3731e0c70bc80"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/pot_empty.mcstructure",
+          "sha256": "a55d542058852d47d5f2f8d3fc05e3c6d85510302ea11441817f9123f2a76538"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/pot_fern.mcstructure",
+          "sha256": "294e420dc7432f6fa1b51276f0b9d1355dbb23a707570d9e9e446b43e0cbfdea"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/pot_golden_fern.mcstructure",
+          "sha256": "076d7b47203cb57df1b32d477802cf02053a0a38beb5a0137881b3e85b1f52ec"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/pot_lily_of_the_valley.mcstructure",
+          "sha256": "fd947dcea8dff0264da50ca698fb6772f64fe8b0264aa08ca08237c1e85781bb"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/pot_niphredil.mcstructure",
+          "sha256": "b14dd433d5a213f62611fd3bbd6397c3a360dc65bada598c8992c1bff1b21293"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/pot_oxeye_daisy.mcstructure",
+          "sha256": "34debdaf16546215cd796dd16b3bcf440bd660dde816b804aaaff2c8e7daf6fb"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/pot_pink_tulip.mcstructure",
+          "sha256": "d0ccafad711cf9669042ed85ea17abf9d0beb24bdc1e112334ae62c7e291454e"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/furnish/pot_white_tulip.mcstructure",
+          "sha256": "f7253a1c6e5c53939f98a69b3cd0985c4305a456cb686607f3f2a09a74ac82d8"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/garden.mcstructure",
+          "sha256": "f3ec203e0b2f9444bcf499017dd663287683124ff954a12f7fa06dc3c0f5bc4d"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_round_05.mcstructure",
+          "sha256": "b7d0f044a7fe7340cd8e39fdd03344d697883b9d60b7ca61ef44efbcef9cd7ad"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_round_07.mcstructure",
+          "sha256": "42bbe2f40b9b5b6f81a279d8f6dafddc131796d005e7d62021c85e7e37e29927"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_02.mcstructure",
+          "sha256": "f4ee219ccac7d474793448ab0bdf02683e8f995ae306fe856b96a4ba56d9f8ba"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_03.mcstructure",
+          "sha256": "685a209ea5985457adfef9de5772e5a71b2bdb9da59741d088fb2e48f1ab7400"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_06.mcstructure",
+          "sha256": "17cdd1a2f5a50039201c19b6a246329bf779925be70b460bebf2549860ccf800"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_08.mcstructure",
+          "sha256": "d42f8ebb40e6e36f5036f53f6b16dbf751db6c820682d9fb50b72aa5df12b8da"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/small_spacer.mcstructure",
+          "sha256": "a0d22df783432d98cff24ee4febfc7c692ee884fd0775b362e30b73a25c6b594"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_round_05.mcstructure",
+          "sha256": "a34cd90b185a094fde415fd55c6b1d6883bd60c0f03e994b55c45e06386a0064"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_round_07.mcstructure",
+          "sha256": "55b3db9f77edd593acb8fbce848e9ca4189433bf6623500a7e0bc15df37538a8"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_02.mcstructure",
+          "sha256": "22b7bf30db8820ddf56b19f365a7c67b76279de0823e2cbdfafa250df73b8dd0"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_03.mcstructure",
+          "sha256": "f14b8b0f65f2b9cac176c3b7cdb735e951adaadf007a933af5f7bd9ed73aaf87"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_06.mcstructure",
+          "sha256": "da5ac5c4320b874f206de38c25f96549af015758dc2a122b6b1be79dac7da21a"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_08.mcstructure",
+          "sha256": "6b2a7dc4dae2b9e5c2f9b43843b8c442ae5537b35a0189e8944c7319112c372d"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_spacer.mcstructure",
+          "sha256": "05fdadf0aec4c158f0c16f121e4ba7bbb3774879c7f951831b005b71dd322380"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/mallorn_round_05.mcstructure",
+          "sha256": "7b84c9d5ce5dd0998bbfcb407e55b2aaf3e3a4745013c0ffec60538f9c74f3f2"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/mallorn_round_07.mcstructure",
+          "sha256": "f5e258eff57712c65e568a67d286d3f2698e85f6547adc61b58737acc6879628"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/mallorn_roundplain_02.mcstructure",
+          "sha256": "c6d3c7f72acd5e7bc2b8f1b522ea547296817a03d02d9cb15a25d97795ae2716"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/mallorn_roundplain_03.mcstructure",
+          "sha256": "0ae39be24e5915655d8413a90302d60361d18d66a0ee793e50396fdc11fe4275"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/mallorn_roundplain_06.mcstructure",
+          "sha256": "520939173b9ac63152d36531899145c3c0d51e246fe89f56514e215165bf51c9"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/mallorn_roundplain_08.mcstructure",
+          "sha256": "28aff41294a05a319bd0a23fb83b7ef52cbc567f67032711638d76b138f9d3a5"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/balcony_braced.mcstructure",
+          "sha256": "364f377f36f30f91bf2869f9211b1e0eb6597a93114c0b116cd6b055802e87dc"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/central_mallorn_01.mcstructure",
+          "sha256": "c694b74ce2f58224cfc0c7c268fd5e3876e9080e1f9cf5526aa15e173e865839"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_node_a_north_bridge_7.mcstructure",
+          "sha256": "07a0f11389f0843ffc67a584fb8a05ebca1bdbd58db98468b1ddb6da0ed16ee5"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_node_a_south_bridge_9.mcstructure",
+          "sha256": "67e897733bbe01d4e476ed8da720bad68102cde06b56e186b2795738103f2303"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_node_b_east_bridge_13.mcstructure",
+          "sha256": "dfb13813dbb5c7837648066e1fe5ab0d380e52a001517d5de0f7191381ae1bd3"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_node_b_south_bridge_15.mcstructure",
+          "sha256": "38add9557807115b5becdaaae138b8ed70ae45314ef92e27739753bb39114d4a"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_node_b_west_bridge_11.mcstructure",
+          "sha256": "93c49686aa34bb4a893c99e6771f38e46f76e79b54b47444ab36bd3ca203a24d"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_node_c_east_bridge_9.mcstructure",
+          "sha256": "d967a64a2b63a62db05ec68555ec799bd7542274469d79f23b3c291657b6e01f"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_node_c_north_bridge_7.mcstructure",
+          "sha256": "8da53ef3974069e80a351933bfc3e1180b4e285b53eff8a983b93c1ddac04a2e"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_node_c_south_bridge_11.mcstructure",
+          "sha256": "a8470185f25c4b8c1640ba1d4840a5fbc35899eb612faa88e4f9efff71325cb0"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_node_c_west_bridge_13.mcstructure",
+          "sha256": "a72355ec25949d639f2c9e004a2732f4a8afb8e73ca22aee2242bc363db9a4f8"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_node_d_east_bridge_15.mcstructure",
+          "sha256": "2f24b4b84564ce00b2762ed9c5f439a9883aefe1856a303e123b7e1da64b74e0"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_node_d_north_bridge_9.mcstructure",
+          "sha256": "cc9f80eebb35119cec075ce1363e70948a6adde5065597b8d8cd1e2cad5d8cf8"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_node_d_west_bridge_7.mcstructure",
+          "sha256": "6ae37bcb0614062243070746b832e7654ba455d842e61de4e0e5cfd45a879745"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_node_e_east_bridge_13.mcstructure",
+          "sha256": "79e972a1dc7eea2f2a5c2b2d5de4f2601b49ccb76055cd2693e0a382e77a0497"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_node_e_north_bridge_11.mcstructure",
+          "sha256": "5bcf08e8e30e4ebb329118ffeaad540b40adac40ac99808b71fd307931ea2643"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_node_f_east_bridge_7.mcstructure",
+          "sha256": "09d51013f7e08f6af6e70f408a2179e6c8ca711b4a1af6c9d166bf936239d078"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_node_f_south_bridge_9.mcstructure",
+          "sha256": "c019383e4ee18d4d7ba2cfe9be9c03c05c284045b84920c0947e21cde8f3b999"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_node_f_west_bridge_15.mcstructure",
+          "sha256": "8b05ab2af850c78f60885554a1f5bf70110437106b0873cdfd71dea959cfca7e"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_a_south_bridge_11.mcstructure",
+          "sha256": "54b2ab581c13b2037f242966f5af21f7ee4b60407d6d90b318eea203695d29b0"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_a_west_bridge_13.mcstructure",
+          "sha256": "203e77592dd4690568a38d8dcb193067679a5682486473c5c0240fabcc3081b5"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_b_east_bridge_15.mcstructure",
+          "sha256": "64d521ebbd557fbc379faacb841b1a027f2cf0669e2aac16a8d91e27aa5d70d8"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_b_north_bridge_7.mcstructure",
+          "sha256": "84d603804dfc0a9d79cfe06381adebe30ee069a8f0b916fd79f597e61404e27c"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_c_north_bridge_9.mcstructure",
+          "sha256": "6a3d644065683c4fe076e357317f5d9738043a1437a1d76e4e658bf520eed8cd"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_c_south_bridge_11.mcstructure",
+          "sha256": "8f9f9df3961f94204f8001fb0d5ec30bc66df54b8f8ed9f88672a822c4b3d024"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/crown_central_a.mcstructure",
+          "sha256": "a6453986f0180a2ded82245019f056f58dccd6f55d86d718670ef7d3ddd4a572"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/crown_central_b.mcstructure",
+          "sha256": "056dc0c217010cd0a16a32f48ed7014242db786eb5c8c309f24d676eedd480d3"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/crown_large.mcstructure",
+          "sha256": "cfd12ad7f7f01cd280cf98a4edb8e206f2ce7207163f77ca23b665c82db53bbe"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/crown_medium.mcstructure",
+          "sha256": "b0a651caed2dff283dbad6c729a06fea11666f16821a40e70de224aa51e62229"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/crown_nub.mcstructure",
+          "sha256": "e923d840a04029eecf7592480487ea149e0311d675df2e7324bf17c5a2876169"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/crown_small.mcstructure",
+          "sha256": "f774c6273549b4682cfb2665ae9c871e7ad1ca9091cf49b515e8354c643b803c"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/crown_tiny.mcstructure",
+          "sha256": "ec82c037bb1d57afa1356f623c3b7b5647f047357f4bf003fae444b04f8720b4"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/lookout_01.mcstructure",
+          "sha256": "2476b7e5c97012a532b78286f47d5cd3a38a4f90f2235f8a2e6269750660d4af"
+        },
+        {
+          "path": "lothlorien_bp/structures/lothlorien/village/railing_end.mcstructure",
+          "sha256": "da548628a00772238a7dbd30298a8c1535b3227dbc69f1cdf1e126f361499f45"
+        }
+      ]
+    }
+  ],
+  "exclusions": [
+    {
+      "id": "lothlorien:phial_light",
+      "reason": "Internal light, marker or pathfinding helper; not a separate player article."
+    },
+    {
+      "id": "lothlorien:elf_post",
+      "reason": "Internal light, marker or pathfinding helper; not a separate player article."
+    },
+    {
+      "id": "lothlorien:guide_beacon",
+      "reason": "Internal light, marker or pathfinding helper; not a separate player article."
+    },
+    {
+      "id": "lothlorien:loop_marker",
+      "reason": "Internal light, marker or pathfinding helper; not a separate player article."
+    },
+    {
+      "id": "lothlorien:rail_mender",
+      "reason": "Internal light, marker or pathfinding helper; not a separate player article."
+    }
+  ]
+}
