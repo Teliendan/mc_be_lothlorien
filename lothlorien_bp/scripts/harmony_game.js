@@ -1,5 +1,4 @@
 import { message } from "./messages.js";
-import { attackingPlayer } from "./attacker.js";
 // Harmony in the running game: deeds and deaths feed the rules in harmony.js, state is kept per player in a dynamic
 // property (survives relogging, independent between players) and written only when harmony changes.
 import { world, system } from "@minecraft/server";
@@ -115,8 +114,8 @@ export function startHarmony(inside, debugTag) {
         const state = harmonyOf(deadEntity);
         update(deadEntity, state, () => recordDeath(state, inside(deadEntity.dimension, deadEntity.location)));
       }
-      const killer = attackingPlayer(damageSource);
-      if (!killer || killer.id === deadEntity.id) return;
+      const killer = damageSource.damagingEntity;
+      if (killer?.typeId !== PLAYER_ID || killer.id === deadEntity.id) return;
       deed(killer, deadEntity, deedKindOf(deadEntity.typeId, familiesOf(deadEntity)));
     } catch {
       // entity already gone

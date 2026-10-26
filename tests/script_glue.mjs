@@ -419,14 +419,6 @@ await scenario("harmony: elf and warden deeds count outside the forest, a deer o
   assert.equal(harmony(), base - H.deedCost("elf_kill"), "an elf killed outside the forest still costs the elf-kill penalty");
   HG.recordElfFight(player, elf); HG.recordWardenFight(player, elf);
   assert.equal(harmony(), base - H.deedCost("elf_kill") - H.deedCost("elf_fight") - H.deedCost("warden_fight"), "fights count outside too");
-  const after = harmony();
-  const elf2 = mock.addEntity(ELF, { x: 3, y: 70, z: 3 }, { components: { "minecraft:type_family": { getTypeFamilies: () => [EL.ELF_FAMILY, "mob"] } } });
-  const grenade = mock.addEntity("gm:grenade_projectile", { x: 3, y: 70, z: 3 }, { components: { "minecraft:projectile": { owner: player } } });
-  mock.fire("entityDie", { deadEntity: elf2, damageSource: { damagingEntity: grenade } });
-  assert.equal(harmony(), after - H.deedCost("elf_kill"), "a grenade kill (the blast names the grenade) charges its thrower");
-  const dispensed = mock.addEntity("gm:grenade_projectile", { x: 3, y: 70, z: 3 }, { components: { "minecraft:projectile": {} } });
-  mock.fire("entityDie", { deadEntity: mock.addEntity(ELF, { x: 4, y: 70, z: 4 }, { components: { "minecraft:type_family": { getTypeFamilies: () => [EL.ELF_FAMILY, "mob"] } } }), damageSource: { damagingEntity: dispensed } });
-  assert.equal(harmony(), after - H.deedCost("elf_kill"), "a dispenser grenade has no thrower: nobody is charged");
 });
 
 // ---- planner speed: the time-boxed job driver and the timing log ----

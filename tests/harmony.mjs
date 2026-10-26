@@ -134,7 +134,7 @@ test("harmony: the game wiring - deeds need player or victim inside, only a play
   const game = readFileSync(new URL("../lothlorien_bp/scripts/harmony_game.js", import.meta.url), "utf8");
   assert.ok(game.includes('"lothlorien:harmony"') && !game.includes("isharmony"));
   assert.ok(/isInside\(player\.dimension, player\.location\) \|\| isInside\(victim\.dimension, victim\.location\)/.test(game), "player OR victim inside");
-  assert.ok(game.includes("attackingPlayer(damageSource)") && game.includes("deedKindOf(deadEntity.typeId"));
+  assert.ok(game.includes("damageSource.damagingEntity") && game.includes("deedKindOf(deadEntity.typeId"));
   assert.ok(/if \(state\.harmony === before\) return false;[\s\S]*setDynamicProperty\(PROPERTY/.test(game), "save only when harmony changed");
   assert.ok(game.includes("HATED_TAG") && game.includes("addTag") && game.includes("removeTag"));
   assert.ok(game.includes("handleHarmonyEvent"));

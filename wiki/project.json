@@ -153,10 +153,6 @@
       "pattern": "lothlorien_bp/scripts/harmony_game.js"
     },
     {
-      "featureId": "lothlorien:harmony",
-      "pattern": "lothlorien_bp/scripts/attacker.js"
-    },
-    {
       "featureId": "lothlorien:growing",
       "pattern": "lothlorien_bp/scripts/healer.js"
     },

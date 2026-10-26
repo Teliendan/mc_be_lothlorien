@@ -6,7 +6,6 @@ import * as guideRules from "../lothlorien_bp/scripts/white_deer_rules.js";
 import * as giftRules from "../lothlorien_bp/scripts/great_mallorn_rules.js";
 import * as squirrelRules from "../lothlorien_bp/scripts/squirrel_rules.js";
 import * as ropeRules from "../lothlorien_bp/scripts/elven_rope_rules.js";
-import { attackingPlayer } from "../lothlorien_bp/scripts/attacker.js";
 class TestItem {
   constructor(typeId = guideRules.ACORN_ID, amount = 1) { Object.assign(this, { typeId, amount }); }
   clone() { return new TestItem(this.typeId, this.amount); }
@@ -92,7 +91,7 @@ async function load(name, bindings) {
   delete globalThis.__scriptPerformance;
   return mod;
 }
-const common = h => ({ attackingPlayer, system: h.system, world: h.world, harmonyOf: p => ({ harmony: p.band || "friend" }),
+const common = h => ({ system: h.system, world: h.world, harmonyOf: p => ({ harmony: p.band || "friend" }),
   GameMode: { Survival: "survival", Adventure: "adventure", Creative: "creative", Spectator: "spectator" }, EquipmentSlot: { Mainhand: "mainhand" },
   bandOf: b => b, repeatedUse: () => false, message: () => "", noteDeed() {},
   readBlock: (dimension, location) => dimension.getBlock(location),
