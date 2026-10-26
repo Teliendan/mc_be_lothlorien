@@ -447,38 +447,6 @@
           ],
           "within_radius": 10,
           "can_get_scared": false
-        },
-        "minecraft:behavior.follow_target_leader": {
-          "priority": 3,
-          "speed_multiplier": 1.0,
-          "control_flags": [
-            "move",
-            "look"
-          ],
-          "leader_filters": {
-            "all_of": [
-              {
-                "test": "is_family",
-                "subject": "other",
-                "value": "player"
-              },
-              {
-                "test": "has_tag",
-                "subject": "other",
-                "value": "lothlorien_friend"
-              },
-              {
-                "test": "has_equipment",
-                "subject": "other",
-                "domain": "hand",
-                "value": "lothlorien:elanor"
-              }
-            ]
-          },
-          "follow_distance": 1.5,
-          "within_radius": 10,
-          "always_look_for_leader": true,
-          "search_cooldown": 20
         }
       },
       "lothlorien:state_alarmed": {

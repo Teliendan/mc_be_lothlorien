@@ -33,19 +33,9 @@ def write(path, data):
 # The Elanor lure is vanilla tempt, the same goal as the deer's working corn lure. It lives in its own group, added
 # only in the Friend state (a Guest within 10 blocks turns the state to calm, so a Guest cannot lure it) and only while
 # no offer wait runs: the script fires lure_off on an accepted offer and lure_on when the wait ends (scripts/unicorn.js).
-# Beside tempt, follow_target_leader on a Friend holding Elanor (the group is its offer-wait gate). Owner 2026-10-26:
-# the lure works in Survival; earlier "ignores Elanor" retests were in Creative, which deer.js then skipped.
-LURE = {
-    "minecraft:behavior.tempt": {"priority": 3, "speed_multiplier": 1.0, "items": [ELANOR], "within_radius": 10,
-                                 "can_get_scared": False},
-    "minecraft:behavior.follow_target_leader": {"priority": 3, "speed_multiplier": 1.0, "control_flags": ["move", "look"],
-        "leader_filters": {"all_of": [
-            {"test": "is_family", "subject": "other", "value": "player"},
-            {"test": "has_tag", "subject": "other", "value": FRIEND_TAG},
-            {"test": "has_equipment", "subject": "other", "domain": "hand", "value": ELANOR},
-        ]},
-        "follow_distance": 1.5, "within_radius": 10, "always_look_for_leader": True, "search_cooldown": 20},
-}
+# Owner 2026-10-26: works in Survival (earlier "ignores Elanor" retests were in Creative, which deer.js then skipped).
+LURE = {"minecraft:behavior.tempt": {"priority": 3, "speed_multiplier": 1.0, "items": [ELANOR], "within_radius": 10,
+                                     "can_get_scared": False}}
 LURE_READY = {"all_of": [
     {"test": "enum_property", "domain": "lothlorien:wariness", "value": "friend"},
     {"test": "bool_property", "domain": "lothlorien:alarmed", "value": False},
