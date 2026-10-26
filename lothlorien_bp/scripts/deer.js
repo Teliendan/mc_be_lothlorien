@@ -50,7 +50,9 @@ function updateWariness() {
   try { nearbyPlayers = world.getPlayers(); } catch { return; }
   for (const player of nearbyPlayers) {
     try {
-      if (!player.isValid || ![GameMode.Survival, GameMode.Adventure].includes(player.getGameMode()) ||
+      // Creative counts (owner 2026-10-26): vanilla lures work in Creative, and the unicorn's lure exists only in its
+      // Friend state. The engine still never flees a Creative player.
+      if (!player.isValid || player.getGameMode() === GameMode.Spectator ||
           !(player.getComponent("minecraft:health")?.currentValue > 0)) continue;
       const wariness = warinessFor(bandOf(harmonyOf(player).harmony));
       const id = player.dimension.id;

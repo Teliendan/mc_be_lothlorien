@@ -9,10 +9,19 @@ import { setup, load, Item } from "./fixtures/wildlife_runtime.mjs";
 let scenarios = 0;
 async function test(name, body) { await body(); scenarios++; console.log(`ok   deer interactions: ${name}`); }
 
-await test("all five wary species ignore Creative/Spectator/dead players", async () => {
+await test("a Creative Friend sets all five wary species to Friend, so the unicorn's lure exists in Creative", async () => {
+  const h = await setup(); const mod = await load("deer", h.base); mod.startDeer();
+  h.player.mode = "creative";
+  const animals = deerRules.WARY_TYPES.map(type => h.entity(type));
+  for (const animal of animals) h.fire("entityLoad", { entity: animal });
+  h.advance(40); for (const animal of animals) assert.ok(animal.events.includes("lothlorien:set_friend"));
+  h.player.band = "hated"; h.advance(40);
+  for (const animal of animals) assert.ok(animal.events.includes("lothlorien:set_l3"));
+});
+await test("all five wary species ignore Spectator/dead players", async () => {
   const h = await setup(); const mod = await load("deer", h.base); mod.startDeer();
   const friend = h.player;
-  for (const mode of ["creative", "spectator", "dead"]) {
+  for (const mode of ["spectator", "dead"]) {
     const hostile = h.entity("minecraft:player"); hostile.band = "hated";
     if (mode === "dead") hostile.health.currentValue = 0;
     else hostile.mode = mode;
