@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import * as deerRules from "../../lothlorien_bp/scripts/deer_rules.js";
 import * as rules from "../../lothlorien_bp/scripts/white_deer_rules.js";
 import * as giftRules from "../../lothlorien_bp/scripts/great_mallorn_rules.js";
+import { attackingPlayer } from "../../lothlorien_bp/scripts/attacker.js";
 let serial = 0;
 async function load(name, bindings, expose = "") {
   globalThis.__deerInteractions = bindings;
@@ -64,7 +65,7 @@ function engine() {
   return { world, system, dimension, entity, fire, advance, flush, timers, jobs };
 }
 async function setup() {
-  const h = engine(), base = { ...h, ...deerRules, ...rules, ...giftRules,
+  const h = engine(), base = { ...h, ...deerRules, ...rules, ...giftRules, attackingPlayer,
     EquipmentSlot: { Mainhand: "mainhand" }, GameMode: { Survival: "survival", Adventure: "adventure", Creative: "creative", Spectator: "spectator" },
     EntityInitializationCause: { Loaded: "Loaded" }, ItemStack: Item, harmonyOf: e => ({ harmony: e.band }), bandOf: b => b,
     watchUnicornReadiness() {}, message: s => s, repeatedUse: () => false, isGuiding: () => false, isErrand: () => false,

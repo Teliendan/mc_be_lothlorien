@@ -443,7 +443,9 @@ Each player has one integer, **Harmony**, from -60 to +10 (one point is about on
   white deer 6, unicorn 10, fighting a warden 1 per fight, killing a warden 6, killing a player 3. While Harmony is above 0 a cost
   counts double.
 - A deed counts when the player **or** the victim is inside the forest. Only direct player kills count (projectiles included);
-  falls, lava and tamed wolves do not. Chopping wood and picking flowers cost nothing for now.
+  falls, lava and tamed wolves do not. A thrown Grenade (Grenade mod) counts for its thrower: its blast names the grenade, so
+  `attacker.js` takes the projectile owner (owner report 2026-10-26: grenade kills did not lower Harmony). The same rule
+  feeds elf foes, deer alarm and warden provocation; dispenser grenades have no owner and count for nobody. Chopping wood and picking flowers cost nothing for now.
 - Dying changes nothing, except dying inside the forest while Hated: Harmony is set to -29.
 - Stored per player in the dynamic property `lothlorien:harmony`, written only when it changes.
 

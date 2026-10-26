@@ -5,10 +5,10 @@ import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { isGuiding } from "./white_deer.js";
 import { isErrand } from "./squirrel.js";
+import { attackingPlayer } from "./attacker.js";
 import { ALARM_RADIUS, CORN_ID, DEER_ID, DEER_TYPES, WARY_TYPES, WATCH_RADIUS, UNICORN_ID, pickWariness, setEventFor, warinessFor } from "./deer_rules.js";
 
 const INTERVAL_TICKS = 40;
-const PLAYER_ID = "minecraft:player";
 const loaded = new Map();
 let warinessTimer;
 let unicornReadiness;
@@ -129,7 +129,7 @@ export function startDeer() {
     } catch { /* dimension unavailable */ }
   }
   world.afterEvents.entityHurt.subscribe(({ hurtEntity, damageSource }) => {
-    if (!WARY_TYPES.includes(hurtEntity.typeId) || damageSource.damagingEntity?.typeId !== PLAYER_ID) return;
+    if (!WARY_TYPES.includes(hurtEntity.typeId) || !attackingPlayer(damageSource)) return;
     try {
       // untame (no longer persistent unless leashed); the alarm below rebuilds its state without state_tame 20 s later.
       // Swans and squirrels are never tamed, so they have no such event.
@@ -151,7 +151,7 @@ export function startDeer() {
     try {
       loaded.delete(deadEntity.id); stopIfEmpty();
       unicornReadiness?.onRemove(deadEntity.id);
-      if (!WARY_TYPES.includes(deadEntity.typeId) || damageSource.damagingEntity?.typeId !== PLAYER_ID) return;
+      if (!WARY_TYPES.includes(deadEntity.typeId) || !attackingPlayer(damageSource)) return;
       alarmAround(deadEntity.dimension, deadEntity.location);
     } catch {
       // entity already gone

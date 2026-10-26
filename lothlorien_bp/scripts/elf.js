@@ -5,7 +5,8 @@
 import { system, world } from "@minecraft/server";
 import { ELF_ID, FOE_MS, FOE_TAG, HOME_OF_ELF, MOVED_PROPERTY, PROFESSIONS, REHOME_EVENT, homeCell, radiusGroupOfMark } from "./elf_rules.js";
 import { message } from "./messages.js";
-import { PLAYER_ID, isNewFight } from "./elven_warden_rules.js";
+import { attackingPlayer } from "./attacker.js";
+import { isNewFight } from "./elven_warden_rules.js";
 
 const TICKS_PER_MS = 20 / 1000;
 const lastHit = new Map(); // player id -> Date.now() of the last hit on an elf (Date: readable in restricted mode)
@@ -66,8 +67,9 @@ export function startElves({ recordFight }) {
   }, { entityTypes: [ELF_ID], eventTypes: [REHOME_EVENT] });
   world.afterEvents.entityHurt.subscribe(({ hurtEntity, damageSource }) => {
     try {
-      const hitter = damageSource.damagingEntity;
-      if (hurtEntity.typeId !== ELF_ID || hitter?.typeId !== PLAYER_ID) return;
+      if (hurtEntity.typeId !== ELF_ID) return;
+      const hitter = attackingPlayer(damageSource);
+      if (!hitter) return;
       const now = Date.now(), at = lastHit.get(hitter.id);
       lastHit.set(hitter.id, now);
       if (isNewFight(at === undefined ? undefined : now - at)) recordFight(hitter, hurtEntity);

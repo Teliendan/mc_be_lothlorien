@@ -30,7 +30,7 @@ One per-player number, **harmony**, an integer from **-60 to +10**. One point is
 | Fighting a warden | -1 per fight | A fight = first player hit on a warden after 60 s without one (`provoked` map in `elven_warden.js`, `PROVOKE_MS`) |
 | Killing a warden | -6 | On top of the fight cost |
 | Killing a player | -3 | |
-| Kills by tamed wolves, fall, lava etc. | 0 | Only `damageSource.damagingEntity` = player (projectiles included), as now |
+| Kills by tamed wolves, fall, lava etc. | 0 | Only `damageSource.damagingEntity` = player (projectiles included), or the projectile owner of a thrown Grenade (`attacker.js`, 2026-10-26) |
 | Chopping wood, picking flowers | 0 | **No plundering penalty in v1** (owner). Keep a single `recordDeed(state, kind)` entry point so plundering costs or care rewards (planting acorns...) are a table entry later |
 
 **Death:** changes nothing, **except** dying inside the forest while Hated: harmony is set to **-29** (top of Shunned). Wardens stop shooting,

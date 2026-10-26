@@ -12,6 +12,7 @@ import { ANGRY_EVENT, BOW_ID, DECK_BLOCKS, WARDEN_ID, isFriendlyFire, isNewFight
 import { HATED_TAG, recordWardenFight } from "./harmony_game.js";
 import { FOE_TAG } from "./elf_rules.js";
 import { nativeElfUse } from "./elf_native_use.js";
+import { attackingPlayer } from "./attacker.js";
 import { greet, speak } from "./voice.js";
 
 const provoked = new Map(); // player id -> Date.now() of the last hit on a warden (Date: readable in restricted mode)
@@ -78,8 +79,9 @@ export function startElvenWardens(depthAt, bandOf) {
   });
   world.afterEvents.entityHurt.subscribe(({ hurtEntity, damageSource }) => {
     try {
-      const hitter = damageSource.damagingEntity;
-      if (hurtEntity.typeId !== WARDEN_ID || hitter?.typeId !== PLAYER_ID) return;
+      if (hurtEntity.typeId !== WARDEN_ID) return;
+      const hitter = attackingPlayer(damageSource);
+      if (!hitter) return;
       const at = provoked.get(hitter.id);
       provoked.set(hitter.id, Date.now());
       if (isNewFight(at === undefined ? undefined : Date.now() - at)) recordWardenFight(hitter, hurtEntity);
