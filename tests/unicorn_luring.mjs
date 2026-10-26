@@ -73,6 +73,7 @@ function matches(filter, player) {
   if (filter.test === "is_family") return filter.value === "player" && player.typeId === "minecraft:player";
   if (filter.test === "has_tag") return player.hasTag(filter.value) === (filter.operator !== "!=");
   if (filter.test === "is_sneaking") return !!player.isSneaking === filter.value;
+  if (filter.test === "has_equipment") return filter.domain === "hand" && player.held === filter.value;
   throw Error(`unhandled filter ${filter.test}`);
 }
 await test("a Friend is never fled from in the Friend state; Guests and worse still are", async () => {
@@ -85,13 +86,23 @@ await test("a Friend is never fled from in the Friend state; Guests and worse st
     assert.equal(avoid.some(e => matches(e.filters, p)), p !== h.player);
   }
 });
-await test("the lure is vanilla tempt in its own group, added only to a wild, ready Friend-state unicorn", async () => {
+await test("the lure (tempt + Friend-with-Elanor follow) lives in its own group, added only to a wild, ready Friend-state unicorn", async () => {
   const lure = entity.component_groups["lothlorien:lure"];
-  // the follow_target_leader goal with a bool_property "self" leader filter never followed in game
-  assert.deepEqual(lure, { "minecraft:behavior.tempt": { priority: 3, speed_multiplier: 1, items: [ELANOR_ID], within_radius: 10, can_get_scared: false } });
+  assert.deepEqual(lure["minecraft:behavior.tempt"], { priority: 3, speed_multiplier: 1, items: [ELANOR_ID], within_radius: 10, can_get_scared: false });
+  const follow = lure["minecraft:behavior.follow_target_leader"];
+  assert.equal(follow.within_radius, 10);
+  // the group is the offer-wait gate: a bool_property "self" leader filter never followed in game
+  assert.ok(!JSON.stringify(follow.leader_filters).includes("property"));
+  const h = await service();
+  h.player.addTag(h.game.FRIEND_TAG); h.guest.removeTag?.(h.game.FRIEND_TAG);
+  for (const p of [h.player, h.guest]) for (const held of [ELANOR_ID, undefined]) {
+    p.held = held;
+    assert.equal(matches(follow.leader_filters, p), p === h.player && held === ELANOR_ID);
+  }
   for (const [name, group] of Object.entries(entity.component_groups)) {
+    if (name === "lothlorien:lure") continue;
     assert.equal(group["minecraft:behavior.follow_target_leader"], undefined);
-    if (name !== "lothlorien:lure") assert.equal(group["minecraft:behavior.tempt"], undefined);
+    assert.equal(group["minecraft:behavior.tempt"], undefined);
   }
   const adds = ev => ev.sequence.filter(step => step.add?.component_groups.includes("lothlorien:lure"));
   for (const n of ["calm", "l1", "l2", "l3", "friend"]) {
