@@ -2404,7 +2404,7 @@
         },
         {
           "path": "lothlorien_bp/entities/unicorn.json",
-          "sha256": "02478aee84cd17a804d5f2edd0a7a1942ccae25a166084c1ca78d674bded9df0"
+          "sha256": "03ca049704e4c439ddcc0a0d0b65168c6f741df9c88a346f159c1628ac8ed592"
         },
         {
           "path": "lothlorien_bp/scripts/unicorn.js",

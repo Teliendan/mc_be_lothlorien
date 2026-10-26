@@ -26,22 +26,16 @@ ALL_STATES = [f"lothlorien:state_{n}" for n in ("calm", "l1", "l2", "l3", "frien
 
 def write(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8", newline="\n")
 
 
 # ---------------------------------------------------------------- behaviour entity
-def friend_with_elanor():
-    return [
+# Following also waits out the offer refusal.
+def lure_filters():
+    return {"all_of": [
         {"test": "is_family", "subject": "other", "value": "player"},
         {"test": "has_tag", "subject": "other", "value": FRIEND_TAG},
         {"test": "has_equipment", "subject": "other", "domain": "hand", "value": ELANOR},
-    ]
-
-
-# Following also waits out the offer refusal; the flight exemption does not, so a Friend holding Elanor is ignored
-# during the wait instead of fled from (the owner saw it run off and come back).
-def lure_filters():
-    return {"all_of": friend_with_elanor() + [
         {"test": "bool_property", "subject": "self", "domain": "lothlorien:offer_ready", "value": True},
     ]}
 
@@ -52,8 +46,10 @@ def player_avoid(dist, sneak_dist, walk, sprint, lure=False):
             {"test": "is_family", "subject": "other", "value": "player"},
             {"test": "is_sneaking", "subject": "other", "value": sneaking},
         ]
-        if lure:  # a Friend holding Elanor is never fled from
-            tests.append({"none_of": [{"all_of": friend_with_elanor()}]})
+        if lure:  # Friend state: a Friend of Lothlorien is never fled from, with or without Elanor (owner, 2026-10-26).
+            # Flat "!=" test like the deer's lure exemption: the nested none_of/all_of form let the unicorn flee a Friend
+            # holding Elanor whenever the follow goal paused, so it came and ran in turns.
+            tests.append({"test": "has_tag", "subject": "other", "operator": "!=", "value": FRIEND_TAG})
         return {"filters": {"all_of": tests}, "max_dist": max_dist, "walk_speed_multiplier": walk, "sprint_speed_multiplier": sprint}
 
     return [entry(False, dist), entry(True, sneak_dist)]

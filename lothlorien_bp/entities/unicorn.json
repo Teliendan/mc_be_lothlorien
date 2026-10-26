@@ -351,28 +351,10 @@
                     "value": false
                   },
                   {
-                    "none_of": [
-                      {
-                        "all_of": [
-                          {
-                            "test": "is_family",
-                            "subject": "other",
-                            "value": "player"
-                          },
-                          {
-                            "test": "has_tag",
-                            "subject": "other",
-                            "value": "lothlorien_friend"
-                          },
-                          {
-                            "test": "has_equipment",
-                            "subject": "other",
-                            "domain": "hand",
-                            "value": "lothlorien:elanor"
-                          }
-                        ]
-                      }
-                    ]
+                    "test": "has_tag",
+                    "subject": "other",
+                    "operator": "!=",
+                    "value": "lothlorien_friend"
                   }
                 ]
               },
@@ -394,28 +376,10 @@
                     "value": true
                   },
                   {
-                    "none_of": [
-                      {
-                        "all_of": [
-                          {
-                            "test": "is_family",
-                            "subject": "other",
-                            "value": "player"
-                          },
-                          {
-                            "test": "has_tag",
-                            "subject": "other",
-                            "value": "lothlorien_friend"
-                          },
-                          {
-                            "test": "has_equipment",
-                            "subject": "other",
-                            "domain": "hand",
-                            "value": "lothlorien:elanor"
-                          }
-                        ]
-                      }
-                    ]
+                    "test": "has_tag",
+                    "subject": "other",
+                    "operator": "!=",
+                    "value": "lothlorien_friend"
                   }
                 ]
               },

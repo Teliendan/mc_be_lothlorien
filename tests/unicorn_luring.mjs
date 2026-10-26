@@ -76,12 +76,12 @@ function matches(filter, player, ready = true) {
   }
   assert.equal(filter.subject, "other");
   if (filter.test === "is_family") return filter.value === "player" && player.typeId === "minecraft:player";
-  if (filter.test === "has_tag") return player.hasTag(filter.value);
+  if (filter.test === "has_tag") return player.hasTag(filter.value) === (filter.operator !== "!=");
   if (filter.test === "has_equipment") { assert.equal(filter.domain, "hand"); return player.slot.item?.typeId === filter.value; }
   if (filter.test === "is_sneaking") return !!player.isSneaking === filter.value;
   throw Error(`unhandled filter ${filter.test}`);
 }
-await test("Friend+Elanor is never fled from; it is followed only once the offer wait is over", async () => {
+await test("a Friend is never fled from; Friend+Elanor is followed only once the offer wait is over", async () => {
   const h = await service(); h.advance(20);
   const group = entity.component_groups["lothlorien:state_friend"], goal = group["minecraft:behavior.follow_target_leader"];
   assert.equal(group["minecraft:behavior.tempt"], undefined);
@@ -92,12 +92,13 @@ await test("Friend+Elanor is never fled from; it is followed only once the offer
     { test: "bool_property", subject: "self", domain: "lothlorien:offer_ready", value: true },
   ] });
   const avoid = group["minecraft:behavior.avoid_mob_type"].entity_types.slice(0, 2);
-  for (const entry of avoid) assert.deepEqual(entry.filters.all_of.at(-1), { none_of: [{ all_of: goal.leader_filters.all_of.slice(0, 3) }] });
+  // flat "!=" like the deer lure exemption; the nested none_of/all_of form let it flee a Friend holding Elanor in game
+  for (const entry of avoid) assert.deepEqual(entry.filters.all_of.at(-1), { test: "has_tag", subject: "other", operator: "!=", value: h.game.FRIEND_TAG });
   for (const p of [h.player, h.guest, h.hated]) for (const item of [ELANOR_ID, "minecraft:stick"]) for (const sneaking of [false, true]) for (const ready of [false,true]) {
     p.slot.item = new Item(item); p.isSneaking = sneaking;
     const friendWithElanor = p === h.player && item === ELANOR_ID;
     assert.equal(matches(goal.leader_filters, p, ready), friendWithElanor && ready);
-    assert.equal(avoid.some(e => matches(e.filters, p, ready)), !friendWithElanor);
+    assert.equal(avoid.some(e => matches(e.filters, p, ready)), p !== h.player);
   }
 });
 await test("nearer Guest with Elanor is excluded while the actual Friend remains eligible", async () => {
