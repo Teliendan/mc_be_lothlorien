@@ -1,11 +1,56 @@
 # Lothlorien soundscape plan
 
-Agreed direction: 2026-10-16. Status: planned; production has not started.
-Target researched: Bedrock 1.26.52 / Script API 2.8.0.
+Agreed direction: 2026-10-16. Production started 2026-10-25 at the owner's
+request (step 2, audition set). Target: Bedrock 1.26.52 / Script API 2.8.0.
 
-The owner wants to return to this later. Do not generate audio or implement
-playback until the owner requests that work. This session changed notes only;
-no new audio, pack changes or in-game playback tests.
+## Implemented, 2026-10-26 (deployed, awaiting in-game listening)
+
+Owner picks from audition 2 (phone listening page, 2026-10-26). Masters in
+`tools/audio/soundscape/` (music masters git-ignored for size; generator
+commands with prompts and seeds in `provenance/`), edits and encoding in
+`tools/prepare_soundscape.py` (`--check` compares shipped files and piece lengths).
+
+| Layer | Wiring | Shipped takes |
+| --- | --- | --- |
+| Forest | client biome `ambient_sounds.addition` = `ambient.lothlorien.forest.additions`, non-3D, volume 0.3; a weight-18 silent entry thins the gusts out | gusts s311, s312 (sfx2); rustles and the loop dropped |
+| Root shrine | invisible `lothlorien:shrine_sound` under the root ceiling, `ambient` every 20-45 s, distance 3-24 | tones s321, s322 (cut to 8 s), s323 (cut to 10 s), 22 s s322 (cut to 17.5 s), bell s322 |
+| Leaf memorial | invisible `lothlorien:memorial_sound` on the pillar cap, every 25-55 s, distance 3-24 | tones s321, s322; harp s321, s322 |
+| Village | `scripts/village_music.js`: `playMusic` piece, then a looped silent rest, 20-60 s; leaving fades after 10 s outside | 1 = harp_flute s411 (cut at 86 s, "good, positive"), 2 = harp_solo s402 ("calm"), 3 = harp_flute s431 (8 s fade-out added), 4 = s432 ("playful"), 5 = s433 ("melancholic"), 6 = harp_solo s451 ("playful, optimistic") |
+
+Maybes not shipped: harp_solo s401 (first half perfect, then a change),
+harp_flute s436 (a bit sharp). Loudness: loud passages at -16 dBFS RMS, peak
+-1 dBFS; game volume in `sound_definitions.json` (music 0.4 like vanilla
+forest music, structure sounds 0.5 in `sounds.json`). Only newly generated
+shrines and memorials carry the sound entities (new world).
+
+In-game checks: overall volumes; how often forest gusts play; shrine and
+memorial reach and repetition; the invisible entities' ambient sounds play at
+all; village piece replaces vanilla forest music, the rest track keeps it out
+between pieces, and vanilla music returns after leaving; no restart when
+briefly crossing the village edge; reload and multiplayer.
+
+## Owner decisions, 2026-10-25
+
+These settle the open choices below; listening may still revise them.
+
+First listening, 2026-10-26: the forest loops all sounded like white noise
+(proposal: drop the loop, occasional gusts/rustles only). Shrine: tones s321/
+s322/s323 and bell s322 usable. Memorial: tones s321/s322, harp s321/s322.
+Village: harp solo s401/s402 good, harp+flute s411 beautiful until its volume
+drops; "wistful" set rejected (extra instruments, sounds like a club, not
+elven). Remove quiet parts. Rest interval shortened to 20-60 s.
+
+- Forest: a quiet continuous loop plus a few occasional additions (soft gust,
+  canopy rustle). No day/night split.
+- Shrine: a clear, sustained bell/glass-like resonance. No voices.
+- Memorial: sound comes from the pillar/totem; a few gently descending tones
+  with a slow, lingering decay.
+- Village: harp-led, unhurried. First pool 3-4 pieces of about 1.5-3 minutes,
+  quiet intervals of roughly 1-3 minutes.
+- Mixing: vanilla forest music stays in Lothlorien outside villages; inside a
+  village the village music replaces it, never two scores at once. Village
+  music does not duck near the shrine or memorial. Whether biome music and
+  script-played music interfere needs an in-game check first.
 
 ## Design
 
@@ -107,5 +152,5 @@ also explains the role of quiet space in Minecraft's music.
 7. After owner acceptance, clean iteration scratch and condense these notes to
    the final palette, behavior, test status and feature commit.
 
-Next action: resume at step 1 when the owner requests production. Nothing is
-waiting to run automatically.
+Next action: step 6, owner listening in game (checks listed under
+"Implemented"). Then tune volumes/intervals, and step 7.

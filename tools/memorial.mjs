@@ -82,7 +82,9 @@ export function buildMemorial() {
   });
   // Deep soil under the apron and a ragged shoulder round it (tools/ground_skirt.mjs).
   const skirt = addSoilSkirt(put, (x, y, z) => blocks.has(key(x, y, z)), ground, { top: -1, seed: 23 });
-  return { blocks, flowers, seats, entities: [], leaf, ground, skirt };
+  // Invisible sound source just above the pillar's cap (docs/SOUNDSCAPE_PLAN.md): its native ambient timer plays the memorial tones.
+  const entities = [{ id: "lothlorien:memorial_sound", x: 0.5, y: 5.6, z: 3.5 }];
+  return { blocks, flowers, seats, entities, leaf, ground, skirt };
 }
 
 export function memorialWorldgen() {

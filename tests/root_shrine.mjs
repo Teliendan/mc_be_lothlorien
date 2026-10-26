@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { SHRINE, buildRootShrine, rootShrineLoot } from "../tools/root_shrine.mjs";
-import { toMcstructure, giantMallornPool } from "../tools/build_structures.mjs";
+import { placeEntities, toMcstructure, giantMallornPool } from "../tools/build_structures.mjs";
 import { ANCHOR_AT, TRUNK_ANCHOR } from "../tools/mallorn_anchor.mjs";
 import { readNbt } from "../tools/village_sim.mjs";
 import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs";
@@ -57,9 +57,12 @@ for (const [k, b] of blocks) {
   if (b.name === "minecraft:air") assert.ok(y >= 0 && y <= 3 && z >= -7 && z <= 0 && x >= -2 && x <= 4, `only recess/approach, altar niche and banner pocket carved: ${k}`);
 }
 assert.ok([...blocks].some(([k, b]) => Number(k.split(",")[1]) >= 30 && b.name === "lothlorien:mallorn_leaves"), "complete crown ships");
-assert.equal(shrine.entities.length, 0, "uninhabited point of interest");
+assert.deepEqual(shrine.entities.map((e) => e.id), ["lothlorien:shrine_sound"], "uninhabited: only the invisible sound source");
+const voice = shrine.entities[0], cell = (dy) => shrine.blocks.get(`${Math.floor(voice.x)},${Math.floor(voice.y) + dy},${Math.floor(voice.z)}`)?.name;
+assert.equal(cell(0), "minecraft:air", "sound source hangs in the open room");
+assert.ok(cell(1) && cell(1) !== "minecraft:air", "sound source sits right under the root ceiling");
 
-const encoded = toMcstructure(blocks, SHRINE.size, SHRINE.offset);
+const encoded = toMcstructure(blocks, SHRINE.size, SHRINE.offset, placeEntities(shrine.entities, SHRINE.offset));
 assert.equal(encoded.clipped, 0, "whole tree fits");
 const nbt = readNbt(encoded.buffer), pal = nbt.structure.palette.default;
 assert.deepEqual(nbt.size, SHRINE.size);
@@ -134,5 +137,5 @@ if (set.structures.some(e => e.structure === "lothlorien:elven_village")) {
   assert.ok(set.structures.some(e => e.structure === "lothlorien:tree_grid_shrine" && e.weight === 18),
     "dense prototype selects the complete shrine as its own weighted structure");
 } else assert.deepEqual(set.structures, [{ structure: "lothlorien:giant_mallorn", weight: 1 }], "restored legacy selection");
-assert.deepEqual(toMcstructure(buildRootShrine().blocks, SHRINE.size, SHRINE.offset).buffer, encoded.buffer, "deterministic prototype");
+assert.deepEqual(toMcstructure(buildRootShrine().blocks, SHRINE.size, SHRINE.offset, placeEntities(shrine.entities, SHRINE.offset)).buffer, encoded.buffer, "deterministic prototype");
 console.log("ok   root shrine: walkable ground-level room, supported decor/rewards, deterministic full tree; legacy mixed-pool weight retained, dense selection covered by tree-grid test");

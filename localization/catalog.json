@@ -4665,6 +4665,114 @@
             }
           }
         },
+        "entity.lothlorien:shrine_sound.name": {
+          "source": "Shrine Sound",
+          "context": {
+            "meaning": "Invisible entity in the root shrine that plays its ambient tones; never seen in normal play.",
+            "location": "lothlorien_rp: inventory/block tooltip, entity name or spawn egg",
+            "trigger": "Viewed in inventory, Creative inventory, block targeting or entity UI, as appropriate to this key.",
+            "tone": "Clear Minecraft UI",
+            "grammar": "Standalone noun phrase, no sentence punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Zvuk svatyně",
+              "based_on": "78ed88a529f65835550262d69600cbff50df0391910500a100444088d3ff7928",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Schreinklang",
+              "based_on": "78ed88a529f65835550262d69600cbff50df0391910500a100444088d3ff7928",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Sonido del santuario",
+              "based_on": "78ed88a529f65835550262d69600cbff50df0391910500a100444088d3ff7928",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Sonido del santuario",
+              "based_on": "78ed88a529f65835550262d69600cbff50df0391910500a100444088d3ff7928",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Son du sanctuaire",
+              "based_on": "78ed88a529f65835550262d69600cbff50df0391910500a100444088d3ff7928",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Dźwięk kapliczki",
+              "based_on": "78ed88a529f65835550262d69600cbff50df0391910500a100444088d3ff7928",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Som do santuário",
+              "based_on": "78ed88a529f65835550262d69600cbff50df0391910500a100444088d3ff7928",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Som do santuário",
+              "based_on": "78ed88a529f65835550262d69600cbff50df0391910500a100444088d3ff7928",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "entity.lothlorien:memorial_sound.name": {
+          "source": "Memorial Sound",
+          "context": {
+            "meaning": "Invisible entity on the leaf memorial pillar that plays its ambient tones; never seen in normal play.",
+            "location": "lothlorien_rp: inventory/block tooltip, entity name or spawn egg",
+            "trigger": "Viewed in inventory, Creative inventory, block targeting or entity UI, as appropriate to this key.",
+            "tone": "Clear Minecraft UI",
+            "grammar": "Standalone noun phrase, no sentence punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Zvuk památníku",
+              "based_on": "3a9895c0c43894b78b2a723adff7a7b5b08f5773a025aa377068b57b6366f397",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Gedenkklang",
+              "based_on": "3a9895c0c43894b78b2a723adff7a7b5b08f5773a025aa377068b57b6366f397",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Sonido del memorial",
+              "based_on": "3a9895c0c43894b78b2a723adff7a7b5b08f5773a025aa377068b57b6366f397",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Sonido del memorial",
+              "based_on": "3a9895c0c43894b78b2a723adff7a7b5b08f5773a025aa377068b57b6366f397",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Son du mémorial",
+              "based_on": "3a9895c0c43894b78b2a723adff7a7b5b08f5773a025aa377068b57b6366f397",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Dźwięk pomnika",
+              "based_on": "3a9895c0c43894b78b2a723adff7a7b5b08f5773a025aa377068b57b6366f397",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Som do memorial",
+              "based_on": "3a9895c0c43894b78b2a723adff7a7b5b08f5773a025aa377068b57b6366f397",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Som do memorial",
+              "based_on": "3a9895c0c43894b78b2a723adff7a7b5b08f5773a025aa377068b57b6366f397",
+              "status": "ai-draft"
+            }
+          }
+        },
         "action.interact.lothlorien.offer_acorn": {
           "source": "Offer Acorn",
           "context": {

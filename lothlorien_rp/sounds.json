@@ -1,6 +1,16 @@
 {
   "entity_sounds": {
     "entities": {
+      "lothlorien:shrine_sound": {
+        "events": {
+          "ambient": { "sound": "ambient.lothlorien.shrine", "volume": 0.5, "pitch": 1.0 }
+        }
+      },
+      "lothlorien:memorial_sound": {
+        "events": {
+          "ambient": { "sound": "ambient.lothlorien.memorial", "volume": 0.5, "pitch": 1.0 }
+        }
+      },
       "lothlorien:deer": {
         "volume": 1.0,
         "pitch": [
@@ -167,6 +177,11 @@
           }
         }
       }
+    }
+  },
+  "individual_named_sounds": {
+    "sounds": {
+      "ambient.lothlorien.forest.additions": { "sound": "ambient.lothlorien.forest.additions", "volume": 1, "pitch": 1.0 }
     }
   }
 }

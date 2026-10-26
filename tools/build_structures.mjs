@@ -81,6 +81,9 @@ const entityTag = ({ id, x, y, z, definitions, mainhand, variant, invulnerable =
   Rotation: list(T.float, [float(0), float(0)]), UniqueID: long(-(2n ** 33n) - BigInt(n) * 7919n),
 });
 
+// Template entities given in piece coordinates -> structure cells (toMcstructure entities).
+export const placeEntities = (entities, [OX, OY, OZ]) => entities.map((e) => ({ ...e, x: e.x + OX, y: e.y + OY, z: e.z + OZ }));
+
 // blocks: Map<"x,y,z" (tree coords), { name, states, loot? }>. size/offset default to the giant tree box.
 export function toMcstructure(blocks, [SX, SY, SZ] = [SIZE, SIZE_Y, SIZE], [OX, OY, OZ] = [TRUNK_AT, ROOT_DEPTH, TRUNK_AT], entities = []) {
   const volume = SX * SY * SZ;
@@ -206,7 +209,7 @@ export function giantMallornPool() {
 
 export function writeRootShrineFiles(bp) {
   const shrine = buildRootShrine();
-  const { buffer, clipped } = toMcstructure(shrine.blocks, SHRINE.size, SHRINE.offset);
+  const { buffer, clipped } = toMcstructure(shrine.blocks, SHRINE.size, SHRINE.offset, placeEntities(shrine.entities, SHRINE.offset));
   if (clipped) throw new Error(`root shrine clips ${clipped} blocks`);
   mkdirSync(join(bp, "structures", "lothlorien"), { recursive: true });
   mkdirSync(join(bp, "loot_tables", "chests"), { recursive: true });

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { MEMORIAL, buildMemorial, memorialWorldgen } from "../tools/memorial.mjs";
 import { GARDEN_SITES } from "../tools/flower_garden.mjs";
-import { toMcstructure } from "../tools/build_structures.mjs";
+import { placeEntities, toMcstructure } from "../tools/build_structures.mjs";
 import { readNbt } from "../tools/village_sim.mjs";
 import { SILVER_WATCH } from "../tools/watch_camp_rules.mjs";
 import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs";
@@ -27,8 +27,12 @@ for (const k of memorial.leaf) {
   const [x, z] = k.split(",").map(Number);
   assert.equal(get(x, -1, z)?.name, "minecraft:grass_block", "every deck cell stands on ground");
 }
-assert.deepEqual(memorial.entities, [], "uninhabited memorial has no template actors");
-const encoded = toMcstructure(blocks, MEMORIAL.size, MEMORIAL.offset);
+assert.deepEqual(memorial.entities.map((e) => e.id), ["lothlorien:memorial_sound"], "uninhabited: only the invisible sound source");
+const voice = memorial.entities[0];
+const capCell = memorial.blocks.get(`${Math.floor(voice.x)},${Math.floor(voice.y)},${Math.floor(voice.z)}`);
+assert.equal(capCell?.name, "lothlorien:mallorn_heartwood_slab", "sound source sits on the pillar cap");
+assert.ok(capCell.states["minecraft:vertical_half"] === "bottom" && voice.y % 1 >= 0.5, "above the bottom slab, not inside it");
+const encoded = toMcstructure(blocks, MEMORIAL.size, MEMORIAL.offset, placeEntities(memorial.entities, MEMORIAL.offset));
 assert.equal(encoded.clipped, 0, "template must include the full deck, apron and cap");
 const nbt = readNbt(encoded.buffer), palette = nbt.structure.palette.default;
 const dataAt = (x, y, z) => {
@@ -84,5 +88,5 @@ assert.deepEqual(generated.template_pools["minecraft:template_pool"].elements, [
   element: { element_type: "minecraft:single_pool_element", location: "lothlorien/memorial_leaf_01" }, weight: 1,
 }]);
 assert.deepEqual(encoded.buffer, readFileSync(new URL("../lothlorien_bp/structures/lothlorien/memorial_leaf_01.mcstructure", import.meta.url)));
-assert.deepEqual(toMcstructure(buildMemorial().blocks, MEMORIAL.size, MEMORIAL.offset).buffer, encoded.buffer);
+assert.deepEqual(toMcstructure(buildMemorial().blocks, MEMORIAL.size, MEMORIAL.offset, placeEntities(memorial.entities, MEMORIAL.offset)).buffer, encoded.buffer);
 console.log("ok   leaf memorial: connected approaches, supported planting, native banners, ground anchor, shared garden grid, deterministic asset");

@@ -97,7 +97,9 @@ export function buildRootShrine() {
   // Leaves persist even if a player trims a root or branch while inspecting the shrine.
   for (const b of blocks.values()) if (b.name === B.leaves) b.states["lothlorien:persistent"] = true;
   anchorMallorn(blocks);
-  return { ...tree, blocks, flowers, entities: [] };
+  // Invisible sound source under the root shoulder above the mat (docs/SOUNDSCAPE_PLAN.md): its native ambient timer rings the shrine tone.
+  const entities = [{ id: "lothlorien:shrine_sound", x: 1.5, y: 2.6, z: -2.5 }];
+  return { ...tree, blocks, flowers, entities };
 }
 
 export function rootShrineLoot() {

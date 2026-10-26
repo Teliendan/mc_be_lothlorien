@@ -1,6 +1,120 @@
 {
   "format_version": "1.14.0",
   "sound_definitions": {
+    "ambient.lothlorien.shrine": {
+      "category": "ambient",
+      "min_distance": 3.0,
+      "max_distance": 24.0,
+      "sounds": [
+        "sounds/ambient/lothlorien/shrine_tone_1",
+        "sounds/ambient/lothlorien/shrine_tone_2",
+        "sounds/ambient/lothlorien/shrine_tone_3",
+        "sounds/ambient/lothlorien/shrine_tone_4",
+        "sounds/ambient/lothlorien/shrine_bell"
+      ]
+    },
+    "ambient.lothlorien.memorial": {
+      "category": "ambient",
+      "min_distance": 3.0,
+      "max_distance": 24.0,
+      "sounds": [
+        "sounds/ambient/lothlorien/memorial_tones_1",
+        "sounds/ambient/lothlorien/memorial_tones_2",
+        "sounds/ambient/lothlorien/memorial_harp_1",
+        "sounds/ambient/lothlorien/memorial_harp_2"
+      ]
+    },
+    "ambient.lothlorien.forest.additions": {
+      "category": "ambient",
+      "sounds": [
+        {
+          "name": "sounds/ambient/lothlorien/forest_gust_1",
+          "is3D": false,
+          "volume": 0.3
+        },
+        {
+          "name": "sounds/ambient/lothlorien/forest_gust_2",
+          "is3D": false,
+          "volume": 0.3
+        },
+        {
+          "name": "sounds/music/lothlorien/village_rest",
+          "is3D": false,
+          "volume": 0.0,
+          "weight": 18
+        }
+      ]
+    },
+    "music.lothlorien.village.1": {
+      "category": "music",
+      "sounds": [
+        {
+          "name": "sounds/music/lothlorien/village_1",
+          "stream": true,
+          "volume": 0.4
+        }
+      ]
+    },
+    "music.lothlorien.village.2": {
+      "category": "music",
+      "sounds": [
+        {
+          "name": "sounds/music/lothlorien/village_2",
+          "stream": true,
+          "volume": 0.4
+        }
+      ]
+    },
+    "music.lothlorien.village.3": {
+      "category": "music",
+      "sounds": [
+        {
+          "name": "sounds/music/lothlorien/village_3",
+          "stream": true,
+          "volume": 0.4
+        }
+      ]
+    },
+    "music.lothlorien.village.4": {
+      "category": "music",
+      "sounds": [
+        {
+          "name": "sounds/music/lothlorien/village_4",
+          "stream": true,
+          "volume": 0.4
+        }
+      ]
+    },
+    "music.lothlorien.village.5": {
+      "category": "music",
+      "sounds": [
+        {
+          "name": "sounds/music/lothlorien/village_5",
+          "stream": true,
+          "volume": 0.4
+        }
+      ]
+    },
+    "music.lothlorien.village.6": {
+      "category": "music",
+      "sounds": [
+        {
+          "name": "sounds/music/lothlorien/village_6",
+          "stream": true,
+          "volume": 0.4
+        }
+      ]
+    },
+    "music.lothlorien.village_rest": {
+      "category": "music",
+      "sounds": [
+        {
+          "name": "sounds/music/lothlorien/village_rest",
+          "stream": true,
+          "volume": 0.0
+        }
+      ]
+    },
     "mob.lothlorien.songbird.ambient": {
       "category": "neutral",
       "sounds": [

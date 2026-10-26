@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 temp/
 node_modules/
+# raw music masters (~37 MB), kept locally; seeds/prompts in docs/SOUNDSCAPE_PLAN.md
+tools/audio/soundscape/music/

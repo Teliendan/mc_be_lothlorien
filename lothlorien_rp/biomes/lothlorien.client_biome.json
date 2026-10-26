@@ -20,6 +20,9 @@
       "minecraft:foliage_appearance": {
         "color": "#e0b43a"
       },
+      "minecraft:ambient_sounds": {
+        "addition": "ambient.lothlorien.forest.additions"
+      },
       "minecraft:biome_music": {
         "music_definition": "forest"
       },

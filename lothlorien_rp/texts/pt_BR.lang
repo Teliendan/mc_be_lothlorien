@@ -167,6 +167,10 @@ entity.lothlorien:white_deer.name=Veado branco
 item.spawn_egg.entity.lothlorien:white_deer.name=Ovo gerador: Veado branco
 ## Context: Invisible navigation helper entity used by guiding animals; not a player-buildable Minecraft beacon.
 entity.lothlorien:guide_beacon.name=Ponto de orientação
+## Context: Invisible entity in the root shrine that plays its ambient tones; never seen in normal play.
+entity.lothlorien:shrine_sound.name=Som do santuário
+## Context: Invisible entity on the leaf memorial pillar that plays its ambient tones; never seen in normal play.
+entity.lothlorien:memorial_sound.name=Som do memorial
 ## Context: Offer Acorn.
 action.interact.lothlorien.offer_acorn=Oferecer bolota
 ## Context: Offer Elanor.

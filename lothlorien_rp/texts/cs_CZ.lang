@@ -167,6 +167,10 @@ entity.lothlorien:white_deer.name=Bílý jelen
 item.spawn_egg.entity.lothlorien:white_deer.name=Vajíčko tvora: Bílý jelen
 ## Context: Invisible navigation helper entity used by guiding animals; not a player-buildable Minecraft beacon.
 entity.lothlorien:guide_beacon.name=Naváděcí bod
+## Context: Invisible entity in the root shrine that plays its ambient tones; never seen in normal play.
+entity.lothlorien:shrine_sound.name=Zvuk svatyně
+## Context: Invisible entity on the leaf memorial pillar that plays its ambient tones; never seen in normal play.
+entity.lothlorien:memorial_sound.name=Zvuk památníku
 ## Context: Offer Acorn.
 action.interact.lothlorien.offer_acorn=Nabídnout žalud
 ## Context: Offer Elanor.

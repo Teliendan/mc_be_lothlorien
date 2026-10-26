@@ -120,6 +120,9 @@
       "voice.mjs",
       "voice_glue.mjs"
     ],
+    "soundscape": [
+      "village_music.mjs"
+    ],
     "archery": [
       "archery.mjs"
     ],

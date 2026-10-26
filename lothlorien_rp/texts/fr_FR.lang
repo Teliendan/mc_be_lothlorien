@@ -167,6 +167,10 @@ entity.lothlorien:white_deer.name=Cerf blanc
 item.spawn_egg.entity.lothlorien:white_deer.name=Œuf d’apparition : Cerf blanc
 ## Context: Invisible navigation helper entity used by guiding animals; not a player-buildable Minecraft beacon.
 entity.lothlorien:guide_beacon.name=Point de guidage
+## Context: Invisible entity in the root shrine that plays its ambient tones; never seen in normal play.
+entity.lothlorien:shrine_sound.name=Son du sanctuaire
+## Context: Invisible entity on the leaf memorial pillar that plays its ambient tones; never seen in normal play.
+entity.lothlorien:memorial_sound.name=Son du mémorial
 ## Context: Offer Acorn.
 action.interact.lothlorien.offer_acorn=Offrir un gland
 ## Context: Offer Elanor.

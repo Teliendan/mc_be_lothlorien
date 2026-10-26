@@ -2,13 +2,13 @@
 import { mkdirSync, writeFileSync, realpathSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { toMcstructure } from "./build_structures.mjs";
+import { placeEntities, toMcstructure } from "./build_structures.mjs";
 import { MEMORIAL, buildMemorial, memorialWorldgen } from "./memorial.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 export function writeMemorial() {
   const memorial = buildMemorial();
-  const { buffer, clipped } = toMcstructure(memorial.blocks, MEMORIAL.size, MEMORIAL.offset);
+  const { buffer, clipped } = toMcstructure(memorial.blocks, MEMORIAL.size, MEMORIAL.offset, placeEntities(memorial.entities, MEMORIAL.offset));
   if (clipped) throw new Error(`memorial clips ${clipped} blocks`);
   const dir = join(root, "lothlorien_bp", "structures", "lothlorien");
   mkdirSync(dir, { recursive: true });
