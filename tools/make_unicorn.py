@@ -33,10 +33,8 @@ def write(path, data):
 # The Elanor lure is vanilla tempt, the same goal as the deer's working corn lure. It lives in its own group, added
 # only in the Friend state (a Guest within 10 blocks turns the state to calm, so a Guest cannot lure it) and only while
 # no offer wait runs: the script fires lure_off on an accepted offer and lure_on when the wait ends (scripts/unicorn.js).
-# Owner retests 2026-10-26: follow_target_leader with a bool_property "self" test in its leader filters never followed,
-# and tempt alone ignored Elanor too (Elanor is a block_placer item sharing the block's id; the deer's corn is a plain
-# item). The only lure that ever walked the unicorn up was follow_target_leader with player + Friend tag + held Elanor
-# (first retest), so it is back, ungated (the group is the gate), next to tempt.
+# Beside tempt, follow_target_leader on a Friend holding Elanor (the group is its offer-wait gate). Owner 2026-10-26:
+# the lure works in Survival; earlier "ignores Elanor" retests were in Creative, which deer.js then skipped.
 LURE = {
     "minecraft:behavior.tempt": {"priority": 3, "speed_multiplier": 1.0, "items": [ELANOR], "within_radius": 10,
                                  "can_get_scared": False},
