@@ -9,7 +9,7 @@
 export const CHECK_TICKS = 40;
 export const LEAVE_TICKS = 200;
 export const REST_ID = "music.lothlorien.village_rest";
-export const REST_TICKS = [20 * 20, 60 * 20]; // quiet interval after a piece, uniform (owner 2026-10-26: 1-3 min was too much for 1.5-2.5 min pieces)
+export const REST_TICKS = [10 * 20, 30 * 20]; // quiet interval after a piece, uniform (owner: 1-3 min too long 2026-10-26, 20-60 s still long 2026-10-27)
 export const FADE_IN = 3, FADE_OUT = 5, VOLUME = 1;
 
 // The pool: sound event and length of each encoded piece (tools/prepare_soundscape.py prints the lengths).

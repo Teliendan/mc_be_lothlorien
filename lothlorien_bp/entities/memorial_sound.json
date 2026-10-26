@@ -33,8 +33,8 @@
       "minecraft:fire_immune": {},
       "minecraft:persistent": {},
       "minecraft:ambient_sound_interval": {
-        "value": 25,
-        "range": 30,
+        "value": 12,
+        "range": 18,
         "event_name": "ambient"
       },
       "minecraft:conditional_bandwidth_optimization": {}

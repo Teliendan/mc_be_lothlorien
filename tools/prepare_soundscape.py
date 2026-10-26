@@ -7,7 +7,7 @@ docs/SOUNDSCAPE_PLAN.md). Edits are fixed in TAKES, so a re-run reproduces the s
 
   sfx:   shorten inner quiet runs, trim both edges to the audible part (optional cut), short fade-in, fade-out,
          even loudness.
-  music: shorten inner quiet runs (> 1.5 s under -45 dBFS -> 0.8 s), optional cut + fade, even loudness.
+  music: shorten inner quiet runs (> 1.5 s under -45 dBFS -> 0.8 s), optional cut + fade, -21 LUFS.
 --check compares the shipped Ogg files with a fresh encoding and the tick lengths in village_music_rules.js.
 """
 from pathlib import Path
@@ -18,6 +18,7 @@ import re
 
 import numpy as np
 import soundfile as sf
+from scipy.signal import lfilter
 
 
 MOD = Path(__file__).absolute().parents[1]
@@ -38,9 +39,6 @@ TAKES = (
     ("ambient/lothlorien/memorial_tones_2", "memorial_tones_s322", "sfx", {}),
     ("ambient/lothlorien/memorial_harp_1", "memorial_harp_s321", "sfx", {}),
     ("ambient/lothlorien/memorial_harp_2", "memorial_harp_s322", "sfx", {}),
-    # gusts swell from a quiet bed: tighter edge threshold, longer fades
-    ("ambient/lothlorien/forest_gust_1", "forest_gust_s311", "sfx", {"edge_db": 24, "fade_in": 1.0, "fade_out": 2.0}),
-    ("ambient/lothlorien/forest_gust_2", "forest_gust_s312", "sfx", {"edge_db": 24, "fade_in": 1.0, "fade_out": 2.0}),
     ("music/lothlorien/village_1", "music/harp_flute_s411", "music", {"cut": 86.0}),  # weak after the drop at 86 s
     ("music/lothlorien/village_2", "music/harp_solo_s402", "music", {}),
     ("music/lothlorien/village_3", "music/harp_flute_s431", "music", {"fade_out": 8.0}),  # abrupt ending
@@ -97,6 +95,18 @@ def loudness(x, target_db, peak_db):
     return x * gain
 
 
+def lufs(x):
+    """Integrated loudness (ITU-R BS.1770 K-weighting at 48 kHz, absolute and relative gates)."""
+    y = lfilter([1.53512485958697, -2.69169618940638, 1.19839281085285], [1, -1.69065929318241, 0.73248077421585], x, axis=0)
+    y = lfilter([1, -2, 1], [1, -1.99004745483398, 0.99007225036621], y, axis=0)
+    n, hop = int(0.4 * RATE), int(0.1 * RATE)
+    ms = np.array([(y[i:i + n] ** 2).mean(axis=0).sum() for i in range(0, len(y) - n, hop)])
+    level = -0.691 + 10 * np.log10(ms + 1e-12)
+    gated = ms[level > -70]
+    rel = -0.691 + 10 * np.log10(gated.mean()) - 10
+    return -0.691 + 10 * np.log10(ms[(level > -70) & (level > rel)].mean())
+
+
 def sfx(x, edge_db=30, fade_in=0.02, fade_out=1.5, cut=None):
     level, n = levels(x, 0.05)
     loud = level.max()
@@ -114,7 +124,12 @@ def music(x, cut=None, fade_out=0.0):
     x = x[audible[0] * n: (audible[-1] + 1) * n]
     if cut:  # seconds into the trimmed piece
         x, fade_out = x[: int(cut * RATE)], max(fade_out, 4.0)
-    return loudness(fades(x, 0.0, fade_out), -16, -1)
+    x = fades(x, 0.0, fade_out)
+    # equal perceived loudness (owner 2026-10-27: peak-capped RMS left pieces up to 3.5 dB apart); -21 fits every peak
+    x = x * 10 ** ((-21 - lufs(x)) / 20)
+    if np.abs(x).max() > 10 ** (-1 / 20):
+        raise ValueError("music peak above -1 dBFS at -21 LUFS; lower the target")
+    return x
 
 
 def encode(data):

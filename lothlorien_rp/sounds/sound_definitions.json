@@ -28,20 +28,154 @@
       "category": "ambient",
       "sounds": [
         {
-          "name": "sounds/ambient/lothlorien/forest_gust_1",
+          "name": "sounds/block/poplar_leaves/ambient1",
           "is3D": false,
-          "volume": 0.3
+          "volume": 1.0,
+          "weight": 2
         },
         {
-          "name": "sounds/ambient/lothlorien/forest_gust_2",
+          "name": "sounds/block/poplar_leaves/ambient2",
           "is3D": false,
-          "volume": 0.3
+          "volume": 1.0,
+          "weight": 2
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient3",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 2
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient4",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 2
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient5",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 2
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient6",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 3
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient7",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 3
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient8",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 3
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient9",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 3
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient10",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 3
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient11",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 3
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient12",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 2
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient13",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 2
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient14",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 3
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient15",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 4
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient16",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 2
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient17",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 3
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient18",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 4
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient19",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 2
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient20",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 1
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient21",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 1
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient22",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 1
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient23",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 1
+        },
+        {
+          "name": "sounds/block/poplar_leaves/ambient24",
+          "is3D": false,
+          "volume": 1.0,
+          "weight": 1
         },
         {
           "name": "sounds/music/lothlorien/village_rest",
           "is3D": false,
           "volume": 0.0,
-          "weight": 18
+          "weight": 168
         }
       ]
     },
@@ -51,7 +185,7 @@
         {
           "name": "sounds/music/lothlorien/village_1",
           "stream": true,
-          "volume": 0.4
+          "volume": 0.5
         }
       ]
     },
@@ -61,7 +195,7 @@
         {
           "name": "sounds/music/lothlorien/village_2",
           "stream": true,
-          "volume": 0.4
+          "volume": 0.5
         }
       ]
     },
@@ -71,7 +205,7 @@
         {
           "name": "sounds/music/lothlorien/village_3",
           "stream": true,
-          "volume": 0.4
+          "volume": 0.5
         }
       ]
     },
@@ -81,7 +215,7 @@
         {
           "name": "sounds/music/lothlorien/village_4",
           "stream": true,
-          "volume": 0.4
+          "volume": 0.5
         }
       ]
     },
@@ -91,7 +225,7 @@
         {
           "name": "sounds/music/lothlorien/village_5",
           "stream": true,
-          "volume": 0.4
+          "volume": 0.5
         }
       ]
     },
@@ -101,7 +235,7 @@
         {
           "name": "sounds/music/lothlorien/village_6",
           "stream": true,
-          "volume": 0.4
+          "volume": 0.5
         }
       ]
     },

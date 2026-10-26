@@ -3,7 +3,14 @@
 Agreed direction: 2026-10-16. Production started 2026-10-25 at the owner's
 request (step 2, audition set). Target: Bedrock 1.26.52 / Script API 2.8.0.
 
-## Implemented, 2026-10-26 (deployed, awaiting in-game listening)
+## Implemented, 2026-10-26; revised after first in-game listening, 2026-10-27
+
+In-game feedback 2026-10-27: two village pieces differed in level (fixed:
+music now normalized to -21 LUFS, game volume 0.4 -> 0.5); the generated wind
+gusts evoked cold autumn wind (dropped); shrine sounds well, especially the
+two gong-like tones, the long pulsing tone is less good but usable; memorial
+good; pauses shorter everywhere (shrine 10-25 s, memorial 12-30 s, village
+rest 10-30 s).
 
 Owner picks from audition 2 (phone listening page, 2026-10-26). Masters in
 `tools/audio/soundscape/` (music masters git-ignored for size; generator
@@ -12,18 +19,18 @@ commands with prompts and seeds in `provenance/`), edits and encoding in
 
 | Layer | Wiring | Shipped takes |
 | --- | --- | --- |
-| Forest | client biome `ambient_sounds.addition` = `ambient.lothlorien.forest.additions`, non-3D, volume 0.3; a weight-18 silent entry thins the gusts out | gusts s311, s312 (sfx2); rustles and the loop dropped |
-| Root shrine | invisible `lothlorien:shrine_sound` under the root ceiling, `ambient` every 20-45 s, distance 3-24 | tones s321, s322 (cut to 8 s), s323 (cut to 10 s), 22 s s322 (cut to 17.5 s), bell s322 |
-| Leaf memorial | invisible `lothlorien:memorial_sound` on the pillar cap, every 25-55 s, distance 3-24 | tones s321, s322; harp s321, s322 |
-| Village | `scripts/village_music.js`: `playMusic` piece, then a looped silent rest, 20-60 s; leaving fades after 10 s outside | 1 = harp_flute s411 (cut at 86 s, "good, positive"), 2 = harp_solo s402 ("calm"), 3 = harp_flute s431 (8 s fade-out added), 4 = s432 ("playful"), 5 = s433 ("melancholic"), 6 = harp_solo s451 ("playful, optimistic") |
+| Forest | client biome `ambient_sounds.addition` = `ambient.lothlorien.forest.additions`, non-3D, volume 1.0; a weight-168 silent entry (about 3 in 4 picks) thins them out | vanilla Dappled Forest poplar leaf rustles (`sounds/block/poplar_leaves/ambient1-24`, vanilla weights, its wind1-3 left out); no shipped files. Generated loop, rustles and gusts dropped |
+| Root shrine | invisible `lothlorien:shrine_sound` under the root ceiling, `ambient` every 10-25 s, distance 3-24 | tones s321, s322 (cut to 8 s), s323 (cut to 10 s), 22 s s322 (cut to 17.5 s), bell s322 |
+| Leaf memorial | invisible `lothlorien:memorial_sound` on the pillar cap, every 12-30 s, distance 3-24 | tones s321, s322; harp s321, s322 |
+| Village | `scripts/village_music.js`: `playMusic` piece, then a looped silent rest, 10-30 s; leaving fades after 10 s outside | 1 = harp_flute s411 (cut at 86 s, "good, positive"), 2 = harp_solo s402 ("calm"), 3 = harp_flute s431 (8 s fade-out added), 4 = s432 ("playful"), 5 = s433 ("melancholic"), 6 = harp_solo s451 ("playful, optimistic") |
 
 Maybes not shipped: harp_solo s401 (first half perfect, then a change),
-harp_flute s436 (a bit sharp). Loudness: loud passages at -16 dBFS RMS, peak
--1 dBFS; game volume in `sound_definitions.json` (music 0.4 like vanilla
-forest music, structure sounds 0.5 in `sounds.json`). Only newly generated
+harp_flute s436 (a bit sharp). Loudness: structure sounds with loud passages at
+-16 dBFS RMS, peak -1 dBFS; music at -21 LUFS integrated. Game volume in
+`sound_definitions.json` (music 0.5, structure sounds 0.5 in `sounds.json`). Only newly generated
 shrines and memorials carry the sound entities (new world).
 
-In-game checks: overall volumes; how often forest gusts play; shrine and
+In-game checks: music levels now even; poplar rustle volume and frequency; shrine and
 memorial reach and repetition; the invisible entities' ambient sounds play at
 all; village piece replaces vanilla forest music, the rest track keeps it out
 between pieces, and vanilla music returns after leaving; no restart when
