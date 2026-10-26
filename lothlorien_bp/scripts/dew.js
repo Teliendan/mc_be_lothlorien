@@ -14,6 +14,7 @@ import { captureUse, liveUse, readBlock } from "./deferred_use.js";
 const DEW = "lothlorien:dew";
 const DEW_BOTTLE = "lothlorien:dew_bottle";
 const MORNING_DEW = "lothlorien:morning_dew";
+const DEW_RECIPES = ["lothlorien:star_canopy", "lothlorien:elven_rope"]; // recipes whose `unlock` is morning dew
 
 system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
   blockComponentRegistry.registerCustomComponent("lothlorien:dew_cover", {
@@ -47,7 +48,14 @@ function collect(player, block, slot) {
     }
   }
   block.setPermutation(block.permutation.withState(DEW, false));
-  if (completed) noteDeed(player, "dew");
+  if (completed) {
+    noteDeed(player, "dew");
+    // The owner saw the dew-unlocked recipes stay locked: a script slot swap is not native acquisition.
+    // Grant them explicitly; the JSON `unlock` still covers dew bought from a gardener.
+    for (const recipe of DEW_RECIPES) {
+      try { player.runCommand(`recipe give @s ${recipe}`); } catch { /* already known or player gone */ }
+    }
+  }
   block.dimension.playSound("bucket.fill_water", block.center(), { pitch: 1.8 });
 }
 

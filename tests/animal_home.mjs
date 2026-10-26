@@ -9,6 +9,7 @@ import * as swanRules from "../lothlorien_bp/scripts/swan_rules.js";
 import * as unicornRules from "../lothlorien_bp/scripts/unicorn_rules.js";
 import { message as localizedMessage } from "../lothlorien_bp/scripts/messages.js";
 
+const watchUnicornReadiness = () => {};
 const ACORN = guideRules.ACORN_ID, BOTTLE = "lothlorien:bottle_of_fireflies";
 const EMPTY = "minecraft:glass_bottle";
 const entityJson = name => JSON.parse(readFileSync(new URL(`../lothlorien_bp/entities/${name}.json`, import.meta.url)))["minecraft:entity"];
@@ -21,6 +22,7 @@ class TestItem {
   setLore(lines) { this.lore = structuredClone(lines); }
 }
 async function load(name, bindings) {
+  if (name === "unicorn") bindings = { watchUnicornReadiness, ...bindings };
   if (name === "fireflies" && !bindings.captureUse) bindings = { ...bindings, ...await load("deferred_use", bindings) };
   if (name === "fireflies") bindings = { ...bindings, ...await load("firefly_bottle",{...bindings,message:localizedMessage}) };
   globalThis.__animalHome = bindings;

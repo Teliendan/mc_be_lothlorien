@@ -5,12 +5,20 @@ import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { isGuiding } from "./white_deer.js";
 import { isErrand } from "./squirrel.js";
-import { ALARM_RADIUS, CORN_ID, DEER_ID, DEER_TYPES, WARY_TYPES, WATCH_RADIUS, pickWariness, setEventFor, warinessFor } from "./deer_rules.js";
+import { ALARM_RADIUS, CORN_ID, DEER_ID, DEER_TYPES, WARY_TYPES, WATCH_RADIUS, UNICORN_ID, pickWariness, setEventFor, warinessFor } from "./deer_rules.js";
 
 const INTERVAL_TICKS = 40;
 const PLAYER_ID = "minecraft:player";
 const loaded = new Map();
 let warinessTimer;
+let unicornReadiness;
+
+// Reuse this service's existing load/bootstrap/removal paths for the unicorn's
+// one-shot offer pause instead of adding another world query or polling loop.
+export function watchUnicornReadiness(onLoad, onRemove) {
+  unicornReadiness = { onLoad, onRemove };
+  for (const entity of loaded.values()) if (entity.typeId === UNICORN_ID) onLoad(entity);
+}
 
 function stopIfEmpty() {
   if (!loaded.size && warinessTimer !== undefined) {
@@ -23,6 +31,7 @@ function trackCreature(entity) {
     if (!WARY_TYPES.includes(entity.typeId) || !entity.isValid) return;
     loaded.set(entity.id, entity);
     if (warinessTimer === undefined) warinessTimer = system.runInterval(updateWariness, INTERVAL_TICKS);
+    if (entity.typeId === UNICORN_ID) unicornReadiness?.onLoad(entity);
   } catch { /* entity removed before delivery */ }
 }
 
@@ -108,6 +117,7 @@ export function startDeer() {
   world.afterEvents.entityLoad.subscribe(({ entity }) => trackCreature(entity));
   world.afterEvents.entityRemove.subscribe(({ removedEntityId }) => {
     loaded.delete(removedEntityId); stopIfEmpty();
+    unicornReadiness?.onRemove(removedEntityId);
   });
   // One-time bootstrap for already loaded animals; no recurring entity query.
   for (const id of ["overworld", "nether", "the_end"]) {
@@ -138,6 +148,7 @@ export function startDeer() {
   world.afterEvents.entityDie.subscribe(({ deadEntity, damageSource }) => {
     try {
       loaded.delete(deadEntity.id); stopIfEmpty();
+      unicornReadiness?.onRemove(deadEntity.id);
       if (!WARY_TYPES.includes(deadEntity.typeId) || damageSource.damagingEntity?.typeId !== PLAYER_ID) return;
       alarmAround(deadEntity.dimension, deadEntity.location);
     } catch {

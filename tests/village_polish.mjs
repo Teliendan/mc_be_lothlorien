@@ -57,7 +57,7 @@ function mouth(onward = false, step = false, turn = 0) {
   for(let x=-2;x<=2;x++) for(let z=-2;z<=0;z++) cells.set(pos(x,24,z),PL);
   for(const x of [-2,2]) cells.set(pos(x,25,0),F);
   for(let x=-1;x<=1;x++) cells.set(pos(x,16,1),PL);
-  if(onward) for(let x=-1;x<=1;x++) cells.set(pos(x,step?23:24,1),step?"lothlorien:mallorn_slab":PL);
+  if(onward) for(let x=-1;x<=1;x++) cells.set(pos(x,step==='up'?25:step?23:24,1),step?"lothlorien:mallorn_slab":PL);
   return overlay((x,y,z)=>cells.get(key(x,y,z)) ?? "minecraft:air");
 }
 const rect = {x0:-5,x1:5,z0:-5,z1:5};
@@ -65,7 +65,7 @@ for(const turn of [0,1,2,3]) {
   const at = mouth(false,false,turn), caps=drive(closeUnusedExitsGen(at,rect,[24]));
   assert.equal(caps.length,1); assert.equal(caps[0].rails.length,3);
   assert.equal(drive(closeUnusedExitsGen(at,rect,[24])).length,0,"one-shot cap is idempotent");
-  for(const step of [false,true]) assert.equal(drive(closeUnusedExitsGen(mouth(true,step,turn),rect,[24])).length,0,"connected bridge/half step remains open");
+  for(const step of [false,true,'up']) assert.equal(drive(closeUnusedExitsGen(mouth(true,step,turn),rect,[24])).length,0,"connected bridge/descending or rising half step remains open");
 }
 console.log("ok   village polish: upper unused mouth closes above a bridge, rotations, idempotence, real joins remain open");
 

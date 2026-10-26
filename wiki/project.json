@@ -719,6 +719,22 @@
     {
       "featureId": "lothlorien:harmony",
       "pattern": "lothlorien_bp/scripts/village_area.js"
+    },
+    {
+      "featureId": "lothlorien:elf",
+      "pattern": "lothlorien_bp/scripts/voice.js"
+    },
+    {
+      "featureId": "lothlorien:elven_warden",
+      "pattern": "lothlorien_bp/scripts/voice.js"
+    },
+    {
+      "featureId": "lothlorien:elf",
+      "pattern": "lothlorien_bp/scripts/voice_rules.js"
+    },
+    {
+      "featureId": "lothlorien:elven_warden",
+      "pattern": "lothlorien_bp/scripts/voice_rules.js"
     }
   ],
   "defaultSelfDrops": [
@@ -728,7 +744,7 @@
   "id": "lothlorien",
   "inventoryMedia": true,
   "locale": "en_US",
-  "name": "LothlÃ³rien",
+  "name": "Lothlórien",
   "nativeForms": {
     "lothlorien:elven_rope_hanging": "Hanging rope",
     "lothlorien:great_mallorn_sprout": "Planted Great Mallorn sprout",
@@ -1599,7 +1615,7 @@
       "evidence": [
         {
           "path": "lothlorien_bp/entities/squirrel.json",
-          "sha256": "33dd4ba501f0bb1ac5f2a792b32e261244ea8ce89c6c430458ef1aadd5f3a67e"
+          "sha256": "d3e9a28a4e4fc9442d839ec287fe6433923eb31f711f5a84240eec69386ac45f"
         },
         {
           "path": "lothlorien_bp/scripts/squirrel.js",

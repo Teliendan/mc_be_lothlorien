@@ -1,9 +1,10 @@
-"""Deterministic 16px salve, leather Miruvor skin, venison and Lembas icons.
+"""Deterministic 16px salve, filled/empty Miruvor skins, venison and Lembas icons.
 
 Run with python -B tools/make_provisions.py. Shapes are pixel polygons; material
 ramps and intentional folds/cut marks supply detail without random texture noise.
 """
 from pathlib import Path
+import argparse
 from PIL import Image, ImageDraw
 
 OUT = Path(__file__).resolve().parents[1] / 'lothlorien_rp/textures/items'
@@ -85,6 +86,28 @@ def miruvor():
     return c.im
 
 
+def empty_miruvor_skin():
+    c = Canvas()
+    # Same gold neck, leather strap and leaf badge as the full skin. The emptied
+    # belly collapses into a narrow, asymmetric hanging fold instead of a bulge.
+    c.line([(9,4),(12,5),(13,7),(12,10),(10,12)], LEATHER[1])
+    c.shape([(8,2),(10,2),(10,4),(8,5)], GOLD)
+    c.shape([(7,4),(10,4),(10,6),(9,8),(10,10),(10,13),
+             (8,14),(6,12),(5,9),(6,7),(7,6)], LEATHER)
+    c.line([(8,4),(10,4)], GOLD[4])
+    c.line([(7,6),(6,8),(6,10),(8,13)], LEATHER[1])
+    c.line([(7,7),(7,9),(9,12)], LEATHER[4])
+    c.line([(9,7),(8,10),(9,13)], LEATHER[0])
+    c.line([(6,8),(7,10)], LEATHER[5])
+    # The familiar badge folds with the leather rather than floating over it.
+    c.line([(8,8),(8,9),(7,10)], GOLD[3])
+    c.dot(8,8,GOLD[5])
+    c.dot(7,9,GOLD[4])
+    c.dot(8,12,LEATHER[3])
+    c.save('empty_miruvor_skin')
+    return c.im
+
+
 def venison(cooked=False):
     c = Canvas()
     # Narrow rib chop, ivory shank below a triangular cut (not a beef slab).
@@ -162,9 +185,16 @@ def wrapped():
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--only', choices=['empty-miruvor-skin'], help='Regenerate only the separate empty skin icon.')
+    args = parser.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
-    salve(); miruvor(); venison(); venison(True); dough(); cake(); wrapped()
-    print('Wrote seven provision icons')
+    if args.only:
+        empty_miruvor_skin()
+        print('Wrote empty Miruvor skin icon')
+    else:
+        salve(); miruvor(); empty_miruvor_skin(); venison(); venison(True); dough(); cake(); wrapped()
+        print('Wrote eight provision icons')
 
 
 if __name__ == '__main__':

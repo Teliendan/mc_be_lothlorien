@@ -58,6 +58,15 @@ await scenario('nectar/dew callers still accept glass, reject filled firefly sou
   bloom.setPermutation(bloom.permutation.withState('lothlorien:nectar',3)); const filled = e.player(BOTTLE); e.click(filled,bloom); e.flush();
   assert.equal(bloom.permutation.getState('lothlorien:nectar'),3);
 });
+await scenario('completing the eighth dew drop gives the dew recipes by command; earlier drops do not', e => {
+  e.block('minecraft:stone', {}, { x: 1,y: 63,z: 0 });
+  const cover = e.block('lothlorien:mallorn_leaf_carpet', { 'lothlorien:dew': true, 'lothlorien:amount': 1 }, { x: 1,y: 64,z: 0 });
+  const p = e.player(DEW, 1, { durability: { damage: 2, maxDurability: 8 } }); e.click(p,cover); e.flush();
+  assert.equal(p.held.typeId, DEW); assert.deepEqual(p.commands, [], 'a non-completing drop gives no recipe');
+  cover.setPermutation(cover.permutation.withState('lothlorien:dew', true)); p.held = e.player(DEW, 1, { durability: { damage: 1, maxDurability: 8 } }).held; e.click(p,cover); e.flush();
+  assert.equal(p.held.typeId, 'lothlorien:morning_dew');
+  assert.deepEqual(p.commands, ['recipe give @s lothlorien:star_canopy', 'recipe give @s lothlorien:elven_rope']);
+});
 await scenario('rope unroll/extension uses dimension bounds and charges once for the placed pieces', e => {
   e.dimension.heightRange = { min: 62, max: 66 }; const wall = e.block('minecraft:stone');
   for (const y of [62,63,65]) e.block('minecraft:stone', {}, { x: 0,y,z: 0 });
@@ -127,9 +136,9 @@ await scenario('both rope IDs/all facings stop climbing when waterlogged and rej
     feet.setType('minecraft:air'); assert.equal(e.rope.inRope(p),false); head.isWaterlogged=false; assert.equal(e.rope.inRope(p),true,'prior head-only entry is preserved');
   }
 });
-await scenario('foreign (long) effects survive entry, sneak and leaving; our own 4-tick grants are replaced and removed', e => {
+await scenario('foreign levitation survives entry, sneak and leaving; our own 4-tick grants are replaced and removed', e => {
   const p=e.player(); e.block(ROPE,{'lothlorien:face':'north'}); e.rope.startRopeClimbing();
-  for(const id of ['levitation','slow_falling']) {
+  for(const id of ['levitation']) {
     p.effects.clear(); const potion={amplifier:3,duration:200}; p.effects.set(id,potion); p.isSneaking=true; e.tick(4,false); e.tick(1,false);
     assert.equal(p.effects.get(id),potion); assert.equal(potion.duration,200); assert.equal(p.grants.length,0); assert.equal(p.removals.length,0); assert.equal(p.teleports.length,0);
     p.location.x=10; e.tick(1,false); assert.equal(p.effects.get(id),potion); assert.equal(p.removals.length,0); p.location.x=0;
@@ -139,6 +148,24 @@ await scenario('foreign (long) effects survive entry, sneak and leaving; our own
   const grants=p.grants.length; e.tick(1,false); assert.equal(p.grants.length>grants,true,'our own live 4-tick grant is replaced, not mistaken for a foreign one');
   assert.ok(p.removals.includes('levitation'));
   p.location.x=10; p.removals.length=0; e.tick(1,false); assert.ok(p.removals.includes('levitation'),'leaving removes our grant');
+});
+await scenario('Slow Falling potions keep their remaining duration while rope climb, slide, crouch and exit work', e => {
+  const p=e.player(); e.block(ROPE,{'lothlorien:face':'north'}); e.rope.startRopeClimbing();
+  const potion={amplifier:0,duration:200}; p.effects.set('slow_falling',potion);
+  p.jump=true; e.tick(4,false);
+  assert.equal(p.effects.get('slow_falling'),potion);
+  assert.ok(p.grants.some(g=>g.id==='levitation'),'climbing is still granted');
+  p.jump=false; e.tick(1,false);
+  assert.equal(p.effects.get('slow_falling'),potion);
+  assert.equal(p.grants.some(g=>g.id==='slow_falling'),false,'no shorter rope effect overwrites the potion');
+  p.isSneaking=true; e.tick(1,false);
+  assert.equal(p.teleports.length,1,'crouching still grips');
+  assert.equal(p.effects.get('slow_falling'),potion);
+  potion.duration=3; e.tick(1,false);
+  assert.equal(p.effects.get('slow_falling'),potion,'last potion ticks are not mistaken for rope ownership');
+  p.location.x=10; e.tick(1,false);
+  assert.equal(p.effects.get('slow_falling'),potion); assert.equal(potion.duration,3);
+  assert.equal(p.removals.includes('slow_falling'),false);
 });
 await scenario('the climb timer stays bounded and stops when nobody climbs', e => {
   const p=e.player(); e.block(ROPE,{'lothlorien:face':'north'}); p.jump=true; e.rope.startRopeClimbing(); e.tick(4,false);

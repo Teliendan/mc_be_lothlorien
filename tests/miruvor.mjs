@@ -7,7 +7,7 @@ const category = c['minecraft:cooldown'].category;
 assert.equal(c['minecraft:cooldown'].duration, 0);
 assert.equal(c['minecraft:use_modifiers'].use_duration, 2);
 const callbacks = new Map();
-const context = { EquipmentSlot: { Mainhand: 'main' }, GameMode: { Creative: 'Creative' },
+const context = { ItemStack: function(typeId, amount) { return { typeId, amount, getComponent() {} }; }, EquipmentSlot: { Mainhand: 'main' }, GameMode: { Creative: 'Creative' },
   system: { beforeEvents: { startup: { subscribe(fn) {
     fn({ itemComponentRegistry: { registerCustomComponent: (id, handlers) => callbacks.set(id, handlers) } });
   } } } } };
@@ -36,7 +36,7 @@ function player(damage = 0) {
   }; return p;
 }
 const miruvor = callbacks.get('lothlorien:miruvor');
-const damage = p => p.held?.getComponent().damage;
+const damage = p => p.held?.getComponent()?.damage;
 let cases = 0;
 function check(name, fn) { fn(); cases++; console.log('ok   miruvor: ' + name); }
 check('completion: original balance, poison cure, sip, then cooldown', () => {
@@ -46,11 +46,12 @@ check('completion: original balance, poison cure, sip, then cooldown', () => {
   assert.equal(damage(p), 1); assert.equal(p.cooldowns.get(category), 600);
   assert.deepEqual(p.calls, ['effect', 'effect', 'effect', 'cure', 'sip', 'cooldown']);
 });
-check('four sips use the skin up', () => {
+check('four sips return the empty reusable skin', () => {
   const p = player();
   for (let sip = 0; sip < 4; sip++) {
     miruvor.onCompleteUse({ source: p });
     assert.equal(damage(p), sip < 3 ? sip + 1 : undefined); assert.equal(p.cooldowns.get(category), 600);
+    if (sip === 3) assert.equal(p.held.typeId, 'lothlorien:empty_miruvor_skin');
   }
 });
 check('Creative keeps the skin and still cools down', () => {

@@ -21,9 +21,11 @@ export function swapHeldBottle(player, item, expectedSource = GLASS_BOTTLE) {
     slot.setItem(item);
     return true;
   }
-  if (!creative) slot.amount -= 1;
   const left = player.getComponent("inventory").container.addItem(item);
   if (left) player.dimension.spawnItem(left, player.location);
+  // Only pay after the output reached the inventory or the ground. In
+  // particular, a failed full-inventory drop must leave the held source intact.
+  if (!creative) slot.amount -= 1;
   return true;
 }
 

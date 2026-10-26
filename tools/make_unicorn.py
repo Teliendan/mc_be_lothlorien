@@ -30,11 +30,19 @@ def write(path, data):
 
 
 # ---------------------------------------------------------------- behaviour entity
-def lure_filters():
-    return {"all_of": [
+def friend_with_elanor():
+    return [
         {"test": "is_family", "subject": "other", "value": "player"},
         {"test": "has_tag", "subject": "other", "value": FRIEND_TAG},
         {"test": "has_equipment", "subject": "other", "domain": "hand", "value": ELANOR},
+    ]
+
+
+# Following also waits out the offer refusal; the flight exemption does not, so a Friend holding Elanor is ignored
+# during the wait instead of fled from (the owner saw it run off and come back).
+def lure_filters():
+    return {"all_of": friend_with_elanor() + [
+        {"test": "bool_property", "subject": "self", "domain": "lothlorien:offer_ready", "value": True},
     ]}
 
 
@@ -44,8 +52,8 @@ def player_avoid(dist, sneak_dist, walk, sprint, lure=False):
             {"test": "is_family", "subject": "other", "value": "player"},
             {"test": "is_sneaking", "subject": "other", "value": sneaking},
         ]
-        if lure:  # the very same Friend+Elanor predicate qualifies for following and no flight
-            tests.append({"none_of": [lure_filters()]})
+        if lure:  # a Friend holding Elanor is never fled from
+            tests.append({"none_of": [{"all_of": friend_with_elanor()}]})
         return {"filters": {"all_of": tests}, "max_dist": max_dist, "walk_speed_multiplier": walk, "sprint_speed_multiplier": sprint}
 
     return [entry(False, dist), entry(True, sneak_dist)]
@@ -61,6 +69,7 @@ def avoid_group(dist, sneak, walk, sprint, lure=False, extra=None):
     group = {"minecraft:behavior.avoid_mob_type": {"priority": 4, "entity_types": player_avoid(dist, sneak, walk, sprint, lure) + DANGER}}
     if lure:
         group["minecraft:behavior.follow_target_leader"] = {"priority": 3, "speed_multiplier": 1,
+            "control_flags": ["move", "look"],
             "leader_filters": lure_filters(), "follow_distance": 1.5, "within_radius": 10,
             "always_look_for_leader": True, "search_cooldown": 20}
     if extra:
@@ -190,6 +199,7 @@ def behaviour_entity():
                     "lothlorien:wariness": {"type": "enum", "values": ["calm", "l1", "l2", "l3", "friend"], "default": "calm", "client_sync": False},
                     "lothlorien:alarmed": {"type": "bool", "default": False, "client_sync": False},
                     "lothlorien:tame": {"type": "bool", "default": False, "client_sync": False},
+                    "lothlorien:offer_ready": {"type": "bool", "default": True, "client_sync": False},
                     "lothlorien:trust": {"type": "int", "range": [0, 3], "default": 0, "client_sync": False},
                 },
             },

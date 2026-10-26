@@ -29,6 +29,11 @@
           "default": false,
           "client_sync": false
         },
+        "lothlorien:offer_ready": {
+          "type": "bool",
+          "default": true,
+          "client_sync": false
+        },
         "lothlorien:trust": {
           "type": "int",
           "range": [
@@ -443,6 +448,10 @@
         "minecraft:behavior.follow_target_leader": {
           "priority": 3,
           "speed_multiplier": 1,
+          "control_flags": [
+            "move",
+            "look"
+          ],
           "leader_filters": {
             "all_of": [
               {
@@ -460,6 +469,12 @@
                 "subject": "other",
                 "domain": "hand",
                 "value": "lothlorien:elanor"
+              },
+              {
+                "test": "bool_property",
+                "subject": "self",
+                "domain": "lothlorien:offer_ready",
+                "value": true
               }
             ]
           },

@@ -21245,6 +21245,60 @@
               "status": "ai-draft"
             }
           }
+        },
+        "item.lothlorien:empty_miruvor_skin": {
+          "source": "Empty Miruvor Skin",
+          "context": {
+            "meaning": "An empty reusable leather container for Miruvor. Craft it from leather, fill it in the Miruvor recipe, and recover it after the last sip. Skin means wineskin, not body skin.",
+            "location": "lothlorien_rp: inventory/block tooltip, entity name or spawn egg",
+            "trigger": "Viewed in inventory, Creative inventory, block targeting or entity UI, as appropriate to this key.",
+            "tone": "Clear Minecraft UI",
+            "grammar": "Standalone noun phrase, no sentence punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Prázdný měch na miruvor",
+              "based_on": "33f7cc0c6294549a0c04c01ef6fa76fba472fe2d68e98a2aaad98c4802bc1678",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Odre de miruvor vacío",
+              "based_on": "33f7cc0c6294549a0c04c01ef6fa76fba472fe2d68e98a2aaad98c4802bc1678",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Odre de miruvor vacío",
+              "based_on": "33f7cc0c6294549a0c04c01ef6fa76fba472fe2d68e98a2aaad98c4802bc1678",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Odre de miruvor vazio",
+              "based_on": "33f7cc0c6294549a0c04c01ef6fa76fba472fe2d68e98a2aaad98c4802bc1678",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Odre de miruvor vazio",
+              "based_on": "33f7cc0c6294549a0c04c01ef6fa76fba472fe2d68e98a2aaad98c4802bc1678",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Leerer Miruvorschlauch",
+              "based_on": "33f7cc0c6294549a0c04c01ef6fa76fba472fe2d68e98a2aaad98c4802bc1678",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Outre de miruvor vide",
+              "based_on": "33f7cc0c6294549a0c04c01ef6fa76fba472fe2d68e98a2aaad98c4802bc1678",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Pusty bukłak na miruvor",
+              "based_on": "33f7cc0c6294549a0c04c01ef6fa76fba472fe2d68e98a2aaad98c4802bc1678",
+              "status": "ai-draft"
+            }
+          }
         }
       }
     }

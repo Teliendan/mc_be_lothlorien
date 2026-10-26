@@ -46,7 +46,7 @@ async function createWorld() {
           (this.maxInclusive ? p.y > this.heightRange.max : p.y >= this.heightRange.max)) throw Error('unloaded/boundary');
       return cells.get(key(p)) ?? block('minecraft:air', {}, p);
     },
-    spawnItem(item, at) { drops.push({ item: item.clone(), at }); },
+    spawnItem(item, at) { if (this.failDrop) throw Error('drop failed'); drops.push({ item: item.clone(), at }); },
     playSound() { if (soundFails) throw Error('sound'); },
     spawnEntity(id, location, options) { const entity = fly(location, id); entity.options = options; spawned.push(entity); return entity; } };
   function block(typeId, states = {}, p = { x: 0, y: 64, z: 0 }) {
@@ -67,7 +67,8 @@ async function createWorld() {
   const players = [];
   function player(id = GLASS, amount = 1, data = {}) {
     const p = { id: `p${serial++}`, isValid: true, dimension, selectedSlotIndex: 0, mode: 'survival', location: { x: 0, y: 64, z: 0 },
-      held: stack(id, amount, data), inventory: [], full: false, noInventory: false, effects: new Map(), grants: [], removals: [], teleports: [],
+      held: stack(id, amount, data), inventory: [], full: false, noInventory: false, effects: new Map(), grants: [], removals: [], teleports: [], commands: [],
+      runCommand(command) { this.commands.push(command); },
       isSneaking: false, velocity: { x: 0, y: 0, z: 0 }, jump: false, forward: 0,
       getGameMode() { if (!this.isValid) throw Error('left'); return this.mode; },
       getHeadLocation() { return { ...this.location, y: this.location.y + 1.6 }; },

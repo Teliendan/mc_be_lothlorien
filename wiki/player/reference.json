@@ -39,7 +39,7 @@
       },
       {
         "path": "lothlorien_bp/entities/butterfly.json",
-        "sha256": "8bfc50f97dcbf2364de42cb77028bf24885fb4d4ac4545131f8b114e98e9f5df"
+        "sha256": "dca0722f420302a82f8fac1874ff7ba1d8924d5057fb444c864d96f1d67c6c16"
       }
     ]
   },
@@ -87,15 +87,15 @@
       },
       {
         "path": "lothlorien_bp/entities/deer.json",
-        "sha256": "5a4c2b67f418c9e30dc2b6bf9f9e5bb8b3c1c77ceef12b96c616cbd8818cefe4"
+        "sha256": "1d5792e7d36080727dfe0db2081fe4e180ed7b00339359a2b030537ad907708a"
       },
       {
         "path": "lothlorien_bp/scripts/deer.js",
-        "sha256": "4a5250f2dfd3f173b71e78e282010c4b37d9d33e9c270dbc2250cb47e2825865"
+        "sha256": "167f9459f7321a922d51272700242b203000d8aabdfca4c2799df92ff6e68fd3"
       },
       {
         "path": "lothlorien_bp/scripts/deer_rules.js",
-        "sha256": "f6acdcc7f8e8d1434eea289ff5f956446b441f090802bf8775bd40acffbc9287"
+        "sha256": "ac744c72b451fd5b91f0802e28ace03e2dee92b49a03c15d624fc08874ec6bba"
       }
     ]
   },
@@ -123,7 +123,7 @@
         },
         {
           "title": "Healing & friendship",
-          "text": "A healer can grant regeneration to nearby injured elves and wardens. Injured Friends of LothlÃƒÆ’Ã‚Â³rien can also receive regeneration when close and in clear sight."
+          "text": "A healer can grant regeneration to nearby injured elves and wardens. Injured Friends of Lothlórien can also receive regeneration when close and in clear sight."
         }
       ],
       "spoilers": [],
@@ -147,7 +147,7 @@
       },
       {
         "path": "lothlorien_bp/entities/elf.json",
-        "sha256": "648c9e1e87015f655229a9025a9c8c41ef9ecfa54a04fd18b06a9107bc1dd94f"
+        "sha256": "c387a116526c4444b18323b0cc472ffb90fa904e649ef677c385b491eb09476b"
       },
       {
         "path": "lothlorien_bp/scripts/elf.js",
@@ -175,7 +175,7 @@
       "sections": [
         {
           "title": "Role",
-          "text": "Wardens guard village trees and also appear naturally in LothlÃƒÆ’Ã‚Â³rien. They fight monsters, including creepers and daylight spiders."
+          "text": "Wardens guard village trees and also appear naturally in Lothlórien. They fight monsters, including creepers and daylight spiders."
         },
         {
           "title": "Approach",
@@ -203,15 +203,15 @@
       },
       {
         "path": "lothlorien_bp/entities/elven_warden.json",
-        "sha256": "44d6f7711cdc8cded52a87701f19720b24e03a88751f33b0303d6b8582f8a0a9"
+        "sha256": "1907021ab09f58f41fa891a9764af83da82132fe424388fbbb073e188ec540a0"
       },
       {
         "path": "lothlorien_bp/scripts/elven_warden.js",
-        "sha256": "86dedf583cb7c8d59d08e48704d07927b27fc35370cff153eca325a8768ec19d"
+        "sha256": "9b0aeb09bd23ca22ced4ac0787179520cef1132a4bc6606621205a35c8d8f9f7"
       },
       {
         "path": "lothlorien_bp/scripts/elven_warden_rules.js",
-        "sha256": "d45b33ed0da0a0be567818178b8afbce1e4e16d22bde7e464b59a18a2f1ca8db"
+        "sha256": "4cf9aa7624d88c8f4674717fd5e20a5017a86a7beb1ee9b8b5046d6ab391d74c"
       }
     ]
   },
@@ -257,7 +257,7 @@
       },
       {
         "path": "lothlorien_bp/entities/firefly.json",
-        "sha256": "b9357b0d667c0172b85392aa7b630badb067637ba0e41ee951f381560b4aeafa"
+        "sha256": "ca378f2fe0cd5cdce88755a70238de85daf4e8d9765998be7ef17dff5a32880e"
       },
       {
         "path": "lothlorien_bp/scripts/firefly_bottle.js",
@@ -305,7 +305,7 @@
       },
       {
         "path": "lothlorien_bp/entities/songbird.json",
-        "sha256": "a18aa29e4ac0a2363dfd24a781bf7780eb0e5cf1b4b9d9eab3be590e5e72e2c8"
+        "sha256": "c823f389735b9bfd5a3662ca8d0503d25adc87abfc6865ab81eafe846db0cb8a"
       }
     ]
   },
@@ -351,7 +351,7 @@
       },
       {
         "path": "lothlorien_bp/entities/squirrel.json",
-        "sha256": "33dd4ba501f0bb1ac5f2a792b32e261244ea8ce89c6c430458ef1aadd5f3a67e"
+        "sha256": "d3e9a28a4e4fc9442d839ec287fe6433923eb31f711f5a84240eec69386ac45f"
       },
       {
         "path": "lothlorien_bp/scripts/squirrel.js",
@@ -407,7 +407,7 @@
       },
       {
         "path": "lothlorien_bp/entities/swan.json",
-        "sha256": "6d68a043fc74f27c103deeb6449752be22529b2ff5b3e34dd9c6d7d0314b7b72"
+        "sha256": "fce865133323172cf7e68024290cc28ee9c560b26ab3390bc4884253a14b24d6"
       },
       {
         "path": "lothlorien_bp/scripts/swan.js",
@@ -433,7 +433,7 @@
       "spoilers": [
         {
           "title": "Earning a bond",
-          "text": "Become a Friend of LothlÃƒÆ’Ã‚Â³rien and hold Elanor to lure a unicorn. Offer {{lothlorien:rule/unicorn-offers}} Elanor flowers, leaving at least {{lothlorien:rule/unicorn-gap}} seconds between accepted offers. Trust remains between visits. Accepted offers restore up to {{lothlorien:rule/food-health}} health points. The bond belongs to the player who completes it."
+          "text": "Become a Friend of Lothlórien and hold Elanor to lure a unicorn. Offer {{lothlorien:rule/unicorn-offers}} Elanor flowers, leaving at least {{lothlorien:rule/unicorn-gap}} seconds between accepted offers. Trust remains between visits. Accepted offers restore up to {{lothlorien:rule/food-health}} health points. The bond belongs to the player who completes it."
         },
         {
           "title": "Caring for a bonded unicorn",
@@ -443,7 +443,7 @@
       "care": [
         {
           "label": "Lure",
-          "text": "Elanor held by a Friend of Lothlorien; an alarmed wild unicorn ignores offers."
+          "text": "Elanor held by a Friend of Lothlorien. A wild unicorn never flees from a Friend holding Elanor; between accepted offers it waits without following or fleeing, then follows Elanor again. An alarmed wild unicorn ignores offers."
         },
         {
           "label": "Feeding",
@@ -472,15 +472,15 @@
       },
       {
         "path": "lothlorien_bp/entities/unicorn.json",
-        "sha256": "68dd72d60ef5da8db4b0e9f85a7db67e232db0c80bc44ed297fa0c0402e29f0a"
+        "sha256": "02478aee84cd17a804d5f2edd0a7a1942ccae25a166084c1ca78d674bded9df0"
       },
       {
         "path": "lothlorien_bp/scripts/unicorn.js",
-        "sha256": "de14953f0d475a053a87479cd96496e65efdddf173eb743d0d95918cfe41ca37"
+        "sha256": "bdb10b9483dfac4ca3858f81fe2339165d074d45e14fafe9e891c7c093f0728d"
       },
       {
         "path": "lothlorien_bp/scripts/unicorn_rules.js",
-        "sha256": "dfcdccc3138b8544a47afc7171eef2834a50a3571367f408e5b51e96c677a971"
+        "sha256": "8ecabaf5f6d9f72427389889935682928a4445cd72d365087a1d950b7df5abaf"
       }
     ]
   },
@@ -663,7 +663,7 @@
       },
       {
         "path": "lothlorien_bp/items/silver_belt.json",
-        "sha256": "35c34e318ad827c2f0b3e3fbc64b0b6e77c2abe26e4499657180492b1b639153"
+        "sha256": "75ebbb58b4a50a55b39dbd5d616171d36311a022b81fc399b7297ce7bb748cb9"
       }
     ]
   },
@@ -764,7 +764,7 @@
       },
       {
         "path": "lothlorien_bp/items/elven_cloak.json",
-        "sha256": "34128395fdc282079b0f209b04a5d85be64d4a2a9461d512566d336063bcde76"
+        "sha256": "331e02036af7f372f728082eda2a30e5b0eb72094f0654840fa6cc6174311d29"
       }
     ]
   },
@@ -812,7 +812,7 @@
   {
     "featureId": "lothlorien:miruvor",
     "details": {
-      "introduction": "A {{lothlorien:rule/miruvor-sips}}-sip skin with a {{lothlorien:rule/miruvor-cooldown}}-second cooldown after each completed sip. Grants healing, regeneration and speed, and removes poison."
+      "introduction": "A {{lothlorien:rule/miruvor-sips}}-sip skin with a {{lothlorien:rule/miruvor-cooldown}}-second cooldown after each completed sip. Grants healing, regeneration and speed, and removes poison. The last sip returns the empty skin for refilling."
     },
     "evidence": [
       {
@@ -822,6 +822,10 @@
       {
         "path": "lothlorien_bp/items/miruvor.json",
         "sha256": "9e9ecc5c5e05813b24a316c861b0b9dc5ff4ef53bc979f1cf0770f40507c6b77"
+      },
+      {
+        "path": "lothlorien_bp/scripts/athelas.js",
+        "sha256": "b63d3a44bd3f47d6907a44825d3a23025fd120863e1c986aa5138d3879c5a097"
       }
     ]
   },
@@ -874,11 +878,11 @@
       },
       {
         "path": "lothlorien_bp/entities/galadhrim_arrow.json",
-        "sha256": "579e99a8eb11f643a2982a874eef7dd6d011fd047958c4cdcb0ffd528593f83c"
+        "sha256": "d7492c9718375bbbb2afb78ad41bd275a05ae41c1b3eefa350aacd3306ce7a28"
       },
       {
         "path": "lothlorien_bp/items/galadhrim_arrow.json",
-        "sha256": "6a7d2bd68dc53b49d4e617194ec2b2f4c5d107d626caa2010e40cd06f0483ff5"
+        "sha256": "61fc5c1ab4996a83da2c2cba4aef82db03d9bb96d83c405366aeb1989917647f"
       }
     ]
   },
@@ -944,7 +948,27 @@
       },
       {
         "path": "lothlorien_bp/items/bow.json",
-        "sha256": "211926708c96497ce2356ce1463a38dc874f2037289dc71991c49fc79ba5407f"
+        "sha256": "2ea8172b0b15623c968ea75c25c4040bf4db9f3ddd6b0bb089e306a487b57d4e"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:empty_miruvor_skin",
+    "details": {
+      "introduction": "A reusable leather container. Fill it with the Miruvor recipe; drinking the last sip returns it."
+    },
+    "evidence": [
+      {
+        "path": "lothlorien_bp/items/empty_miruvor_skin.json",
+        "sha256": "3b7fad28b6dce486867c29ebce101c372d821bc9941605d8d8c6fd2bb71ff9f5"
+      },
+      {
+        "path": "lothlorien_bp/recipes/miruvor.json",
+        "sha256": "8fee27617379ee54cef85cf4a8cf50d6ac1c700bbfa95fe5a2f52be0fa998b70"
+      },
+      {
+        "path": "lothlorien_bp/scripts/athelas.js",
+        "sha256": "b63d3a44bd3f47d6907a44825d3a23025fd120863e1c986aa5138d3879c5a097"
       }
     ]
   }

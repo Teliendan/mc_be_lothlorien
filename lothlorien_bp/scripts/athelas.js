@@ -1,4 +1,4 @@
-import { EquipmentSlot, system, GameMode } from "@minecraft/server";
+import { EquipmentSlot, system, GameMode, ItemStack } from "@minecraft/server";
 
 // Phase 8: Athelas salve and Miruvor. Food JSON gives the drinking (animation, duration, can always
 // be drunk); these components add the effects. First balance is deliberately conservative: the salve
@@ -32,13 +32,12 @@ function apply(source, effects) {
   source.removeEffect("poison");
 }
 
-// One sip of the skin: the last one uses it up.
+// One sip of the skin: the last one returns the reusable empty container.
 function sip(player, slot) {
   if (player.getGameMode() === GameMode.Creative) return;
   const item = slot.getItem(), durability = item.getComponent("minecraft:durability");
   if (durability.damage + 1 >= durability.maxDurability) {
-    slot.setItem(undefined);
-    player.playSound("random.break");
+    slot.setItem(new ItemStack("lothlorien:empty_miruvor_skin", 1));
   } else {
     durability.damage += 1;
     slot.setItem(item);

@@ -6,7 +6,7 @@
     "evidence": [
       {
         "path": "lothlorien_bp/blocks/elven_rope.json",
-        "sha256": "557616875bd60c2e11a1f12bb4de1e2437403b5f463c610ca47600a22f73b5a2"
+        "sha256": "4aa03f374df712c8c621b7a22a2b755db0a5984dabc52f8959474a31b8aa8df7"
       },
       {
         "path": "lothlorien_bp/blocks/elven_rope_hanging.json",
@@ -14,11 +14,11 @@
       },
       {
         "path": "lothlorien_bp/items/elven_rope.json",
-        "sha256": "8f279fedc830a011d347ee3f632fc636e7773facd6af2c319dcd7455f6f876aa"
+        "sha256": "9ed7629ae84b03e849cc2b8f3eb0f3855f6307b7cb7068f55bae0b4ef12ef286"
       },
       {
         "path": "lothlorien_bp/scripts/elven_rope.js",
-        "sha256": "28262b9a94fc98b3c2f246ea3ba5e8eeb23b6d628b20dadbee41c87fb91debc7"
+        "sha256": "bb3102904e878368a1155a901c9c1c35480435868941d80172c2d570ed439a72"
       },
       {
         "path": "lothlorien_bp/scripts/elven_rope_rules.js",
@@ -37,15 +37,15 @@
       },
       {
         "path": "lothlorien_bp/entities/unicorn.json",
-        "sha256": "68dd72d60ef5da8db4b0e9f85a7db67e232db0c80bc44ed297fa0c0402e29f0a"
+        "sha256": "02478aee84cd17a804d5f2edd0a7a1942ccae25a166084c1ca78d674bded9df0"
       },
       {
         "path": "lothlorien_bp/scripts/unicorn.js",
-        "sha256": "de14953f0d475a053a87479cd96496e65efdddf173eb743d0d95918cfe41ca37"
+        "sha256": "bdb10b9483dfac4ca3858f81fe2339165d074d45e14fafe9e891c7c093f0728d"
       },
       {
         "path": "lothlorien_bp/scripts/unicorn_rules.js",
-        "sha256": "dfcdccc3138b8544a47afc7171eef2834a50a3571367f408e5b51e96c677a971"
+        "sha256": "8ecabaf5f6d9f72427389889935682928a4445cd72d365087a1d950b7df5abaf"
       }
     ]
   },
@@ -84,6 +84,126 @@
       {
         "path": "lothlorien_bp/items/mallorn_leaf_carpet.json",
         "sha256": "bfba5d314dabe4e32ffb7130261c2eb906455db6daab26c1ee1d406f7eb09490"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_log",
+    "id": "lothlorien:mallorn_log/stripping-animation",
+    "text": "Stripping works and wears the axe, but the usual axe swing animation does not play.",
+    "evidence": [
+      {
+        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
+        "sha256": "135bc8fe93b3b382f6a41edd3d92ac220d0152077a53c9242c5d06ab3f240947"
+      },
+      {
+        "path": "lothlorien_bp/scripts/blocks.js",
+        "sha256": "fa99c0091796be5c10de7e43d0dda08d36854182bea4181df1ee02caef0176a5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_wood",
+    "id": "lothlorien:mallorn_wood/stripping-animation",
+    "text": "Stripping works and wears the axe, but the usual axe swing animation does not play.",
+    "evidence": [
+      {
+        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
+        "sha256": "135bc8fe93b3b382f6a41edd3d92ac220d0152077a53c9242c5d06ab3f240947"
+      },
+      {
+        "path": "lothlorien_bp/scripts/blocks.js",
+        "sha256": "fa99c0091796be5c10de7e43d0dda08d36854182bea4181df1ee02caef0176a5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_fence_gate",
+    "id": "lothlorien:mallorn_fence_gate/wall-connection",
+    "text": "The gate lowers beside a cobblestone wall, but the wall does not draw its arm toward the gate.",
+    "evidence": [
+      {
+        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
+        "sha256": "135bc8fe93b3b382f6a41edd3d92ac220d0152077a53c9242c5d06ab3f240947"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_fence_gate.json",
+        "sha256": "fc4c2c24ebc8c1872f6317b96d3223aa64741586369754f7867c873ce1951ed2"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_fence_gate",
+    "id": "lothlorien:mallorn_heartwood_fence_gate/wall-connection",
+    "text": "The gate lowers beside a cobblestone wall, but the wall does not draw its arm toward the gate.",
+    "evidence": [
+      {
+        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
+        "sha256": "135bc8fe93b3b382f6a41edd3d92ac220d0152077a53c9242c5d06ab3f240947"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_heartwood_fence_gate.json",
+        "sha256": "032abecbe9ddaa27bbed69b01445ad142608c49825a39b073be58a466c7ca11d"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_boat",
+    "id": "lothlorien:mallorn_boat/dispenser-clearance",
+    "text": "The long hull can rise over the dispenser when dispensed. Place the boat by hand to avoid that dispenser placement.",
+    "evidence": [
+      {
+        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
+        "sha256": "135bc8fe93b3b382f6a41edd3d92ac220d0152077a53c9242c5d06ab3f240947"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_boat.json",
+        "sha256": "c165ff29788c3a7d16f7dbe268491d63d0788f22287ac0e008654e1f285b7192"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_chest_boat",
+    "id": "lothlorien:mallorn_chest_boat/dispenser-clearance",
+    "text": "The long hull can rise over the dispenser when dispensed. Place the boat by hand to avoid that dispenser placement.",
+    "evidence": [
+      {
+        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
+        "sha256": "135bc8fe93b3b382f6a41edd3d92ac220d0152077a53c9242c5d06ab3f240947"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_chest_boat.json",
+        "sha256": "88c47b7e9d9219055a5e0d534e89f619f68a5be32b1d24aa0cac5586fbcee3d5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_boat",
+    "id": "lothlorien:mallorn_heartwood_boat/dispenser-clearance",
+    "text": "The long hull can rise over the dispenser when dispensed. Place the boat by hand to avoid that dispenser placement.",
+    "evidence": [
+      {
+        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
+        "sha256": "135bc8fe93b3b382f6a41edd3d92ac220d0152077a53c9242c5d06ab3f240947"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_heartwood_boat.json",
+        "sha256": "a2b958edd00ce9ff926e0b02a80587269b1c49a5884e4e846055eeb8ea9903c7"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_chest_boat",
+    "id": "lothlorien:mallorn_heartwood_chest_boat/dispenser-clearance",
+    "text": "The long hull can rise over the dispenser when dispensed. Place the boat by hand to avoid that dispenser placement.",
+    "evidence": [
+      {
+        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
+        "sha256": "135bc8fe93b3b382f6a41edd3d92ac220d0152077a53c9242c5d06ab3f240947"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_heartwood_chest_boat.json",
+        "sha256": "5a6fe67e36b29f549205a80f863cbef1fe1941969158b722db8e37ec80373d48"
       }
     ]
   }

@@ -8,10 +8,31 @@ import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { healAnimal } from "./animal_food.js";
 import { setEventFor } from "./deer_rules.js";
-import { ELANOR_ID, UNICORN_ID, mayRide, nextTrust, offerRefusal, ticksSince } from "./unicorn_rules.js";
+import { watchUnicornReadiness } from "./deer.js";
+import { ELANOR_ID, UNICORN_ID, mayRide, nextTrust, offerRefusal, offerWaitTicks, ticksSince } from "./unicorn_rules.js";
 
 const OWNER = "lothlorien:owner"; // dynamic property on the unicorn: id of the player it is bonded to
 const LAST_OFFER = "lothlorien:last_offer"; // dynamic property: world time (ticks) of the last accepted offer
+
+const OFFER_READY = "lothlorien:offer_ready";
+const offerTimers = new Map(); // only loaded unicorns currently waiting for another offering
+
+function forgetOfferTimer(id) {
+  const timer = offerTimers.get(id);
+  if (timer !== undefined) system.clearRun(timer);
+  offerTimers.delete(id);
+}
+
+function syncOfferReadiness(unicorn) {
+  forgetOfferTimer(unicorn.id);
+  const delay = offerWaitTicks(world.getAbsoluteTime(), unicorn.getDynamicProperty(LAST_OFFER));
+  unicorn.setProperty(OFFER_READY, delay === 0);
+  if (!delay || unicorn.getProperty("lothlorien:tame")) return;
+  offerTimers.set(unicorn.id, system.runTimeout(() => {
+    offerTimers.delete(unicorn.id);
+    try { if (unicorn.isValid) syncOfferReadiness(unicorn); } catch { /* unloaded */ }
+  }, delay));
+}
 
 const say = (player, text) => {
   try {
@@ -78,6 +99,7 @@ function offer(player, unicorn) {
   say(player, MESSAGES[trust - 1]);
   if (bonded) bond(unicorn, player);
   else {
+    syncOfferReadiness(unicorn);
     try {
       unicorn.dimension.spawnParticle("minecraft:heart_particle", { x: unicorn.location.x, y: unicorn.location.y + 1.8, z: unicorn.location.z });
     } catch {
@@ -87,6 +109,9 @@ function offer(player, unicorn) {
 }
 
 export function startUnicorns() {
+  // Reuse the existing wildlife lifecycle registry/bootstrap; no extra entity
+  // scan or recurring timer. Recompute the remaining pause after chunk reload.
+  watchUnicornReadiness(syncOfferReadiness, forgetOfferTimer);
   // Like a tamed wolf or horse: the bonded owner is told when their unicorn dies.
   world.afterEvents.entityDie.subscribe(({ deadEntity }) => {
     try {

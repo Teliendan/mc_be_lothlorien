@@ -23,8 +23,9 @@ Target: tester build on the weekend of 2026-10-24/25.
   - command-only landscape probe structures: `worldgen/structures/{landscape_probe,woodland_group_probe}.json`,
     `template_pools/landscape_probe_*.json`, `structures/lothlorien/landscape_probe/`
   - `verification_exceptions.json`, a dev-only file that ships
-- [ ] **Owner game checks L1-L17** in the workspace `docs/game-checks.md`. L1-L8 cover code
-  changed in the parity cleanup, so do those first.
+- [ ] **Feedback retests only.** Owner completed the broad checks on 2026-10-25.
+  Accepted results and fixes: `TEST_FEEDBACK_2026-10-25.md`; remaining focused
+  checks: workspace `docs/game-checks.md`. L8 is untested and L9 inconclusive.
 - [x] **Snow on blocks.** Native snowlogging enabled for Elanor, Niphredil, Athelas and Golden Fern
   (2026-10-25); counterpart scope and remaining game checks: `SNOW.md`.
 - [ ] **Elf and Elven Warden sounds.** They have no `entity_sounds` entry, so they use the player
@@ -54,8 +55,8 @@ Target: tester build on the weekend of 2026-10-24/25.
 
 ## 3. Before release
 
-- [ ] **Sindarin voice.** Nothing is generated yet. The plan is in `SINDARIN_VOICE_EVENTS.md`
-  (9 groups, 20 lines) and the voice setup is in `tools/audio/sindarin_voice/`.
+- [x] **Sindarin voice.** Generated and owner accepted overall on 2026-10-25
+  ("Sindarin - Good"). Bindings: `SINDARIN_VOICE_EVENTS.md`.
 - [ ] **Background music.** There is no `music_definitions.json` yet; the biome still uses vanilla
   `forest` music (`lothlorien_rp/biomes/lothlorien.client_biome.json`).
 - [ ] **Soundscape** (`SOUNDSCAPE_PLAN.md`): forest-wide ambience, root shrine and leaf memorial sounds.
@@ -120,3 +121,27 @@ Target: tester build on the weekend of 2026-10-24/25.
   - no dew lantern (lanterns exist)
 - **Not to-dos (testers will report):** biome size, natural placement, performance, Loremaster
   edge cases, survival balance, translations.
+
+## Owner feedback backlog - 2026-10-25
+
+Completed source fixes and accepted checks: `TEST_FEEDBACK_2026-10-25.md`.
+
+- [ ] **Retest bounded fixes:** Miruvor empty skin/refill/last sip; Star Canopy
+  survival unlock; Friend unicorn lure; wind-charge controls; rope with an
+  existing Slow Falling potion; full-inventory named/injured firefly capture;
+  water-only boat dispensing; rising-bridge exit closure.
+- [ ] **Spawn egg graphics (deferred):** replace generic eggs with the current
+  creature-recognizable vanilla visual language, using the shared Bedrock art
+  guide and reproducible asset generators. No artwork overhaul in this pass.
+- [ ] **Stripping swing (deferred API limit):** keep correct stripping/wear;
+  revisit a supported native use-animation route when the stable API permits it.
+- [ ] **Wall/gate visual connection (deferred engine limit):** gate lowers,
+  cobblestone wall arm stays absent. Avoid changing unrelated connections just
+  to make this cosmetic junction connect.
+- [ ] **Boat hull lift (deferred):** redesign long hull/native dispenser spawn fit;
+  the water-only filter does not correct vertical lift above the dispenser.
+- [ ] **Railing follow-up:** verify newly processed upward half-step bridge joins
+  remain open. Inspect the photographed location (1040,141,-1338) and manually
+  remove an old false closure if needed; existing saved fences are retained.
+- [ ] **L8 / L9:** complete targeted deer and squirrel checks with explicit setups
+  in the workspace checklist; no failure is inferred from an untested case.

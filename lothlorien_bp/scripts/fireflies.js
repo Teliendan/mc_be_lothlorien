@@ -23,10 +23,12 @@ world.beforeEvents.playerInteractWithEntity.subscribe((event) => {
       if (!target.isValid || !heldSlot(player, GLASS_BOTTLE)) return;
       const { dimension, location } = target;
       const result = bottleFirefly(newItem(FIREFLY_BOTTLE), target);
+      // Deliver before removing the animal: a native inventory/drop error must
+      // leave it catchable instead of silently deleting a named firefly.
+      if (!swapHeldBottle(player, result, GLASS_BOTTLE)) return;
       target.remove();
-      swapHeldBottle(player, result, GLASS_BOTTLE);
       try { noteDeed(player, "fireflies"); } catch { /* optional feedback */ }
-      try { dimension.playSound("bucket.fill_water", location, { pitch: 1.8 }); } catch { /* optional sound */ }
+      try { dimension.playSound("bottle.dragonbreath", location, { volume: 0.35, pitch: 1.5 }); } catch { /* optional sound */ }
     } catch { /* player/target unloaded or disconnected */ }
   });
 });
@@ -58,7 +60,7 @@ world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
         { spawnEvent: "lothlorien:released" });
       restoreFirefly(firefly, state);
       swapHeldBottle(player, newItem(GLASS_BOTTLE), FIREFLY_BOTTLE);
-      try { dimension.playSound("bucket.empty_water", firefly.location, { pitch: 1.8 }); } catch { /* optional sound */ }
+      try { dimension.playSound("bottle.dragonbreath", firefly.location, { volume: 0.35, pitch: 1.3 }); } catch { /* optional sound */ }
     } catch { /* placement became unloaded or out of bounds */ }
   });
 });

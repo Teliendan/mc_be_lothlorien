@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { setup, load, Item } from "./fixtures/wildlife_runtime.mjs";
 import * as H from "../lothlorien_bp/scripts/harmony.js";
+import * as UR from "../lothlorien_bp/scripts/unicorn_rules.js";
 import { ELANOR_ID, UNICORN_ID } from "../lothlorien_bp/scripts/unicorn_rules.js";
 const entity = JSON.parse(readFileSync(new URL("../lothlorien_bp/entities/unicorn.json", import.meta.url)))["minecraft:entity"];
 let cases = 0;
@@ -66,9 +67,13 @@ await test("leave/rejoin reads fresh persisted Harmony and repairs stale Friend 
 
 // Evaluate just the declared filter contract against explicit players. This
 // checks membership/exemption data, not native pathfinding/retarget timing.
-function matches(filter, player) {
-  if (filter.all_of) return filter.all_of.every(f => matches(f, player));
-  if (filter.none_of) return !filter.none_of.some(f => matches(f, player));
+function matches(filter, player, ready = true) {
+  if (filter.all_of) return filter.all_of.every(f => matches(f, player, ready));
+  if (filter.none_of) return !filter.none_of.some(f => matches(f, player, ready));
+  if (filter.test === "bool_property") {
+    assert.equal(filter.subject, "self"); assert.equal(filter.domain, "lothlorien:offer_ready");
+    return ready === filter.value;
+  }
   assert.equal(filter.subject, "other");
   if (filter.test === "is_family") return filter.value === "player" && player.typeId === "minecraft:player";
   if (filter.test === "has_tag") return player.hasTag(filter.value);
@@ -76,7 +81,7 @@ function matches(filter, player) {
   if (filter.test === "is_sneaking") return !!player.isSneaking === filter.value;
   throw Error(`unhandled filter ${filter.test}`);
 }
-await test("the same actual Friend+Elanor predicate selects leaders and exempts flight", async () => {
+await test("Friend+Elanor is never fled from; it is followed only once the offer wait is over", async () => {
   const h = await service(); h.advance(20);
   const group = entity.component_groups["lothlorien:state_friend"], goal = group["minecraft:behavior.follow_target_leader"];
   assert.equal(group["minecraft:behavior.tempt"], undefined);
@@ -84,14 +89,15 @@ await test("the same actual Friend+Elanor predicate selects leaders and exempts 
     { test: "is_family", subject: "other", value: "player" },
     { test: "has_tag", subject: "other", value: h.game.FRIEND_TAG },
     { test: "has_equipment", subject: "other", domain: "hand", value: ELANOR_ID },
+    { test: "bool_property", subject: "self", domain: "lothlorien:offer_ready", value: true },
   ] });
   const avoid = group["minecraft:behavior.avoid_mob_type"].entity_types.slice(0, 2);
-  for (const entry of avoid) assert.deepEqual(entry.filters.all_of.at(-1), { none_of: [goal.leader_filters] });
-  for (const p of [h.player, h.guest, h.hated]) for (const item of [ELANOR_ID, "minecraft:stick"]) for (const sneaking of [false, true]) {
+  for (const entry of avoid) assert.deepEqual(entry.filters.all_of.at(-1), { none_of: [{ all_of: goal.leader_filters.all_of.slice(0, 3) }] });
+  for (const p of [h.player, h.guest, h.hated]) for (const item of [ELANOR_ID, "minecraft:stick"]) for (const sneaking of [false, true]) for (const ready of [false,true]) {
     p.slot.item = new Item(item); p.isSneaking = sneaking;
-    const eligible = p === h.player && item === ELANOR_ID;
-    assert.equal(matches(goal.leader_filters, p), eligible);
-    assert.equal(avoid.some(e => matches(e.filters, p)), !eligible);
+    const friendWithElanor = p === h.player && item === ELANOR_ID;
+    assert.equal(matches(goal.leader_filters, p, ready), friendWithElanor && ready);
+    assert.equal(avoid.some(e => matches(e.filters, p, ready)), !friendWithElanor);
   }
 });
 await test("nearer Guest with Elanor is excluded while the actual Friend remains eligible", async () => {
@@ -105,6 +111,7 @@ await test("nearer Guest with Elanor is excluded while the actual Friend remains
 await test("lure stays in Friend state with bounded native search and unchanged danger/ownership policies", async () => {
   const g=entity.component_groups["lothlorien:state_friend"], goal=g["minecraft:behavior.follow_target_leader"];
   assert.equal(entity.description.identifier,UNICORN_ID);
+  assert.deepEqual(goal.control_flags,['move','look']);
   assert.equal(goal.priority,3); assert.equal(goal.speed_multiplier,1); assert.equal(goal.follow_distance,1.5);
   assert.equal(goal.within_radius,10); assert.equal(goal.search_cooldown,20); assert.equal(goal.always_look_for_leader,true);
   for (const [name,group] of Object.entries(entity.component_groups)) {
@@ -124,5 +131,42 @@ await test("a bonded unicorn's death is reported to its owner only", async () =>
   const unicorn = h.entity(UNICORN_ID); unicorn.setDynamicProperty("lothlorien:owner", h.player.id);
   h.fire("entityDie", { deadEntity: unicorn }); assert.deepEqual(sent, [["owner", "unicorn.died"]]);
   sent.length = 0; h.fire("entityDie", { deadEntity: h.entity(UNICORN_ID) }); assert.deepEqual(sent, []);
+});
+async function cooldownService(lastOffer, offset = 0) {
+  const h=await setup(); h.clockOffset=offset;
+  h.world.getAbsoluteTime=()=>h.clockOffset+h.system.currentTick;
+  h.unicorn=h.entity(UNICORN_ID); h.unicorn.setProperty('lothlorien:trust',0);
+  h.unicorn.setProperty('lothlorien:wariness','friend');
+  if (lastOffer !== undefined) h.unicorn.setDynamicProperty('lothlorien:last_offer',lastOffer);
+  const deer=await load('deer',h.base); deer.startDeer();
+  const unicorn=await load('unicorn',{...h.base,...UR,watchUnicornReadiness:deer.watchUnicornReadiness});
+  unicorn.startUnicorns(); h.player.slot.item=new Item(ELANOR_ID,5);
+  h.feed=()=>h.fire('playerInteractWithEntity',{player:h.player,target:h.unicorn,itemStack:h.player.slot.item.clone()});
+  return h;
+}
+await test('accepted offering stops native lure for exactly the same ten-second refusal window',async()=>{
+  const h=await cooldownService(); assert.equal(h.unicorn.getProperty('lothlorien:offer_ready'),true);
+  h.feed(); assert.equal(h.player.slot.amount,4); assert.equal(h.unicorn.getProperty('lothlorien:offer_ready'),false);
+  h.advance(199); h.feed(); assert.equal(h.player.slot.amount,4);
+  assert.equal(h.unicorn.getProperty('lothlorien:offer_ready'),false);
+  h.advance(1); assert.equal(h.unicorn.getProperty('lothlorien:offer_ready'),true);
+  h.feed(); assert.equal(h.player.slot.amount,3); assert.equal(h.unicorn.getProperty('lothlorien:offer_ready'),false);
+});
+await test('unload cancels the one-shot wait; load restores only its remaining world-time pause',async()=>{
+  const h=await cooldownService(); h.feed(); h.advance(70);
+  h.unicorn.isValid=false; h.fire('entityRemove',{removedEntityId:h.unicorn.id});
+  h.advance(80); h.unicorn.isValid=true; h.fire('entityLoad',{entity:h.unicorn});
+  assert.equal(h.unicorn.getProperty('lothlorien:offer_ready'),false);
+  h.advance(49); assert.equal(h.unicorn.getProperty('lothlorien:offer_ready'),false);
+  h.advance(1); assert.equal(h.unicorn.getProperty('lothlorien:offer_ready'),true);
+});
+await test('existing lifecycle bootstrap restores persisted pause and follows existing clock-reset semantics',async()=>{
+  const pending=await cooldownService(900,1000);
+  assert.equal(pending.unicorn.getProperty('lothlorien:offer_ready'),false);
+  pending.advance(99); assert.equal(pending.unicorn.getProperty('lothlorien:offer_ready'),false);
+  pending.advance(1); assert.equal(pending.unicorn.getProperty('lothlorien:offer_ready'),true);
+  const elapsed=await cooldownService(600,1000); assert.equal(elapsed.unicorn.getProperty('lothlorien:offer_ready'),true);
+  const reset=await cooldownService(1100,1000); assert.equal(reset.unicorn.getProperty('lothlorien:offer_ready'),true);
+  assert.equal(UR.offerRefusal({band:'friend',tame:false,sinceLast:UR.ticksSince(1000,1100)}),undefined);
 });
 console.log(`Passed ${cases} unicorn luring/Harmony production and filter scenarios.`);

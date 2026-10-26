@@ -413,6 +413,24 @@ group/events removed from BP; only production art/controller ship in RP.
 Feature commit: `2810ce3` (`Finish swan drops and visible feather shedding`).
 Final art/cleanup commit: `Finalize swan art and remove runtime diagnostics`.
 
+
+## Empty Miruvor skin (2026-10-25)
+
+Owner requested a separate empty-skin icon: keep the filled skin's basis, but
+make the leather flatter, hanging and slack. `tools/make_provisions.py` now
+owns both icons; `--only empty-miruvor-skin` regenerates only the new asset.
+The empty skin keeps the gold neck, strap and folded leaf badge, with a narrower
+asymmetric belly and long leather folds. Filled-skin art is unchanged.
+
+Reviewed at 1x/2x, hotbar and 8x beside the filled skin and vanilla leather/rabbit
+hide. New icon: 16x16, binary alpha, 60 painted pixels, 11 colours, 0.59 value
+range, largest same-colour area 13%, no clipping or review warnings.
+Item, atlas and wiki media bind the separate empty-skin texture. Miruvor scoped
+pack verification passes with zero errors/warnings; native acceptance remains
+an in-game visual check on Bedrock 1.26.52.
+
+**Status: generated and visually reviewed; owner acceptance pending.**
+
 **Spawn eggs: final, owner accepted from the review sheet 2026-10-26** (commit "Draw spawn eggs in the current
 vanilla style"). The ten spawnable mobs (deer, white deer, unicorn, swan, songbird, ground squirrel, butterfly,
 firefly, elf, Elven Warden) have drawn egg icons instead of the old two-colour eggs:

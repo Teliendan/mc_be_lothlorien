@@ -446,5 +446,12 @@
     "source": "lothlorien_rp/textures/items/western_corn_seeds.png",
     "kind": "item",
     "alt": "Western Corn Seeds"
+  },
+  {
+    "id": "lothlorien:empty_miruvor_skin/icon",
+    "featureId": "lothlorien:empty_miruvor_skin",
+    "source": "lothlorien_rp/textures/items/empty_miruvor_skin.png",
+    "kind": "item",
+    "alt": "Empty Miruvor Skin"
   }
 ]
