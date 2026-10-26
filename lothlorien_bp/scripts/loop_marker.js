@@ -34,6 +34,9 @@ let claim = null, running = false, loggedQuota = false, debug = false, areaAttem
 const log = (msg) => console.warn(`[lothlorien] planner: ${msg}`);
 const dlog = (msg) => { if (debug) log(`(debug) ${msg}`); };
 export function toggleDebug() { debug = !debug; return debug; }
+// The area of the village being planned right now (chunk-aligned, as later recorded in the done-list), or null. Village music uses it
+// so a visitor hears the village while it is still being built (owner 2026-10-27: music started only after the build).
+export const planningArea = () => claim;
 
 const cellOf = (e) => { const p = e.location; return [Math.floor(p.x), Math.floor(p.y) - 1, Math.floor(p.z)]; }; // the deck cell under the marker
 const sleep = (ticks) => new Promise((resolve) => system.runTimeout(resolve, ticks));

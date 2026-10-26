@@ -17,8 +17,8 @@ import "./athelas.js";
 import "./trees.js";
 import "./great_mallorn.js";
 import "./rail_mender.js";
-import { planNearest, toggleDebug } from "./loop_marker.js";
-import { VILLAGE_PLANS, villageAreaTest } from "./village_planner.js";
+import { planNearest, planningArea, toggleDebug } from "./loop_marker.js";
+import { VILLAGE_PLANS, inRect, villageAreaTest } from "./village_planner.js";
 import { startVillageMusic } from "./village_music.js";
 import "./warden_replace.js";
 import { leafUndersideY } from "./leaf_fall.js";
@@ -250,5 +250,6 @@ world.afterEvents.worldLoad.subscribe(() => {
   });
   startAntlerSupport();
   startRopeClimbing();
-  startVillageMusic(inVillageArea);
+  // music also while a village is still being planned and built (owner 2026-10-27)
+  startVillageMusic((x, z) => { const r = planningArea(); return inVillageArea(x, z) || (r !== null && inRect(r, Math.floor(x), Math.floor(z))); });
 });
