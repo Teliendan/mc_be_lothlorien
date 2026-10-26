@@ -443,7 +443,7 @@
       "care": [
         {
           "label": "Lure",
-          "text": "Elanor held by a Friend of Lothlorien. A wild unicorn never flees from a Friend of Lothlorien; between accepted offers it does not follow, then follows Elanor again. An alarmed wild unicorn ignores offers."
+          "text": "Elanor held by a Friend of Lothlorien. A wild unicorn keeps about 3 blocks from a Friend of Lothlorien without Elanor and lets one holding Elanor come close; between accepted offers it does not follow, then follows Elanor again. An alarmed wild unicorn ignores offers."
         },
         {
           "label": "Feeding",

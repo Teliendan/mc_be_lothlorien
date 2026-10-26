@@ -73,16 +73,16 @@ function matches(filter, player) {
   if (filter.test === "is_family") return filter.value === "player" && player.typeId === "minecraft:player";
   if (filter.test === "has_tag") return player.hasTag(filter.value) === (filter.operator !== "!=");
   if (filter.test === "is_sneaking") return !!player.isSneaking === filter.value;
+  if (filter.test === "has_equipment") return filter.domain === "hand" && (player.held === filter.value) === (filter.operator !== "!=");
   throw Error(`unhandled filter ${filter.test}`);
 }
-await test("a Friend is never fled from in the Friend state; Guests and worse still are", async () => {
-  const h = await service(); h.advance(20);
+await test("in the Friend state it keeps 3 blocks (2 sneaking) from players without Elanor, none from Elanor holders", async () => {
   const avoid = entity.component_groups["lothlorien:state_friend"]["minecraft:behavior.avoid_mob_type"].entity_types.slice(0, 2);
-  // flat "!=" like the deer lure exemption; the nested none_of/all_of form let it flee a Friend holding Elanor in game
-  for (const entry of avoid) assert.deepEqual(entry.filters.all_of.at(-1), { test: "has_tag", subject: "other", operator: "!=", value: h.game.FRIEND_TAG });
-  for (const p of [h.player, h.guest, h.hated]) for (const sneaking of [false, true]) {
-    p.isSneaking = sneaking;
-    assert.equal(avoid.some(e => matches(e.filters, p)), p !== h.player);
+  assert.deepEqual(avoid.map(e => e.max_dist), [3, 2]);
+  const h = await service();
+  for (const held of [ELANOR_ID, undefined]) for (const sneaking of [false, true]) {
+    h.player.held = held; h.player.isSneaking = sneaking;
+    assert.equal(avoid.some(e => matches(e.filters, h.player)), held !== ELANOR_ID);
   }
 });
 await test("the lure is vanilla tempt in its own group, added only to a wild, ready Friend-state unicorn", async () => {

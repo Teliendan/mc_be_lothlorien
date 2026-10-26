@@ -1402,7 +1402,7 @@
   {
     "featureId": "lothlorien:unicorn",
     "id": "lothlorien:unicorn/care",
-    "text": "A rare, timid forest encounter. A wild unicorn accepts an Elanor offering from a Friend of Lothlorien at most once every {{lothlorien:rule/unicorn-gap}} seconds; a wild unicorn never flees from a Friend; while it waits between offers it does not follow, and afterwards it follows Elanor again.",
+    "text": "A rare, timid forest encounter. A wild unicorn accepts an Elanor offering from a Friend of Lothlorien at most once every {{lothlorien:rule/unicorn-gap}} seconds; a wild unicorn keeps about 3 blocks from a Friend without Elanor and lets a Friend holding Elanor come close; while it waits between offers it does not follow, and afterwards it follows Elanor again.",
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",

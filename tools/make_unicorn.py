@@ -20,7 +20,6 @@ BP, RP = MOD / "lothlorien_bp", MOD / "lothlorien_rp"
 VANILLA_RP = MOD.parents[1] / "reference" / "vanilla" / "current" / "resource_packs" / "vanilla"
 ID = "lothlorien:unicorn"
 ELANOR = "lothlorien:elanor"
-FRIEND_TAG = "lothlorien_friend"
 ALL_STATES = [f"lothlorien:state_{n}" for n in ("calm", "l1", "l2", "l3", "friend", "tame", "alarmed")] + ["lothlorien:lure"]
 
 
@@ -49,10 +48,9 @@ def player_avoid(dist, sneak_dist, walk, sprint, lure=False):
             {"test": "is_family", "subject": "other", "value": "player"},
             {"test": "is_sneaking", "subject": "other", "value": sneaking},
         ]
-        if lure:  # Friend state: a Friend of Lothlorien is never fled from, with or without Elanor (owner, 2026-10-26).
-            # Flat "!=" test like the deer's lure exemption: the nested none_of/all_of form let the unicorn flee a Friend
-            # holding Elanor whenever the follow goal paused, so it came and ran in turns.
-            tests.append({"test": "has_tag", "subject": "other", "operator": "!=", "value": FRIEND_TAG})
+        if lure:  # Friend state: keeps 3 blocks from a Friend without Elanor, none from one holding it (owner, 2026-10-26).
+            # The deer's corn exemption; a Guest this close has already turned the state calm.
+            tests.append({"test": "has_equipment", "subject": "other", "domain": "hand", "operator": "!=", "value": ELANOR})
         return {"filters": {"all_of": tests}, "max_dist": max_dist, "walk_speed_multiplier": walk, "sprint_speed_multiplier": sprint}
 
     return [entry(False, dist), entry(True, sneak_dist)]

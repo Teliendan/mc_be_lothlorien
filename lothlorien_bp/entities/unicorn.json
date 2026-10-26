@@ -351,10 +351,11 @@
                     "value": false
                   },
                   {
-                    "test": "has_tag",
+                    "test": "has_equipment",
                     "subject": "other",
+                    "domain": "hand",
                     "operator": "!=",
-                    "value": "lothlorien_friend"
+                    "value": "lothlorien:elanor"
                   }
                 ]
               },
@@ -376,10 +377,11 @@
                     "value": true
                   },
                   {
-                    "test": "has_tag",
+                    "test": "has_equipment",
                     "subject": "other",
+                    "domain": "hand",
                     "operator": "!=",
-                    "value": "lothlorien_friend"
+                    "value": "lothlorien:elanor"
                   }
                 ]
               },
