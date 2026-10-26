@@ -33,7 +33,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "b8b38d0e33df92b811b0dcd3db53c3dc7bd68d297d18752894241b291df0ace0"
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
       },
       {
         "path": "lothlorien_bp/entities/unicorn.json",
