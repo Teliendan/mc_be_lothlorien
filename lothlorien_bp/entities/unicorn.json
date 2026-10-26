@@ -409,44 +409,6 @@
             }
           ]
         },
-        "minecraft:behavior.follow_target_leader": {
-          "priority": 3,
-          "speed_multiplier": 1,
-          "control_flags": [
-            "move",
-            "look"
-          ],
-          "leader_filters": {
-            "all_of": [
-              {
-                "test": "is_family",
-                "subject": "other",
-                "value": "player"
-              },
-              {
-                "test": "has_tag",
-                "subject": "other",
-                "value": "lothlorien_friend"
-              },
-              {
-                "test": "has_equipment",
-                "subject": "other",
-                "domain": "hand",
-                "value": "lothlorien:elanor"
-              },
-              {
-                "test": "bool_property",
-                "subject": "self",
-                "domain": "lothlorien:offer_ready",
-                "value": true
-              }
-            ]
-          },
-          "follow_distance": 1.5,
-          "within_radius": 10,
-          "always_look_for_leader": true,
-          "search_cooldown": 20
-        },
         "minecraft:interact": {
           "interactions": [
             {
@@ -476,6 +438,17 @@
         }
       },
       "lothlorien:state_tame": {},
+      "lothlorien:lure": {
+        "minecraft:behavior.tempt": {
+          "priority": 3,
+          "speed_multiplier": 1.0,
+          "items": [
+            "lothlorien:elanor"
+          ],
+          "within_radius": 10,
+          "can_get_scared": false
+        }
+      },
       "lothlorien:state_alarmed": {
         "minecraft:behavior.avoid_mob_type": {
           "priority": 4,
@@ -694,7 +667,8 @@
                 "lothlorien:state_l3",
                 "lothlorien:state_friend",
                 "lothlorien:state_tame",
-                "lothlorien:state_alarmed"
+                "lothlorien:state_alarmed",
+                "lothlorien:lure"
               ]
             }
           },
@@ -739,7 +713,8 @@
                 "lothlorien:state_l3",
                 "lothlorien:state_friend",
                 "lothlorien:state_tame",
-                "lothlorien:state_alarmed"
+                "lothlorien:state_alarmed",
+                "lothlorien:lure"
               ]
             }
           },
@@ -784,7 +759,8 @@
                 "lothlorien:state_l3",
                 "lothlorien:state_friend",
                 "lothlorien:state_tame",
-                "lothlorien:state_alarmed"
+                "lothlorien:state_alarmed",
+                "lothlorien:lure"
               ]
             }
           },
@@ -829,7 +805,8 @@
                 "lothlorien:state_l3",
                 "lothlorien:state_friend",
                 "lothlorien:state_tame",
-                "lothlorien:state_alarmed"
+                "lothlorien:state_alarmed",
+                "lothlorien:lure"
               ]
             }
           },
@@ -874,7 +851,8 @@
                 "lothlorien:state_l3",
                 "lothlorien:state_friend",
                 "lothlorien:state_tame",
-                "lothlorien:state_alarmed"
+                "lothlorien:state_alarmed",
+                "lothlorien:lure"
               ]
             }
           },
@@ -901,6 +879,27 @@
                 "lothlorien:state_tame"
               ]
             }
+          },
+          {
+            "filters": {
+              "all_of": [
+                {
+                  "test": "bool_property",
+                  "domain": "lothlorien:tame",
+                  "value": false
+                },
+                {
+                  "test": "bool_property",
+                  "domain": "lothlorien:offer_ready",
+                  "value": true
+                }
+              ]
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:lure"
+              ]
+            }
           }
         ]
       },
@@ -916,7 +915,8 @@
             "lothlorien:state_l3",
             "lothlorien:state_friend",
             "lothlorien:state_tame",
-            "lothlorien:state_alarmed"
+            "lothlorien:state_alarmed",
+            "lothlorien:lure"
           ]
         },
         "add": {
@@ -968,6 +968,43 @@
             "trigger": "lothlorien:set_friend"
           }
         ]
+      },
+      "lothlorien:lure_on": {
+        "sequence": [
+          {
+            "filters": {
+              "all_of": [
+                {
+                  "test": "enum_property",
+                  "domain": "lothlorien:wariness",
+                  "value": "friend"
+                },
+                {
+                  "test": "bool_property",
+                  "domain": "lothlorien:alarmed",
+                  "value": false
+                },
+                {
+                  "test": "bool_property",
+                  "domain": "lothlorien:tame",
+                  "value": false
+                }
+              ]
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:lure"
+              ]
+            }
+          }
+        ]
+      },
+      "lothlorien:lure_off": {
+        "remove": {
+          "component_groups": [
+            "lothlorien:lure"
+          ]
+        }
       },
       "minecraft:entity_spawned": {
         "trigger": "lothlorien:set_calm"

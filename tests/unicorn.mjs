@@ -45,9 +45,8 @@ test("unicorn entity: Harmony wariness states and flight radii (calm is as timid
     assert.ok(e.events[R.setEventFor(w)], `event ${w}`);
     assert.equal(avoidRadius(e, w), w === "calm" ? R.FLIGHT_RADIUS.l1 : R.FLIGHT_RADIUS[w], w);
   }
-  const lure=e.component_groups["lothlorien:state_friend"]["minecraft:behavior.follow_target_leader"];
-  assert.ok(lure.leader_filters.all_of.some(f=>f.test==="has_equipment" && f.value===UR.ELANOR_ID));
-  assert.equal(e.component_groups["lothlorien:state_friend"]["minecraft:behavior.tempt"],undefined);
+  // the Elanor tempt lives in its own group, which only set_friend / lure_on add (tests/unicorn_luring.mjs)
+  assert.deepEqual(e.component_groups["lothlorien:lure"]["minecraft:behavior.tempt"].items,[UR.ELANOR_ID]);
   for (const w of ["calm", "l1", "l2", "l3"]) assert.ok(!("minecraft:behavior.tempt" in e.component_groups[`lothlorien:state_${w}`]), `${w} must not lure`);
   assert.ok(e.events["lothlorien:alarm"] && e.events["lothlorien:alarm_over"]);
   assert.ok("lothlorien:alarmed" in e.description.properties && "lothlorien:tame" in e.description.properties);

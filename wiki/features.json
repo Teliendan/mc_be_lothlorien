@@ -2404,11 +2404,11 @@
         },
         {
           "path": "lothlorien_bp/entities/unicorn.json",
-          "sha256": "03ca049704e4c439ddcc0a0d0b65168c6f741df9c88a346f159c1628ac8ed592"
+          "sha256": "1af64f82b6683a367ec5ce2e63b19f5b09f8e4f6fe77d5ed02c824df8d22e1ed"
         },
         {
           "path": "lothlorien_bp/scripts/unicorn.js",
-          "sha256": "bdb10b9483dfac4ca3858f81fe2339165d074d45e14fafe9e891c7c093f0728d"
+          "sha256": "1bb7265c1351051542d5a5931884d52b3510495b0440710ffc3d82829ac14714"
         },
         {
           "path": "lothlorien_bp/scripts/unicorn_rules.js",

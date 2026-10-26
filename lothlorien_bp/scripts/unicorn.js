@@ -27,6 +27,8 @@ function syncOfferReadiness(unicorn) {
   forgetOfferTimer(unicorn.id);
   const delay = offerWaitTicks(world.getAbsoluteTime(), unicorn.getDynamicProperty(LAST_OFFER));
   unicorn.setProperty(OFFER_READY, delay === 0);
+  // The lure group: removed for the wait; lure_on adds it back only in the wild Friend state (entities/unicorn.json).
+  unicorn.triggerEvent(delay === 0 ? "lothlorien:lure_on" : "lothlorien:lure_off");
   if (!delay || unicorn.getProperty("lothlorien:tame")) return;
   offerTimers.set(unicorn.id, system.runTimeout(() => {
     offerTimers.delete(unicorn.id);
