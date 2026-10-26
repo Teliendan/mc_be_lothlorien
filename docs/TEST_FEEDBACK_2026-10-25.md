@@ -38,7 +38,7 @@ against the original `docs/game-checks.md`. A source fix still needs game retest
   a custom gate as a vanilla gate to walls. Broad connection changes are deferred.
 - Boat: the long hull can rise over the dispenser. The water filter fixes dry
   dispensing only; a hull/spawn-position redesign is a later task.
-- Railing image: workspace `temp/village_problem.png`, shown position
+- Railing image (scratch, deleted 2026-10-27): shown position
   1040, 141, -1338. Existing closures are one-shot saved blocks; the change prevents
   new false closures and does not automatically remove previously placed fences.
   No structure assets or biome/worldgen distribution changed.
