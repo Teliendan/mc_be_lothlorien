@@ -82,7 +82,13 @@ per-mender log lines show only in village debug mode. Measured offline in QuickJ
 2026-10-27 scratch): reads and written cells identical (209,681 / 6,569 average),
 live allocations after planning 466k -> 61k average, peak 838k -> 124k,
 32-bit heap growth 16/32 MB -> none measurable. In-game check open: plan a fresh
-village and confirm the warning no longer appears. Not done: native filtered
-scans for full-area layers, smaller discovery areas, extra yields (owner: the
-planner already takes long), fence repair limited to changed cells (owner: the
-mender must also repair jigsaw seams).
+village and confirm the warning no longer appears. Long steps (same day): timing every planner step in QuickJS showed single steps
+of up to ~1.1 s, almost all in the bridge light greedy (`planLights`) and the
+plaza lanterns (`plazaLanterns`): every candidate's light reach was searched
+again for every light, with "x,y,z" string keys. The reach is now found once per
+candidate and both use numeric grid indexes; `findMerges` yields every column.
+Measured (seeds 1-20, same harness): identical writes (hash) 20/20, longest step
+average 667 -> 126 ms, worst 1135 -> 273 ms, whole plan 5.2 -> 3.7 s (QuickJS in
+wasm; absolute times in game differ). Not done: native filtered scans for
+full-area layers, smaller discovery areas, fence repair limited to changed cells
+(owner: the mender must also repair jigsaw seams).
