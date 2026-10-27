@@ -5,6 +5,7 @@
 import { system, world } from "@minecraft/server";
 import { WARDEN_ID, VILLAGE_GROUP } from "./elven_warden_rules.js";
 import { needsReplacement } from "./warden_replace_rules.js";
+import { villageDebug } from "./village_debug.js";
 
 const done = new Set(); // ids of wardens already handled (or being replaced)
 
@@ -18,7 +19,7 @@ function check(entity) {
     const fresh = dimension.spawnEntity(WARDEN_ID, location, { spawnEvent: VILLAGE_GROUP, initialRotation: yaw });
     if (name) fresh.nameTag = name;
     entity.remove();
-    console.warn(`[lothlorien] warden replace: structure warden with movement ${movement} replaced at ${location.x.toFixed(1)},${location.y.toFixed(1)},${location.z.toFixed(1)}`);
+    if (villageDebug()) console.warn(`[lothlorien] warden replace: structure warden with movement ${movement} replaced at ${location.x.toFixed(1)},${location.y.toFixed(1)},${location.z.toFixed(1)}`);
   } catch {
     // unloaded or gone meanwhile: the next load checks again
   }

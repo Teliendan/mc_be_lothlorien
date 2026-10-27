@@ -10,6 +10,7 @@ import { gunzipSync } from "node:zlib";
 register(new URL("../../../.claude/skills/bedrock-scripting/scripts/mock_loader.mjs", import.meta.url));
 const { __mock: mock, world } = await import("@minecraft/server");
 const PL = await import("../lothlorien_bp/scripts/village_planner.js");
+const DBG = await import("../lothlorien_bp/scripts/village_debug.js"); // shared switch: not re-imported per scenario, so reset below
 const SRC = new URL("../lothlorien_bp/scripts/", import.meta.url).href;
 const MARKER = "lothlorien:loop_marker";
 
@@ -25,6 +26,7 @@ const realWarn = console.warn;
 console.warn = (...a) => { lines.push(a.join(" ")); }; // captured; printed only on failure
 async function scenario(name, body) {
   lines.length = 0; mock.reset(); runNo++;
+  if (DBG.villageDebug()) DBG.toggleVillageDebug();
   try { await body(); } catch (e) { console.warn = realWarn; console.log(`log of the failed scenario "${name}":\n  ${lines.join("\n  ")}`); throw e; }
   assert.deepEqual(mock.errors, [], `${name}: no uncaught error in a timer or job`);
   console.warn = realWarn; console.log(`ok   script glue: ${name}`); console.warn = (...a) => { lines.push(a.join(" ")); };
@@ -227,6 +229,7 @@ await scenario("rail_mender: waits for loaded corners, switches on the dropped f
   const dim = mock.dimension();
   const e = mock.addEntity(MENDER, { x: 1.5, y: 70.5, z: 0.5 });
   await loadScript("rail_mender.js");
+  DBG.toggleVillageDebug(); // its repair count is a debug line (owner 2026-10-27: log flood while a village loads)
   mock.fire("entityLoad", { entity: e });
   await mock.settle();
   assert.equal(e.isValid, false, "mender removed itself");

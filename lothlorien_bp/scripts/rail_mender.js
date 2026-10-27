@@ -5,6 +5,7 @@
 import { BlockVolume, system, world } from "@minecraft/server";
 import { FENCE_IDS, MAX_WAIT_TICKS, MENDER_ID, RETRY_TICKS, START_DELAY_TICKS, scanBox } from "./rail_mender_rules.js";
 import { mendFence, mendAround } from "./rail_connections.js";
+import { villageDebug } from "./village_debug.js";
 
 const busy = new Set();
 const pending = [];
@@ -24,7 +25,7 @@ function* mend(entity, dimension, box) {
     yield;
   }
   if (entity.isValid && boxLoaded(dimension, box)) entity.remove();
-  if (fixed) console.warn(`[lothlorien] rail mender: ${fixed} fence link(s) repaired`);
+  if (fixed && villageDebug()) console.warn(`[lothlorien] rail mender: ${fixed} fence link(s) repaired`);
 }
 
 // One mender job at a time: a village loading dozens of markers cannot demand

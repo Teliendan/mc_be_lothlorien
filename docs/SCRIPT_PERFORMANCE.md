@@ -68,3 +68,21 @@ chunk loading. Mock tests cover duplicate registration, death before deferred
 discovery, unload/reload, invalid handles and empty-world sleep; engine cost
 and visuals were not individually reported. Owner accepted M4 overall on
 2026-10-11 (bc1da69); this is not a measured performance result.
+
+Village planner memory (2026-10-27): the owner saw `[Watchdog] High memory usage
+detected` (warning at 100 MB of script memory for all packs together; limit
+250 MB shuts the world down) while a fresh village was planned. The cause was the
+block-read memo in `boundedReader`, one `Map` entry per cell read: about 210k
+reads on average and 370k at most per village (simulator seeds 1-20, 300-chunk
+quota), estimated 30-65 MB on 64-bit QuickJS. Fixes: the memo is now a name
+palette plus one `Uint16Array(256)` per 16x16 slice and height; the planner
+releases the memo and the overlay after the write loop; the per-warden and
+per-mender log lines show only in village debug mode. Measured offline in QuickJS
+(quickjs-emscripten 0.31, the planner as shipped, seeds 1-20, harness in the
+2026-10-27 scratch): reads and written cells identical (209,681 / 6,569 average),
+live allocations after planning 466k -> 61k average, peak 838k -> 124k,
+32-bit heap growth 16/32 MB -> none measurable. In-game check open: plan a fresh
+village and confirm the warning no longer appears. Not done: native filtered
+scans for full-area layers, smaller discovery areas, extra yields (owner: the
+planner already takes long), fence repair limited to changed cells (owner: the
+mender must also repair jigsaw seams).

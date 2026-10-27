@@ -276,18 +276,28 @@ export async function discoverVillage(env, first, baseId) {
 export const discoverSync = (env, first, baseId) => drive(discoverGen(env, first, baseId));
 
 // a block reader that sees only what the ticking area holds: `get(x, y, z)` for cells inside the rect, undefined outside (and memoised)
-// Numeric memo keys (a village rect is a few hundred blocks wide; y within -256..767): about a fifth of the time of string keys in node.
+// Memo: a palette of the names read (a few dozen per village) and one Uint16Array per 16 x 16 column slice and height (0 = not read yet,
+// 1 = unloaded). A Map entry per cell was ~150-180 B in QuickJS, 30-65 MB per village (watchdog warning, owner 2026-10-27); this is ~1 MB.
 // `.size()` = distinct reads so far (the planner's timing log), `.rect` / `.nkey` are used by overlay().
 export function boundedReader(get, rect) {
-  const cache = new Map(), nkey = (x, y, z) => ((x - rect.x0) * 4096 + (z - rect.z0)) * 1024 + (y + 256);
+  const nkey = (x, y, z) => ((x - rect.x0) * 4096 + (z - rect.z0)) * 1024 + (y + 256);
+  const pages = new Map(), names = [undefined, undefined], codes = new Map();
+  let reads = 0;
   const reader = (x, y, z) => {
     if (!inRect(rect, x, z)) return undefined;
-    const k = nkey(x, y, z);
-    let v = cache.get(k);
-    if (v === undefined && !cache.has(k)) { v = get(x, y, z); cache.set(k, v); }
+    const dx = x - rect.x0, dz = z - rect.z0, pk = ((dx >> 4) * 4096 + (dz >> 4)) * 1024 + (y + 256);
+    let page = pages.get(pk);
+    if (!page) { page = new Uint16Array(256); pages.set(pk, page); }
+    const i = (dx & 15) * 16 + (dz & 15), c = page[i];
+    if (c) return names[c];
+    const v = get(x, y, z);
+    reads++;
+    let code = v === undefined ? 1 : codes.get(v);
+    if (code === undefined) { code = names.length; names.push(v); codes.set(v, code); }
+    page[i] = code;
     return v;
   };
-  reader.size = () => cache.size; reader.rect = rect; reader.nkey = nkey;
+  reader.size = () => reads; reader.rect = rect; reader.nkey = nkey;
   return reader;
 }
 

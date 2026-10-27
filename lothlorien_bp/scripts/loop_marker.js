@@ -14,6 +14,7 @@
 // most AREA.maxTries times per marker. `/scriptevent lothlorien:village plan` re-runs it by hand for the nearest marker (see planNearest).
 import { BlockPermutation, system, world } from "@minecraft/server";
 import { MARKER_ID, finalBlocks } from "./village_loop.js";
+import { villageDebug, toggleVillageDebug } from "./village_debug.js";
 import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, chunksIn, describePick, describeMerge, VILLAGE_PLANS } from "./village_planner.js";
 import { describeRepair } from "./village_repair.js";
 import { missingLinks } from "./rail_mender_rules.js";
@@ -27,13 +28,13 @@ import { populateVillage } from "./elf_village.js";
 const START_DELAY_TICKS = 5, SETTLE_TICKS = 40, AREA_TIMEOUT_TICKS = 600, WRITES_PER_TICK = 32, JOB_SLICE_MS = 2;
 const TRIES = "lothlorien:loop_tries", DONE = VILLAGE_PLANS;
 const seen = new Set(), queue = [], failed = [];
-let claim = null, running = false, loggedQuota = false, debug = false, areaAttempt = 0;
+let claim = null, running = false, loggedQuota = false, areaAttempt = 0;
 
 // Stage logging: the start and the summary of every planner run are always logged; every silent exit (marker skipped, invalid, queued, retried)
 // logs only in debug mode, which `/scriptevent lothlorien:village debug` toggles (see toggleDebug).
 const log = (msg) => console.warn(`[lothlorien] planner: ${msg}`);
-const dlog = (msg) => { if (debug) log(`(debug) ${msg}`); };
-export function toggleDebug() { debug = !debug; return debug; }
+const dlog = (msg) => { if (villageDebug()) log(`(debug) ${msg}`); };
+export const toggleDebug = toggleVillageDebug;
 // The area of the village being planned right now (chunk-aligned, as later recorded in the done-list), or null. Village music uses it
 // so a visitor hears the village while it is still being built (owner 2026-10-27: music started only after the build).
 export const planningArea = () => claim;
@@ -75,7 +76,7 @@ function* planAndBuild(dimension, found, budget, stats) {
     } catch {return undefined;}
   };
   const get = planterWalkName(raw);
-  const at = boundedReader(get, found.rect);
+  let at = boundedReader(get, found.rect);
   if (stats) stats.reads = at.size;
   const res = yield* planGen(at, found.known, { budget, rect: found.rect });
   const writes = new Map();
@@ -93,6 +94,7 @@ function* planAndBuild(dimension, found, budget, stats) {
     } catch { failedWrites++; }
     if (++n % WRITES_PER_TICK === 0) yield;
   }
+  at = null; res.at = null; // release the block memo and the overlay before the long rail and fence passes (watchdog memory, 2026-10-27)
   const typeAt = (x, y, z) => dimension.getBlock({ x, y, z })?.typeId;
   for (const item of [...res.merges, ...res.picks, ...res.repairs]) for (const r of [...(item.plan ?? item).rails, ...((item.plan ?? item).lamps ?? []).map((l) => ({ x: l.x, y: l.y - 1, z: l.z }))]) { // rails and lamp supports after every write
     try {
