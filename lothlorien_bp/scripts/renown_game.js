@@ -250,7 +250,7 @@ function watchSaplings() {
     } catch {
       // player or block gone
     }
-  });
+  }, { blockTypes: [SAPLING_BLOCK] });
 }
 
 // ---- Debug: /scriptevent lothlorien:renown [points N | reset | deed <id> | take <lesson id> | chapter N | offer <request id>] ----

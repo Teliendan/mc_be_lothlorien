@@ -86,7 +86,7 @@ export function startElvenWardens(depthAt, bandOf) {
     } catch {
       // entity gone
     }
-  });
+  }, { entityTypes: [WARDEN_ID] });
   world.afterEvents.playerLeave.subscribe(({ playerId }) => provoked.delete(playerId));
   world.beforeEvents.playerInteractWithEntity.subscribe(({ player, target, itemStack }) => {
     try {

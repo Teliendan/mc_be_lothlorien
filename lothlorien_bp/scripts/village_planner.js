@@ -26,6 +26,7 @@ export const AREA = { seed: 48, margins: [32, 28, 24], maxRounds: 8, minPad: 12,
 
 const isWalk = (n) => isPlank(n) || n === SLAB || (typeof n === "string" && /_stairs?$/.test(n));
 const key = (x, y, z) => `${x},${y},${z}`;
+const N4 = [[1, 0], [-1, 0], [0, 1], [0, -1]], DY = [0, 1, -1]; // BFS steps, hoisted out of the per-cell loops
 
 // shortest walking distance (cells) from A over deck cells (4-neighbours, |dy| <= 1: arched slab bridges, stairs) to every cell, up to `limit`
 export function walkDist(at, A, limit = 400) {
@@ -37,7 +38,7 @@ export function* walkDistGen(at, A, limit = 400) {
     if (i % 32 === 0) yield;
     const [x, y, z] = q[i], d = dist.get(key(x, y, z));
     if (d >= limit) continue;
-    for (const [a, b] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) for (const dy of [0, 1, -1]) {
+    for (const [a, b] of N4) for (const dy of DY) {
       const nx = x + a, ny = y + dy, nz = z + b, k = key(nx, ny, nz);
       if (dist.has(k) || !isWalk(at(nx, ny, nz))) continue;
       dist.set(k, d + 1); q.push([nx, ny, nz]);
@@ -53,7 +54,7 @@ export function openWalk(at, A, B, limit) {
     const [x, z] = q[i], d = dist.get(key(x, A.y, z));
     if (x === B.x && z === B.z) return true;
     if (d >= limit) continue;
-    for (const [a, b] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+    for (const [a, b] of N4) {
       const k = key(x + a, A.y, z + b);
       if (dist.has(k) || !isPlank(at(x + a, A.y, z + b)) || at(x + a, A.y + 1, z + b) === FENCE) continue;
       dist.set(k, d + 1); q.push([x + a, z + b]);

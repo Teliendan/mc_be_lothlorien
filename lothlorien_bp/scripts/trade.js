@@ -85,16 +85,16 @@ function swapTick() {
   const nearbyElves = new Map();
   for (const player of world.getPlayers()) {
     try {
-      const elves = player.dimension.getEntities({ type: ELF_ID, location: player.location, maxDistance: SWAP_RADIUS });
+      const p = player.location;
+      const elves = player.dimension.getEntities({ type: ELF_ID, location: p, maxDistance: SWAP_RADIUS });
       let key;
       for (const elf of elves) {
         if (!traderProfession(elf)) continue;
         if (key === undefined) key = keyFor(player) ?? NO_TABLE;
         let entry = nearbyElves.get(elf.id);
         if (!entry) nearbyElves.set(elf.id, entry = { elf, candidates: [] });
-        entry.candidates.push({ playerId: player.id, key, dist: Math.hypot(
-          player.location.x - elf.location.x, player.location.y - elf.location.y, player.location.z - elf.location.z,
-        ) });
+        const e = elf.location;
+        entry.candidates.push({ playerId: player.id, key, dist: Math.hypot(p.x - e.x, p.y - e.y, p.z - e.z) });
       }
     } catch { /* disconnected player or unloaded dimension */ }
   }

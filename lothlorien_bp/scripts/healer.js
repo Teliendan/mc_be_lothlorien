@@ -113,8 +113,9 @@ export function startHealers(deps) {
   world.afterEvents.dataDrivenEntityTrigger.subscribe(({ entity }) => discover(entity), {
     entityTypes: [ELF_ID], eventTypes: PROFESSIONS.map(spawnEventOf),
   });
-  world.afterEvents.entityRemove.subscribe(({ removedEntityId }) => { loaded.delete(removedEntityId); stopIfEmpty(); });
-  world.afterEvents.entityDie.subscribe(({ deadEntity }) => { loaded.delete(deadEntity.id); stopIfEmpty(); });
+  // Only elves are tracked.
+  world.afterEvents.entityRemove.subscribe(({ removedEntityId }) => { loaded.delete(removedEntityId); stopIfEmpty(); }, { entityTypes: [ELF_ID] });
+  world.afterEvents.entityDie.subscribe(({ deadEntity }) => { loaded.delete(deadEntity.id); stopIfEmpty(); }, { entityTypes: [ELF_ID] });
   // Already loaded inhabitants on world load; later chunk loads arrive through entityLoad.
   for (const id of ["overworld", "nether", "the_end"]) {
     try {

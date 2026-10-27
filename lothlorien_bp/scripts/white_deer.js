@@ -338,7 +338,8 @@ function tickSession(deerId, s) {
   const player = world.getPlayers().find((p) => p.id === s.playerId);
   if (!deer?.isValid || !(deer.getComponent("minecraft:health")?.currentValue > 0) || !activePlayer(player) || deer.dimension.id !== player.dimension.id ||
       deer.dimension.id !== s.dimensionId) return end(deerId, deer, player, undefined);
-  if (!canBeGuided(bandOf(harmonyOf(player).harmony))) return end(deerId, deer, player, message("deer.abort"));
+  const playerCalm = canBeGuided(bandOf(harmonyOf(player).harmony));
+  if (!playerCalm) return end(deerId, deer, player, message("deer.abort"));
   if (!deer.getProperty("lothlorien:guiding")) return end(deerId, deer, undefined, undefined); // hurt: the alarm cleared the state
   const toTarget = horizontal(deer.location, s.target);
   const toPlayer = horizontal(deer.location, player.location);
@@ -348,7 +349,7 @@ function tickSession(deerId, s) {
     toPlayer,
     stuck: s.stuck,
     age: system.currentTick - s.born,
-    playerCalm: canBeGuided(bandOf(harmonyOf(player).harmony)),
+    playerCalm,
     leashed: isLeashed(deer),
   });
   if (s.phase === "leashed") return end(deerId, deer, player, message("deer.stop_leashed"));

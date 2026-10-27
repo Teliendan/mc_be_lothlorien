@@ -125,7 +125,7 @@ export function startArchery() {
   world.afterEvents.itemStopUse.subscribe(({ source }) => clearZoom(source));
   world.afterEvents.entityDie.subscribe(({ deadEntity }) => {
     if (deadEntity.typeId === "minecraft:player") clearZoom(deadEntity);
-  });
+  }, { entityTypes: ["minecraft:player"] });
   world.afterEvents.playerDimensionChange.subscribe(({ player }) => clearZoom(player));
   world.afterEvents.playerLeave.subscribe(({ playerId }) => { drawing.delete(playerId); lastHint.delete(playerId); stopIfEmpty(); });
   world.afterEvents.playerSpawn.subscribe(({ player }) => clearZoom(player));

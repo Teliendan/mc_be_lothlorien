@@ -117,10 +117,11 @@ function alarmAround(dimension, location) {
 export function startDeer() {
   world.afterEvents.entitySpawn.subscribe(({ entity }) => trackCreature(entity));
   world.afterEvents.entityLoad.subscribe(({ entity }) => trackCreature(entity));
+  // Only wary types are tracked (the unicorn readiness timers too), so the native filters skip every other entity.
   world.afterEvents.entityRemove.subscribe(({ removedEntityId }) => {
     loaded.delete(removedEntityId); stopIfEmpty();
     unicornReadiness?.onRemove(removedEntityId);
-  });
+  }, { entityTypes: WARY_TYPES });
   // One-time bootstrap for already loaded animals; no recurring entity query.
   for (const id of ["overworld", "nether", "the_end"]) {
     try {
@@ -138,7 +139,7 @@ export function startDeer() {
       // deer died of the hit
     }
     alarmAround(hurtEntity.dimension, hurtEntity.location);
-  });
+  }, { entityTypes: WARY_TYPES });
   // Feeding corn (breeding or a fawn) tames a deer. The white deer is tamed by the acorn in white_deer.js.
   world.afterEvents.playerInteractWithEntity.subscribe(({ target, beforeItemStack, itemStack }) => {
     try {
@@ -156,5 +157,5 @@ export function startDeer() {
     } catch {
       // entity already gone
     }
-  });
+  }, { entityTypes: WARY_TYPES });
 }

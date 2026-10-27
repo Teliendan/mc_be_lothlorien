@@ -139,21 +139,21 @@ const connectedUntil = new Map();
 let lastPrune = 0;
 
 function connectedToWood(start) {
-  const dim = start.dimension;
+  const dim = start.dimension, dimId = dim.id, origin = start.location; // native getters: read once, not per BFS node
   const now = system.currentTick;
   if (now - lastPrune > 6000) {
     lastPrune = now;
     for (const [k, t] of connectedUntil) if (t <= now) connectedUntil.delete(k);
   }
-  const keyOf = (p) => `${dim.id}|${p.x},${p.y},${p.z}`;
-  const startKey = keyOf(start.location);
+  const keyOf = (p) => `${dimId}|${p.x},${p.y},${p.z}`;
+  const startKey = keyOf(origin);
   if ((connectedUntil.get(startKey) ?? 0) > now) return true;
 
   const parent = new Map([[startKey, undefined]]);
   const markPath = (k) => {
     for (; k !== undefined; k = parent.get(k)) connectedUntil.set(k, now + CONNECTED_TTL);
   };
-  let frontier = [start.location];
+  let frontier = [origin];
   let nodes = 0;
   for (let step = 0; step < LEAF_REACH; step++) {
     const next = [];

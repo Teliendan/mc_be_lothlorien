@@ -5,6 +5,7 @@ const key = p => `${p.x},${p.y},${p.z}`;
 const add = (p, a, n = 1) => ({ x: p.x + a.x * n, y: p.y + a.y * n, z: p.z + a.z * n });
 const NEIGHBOURS = [{ x: 0, y: 0, z: 0 }, { x: 1, y: 0, z: 0 }, { x: -1, y: 0, z: 0 },
   { x: 0, y: 1, z: 0 }, { x: 0, y: -1, z: 0 }, { x: 0, y: 0, z: 1 }, { x: 0, y: 0, z: -1 }];
+const ADJACENT = NEIGHBOURS.slice(1);
 
 export function createSupportMotionService({ now, schedule, describe, read, remove,
   onGone = () => {}, onMove = () => {}, onSettled = () => {},
@@ -106,9 +107,10 @@ export function createSupportMotionService({ now, schedule, describe, read, remo
   function resetAround(dimension, position) {
     // Player edits/explosions must work after reload without a warmed index.
     // Inspect only immediate neighbours whose selected support is this cell.
-    for (const off of NEIGHBOURS.slice(1)) {
+    const cell = key(position);
+    for (const off of ADJACENT) {
       const block = read(dimension, add(position, off)), info = block && describe(block);
-      if (info?.supports?.some(s => key(s.position) === key(position)) &&
+      if (info?.supports?.some(s => key(s.position) === cell) &&
           !records.has(address(dimension, block.location))) observe(block, { reset: true });
     }
     // Explicit non-piston edits retire old relationships immediately. Never reset
@@ -123,7 +125,7 @@ export function createSupportMotionService({ now, schedule, describe, read, remo
   function onPiston({ dimension, position, axis, isExpanding, piston }) {
     if (!axis) return;
     const delta = isExpanding ? axis : add({ x: 0, y: 0, z: 0 }, axis, -1);
-    const head = add(position, axis), candidates = new Map(), frozen = new Set(), discovered = new Set();
+    const head = add(position, axis), headKey = key(head), candidates = new Map(), frozen = new Set(), discovered = new Set();
     function candidate(p) {
       const k = key(p);
       if (candidates.has(k)) return;
@@ -154,10 +156,10 @@ export function createSupportMotionService({ now, schedule, describe, read, remo
       for (const record of frozen) for (const support of record.supports) {
         const current = read(dimension, support.position);
         if (!current) continue;
-        const moving = current.typeId === MOVING;
-        const newHead = key(support.position) === key(head) && HEADS.has(current.typeId) &&
+        const moving = current.typeId === MOVING, sk = key(support.position);
+        const newHead = sk === headKey && HEADS.has(current.typeId) &&
           (!HEADS.has(support.type) || (record.motionDiscovered && isExpanding));
-        const changed = candidates.has(key(support.position)) && support.type && current.typeId !== support.type;
+        const changed = candidates.has(sk) && support.type && current.typeId !== support.type;
         if (moving || newHead || changed) record.departed = true;
       }
       samples++;

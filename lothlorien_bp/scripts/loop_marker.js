@@ -18,8 +18,8 @@ import { villageDebug, toggleVillageDebug } from "./village_debug.js";
 import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, growRect, hullOf, chunksIn, describePick, describeMerge, VILLAGE_PLANS } from "./village_planner.js";
 import { rememberVillageArea } from "./village_area.js";
 import { describeRepair } from "./village_repair.js";
-import { missingLinks } from "./rail_mender_rules.js";
-import { mendAround } from "./rail_connections.js";
+import { LINKS, missingLinks } from "./rail_mender_rules.js";
+import { mendFence } from "./rail_connections.js";
 import { PANEL_ID,planterWalkName } from "./planter_panels.js";
 import { message } from "./messages.js";
 import { populateVillage } from "./elf_village.js";
@@ -101,7 +101,11 @@ function* planAndBuild(dimension, found, budget, stats) {
     } catch { failedWrites++; }
     yield;
   }
-  for (const k of writes.keys()) { const [x,y,z] = k.split(",").map(Number); mendAround(dimension, {x,y,z}); yield; }
+  // every written cell and its four neighbours, each fence mended once (mendAround per cell visited a shared neighbour up to 5 times;
+  // a mend reads only neighbour types, which mending never changes, so order and repeats do not matter)
+  const mend = new Set();
+  for (const k of writes.keys()) { const [x, y, z] = k.split(",").map(Number); mend.add(k); for (const l of LINKS) mend.add(`${x + l.dx},${y},${z + l.dz}`); }
+  for (const k of mend) { const [x, y, z] = k.split(",").map(Number); try { mendFence(dimension, { x, y, z }); } catch { /* unloaded */ } yield; }
   return { ...res, blocks: count, failedWrites };
 }
 

@@ -51,4 +51,4 @@ world.afterEvents.playerPlaceBlock.subscribe(({ block }) => {
   block.setType("minecraft:air");
   below.setPermutation(below.permutation.withState(AMOUNT, amount + 1));
   sound(below);
-});
+}, { blockTypes: [...COVERS] });

@@ -22,8 +22,11 @@ export function ringOffsets(r) {
   return offsets;
 }
 
+// The rings are fixed: computed once, not on every estimate.
+const RINGS = DEPTH_RADII.map((r) => [r, ringOffsets(r)]);
+
 export function probeCount() {
-  return 1 + DEPTH_RADII.reduce((sum, r) => sum + ringOffsets(r).length, 0);
+  return 1 + RINGS.reduce((sum, [, offsets]) => sum + offsets.length, 0);
 }
 
 function levelFor(borderDistance) {
@@ -46,9 +49,9 @@ export function estimateDepth(sample, biomeId, transparent) {
   // Standing in a river counts only if Lothlorien is seen before the first foreign ring.
   let sawBiome = here === biomeId;
   let complete = true;
-  for (const r of DEPTH_RADII) {
+  for (const [r, offsets] of RINGS) {
     let foreign = false;
-    for (const [dx, dz] of ringOffsets(r)) {
+    for (const [dx, dz] of offsets) {
       const id = sample(dx, dz);
       if (id === undefined) complete = false;
       else if (id === biomeId) sawBiome = true;

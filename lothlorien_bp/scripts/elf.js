@@ -83,7 +83,7 @@ export function startElves({ recordFight }) {
     } catch {
       // entity gone
     }
-  });
+  }, { entityTypes: [ELF_ID] });
   world.afterEvents.playerSpawn.subscribe(({ player, initialSpawn }) => {
     try {
       if (initialSpawn && player.hasTag(FOE_TAG)) player.removeTag(FOE_TAG); // a tag left over from before a reload or relog

@@ -109,7 +109,7 @@ system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
 world.afterEvents.playerPlaceBlock.subscribe(({ block, player }) => {
   if (block.typeId !== SPROUT_ID) return;
   player.sendMessage(message("mallorn.planted"));
-});
+}, { blockTypes: [SPROUT_ID] });
 
 // Vanilla bone meal does nothing on a custom block; say why instead of letting it look broken.
 world.beforeEvents.playerInteractWithBlock.subscribe((event) => {

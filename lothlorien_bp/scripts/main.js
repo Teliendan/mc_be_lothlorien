@@ -133,7 +133,7 @@ function updateDepth() {
     const result = playerDepth(player);
     const prev = lastDepth.get(player.id);
     lastDepth.set(player.id, result);
-    if (prev !== undefined && prev.level !== result.level && player.hasTag(DEBUG_TAG)) {
+    if (prev !== undefined && prev.level !== result.level) {
       player.sendMessage(message("depth.changed", depthLabel(prev), depthLabel(result)));
     }
   }
@@ -219,7 +219,7 @@ function fallLeaves() {
 
 // Scripting V2 runs before the world exists: touch `world` only from events.
 world.afterEvents.worldLoad.subscribe(() => {
-  system.afterEvents.scriptEventReceive.subscribe(onScriptEvent);
+  system.afterEvents.scriptEventReceive.subscribe(onScriptEvent, { namespaces: ["lothlorien"] }); // every handled id is lothlorien:*
   system.runInterval(showDebug, DEBUG_INTERVAL_TICKS);
   system.runInterval(updateDepth, DEPTH_INTERVAL_TICKS);
   system.runInterval(fallLeaves, LEAF_INTERVAL_TICKS);

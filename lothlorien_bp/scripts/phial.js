@@ -14,8 +14,9 @@ let started = false;
 
 // A holder keeps the Phial in the offhand, is alive and is not a Spectator (who keeps its items but is not there).
 function holdsPhial(player) {
-    return player.getGameMode() !== "Spectator" && player.getComponent("minecraft:health").currentValue > 0
-        && player.getComponent("minecraft:equippable")?.getEquipment("Offhand")?.typeId === PHIAL_ID;
+    // The offhand check rules out almost every player, so it goes first.
+    return player.getComponent("minecraft:equippable")?.getEquipment("Offhand")?.typeId === PHIAL_ID
+        && player.getGameMode() !== "Spectator" && player.getComponent("minecraft:health").currentValue > 0;
 }
 
 export function startPhial() {

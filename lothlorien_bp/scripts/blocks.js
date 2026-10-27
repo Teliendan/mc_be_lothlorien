@@ -166,9 +166,9 @@ const components = {
         .getEntities({ location: { x, y, z }, volume: { x: 1, y: 0.25, z: 1 }, excludeGameModes: [GameMode.Spectator] })
         .some((e) => overlapsPlate(block.location, e.getAABB()));
       const powered = block.permutation.getState(`${NS}:powered`);
+      if (pressed === powered) return; // the idle case: no key string needed
       const key = positionKey(dimension, block.location);
-      if (!pressed && powered && system.currentTick < (plateHoldUntil.get(key) ?? 0)) return;
-      if (pressed === powered) return;
+      if (!pressed && system.currentTick < (plateHoldUntil.get(key) ?? 0)) return;
       if (pressed) plateHoldUntil.set(key, system.currentTick + PLATE_RELEASE_TICKS);
       else plateHoldUntil.delete(key);
       setState(block, `${NS}:powered`, pressed);
