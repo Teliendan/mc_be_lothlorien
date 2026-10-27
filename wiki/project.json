@@ -735,6 +735,34 @@
     {
       "featureId": "lothlorien:elven_warden",
       "pattern": "lothlorien_bp/scripts/voice_rules.js"
+    },
+    {
+      "featureId": "lothlorien:memorial",
+      "pattern": "lothlorien_bp/entities/memorial_sound.json"
+    },
+    {
+      "featureId": "lothlorien:memorial",
+      "pattern": "lothlorien_rp/entity/memorial_sound.entity.json"
+    },
+    {
+      "featureId": "lothlorien:root_shrine",
+      "pattern": "lothlorien_bp/entities/shrine_sound.json"
+    },
+    {
+      "featureId": "lothlorien:root_shrine",
+      "pattern": "lothlorien_rp/entity/shrine_sound.entity.json"
+    },
+    {
+      "featureId": "lothlorien:growing",
+      "pattern": "lothlorien_bp/scripts/village_debug.js"
+    },
+    {
+      "featureId": "lothlorien:growing",
+      "pattern": "lothlorien_bp/scripts/village_music.js"
+    },
+    {
+      "featureId": "lothlorien:growing",
+      "pattern": "lothlorien_bp/scripts/village_music_rules.js"
     }
   ],
   "defaultSelfDrops": [
@@ -1211,11 +1239,11 @@
         },
         {
           "path": "lothlorien_bp/structures/lothlorien/root_shrine_01.mcstructure",
-          "sha256": "aff8960bf7bab4681e0e151ccaa453acec5ebd151608609bbf67a9194e9b4494"
+          "sha256": "899333fd5462971eecd809b6f0b999241f8d68c7dac4359ead5d044bf1a54d80"
         },
         {
           "path": "tools/root_shrine.mjs",
-          "sha256": "f420c41dc20af1597c4dec2142313733e19471745e9bdb6400b6efda73ea4ee5"
+          "sha256": "a04de0c54288de667a35c7e1729b47fcbc950522a26e52ed72ef850c1a9a8fd2"
         }
       ],
       "featureId": "lothlorien:root_shrine",

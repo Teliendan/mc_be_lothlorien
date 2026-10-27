@@ -2725,7 +2725,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/loop_marker.js",
-          "sha256": "16f733769f0f2ae329a14ee619c6b98553ce60ef37b6f0a950da0d1654aca2b8"
+          "sha256": "3fe3dad3318c4990e8944634c310d5f35879978d9063ae5261666c827260f8ef"
         },
         {
           "path": "lothlorien_bp/scripts/loremaster.js",
@@ -2733,7 +2733,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/main.js",
-          "sha256": "2fd52bf5ec845e1c86dbd9226927c93421fbbe4ef0463b998ce8e30027b2c795"
+          "sha256": "5d6af2ae3d42b27490a1ed94c3028e721a903342eb33ddf744bd920d9156be5c"
         },
         {
           "path": "lothlorien_bp/scripts/mallorn_tree.js",
@@ -2765,7 +2765,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/rail_mender.js",
-          "sha256": "974dc70416bc1b0830df2827e002358d2d164b701ccae117a9ec5961b2332540"
+          "sha256": "24ccd05b9ab477077ee4c079133891c2df22b769c7cbc56b6c76425929a4353c"
         },
         {
           "path": "lothlorien_bp/scripts/rail_mender_rules.js",
@@ -2817,11 +2817,11 @@
         },
         {
           "path": "lothlorien_bp/scripts/village_loop.js",
-          "sha256": "4c5f41343425e682c91858d7b0e3bfed6bdc425db618ea0ff330cf7aeb260734"
+          "sha256": "4c848a3af60dbb6f81b9a5b939adac3862ff57312f14cb46b0dad746aa0c9f09"
         },
         {
           "path": "lothlorien_bp/scripts/village_planner.js",
-          "sha256": "b8897bc99b7f617cb7de7205d6c153496d461badf78b557aaa06b4ed729ed0be"
+          "sha256": "6ac361b8753afe7379397c05c25932d2e26b4a8a15f8e34d013154c70e78510c"
         },
         {
           "path": "lothlorien_bp/scripts/village_repair.js",
@@ -2829,7 +2829,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/warden_replace.js",
-          "sha256": "cc1672789e219a1a280aaa716f3a95d4fa03c23c5cda52929245a3c287d711c0"
+          "sha256": "130ac05ab7902f18f2c5f6245ceb832f9ad29c80cfb133093a1e4ba2b88d1231"
         },
         {
           "path": "lothlorien_bp/scripts/warden_replace_rules.js",
@@ -2847,7 +2847,9 @@
       "name": "Root Shrine",
       "kind": "structure",
       "aliases": [],
-      "nativeIds": [],
+      "nativeIds": [
+        "lothlorien:shrine_sound"
+      ],
       "obtaining": [
         {
           "id": "lothlorien:root_shrine/obtain",
@@ -2872,7 +2874,7 @@
         },
         {
           "path": "lothlorien_bp/structures/lothlorien/root_shrine_01.mcstructure",
-          "sha256": "aff8960bf7bab4681e0e151ccaa453acec5ebd151608609bbf67a9194e9b4494"
+          "sha256": "899333fd5462971eecd809b6f0b999241f8d68c7dac4359ead5d044bf1a54d80"
         }
       ]
     },
@@ -2913,7 +2915,9 @@
       "name": "Forest Memorial",
       "kind": "structure",
       "aliases": [],
-      "nativeIds": [],
+      "nativeIds": [
+        "lothlorien:memorial_sound"
+      ],
       "obtaining": [
         {
           "id": "lothlorien:memorial/obtain",
@@ -2938,7 +2942,7 @@
         },
         {
           "path": "lothlorien_bp/structures/lothlorien/memorial_leaf_01.mcstructure",
-          "sha256": "e2de3e8fed31b3e100582a25fed6262e4a4ce02b72daefe4bd435b4d25d3d9e5"
+          "sha256": "354f483329d101270b5aac9c552b50fd343f370a30a793844205d9990995d867"
         }
       ]
     },
