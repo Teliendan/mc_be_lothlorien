@@ -26,7 +26,7 @@ export const HATED_DEATH_HARMONY = SHUNNED_FROM;
 // Deed kinds -> penalty points. Single table: plundering costs or care rewards later are one more entry.
 export const DEED_COSTS = {
   animal: 3, // any non-monster mob (deer, swan, squirrel, vanilla animals, villagers...)
-  monster: 1, // deliberate: lead monsters to the wardens, who kill for free
+  monster: 0, // free: players may help the wardens defend the forest (owner 2026-10-27; was 1)
   white_deer: 6,
   unicorn: 10, // the forest's most sacred creature
   warden_fight: 1, // per fight (first hit after PROVOKE_MS without one), see elven_warden.js
@@ -46,10 +46,11 @@ const WARDEN = "lothlorien:elven_warden";
 const ELF = "lothlorien:elf";
 const PLAYER = "minecraft:player";
 
-// Deed kind of a victim, or undefined when it counts nothing (armor stands and the like: family `inanimate`).
-// `families` = the victim's type families.
-export function deedKindOf(typeId, families = []) {
+// Deed kind of a victim, or undefined when it counts nothing (armor stands and the like: family `inanimate`; a player the
+// wardens hunt). `families` = the victim's type families; `quarry` = a player tagged Hated or elf foe (warden targets).
+export function deedKindOf(typeId, families = [], quarry = false) {
   if (families.includes("inanimate")) return undefined;
+  if (typeId === PLAYER && quarry) return undefined;
   if (typeId === WHITE_DEER) return "white_deer";
   if (typeId === UNICORN) return "unicorn";
   if (typeId === WARDEN) return "warden_kill";

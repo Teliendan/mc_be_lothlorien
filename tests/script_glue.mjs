@@ -424,6 +424,22 @@ await scenario("harmony: elf and warden deeds count outside the forest, a deer o
   assert.equal(harmony(), base - H.deedCost("elf_kill") - H.deedCost("elf_fight") - H.deedCost("warden_fight"), "fights count outside too");
 });
 
+await scenario("harmony: inside the forest monsters and players the wardens hunt are free kills; any other player costs", async () => {
+  const H = await import(`${SRC}harmony.js`), HG = await import(`${SRC}harmony_game.js`);
+  const fam = (list) => ({ components: { "minecraft:type_family": { getTypeFamilies: () => list } } });
+  const player = mock.addEntity("minecraft:player", { x: 0, y: 70, z: 0 }), zombie = mock.addEntity("minecraft:zombie", { x: 1, y: 70, z: 1 }, fam(["zombie", "monster", "mob"]));
+  const hated = mock.addEntity("minecraft:player", { x: 2, y: 70, z: 2 }, fam(["player"])), foe = mock.addEntity("minecraft:player", { x: 3, y: 70, z: 3 }, fam(["player"])), other = mock.addEntity("minecraft:player", { x: 4, y: 70, z: 4 }, fam(["player"]));
+  hated.setDynamicProperty("lothlorien:harmony", H.serialize({ harmony: -40, timer: 0 })); hated.addTag(HG.HATED_TAG); foe.addTag("lothlorien_elf_foe");
+  for (const p of [player, hated, foe, other]) { p.sendMessage = () => {}; p.onScreenDisplay = { setActionBar() {} }; }
+  HG.startHarmony(() => true, "dbg");
+  const harmony = () => HG.harmonyOf(player).harmony;
+  for (const victim of [zombie, hated, foe]) mock.fire("entityDie", { deadEntity: victim, damageSource: { damagingEntity: player } });
+  assert.equal(harmony(), 0, "a zombie, a Hated player and an elf foe cost nothing");
+  assert.equal(HG.harmonyOf(hated).harmony, H.HATED_DEATH_HARMONY, "the Hated victim's own death reset still applies");
+  mock.fire("entityDie", { deadEntity: other, damageSource: { damagingEntity: player } });
+  assert.equal(harmony(), -H.deedCost("player"), "an ordinary player still costs");
+});
+
 // ---- planner speed: the time-boxed job driver and the timing log ----
 await scenario("loop_marker.js: sliced() runs many inner steps per engine step, returns the same value, counts steps; the timing log lines appear in debug mode", async () => {
   const mod = await loadScript("loop_marker.js");

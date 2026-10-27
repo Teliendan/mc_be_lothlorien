@@ -1460,11 +1460,26 @@
       },
       {
         "path": "lothlorien_bp/scripts/harmony.js",
-        "sha256": "cb13b3d41b65ecb7cbda03ecb2000652ced54d5c1a3e9aa8cbad5b5540564bce"
+        "sha256": "0136236c6f5c854758225436ac65a574c4036446be9ebeab5d6623792ac9ee28"
       },
       {
         "path": "lothlorien_bp/scripts/harmony_game.js",
-        "sha256": "5dc81335d94c24f7688f513a21e3f6dab3761ec82333d9bf569a80f25b73ef89"
+        "sha256": "aaa6f4848f660d66af620774b30f394b5a33bf1feb03f60d2e6f70e491f31993"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:harmony",
+    "id": "lothlorien:harmony/defending",
+    "text": "Defending the forest is welcome: killing monsters, or players the wardens are hunting, never lowers your Harmony.",
+    "evidence": [
+      {
+        "path": "lothlorien_bp/scripts/harmony.js",
+        "sha256": "0136236c6f5c854758225436ac65a574c4036446be9ebeab5d6623792ac9ee28"
+      },
+      {
+        "path": "lothlorien_bp/scripts/harmony_game.js",
+        "sha256": "aaa6f4848f660d66af620774b30f394b5a33bf1feb03f60d2e6f70e491f31993"
       }
     ]
   },

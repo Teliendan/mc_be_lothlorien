@@ -2,6 +2,7 @@ import { message } from "./messages.js";
 // Harmony in the running game: deeds and deaths feed the rules in harmony.js, state is kept per player in a dynamic
 // property (survives relogging, independent between players) and written only when harmony changes.
 import { world, system } from "@minecraft/server";
+import { FOE_TAG } from "./elf_rules.js";
 import { EVERYWHERE_DEEDS, MAX_HARMONY, MIN_HARMONY, bandOf, changeMessages, deedCounts, deedKindOf, hintDue, isFriend, isHated, parse, recordDeath, recordDeed, serialize, statusText, tick } from "./harmony.js";
 
 const PROPERTY = "lothlorien:harmony";
@@ -110,13 +111,15 @@ export function startHarmony(inside, debugTag) {
   isInside = inside;
   world.afterEvents.entityDie.subscribe(({ deadEntity, damageSource }) => {
     try {
+      // read before recordDeath: a Hated player dying inside drops to Shunned and loses the tag
+      const quarry = deadEntity.typeId === PLAYER_ID && (deadEntity.hasTag(HATED_TAG) || deadEntity.hasTag(FOE_TAG));
       if (deadEntity.typeId === PLAYER_ID) {
         const state = harmonyOf(deadEntity);
         update(deadEntity, state, () => recordDeath(state, inside(deadEntity.dimension, deadEntity.location)));
       }
       const killer = damageSource.damagingEntity;
       if (killer?.typeId !== PLAYER_ID || killer.id === deadEntity.id) return;
-      deed(killer, deadEntity, deedKindOf(deadEntity.typeId, familiesOf(deadEntity)));
+      deed(killer, deadEntity, deedKindOf(deadEntity.typeId, familiesOf(deadEntity), quarry));
     } catch {
       // entity already gone
     }

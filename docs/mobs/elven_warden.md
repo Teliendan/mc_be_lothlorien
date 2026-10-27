@@ -181,7 +181,7 @@ target goals. Name tag keeps it (`minecraft:nameable`). A warden mid-fight beyon
 - **Harmony (owner decisions 2026-10-07; replaces the Disharmony weights; plan `docs/design/harmony_rework_plan.md`, rules in `harmony.js` `DEED_COSTS`, hook in `harmony_game.js`).**
   Hitting a warden starts a *fight*: -1 Harmony once per fight (first player hit after 60 s without one, the `provoked` map and `PROVOKE_MS` here). Killing a warden: -6 on top.
   A kill costs only when a player is the damager (projectiles included); a warden killed by a tamed wolf costs nothing. A deed counts when the player or the warden is inside the forest,
-  so a warden dying outside the biome still counts. A warden killing a monster costs the player nothing.
+  so a warden dying outside the biome still counts. A warden killing a monster costs the player nothing, and since 2026-10-27 (owner) neither does a player killing a monster or a player the wardens hunt (Hated or elf foe).
   **Hated players** (Harmony -30 or lower): the script keeps the player tag `lothlorien_hated` in step with the band; `nearest_attackable_target` has an entry for players with
   that tag, so wardens shoot them on sight, and `isFriendlyFire` never shields a Hated player. Dying inside the forest while Hated sets Harmony to -29 (Shunned), so wardens stop and
   spawn-camping does not work. **[U: the tag filter, the arrows and the reset have not been seen in game yet.]**

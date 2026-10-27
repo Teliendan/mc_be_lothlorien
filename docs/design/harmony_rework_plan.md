@@ -24,7 +24,7 @@ One per-player number, **harmony**, an integer from **-60 to +10**. One point is
 | Deed | Cost | Notes |
 |---|---|---|
 | Animal (any non-monster mob: deer, swan, squirrel, vanilla animals, villagers...) | -3 | Not family `inanimate` (armor stands) |
-| Monster (family `monster`, `entity.matches({families: ["monster"]})`) | -1 | Deliberate: lead monsters to the wardens, who kill for free (owner wants that tactic) |
+| Monster (family `monster`, `entity.matches({families: ["monster"]})`) | 0 | **Free since 2026-10-27** (owner: players, the owner's children included, want to help the elves defend the forest; the earlier -1 "lead monsters to the wardens" tactic did not work in play). Also free: a player the wardens hunt (tag `lothlorien_hated` or `lothlorien_elf_foe`, read before the victim's own death reset) |
 | White deer | -6 | |
 | Unicorn | -10 | The forest's most sacred creature |
 | Fighting a warden | -1 per fight | A fight = first player hit on a warden after 60 s without one (`provoked` map in `elven_warden.js`, `PROVOKE_MS`) |
@@ -46,7 +46,7 @@ trading stays refused. Prevents both a "die to reset" exploit and warden spawn-c
 | -15...-29 | Shunned | red | leaf broken in two (owner rejected the thorn twig 2026-10-07) | `l2` (20) | "restless" | refused; Loremaster: "Learn to live in peace with the forest, then return." |
 | -30...-60 | Hated | dark red | arrow drawn after the vanilla arrow item (owner rejected the eye: too Sauron) | `l3` (30) | "restless" | refused; **wardens shoot on sight** |
 
-Friend is +10 only on purpose: any single bad deed loses it (a monster kill at +10 costs 2). Any negative value already shows that the
+Friend is +10 only on purpose: any single bad deed loses it (an animal kill at +10 costs 6). Any negative value already shows that the
 forest dislikes you. The Uneasy/Shunned boundary (-15) is a starting value. The wildlife states and radii are the existing ones, so the
 entity JSON of deer, white deer, swan, squirrel and unicorn does not change.
 
@@ -100,7 +100,7 @@ Stock, Renown and the Loremaster (who never trades) are now designed in `elven_i
 - Debug: `/scriptevent lothlorien:harmony [value]` shows or sets harmony; drop `lothlorien:disharmony`.
 - `main.js` wiring, `KILL_WEIGHTS` removed (costs table in `harmony.js`).
 - `tests/run.mjs`: replace the `disharmony:` tests (levels, decay, death, Friend, status, white deer weight, warden weight) with harmony tests:
-  recovery inside/outside and the 0 cap outside, the double-cost rule (h = 4 animal -> -1; h = 10 monster -> 8), floor, every deed cost,
+  recovery inside/outside and the 0 cap outside, the double-cost rule (h = 4 animal -> -1), floor, every deed cost,
   Hated death -> -29 and other deaths unchanged, band table incl. edges (10, 9, 0, -1, -14, -15, -29, -30), junk tolerance,
   consumer mappings (wariness, refusals).
 

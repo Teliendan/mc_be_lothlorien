@@ -51,9 +51,9 @@ test("harmony: floor at -60", () => {
 });
 
 test("harmony: every deed cost", () => {
-  assert.deepEqual(H.DEED_COSTS, { animal: 3, monster: 1, white_deer: 6, unicorn: 10, warden_fight: 1, warden_kill: 6, elf_fight: 1, elf_kill: 6, player: 3 });
-  for (const [kind, cost] of Object.entries(H.DEED_COSTS)) { const s = hs(0); H.recordDeed(s, kind); assert.equal(s.harmony, -cost, kind); }
-  const s = hs(10); H.recordDeed(s, "monster"); assert.equal(s.harmony, 8);
+  assert.deepEqual(H.DEED_COSTS, { animal: 3, monster: 0, white_deer: 6, unicorn: 10, warden_fight: 1, warden_kill: 6, elf_fight: 1, elf_kill: 6, player: 3 });
+  for (const [kind, cost] of Object.entries(H.DEED_COSTS)) { const s = hs(0); H.recordDeed(s, kind); assert.equal(s.harmony, 0 - cost, kind); }
+  const s = hs(10, 30); H.recordDeed(s, "monster"); assert.deepEqual(s, hs(10, 30), "monsters are free: no cost, recovery timer untouched");
   const u = hs(10); H.recordDeed(u, "unicorn"); assert.equal(u.harmony, -5, "8, 6, 4, 2, 0, then five at 1 each");
   const n = hs(3, 7); H.recordDeed(n, "nonsense"); assert.deepEqual(n, hs(3, 7), "unknown deed kinds count nothing");
 });
@@ -69,6 +69,8 @@ test("harmony: victims are classified into deed kinds (inanimate counts nothing,
   assert.equal(k("lothlorien:unicorn"), "unicorn");
   assert.equal(k(EW.WARDEN_ID, ["lothlorien_warden", "irongolem", "mob"]), "warden_kill");
   assert.equal(k("minecraft:player", ["player"]), "player");
+  assert.equal(k("minecraft:player", ["player"], true), undefined, "a player the wardens hunt (Hated, elf foe) is free");
+  assert.equal(k("minecraft:zombie", ["zombie", "monster", "mob"], true), "monster", "quarry only concerns players");
   assert.equal(k("minecraft:cow"), "animal");
   assert.equal(k("lothlorien:elf", ["lothlorien_elf", "mob"]), "elf_kill", "a civilian elf is its own kind (was a plain animal, 3)");
   assert.equal(k("lothlorien:elf_post", ["lothlorien_elf_post", "elf_post_home", "inanimate"]), undefined, "a post counts nothing");
