@@ -91,7 +91,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/deer.js",
-        "sha256": "ba61df49fdb316a4e414f3ca36a7605b3532a5a579e3c16777ef96c9f49a1fca"
+        "sha256": "0f6fd5c88d5acb8804c252b3f71723abbc74195c33a1740653de6d44cb61aef2"
       },
       {
         "path": "lothlorien_bp/scripts/deer_rules.js",
@@ -151,7 +151,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/elf.js",
-        "sha256": "73ab6d4b93bb37ff8dbabcf9f69747530977d24ea306702cb9455919863f4d49"
+        "sha256": "3f4dae1c6e491d96fcb30c9ce721a65a7629bb52928e64ab5f5585bf3ebad6a4"
       },
       {
         "path": "lothlorien_bp/scripts/elf_native_use.js",
@@ -207,7 +207,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/elven_warden.js",
-        "sha256": "9b0aeb09bd23ca22ced4ac0787179520cef1132a4bc6606621205a35c8d8f9f7"
+        "sha256": "a30903c0c1c0d1a75119ae4dc1c136040b6862967244ec293553993d03e91605"
       },
       {
         "path": "lothlorien_bp/scripts/elven_warden_rules.js",
@@ -530,7 +530,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/white_deer.js",
-        "sha256": "87b7d8bc9cfe04630399947601c0379c2d0e075b14d67bfe1e3e9905403beb45"
+        "sha256": "ae0a756a4957022af8e50ee384410224e78f5f546b84ccb571f1a61e77aaddc4"
       },
       {
         "path": "lothlorien_bp/scripts/white_deer_rules.js",
