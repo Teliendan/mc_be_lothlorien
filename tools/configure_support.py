@@ -18,6 +18,7 @@ MOUNTED = {"deer_antler", "elven_lantern", "elven_lantern_heartwood", "firefly_j
            "mallorn_button", "mallorn_heartwood_button"}
 EXTRA = {"mallorn_door", "mallorn_heartwood_door", "elven_rope", "elven_rope_hanging"}
 COVERS = {"mallorn_leaf_carpet", "mallorn_blossom"}
+SNOWLOGGABLE = {"athelas", "elanor", "golden_fern", "niphredil"}
 WATER_POP = {"athelas", "elanor", "golden_fern", "nectar_bloom", "niphredil",
              "western_corn", "mallorn_sapling", "great_mallorn_sprout"} | COVERS
 WATER_SOLID = {"mallorn_log", "mallorn_wood", "mallorn_stripped_log", "mallorn_stripped_wood",
@@ -64,6 +65,9 @@ def configure(block):
     b = block["minecraft:block"]
     name = b["description"]["identifier"].split(":")[1]
     c = b["components"]
+    # Bedrock small flowers/ferns; hanging nectar blooms are spore-blossom-like.
+    if name in SNOWLOGGABLE:
+        c["minecraft:precipitation_interactions"] = {"precipitation_behavior": "snowlogging"}
     if name in {"elanor", "niphredil", "athelas", "nectar_bloom", "mallorn_blossom", "golden_fern"}:
         tags = c.setdefault("minecraft:tags", [])
         if "lothlorien:flower" not in tags:

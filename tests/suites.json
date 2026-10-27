@@ -59,6 +59,9 @@
     "harmony": [
       "harmony.mjs"
     ],
+    "village-area": [
+      "village_area.mjs"
+    ],
     "renown": [
       "renown.mjs"
     ],
@@ -181,9 +184,6 @@
     "landscape-probe": [
       "landscape_probe.mjs"
     ],
-    "constrained-feature-probe": [
-      "constrained_feature_probe.mjs"
-    ],
     "suite-layout": [
       "suite_layout.mjs"
     ],
@@ -199,6 +199,7 @@
       "miruvor.mjs"
     ],
     "village": [
+      "village_area.mjs",
       "script_glue.mjs",
       "village_structures.mjs",
       "village_planner.mjs",

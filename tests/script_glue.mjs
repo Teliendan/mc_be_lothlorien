@@ -46,6 +46,11 @@ await scenario("an automatic entityLoad plans the village once, removes the mark
   assert.equal(mock.subscribers("after", "entityLoad"), 1); assert.equal(mock.subscribers("after", "entitySpawn"), 1);
   for (const i of [0, 7, 30]) mock.fire("entityLoad", { entity: markers[i] }); // several trees of one village load in the same moment
   mock.fire("entitySpawn", { entity: markers[1] });
+  await mock.advance(20);
+  const territory = PL.parseDone(world.getDynamicProperty("lothlorien:village_areas"));
+  assert.equal(territory.length, 1, "discovery saves the full area before repair planning completes");
+  assert.ok(markers.every((m) => PL.inRect(territory[0], m.location.x, m.location.z)), "the discovered area covers every village marker");
+  assert.equal(world.getDynamicProperty("lothlorien:village_plans"), undefined, "territory is available during the settle delay");
   await mock.settle();
   assert.equal(grep(/planner: start for village/).length, 1, "exactly one planner run per village");
   assert.match(grep(/planner: start for village/)[0], /trigger entityLoad/);
@@ -126,7 +131,7 @@ await scenario("manual planNearest plans even for a done village and does not to
   await mock.settle();
   assert.equal(grep(/planner: start for village/).length, 1); assert.match(grep(/planner: start for village/)[0], /trigger manual/);
   assert.equal(sent.length, 1); assert.equal(sent[0].translate, "lothlorien.message.village.plan.done");
-  assert.equal(mock.propWrites.length, 0, "manual run leaves the done-list alone");
+  assert.equal(mock.propWrites.filter((key) => key === PL.VILLAGE_PLANS).length, 0, "manual run leaves the done-list alone");
   assert.equal(markersLeft(), 0);
   mock.reset(); runNo++; // nothing to plan: a message, no run
   const mod2 = await loadScript("loop_marker.js"), sent2 = [];

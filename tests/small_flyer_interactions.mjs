@@ -71,4 +71,12 @@ await test('different capture data stays distinct while identical data matches s
   assert.notDeepEqual(bottles[0].getRawLore(),bottles[1].getRawLore());assert.notDeepEqual(bottles[0].getRawLore(),bottles[2].getRawLore());
   assert.deepEqual(bottles[0].getRawLore(),bottles[3].getRawLore()); // actual native merge behavior is not simulated
 });
+await test('failed full-inventory delivery keeps the firefly and the empty bottles',e=>{
+  const p=e.player(GLASS,3), f=e.fly(); p.full=true; e.dimension.failDrop=true;
+  f.nameTag='Still here'; e.catch(p,f); e.flush();
+  assert.equal(f.isValid,true); assert.equal(p.held.amount,3); assert.equal(e.drops.length,0);
+  e.dimension.failDrop=false; e.catch(p,f); e.flush();
+  assert.equal(f.isValid,false); assert.equal(p.held.amount,2);
+  const out=release(e,e.drops.at(-1).item); assert.equal(out.animal.nameTag,'Still here');
+});
 console.log(`Passed ${cases} production small-flyer/data scenarios; native lore persistence/stacking remains acceptance.`);

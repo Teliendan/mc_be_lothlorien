@@ -15,7 +15,8 @@
 import { BlockPermutation, system, world } from "@minecraft/server";
 import { MARKER_ID, finalBlocks } from "./village_loop.js";
 import { villageDebug, toggleVillageDebug } from "./village_debug.js";
-import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, chunksIn, describePick, describeMerge, VILLAGE_PLANS } from "./village_planner.js";
+import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, growRect, hullOf, chunksIn, describePick, describeMerge, VILLAGE_PLANS } from "./village_planner.js";
+import { rememberVillageArea } from "./village_area.js";
 import { describeRepair } from "./village_repair.js";
 import { missingLinks } from "./rail_mender_rules.js";
 import { mendAround } from "./rail_connections.js";
@@ -35,9 +36,6 @@ let claim = null, running = false, loggedQuota = false, areaAttempt = 0;
 const log = (msg) => console.warn(`[lothlorien] planner: ${msg}`);
 const dlog = (msg) => { if (villageDebug()) log(`(debug) ${msg}`); };
 export const toggleDebug = toggleVillageDebug;
-// The area of the village being planned right now (chunk-aligned, as later recorded in the done-list), or null. Village music uses it
-// so a visitor hears the village while it is still being built (owner 2026-10-27: music started only after the build).
-export const planningArea = () => claim;
 
 const cellOf = (e) => { const p = e.location; return [Math.floor(p.x), Math.floor(p.y) - 1, Math.floor(p.z)]; }; // the deck cell under the marker
 const sleep = (ticks) => new Promise((resolve) => system.runTimeout(resolve, ticks));
@@ -145,6 +143,7 @@ async function planVillageAt(entity, force, trigger) {
   let found = null;
   try {
     found = await discoverVillage(env, first, base);
+    if (dimension.id === "minecraft:overworld") rememberVillageArea(found.rect);
     dlog(`discovery done: ${found.rounds} round(s) in ${ms(t0)} ms since the start`);
     const tSettle = Date.now();
     await sleep(SETTLE_TICKS); // neighbouring chunks of a fresh village finish their decoration
@@ -203,6 +202,9 @@ async function drain() {
 function onMarker(entity, trigger) {
   if (!entity || entity.typeId !== MARKER_ID) return;
   if (seen.has(entity.id)) { dlog(`marker ${entity.id} already seen this session (${trigger})`); return; }
+  // Recognize the first loaded village piece immediately, even while queued or if
+  // loading/planning fails. The normal discovery margin covers the marker's platform.
+  if (entity.dimension.id === "minecraft:overworld") rememberVillageArea(growRect(hullOf([cellOf(entity)]), AREA.margins[0]));
   seen.add(entity.id);
   dlog(`marker ${entity.id} noticed (${trigger}), queued in ${START_DELAY_TICKS} ticks`);
   system.runTimeout(() => { try { if (entity.isValid) { queue.push({ entity, trigger }); drain(); } else dlog(`marker ${entity.id} gone before its turn`); } catch { /* unloaded */ } }, START_DELAY_TICKS);

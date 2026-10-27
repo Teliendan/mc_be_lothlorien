@@ -1,0 +1,457 @@
+[
+  {
+    "id": "lothlorien:athelas/icon",
+    "featureId": "lothlorien:athelas",
+    "source": "lothlorien_rp/textures/items/athelas.png",
+    "kind": "item",
+    "alt": "Athelas"
+  },
+  {
+    "id": "lothlorien:athelas_salve/icon",
+    "featureId": "lothlorien:athelas_salve",
+    "source": "lothlorien_rp/textures/items/athelas_salve.png",
+    "kind": "item",
+    "alt": "Athelas Salve"
+  },
+  {
+    "id": "lothlorien:bottle_of_fireflies/icon",
+    "featureId": "lothlorien:bottle_of_fireflies",
+    "source": "lothlorien_rp/textures/items/bottle_of_fireflies.png",
+    "kind": "item",
+    "alt": "Bottle of Fireflies"
+  },
+  {
+    "id": "lothlorien:bow/icon",
+    "featureId": "lothlorien:bow",
+    "source": "lothlorien_rp/textures/items/galadhrim_bow.png",
+    "kind": "item",
+    "alt": "Bow of the Galadhrim"
+  },
+  {
+    "id": "lothlorien:deer_antler/icon",
+    "featureId": "lothlorien:deer_antler",
+    "source": "lothlorien_rp/textures/items/deer_antler.png",
+    "kind": "item",
+    "alt": "Deer Antler"
+  },
+  {
+    "id": "lothlorien:dew_bottle/icon",
+    "featureId": "lothlorien:dew_bottle",
+    "source": "lothlorien_rp/textures/items/dew_bottle.png",
+    "kind": "item",
+    "alt": "Dew Bottle"
+  },
+  {
+    "id": "lothlorien:elanor/icon",
+    "featureId": "lothlorien:elanor",
+    "source": "lothlorien_rp/textures/items/elanor.png",
+    "kind": "item",
+    "alt": "Elanor"
+  },
+  {
+    "id": "lothlorien:elven_chandelier/icon",
+    "featureId": "lothlorien:elven_chandelier",
+    "source": "lothlorien_rp/textures/items/elven_chandelier.png",
+    "kind": "item",
+    "alt": "Elven Chandelier"
+  },
+  {
+    "id": "lothlorien:elven_cloak/icon",
+    "featureId": "lothlorien:elven_cloak",
+    "source": "lothlorien_rp/textures/items/elven_cloak.png",
+    "kind": "item",
+    "alt": "Elven cloak"
+  },
+  {
+    "id": "lothlorien:elven_lantern/icon",
+    "featureId": "lothlorien:elven_lantern",
+    "source": "lothlorien_rp/textures/items/elven_lantern.png",
+    "kind": "item",
+    "alt": "Elven Lantern"
+  },
+  {
+    "id": "lothlorien:elven_lantern_heartwood/icon",
+    "featureId": "lothlorien:elven_lantern_heartwood",
+    "source": "lothlorien_rp/textures/items/elven_lantern_heartwood.png",
+    "kind": "item",
+    "alt": "Heartwood Elven Lantern"
+  },
+  {
+    "id": "lothlorien:elven_rope/icon",
+    "featureId": "lothlorien:elven_rope",
+    "source": "lothlorien_rp/textures/items/elven_rope.png",
+    "kind": "item",
+    "alt": "Elven Rope"
+  },
+  {
+    "id": "lothlorien:firefly_jar/icon",
+    "featureId": "lothlorien:firefly_jar",
+    "source": "lothlorien_rp/textures/items/firefly_jar.png",
+    "kind": "item",
+    "alt": "Firefly Jar"
+  },
+  {
+    "id": "lothlorien:galadhrim_arrow/icon",
+    "featureId": "lothlorien:galadhrim_arrow",
+    "source": "lothlorien_rp/textures/items/galadhrim_arrow.png",
+    "kind": "item",
+    "alt": "Galadhrim arrow"
+  },
+  {
+    "id": "lothlorien:golden_fern/icon",
+    "featureId": "lothlorien:golden_fern",
+    "source": "lothlorien_rp/textures/items/golden_fern.png",
+    "kind": "item",
+    "alt": "Golden Fern"
+  },
+  {
+    "id": "lothlorien:great_mallorn_nut/icon",
+    "featureId": "lothlorien:great_mallorn_nut",
+    "source": "lothlorien_rp/textures/items/great_mallorn_nut.png",
+    "kind": "item",
+    "alt": "Great Mallorn Nut"
+  },
+  {
+    "id": "lothlorien:lembas_cake/icon",
+    "featureId": "lothlorien:lembas_cake",
+    "source": "lothlorien_rp/textures/items/lembas_cake.png",
+    "kind": "item",
+    "alt": "Lembas Cake"
+  },
+  {
+    "id": "lothlorien:lembas_dough/icon",
+    "featureId": "lothlorien:lembas_dough",
+    "source": "lothlorien_rp/textures/items/lembas_dough.png",
+    "kind": "item",
+    "alt": "Lembas Dough"
+  },
+  {
+    "id": "lothlorien:lembas_wrapped/icon",
+    "featureId": "lothlorien:lembas_wrapped",
+    "source": "lothlorien_rp/textures/items/lembas_wrapped.png",
+    "kind": "item",
+    "alt": "Lembas"
+  },
+  {
+    "id": "lothlorien:mallorn_acorn/icon",
+    "featureId": "lothlorien:mallorn_acorn",
+    "source": "lothlorien_rp/textures/items/mallorn_acorn.png",
+    "kind": "item",
+    "alt": "Mallorn Acorn"
+  },
+  {
+    "id": "lothlorien:mallorn_blossom/icon",
+    "featureId": "lothlorien:mallorn_blossom",
+    "source": "lothlorien_rp/textures/items/mallorn_blossom.png",
+    "kind": "item",
+    "alt": "Mallorn Blossom"
+  },
+  {
+    "id": "lothlorien:mallorn_boat/icon",
+    "featureId": "lothlorien:mallorn_boat",
+    "source": "lothlorien_rp/textures/items/mallorn_boat.png",
+    "kind": "item",
+    "alt": "Mallorn Boat"
+  },
+  {
+    "id": "lothlorien:mallorn_button/icon",
+    "featureId": "lothlorien:mallorn_button",
+    "source": "lothlorien_rp/textures/blocks/mallorn_planks.png",
+    "kind": "texture",
+    "alt": "Mallorn Button"
+  },
+  {
+    "id": "lothlorien:mallorn_chest_boat/icon",
+    "featureId": "lothlorien:mallorn_chest_boat",
+    "source": "lothlorien_rp/textures/items/mallorn_chest_boat.png",
+    "kind": "item",
+    "alt": "Mallorn Boat with Chest"
+  },
+  {
+    "id": "lothlorien:mallorn_door/icon",
+    "featureId": "lothlorien:mallorn_door",
+    "source": "lothlorien_rp/textures/items/mallorn_door.png",
+    "kind": "item",
+    "alt": "Mallorn Door"
+  },
+  {
+    "id": "lothlorien:mallorn_fence/icon",
+    "featureId": "lothlorien:mallorn_fence",
+    "source": "lothlorien_rp/textures/blocks/mallorn_fence_post.png",
+    "kind": "texture",
+    "alt": "Mallorn Fence"
+  },
+  {
+    "id": "lothlorien:mallorn_fence_gate/icon",
+    "featureId": "lothlorien:mallorn_fence_gate",
+    "source": "lothlorien_rp/textures/blocks/mallorn_fence_post.png",
+    "kind": "texture",
+    "alt": "Mallorn Fence Gate"
+  },
+  {
+    "id": "lothlorien:mallorn_golden_leaves/icon",
+    "featureId": "lothlorien:mallorn_golden_leaves",
+    "source": "lothlorien_rp/textures/blocks/mallorn_golden_leaves.png",
+    "kind": "texture",
+    "alt": "Golden Mallorn Leaves"
+  },
+  {
+    "id": "lothlorien:mallorn_heartwood_boat/icon",
+    "featureId": "lothlorien:mallorn_heartwood_boat",
+    "source": "lothlorien_rp/textures/items/mallorn_heartwood_boat.png",
+    "kind": "item",
+    "alt": "Mallorn Heartwood Boat"
+  },
+  {
+    "id": "lothlorien:mallorn_heartwood_button/icon",
+    "featureId": "lothlorien:mallorn_heartwood_button",
+    "source": "lothlorien_rp/textures/blocks/mallorn_heartwood_planks.png",
+    "kind": "texture",
+    "alt": "Mallorn Heartwood Button"
+  },
+  {
+    "id": "lothlorien:mallorn_heartwood_chest_boat/icon",
+    "featureId": "lothlorien:mallorn_heartwood_chest_boat",
+    "source": "lothlorien_rp/textures/items/mallorn_heartwood_chest_boat.png",
+    "kind": "item",
+    "alt": "Mallorn Heartwood Boat with Chest"
+  },
+  {
+    "id": "lothlorien:mallorn_heartwood_door/icon",
+    "featureId": "lothlorien:mallorn_heartwood_door",
+    "source": "lothlorien_rp/textures/items/mallorn_heartwood_door.png",
+    "kind": "item",
+    "alt": "Mallorn Heartwood Door"
+  },
+  {
+    "id": "lothlorien:mallorn_heartwood_fence/icon",
+    "featureId": "lothlorien:mallorn_heartwood_fence",
+    "source": "lothlorien_rp/textures/blocks/mallorn_heartwood_fence_post.png",
+    "kind": "texture",
+    "alt": "Mallorn Heartwood Fence"
+  },
+  {
+    "id": "lothlorien:mallorn_heartwood_fence_gate/icon",
+    "featureId": "lothlorien:mallorn_heartwood_fence_gate",
+    "source": "lothlorien_rp/textures/blocks/mallorn_heartwood_fence_post.png",
+    "kind": "texture",
+    "alt": "Mallorn Heartwood Fence Gate"
+  },
+  {
+    "id": "lothlorien:mallorn_heartwood_planks/icon",
+    "featureId": "lothlorien:mallorn_heartwood_planks",
+    "source": "lothlorien_rp/textures/blocks/mallorn_heartwood_planks.png",
+    "kind": "texture",
+    "alt": "Mallorn Heartwood Planks"
+  },
+  {
+    "id": "lothlorien:mallorn_heartwood_pressure_plate/icon",
+    "featureId": "lothlorien:mallorn_heartwood_pressure_plate",
+    "source": "lothlorien_rp/textures/blocks/mallorn_heartwood_planks.png",
+    "kind": "texture",
+    "alt": "Mallorn Heartwood Pressure Plate"
+  },
+  {
+    "id": "lothlorien:mallorn_heartwood_slab/icon",
+    "featureId": "lothlorien:mallorn_heartwood_slab",
+    "source": "lothlorien_rp/textures/blocks/mallorn_heartwood_planks.png",
+    "kind": "texture",
+    "alt": "Mallorn Heartwood Slab"
+  },
+  {
+    "id": "lothlorien:mallorn_heartwood_stairs/icon",
+    "featureId": "lothlorien:mallorn_heartwood_stairs",
+    "source": "lothlorien_rp/textures/blocks/mallorn_heartwood_planks.png",
+    "kind": "texture",
+    "alt": "Mallorn Heartwood Stairs"
+  },
+  {
+    "id": "lothlorien:mallorn_heartwood_trapdoor/icon",
+    "featureId": "lothlorien:mallorn_heartwood_trapdoor",
+    "source": "lothlorien_rp/textures/blocks/mallorn_heartwood_trapdoor.png",
+    "kind": "texture",
+    "alt": "Mallorn Heartwood Trapdoor"
+  },
+  {
+    "id": "lothlorien:mallorn_leaf_carpet/icon",
+    "featureId": "lothlorien:mallorn_leaf_carpet",
+    "source": "lothlorien_rp/textures/items/mallorn_leaf_carpet.png",
+    "kind": "item",
+    "alt": "Mallorn Leaf Litter"
+  },
+  {
+    "id": "lothlorien:mallorn_leaves/icon",
+    "featureId": "lothlorien:mallorn_leaves",
+    "source": "lothlorien_rp/textures/blocks/mallorn_leaves_side.png",
+    "kind": "texture",
+    "alt": "Mallorn Leaves"
+  },
+  {
+    "id": "lothlorien:mallorn_log/icon",
+    "featureId": "lothlorien:mallorn_log",
+    "source": "lothlorien_rp/textures/blocks/mallorn_log_side.png",
+    "kind": "texture",
+    "alt": "Mallorn Log"
+  },
+  {
+    "id": "lothlorien:mallorn_nectar/icon",
+    "featureId": "lothlorien:mallorn_nectar",
+    "source": "lothlorien_rp/textures/items/mallorn_nectar.png",
+    "kind": "item",
+    "alt": "Mallorn Nectar"
+  },
+  {
+    "id": "lothlorien:mallorn_planks/icon",
+    "featureId": "lothlorien:mallorn_planks",
+    "source": "lothlorien_rp/textures/blocks/mallorn_planks.png",
+    "kind": "texture",
+    "alt": "Mallorn Planks"
+  },
+  {
+    "id": "lothlorien:mallorn_pressure_plate/icon",
+    "featureId": "lothlorien:mallorn_pressure_plate",
+    "source": "lothlorien_rp/textures/blocks/mallorn_planks.png",
+    "kind": "texture",
+    "alt": "Mallorn Pressure Plate"
+  },
+  {
+    "id": "lothlorien:mallorn_slab/icon",
+    "featureId": "lothlorien:mallorn_slab",
+    "source": "lothlorien_rp/textures/blocks/mallorn_planks.png",
+    "kind": "texture",
+    "alt": "Mallorn Slab"
+  },
+  {
+    "id": "lothlorien:mallorn_stairs/icon",
+    "featureId": "lothlorien:mallorn_stairs",
+    "source": "lothlorien_rp/textures/blocks/mallorn_planks.png",
+    "kind": "texture",
+    "alt": "Mallorn Stairs"
+  },
+  {
+    "id": "lothlorien:mallorn_stripped_log/icon",
+    "featureId": "lothlorien:mallorn_stripped_log",
+    "source": "lothlorien_rp/textures/blocks/mallorn_stripped_log_side.png",
+    "kind": "texture",
+    "alt": "Stripped Mallorn Log"
+  },
+  {
+    "id": "lothlorien:mallorn_stripped_wood/icon",
+    "featureId": "lothlorien:mallorn_stripped_wood",
+    "source": "lothlorien_rp/textures/blocks/mallorn_stripped_log_side.png",
+    "kind": "texture",
+    "alt": "Stripped Mallorn Wood"
+  },
+  {
+    "id": "lothlorien:mallorn_trapdoor/icon",
+    "featureId": "lothlorien:mallorn_trapdoor",
+    "source": "lothlorien_rp/textures/blocks/mallorn_trapdoor.png",
+    "kind": "texture",
+    "alt": "Mallorn Trapdoor"
+  },
+  {
+    "id": "lothlorien:mallorn_wood/icon",
+    "featureId": "lothlorien:mallorn_wood",
+    "source": "lothlorien_rp/textures/blocks/mallorn_log_side.png",
+    "kind": "texture",
+    "alt": "Mallorn Wood"
+  },
+  {
+    "id": "lothlorien:miruvor/icon",
+    "featureId": "lothlorien:miruvor",
+    "source": "lothlorien_rp/textures/items/miruvor.png",
+    "kind": "item",
+    "alt": "Miruvor Skin"
+  },
+  {
+    "id": "lothlorien:morning_dew/icon",
+    "featureId": "lothlorien:morning_dew",
+    "source": "lothlorien_rp/textures/items/morning_dew.png",
+    "kind": "item",
+    "alt": "Bottle of Morning Dew"
+  },
+  {
+    "id": "lothlorien:nectar_bloom/icon",
+    "featureId": "lothlorien:nectar_bloom",
+    "source": "lothlorien_rp/textures/items/nectar_bloom.png",
+    "kind": "item",
+    "alt": "Nectar Bloom"
+  },
+  {
+    "id": "lothlorien:niphredil/icon",
+    "featureId": "lothlorien:niphredil",
+    "source": "lothlorien_rp/textures/items/niphredil.png",
+    "kind": "item",
+    "alt": "Niphredil"
+  },
+  {
+    "id": "lothlorien:phial_of_galadriel/icon",
+    "featureId": "lothlorien:phial_of_galadriel",
+    "source": "lothlorien_rp/textures/items/phial_of_galadriel.png",
+    "kind": "item",
+    "alt": "Phial of Galadriel"
+  },
+  {
+    "id": "lothlorien:silver_belt/icon",
+    "featureId": "lothlorien:silver_belt",
+    "source": "lothlorien_rp/textures/items/silver_belt.png",
+    "kind": "item",
+    "alt": "Silver belt"
+  },
+  {
+    "id": "lothlorien:star_canopy/icon",
+    "featureId": "lothlorien:star_canopy",
+    "source": "lothlorien_rp/textures/blocks/star_canopy.png",
+    "kind": "texture",
+    "alt": "Star Canopy"
+  },
+  {
+    "id": "lothlorien:swan_meat_cooked/icon",
+    "featureId": "lothlorien:swan_meat_cooked",
+    "source": "lothlorien_rp/textures/items/swan_meat_cooked.png",
+    "kind": "item",
+    "alt": "Cooked Swan Meat"
+  },
+  {
+    "id": "lothlorien:swan_meat_raw/icon",
+    "featureId": "lothlorien:swan_meat_raw",
+    "source": "lothlorien_rp/textures/items/swan_meat_raw.png",
+    "kind": "item",
+    "alt": "Raw Swan Meat"
+  },
+  {
+    "id": "lothlorien:venison_cooked/icon",
+    "featureId": "lothlorien:venison_cooked",
+    "source": "lothlorien_rp/textures/items/venison_cooked.png",
+    "kind": "item",
+    "alt": "Cooked Venison"
+  },
+  {
+    "id": "lothlorien:venison_raw/icon",
+    "featureId": "lothlorien:venison_raw",
+    "source": "lothlorien_rp/textures/items/venison_raw.png",
+    "kind": "item",
+    "alt": "Raw Venison"
+  },
+  {
+    "id": "lothlorien:western_corn_grain/icon",
+    "featureId": "lothlorien:western_corn_grain",
+    "source": "lothlorien_rp/textures/items/western_corn_grain.png",
+    "kind": "item",
+    "alt": "Western Corn Grain"
+  },
+  {
+    "id": "lothlorien:western_corn_seeds/icon",
+    "featureId": "lothlorien:western_corn_seeds",
+    "source": "lothlorien_rp/textures/items/western_corn_seeds.png",
+    "kind": "item",
+    "alt": "Western Corn Seeds"
+  },
+  {
+    "id": "lothlorien:empty_miruvor_skin/icon",
+    "featureId": "lothlorien:empty_miruvor_skin",
+    "source": "lothlorien_rp/textures/items/empty_miruvor_skin.png",
+    "kind": "item",
+    "alt": "Empty Miruvor Skin"
+  }
+]

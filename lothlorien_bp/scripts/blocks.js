@@ -229,7 +229,7 @@ const FACE_OFFSET = {
   Up: [0, 1, 0], Down: [0, -1, 0], North: [0, 0, -1], South: [0, 0, 1], East: [1, 0, 0], West: [-1, 0, 0],
 };
 const WIND_CHARGES = new Set(["minecraft:wind_charge_projectile", "minecraft:breeze_wind_charge_projectile"]);
-const WIND_RADIUS = 1.2;
+const WIND_RADIUS = { "minecraft:wind_charge_projectile": 1.2, "minecraft:breeze_wind_charge_projectile": 3 };
 const toggleParams = (open, close) => ({ block_state: `${NS}:open`, enable_sound: open, disable_sound: close });
 const WIND_TOGGLES = Object.fromEntries(WOODS.flatMap((w) => [
   [`${NS}:${w}_door`, [toggleDoor, toggleParams("open.wooden_door", "close.wooden_door")]],
@@ -238,13 +238,13 @@ const WIND_TOGGLES = Object.fromEntries(WOODS.flatMap((w) => [
 ]));
 const BUTTONS = new Set(WOODS.map((w) => `${NS}:${w}_button`));
 
-function windBurst(dimension, at) {
+function windBurst(dimension, at, radius) {
   const reach = (cell, p) => Math.max(cell - p, p - (cell + 1), 0); // distance from the point to the cell's span
   const done = new Set();
-  for (let x = Math.floor(at.x - WIND_RADIUS); x <= Math.floor(at.x + WIND_RADIUS); x++)
-    for (let y = Math.floor(at.y - WIND_RADIUS); y <= Math.floor(at.y + WIND_RADIUS); y++)
-      for (let z = Math.floor(at.z - WIND_RADIUS); z <= Math.floor(at.z + WIND_RADIUS); z++) {
-        if (Math.hypot(reach(x, at.x), reach(y, at.y), reach(z, at.z)) > WIND_RADIUS) continue;
+  for (let x = Math.floor(at.x - radius); x <= Math.floor(at.x + radius); x++)
+    for (let y = Math.floor(at.y - radius); y <= Math.floor(at.y + radius); y++)
+      for (let z = Math.floor(at.z - radius); z <= Math.floor(at.z + radius); z++) {
+        if (Math.hypot(reach(x, at.x), reach(y, at.y), reach(z, at.z)) > radius) continue;
         const block = readBlock(dimension, { x, y, z });
         if (!block) continue;
         if (BUTTONS.has(block.typeId)) { pressButton(block); continue; }
@@ -255,6 +255,13 @@ function windBurst(dimension, at) {
         const key = `${base.x},${base.y},${base.z}`;
         if (done.has(key)) continue;
         done.add(key);
+        if (block.typeId.endsWith("_door")) {
+          const partner = doublePartner(block);
+          if (partner) {
+            const p = partner.getParts()[0].location;
+            done.add(`${p.x},${p.y},${p.z}`);
+          }
+        }
         toggle[0](block, toggle[1]);
       }
 }
@@ -271,13 +278,15 @@ function pressStruckButton({ block, face, faceLocation }) {
 }
 
 world.afterEvents.projectileHitBlock.subscribe((event) => {
-  if (!event.projectile.isValid) return;
+  // Native wind bursts remove their projectile on impact. typeId remains readable
+  // after removal (API 2.8); use the event location/dimension for the burst.
   const id = event.projectile.typeId;
-  if (WIND_CHARGES.has(id)) windBurst(event.dimension, event.location);
+  if (WIND_CHARGES.has(id)) windBurst(event.dimension, event.location, WIND_RADIUS[id]);
   else if (PRESSERS.has(id)) pressStruckButton(event.getBlockHit());
 });
 world.afterEvents.projectileHitEntity.subscribe((event) => {
-  if (event.projectile.isValid && WIND_CHARGES.has(event.projectile.typeId)) windBurst(event.dimension, event.location);
+  const id = event.projectile.typeId;
+  if (WIND_CHARGES.has(id)) windBurst(event.dimension, event.location, WIND_RADIUS[id]);
 });
 
 // --- Axe strips logs/wood; slabs merge. Done as world events so ordinary placement against these

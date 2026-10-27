@@ -1,0 +1,975 @@
+[
+  {
+    "featureId": "lothlorien:butterfly",
+    "details": {
+      "group": "wildlife",
+      "summary": "Small daytime flyers with eight wing colours.",
+      "sections": [
+        {
+          "title": "Encounter",
+          "text": "Look for butterflies hovering above the forest floor during the day."
+        }
+      ],
+      "spoilers": [],
+      "care": [
+        {
+          "label": "Lure",
+          "text": "Vanilla flowers, Elanor, Niphredil, Mallorn Blossom or Nectar Bloom; follows upward and downward too."
+        },
+        {
+          "label": "Feeding",
+          "text": "Flowers heal up to {{lothlorien:rule/food-health}} health points and prevent ordinary despawning."
+        },
+        {
+          "label": "Breeding",
+          "text": "No"
+        },
+        {
+          "label": "Lead",
+          "text": "Yes"
+        }
+      ],
+      "production": [],
+      "dropNotes": []
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/butterfly.json",
+        "sha256": "dca0722f420302a82f8fac1874ff7ba1d8924d5057fb444c864d96f1d67c6c16"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:deer",
+    "details": {
+      "group": "wildlife",
+      "summary": "Wary woodland herds, with antlered bucks and spotted fawns.",
+      "sections": [
+        {
+          "title": "Approach",
+          "text": "Deer are more common deeper inside the forest. Sneak to approach without alarming the herd. Negative Harmony and nearby danger can override a food lure."
+        }
+      ],
+      "spoilers": [],
+      "care": [
+        {
+          "label": "Lure",
+          "text": "Western Corn Grain while calm or friendly; seeds do not work."
+        },
+        {
+          "label": "Feeding",
+          "text": "Grain breeds adults and speeds fawn growth; it does not heal. Feeding for breeding or growth makes deer familiar with players and prevents ordinary despawning. Alarms and negative Harmony still make them flee."
+        },
+        {
+          "label": "Breeding",
+          "text": "Western Corn Grain; fawns mature in {{lothlorien:rule/deer-maturity|duration}}, faster with grain."
+        },
+        {
+          "label": "Lead",
+          "text": "Yes"
+        }
+      ],
+      "production": [
+        "Antlers found on the ground are naturally generated decorations. Collect them from the forest floor."
+      ],
+      "dropNotes": [
+        "Fawns drop nothing. Only adult bucks can drop an antler; adult does do not."
+      ]
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/deer.json",
+        "sha256": "1d5792e7d36080727dfe0db2081fe4e180ed7b00339359a2b030537ad907708a"
+      },
+      {
+        "path": "lothlorien_bp/scripts/deer.js",
+        "sha256": "ba61df49fdb316a4e414f3ca36a7605b3532a5a579e3c16777ef96c9f49a1fca"
+      },
+      {
+        "path": "lothlorien_bp/scripts/deer_rules.js",
+        "sha256": "ac744c72b451fd5b91f0802e28ace03e2dee92b49a03c15d624fc08874ec6bba"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:elf",
+    "details": {
+      "group": "village",
+      "summary": "Five professions bring the villages to life.",
+      "sections": [
+        {
+          "title": "Village life",
+          "text": "Gardeners, healers, woodwrights, lamplighters and the Loremaster inhabit newly generated villages. Visit their trees to find lessons, requests and shops."
+        },
+        {
+          "title": "Trading & progression",
+          "text": "Gardeners, healers, woodwrights and lamplighters buy and sell supplies for emeralds. Guest and Friend stock expands at Welcome, Trusted and Elf-friend Renown; Friend Harmony improves prices. Uneasy standing limits stock to its starting level regardless of Renown, and Shunned or Hated players are refused. Final equipment needs both Elf-friend Renown and Friend Harmony."
+        },
+        {
+          "title": "Lessons & requests",
+          "text": "Speak with the Loremaster for lessons and profession requests. Finish Chapters I and II to unlock requests. One task slot is shared by deed lessons and requests: accept first, then perform the deed and turn it in. Deliver requests to the matching profession; the Loremaster accepts them when none lives nearby."
+        },
+        {
+          "title": "Approach",
+          "text": "Elves flee when hurt, and wardens defend them. Healers roam farther during the day and return towards home at dusk."
+        },
+        {
+          "title": "Healing & friendship",
+          "text": "A healer can grant regeneration to nearby injured elves and wardens. Injured Friends of Lothlórien can also receive regeneration when close and in clear sight."
+        }
+      ],
+      "spoilers": [],
+      "care": [
+        {
+          "label": "Breeding",
+          "text": "No; residents are not replaced when they die."
+        },
+        {
+          "label": "Lead",
+          "text": "Yes. Release the lead to set a new home; shears cut the lead."
+        }
+      ],
+      "production": [],
+      "dropNotes": []
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/elf.json",
+        "sha256": "c387a116526c4444b18323b0cc472ffb90fa904e649ef677c385b491eb09476b"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elf.js",
+        "sha256": "73ab6d4b93bb37ff8dbabcf9f69747530977d24ea306702cb9455919863f4d49"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elf_native_use.js",
+        "sha256": "432f2aaff647406d23154a05791598c4769b3100e8b7f59405b3e0e6d6c62891"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elf_rules.js",
+        "sha256": "96f37be2215d690d5da64464b14aab6fc60a6efd1df7b6f5e707ec9b43b94711"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elf_village.js",
+        "sha256": "c78dfd2f26767d428edea314d6f9a07e4295786b09696f4db7b0d22b5e9b640d"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:elven_warden",
+    "details": {
+      "group": "village",
+      "summary": "Bow-carrying defenders of the forest and its villages.",
+      "sections": [
+        {
+          "title": "Role",
+          "text": "Wardens guard village trees and also appear naturally in Lothlórien. They fight monsters, including creepers and daylight spiders."
+        },
+        {
+          "title": "Approach",
+          "text": "Attacking an elf or warden can turn the guards against you. Wardens also attack Hated players on sight; check the Harmony guide before approaching with a damaged reputation."
+        }
+      ],
+      "spoilers": [],
+      "care": [
+        {
+          "label": "Breeding",
+          "text": "No"
+        },
+        {
+          "label": "Lead",
+          "text": "Yes. The first lead keeps a natural warden from despawning. Release it to set a new home; shears cut the lead."
+        }
+      ],
+      "production": [],
+      "dropNotes": []
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/elven_warden.json",
+        "sha256": "1907021ab09f58f41fa891a9764af83da82132fe424388fbbb073e188ec540a0"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elven_warden.js",
+        "sha256": "9b0aeb09bd23ca22ced4ac0787179520cef1132a4bc6606621205a35c8d8f9f7"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elven_warden_rules.js",
+        "sha256": "4cf9aa7624d88c8f4674717fd5e20a5017a86a7beb1ee9b8b5046d6ab391d74c"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:firefly",
+    "details": {
+      "group": "wildlife",
+      "summary": "Tiny hovering insects that glow in the dark.",
+      "sections": [
+        {
+          "title": "Encounter",
+          "text": "Look for fireflies at night or in shade. Their glowing abdomen is visible with Vibrant Visuals; it does not light nearby blocks."
+        }
+      ],
+      "spoilers": [],
+      "care": [
+        {
+          "label": "Lure",
+          "text": "None"
+        },
+        {
+          "label": "Feeding",
+          "text": "None"
+        },
+        {
+          "label": "Breeding",
+          "text": "No"
+        },
+        {
+          "label": "Lead",
+          "text": "No; transport in a Bottle of Fireflies."
+        }
+      ],
+      "production": [
+        "Use an empty glass bottle on a living firefly to obtain a Bottle of Fireflies. Use it against a block face with air beside it to release the firefly and recover the glass bottle. Its name and remaining health are preserved. Released fireflies do not ordinarily despawn."
+      ],
+      "dropNotes": []
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/firefly.json",
+        "sha256": "ca378f2fe0cd5cdce88755a70238de85daf4e8d9765998be7ef17dff5a32880e"
+      },
+      {
+        "path": "lothlorien_bp/scripts/firefly_bottle.js",
+        "sha256": "60f1eadf80a92a0391e0a1e35bca4b52c3d1a9f8c8054faee6422cf692ffb50c"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:songbird",
+    "details": {
+      "group": "wildlife",
+      "summary": "Blue, yellow and pink birds with woodland songs.",
+      "sections": [
+        {
+          "title": "Encounter",
+          "text": "Songbirds fly independently during the day and can land on the ground. They do not share the Harmony-based wariness of deer."
+        }
+      ],
+      "spoilers": [],
+      "care": [
+        {
+          "label": "Lure",
+          "text": "Wheat or Western Corn Grain, including upward and downward; seeds do not work."
+        },
+        {
+          "label": "Feeding",
+          "text": "Grain heals up to {{lothlorien:rule/food-health}} health points and prevents ordinary despawning."
+        },
+        {
+          "label": "Breeding",
+          "text": "No"
+        },
+        {
+          "label": "Lead",
+          "text": "Yes"
+        }
+      ],
+      "production": [],
+      "dropNotes": []
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/songbird.json",
+        "sha256": "c823f389735b9bfd5a3662ca8d0503d25adc87abfc6865ab81eafe846db0cb8a"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:squirrel",
+    "details": {
+      "group": "wildlife",
+      "summary": "Small forest-floor residents drawn to Mallorn Acorns.",
+      "sections": [
+        {
+          "title": "Approach",
+          "text": "Negative Harmony and nearby alarms can make a squirrel flee even when you hold an acorn."
+        }
+      ],
+      "spoilers": [],
+      "care": [
+        {
+          "label": "Lure",
+          "text": "Mallorn Acorns while calm or friendly."
+        },
+        {
+          "label": "Feeding",
+          "text": "Acorns heal up to {{lothlorien:rule/food-health}} health points. Feeding outside Lothlorien, or while leashed, prevents ordinary despawning. Inside the forest, an eligible Friend can start an errand instead; feeding there does not make it stay."
+        },
+        {
+          "label": "Breeding",
+          "text": "No"
+        },
+        {
+          "label": "Lead",
+          "text": "Yes"
+        }
+      ],
+      "production": [
+        "Inside Lothlorien, a Friend can offer a Mallorn Acorn to an unalarmed, unleashed squirrel to start an errand. An injured squirrel eats to heal instead. It runs away, digs and returns with one of the gifts listed below. After a successful gift, that squirrel has a cooldown of {{lothlorien:rule/errand-cooldown|duration}}. Stay close when it returns. Leashing, damage, separation or losing Friend standing can end the errand; an errand that cannot finish ends after {{lothlorien:rule/errand-timeout|duration}}."
+      ],
+      "dropNotes": []
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/squirrel.json",
+        "sha256": "d3e9a28a4e4fc9442d839ec287fe6433923eb31f711f5a84240eec69386ac45f"
+      },
+      {
+        "path": "lothlorien_bp/scripts/squirrel.js",
+        "sha256": "739f00c776f8fb0bd38c7f0265d5cafcb43f8f031c06707e245c1fefc2f49e38"
+      },
+      {
+        "path": "lothlorien_bp/scripts/squirrel_rules.js",
+        "sha256": "56300ce0bc4119062f4c47e41bce3d9f654f142b353c15b83a2ea7b9cf92880f"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:swan",
+    "details": {
+      "group": "wildlife",
+      "summary": "White water birds with cygnets and naturally shed feathers.",
+      "sections": [
+        {
+          "title": "Encounter",
+          "text": "Look on Lothlorien waters and nearby rivers. Swans float at the surface and walk on land. Alarms and negative Harmony take precedence over a food lure."
+        }
+      ],
+      "spoilers": [],
+      "care": [
+        {
+          "label": "Lure",
+          "text": "Wheat or Western Corn Grain while calm or friendly."
+        },
+        {
+          "label": "Feeding",
+          "text": "Grain breeds adults and speeds cygnet growth; it does not heal."
+        },
+        {
+          "label": "Breeding",
+          "text": "Wheat or Western Corn Grain, including outside the forest. Cygnets mature in {{lothlorien:rule/swan-maturity|duration}}, faster with grain."
+        },
+        {
+          "label": "Lead",
+          "text": "Yes"
+        }
+      ],
+      "production": [
+        "Adult swans shed {{lothlorien:rule/swan-shed-count}} feather every {{lothlorien:rule/swan-shed-min}}-{{lothlorien:rule/swan-shed-max}} seconds. Cygnets do not; this is separate from death drops."
+      ],
+      "dropNotes": [
+        "Cygnets drop nothing."
+      ]
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/swan.json",
+        "sha256": "fce865133323172cf7e68024290cc28ee9c560b26ab3390bc4884253a14b24d6"
+      },
+      {
+        "path": "lothlorien_bp/scripts/swan.js",
+        "sha256": "d4eb5d0bbd1135b16d7822e4e2afbba3ffaae2c9a70f3dd329490c8871e99f8e"
+      },
+      {
+        "path": "lothlorien_bp/scripts/swan_rules.js",
+        "sha256": "23b6a1bcf30b3cd688aed79ef8014b2946c42cfd86adaaee4d217628646aca4d"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:unicorn",
+    "details": {
+      "group": "wildlife",
+      "summary": "A rare, timid forest encounter.",
+      "sections": [
+        {
+          "title": "Approach",
+          "text": "Wild unicorns are wary of strangers. Give them space and avoid frightening nearby animals."
+        }
+      ],
+      "spoilers": [
+        {
+          "title": "Earning a bond",
+          "text": "Become a Friend of Lothlórien and hold Elanor to lure a unicorn. Offer {{lothlorien:rule/unicorn-offers}} Elanor flowers, leaving at least {{lothlorien:rule/unicorn-gap}} seconds between accepted offers. Trust remains between visits. Accepted offers restore up to {{lothlorien:rule/food-health}} health points. The bond belongs to the player who completes it."
+        },
+        {
+          "title": "Caring for a bonded unicorn",
+          "text": "The bonded owner can offer Elanor to heal an injured unicorn. That interaction heals instead of mounting; at full health the owner mounts normally. Bonded unicorns can swim, and you receive a message if yours dies. They take ordinary fall damage and do not regain health passively: use Elanor to care for them."
+        }
+      ],
+      "care": [
+        {
+          "label": "Lure",
+          "text": "Elanor held by a Friend of Lothlorien. A wild unicorn keeps about 3 blocks from a Friend of Lothlorien without Elanor and lets one holding Elanor come close; between accepted offers it does not follow, then follows Elanor again. An alarmed wild unicorn ignores offers."
+        },
+        {
+          "label": "Feeding",
+          "text": "Accepted Elanor offers heal up to {{lothlorien:rule/food-health}} health points. Once bonded, only its owner can feed or name it."
+        },
+        {
+          "label": "Breeding",
+          "text": "No"
+        },
+        {
+          "label": "Lead",
+          "text": "No"
+        },
+        {
+          "label": "Riding",
+          "text": "Only its bonded owner, without a saddle."
+        }
+      ],
+      "production": [],
+      "dropNotes": []
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/unicorn.json",
+        "sha256": "5e9e62e5f835e3221dc24a95280e588c94fa5944745941234774a46fe17112ae"
+      },
+      {
+        "path": "lothlorien_bp/scripts/unicorn.js",
+        "sha256": "1bb7265c1351051542d5a5931884d52b3510495b0440710ffc3d82829ac14714"
+      },
+      {
+        "path": "lothlorien_bp/scripts/unicorn_rules.js",
+        "sha256": "8ecabaf5f6d9f72427389889935682928a4445cd72d365087a1d950b7df5abaf"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:white_deer",
+    "details": {
+      "group": "wildlife",
+      "summary": "A solitary white hart, always bearing antlers.",
+      "sections": [
+        {
+          "title": "Approach",
+          "text": "A white deer shares the ordinary deer's Harmony-based wariness. Approach gently and avoid alarming it."
+        }
+      ],
+      "spoilers": [],
+      "care": [
+        {
+          "label": "Lure",
+          "text": "Mallorn Acorns while calm or friendly."
+        },
+        {
+          "label": "Feeding",
+          "text": "Acorns heal up to {{lothlorien:rule/food-health}} health points. Outside Lothlorien, feeding prevents ordinary despawning; an eligible Friend inside can start guidance instead."
+        },
+        {
+          "label": "Breeding",
+          "text": "No; no fawn form."
+        },
+        {
+          "label": "Lead",
+          "text": "Yes; a lead prevents or interrupts guidance."
+        }
+      ],
+      "production": [
+        "Inside Lothlorien, a Friend can offer a Mallorn Acorn to an unleashed, unalarmed White Deer to begin guidance. An injured deer eats to heal instead. Follow it towards a place deeper in the forest, where it gives a Great Mallorn Nut once in its lifetime. Attaching a lead interrupts the walk. If its destination becomes blocked or flooded, offer another acorn to start a new search. Outside feeding does not spend the gift."
+      ],
+      "dropNotes": []
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/white_deer.json",
+        "sha256": "43faecd61fff80f3642265500e9969fb5f49b5b12f4cd03c391837b51ac8edd3"
+      },
+      {
+        "path": "lothlorien_bp/scripts/white_deer.js",
+        "sha256": "87b7d8bc9cfe04630399947601c0379c2d0e075b14d67bfe1e3e9905403beb45"
+      },
+      {
+        "path": "lothlorien_bp/scripts/white_deer_rules.js",
+        "sha256": "49c58eb000687cf57396ffcf7e55273d9cb3af72c893425949ba54ed7d0f2ced"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:athelas_salve",
+    "details": {
+      "introduction": "Grants a short regeneration effect and removes poison when consumed."
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/athelas_salve.json",
+        "sha256": "3941ce08c87b0636090ccea11f6d366bddd31ea526a30422d71b1930bc64f763"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:lembas_dough",
+    "details": {
+      "introduction": "Made from Western Corn grain and sugar. Cook the dough into Lembas Cake, then wrap it for travel."
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/lembas_dough.json",
+        "sha256": "f6f5eb8c36ff75539040167d40dd5e962d55586d3dfa2146b142479185e62e97"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_blossom",
+    "details": {
+      "introduction": "A placeable layer of fallen Mallorn petals. Under Mallorn leaves, dewy patches offer another place to gather morning dew with a glass bottle."
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_blossom.json",
+        "sha256": "004d84de1eacadf72a9fc1fff95dda4a88abc9ad1d998bf735827627ae2e6a41"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_blossom.json",
+        "sha256": "4e399f576fe101ddbe9ce4d3f9c4f439828a9875e217cb832be43c76581d1672"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:western_corn_grain",
+    "details": {
+      "introduction": "A crop ingredient for Lembas, and food or lure for several woodland animals."
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/western_corn_grain.json",
+        "sha256": "4b416a29da855ef75fe9cd260636f00f230081d8b0f914cde592060d8482d780"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:western_corn_seeds",
+    "details": {
+      "introduction": "Plant these to grow Western Corn. Its grain supplies Lembas recipes and food or lures for woodland animals."
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/western_corn.json",
+        "sha256": "746d4b4ec6d23b552edf416ff4e1565aaa8a716c055053abdf90d8a9892fa8f3"
+      },
+      {
+        "path": "lothlorien_bp/items/western_corn_seeds.json",
+        "sha256": "6ee1ab94280e3bf6b15ac3149e762a41b084011a908011cf6fe7639a420853d8"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:silver_belt",
+    "details": {
+      "introduction": "Held offhand. Grants Regeneration level {{lothlorien:rule/belt-level}} while your health is strictly below half your maximum.",
+      "equipment": {
+        "summary": "Hold the belt in your offhand to recover health when badly injured.",
+        "stats": [
+          {
+            "label": "Equipment slot",
+            "value": "Offhand"
+          },
+          {
+            "label": "Activation",
+            "value": "Health below {{lothlorien:rule/belt-health-fraction}} of your maximum; exactly that threshold does not trigger it."
+          },
+          {
+            "label": "Effect",
+            "value": "Regeneration level {{lothlorien:rule/belt-level}}"
+          },
+          {
+            "label": "Durability",
+            "value": "Does not wear out"
+          }
+        ],
+        "notes": [
+          "Healing can continue briefly after you reach half health or put the belt away.",
+          "The belt and the Phial of Galadriel share the offhand slot, so you must choose which to hold."
+        ]
+      }
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/silver_belt.json",
+        "sha256": "75ebbb58b4a50a55b39dbd5d616171d36311a022b81fc399b7297ce7bb748cb9"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:great_mallorn_nut",
+    "details": {
+      "introduction": "A one-time gift from a White Deer to a Friend of Lothlorien. Plant it to grow a giant Mallorn; leave room for its crown and roots."
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/great_mallorn_sprout.json",
+        "sha256": "c6e4e79cd69c6380d33bfd8812b808b3f142e2094682a4338299b7b9f26178df"
+      },
+      {
+        "path": "lothlorien_bp/items/great_mallorn_nut.json",
+        "sha256": "29db314c99880f23014629783cc013b9ecb52b9b80221fcc102a378eea4690e7"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:lembas_wrapped",
+    "details": {
+      "introduction": "A journey food that restores {{lothlorien:rule/lembas-food}} food points and removes the Hunger effect when eaten."
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/lembas_wrapped.json",
+        "sha256": "a85a3e29508c182f5d4ef0174e46ad17934174cf08ada2313c860e847dce722b"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_acorn",
+    "details": {
+      "introduction": "Plants an ordinary Mallorn sapling. Also used when interacting with white deer and squirrels."
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_sapling.json",
+        "sha256": "d1272e89dad858ecc5d90316412f9cbcab7c86305d19effb7e6f0c45b9438e20"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_acorn.json",
+        "sha256": "5906937f40d5ca9c8171df1563ef1948eb821ab6d00e78621bd46f3ac1125c1e"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:elven_cloak",
+    "details": {
+      "introduction": "Worn in the chest slot. Sneaking without moving for {{lothlorien:rule/cloak-still-seconds|duration}} grants invisibility; movement stops its renewal.",
+      "equipment": {
+        "summary": "Sneak and stand still to become invisible.",
+        "stats": [
+          {
+            "label": "Equipment slot",
+            "value": "Chest"
+          },
+          {
+            "label": "Armor",
+            "value": "{{lothlorien:rule/cloak-armor}} armor points"
+          },
+          {
+            "label": "Durability",
+            "value": "{{lothlorien:rule/cloak-durability}}"
+          },
+          {
+            "label": "Activation",
+            "value": "Sneak without moving for {{lothlorien:rule/cloak-still-seconds|duration}}."
+          },
+          {
+            "label": "Effect",
+            "value": "Invisibility while you remain still and sneaking."
+          }
+        ],
+        "notes": [
+          "Moving, standing up or removing the cloak ends its invisibility shortly afterward.",
+          "It accepts chest-armour enchantments, but cannot be dyed or given an armour trim. It does not protect you from freezing."
+        ]
+      }
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/elven_cloak.json",
+        "sha256": "331e02036af7f372f728082eda2a30e5b0eb72094f0654840fa6cc6174311d29"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:phial_of_galadriel",
+    "details": {
+      "introduction": "Held offhand. Creates nearby light in available air and repels spiders. It does not replace plants, solid blocks or fluids.",
+      "equipment": {
+        "summary": "Hold the phial in your offhand to light your surroundings and repel spiders.",
+        "stats": [
+          {
+            "label": "Equipment slot",
+            "value": "Offhand"
+          },
+          {
+            "label": "Light level",
+            "value": "{{lothlorien:rule/phial-light}} nearby; fades with distance."
+          },
+          {
+            "label": "Repels",
+            "value": "Spiders and cave spiders within {{lothlorien:rule/phial-radius}} blocks"
+          },
+          {
+            "label": "Durability",
+            "value": "Does not wear out"
+          }
+        ],
+        "notes": [
+          "Walls and terrain can block the light or keep spiders from being pushed away.",
+          "The phial and the Silver Belt share the offhand slot, so you must choose which to hold."
+        ]
+      }
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/phial_of_galadriel.json",
+        "sha256": "94688cef581b10ad597c51f40d71915ad9378f25eee6f1acce070860cf199a37"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:miruvor",
+    "details": {
+      "introduction": "A {{lothlorien:rule/miruvor-sips}}-sip skin with a {{lothlorien:rule/miruvor-cooldown}}-second cooldown after each completed sip. Grants healing, regeneration and speed, and removes poison. The last sip returns the empty skin for refilling."
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/miruvor.json",
+        "sha256": "9e9ecc5c5e05813b24a316c861b0b9dc5ff4ef53bc979f1cf0770f40507c6b77"
+      },
+      {
+        "path": "lothlorien_bp/scripts/athelas.js",
+        "sha256": "b63d3a44bd3f47d6907a44825d3a23025fd120863e1c986aa5138d3879c5a097"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:dew_bottle",
+    "details": {
+      "introduction": "A partly filled collection bottle. Gather dew from damp Mallorn leaf litter or blossoms until it becomes Morning Dew."
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/dew_bottle.json",
+        "sha256": "724bdaab7c8fa459ab3e953733c5b24384647b94dc3afe37b27a8dd64b74e71a"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:galadhrim_arrow",
+    "details": {
+      "introduction": "Custom ammunition for the Bow of the Galadhrim.",
+      "equipment": {
+        "summary": "Recoverable ammunition for the Bow of the Galadhrim.",
+        "stats": [
+          {
+            "label": "Damage",
+            "value": "Same damage as an ordinary arrow"
+          },
+          {
+            "label": "Stack size",
+            "value": "{{lothlorien:rule/arrow-stack}}"
+          },
+          {
+            "label": "Compatible bow",
+            "value": "Bow of the Galadhrim"
+          }
+        ],
+        "notes": [],
+        "warnings": [
+          "A normal bow cannot use Galadhrim arrows in Survival."
+        ]
+      }
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/entities/galadhrim_arrow.json",
+        "sha256": "d7492c9718375bbbb2afb78ad41bd275a05ae41c1b3eefa350aacd3306ce7a28"
+      },
+      {
+        "path": "lothlorien_bp/items/galadhrim_arrow.json",
+        "sha256": "61fc5c1ab4996a83da2c2cba4aef82db03d9bb96d83c405366aeb1989917647f"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:nectar_bloom",
+    "details": {
+      "introduction": "Refills through {{lothlorien:rule/nectar-stage}} stages when Mallorn leaves hang directly above it."
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/nectar_bloom.json",
+        "sha256": "2852a63a40161e2200cc080e30e1e759476c4f206ccf6f0386ddc142ba8711e4"
+      },
+      {
+        "path": "lothlorien_bp/items/nectar_bloom.json",
+        "sha256": "59da322c3f06e104e3d76bac46e6b8d88f814be90480b2a76808b1882ff75083"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:bow",
+    "details": {
+      "introduction": "The Bow of the Galadhrim has a {{lothlorien:rule/bow-draw}}-second full draw and {{lothlorien:rule/bow-durability}} durability.",
+      "equipment": {
+        "summary": "A faster-drawing bow with the same damage as a normal bow. Use Galadhrim arrows to recover ammunition after hits.",
+        "stats": [
+          {
+            "label": "Damage",
+            "value": "Same damage as a normal bow"
+          },
+          {
+            "label": "Full draw",
+            "value": "{{lothlorien:rule/bow-draw}} seconds"
+          },
+          {
+            "label": "Durability",
+            "value": "{{lothlorien:rule/bow-durability}}"
+          },
+          {
+            "label": "Ammunition",
+            "value": "Galadhrim arrows and ordinary arrows"
+          },
+          {
+            "label": "Zoom",
+            "value": "Your view zooms in while drawing."
+          }
+        ],
+        "notes": [
+          "Draw fully for the strongest shot.",
+          "Galadhrim arrows drop where they hit a creature, ready to collect. Ordinary arrows do not gain this recovery effect.",
+          "It cannot replace a normal bow in a dispenser crafting recipe."
+        ]
+      }
+    },
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/bow.json",
+        "sha256": "2ea8172b0b15623c968ea75c25c4040bf4db9f3ddd6b0bb089e306a487b57d4e"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:empty_miruvor_skin",
+    "details": {
+      "introduction": "A reusable leather container. Fill it with the Miruvor recipe; drinking the last sip returns it."
+    },
+    "evidence": [
+      {
+        "path": "lothlorien_bp/items/empty_miruvor_skin.json",
+        "sha256": "3b7fad28b6dce486867c29ebce101c372d821bc9941605d8d8c6fd2bb71ff9f5"
+      },
+      {
+        "path": "lothlorien_bp/recipes/miruvor.json",
+        "sha256": "8fee27617379ee54cef85cf4a8cf50d6ac1c700bbfa95fe5a2f52be0fa998b70"
+      },
+      {
+        "path": "lothlorien_bp/scripts/athelas.js",
+        "sha256": "b63d3a44bd3f47d6907a44825d3a23025fd120863e1c986aa5138d3879c5a097"
+      }
+    ]
+  }
+]

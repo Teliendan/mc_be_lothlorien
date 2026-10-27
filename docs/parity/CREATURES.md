@@ -8,8 +8,9 @@ selected slot's item type, native JSON before script).
 
 ## Shared
 - Wary types (deer, white deer, swan, squirrel, unicorn): `deer.js` picks the wariness state from the nearest living
-  Survival/Adventure player's Harmony band; one 40-tick interval, event-tracked set, stops when empty.
-  Creative/Spectator/dead players are ignored (owner design). Creative Friends may still be guided/fed.
+  living non-Spectator player's Harmony band; one 40-tick interval, event-tracked set, stops when empty.
+  Spectator/dead players are ignored. Creative players count since 2026-10-26 (the owner tested the unicorn lure in
+  Creative and it never left the calm state; vanilla lures work in Creative); the engine still never flees them.
 - Interaction handlers (white deer, squirrel, unicorn): one gate (entity type + held item from `beforeItemStack`),
   then game rules. No `repeatedUse` debounce: the `minecraft:interact` entries carry `"cooldown": 1`. No re-check of
   player/target validity, dimension, reach or hand inside the same callback.

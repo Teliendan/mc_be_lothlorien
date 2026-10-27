@@ -67,7 +67,7 @@ async function setup() {
   const h = engine(), base = { ...h, ...deerRules, ...rules, ...giftRules,
     EquipmentSlot: { Mainhand: "mainhand" }, GameMode: { Survival: "survival", Adventure: "adventure", Creative: "creative", Spectator: "spectator" },
     EntityInitializationCause: { Loaded: "Loaded" }, ItemStack: Item, harmonyOf: e => ({ harmony: e.band }), bandOf: b => b,
-    message: s => s, repeatedUse: () => false, isGuiding: () => false, isErrand: () => false,
+    watchUnicornReadiness() {}, message: s => s, repeatedUse: () => false, isGuiding: () => false, isErrand: () => false,
     pickWaypoint: () => ({ x: 14, y: 65, z: 0, final: false }), hopStatus: () => "go" };
   const food = await load("animal_food", { ...base, FOOD_HEALTH: 2, FLOWER_ITEMS: [], GRAIN_ITEMS: [] });
   h.base = { ...base, ...food }; h.depth = { level: 3, complete: true };

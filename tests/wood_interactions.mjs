@@ -182,16 +182,26 @@ await scenario('a wind charge toggles Mallorn doors, trapdoors and gates and pre
   const trap = e.block('lothlorien:mallorn_heartwood_trapdoor', { 'lothlorien:open': false }, { x: 6, y: 64, z: 5 });
   const gate = e.block('lothlorien:mallorn_fence_gate', { 'lothlorien:open': false, 'minecraft:cardinal_direction': 'north' }, { x: 5, y: 65, z: 5 });
   const button = e.block('lothlorien:mallorn_button', { 'lothlorien:powered': false }, { x: 5, y: 63, z: 5 });
-  const far = e.block('lothlorien:mallorn_trapdoor', { 'lothlorien:open': false }, { x: 9, y: 64, z: 5 });
-  e.fire('projectileHitBlock', { projectile: { isValid: true, typeId: WIND }, dimension: e.dimension, location: { x: 5.9, y: 64.5, z: 5.5 } });
+  const far = e.block('lothlorien:mallorn_trapdoor', { 'lothlorien:open': false }, { x: 8, y: 64, z: 5 });
+  e.fire('projectileHitBlock', { projectile: { isValid: false, typeId: WIND }, dimension: e.dimension, location: { x: 5.9, y: 64.5, z: 5.5 } });
   assert.equal(door.permutation.getState('lothlorien:open'), true); assert.equal(trap.permutation.getState('lothlorien:open'), true);
   assert.equal(gate.permutation.getState('lothlorien:open'), true); assert.equal(button.permutation.getState('lothlorien:powered'), true);
   assert.equal(far.writes, undefined); assert.equal(door.writes, 1, 'a door is toggled once');
-  e.fire('projectileHitEntity', { projectile: { isValid: true, typeId: 'minecraft:breeze_wind_charge_projectile' }, dimension: e.dimension, location: { x: 5.9, y: 64.5, z: 5.5 } });
+  e.fire('projectileHitEntity', { projectile: { isValid: false, typeId: 'minecraft:breeze_wind_charge_projectile' }, dimension: e.dimension, location: { x: 5.9, y: 64.5, z: 5.5 } });
   assert.equal(door.permutation.getState('lothlorien:open'), false); assert.equal(trap.permutation.getState('lothlorien:open'), false);
   assert.equal(button.writes, 1, 'a pressed button stays pressed');
+  assert.equal(far.permutation.getState('lothlorien:open'), true, 'Breeze burst reaches three blocks rather than the player charge radius');
   e.fire('projectileHitBlock', { projectile: { isValid: true, typeId: 'minecraft:snowball' }, dimension: e.dimension, location: { x: 5.9, y: 64.5, z: 5.5 } });
   assert.equal(door.permutation.getState('lothlorien:open'), false);
+});
+await scenario('one wind burst toggles a paired double door once even when both doors are in range', e => {
+  const states = { 'lothlorien:open': false, 'minecraft:cardinal_direction': 'north', 'lothlorien:hinge_right': false };
+  const a = e.block('lothlorien:mallorn_door', states, {x:0,y:64,z:0});
+  const b = e.block('lothlorien:mallorn_door', {...states,'lothlorien:hinge_right':true}, {x:1,y:64,z:0});
+  e.fire('projectileHitBlock', {projectile:{isValid:false,typeId:WIND},dimension:e.dimension,location:{x:1,y:64.5,z:.5}});
+  assert.equal(a.permutation.getState('lothlorien:open'),true);
+  assert.equal(b.permutation.getState('lothlorien:open'),true);
+  assert.equal(a.writes,1); assert.equal(b.writes,1);
 });
 await scenario('an arrow or trident hitting the middle of the backing face presses the button there', e => {
   const wall = e.block('minecraft:stone', {}, { x: 0, y: 64, z: 0 });

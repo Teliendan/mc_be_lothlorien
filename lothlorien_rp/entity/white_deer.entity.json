@@ -34,8 +34,7 @@
         "controller.render.lothlorien.white_deer"
       ],
       "spawn_egg": {
-        "base_color": "#e3e7ee",
-        "overlay_color": "#a6adbb"
+        "texture": "lothlorien:spawn_egg_white_deer"
       }
     }
   }

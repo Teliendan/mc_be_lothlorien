@@ -17,8 +17,8 @@ import "./athelas.js";
 import "./trees.js";
 import "./great_mallorn.js";
 import "./rail_mender.js";
-import { planNearest, planningArea, toggleDebug } from "./loop_marker.js";
-import { VILLAGE_PLANS, inRect, villageAreaTest } from "./village_planner.js";
+import { planNearest, toggleDebug } from "./loop_marker.js";
+import { inVillageArea } from "./village_area.js";
 import { startVillageMusic } from "./village_music.js";
 import "./warden_replace.js";
 import { leafUndersideY } from "./leaf_fall.js";
@@ -74,10 +74,9 @@ function hostilesInBiome(player) {
   return { inside, total };
 }
 
-// Gameplay "in Lothlorien" (Harmony, Renown): the biome, or a planned village area (owner 2026-10-20: a village on the biome edge counts too;
+// Gameplay "in Lothlorien" (Harmony, Renown): the biome, or a village area recognized as its markers load (owner 2026-10-20: a village on the biome edge counts too;
 // the biome itself and its colours stay as generated, the Script API has no biome setter).
-const inVillageArea = villageAreaTest(() => world.getDynamicProperty(VILLAGE_PLANS));
-const inBiome = (dimension, location) => biomeAt(dimension, location) === BIOME_ID || (dimension.id === "minecraft:overworld" && inVillageArea(location.x, location.z));
+const inBiome = (dimension, location) => biomeAt(dimension, location) === BIOME_ID || (dimension.id === "minecraft:overworld" && inVillageArea(dimension, location));
 
 function showDebug() {
   for (const player of world.getPlayers({ tags: [DEBUG_TAG] })) {
@@ -250,6 +249,6 @@ world.afterEvents.worldLoad.subscribe(() => {
   });
   startAntlerSupport();
   startRopeClimbing();
-  // music also while a village is still being planned and built (owner 2026-10-27)
-  startVillageMusic((x, z) => { const r = planningArea(); return inVillageArea(x, z) || (r !== null && inRect(r, Math.floor(x), Math.floor(z))); });
+  // music also while a village is still being planned and built (owner 2026-10-27): village_area.js remembers a village as its first marker loads
+  startVillageMusic(inVillageArea);
 });

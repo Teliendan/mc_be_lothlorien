@@ -80,7 +80,18 @@ const giant = JSON.parse(asset("worldgen/structures/giant_mallorn.json"))["minec
 const gardenDef = flowerGardenWorldgen().structures["minecraft:jigsaw"];
 assert.deepEqual(gardenDef.biome_filters, giant.biome_filters, "same biome eligibility as giants");
 assert.equal(gardenDef.heightmap_projection, giant.heightmap_projection);
-assert.equal(gardenDef.start_height.value.absolute, 0, "the buried anchor (y -2) lands on the terrain's top block: the garden grass is one above the terrain");
+// Vertical placement uses encoded template height, not the named jigsaw's Y.
+const shipped = readNbt(asset("structures/lothlorien/flower_garden_01.mcstructure"));
+const shippedPalette = shipped.structure.palette.default.block_palette;
+const surfaceY = (index) => gardenDef.start_height.value.absolute + Math.floor(index / shipped.size[2]) % shipped.size[1];
+for (const [index, id] of shipped.structure.block_indices[0].entries()) {
+  const name = shippedPalette[id]?.name;
+  if (name === "minecraft:grass_block") assert.ok(surfaceY(index) <= 0, "all garden soil stays at or below terrain");
+  if (name === "minecraft:dirt") assert.ok(surfaceY(index) < 0, "foundation dirt stays underground");
+}
+const grassIndex = (GARDEN.offset[0] * shipped.size[1] + GARDEN.offset[1] - 1) * shipped.size[2] + GARDEN.offset[2];
+assert.equal(shippedPalette[shipped.structure.block_indices[0][grassIndex]].name, "minecraft:grass_block");
+assert.equal(surfaceY(grassIndex), 0, "the garden soil surface replaces the terrain top, even with a deep foundation");
 // owner, Test G 2026-10-20: deep soil, 4 free cells above the planting, a ragged shoulder (not a square), nothing else written
 for (const k of garden.footprint) {
   const [x, z] = k.split(",").map(Number);

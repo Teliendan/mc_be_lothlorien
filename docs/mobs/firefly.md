@@ -19,6 +19,14 @@ Art: `tools/make_firefly.py` (generated; green abdomen glows). Feature commit: `
 | Catch / release | Main-hand glass bottle on firefly: script-owned before-event then privileged callback; real delayed hand/metadata/dimension/reach/container checks. Captured name/current health stored as visible localized raw lore and restored before bottle exchange. Release against a block face with adjacent air makes one persistent firefly and returns plain glass. |
 | Item | Bottle of Fireflies, stack 16, items menu. Icon: vanilla empty bottle with two bright dots and a dim one, each in a lime glow (side 230, diagonal 130 alpha); the rest of the glass stays empty (owner: no green fill). Release and existing jar/lantern ingredient uses are implemented; recipes are resource use, not named-animal enclosures |
 
+## Capture feedback - 2026-10-25 follow-up
+
+Owner confirms full-inventory capture works after delivery-before-removal.
+The water cues were rejected. Capture plays vanilla `bottle.dragonbreath`
+(volume 0.35, pitch 1.5), accepted by the owner 2026-10-26; release plays the same
+sound at pitch 1.3 (retest pending). No generated audio needed. Native file identity checked in installed vanilla
+`sounds/sound_definitions.json`; no native audio assets copied into the mod.
+
 ## To test in game (1.26.52)
 
 1. Do the wings flutter in the right plane; is the model visible at size 0.2?

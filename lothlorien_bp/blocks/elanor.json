@@ -93,7 +93,10 @@
       },
       "minecraft:tags": [
         "lothlorien:flower"
-      ]
+      ],
+      "minecraft:precipitation_interactions": {
+        "precipitation_behavior": "snowlogging"
+      }
     },
     "permutations": [
       {

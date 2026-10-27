@@ -20,22 +20,26 @@ BP, RP = MOD / "lothlorien_bp", MOD / "lothlorien_rp"
 VANILLA_RP = MOD.parents[1] / "reference" / "vanilla" / "current" / "resource_packs" / "vanilla"
 ID = "lothlorien:unicorn"
 ELANOR = "lothlorien:elanor"
-FRIEND_TAG = "lothlorien_friend"
-ALL_STATES = [f"lothlorien:state_{n}" for n in ("calm", "l1", "l2", "l3", "friend", "tame", "alarmed")]
+ALL_STATES = [f"lothlorien:state_{n}" for n in ("calm", "l1", "l2", "l3", "friend", "tame", "alarmed")] + ["lothlorien:lure"]
 
 
 def write(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8", newline="\n")
 
 
 # ---------------------------------------------------------------- behaviour entity
-def lure_filters():
-    return {"all_of": [
-        {"test": "is_family", "subject": "other", "value": "player"},
-        {"test": "has_tag", "subject": "other", "value": FRIEND_TAG},
-        {"test": "has_equipment", "subject": "other", "domain": "hand", "value": ELANOR},
-    ]}
+# The Elanor lure is vanilla tempt, the same goal as the deer's working corn lure. It lives in its own group, added
+# only in the Friend state (a Guest within 10 blocks turns the state to calm, so a Guest cannot lure it) and only while
+# no offer wait runs: the script fires lure_off on an accepted offer and lure_on when the wait ends (scripts/unicorn.js).
+# Owner 2026-10-26: works in Survival (earlier "ignores Elanor" retests were in Creative, which deer.js then skipped).
+LURE = {"minecraft:behavior.tempt": {"priority": 3, "speed_multiplier": 1.0, "items": [ELANOR], "within_radius": 10,
+                                     "can_get_scared": False}}
+LURE_READY = {"all_of": [
+    {"test": "enum_property", "domain": "lothlorien:wariness", "value": "friend"},
+    {"test": "bool_property", "domain": "lothlorien:alarmed", "value": False},
+    {"test": "bool_property", "domain": "lothlorien:tame", "value": False},
+]}
 
 
 def player_avoid(dist, sneak_dist, walk, sprint, lure=False):
@@ -44,8 +48,9 @@ def player_avoid(dist, sneak_dist, walk, sprint, lure=False):
             {"test": "is_family", "subject": "other", "value": "player"},
             {"test": "is_sneaking", "subject": "other", "value": sneaking},
         ]
-        if lure:  # the very same Friend+Elanor predicate qualifies for following and no flight
-            tests.append({"none_of": [lure_filters()]})
+        if lure:  # Friend state: keeps 3 blocks from a Friend without Elanor, none from one holding it (owner, 2026-10-26).
+            # The deer's corn exemption; a Guest this close has already turned the state calm.
+            tests.append({"test": "has_equipment", "subject": "other", "domain": "hand", "operator": "!=", "value": ELANOR})
         return {"filters": {"all_of": tests}, "max_dist": max_dist, "walk_speed_multiplier": walk, "sprint_speed_multiplier": sprint}
 
     return [entry(False, dist), entry(True, sneak_dist)]
@@ -59,10 +64,6 @@ DANGER = [
 
 def avoid_group(dist, sneak, walk, sprint, lure=False, extra=None):
     group = {"minecraft:behavior.avoid_mob_type": {"priority": 4, "entity_types": player_avoid(dist, sneak, walk, sprint, lure) + DANGER}}
-    if lure:
-        group["minecraft:behavior.follow_target_leader"] = {"priority": 3, "speed_multiplier": 1,
-            "leader_filters": lure_filters(), "follow_distance": 1.5, "within_radius": 10,
-            "always_look_for_leader": True, "search_cooldown": 20}
     if extra:
         group.update(extra)
     return group
@@ -99,7 +100,9 @@ def state_events():
                 base,
                 {"filters": {"test": "bool_property", "domain": "lothlorien:tame", "value": False}, "add": {"component_groups": [f"lothlorien:state_{name}"]}},
                 {"filters": {"test": "bool_property", "domain": "lothlorien:tame", "value": True}, "add": {"component_groups": ["lothlorien:state_tame"]}},
-            ]
+            ] + ([{"filters": {"all_of": [{"test": "bool_property", "domain": "lothlorien:tame", "value": False},
+                                          {"test": "bool_property", "domain": "lothlorien:offer_ready", "value": True}]},
+                   "add": {"component_groups": ["lothlorien:lure"]}}] if name == "friend" else [])
         }
 
     names = ["calm", "l1", "l2", "l3", "friend"]
@@ -114,6 +117,8 @@ def state_events():
             {"filters": {"test": "enum_property", "domain": "lothlorien:wariness", "value": n}, "trigger": f"lothlorien:set_{n}"} for n in names
         ]
     }
+    events["lothlorien:lure_on"] = {"sequence": [{"filters": LURE_READY, "add": {"component_groups": ["lothlorien:lure"]}}]}
+    events["lothlorien:lure_off"] = {"remove": {"component_groups": ["lothlorien:lure"]}}
     events["minecraft:entity_spawned"] = {"trigger": "lothlorien:set_calm"}
     # The bond: the script sets the owner and the property is visible a tick later, when it re-applies the state.
     events["lothlorien:become_tame"] = {"set_property": {"lothlorien:tame": True}, "add": {"component_groups": ["lothlorien:bonded"]}}
@@ -128,6 +133,7 @@ def behaviour_entity():
         "lothlorien:state_l3": avoid_group(30, 15, 1.6, 2.1),
         "lothlorien:state_friend": avoid_group(3, 2, 1.1, 1.3, lure=True, extra=OFFER),
         "lothlorien:state_tame": {},
+        "lothlorien:lure": LURE,
         "lothlorien:state_alarmed": avoid_group(36, 18, 1.6, 2.1, extra={
             "minecraft:timer": {"time": 20, "looping": False, "time_down_event": {"event": "lothlorien:alarm_over", "target": "self"}}
         }),
@@ -190,6 +196,7 @@ def behaviour_entity():
                     "lothlorien:wariness": {"type": "enum", "values": ["calm", "l1", "l2", "l3", "friend"], "default": "calm", "client_sync": False},
                     "lothlorien:alarmed": {"type": "bool", "default": False, "client_sync": False},
                     "lothlorien:tame": {"type": "bool", "default": False, "client_sync": False},
+                    "lothlorien:offer_ready": {"type": "bool", "default": True, "client_sync": False},
                     "lothlorien:trust": {"type": "int", "range": [0, 3], "default": 0, "client_sync": False},
                 },
             },
@@ -256,7 +263,7 @@ def client_entity():
                     "animate": ["walk", "look_at_player"],
                 },
                 "render_controllers": ["controller.render.lothlorien.unicorn"],
-                "spawn_egg": {"base_color": "#f3f1f7", "overlay_color": "#b9a6d6"},
+                "spawn_egg": {"texture": "lothlorien:spawn_egg_unicorn"},  # icon drawn by make_spawn_eggs.py
             }
         },
     }

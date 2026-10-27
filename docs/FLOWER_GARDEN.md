@@ -40,9 +40,12 @@ This is a long-run density target, not a quota in every small patch; biome bound
 and placement success affect observed counts. Independent sets do not exclude each
 other, so natural terrain and occasional proximity to trees need an in-game review.
 The garden shares the giants' biome filter and world-surface projection. Its buried
-anchor becomes dirt; start height 0 puts the garden grass one block above the terrain
-(-2 until 2026-10-20, which sank it one block and flooded one in a lake; see
-`WORLDGEN_FIXES_2026-10-20.md`). Worldgen changes need a new world.
+anchor becomes dirt and centres horizontal placement. Start height is `1 - SKIRT.depth`
+(currently -5), cancelling the grass surface's encoded y 5 so it replaces the terrain top.
+Owner correction, 2026-10-24: retain deep soil underground without raising the beds.
+The former start 0 raised the six-layer template five blocks; the anchor's Y does not
+cancel that offset. Offline checked for Bedrock 1.26.52, native placement pending.
+See `WORLDGEN_FIXES_2026-10-20.md`. Worldgen changes need a new world.
 
 Leave and re-enter the world after deployment. Stand on level grass and load a
 fresh garden centred roughly seven blocks ahead:

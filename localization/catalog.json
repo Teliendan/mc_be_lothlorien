@@ -21353,116 +21353,57 @@
               "status": "ai-draft"
             }
           }
-        }
-      }
-    },
-    "lothlorien_feature_probe_bp": {
-      "kind": "behavior",
-      "entries": {
-        "pack.name": {
-          "source": "Lothlorien — Worldgen Test",
-          "context": {
-            "meaning": "Name of the optional native structure-placement diagnostic pack, separate from normal Lothlorien gameplay.",
-            "location": "lothlorien_feature_probe_bp: world behavior pack selection screen",
-            "trigger": "Player selects behavior packs while creating a test world.",
-            "tone": "Concise technical test label",
-            "grammar": "Standalone pack label",
-            "constraints": "Preserve Lothlorien brand; distinguish this optional diagnostic pack from the normal mod."
-          },
-          "placeholders": [],
-          "translations": {
-            "cs_CZ": {
-              "text": "Lothlorien — Test generování světa",
-              "based_on": "7969603cea3143b6a604160db9a62cf32dfcb4e4f5d5a39f3b4280bc4be74a8e",
-              "status": "ai-draft"
-            },
-            "es_ES": {
-              "text": "Lothlorien — Prueba de generación del mundo",
-              "based_on": "7969603cea3143b6a604160db9a62cf32dfcb4e4f5d5a39f3b4280bc4be74a8e",
-              "status": "ai-draft"
-            },
-            "es_MX": {
-              "text": "Lothlorien — Prueba de generación del mundo",
-              "based_on": "7969603cea3143b6a604160db9a62cf32dfcb4e4f5d5a39f3b4280bc4be74a8e",
-              "status": "ai-draft"
-            },
-            "pt_PT": {
-              "text": "Lothlorien — Teste de geração do mundo",
-              "based_on": "7969603cea3143b6a604160db9a62cf32dfcb4e4f5d5a39f3b4280bc4be74a8e",
-              "status": "ai-draft"
-            },
-            "pt_BR": {
-              "text": "Lothlorien — Teste de geração do mundo",
-              "based_on": "7969603cea3143b6a604160db9a62cf32dfcb4e4f5d5a39f3b4280bc4be74a8e",
-              "status": "ai-draft"
-            },
-            "de_DE": {
-              "text": "Lothlorien — Weltgenerierungstest",
-              "based_on": "7969603cea3143b6a604160db9a62cf32dfcb4e4f5d5a39f3b4280bc4be74a8e",
-              "status": "ai-draft"
-            },
-            "fr_FR": {
-              "text": "Lothlorien — Test de génération du monde",
-              "based_on": "7969603cea3143b6a604160db9a62cf32dfcb4e4f5d5a39f3b4280bc4be74a8e",
-              "status": "ai-draft"
-            },
-            "pl_PL": {
-              "text": "Lothlorien — Test generowania świata",
-              "based_on": "7969603cea3143b6a604160db9a62cf32dfcb4e4f5d5a39f3b4280bc4be74a8e",
-              "status": "ai-draft"
-            }
-          }
         },
-        "pack.description": {
-          "source": "Optional structure placement diagnostics. Enable only in disposable test worlds.",
+        "item.lothlorien:empty_miruvor_skin": {
+          "source": "Empty Miruvor Skin",
           "context": {
-            "meaning": "This optional diagnostic pack adds artificial fixtures to world generation; activate it only in disposable test worlds.",
-            "location": "lothlorien_feature_probe_bp: world behavior pack selection screen",
-            "trigger": "Player selects behavior packs while creating a test world.",
-            "tone": "Concise technical test label",
-            "grammar": "Description followed by a direct instruction",
-            "constraints": "Preserve Lothlorien brand; distinguish this optional diagnostic pack from the normal mod."
+            "meaning": "An empty reusable leather container for Miruvor. Craft it from leather, fill it in the Miruvor recipe, and recover it after the last sip. Skin means wineskin, not body skin.",
+            "location": "lothlorien_rp: inventory/block tooltip, entity name or spawn egg",
+            "trigger": "Viewed in inventory, Creative inventory, block targeting or entity UI, as appropriate to this key.",
+            "tone": "Clear Minecraft UI",
+            "grammar": "Standalone noun phrase, no sentence punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender."
           },
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Volitelné testy umisťování staveb. Zapínejte pouze ve světech určených k testování a smazání.",
-              "based_on": "fc6d3ebeb82b51c47549c51d6199c8cf44788674e8ff783ae07abda8d66e7885",
+              "text": "Prázdný měch na miruvor",
+              "based_on": "33f7cc0c6294549a0c04c01ef6fa76fba472fe2d68e98a2aaad98c4802bc1678",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "Pruebas opcionales de colocación de estructuras. Actívalas solo en mundos de prueba que puedas borrar.",
-              "based_on": "fc6d3ebeb82b51c47549c51d6199c8cf44788674e8ff783ae07abda8d66e7885",
+              "text": "Odre de miruvor vacío",
+              "based_on": "33f7cc0c6294549a0c04c01ef6fa76fba472fe2d68e98a2aaad98c4802bc1678",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "Pruebas opcionales de colocación de estructuras. Actívalas solo en mundos de prueba que puedas borrar.",
-              "based_on": "fc6d3ebeb82b51c47549c51d6199c8cf44788674e8ff783ae07abda8d66e7885",
+              "text": "Odre de miruvor vacío",
+              "based_on": "33f7cc0c6294549a0c04c01ef6fa76fba472fe2d68e98a2aaad98c4802bc1678",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Testes opcionais de colocação de estruturas. Ativa apenas em mundos de teste que possas apagar.",
-              "based_on": "fc6d3ebeb82b51c47549c51d6199c8cf44788674e8ff783ae07abda8d66e7885",
+              "text": "Odre de miruvor vazio",
+              "based_on": "33f7cc0c6294549a0c04c01ef6fa76fba472fe2d68e98a2aaad98c4802bc1678",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Testes opcionais de posicionamento de estruturas. Ative apenas em mundos de teste que possam ser apagados.",
-              "based_on": "fc6d3ebeb82b51c47549c51d6199c8cf44788674e8ff783ae07abda8d66e7885",
+              "text": "Odre de miruvor vazio",
+              "based_on": "33f7cc0c6294549a0c04c01ef6fa76fba472fe2d68e98a2aaad98c4802bc1678",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Optionale Tests zur Platzierung von Bauwerken. Nur in Testwelten aktivieren, die gelöscht werden können.",
-              "based_on": "fc6d3ebeb82b51c47549c51d6199c8cf44788674e8ff783ae07abda8d66e7885",
+              "text": "Leerer Miruvorschlauch",
+              "based_on": "33f7cc0c6294549a0c04c01ef6fa76fba472fe2d68e98a2aaad98c4802bc1678",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Tests facultatifs de placement des structures. À activer uniquement dans des mondes de test pouvant être supprimés.",
-              "based_on": "fc6d3ebeb82b51c47549c51d6199c8cf44788674e8ff783ae07abda8d66e7885",
+              "text": "Outre de miruvor vide",
+              "based_on": "33f7cc0c6294549a0c04c01ef6fa76fba472fe2d68e98a2aaad98c4802bc1678",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Opcjonalne testy rozmieszczania budowli. Włączaj tylko w światach testowych przeznaczonych do usunięcia.",
-              "based_on": "fc6d3ebeb82b51c47549c51d6199c8cf44788674e8ff783ae07abda8d66e7885",
+              "text": "Pusty bukłak na miruvor",
+              "based_on": "33f7cc0c6294549a0c04c01ef6fa76fba472fe2d68e98a2aaad98c4802bc1678",
               "status": "ai-draft"
             }
           }

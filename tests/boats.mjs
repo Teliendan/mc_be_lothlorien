@@ -17,7 +17,7 @@ test('all four boat items preserve water placement and provide six furnace smelt
     assert.equal(item.components['minecraft:fuel'].duration, 60, `${file}: 60 seconds, plain and chest boats alike`);
     assert.equal(item.components['minecraft:max_stack_size'], 1);
     assert.equal(item.components['minecraft:liquid_clipped'], true);
-    assert.deepEqual(item.components['minecraft:entity_placer'], { entity: id }, `${file}: retain native unrestricted default placement; dispenser parity needs engine testing`);
+    assert.deepEqual(item.components['minecraft:entity_placer'], { entity: id, dispense_on: ['minecraft:water', 'minecraft:flowing_water'] }, `${file}: dispensers place into water; hand placement retains its default`);
   }
 });
 

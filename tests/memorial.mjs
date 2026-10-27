@@ -74,7 +74,16 @@ const definition = generated.structures["minecraft:jigsaw"];
 const gardenDef = asset("worldgen/structures/flower_garden.json")["minecraft:jigsaw"];
 for (const field of ["biome_filters", "heightmap_projection", "step", "terrain_adaptation"])
   assert.deepEqual(definition[field], gardenDef[field], `${field}: same garden terrain eligibility`);
-assert.equal(definition.start_height.value.absolute, -1, "the deck stands one above the terrain's top block");
+// Vertical placement uses encoded template height, not the named jigsaw's Y.
+const shipped = readNbt(readFileSync(new URL("../lothlorien_bp/structures/lothlorien/memorial_leaf_01.mcstructure", import.meta.url)));
+const shippedPalette = shipped.structure.palette.default.block_palette;
+const surfaceY = (index) => definition.start_height.value.absolute + Math.floor(index / shipped.size[2]) % shipped.size[1];
+for (const [index, id] of shipped.structure.block_indices[0].entries()) {
+  const name = shippedPalette[id]?.name;
+  if (name === "minecraft:dirt") assert.ok(surfaceY(index) < 0, "foundation dirt stays underground");
+  if (name === "minecraft:grass_block") assert.ok(surfaceY(index) <= 0, "soil pockets stay at or below terrain");
+  if (name?.endsWith("_planks")) assert.equal(surfaceY(index), 0, "memorial planks replace the terrain top, even with a deep foundation");
+}
 // owner, Test G 2026-10-20: deep soil under the apron, 4 free cells above the deck, a ragged shoulder
 for (const k of memorial.ground) {
   const [x, z] = k.split(",").map(Number);

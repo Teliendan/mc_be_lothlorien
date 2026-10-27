@@ -16,7 +16,8 @@
         "duration": 60
       },
       "minecraft:entity_placer": {
-        "entity": "lothlorien:mallorn_boat"
+        "entity": "lothlorien:mallorn_boat",
+        "dispense_on": ["minecraft:water", "minecraft:flowing_water"]
       }
     }
   }

@@ -739,3 +739,5 @@ lothlorien.message.firefly.name=Luciérnaga: %s
 lothlorien.message.firefly.name_more=%s
 ## Context: Captured firefly current health in health points, not hearts. Only injured or nondefault-health captures need this lore line.
 lothlorien.message.firefly.health=Salud: %s
+## Context: An empty reusable leather container for Miruvor. Craft it from leather, fill it in the Miruvor recipe, and recover it after the last sip. Skin means wineskin, not body skin.
+item.lothlorien:empty_miruvor_skin=Odre de miruvor vacío

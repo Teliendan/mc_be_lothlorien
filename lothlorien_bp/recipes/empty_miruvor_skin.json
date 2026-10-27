@@ -1,0 +1,11 @@
+{
+  "format_version": "1.20.30",
+  "minecraft:recipe_shaped": {
+    "description": { "identifier": "lothlorien:empty_miruvor_skin" },
+    "tags": ["crafting_table"],
+    "pattern": ["L"],
+    "key": { "L": { "item": "minecraft:leather" } },
+    "unlock": [{ "item": "minecraft:leather" }],
+    "result": { "item": "lothlorien:empty_miruvor_skin", "count": 1 }
+  }
+}

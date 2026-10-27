@@ -32,8 +32,7 @@
         "controller.render.lothlorien.squirrel"
       ],
       "spawn_egg": {
-        "base_color": "#7c5232",
-        "overlay_color": "#ecdcb4"
+        "texture": "lothlorien:spawn_egg_squirrel"
       }
     }
   }

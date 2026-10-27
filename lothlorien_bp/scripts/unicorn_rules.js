@@ -30,6 +30,12 @@ export function ticksSince(now, last) {
   return typeof last === "number" && now >= last ? now - last : undefined;
 }
 
+// Same persisted world-time pause used by both offer refusal and native luring.
+export function offerWaitTicks(now, last) {
+  const elapsed = ticksSince(now, last);
+  return elapsed === undefined ? 0 : Math.max(0, OFFER_GAP_TICKS - elapsed);
+}
+
 // Only the owner rides a bonded unicorn. A bonded unicorn without a recorded owner (a /summon with the tame event, say)
 // is anyone's.
 export const mayRide = (ownerId, playerId) => !ownerId || ownerId === playerId;

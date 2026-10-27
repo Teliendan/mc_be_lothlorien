@@ -42,12 +42,30 @@ This is not an exact quota per biome patch: terrain, biome edges and placement
 success affect observed counts. Independent sets can place sites near each other.
 
 The memorial uses the garden's Lothlorien biome filter, world-surface projection
-and start height -1 (deck one above the terrain; -2 until 2026-10-20). A buried central
+and start height `-SKIRT.depth` (currently -6): encoded deck y 6 lands at terrain level,
+with the foundation beneath it (owner correction, 2026-10-24). The former start -1
+raised it five blocks. Offline checked for Bedrock 1.26.52; native placement pending. A buried central
 jigsaw anchor becomes dirt during natural placement and preserves the accepted deck.
 Six soil layers, a ragged shoulder and four free cells above the deck, as the garden
 (`WORLDGEN_FIXES_2026-10-20.md`); it does not fit steep slopes. **Worldgen changes need a new world.**
 Natural terrain/distribution review remains pending; the owner accepted the
 manually placed structure, not natural counts.
+
+### Missing-memorial investigation (2026-10-24)
+
+Bedrock 1.26.52, saved-world evidence from the owner's `Test` world: an intact
+memorial is centred at X -1152, deck Y 104, Z 80. All 77 distinctive solid blocks
+(deck, pillar, banners, benches and flowers) match the shipped template after
+rotation; the buried jigsaw is dirt. Nearby terrain and leaves may obscure it
+from above. The same saved snapshot contains three intact garden matches.
+This confirms a placed memorial, not the generation date or a large-sample ratio.
+
+Source and deployed definitions retain the intended equal weights (1 garden :
+1 memorial) on the shared grid. The latest height correction lowered both
+definitions by five blocks; no memorial-specific registration or template fault
+was found. Scoped `flower-garden` and `memorial` verification passed: 0 errors,
+0 warnings, 15 existing documented exceptions. Owner accepted that this was
+probably normal variation; no pack change was made for this investigation.
 
 ## Build and verification
 

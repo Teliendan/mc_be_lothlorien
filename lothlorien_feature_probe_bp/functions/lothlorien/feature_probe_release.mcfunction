@@ -1,4 +1,0 @@
-tickingarea remove fp_control
-tickingarea remove fp_checked
-tickingarea remove fp_control_blocked
-tickingarea remove fp_checked_blocked

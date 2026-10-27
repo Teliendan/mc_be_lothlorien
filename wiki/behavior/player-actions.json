@@ -1,0 +1,2295 @@
+[
+  {
+    "featureId": "lothlorien:athelas",
+    "id": "lothlorien:athelas/use",
+    "text": "Plant as woodland decoration, propagate with bone meal, or prepare Athelas Salve. Healers also request it. Snow layers can cover the planted plant. Remove the snow to reach it again.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/athelas.json",
+        "sha256": "c35d85df7c03a78a565e221624f8093eea4465347053f5067d2482e246a484a6"
+      },
+      {
+        "path": "lothlorien_bp/items/athelas.json",
+        "sha256": "b1e2ad30bfd4679d7766b9aacf0b4df3b52f7ea57d88660457590a3a1a966fc9"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:athelas_salve",
+    "id": "lothlorien:athelas_salve/use",
+    "text": "Consume for Regeneration level {{lothlorien:rule/salve-level}} for {{lothlorien:rule/salve-regen}} seconds and removal of poison. Drinking leaves an empty glass bottle.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/athelas_salve.json",
+        "sha256": "3941ce08c87b0636090ccea11f6d366bddd31ea526a30422d71b1930bc64f763"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:bottle_of_fireflies",
+    "id": "lothlorien:bottle_of_fireflies/use",
+    "text": "Use against a block face with adjacent air to release a persistent Firefly and recover an empty glass bottle. Also used to craft a Firefly Jar and fulfil Lamplighter requests.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/bottle_of_fireflies.json",
+        "sha256": "e7d57d04d432dd6cb864f3bca9b90e2bc5cbd3e5c7967e344e8f950dce6ae1bd"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:bow",
+    "id": "lothlorien:bow/use",
+    "text": "Draw and release to fire ordinary arrows or Galadhrim arrows. See Equipment statistics for draw time, Bedrock comparison and enchantments.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/bow.json",
+        "sha256": "2ea8172b0b15623c968ea75c25c4040bf4db9f3ddd6b0bb089e306a487b57d4e"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:deer_antler",
+    "id": "lothlorien:deer_antler/use",
+    "text": "Place as a decoration against a supported face, or use in an Elven Chandelier recipe. Losing its support drops the decoration. Antlers are not an animal gift.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/deer_antler.json",
+        "sha256": "c6b7df37575c009b394f3ac7fe8a450b93b8f38fa4b9149f79207ce05ecffe2e"
+      },
+      {
+        "path": "lothlorien_bp/items/deer_antler.json",
+        "sha256": "2e17cc042cd43fb5d7d9c2dd331a25e5b5ebe550ba37199482f24f438ee6b3f2"
+      },
+      {
+        "path": "lothlorien_bp/scripts/antler.js",
+        "sha256": "5d090749e720ff761a2dd515cf65596f33d6faa5bcc1149442995dde613f12fc"
+      },
+      {
+        "path": "lothlorien_bp/scripts/antler_rules.js",
+        "sha256": "e8f930bd2e5932119e07b59668b030c8667c400dfe539f6e887441ca730e9ccc"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:dew_bottle",
+    "id": "lothlorien:dew_bottle/use",
+    "text": "Continue gathering visible dew until {{lothlorien:rule/dew-drops}} drops become Morning Dew. Its {{lothlorien:rule/dew-drops}}-step filling progress is not ordinary tool wear. Collecting the drop that completes a Bottle of Morning Dew reveals the Star Canopy and Elven Rope recipes.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/dew_bottle.json",
+        "sha256": "724bdaab7c8fa459ab3e953733c5b24384647b94dc3afe37b27a8dd64b74e71a"
+      },
+      {
+        "path": "lothlorien_bp/scripts/dew.js",
+        "sha256": "5abd32eb1513a24a165b63e0587ddbbf832e8a1adb646b7ee09c377fff33b011"
+      },
+      {
+        "path": "lothlorien_bp/recipes/star_canopy.json",
+        "sha256": "58a5b97d22011cce3a42a61aab0249fad0142b851095708e3c54e5406c391102"
+      },
+      {
+        "path": "lothlorien_bp/recipes/elven_rope.json",
+        "sha256": "08e4122b7ab20d9b2107b543a5f873f89f5acf66c7207f3605e3a5f7610ccac4"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:elanor",
+    "id": "lothlorien:elanor/use",
+    "text": "Plant as decoration or propagate with bone meal. It lures and feeds butterflies, and is used in unicorn bonding and healing. Healers request it. Snow layers can cover the planted plant. Remove the snow to reach it again.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/elanor.json",
+        "sha256": "76106a1d516e933ff9d99beb7edc056156f34cd730a8d2c800447639d35defdf"
+      },
+      {
+        "path": "lothlorien_bp/items/elanor.json",
+        "sha256": "ea0e12e19ef0d64e44b786761ab263d123cc8a53e6f6a29453b188d5a259af54"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:elven_chandelier",
+    "id": "lothlorien:elven_chandelier/use",
+    "text": "Place as a light and decoration. Use its placement support; the recipe book shows its materials.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/elven_chandelier.json",
+        "sha256": "63783d9cc5b8db512fa4490a20bb87bd985019ded3ea2e56fa2862a1e254a76b"
+      },
+      {
+        "path": "lothlorien_bp/items/elven_chandelier.json",
+        "sha256": "ee2b18b6e1097bcc955d8171a1fb8acfccae08174097ebc520642c1842639ddd"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:elven_cloak",
+    "id": "lothlorien:elven_cloak/use",
+    "text": "Wear in the chest slot. Sneak without moving for {{lothlorien:rule/cloak-still-seconds|duration}} to gain invisibility; movement stops its renewal.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/elven_cloak.json",
+        "sha256": "331e02036af7f372f728082eda2a30e5b0eb72094f0654840fa6cc6174311d29"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:elven_lantern",
+    "id": "lothlorien:elven_lantern/use",
+    "text": "Place as a light and decoration. Use its placement support; the recipe book shows its materials.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/elven_lantern.json",
+        "sha256": "6b6cfb49938985860d745802a2102b1b0b8be165ded8c5ddfd0a455ae8db1819"
+      },
+      {
+        "path": "lothlorien_bp/items/elven_lantern.json",
+        "sha256": "f6390da1b6b56c22d63a396891472587d455f99eae9941d07e2998d7a8ab32d0"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:elven_lantern_heartwood",
+    "id": "lothlorien:elven_lantern_heartwood/use",
+    "text": "Place as a light and decoration. Use its placement support; the recipe book shows its materials.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/elven_lantern_heartwood.json",
+        "sha256": "04d4a6104bc9a6a22c113fe92f59653bc84f2497770abdd1d22690bfb228da7c"
+      },
+      {
+        "path": "lothlorien_bp/items/elven_lantern_heartwood.json",
+        "sha256": "e0e9460885a4a2a3a5abbcf91503db6b3b79d8333d33ff139cb214f87995a3fd"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:elven_rope",
+    "id": "lothlorien:elven_rope/use",
+    "text": "Use on a wall to hang rope, then extend the strand with more rope. Hold jump or move forward to climb, release to descend, and sneak to hold your height. Breaking rope or removing its wall brings down the connected strand for recovery. Slow Falling potions remain active while climbing; external Levitation takes priority.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/elven_rope.json",
+        "sha256": "4aa03f374df712c8c621b7a22a2b755db0a5984dabc52f8959474a31b8aa8df7"
+      },
+      {
+        "path": "lothlorien_bp/blocks/elven_rope_hanging.json",
+        "sha256": "928ad1f6c763a0a920e5629958211fd2e3eff9540d8264be03cfdb64820bfbb4"
+      },
+      {
+        "path": "lothlorien_bp/items/elven_rope.json",
+        "sha256": "9ed7629ae84b03e849cc2b8f3eb0f3855f6307b7cb7068f55bae0b4ef12ef286"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elven_rope.js",
+        "sha256": "bb3102904e878368a1155a901c9c1c35480435868941d80172c2d570ed439a72"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elven_rope_rules.js",
+        "sha256": "f4974feba45f39c0692fadda5c8e2ddc30076cb31c98a10ee21fba67bf5714f0"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:firefly_jar",
+    "id": "lothlorien:firefly_jar/use",
+    "text": "Place as a light and decoration. Use its placement support; the recipe book shows its materials.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/firefly_jar.json",
+        "sha256": "b5608ee67fd5ad023d4e1175638227375cc393c1c5f9f7d18d18c93b945eed93"
+      },
+      {
+        "path": "lothlorien_bp/items/firefly_jar.json",
+        "sha256": "8ab663c677997b9eb64c31dea5ef199de7a2389e8f3206cc8ccc2cd0c5e6daec"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:galadhrim_arrow",
+    "id": "lothlorien:galadhrim_arrow/use",
+    "text": "After hitting a creature, the arrow drops at the hit location for you to collect. Arrows stuck in blocks can also be picked up. Returned arrows can still be lost or destroyed.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/entities/galadhrim_arrow.json",
+        "sha256": "d7492c9718375bbbb2afb78ad41bd275a05ae41c1b3eefa350aacd3306ce7a28"
+      },
+      {
+        "path": "lothlorien_bp/items/galadhrim_arrow.json",
+        "sha256": "61fc5c1ab4996a83da2c2cba4aef82db03d9bb96d83c405366aeb1989917647f"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:golden_fern",
+    "id": "lothlorien:golden_fern/use",
+    "text": "Plant as decoration and use bone meal to spread more onto suitable nearby ground. Collect it with any tool or by hand; it drops one fern, with no extra seeds or Fortune bonus. Snow layers can cover the planted fern. Remove the snow to reach it again.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/golden_fern.json",
+        "sha256": "ce591b0c92d21f984187f73978fd9a036adbe1534a0da08078e676899b4109f7"
+      },
+      {
+        "path": "lothlorien_bp/items/golden_fern.json",
+        "sha256": "d8cdfb7b5dbd63e6470d1d2fe15780b88efb0efb9da09bee7559b4ca6e436926"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:great_mallorn_nut",
+    "id": "lothlorien:great_mallorn_nut/use",
+    "text": "Plant to grow a Great Mallorn {{lothlorien:rule/tree-width}} blocks wide and {{lothlorien:rule/tree-height}} blocks tall including roots reaching {{lothlorien:rule/tree-roots}} blocks below ground. The sprout needs light level {{lothlorien:rule/tree-growth-light}} or more. Before growing, it checks for built blocks in the tree's space. If it finds an obstruction, it stays a sprout and warns nearby players with the block name and coordinates. Break the sprout to recover the nut and replant farther from buildings. Natural terrain and unstripped logs may be replaced, so leave space around anything you want to preserve. Bone meal does not speed growth.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/great_mallorn_sprout.json",
+        "sha256": "c6e4e79cd69c6380d33bfd8812b808b3f142e2094682a4338299b7b9f26178df"
+      },
+      {
+        "path": "lothlorien_bp/items/great_mallorn_nut.json",
+        "sha256": "29db314c99880f23014629783cc013b9ecb52b9b80221fcc102a378eea4690e7"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:lembas_cake",
+    "id": "lothlorien:lembas_cake/use",
+    "text": "Wrap with Mallorn leaves to make portable Lembas. The recipe book gives the exact arrangement.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/lembas_cake.json",
+        "sha256": "5b019441ba12f5f207aa77b237b897b79a8d868bbbf3b5d7f454e9aeeb727f2e"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:lembas_dough",
+    "id": "lothlorien:lembas_dough/use",
+    "text": "Cook into Lembas Cake, then wrap it with Mallorn leaves for travel.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/lembas_dough.json",
+        "sha256": "f6f5eb8c36ff75539040167d40dd5e962d55586d3dfa2146b142479185e62e97"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:lembas_wrapped",
+    "id": "lothlorien:lembas_wrapped/use",
+    "text": "Eat to restore {{lothlorien:rule/lembas-food}} food points and remove the Hunger effect.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/lembas_wrapped.json",
+        "sha256": "a85a3e29508c182f5d4ef0174e46ad17934174cf08ada2313c860e847dce722b"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_acorn",
+    "id": "lothlorien:mallorn_acorn/use",
+    "text": "Plant an ordinary Mallorn sapling, alone or in a 2x2 arrangement for a larger tree. Also offered to White Deer for guidance and squirrels for errands when Harmony permits.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_sapling.json",
+        "sha256": "d1272e89dad858ecc5d90316412f9cbcab7c86305d19effb7e6f0c45b9438e20"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_acorn.json",
+        "sha256": "5906937f40d5ca9c8171df1563ef1948eb821ab6d00e78621bd46f3ac1125c1e"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_blossom",
+    "id": "lothlorien:mallorn_blossom/use",
+    "text": "Place one to four segments by adding more blossoms to the same block. Bone meal has no effect on this cover. Dewy blossoms under Mallorn foliage supply dew. Blossoms also lure and feed butterflies.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_blossom.json",
+        "sha256": "004d84de1eacadf72a9fc1fff95dda4a88abc9ad1d998bf735827627ae2e6a41"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_blossom.json",
+        "sha256": "4e399f576fe101ddbe9ce4d3f9c4f439828a9875e217cb832be43c76581d1672"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_boat",
+    "id": "lothlorien:mallorn_boat/use",
+    "text": "Place on water and ride it. Use its matching chest-boat recipe when you want storage. Dispensers require water in front.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/entities/mallorn_boat.json",
+        "sha256": "0c893668982e8e78358bdbd7b993fe89dcc1f4ff2a133150382b42d0f4493031"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_boat.json",
+        "sha256": "c165ff29788c3a7d16f7dbe268491d63d0788f22287ac0e008654e1f285b7192"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_button",
+    "id": "lothlorien:mallorn_button/use",
+    "text": "Place against a supporting block and press to provide a temporary redstone signal. A nearby wind-charge burst also activates it.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_button.json",
+        "sha256": "a375727c631d7d2b328cbd8836023cebe7c4262f1c91fed577d7a132ebcfb724"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_button.json",
+        "sha256": "f85ba72aec50183582d979b5b9ee3a413b3a206e209afc472fea513a882341b9"
+      },
+      {
+        "path": "lothlorien_bp/scripts/blocks.js",
+        "sha256": "fa99c0091796be5c10de7e43d0dda08d36854182bea4181df1ee02caef0176a5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_chest_boat",
+    "id": "lothlorien:mallorn_chest_boat/use",
+    "text": "Place on water and ride it. The chest variant also carries an inventory; its wood type changes its appearance. Dispensers require water in front.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/entities/mallorn_chest_boat.json",
+        "sha256": "2246006117a7bc0c8daa433f961b1f3e93816668c9d3fde8601ba9e79996a1f8"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_chest_boat.json",
+        "sha256": "88c47b7e9d9219055a5e0d534e89f619f68a5be32b1d24aa0cac5586fbcee3d5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_door",
+    "id": "lothlorien:mallorn_door/use",
+    "text": "Open and close by interaction or redstone. Matching double doors open together where the door supports pairing. A nearby wind-charge burst also activates it.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_door.json",
+        "sha256": "4198af83fb00912cf3ea7381b3aacbf213a5c6155cb9e78ec7215a3c66206247"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_door.json",
+        "sha256": "d8b9c4f4e1faf7e1bfede278b8607ac5ac643c47881585b47bc028853ed71567"
+      },
+      {
+        "path": "lothlorien_bp/scripts/blocks.js",
+        "sha256": "fa99c0091796be5c10de7e43d0dda08d36854182bea4181df1ee02caef0176a5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_fence",
+    "id": "lothlorien:mallorn_fence/use",
+    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_fence.json",
+        "sha256": "8baa979a6a8c501117638798622d5241a404235c278b071fffea6bf11bc36e8d"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_fence.json",
+        "sha256": "ef01a324ae2bfdc522f328b4789da6fc452f3a1888e127b73e671acd77c71e03"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_fence_gate",
+    "id": "lothlorien:mallorn_fence_gate/use",
+    "text": "Open and close by interaction or redstone. A nearby wind-charge burst also activates it.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_fence_gate.json",
+        "sha256": "fc4c2c24ebc8c1872f6317b96d3223aa64741586369754f7867c873ce1951ed2"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_fence_gate.json",
+        "sha256": "b7d03c6dc43e5bdc477617ce2d2d05dabec5513310e8bdeea21abdc0f4696134"
+      },
+      {
+        "path": "lothlorien_bp/scripts/blocks.js",
+        "sha256": "fa99c0091796be5c10de7e43d0dda08d36854182bea4181df1ee02caef0176a5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_golden_leaves",
+    "id": "lothlorien:mallorn_golden_leaves/use",
+    "text": "Place golden foliage as decoration. It drops itself when broken with any tool or by hand and does not decay.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_golden_leaves.json",
+        "sha256": "5cdc8cd479ffa811122bd511e0fd0f473365dfe1a671eba838be3385c762ae29"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_golden_leaves.json",
+        "sha256": "4ad84445ef00083878397c25300ae1202f55d3e00381b9ccb92f14c336de3ab8"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_boat",
+    "id": "lothlorien:mallorn_heartwood_boat/use",
+    "text": "Place on water and ride it. Use its matching chest-boat recipe when you want storage. Dispensers require water in front.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/entities/mallorn_heartwood_boat.json",
+        "sha256": "5f5f47e81bb2e2c6c46b58fc817b034c162919edf955d1c1c8ec7ae28fd6356a"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_heartwood_boat.json",
+        "sha256": "a2b958edd00ce9ff926e0b02a80587269b1c49a5884e4e846055eeb8ea9903c7"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_button",
+    "id": "lothlorien:mallorn_heartwood_button/use",
+    "text": "Place against a supporting block and press to provide a temporary redstone signal. A nearby wind-charge burst also activates it.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_heartwood_button.json",
+        "sha256": "afea299d8043b14052af05153f759c304e81fd18d419a665c53f44155f4fa6fa"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_heartwood_button.json",
+        "sha256": "5b51236812a48c9030c1fe73a2d2a70a29d8fa441942906ee56ade32fc9f2bad"
+      },
+      {
+        "path": "lothlorien_bp/scripts/blocks.js",
+        "sha256": "fa99c0091796be5c10de7e43d0dda08d36854182bea4181df1ee02caef0176a5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_chest_boat",
+    "id": "lothlorien:mallorn_heartwood_chest_boat/use",
+    "text": "Place on water and ride it. The chest variant also carries an inventory; its wood type changes its appearance. Dispensers require water in front.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/entities/mallorn_heartwood_chest_boat.json",
+        "sha256": "0c3451c9734881db97834004eb72ed61192de575bab111f6c70167328bd1485a"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_heartwood_chest_boat.json",
+        "sha256": "5a6fe67e36b29f549205a80f863cbef1fe1941969158b722db8e37ec80373d48"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_door",
+    "id": "lothlorien:mallorn_heartwood_door/use",
+    "text": "Open and close by interaction or redstone. Matching double doors open together where the door supports pairing. A nearby wind-charge burst also activates it.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_heartwood_door.json",
+        "sha256": "a8bd88f10e305f04d5a57e5f968cb67b082969b14c991356efcd8ce9f0b62ae6"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_heartwood_door.json",
+        "sha256": "044ca31e4c2e51a475c83d2498b32b1f6f6dfe78952c5e9fc3e3efcb4a590f6b"
+      },
+      {
+        "path": "lothlorien_bp/scripts/blocks.js",
+        "sha256": "fa99c0091796be5c10de7e43d0dda08d36854182bea4181df1ee02caef0176a5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_fence",
+    "id": "lothlorien:mallorn_heartwood_fence/use",
+    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_heartwood_fence.json",
+        "sha256": "803ff1e47e529c0286e861b3c49bf6cbff2830ed41b090198fc3ecf8e645e0ae"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_heartwood_fence.json",
+        "sha256": "06602ce034fce7926267af325a9f14c89906e425d120a75ab45f9ac682464992"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_fence_gate",
+    "id": "lothlorien:mallorn_heartwood_fence_gate/use",
+    "text": "Open and close by interaction or redstone. A nearby wind-charge burst also activates it.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_heartwood_fence_gate.json",
+        "sha256": "032abecbe9ddaa27bbed69b01445ad142608c49825a39b073be58a466c7ca11d"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_heartwood_fence_gate.json",
+        "sha256": "3a4ddaf1e6e953c8983ba91e2c6845cf54e708ff80b823e274f0e22f0a8ac85c"
+      },
+      {
+        "path": "lothlorien_bp/scripts/blocks.js",
+        "sha256": "fa99c0091796be5c10de7e43d0dda08d36854182bea4181df1ee02caef0176a5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_planks",
+    "id": "lothlorien:mallorn_heartwood_planks/use",
+    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_heartwood_planks.json",
+        "sha256": "1953254fae199157b6e20627fa6ba275f9c1b30a24ca408b01e6609739cd1bbe"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_heartwood_planks.json",
+        "sha256": "a9735c11a457793204014f00b8701ba67563d66caeec46b6e28b400c81473c64"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_pressure_plate",
+    "id": "lothlorien:mallorn_heartwood_pressure_plate/use",
+    "text": "Place on a supporting surface to supply redstone power when activated by an entity.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_heartwood_pressure_plate.json",
+        "sha256": "5a3007ceb5958e4047f89317eb5995237cf86ecba81885ea550c0543ea6050fc"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_heartwood_pressure_plate.json",
+        "sha256": "742df43194b61e9adea6298c64fe7f186a91ad1defa0c2f383c8be3c745b40cd"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_slab",
+    "id": "lothlorien:mallorn_heartwood_slab/use",
+    "text": "Place as a half-height building piece. Matching slabs combine into a double slab, represented by this same article.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_heartwood_double_slab.json",
+        "sha256": "d38987f624fc92584a2587a39b5ea477c15f51764bf4389fa57bb491ad6b4865"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_heartwood_slab.json",
+        "sha256": "3c56c93ec45f52d2ae94c03e3e3a834074c192afc7f0a7f285997f502e1605fa"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_heartwood_slab.json",
+        "sha256": "2b5e151533281745e253048e05c318ded59c25f4c01aac96f44bc119b3234b88"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_stairs",
+    "id": "lothlorien:mallorn_heartwood_stairs/use",
+    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_heartwood_stairs.json",
+        "sha256": "5140b024f5c45812ee0c16d14e5b8acef3ab2ffb3f582b1a36ec993e672727a2"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_heartwood_stairs.json",
+        "sha256": "319cc2ff5d0df1dd23945ad7a802334486ee8e6a523c383bfee8d256a7bd45ee"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_trapdoor",
+    "id": "lothlorien:mallorn_heartwood_trapdoor/use",
+    "text": "Open and close by interaction or redstone. A nearby wind-charge burst also activates it.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_heartwood_trapdoor.json",
+        "sha256": "3ebe9b469e4bf217e96f752ff38a6b8af8eb7460a0fc4ca996a6ffebb4f2b4e3"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_heartwood_trapdoor.json",
+        "sha256": "3c087894cdb74318cdacbfc1d5fbc6000eebace8f1a3449817b006256740b3c9"
+      },
+      {
+        "path": "lothlorien_bp/scripts/blocks.js",
+        "sha256": "fa99c0091796be5c10de7e43d0dda08d36854182bea4181df1ee02caef0176a5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_leaf_carpet",
+    "id": "lothlorien:mallorn_leaf_carpet/use",
+    "text": "Place one to four segments by adding more leaf carpet to the same block. Bone meal has no effect on this cover. Dewy carpet under Mallorn foliage supplies dew.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_leaf_carpet.json",
+        "sha256": "b5f778b5522a2072bd954350f7c3d67501cbdab3af03e0a7f2763a8559dd15e9"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_leaf_carpet.json",
+        "sha256": "bfba5d314dabe4e32ffb7130261c2eb906455db6daab26c1ee1d406f7eb09490"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_leaves",
+    "id": "lothlorien:mallorn_leaves/use",
+    "text": "Place persistent foliage. Leaves above Nectar Blooms enable filling, and nearby foliage enables dew. Naturally grown leaves decay when no supported tree log or wood can be reached through connected leaves within ten steps; mixed vanilla and Mallorn foliage can connect them.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_leaves.json",
+        "sha256": "6a2fac9ceadb79f9996871cd763653c85895b253254a52629c3485a2b67b10e4"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_leaves.json",
+        "sha256": "23c07ca000db20b358bdc69c08b837adc311a6af860d8561089ed236c3697261"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_log",
+    "id": "lothlorien:mallorn_log/use",
+    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_log.json",
+        "sha256": "4a8d056693c29d4f9d792ce1be0a20ff73df7149a0dcc6a54d976bb7477f67e5"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_log.json",
+        "sha256": "b0e230f42ca81d8cae7876758f7728f6da1c1692d815ecfc25e0a89a75717cb8"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_nectar",
+    "id": "lothlorien:mallorn_nectar/use",
+    "text": "Gathering ingredient for woodland provisions and a Healer request. Keep its bottle distinct from Morning Dew.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_nectar.json",
+        "sha256": "25e1c3aff3dfc2a6873c26b29d54b928f2019087e37b899c3160df96db0f1dde"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_planks",
+    "id": "lothlorien:mallorn_planks/use",
+    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_planks.json",
+        "sha256": "743d84c1fb71768fbfea44aa044baac33e71dc75e6785f8594649db95d3df57a"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_planks.json",
+        "sha256": "10d100c8bf72f0080de5430805fcd8fd8133f7717c1a4dba4117cc3574800c9b"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_pressure_plate",
+    "id": "lothlorien:mallorn_pressure_plate/use",
+    "text": "Place on a supporting surface to supply redstone power when activated by an entity.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_pressure_plate.json",
+        "sha256": "2b549bac264beb10b68f67d6fe5e0f5e3d02772d917cdc5e37f502b2457d7cfa"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_pressure_plate.json",
+        "sha256": "29be78b46cdf6b3810fde20f60a9fdf4fca6df99777b00b4cee144479434b22d"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_slab",
+    "id": "lothlorien:mallorn_slab/use",
+    "text": "Place as a half-height building piece. Matching slabs combine into a double slab, represented by this same article.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_double_slab.json",
+        "sha256": "cb281abae340f08a27b3cc90c7516e6006c72785d5a473ec0417e362f672057a"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_slab.json",
+        "sha256": "4d6f576ee01d29ceffe584ecf7cfb415f3bfedf1826da71afc6b1eb7380e2a35"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_slab.json",
+        "sha256": "0b74357dcad62401a17a021ab03dd37b1715cc61561bda0040477798fd9e729e"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_stairs",
+    "id": "lothlorien:mallorn_stairs/use",
+    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_stairs.json",
+        "sha256": "05921873057290b06961ad5816787a61ded492df0118c47881abfbd97ed519c9"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_stairs.json",
+        "sha256": "589415a8d1a2569ad92496be94432fff57b3734a7bbc1203b6d70f51f74019ac"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_stripped_log",
+    "id": "lothlorien:mallorn_stripped_log/use",
+    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_stripped_log.json",
+        "sha256": "9a80666ecfae9b899c3b19b927f6c72ffe4d070776fbb563164b168c6e4dd640"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_stripped_log.json",
+        "sha256": "2f60576ee9dae6516ff05aadadb364557e927c40fe80d2f8f40efdef029ffc09"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_stripped_wood",
+    "id": "lothlorien:mallorn_stripped_wood/use",
+    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_stripped_wood.json",
+        "sha256": "dea42e6ecdcf6d3b871c56362b9242050decf9be5c74bb8115e279c1520a8e6b"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_stripped_wood.json",
+        "sha256": "8a47a946da4fd6538d04fbc27c5d3f96bf504e00511bb9fc6cba905b9172dfde"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_trapdoor",
+    "id": "lothlorien:mallorn_trapdoor/use",
+    "text": "Open and close by interaction or redstone. A nearby wind-charge burst also activates it.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_trapdoor.json",
+        "sha256": "1a8d562e745541f14cd03bf5da212db9e52a3cfd5672aaf3253b5c855bcff304"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_trapdoor.json",
+        "sha256": "4f0699e1dff3d4efd4d8f311524e9f9da23877760564852d120ff41f751e8930"
+      },
+      {
+        "path": "lothlorien_bp/scripts/blocks.js",
+        "sha256": "fa99c0091796be5c10de7e43d0dda08d36854182bea4181df1ee02caef0176a5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_wood",
+    "id": "lothlorien:mallorn_wood/use",
+    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_wood.json",
+        "sha256": "dd90daa74c2da3e8a042e81181c1dff22c97a71dc3d0a25408e5586901a54956"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_wood.json",
+        "sha256": "c267e3947d8d4efeb7bcc85b783aa780a75a21e0bf85b4d04b586bb00d4be746"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:miruvor",
+    "id": "lothlorien:miruvor/use",
+    "text": "Drink in {{lothlorien:rule/miruvor-sips}} sips. Each completed sip gives Instant Health I, Regeneration level {{lothlorien:rule/miruvor-regen-level}} for {{lothlorien:rule/miruvor-regen}} seconds and Speed level {{lothlorien:rule/miruvor-speed-level}} for {{lothlorien:rule/miruvor-speed}} seconds, removes poison, and starts a {{lothlorien:rule/miruvor-cooldown}}-second cooldown. The last sip leaves an Empty Miruvor Skin, which can be filled again with the crafting recipe.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/miruvor.json",
+        "sha256": "9e9ecc5c5e05813b24a316c861b0b9dc5ff4ef53bc979f1cf0770f40507c6b77"
+      },
+      {
+        "path": "lothlorien_bp/scripts/athelas.js",
+        "sha256": "b63d3a44bd3f47d6907a44825d3a23025fd120863e1c986aa5138d3879c5a097"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:morning_dew",
+    "id": "lothlorien:morning_dew/use",
+    "text": "Use in Elven Rope and Star Canopy recipes, or deliver it for the Gardener request. Collecting a full Bottle of Morning Dew reveals the Star Canopy and Elven Rope recipes.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/morning_dew.json",
+        "sha256": "fdf75991347c6226d75d30775e3dd539c32092c3a3da14fe98f8d364e4355954"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:nectar_bloom",
+    "id": "lothlorien:nectar_bloom/use",
+    "text": "Hang immediately beneath Mallorn leaves to refill through three nectar stages. Collect a full bloom using an empty glass bottle.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/nectar_bloom.json",
+        "sha256": "2852a63a40161e2200cc080e30e1e759476c4f206ccf6f0386ddc142ba8711e4"
+      },
+      {
+        "path": "lothlorien_bp/items/nectar_bloom.json",
+        "sha256": "59da322c3f06e104e3d76bac46e6b8d88f814be90480b2a76808b1882ff75083"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:niphredil",
+    "id": "lothlorien:niphredil/use",
+    "text": "Plant as decoration or propagate with bone meal. It lures and feeds butterflies, contributes to Miruvor, and is requested by healers. Snow layers can cover the planted plant. Remove the snow to reach it again.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/niphredil.json",
+        "sha256": "0e3216ef4f082588284340b557f96abee6b1b3b79f4a56915221cae160ed6bae"
+      },
+      {
+        "path": "lothlorien_bp/items/niphredil.json",
+        "sha256": "45c863bb44a557e54e87cbe35ca4c81d7919086a9d931076c2f5d050ba4673f5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:phial_of_galadriel",
+    "id": "lothlorien:phial_of_galadriel/use",
+    "text": "Hold offhand to create level-{{lothlorien:rule/phial-light}} light in nearby available air and repel spiders and cave spiders within {{lothlorien:rule/phial-radius}} blocks. It does not replace plants, solids or fluids.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/phial_of_galadriel.json",
+        "sha256": "94688cef581b10ad597c51f40d71915ad9378f25eee6f1acce070860cf199a37"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:silver_belt",
+    "id": "lothlorien:silver_belt/use",
+    "text": "Hold offhand for Regeneration level {{lothlorien:rule/belt-level}} while strictly below {{lothlorien:rule/belt-health-fraction}} of your maximum health.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/silver_belt.json",
+        "sha256": "75ebbb58b4a50a55b39dbd5d616171d36311a022b81fc399b7297ce7bb748cb9"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:star_canopy",
+    "id": "lothlorien:star_canopy/use",
+    "text": "Build with this solid, softly glowing building block. It blocks water and can be collected by hand; a pickaxe is faster.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/star_canopy.json",
+        "sha256": "e1a43b201c6435b39863820b4b1aa68476da2daba20e4645b5e0f44ebf5c6455"
+      },
+      {
+        "path": "lothlorien_bp/items/star_canopy.json",
+        "sha256": "7fe7ad4add7c1d5c2aa46408d351e5c8e1f4a53a77927c92fb8ddfefbbd2ae46"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:swan_meat_cooked",
+    "id": "lothlorien:swan_meat_cooked/use",
+    "text": "Eat as provisions. Food points are listed in the quick reference.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/swan_meat_cooked.json",
+        "sha256": "2ca9e0633168499777db162d1693cd205bae050ffcacb27db89a4a32cf9774b0"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:swan_meat_raw",
+    "id": "lothlorien:swan_meat_raw/use",
+    "text": "Cook into its prepared meat using the heat-processing recipe below. Food points are listed in the quick reference.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/swan_meat_raw.json",
+        "sha256": "254b762ae83a6236283448cbc279c77ffa2b115dc9302fb41ba77f3bdae8153a"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:venison_cooked",
+    "id": "lothlorien:venison_cooked/use",
+    "text": "Eat as provisions. Food points are listed in the quick reference.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/venison_cooked.json",
+        "sha256": "3b927ceafa5eb43e34f8007dba0a0938652dd7e005a3084fdf7f96d9834fda3d"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:venison_raw",
+    "id": "lothlorien:venison_raw/use",
+    "text": "Cook into its prepared meat using the heat-processing recipe below. Food points are listed in the quick reference.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/venison_raw.json",
+        "sha256": "4c28ec166b650a71cd850649a2daca966aea023ad4be36fc78d589da2275c556"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:western_corn_grain",
+    "id": "lothlorien:western_corn_grain/use",
+    "text": "Food and lure for woodland animals: deer breeding and fawn growth, swan feeding and breeding, and songbird lure/healing. Also an ingredient for Lembas Dough; grain is distinct from seeds.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/items/western_corn_grain.json",
+        "sha256": "4b416a29da855ef75fe9cd260636f00f230081d8b0f914cde592060d8482d780"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:western_corn_seeds",
+    "id": "lothlorien:western_corn_seeds/use",
+    "text": "Plant Western Corn on farmland. It grows through {{lothlorien:rule/corn-stages}} stages with light level at least {{lothlorien:rule/corn-min-light}}; moist farmland speeds growth. Bone meal advances it by {{lothlorien:rule/corn-bonemeal-min}}-{{lothlorien:rule/corn-bonemeal-max}} stages. The harvest amounts and Fortune conditions are listed below. Wild corn does not keep growing until replanted on farmland.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/western_corn.json",
+        "sha256": "746d4b4ec6d23b552edf416ff4e1565aaa8a716c055053abdf90d8a9892fa8f3"
+      },
+      {
+        "path": "lothlorien_bp/items/western_corn_seeds.json",
+        "sha256": "6ee1ab94280e3bf6b15ac3149e762a41b084011a908011cf6fe7639a420853d8"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:butterfly",
+    "id": "lothlorien:butterfly/care",
+    "text": "Small daytime flyers with eight wing colours.",
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/butterfly.json",
+        "sha256": "dca0722f420302a82f8fac1874ff7ba1d8924d5057fb444c864d96f1d67c6c16"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:deer",
+    "id": "lothlorien:deer/care",
+    "text": "Wary woodland herds, with antlered bucks and spotted fawns.",
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/deer.json",
+        "sha256": "1d5792e7d36080727dfe0db2081fe4e180ed7b00339359a2b030537ad907708a"
+      },
+      {
+        "path": "lothlorien_bp/scripts/deer.js",
+        "sha256": "ba61df49fdb316a4e414f3ca36a7605b3532a5a579e3c16777ef96c9f49a1fca"
+      },
+      {
+        "path": "lothlorien_bp/scripts/deer_rules.js",
+        "sha256": "ac744c72b451fd5b91f0802e28ace03e2dee92b49a03c15d624fc08874ec6bba"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:elf",
+    "id": "lothlorien:elf/care",
+    "text": "Five professions bring the villages to life.",
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/elf.json",
+        "sha256": "c387a116526c4444b18323b0cc472ffb90fa904e649ef677c385b491eb09476b"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elf.js",
+        "sha256": "73ab6d4b93bb37ff8dbabcf9f69747530977d24ea306702cb9455919863f4d49"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elf_native_use.js",
+        "sha256": "432f2aaff647406d23154a05791598c4769b3100e8b7f59405b3e0e6d6c62891"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elf_rules.js",
+        "sha256": "96f37be2215d690d5da64464b14aab6fc60a6efd1df7b6f5e707ec9b43b94711"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elf_village.js",
+        "sha256": "c78dfd2f26767d428edea314d6f9a07e4295786b09696f4db7b0d22b5e9b640d"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:elven_warden",
+    "id": "lothlorien:elven_warden/care",
+    "text": "Bow-carrying defenders of the forest and its villages.",
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/elven_warden.json",
+        "sha256": "1907021ab09f58f41fa891a9764af83da82132fe424388fbbb073e188ec540a0"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elven_warden.js",
+        "sha256": "9b0aeb09bd23ca22ced4ac0787179520cef1132a4bc6606621205a35c8d8f9f7"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elven_warden_rules.js",
+        "sha256": "4cf9aa7624d88c8f4674717fd5e20a5017a86a7beb1ee9b8b5046d6ab391d74c"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:firefly",
+    "id": "lothlorien:firefly/care",
+    "text": "Tiny hovering insects that glow in the dark. Use a glass bottle to catch one. Its name and current health are kept when released. If your inventory is full, the filled bottle drops at your feet.",
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/firefly.json",
+        "sha256": "ca378f2fe0cd5cdce88755a70238de85daf4e8d9765998be7ef17dff5a32880e"
+      },
+      {
+        "path": "lothlorien_bp/scripts/firefly_bottle.js",
+        "sha256": "60f1eadf80a92a0391e0a1e35bca4b52c3d1a9f8c8054faee6422cf692ffb50c"
+      },
+      {
+        "path": "lothlorien_bp/scripts/fireflies.js",
+        "sha256": "27151feeb54553df02373e52f680d54028dccd9f1aad24e02e50a054d9dba693"
+      },
+      {
+        "path": "lothlorien_bp/scripts/bottles.js",
+        "sha256": "6fda452aa9f979b3c80a878906d8e052c90d656b1150c51cf0fcf3d9167440b2"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:songbird",
+    "id": "lothlorien:songbird/care",
+    "text": "Blue, yellow and pink birds with woodland songs.",
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/songbird.json",
+        "sha256": "c823f389735b9bfd5a3662ca8d0503d25adc87abfc6865ab81eafe846db0cb8a"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:squirrel",
+    "id": "lothlorien:squirrel/care",
+    "text": "Small forest-floor residents drawn to Mallorn Acorns.",
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/squirrel.json",
+        "sha256": "d3e9a28a4e4fc9442d839ec287fe6433923eb31f711f5a84240eec69386ac45f"
+      },
+      {
+        "path": "lothlorien_bp/scripts/squirrel.js",
+        "sha256": "739f00c776f8fb0bd38c7f0265d5cafcb43f8f031c06707e245c1fefc2f49e38"
+      },
+      {
+        "path": "lothlorien_bp/scripts/squirrel_rules.js",
+        "sha256": "56300ce0bc4119062f4c47e41bce3d9f654f142b353c15b83a2ea7b9cf92880f"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:swan",
+    "id": "lothlorien:swan/care",
+    "text": "White water birds with cygnets and naturally shed feathers.",
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/swan.json",
+        "sha256": "fce865133323172cf7e68024290cc28ee9c560b26ab3390bc4884253a14b24d6"
+      },
+      {
+        "path": "lothlorien_bp/scripts/swan.js",
+        "sha256": "d4eb5d0bbd1135b16d7822e4e2afbba3ffaae2c9a70f3dd329490c8871e99f8e"
+      },
+      {
+        "path": "lothlorien_bp/scripts/swan_rules.js",
+        "sha256": "23b6a1bcf30b3cd688aed79ef8014b2946c42cfd86adaaee4d217628646aca4d"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:unicorn",
+    "id": "lothlorien:unicorn/care",
+    "text": "A rare, timid forest encounter. A wild unicorn accepts an Elanor offering from a Friend of Lothlorien at most once every {{lothlorien:rule/unicorn-gap}} seconds; a wild unicorn keeps about 3 blocks from a Friend without Elanor and lets a Friend holding Elanor come close; while it waits between offers it does not follow, and afterwards it follows Elanor again.",
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/unicorn.json",
+        "sha256": "5e9e62e5f835e3221dc24a95280e588c94fa5944745941234774a46fe17112ae"
+      },
+      {
+        "path": "lothlorien_bp/scripts/unicorn.js",
+        "sha256": "1bb7265c1351051542d5a5931884d52b3510495b0440710ffc3d82829ac14714"
+      },
+      {
+        "path": "lothlorien_bp/scripts/unicorn_rules.js",
+        "sha256": "8ecabaf5f6d9f72427389889935682928a4445cd72d365087a1d950b7df5abaf"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:white_deer",
+    "id": "lothlorien:white_deer/care",
+    "text": "A solitary white hart, always bearing antlers.",
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/white_deer.json",
+        "sha256": "43faecd61fff80f3642265500e9969fb5f49b5b12f4cd03c391837b51ac8edd3"
+      },
+      {
+        "path": "lothlorien_bp/scripts/white_deer.js",
+        "sha256": "87b7d8bc9cfe04630399947601c0379c2d0e075b14d67bfe1e3e9905403beb45"
+      },
+      {
+        "path": "lothlorien_bp/scripts/white_deer_rules.js",
+        "sha256": "49c58eb000687cf57396ffcf7e55273d9cb3af72c893425949ba54ed7d0f2ced"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:harmony",
+    "id": "lothlorien:harmony/overview",
+    "text": "Your actions towards the forest and its inhabitants change how they respond to you.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/scripts/harmony.js",
+        "sha256": "cb13b3d41b65ecb7cbda03ecb2000652ced54d5c1a3e9aa8cbad5b5540564bce"
+      },
+      {
+        "path": "lothlorien_bp/scripts/harmony_game.js",
+        "sha256": "5dc81335d94c24f7688f513a21e3f6dab3761ec82333d9bf569a80f25b73ef89"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:renown",
+    "id": "lothlorien:renown/overview",
+    "text": "Complete Loremaster lessons and requests to improve your Renown. It is separate from Harmony.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/scripts/renown_game.js",
+        "sha256": "a86b5c4a72f64f8379529a564787f0672a6011f46a60534d14f12178ac44c25d"
+      },
+      {
+        "path": "lothlorien_bp/scripts/renown_rules.js",
+        "sha256": "c34bf63799a3650a5edc77364c1d4c880d82d3907abebbbee4c271e8571d2b3e"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:quests",
+    "id": "lothlorien:quests/overview",
+    "text": "Visit a Loremaster to receive lessons and profession requests. Complete the requested handover to earn progress.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:trading",
+    "id": "lothlorien:trading/overview",
+    "text": "Trade with gardeners, healers, woodwrights and lamplighters. Harmony changes prices and access; Renown unlocks stock.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/scripts/trade.js",
+        "sha256": "ea9cf40bc2fb3514ed300393489f67d5d9c16f41f1e9b8c5569ac46a6924a050"
+      },
+      {
+        "path": "lothlorien_bp/scripts/trade_rules.js",
+        "sha256": "fc63dc186136de45a67e65efeb3c94027fd77f12990bd569753cddfb5f4ac3fc"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:growing",
+    "id": "lothlorien:growing/overview",
+    "text": "Plant Mallorn Acorns for trees, grow Western Corn on farmland, and collect dew and nectar for supplies.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/scripts/animal_food.js",
+        "sha256": "f0d01fe55718a62257441890a80181d8def071a556723f4379f5e3c10f8c37cb"
+      },
+      {
+        "path": "lothlorien_bp/scripts/animal_food_rules.js",
+        "sha256": "cd88255f06e1fd5924f362f420ab4aeb53a3e398b20db88b7b8043dcb11cdb82"
+      },
+      {
+        "path": "lothlorien_bp/scripts/archery.js",
+        "sha256": "d0db1dc6817088b7b1a9412e200adea08dd1332c72066a2f74b52b595bec29c5"
+      },
+      {
+        "path": "lothlorien_bp/scripts/athelas.js",
+        "sha256": "b63d3a44bd3f47d6907a44825d3a23025fd120863e1c986aa5138d3879c5a097"
+      },
+      {
+        "path": "lothlorien_bp/scripts/blocks.js",
+        "sha256": "fa99c0091796be5c10de7e43d0dda08d36854182bea4181df1ee02caef0176a5"
+      },
+      {
+        "path": "lothlorien_bp/scripts/bonemeal.js",
+        "sha256": "a515048ce49ebe4da94a76851e67e3d0c5a80032b55acedef745e5cf7001f314"
+      },
+      {
+        "path": "lothlorien_bp/scripts/bottles.js",
+        "sha256": "6fda452aa9f979b3c80a878906d8e052c90d656b1150c51cf0fcf3d9167440b2"
+      },
+      {
+        "path": "lothlorien_bp/scripts/control_rules.js",
+        "sha256": "9986d8b39d57629dcaf2973d8f57177f8096a97dcadb58212b1214498a9ff695"
+      },
+      {
+        "path": "lothlorien_bp/scripts/crop.js",
+        "sha256": "1ac8c635313543ee86a5d118d70b7f90c4476aa4778b3554962ea467cb083964"
+      },
+      {
+        "path": "lothlorien_bp/scripts/crop_rules.js",
+        "sha256": "1891c327a6993984abd4efefca602d1b1a8ea7a8c38308e6034967dc7735a97d"
+      },
+      {
+        "path": "lothlorien_bp/scripts/deeds.js",
+        "sha256": "de2add819e84b777ae9d096c1e66bcea9cc29ea039208a899482da46bf7b61c9"
+      },
+      {
+        "path": "lothlorien_bp/scripts/deferred_use.js",
+        "sha256": "6e83af81d30a8429160fc62275d5c50b03329b5c2521666b148901290544a7c0"
+      },
+      {
+        "path": "lothlorien_bp/scripts/depth.js",
+        "sha256": "2aad59f1e925d2e2bc6b0379f09caa8510f26342eb1643632c1806a74a3cd9ad"
+      },
+      {
+        "path": "lothlorien_bp/scripts/dew.js",
+        "sha256": "5abd32eb1513a24a165b63e0587ddbbf832e8a1adb646b7ee09c377fff33b011"
+      },
+      {
+        "path": "lothlorien_bp/scripts/dew_rules.js",
+        "sha256": "e7d6cbb6b9e4a177d4a3c2d45572079b7121d93645627df1d19c85be176a166d"
+      },
+      {
+        "path": "lothlorien_bp/scripts/fireflies.js",
+        "sha256": "27151feeb54553df02373e52f680d54028dccd9f1aad24e02e50a054d9dba693"
+      },
+      {
+        "path": "lothlorien_bp/scripts/flora_table.js",
+        "sha256": "2b19dc6fea4c89faba08fa68f82dce792e81c6011fb0859c59e6c55a72d060bd"
+      },
+      {
+        "path": "lothlorien_bp/scripts/gift_rules.js",
+        "sha256": "258393605b810b7e87237e5b9d406bf228d39ff264a062f8d6ea226cd7881271"
+      },
+      {
+        "path": "lothlorien_bp/scripts/grass_overlay.js",
+        "sha256": "290dbf1112fb3b996e709d81fd7958c44dfd8058cfd63462b7402d023886aa87"
+      },
+      {
+        "path": "lothlorien_bp/scripts/great_mallorn.js",
+        "sha256": "4c2629b83be76171b4769430a98ad5c3395cfcd2ad8af827ab8dddce90c3cc02"
+      },
+      {
+        "path": "lothlorien_bp/scripts/great_mallorn_rules.js",
+        "sha256": "2102f033d3c54e9832daa92d3944fcafc648067dff0995c7a4d0360d638c7c7e"
+      },
+      {
+        "path": "lothlorien_bp/scripts/ground_cover.js",
+        "sha256": "9794ddc679b379303853a809c13d17e0fc8aec511c26a8fa51ec3e70c1f84b3b"
+      },
+      {
+        "path": "lothlorien_bp/scripts/healer.js",
+        "sha256": "27fdd984e7de9c9a47bc582142ddb88d78e5aa91714d64735c46ab7f05482b9a"
+      },
+      {
+        "path": "lothlorien_bp/scripts/healer_rules.js",
+        "sha256": "5a069c2ba3471311b42c96c9c0ce7c5ab18351be4b25fe10ed4580de445c95a7"
+      },
+      {
+        "path": "lothlorien_bp/scripts/home_furnish.js",
+        "sha256": "5aaad547a621fb6a2c6718e8e6050429e63ff951b5b6aa3ac0dac3b2abba1eee"
+      },
+      {
+        "path": "lothlorien_bp/scripts/leaf_fall.js",
+        "sha256": "9704d9d05d62f6b2a99ec80d0df6cde611ed90f36823419cc30e56e8699bcc5e"
+      },
+      {
+        "path": "lothlorien_bp/scripts/lembas.js",
+        "sha256": "b2bfef689299a6f86757c8b0a46a825847a7ae3e5fab1ce2c138f31bf7c6375b"
+      },
+      {
+        "path": "lothlorien_bp/scripts/loop_marker.js",
+        "sha256": "16f733769f0f2ae329a14ee619c6b98553ce60ef37b6f0a950da0d1654aca2b8"
+      },
+      {
+        "path": "lothlorien_bp/scripts/loremaster.js",
+        "sha256": "1873faed71c540fa5c97f643a6c18dfe20e8e86f139d3d2ad6057129a15574c1"
+      },
+      {
+        "path": "lothlorien_bp/scripts/main.js",
+        "sha256": "2fd52bf5ec845e1c86dbd9226927c93421fbbe4ef0463b998ce8e30027b2c795"
+      },
+      {
+        "path": "lothlorien_bp/scripts/mallorn_tree.js",
+        "sha256": "7d4be00d4466a590b83f188b26efeb2fc23335adb71cfd6be6f8d9d61f51dc18"
+      },
+      {
+        "path": "lothlorien_bp/scripts/messages.js",
+        "sha256": "e8253e5a1d83e77484e2599c23a2ccbe9b686e55d694d61d486ad0c845a59d4b"
+      },
+      {
+        "path": "lothlorien_bp/scripts/nectar.js",
+        "sha256": "ce39223dc22250ad68fcc40652b29d38c249ce3b45a19e7dea68a12304375ef3"
+      },
+      {
+        "path": "lothlorien_bp/scripts/nectar_rules.js",
+        "sha256": "55f74bf0e31719e8beb62e179efbe005bb0fe26597e79c73ceefa54c734499b1"
+      },
+      {
+        "path": "lothlorien_bp/scripts/phial.js",
+        "sha256": "f3f8337074bc0d333e2b357b54e4ebc7877dd1810fcbf4af14ff4a77358d4d64"
+      },
+      {
+        "path": "lothlorien_bp/scripts/planter_panels.js",
+        "sha256": "174fc800c3e92e0f8d45884e7409d08c4b6309bf19df83e280e0053d9aa42a9b"
+      },
+      {
+        "path": "lothlorien_bp/scripts/rail_connections.js",
+        "sha256": "062e03beedbf44ce559b9117e3bbe43733304d9a0f55042aef549164bb024e96"
+      },
+      {
+        "path": "lothlorien_bp/scripts/rail_mender.js",
+        "sha256": "974dc70416bc1b0830df2827e002358d2d164b701ccae117a9ec5961b2332540"
+      },
+      {
+        "path": "lothlorien_bp/scripts/rail_mender_rules.js",
+        "sha256": "6118bd6509889630e9fee4827198cbcf0f866137060e63fb20cdeb8d21443fe1"
+      },
+      {
+        "path": "lothlorien_bp/scripts/speed_probe.js",
+        "sha256": "7a47174be3159cfeed9afcffbb3f0e9a922f87eb9b8ccfa71491880d898e659b"
+      },
+      {
+        "path": "lothlorien_bp/scripts/speed_stats.js",
+        "sha256": "377eb46fe20cec8e72ab6975b6bcc9d013869991f7d886008df8bac6e7a5182c"
+      },
+      {
+        "path": "lothlorien_bp/scripts/support_motion.js",
+        "sha256": "cd79233bd9b62247b4dce961fd20b524e7f18ac4d40442496b0f29e98859c505"
+      },
+      {
+        "path": "lothlorien_bp/scripts/support_motion_service.js",
+        "sha256": "32addb6d0db9a94724f80aa8eca42d86c2fd02c502d7854f11f577d52a8a75a7"
+      },
+      {
+        "path": "lothlorien_bp/scripts/support_policies.js",
+        "sha256": "77306429404658e47f4a88dcd81c7837a6064f424d1c2a349407fe2f141d95f5"
+      },
+      {
+        "path": "lothlorien_bp/scripts/tick_rate.js",
+        "sha256": "04514ae451878f7d0a1f5796f6dbf347ebd840f91fbfe4629e12671936257fcc"
+      },
+      {
+        "path": "lothlorien_bp/scripts/tick_rate_rules.js",
+        "sha256": "2bd0529c862bc78b9ab9b41c93bd963574bb33d049eb7f6ca6b673e6b6ada1e0"
+      },
+      {
+        "path": "lothlorien_bp/scripts/tree_interaction_rules.js",
+        "sha256": "9d80ce2844049fbb9200d97c17cc4273a9de934969c5d5a099cff90ad1471bde"
+      },
+      {
+        "path": "lothlorien_bp/scripts/trees.js",
+        "sha256": "78bf819df0f7ebadde273c747f1500b3a5456b295f8e085e932fbc8cfa12184a"
+      },
+      {
+        "path": "lothlorien_bp/scripts/use_guard.js",
+        "sha256": "35953fdcbf6e77847bb661d5cbe664fdc753a36e2a239d7be1ad5954241f2a5c"
+      },
+      {
+        "path": "lothlorien_bp/scripts/village_bridge.js",
+        "sha256": "860988ea350d020ffde9ed8632e761ae786fa37276cfd0411966513aeae5036e"
+      },
+      {
+        "path": "lothlorien_bp/scripts/village_loop.js",
+        "sha256": "4c5f41343425e682c91858d7b0e3bfed6bdc425db618ea0ff330cf7aeb260734"
+      },
+      {
+        "path": "lothlorien_bp/scripts/village_planner.js",
+        "sha256": "b8897bc99b7f617cb7de7205d6c153496d461badf78b557aaa06b4ed729ed0be"
+      },
+      {
+        "path": "lothlorien_bp/scripts/village_repair.js",
+        "sha256": "e6493becc68a645cded62ce74912d5f6b52f6a1c48470b5b737dd6e628fb0de4"
+      },
+      {
+        "path": "lothlorien_bp/scripts/warden_replace.js",
+        "sha256": "cc1672789e219a1a280aaa716f3a95d4fa03c23c5cda52929245a3c287d711c0"
+      },
+      {
+        "path": "lothlorien_bp/scripts/warden_replace_rules.js",
+        "sha256": "7e1c608551efaf376bc0d989122caa12eb282024282bc8258371a4d2307a4ee8"
+      },
+      {
+        "path": "lothlorien_bp/scripts/worn_gifts.js",
+        "sha256": "8252fc1fd824aa582d7a4d729eba4aab6dde6bb9815561e258a5714dbdb823e7"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:root_shrine",
+    "id": "lothlorien:root_shrine/overview",
+    "text": "Find the shrine beneath a Great Mallorn. Its west-root chest and decorated pot supply treasure and provisions.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_shrine.mcstructure",
+        "sha256": "a2b6916b1180de3704bc276f82f23fb24bda7db003c03370fc3cc28d679c7b46"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/root_shrine_01.mcstructure",
+        "sha256": "aff8960bf7bab4681e0e151ccaa453acec5ebd151608609bbf67a9194e9b4494"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:flower_garden",
+    "id": "lothlorien:flower_garden/overview",
+    "text": "Find woodland flowers, a supply barrel and a place to gather plants.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/flower_garden_01.mcstructure",
+        "sha256": "6a4d0770d82d1973dabc42de8e5168311800d00ffb7d70148dfc496de63c9da6"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:memorial",
+    "id": "lothlorien:memorial/overview",
+    "text": "Explore a forest memorial and its surroundings.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/memorial.mcstructure",
+        "sha256": "89409ff1143ff1dbb0162ffe274f28f780c7de15f7bf9c3df939a9933b098f4d"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/memorial_leaf_01.mcstructure",
+        "sha256": "e2de3e8fed31b3e100582a25fed6262e4a4ce02b72daefe4bd435b4d25d3d9e5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:great_mallorn",
+    "id": "lothlorien:great_mallorn/overview",
+    "text": "Explore naturally generated Great Mallorns and their furnished flet platforms.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/banner_healer_east.mcstructure",
+        "sha256": "ff22b55884c4e7e21eb2edff269440e6a90d4e393d98941936128cba2b9ad788"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/banner_healer_north.mcstructure",
+        "sha256": "c38bde7ed4d98aefbf92cbcdb0a500b8054969fa9aa04c39a9723876b643b1ee"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/banner_healer_south.mcstructure",
+        "sha256": "28901ca5ae4780c5ca8e1dd4cbd5cc547172e604ab12a1532822c25d8d00890a"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/banner_healer_west.mcstructure",
+        "sha256": "c891d490dffae8e51e97a60fabb9cc3aefb93de689b132564fcf9e15be316dae"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/banner_lightblue_east.mcstructure",
+        "sha256": "274a7f55479667b59d70b35171827a3d0e2015ef804162abd5b31d2fa30ffc76"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/banner_lightblue_north.mcstructure",
+        "sha256": "fd679398ac340b747c09b260c61eb0695270b41c6df8f4deecb30a67ea9647d0"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/banner_lightblue_south.mcstructure",
+        "sha256": "947e48518a5350fbf875e5643d5216c9203aa99680045fa2a28c650e1e2b3c7b"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/banner_lightblue_west.mcstructure",
+        "sha256": "c5afb5f0ccf53f94937d46881fcff27bbb9d8bf514e830fb34c8c363afb281d7"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/banner_watch_east.mcstructure",
+        "sha256": "6ec20c1b35619198c696fb5fddd2261e8b7b6209b5f0def10c3f20f73e18c883"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/banner_watch_north.mcstructure",
+        "sha256": "4275a12d40a51df183be23b0b5291d8979ccef6baa2f9f0e7d0ebc0515284792"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/banner_watch_south.mcstructure",
+        "sha256": "b758242ac2a40bdf1cf8b06ca38e88c624574ebebcd37d651d724d08fe524b22"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/banner_watch_west.mcstructure",
+        "sha256": "feb685852591876216e63c2572ce06d04bb21f85318f1465a1f44fe1e58cdecf"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/banner_white_east.mcstructure",
+        "sha256": "f39695a25592c4b5b2839f62d407e57f675378e2014340405a314d2d7747aa7d"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/banner_white_north.mcstructure",
+        "sha256": "86d89da2bbb60f5bcfd911f6d7c8307ce06d1babca1b2ba65d7b1aa10094f74a"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/banner_white_south.mcstructure",
+        "sha256": "9de6d81bcd819dcc775514f6c2788b8d5be1b747495dd55288a9ea08b0b528d7"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/banner_white_west.mcstructure",
+        "sha256": "b2687b71eb6bf9cca1eaece2187dca1ede09ff60222913083cd7444d7befed29"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/cushion_11.mcstructure",
+        "sha256": "acb3b5fd2e44ec2b91e51dc75e1549b3e646bb24f4678068a36ba11d71d4e2d5"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/cushion_12.mcstructure",
+        "sha256": "36d4b157eb22cce816647a229dcb5b73845c3140935f4974203433572c4b037f"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/cushion_15.mcstructure",
+        "sha256": "d8fbbea944120be2ec429ad1c778fcaa66322ea006b61299021829f5fd6a1434"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/cushion_2.mcstructure",
+        "sha256": "a0e1498e5e7b76007e3644c9daee47ccbc135ddb6881906ae6e3974a1868d324"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/cushion_7.mcstructure",
+        "sha256": "4ec3bb6ebfcbc825339126d08c3a6810a89012f29d33783ac394e01e23213414"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/pot_allium.mcstructure",
+        "sha256": "3ad26b65649d5fa542b74ac4742838de2aff8c0d34f5429f45d7ebd0fc501c62"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/pot_athelas.mcstructure",
+        "sha256": "70370ef28477f15ac817c2a8a79f61bc25f6c620c5f1057e3426b5265717f50d"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/pot_azure_bluet.mcstructure",
+        "sha256": "30f3132e38e8e25d7dd89bd08f0503697b5c5d7eadfa09315b3659f5b37b97f9"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/pot_blue_orchid.mcstructure",
+        "sha256": "9b4f758cf2f37c9ac9fc69601d5aa71a2a6dc3c9d23fd4f485b905e1c8319163"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/pot_cornflower.mcstructure",
+        "sha256": "b7bc5cc0451acb8b0eaf58fe8af65c1216b990fc8359bc3af37be782f20543d8"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/pot_elanor.mcstructure",
+        "sha256": "50b9afaaa2548a98fbfed5f7b29f674db3cf9b1e870c7b05d5e3731e0c70bc80"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/pot_empty.mcstructure",
+        "sha256": "a55d542058852d47d5f2f8d3fc05e3c6d85510302ea11441817f9123f2a76538"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/pot_fern.mcstructure",
+        "sha256": "294e420dc7432f6fa1b51276f0b9d1355dbb23a707570d9e9e446b43e0cbfdea"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/pot_golden_fern.mcstructure",
+        "sha256": "076d7b47203cb57df1b32d477802cf02053a0a38beb5a0137881b3e85b1f52ec"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/pot_lily_of_the_valley.mcstructure",
+        "sha256": "fd947dcea8dff0264da50ca698fb6772f64fe8b0264aa08ca08237c1e85781bb"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/pot_niphredil.mcstructure",
+        "sha256": "b14dd433d5a213f62611fd3bbd6397c3a360dc65bada598c8992c1bff1b21293"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/pot_oxeye_daisy.mcstructure",
+        "sha256": "34debdaf16546215cd796dd16b3bcf440bd660dde816b804aaaff2c8e7daf6fb"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/pot_pink_tulip.mcstructure",
+        "sha256": "d0ccafad711cf9669042ed85ea17abf9d0beb24bdc1e112334ae62c7e291454e"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/furnish/pot_white_tulip.mcstructure",
+        "sha256": "f7253a1c6e5c53939f98a69b3cd0985c4305a456cb686607f3f2a09a74ac82d8"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/garden.mcstructure",
+        "sha256": "f3ec203e0b2f9444bcf499017dd663287683124ff954a12f7fa06dc3c0f5bc4d"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_round_05.mcstructure",
+        "sha256": "b7d0f044a7fe7340cd8e39fdd03344d697883b9d60b7ca61ef44efbcef9cd7ad"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_round_07.mcstructure",
+        "sha256": "42bbe2f40b9b5b6f81a279d8f6dafddc131796d005e7d62021c85e7e37e29927"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_02.mcstructure",
+        "sha256": "f4ee219ccac7d474793448ab0bdf02683e8f995ae306fe856b96a4ba56d9f8ba"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_03.mcstructure",
+        "sha256": "685a209ea5985457adfef9de5772e5a71b2bdb9da59741d088fb2e48f1ab7400"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_06.mcstructure",
+        "sha256": "17cdd1a2f5a50039201c19b6a246329bf779925be70b460bebf2549860ccf800"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_08.mcstructure",
+        "sha256": "d42f8ebb40e6e36f5036f53f6b16dbf751db6c820682d9fb50b72aa5df12b8da"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/small_spacer.mcstructure",
+        "sha256": "a0d22df783432d98cff24ee4febfc7c692ee884fd0775b362e30b73a25c6b594"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_round_05.mcstructure",
+        "sha256": "a34cd90b185a094fde415fd55c6b1d6883bd60c0f03e994b55c45e06386a0064"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_round_07.mcstructure",
+        "sha256": "55b3db9f77edd593acb8fbce848e9ca4189433bf6623500a7e0bc15df37538a8"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_02.mcstructure",
+        "sha256": "22b7bf30db8820ddf56b19f365a7c67b76279de0823e2cbdfafa250df73b8dd0"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_03.mcstructure",
+        "sha256": "f14b8b0f65f2b9cac176c3b7cdb735e951adaadf007a933af5f7bd9ed73aaf87"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_06.mcstructure",
+        "sha256": "da5ac5c4320b874f206de38c25f96549af015758dc2a122b6b1be79dac7da21a"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_08.mcstructure",
+        "sha256": "6b2a7dc4dae2b9e5c2f9b43843b8c442ae5537b35a0189e8944c7319112c372d"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_spacer.mcstructure",
+        "sha256": "05fdadf0aec4c158f0c16f121e4ba7bbb3774879c7f951831b005b71dd322380"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/mallorn_round_05.mcstructure",
+        "sha256": "7b84c9d5ce5dd0998bbfcb407e55b2aaf3e3a4745013c0ffec60538f9c74f3f2"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/mallorn_round_07.mcstructure",
+        "sha256": "f5e258eff57712c65e568a67d286d3f2698e85f6547adc61b58737acc6879628"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/mallorn_roundplain_02.mcstructure",
+        "sha256": "c6d3c7f72acd5e7bc2b8f1b522ea547296817a03d02d9cb15a25d97795ae2716"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/mallorn_roundplain_03.mcstructure",
+        "sha256": "0ae39be24e5915655d8413a90302d60361d18d66a0ee793e50396fdc11fe4275"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/mallorn_roundplain_06.mcstructure",
+        "sha256": "520939173b9ac63152d36531899145c3c0d51e246fe89f56514e215165bf51c9"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/mallorn_roundplain_08.mcstructure",
+        "sha256": "28aff41294a05a319bd0a23fb83b7ef52cbc567f67032711638d76b138f9d3a5"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/balcony_braced.mcstructure",
+        "sha256": "364f377f36f30f91bf2869f9211b1e0eb6597a93114c0b116cd6b055802e87dc"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/central_mallorn_01.mcstructure",
+        "sha256": "c694b74ce2f58224cfc0c7c268fd5e3876e9080e1f9cf5526aa15e173e865839"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_node_a_north_bridge_7.mcstructure",
+        "sha256": "07a0f11389f0843ffc67a584fb8a05ebca1bdbd58db98468b1ddb6da0ed16ee5"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_node_a_south_bridge_9.mcstructure",
+        "sha256": "67e897733bbe01d4e476ed8da720bad68102cde06b56e186b2795738103f2303"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_node_b_east_bridge_13.mcstructure",
+        "sha256": "dfb13813dbb5c7837648066e1fe5ab0d380e52a001517d5de0f7191381ae1bd3"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_node_b_south_bridge_15.mcstructure",
+        "sha256": "38add9557807115b5becdaaae138b8ed70ae45314ef92e27739753bb39114d4a"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_node_b_west_bridge_11.mcstructure",
+        "sha256": "93c49686aa34bb4a893c99e6771f38e46f76e79b54b47444ab36bd3ca203a24d"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_node_c_east_bridge_9.mcstructure",
+        "sha256": "d967a64a2b63a62db05ec68555ec799bd7542274469d79f23b3c291657b6e01f"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_node_c_north_bridge_7.mcstructure",
+        "sha256": "8da53ef3974069e80a351933bfc3e1180b4e285b53eff8a983b93c1ddac04a2e"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_node_c_south_bridge_11.mcstructure",
+        "sha256": "a8470185f25c4b8c1640ba1d4840a5fbc35899eb612faa88e4f9efff71325cb0"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_node_c_west_bridge_13.mcstructure",
+        "sha256": "a72355ec25949d639f2c9e004a2732f4a8afb8e73ca22aee2242bc363db9a4f8"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_node_d_east_bridge_15.mcstructure",
+        "sha256": "2f24b4b84564ce00b2762ed9c5f439a9883aefe1856a303e123b7e1da64b74e0"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_node_d_north_bridge_9.mcstructure",
+        "sha256": "cc9f80eebb35119cec075ce1363e70948a6adde5065597b8d8cd1e2cad5d8cf8"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_node_d_west_bridge_7.mcstructure",
+        "sha256": "6ae37bcb0614062243070746b832e7654ba455d842e61de4e0e5cfd45a879745"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_node_e_east_bridge_13.mcstructure",
+        "sha256": "79e972a1dc7eea2f2a5c2b2d5de4f2601b49ccb76055cd2693e0a382e77a0497"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_node_e_north_bridge_11.mcstructure",
+        "sha256": "5bcf08e8e30e4ebb329118ffeaad540b40adac40ac99808b71fd307931ea2643"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_node_f_east_bridge_7.mcstructure",
+        "sha256": "09d51013f7e08f6af6e70f408a2179e6c8ca711b4a1af6c9d166bf936239d078"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_node_f_south_bridge_9.mcstructure",
+        "sha256": "c019383e4ee18d4d7ba2cfe9be9c03c05c284045b84920c0947e21cde8f3b999"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_node_f_west_bridge_15.mcstructure",
+        "sha256": "8b05ab2af850c78f60885554a1f5bf70110437106b0873cdfd71dea959cfca7e"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_a_south_bridge_11.mcstructure",
+        "sha256": "54b2ab581c13b2037f242966f5af21f7ee4b60407d6d90b318eea203695d29b0"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_a_west_bridge_13.mcstructure",
+        "sha256": "203e77592dd4690568a38d8dcb193067679a5682486473c5c0240fabcc3081b5"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_b_east_bridge_15.mcstructure",
+        "sha256": "64d521ebbd557fbc379faacb841b1a027f2cf0669e2aac16a8d91e27aa5d70d8"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_b_north_bridge_7.mcstructure",
+        "sha256": "84d603804dfc0a9d79cfe06381adebe30ee069a8f0b916fd79f597e61404e27c"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_c_north_bridge_9.mcstructure",
+        "sha256": "6a3d644065683c4fe076e357317f5d9738043a1437a1d76e4e658bf520eed8cd"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_c_south_bridge_11.mcstructure",
+        "sha256": "8f9f9df3961f94204f8001fb0d5ec30bc66df54b8f8ed9f88672a822c4b3d024"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/crown_central_a.mcstructure",
+        "sha256": "a6453986f0180a2ded82245019f056f58dccd6f55d86d718670ef7d3ddd4a572"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/crown_central_b.mcstructure",
+        "sha256": "056dc0c217010cd0a16a32f48ed7014242db786eb5c8c309f24d676eedd480d3"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/crown_large.mcstructure",
+        "sha256": "cfd12ad7f7f01cd280cf98a4edb8e206f2ce7207163f77ca23b665c82db53bbe"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/crown_medium.mcstructure",
+        "sha256": "b0a651caed2dff283dbad6c729a06fea11666f16821a40e70de224aa51e62229"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/crown_nub.mcstructure",
+        "sha256": "e923d840a04029eecf7592480487ea149e0311d675df2e7324bf17c5a2876169"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/crown_small.mcstructure",
+        "sha256": "f774c6273549b4682cfb2665ae9c871e7ad1ca9091cf49b515e8354c643b803c"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/crown_tiny.mcstructure",
+        "sha256": "ec82c037bb1d57afa1356f623c3b7b5647f047357f4bf003fae444b04f8720b4"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/lookout_01.mcstructure",
+        "sha256": "2476b7e5c97012a532b78286f47d5cd3a38a4f90f2235f8a2e6269750660d4af"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/village/railing_end.mcstructure",
+        "sha256": "da548628a00772238a7dbd30298a8c1535b3227dbc69f1cdf1e126f361499f45"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:root_shrine",
+    "id": "lothlorien:root_shrine/pot",
+    "text": "The decorated pot contains one Bottle of Morning Dew. The chest is concealed in the west root beside the shrine.",
+    "evidence": [
+      {
+        "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_shrine.mcstructure",
+        "sha256": "a2b6916b1180de3704bc276f82f23fb24bda7db003c03370fc3cc28d679c7b46"
+      },
+      {
+        "path": "lothlorien_bp/structures/lothlorien/root_shrine_01.mcstructure",
+        "sha256": "aff8960bf7bab4681e0e151ccaa453acec5ebd151608609bbf67a9194e9b4494"
+      },
+      {
+        "path": "tools/root_shrine.mjs",
+        "sha256": "f420c41dc20af1597c4dec2142313733e19471745e9bdb6400b6efda73ea4ee5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:harmony",
+    "id": "lothlorien:harmony/village-territory",
+    "text": "Village decks and the ground beside or beneath them count as Lothlorien for Harmony, including village portions outside the forest biome.",
+    "evidence": [
+      {
+        "path": "lothlorien_bp/scripts/main.js",
+        "sha256": "2fd52bf5ec845e1c86dbd9226927c93421fbbe4ef0463b998ce8e30027b2c795"
+      },
+      {
+        "path": "lothlorien_bp/scripts/loop_marker.js",
+        "sha256": "16f733769f0f2ae329a14ee619c6b98553ce60ef37b6f0a950da0d1654aca2b8"
+      },
+      {
+        "path": "lothlorien_bp/scripts/village_area.js",
+        "sha256": "89e82852d6003619c63e665d5989dfa0897a1f3dc82fd72fc4b7706933bd5979"
+      },
+      {
+        "path": "lothlorien_bp/scripts/village_planner.js",
+        "sha256": "b8897bc99b7f617cb7de7205d6c153496d461badf78b557aaa06b4ed729ed0be"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:renown",
+    "id": "lothlorien:renown/village-territory",
+    "text": "Village decks and the ground beside or beneath them count as Lothlorien for Renown, including village portions outside the forest biome.",
+    "evidence": [
+      {
+        "path": "lothlorien_bp/scripts/main.js",
+        "sha256": "2fd52bf5ec845e1c86dbd9226927c93421fbbe4ef0463b998ce8e30027b2c795"
+      },
+      {
+        "path": "lothlorien_bp/scripts/loop_marker.js",
+        "sha256": "16f733769f0f2ae329a14ee619c6b98553ce60ef37b6f0a950da0d1654aca2b8"
+      },
+      {
+        "path": "lothlorien_bp/scripts/village_area.js",
+        "sha256": "89e82852d6003619c63e665d5989dfa0897a1f3dc82fd72fc4b7706933bd5979"
+      },
+      {
+        "path": "lothlorien_bp/scripts/village_planner.js",
+        "sha256": "b8897bc99b7f617cb7de7205d6c153496d461badf78b557aaa06b4ed729ed0be"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:empty_miruvor_skin",
+    "id": "lothlorien:empty_miruvor_skin/use",
+    "text": "Fill it with the Miruvor crafting recipe. The container is returned after drinking the last sip.",
+    "evidence": [
+      {
+        "path": "lothlorien_bp/items/empty_miruvor_skin.json",
+        "sha256": "3b7fad28b6dce486867c29ebce101c372d821bc9941605d8d8c6fd2bb71ff9f5"
+      },
+      {
+        "path": "lothlorien_bp/recipes/miruvor.json",
+        "sha256": "8fee27617379ee54cef85cf4a8cf50d6ac1c700bbfa95fe5a2f52be0fa998b70"
+      },
+      {
+        "path": "lothlorien_bp/scripts/athelas.js",
+        "sha256": "b63d3a44bd3f47d6907a44825d3a23025fd120863e1c986aa5138d3879c5a097"
+      }
+    ]
+  }
+]

@@ -32,6 +32,15 @@ for (const [name, bottles] of [['miruvor', 4], ['elven_rope', 1], ['star_canopy'
 const miruvorRecipe = read('recipes/miruvor.json')['minecraft:recipe_shaped'];
 assert.deepEqual(miruvorRecipe.pattern, ['ESE', 'SHS', 'NLN']);
 assert.equal(miruvorRecipe.key.S.item, 'lothlorien:athelas_salve');
+assert.equal(miruvorRecipe.key.L.item, 'lothlorien:empty_miruvor_skin');
+const emptyRecipe = read('recipes/empty_miruvor_skin.json')['minecraft:recipe_shaped'];
+assert.equal(emptyRecipe.key.L.item, 'minecraft:leather');
+assert.equal(emptyRecipe.result.item, 'lothlorien:empty_miruvor_skin');
+assert.equal(components('empty_miruvor_skin')['minecraft:durability'], undefined);
+assert.equal(components('empty_miruvor_skin')['minecraft:max_stack_size'], 16);
+const canopyRecipe = read('recipes/star_canopy.json')['minecraft:recipe_shaped'];
+assert.equal(canopyRecipe.key.D.item, 'lothlorien:morning_dew');
+assert.deepEqual(canopyRecipe.unlock, [{item: 'lothlorien:morning_dew'}]);
 console.log('ok   food/remedy native data, stations, balance and intentional policies');
 
 let handler, deeds = 0;

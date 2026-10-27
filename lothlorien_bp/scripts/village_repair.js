@@ -490,7 +490,8 @@ export const planForestFloor = (at, rect, trunks, ropeFoot, seed, o) => drive(pl
 // All repairs of a village (the planner calls this after the links): -> [{ kind: "rope", x, z, buried, hung, cells: [], rails: [], lanterns: [], blocks }]
 // Jigsaw may leave an exit unfilled when every child box collides, including above a bridge.
 // Close only unused flat three-wide mouths: rail shoulders, a walkable deck behind,
-// and no onward surface (check the lower layer too, so an arch or stair remains open).
+// and no onward surface. A rising arch starts with a bottom slab one block above
+// this deck cell; falling half-steps use the layer below. Keep both joins open.
 export function* closeUnusedExitsGen(at, rect, levels) {
   const out = [], plank = n => /^lothlorien:mallorn_(heartwood_)?planks$/.test(n ?? "");
   const surface = n => plank(n) || /^lothlorien:mallorn_(heartwood_)?(slab|stairs)$/.test(n ?? "");
@@ -507,7 +508,7 @@ export function* closeUnusedExitsGen(at, rect, levels) {
           const a=x+px*s,b=z+pz*s;
           return plank(at(a,y,b)) && air(at(a,y+1,b)) && air(at(a,y+2,b))
             && plank(at(a-dx,y,b-dz)) && air(at(a-dx,y+1,b-dz))
-            && at(a+dx,y,b+dz) !== undefined && !surface(at(a+dx,y,b+dz)) && !surface(at(a+dx,y-1,b+dz));
+            && at(a+dx,y,b+dz) !== undefined && ![-1,0,1].some(h => surface(at(a+dx,y+h,b+dz)));
         })) continue;
         const rails = [-1,0,1].map(s => ({x:x+px*s,y:y+1,z:z+pz*s}));
         const states = Object.fromEntries(LINKS.map(l => [l.state, l.dx * px + l.dz * pz !== 0]));

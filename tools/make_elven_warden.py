@@ -540,7 +540,7 @@ def client_entity():
             },
             "render_controllers": ["controller.render.lothlorien.elven_warden"],
             "enable_attachables": True,
-            "spawn_egg": {"base_color": "#6f7f66", "overlay_color": "#c9d1d6"},
+            "spawn_egg": {"texture": "lothlorien:spawn_egg_elven_warden"},  # icon drawn by make_spawn_eggs.py
         }},
     }
 

@@ -153,17 +153,31 @@ const climbing = new Map();
 const ENTRY_TICKS = 4; // no pass-through contact callback for a collision-free rope
 let climbingTimer;
 
-// The API has no effect-source token, so ownership is told by duration: our grants last at most CLIMB.effectTicks,
-// a potion's (slow falling) or a shulker bullet's levitation lasts longer and is left alone.
-const ours = (player, effect) => player.getEffect(effect)?.duration <= CLIMB.effectTicks;
-const foreign = (player, effect) => player.getEffect(effect)?.duration > CLIMB.effectTicks;
+// Track our grants as well as their short duration: a potion's last four ticks
+// must not be mistaken for a rope grant. Longer replacement effects stay intact.
+const grantedEffects = new Map();
+const ours = (player, effect) => grantedEffects.get(player.id)?.has(effect) && player.getEffect(effect)?.duration <= CLIMB.effectTicks;
+function foreign(player, effect) {
+  const active = player.getEffect(effect);
+  if (active?.duration > CLIMB.effectTicks) grantedEffects.get(player.id)?.delete(effect);
+  return !!active && !ours(player, effect);
+}
+function grant(player, effect, amplifier) {
+  player.addEffect(effect, CLIMB.effectTicks, { amplifier, showParticles: false });
+  if (!grantedEffects.has(player.id)) grantedEffects.set(player.id, new Set());
+  grantedEffects.get(player.id).add(effect);
+}
 function clearOurs(player, ...effects) {
-  for (const effect of effects) if (ours(player, effect)) player.removeEffect(effect);
+  for (const effect of effects) {
+    if (ours(player, effect)) player.removeEffect(effect);
+    grantedEffects.get(player.id)?.delete(effect);
+  }
 }
 
 function leaveRope(id, player) {
   climbing.delete(id);
   if (player) clearOurs(player, "levitation", "slow_falling");
+  grantedEffects.delete(id);
 }
 
 function syncClimbingTimer() {
@@ -179,8 +193,9 @@ function updateClimber(player) {
     }
     const y = player.location.y;
     const last = climbing.get(player.id);
-    // A potion's or shulker's effect has priority: do not touch it.
-    if (foreign(player, "levitation") || foreign(player, "slow_falling")) {
+    // External levitation controls vertical motion. Slow Falling can coexist
+    // with rope climbing and crouching, and must retain its original duration.
+    if (foreign(player, "levitation")) {
       climbing.set(player.id, { player, v: null, y });
       return;
     }
@@ -205,12 +220,12 @@ function updateClimber(player) {
       clearOurs(player, "slow_falling");
     } else {
       // sliding down: slow falling, braked by a tick of levitation when faster than a ladder
-      player.addEffect("slow_falling", CLIMB.effectTicks, { amplifier: 0, showParticles: false });
+      if (!foreign(player, "slow_falling")) grant(player, "slow_falling", 0);
       if (last && brakes(y - last.y, CLIMB.downSpeed / 20)) level = 0;
     }
     climbing.set(player.id, { player, v, y });
     clearOurs(player, "levitation"); // a lower level would not replace a higher one still running
-    if (level !== undefined) player.addEffect("levitation", CLIMB.effectTicks, { amplifier: level, showParticles: false });
+    if (level !== undefined) grant(player, "levitation", level);
   } catch {
     leaveRope(player.id); // player gone this tick
   }

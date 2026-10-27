@@ -53,6 +53,9 @@
     "lothlorien:miruvor": {
       "textures": "textures/items/miruvor"
     },
+    "lothlorien:empty_miruvor_skin": {
+      "textures": "textures/items/empty_miruvor_skin"
+    },
     "lothlorien:venison_raw": {
       "textures": "textures/items/venison_raw"
     },
@@ -124,6 +127,36 @@
     },
     "lothlorien:swan_meat_cooked": {
       "textures": "textures/items/swan_meat_cooked"
+    },
+    "lothlorien:spawn_egg_deer": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_deer"
+    },
+    "lothlorien:spawn_egg_white_deer": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_white_deer"
+    },
+    "lothlorien:spawn_egg_unicorn": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_unicorn"
+    },
+    "lothlorien:spawn_egg_swan": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_swan"
+    },
+    "lothlorien:spawn_egg_songbird": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_songbird"
+    },
+    "lothlorien:spawn_egg_squirrel": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_squirrel"
+    },
+    "lothlorien:spawn_egg_butterfly": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_butterfly"
+    },
+    "lothlorien:spawn_egg_firefly": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_firefly"
+    },
+    "lothlorien:spawn_egg_elf": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_elf"
+    },
+    "lothlorien:spawn_egg_elven_warden": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_elven_warden"
     }
   }
 }

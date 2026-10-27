@@ -1,0 +1,210 @@
+[
+  {
+    "featureId": "lothlorien:elven_rope",
+    "id": "lothlorien:elven_rope/status-icons",
+    "text": "Climbing or descending rope can show Levitation or Slow Falling status icons while you use it.",
+    "evidence": [
+      {
+        "path": "lothlorien_bp/blocks/elven_rope.json",
+        "sha256": "4aa03f374df712c8c621b7a22a2b755db0a5984dabc52f8959474a31b8aa8df7"
+      },
+      {
+        "path": "lothlorien_bp/blocks/elven_rope_hanging.json",
+        "sha256": "928ad1f6c763a0a920e5629958211fd2e3eff9540d8264be03cfdb64820bfbb4"
+      },
+      {
+        "path": "lothlorien_bp/items/elven_rope.json",
+        "sha256": "9ed7629ae84b03e849cc2b8f3eb0f3855f6307b7cb7068f55bae0b4ef12ef286"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elven_rope.js",
+        "sha256": "bb3102904e878368a1155a901c9c1c35480435868941d80172c2d570ed439a72"
+      },
+      {
+        "path": "lothlorien_bp/scripts/elven_rope_rules.js",
+        "sha256": "f4974feba45f39c0692fadda5c8e2ddc30076cb31c98a10ee21fba67bf5714f0"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:unicorn",
+    "id": "lothlorien:unicorn/fall-damage",
+    "text": "A unicorn takes ordinary fall damage. Choose a safe route down.",
+    "evidence": [
+      {
+        "path": "docs/parity/CREATURES.md",
+        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+      },
+      {
+        "path": "lothlorien_bp/entities/unicorn.json",
+        "sha256": "5e9e62e5f835e3221dc24a95280e588c94fa5944745941234774a46fe17112ae"
+      },
+      {
+        "path": "lothlorien_bp/scripts/unicorn.js",
+        "sha256": "1bb7265c1351051542d5a5931884d52b3510495b0440710ffc3d82829ac14714"
+      },
+      {
+        "path": "lothlorien_bp/scripts/unicorn_rules.js",
+        "sha256": "8ecabaf5f6d9f72427389889935682928a4445cd72d365087a1d950b7df5abaf"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_blossom",
+    "id": "lothlorien:mallorn_blossom/bone-meal",
+    "text": "Bone meal does not add segments to blossoms. Add the matching blossom item to fill the patch.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_blossom.json",
+        "sha256": "004d84de1eacadf72a9fc1fff95dda4a88abc9ad1d998bf735827627ae2e6a41"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_blossom.json",
+        "sha256": "4e399f576fe101ddbe9ce4d3f9c4f439828a9875e217cb832be43c76581d1672"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_leaf_carpet",
+    "id": "lothlorien:mallorn_leaf_carpet/bone-meal",
+    "text": "Bone meal has no effect on leaf litter. Add the matching item to fill the patch.",
+    "evidence": [
+      {
+        "path": "docs/parity/BLOCKS_ITEMS.md",
+        "sha256": "95fe9b7c0913666c6e163d2c01c49bdc0f13a476bf2888ce1ce3830385e1ad49"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_leaf_carpet.json",
+        "sha256": "b5f778b5522a2072bd954350f7c3d67501cbdab3af03e0a7f2763a8559dd15e9"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_leaf_carpet.json",
+        "sha256": "bfba5d314dabe4e32ffb7130261c2eb906455db6daab26c1ee1d406f7eb09490"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_log",
+    "id": "lothlorien:mallorn_log/stripping-animation",
+    "text": "Stripping works and wears the axe, but the usual axe swing animation does not play.",
+    "evidence": [
+      {
+        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
+        "sha256": "afc78133e21db4708b2ce4160f5e463f7052c0cd0c3409a0007016a8c6a2cf7f"
+      },
+      {
+        "path": "lothlorien_bp/scripts/blocks.js",
+        "sha256": "fa99c0091796be5c10de7e43d0dda08d36854182bea4181df1ee02caef0176a5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_wood",
+    "id": "lothlorien:mallorn_wood/stripping-animation",
+    "text": "Stripping works and wears the axe, but the usual axe swing animation does not play.",
+    "evidence": [
+      {
+        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
+        "sha256": "afc78133e21db4708b2ce4160f5e463f7052c0cd0c3409a0007016a8c6a2cf7f"
+      },
+      {
+        "path": "lothlorien_bp/scripts/blocks.js",
+        "sha256": "fa99c0091796be5c10de7e43d0dda08d36854182bea4181df1ee02caef0176a5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_fence_gate",
+    "id": "lothlorien:mallorn_fence_gate/wall-connection",
+    "text": "The gate lowers beside a cobblestone wall, but the wall does not draw its arm toward the gate.",
+    "evidence": [
+      {
+        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
+        "sha256": "afc78133e21db4708b2ce4160f5e463f7052c0cd0c3409a0007016a8c6a2cf7f"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_fence_gate.json",
+        "sha256": "fc4c2c24ebc8c1872f6317b96d3223aa64741586369754f7867c873ce1951ed2"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_fence_gate",
+    "id": "lothlorien:mallorn_heartwood_fence_gate/wall-connection",
+    "text": "The gate lowers beside a cobblestone wall, but the wall does not draw its arm toward the gate.",
+    "evidence": [
+      {
+        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
+        "sha256": "afc78133e21db4708b2ce4160f5e463f7052c0cd0c3409a0007016a8c6a2cf7f"
+      },
+      {
+        "path": "lothlorien_bp/blocks/mallorn_heartwood_fence_gate.json",
+        "sha256": "032abecbe9ddaa27bbed69b01445ad142608c49825a39b073be58a466c7ca11d"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_boat",
+    "id": "lothlorien:mallorn_boat/dispenser-clearance",
+    "text": "The long hull can rise over the dispenser when dispensed. Place the boat by hand to avoid that dispenser placement.",
+    "evidence": [
+      {
+        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
+        "sha256": "afc78133e21db4708b2ce4160f5e463f7052c0cd0c3409a0007016a8c6a2cf7f"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_boat.json",
+        "sha256": "c165ff29788c3a7d16f7dbe268491d63d0788f22287ac0e008654e1f285b7192"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_chest_boat",
+    "id": "lothlorien:mallorn_chest_boat/dispenser-clearance",
+    "text": "The long hull can rise over the dispenser when dispensed. Place the boat by hand to avoid that dispenser placement.",
+    "evidence": [
+      {
+        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
+        "sha256": "afc78133e21db4708b2ce4160f5e463f7052c0cd0c3409a0007016a8c6a2cf7f"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_chest_boat.json",
+        "sha256": "88c47b7e9d9219055a5e0d534e89f619f68a5be32b1d24aa0cac5586fbcee3d5"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_boat",
+    "id": "lothlorien:mallorn_heartwood_boat/dispenser-clearance",
+    "text": "The long hull can rise over the dispenser when dispensed. Place the boat by hand to avoid that dispenser placement.",
+    "evidence": [
+      {
+        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
+        "sha256": "afc78133e21db4708b2ce4160f5e463f7052c0cd0c3409a0007016a8c6a2cf7f"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_heartwood_boat.json",
+        "sha256": "a2b958edd00ce9ff926e0b02a80587269b1c49a5884e4e846055eeb8ea9903c7"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_chest_boat",
+    "id": "lothlorien:mallorn_heartwood_chest_boat/dispenser-clearance",
+    "text": "The long hull can rise over the dispenser when dispensed. Place the boat by hand to avoid that dispenser placement.",
+    "evidence": [
+      {
+        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
+        "sha256": "afc78133e21db4708b2ce4160f5e463f7052c0cd0c3409a0007016a8c6a2cf7f"
+      },
+      {
+        "path": "lothlorien_bp/items/mallorn_heartwood_chest_boat.json",
+        "sha256": "5a6fe67e36b29f549205a80f863cbef1fe1941969158b722db8e37ec80373d48"
+      }
+    ]
+  }
+]

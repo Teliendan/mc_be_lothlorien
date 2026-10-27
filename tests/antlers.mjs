@@ -37,6 +37,7 @@ test("antler support: opposite side of the clicked face; air and liquid drop it,
 test("antler drop: only on ground blocks, never on litter", () => {
   for (const d of ["north", "east", "south", "west"]) {
     const f = readJson(`../lothlorien_bp/features/deer_antler_${d}_feature.json`)["minecraft:single_block_feature"];
+    assert.equal(f.places_block.states["minecraft:block_face"], "up", "natural antlers lie on the floor");
     assert.deepEqual(f.may_replace, ["minecraft:air"]);
     const bottom = f.may_attach_to.bottom.map((x) => x.name);
     assert.ok(bottom.includes("minecraft:grass_block"));
@@ -44,11 +45,13 @@ test("antler drop: only on ground blocks, never on litter", () => {
   }
 });
 
-test("antler drop: every feature it names exists; about 1 in 16 chunks, findable on a walk", () => {
+test("antler drop: one solo placement attempt per site; about 1 in 16 chunks", () => {
   const f = (n) => readJson(`../lothlorien_bp/features/${n}.json`);
   const rule = readJson("../lothlorien_bp/feature_rules/deer_antler_drop_feature_rules.json")["minecraft:feature_rules"];
   assert.equal(rule.description.places_feature, "lothlorien:deer_antler_drop_feature");
   const scatter = f("deer_antler_drop_feature")["minecraft:scatter_feature"];
+  assert.equal(rule.distribution.iterations, 1, "one site attempt per selected chunk");
+  assert.equal(scatter.iterations, 1, "one antler attempt per site, never a batch");
   const weighted = f(scatter.places_feature.split(":")[1])["minecraft:weighted_random_feature"];
   for (const [name] of weighted.features) assert.ok(f(name.split(":")[1])["minecraft:single_block_feature"], name);
   // 1/64 was too rare to find (owner, 2026-10-02: none seen in several forests; the save had one site per ~50 chunks)

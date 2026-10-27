@@ -42,6 +42,7 @@ there is no need to run both verify and deploy without an intervening reason.
 | Biome depth / plants / crops / wood | `biome`, `flora`, `crops`, `wood` |
 | Giant tree generation and nut growth | `giant-trees` |
 | Harmony, Renown, shops, healing | `harmony`, `renown`, `trade`, `healer` |
+| Village recognition during loading / Harmony outside the biome | `village-area`, `script-glue`, `harmony`, `renown` |
 | Animals and transport | `deer`, `antlers`, `white-deer`, `swan-squirrel`, `unicorn`, `animal-home`, `small-flyers` |
 | Mallorn boats and chest boats | `boats` (native source contracts and item/recipe/drop bindings; runtime cases in [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md)) |
 | Nectar / dew / rope / lamps | `nectar-dew`, `rope`, `lamps` |

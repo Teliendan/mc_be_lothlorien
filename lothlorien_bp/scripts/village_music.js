@@ -5,12 +5,12 @@ import { CHECK_TICKS, FADE_IN, FADE_OUT, REST_ID, VOLUME, step } from "./village
 
 const states = new Map();
 
-// inVillage(x, z) -> inside a planned village area (village_planner.js villageAreaTest)
+// inVillage(dimension, location) -> inside a recognized village area (village_area.js inVillageArea)
 export function startVillageMusic(inVillage) {
   world.afterEvents.playerLeave.subscribe(({ playerId }) => states.delete(playerId));
   system.runInterval(() => {
     for (const player of world.getPlayers()) {
-      const inside = player.dimension.id === "minecraft:overworld" && inVillage(player.location.x, player.location.z);
+      const inside = inVillage(player.dimension, player.location);
       const { state, actions } = step(states.get(player.id), inside, system.currentTick);
       states.set(player.id, state);
       for (const action of actions) {

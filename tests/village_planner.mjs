@@ -575,7 +575,7 @@ test("loop planner: the owner's real village V2 (dump of world TT) gets the plaz
   assert.ok(PL.chunksIn(area) < 200, `V2 hull + 32 is ${PL.chunksIn(area)} chunks`);
 });
 
-test("village area counts as Lothlorien: planned rects from the world property, re-parsed only when it changes; main.js and loop_marker share the key", () => {
+test("village area counts as Lothlorien: planned rects from the world property, re-parsed only when it changes; territory reader and planner share the key", () => {
   let raw = JSON.stringify([{ x0: 0, x1: 47, z0: 16, z1: 63 }]), reads = 0;
   const inside = PL.villageAreaTest(() => { reads++; return raw; });
   assert.equal(inside(10.7, 20.2), true); assert.equal(inside(-0.5, 20), false); assert.equal(inside(47.9, 63.9), true); assert.equal(inside(48, 20), false);
