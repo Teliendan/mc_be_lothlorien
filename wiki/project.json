@@ -783,6 +783,90 @@
     "lothlorien:mallorn_slab": "Single slab",
     "lothlorien:western_corn": "Growing corn crop"
   },
+  "phrasebooks": [
+    {
+      "contexts": {
+        "combat_start": {
+          "label": "Warden going into battle",
+          "speakers": [
+            "lothlorien:elven_warden"
+          ]
+        },
+        "completion": {
+          "label": "Accepting a finished task",
+          "speakers": [
+            "lothlorien:elf"
+          ]
+        },
+        "explain": {
+          "label": "Loremaster explaining a lesson or request",
+          "speakers": [
+            "lothlorien:elf"
+          ]
+        },
+        "healing": {
+          "label": "Healer giving a blessing",
+          "speakers": [
+            "lothlorien:elf"
+          ]
+        },
+        "opening_neutral": {
+          "label": "Greeting a visitor",
+          "speakers": [
+            "lothlorien:elf",
+            "lothlorien:elven_warden"
+          ]
+        },
+        "opening_warm": {
+          "label": "Greeting a friend",
+          "speakers": [
+            "lothlorien:elf",
+            "lothlorien:elven_warden"
+          ]
+        },
+        "refuse_speak": {
+          "label": "Refusing a shunned visitor",
+          "speakers": [
+            "lothlorien:elf",
+            "lothlorien:elven_warden"
+          ]
+        },
+        "task_taken": {
+          "label": "Loremaster, when you take on a task",
+          "speakers": [
+            "lothlorien:elf"
+          ]
+        },
+        "trade_positive": {
+          "label": "Accepting a trade",
+          "speakers": [
+            "lothlorien:elf"
+          ]
+        }
+      },
+      "credits": [
+        {
+          "author": "Paul Strack",
+          "name": "Eldamo: An Elvish Lexicon",
+          "site": "eldamo.org",
+          "text": "Word meanings, Tolkien citations and the Neo-Sindarin grammar model behind every phrase."
+        },
+        {
+          "author": "J.R.R. Tolkien",
+          "name": "The Elvish languages",
+          "text": "Attested words and phrases from The Lord of the Rings, Unfinished Tales, The Letters of J.R.R. Tolkien, Sauron Defeated, The War of the Jewels, Parma Eldalamberon 17 and Vinyar Tengwar 44, as cited by Eldamo."
+        }
+      ],
+      "id": "lothlorien:sindarin",
+      "language": "Sindarin",
+      "note": "Elves speak these lines aloud. Translations follow published scholarship on Tolkien's Elvish; the Neo-Sindarin lines are modern compositions and have not been reviewed by a Sindarin specialist.",
+      "soundDefinitions": "lothlorien_rp/sounds/sound_definitions.json",
+      "soundEventPrefix": "lothlorien.voice.",
+      "source": "tools/audio/sindarin_voice/final/lines.json",
+      "title": "Sindarin phrasebook",
+      "translationLanguage": "English"
+    }
+  ],
   "resourcePacks": [
     "lothlorien_rp"
   ],

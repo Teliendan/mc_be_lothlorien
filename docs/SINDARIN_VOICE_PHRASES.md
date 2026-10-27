@@ -8,6 +8,17 @@ triggers: [`SINDARIN_VOICE_EVENTS.md`](SINDARIN_VOICE_EVENTS.md).
 Ordinary, meaningful elven speech replaces villager murmurs. Lines are short.
 Wardens are elven guards, not the vanilla sculk Warden.
 
+## Player wiki
+
+The wiki's Sindarin phrasebook is exported from
+`tools/audio/sindarin_voice/final/lines.json` (text, English, `attestation`, pools)
+plus the `phrasebooks` block in `wiki/project.json` (context labels, speakers,
+credits). When a line is recorded, give it `attestation` (`attested` = T,
+`excerpt` = E, `neo` = N below) and, for a new pool, a context label; the export
+refuses otherwise. Lines that do not ship in `sound_definitions.json` (the
+vocabulary bank) are not exported. Credits: Eldamo (Paul Strack) and the Tolkien
+works it cites; update them in `wiki/project.json` when a new source is used.
+
 ## Labels
 
 - **T**: Tolkien-attested wording, including single attested words and

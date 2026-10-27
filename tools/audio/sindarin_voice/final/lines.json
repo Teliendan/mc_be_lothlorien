@@ -6,6 +6,7 @@
       "file": "mae_govannen",
       "sindarin": "Mae govannen.",
       "english": "Well met.",
+      "attestation": "attested",
       "pools": [
         "opening_neutral"
       ],
@@ -30,6 +31,7 @@
       "file": "suilad",
       "sindarin": "Suilad.",
       "english": "Greetings.",
+      "attestation": "neo",
       "pools": [
         "opening_neutral"
       ],
@@ -54,6 +56,7 @@
       "file": "tolo",
       "sindarin": "Tolo.",
       "english": "Come.",
+      "attestation": "attested",
       "pools": [
         "opening_neutral"
       ],
@@ -78,6 +81,7 @@
       "file": "mae_govannen_mellon",
       "sindarin": "Mae govannen, mellon.",
       "english": "Well met, friend.",
+      "attestation": "neo",
       "pools": [
         "opening_warm"
       ],
@@ -102,6 +106,7 @@
       "file": "suilad_mellon_1",
       "sindarin": "Suilad, mellon.",
       "english": "Greetings, friend.",
+      "attestation": "neo",
       "pools": [
         "opening_warm"
       ],
@@ -126,6 +131,7 @@
       "file": "suilad_mellon_2",
       "sindarin": "Suilad, mellon.",
       "english": "Greetings, friend.",
+      "attestation": "neo",
       "pools": [
         "opening_warm"
       ],
@@ -150,6 +156,7 @@
       "file": "tolo_mellon",
       "sindarin": "Tolo, mellon.",
       "english": "Come, friend.",
+      "attestation": "neo",
       "pools": [
         "opening_warm"
       ],
@@ -174,6 +181,7 @@
       "file": "ma_1",
       "sindarin": "Ma!",
       "english": "Good!",
+      "attestation": "attested",
       "pools": [
         "trade_positive",
         "completion"
@@ -199,6 +207,7 @@
       "file": "ma_2",
       "sindarin": "Ma!",
       "english": "Good!",
+      "attestation": "attested",
       "pools": [
         "trade_positive",
         "completion"
@@ -224,6 +233,7 @@
       "file": "mae_1",
       "sindarin": "Mae.",
       "english": "Excellent.",
+      "attestation": "attested",
       "pools": [
         "trade_positive",
         "completion"
@@ -249,6 +259,7 @@
       "file": "mae_2",
       "sindarin": "Mae.",
       "english": "Excellent.",
+      "attestation": "attested",
       "pools": [
         "trade_positive",
         "completion"
@@ -274,6 +285,7 @@
       "file": "lasto_1",
       "sindarin": "Lasto.",
       "english": "Listen.",
+      "attestation": "attested",
       "pools": [
         "explain"
       ],
@@ -298,6 +310,7 @@
       "file": "lasto_2",
       "sindarin": "Lasto.",
       "english": "Listen.",
+      "attestation": "attested",
       "pools": [
         "explain"
       ],
@@ -322,6 +335,7 @@
       "file": "lasto_beth_lammen",
       "sindarin": "Lasto beth lammen.",
       "english": "Listen to the word of my tongue.",
+      "attestation": "excerpt",
       "pools": [
         "explain"
       ],
@@ -346,6 +360,7 @@
       "file": "tolo_a_lasto",
       "sindarin": "Tolo a lasto.",
       "english": "Come and listen.",
+      "attestation": "neo",
       "pools": [
         "explain"
       ],
@@ -370,6 +385,7 @@
       "file": "caro_mae",
       "sindarin": "Caro mae.",
       "english": "Do well.",
+      "attestation": "neo",
       "pools": [
         "task_taken"
       ],
@@ -394,6 +410,7 @@
       "file": "dandolo_1",
       "sindarin": "Dandolo.",
       "english": "Come back.",
+      "attestation": "neo",
       "pools": [
         "task_taken"
       ],
@@ -418,6 +435,7 @@
       "file": "dandolo_2",
       "sindarin": "Dandolo.",
       "english": "Come back.",
+      "attestation": "neo",
       "pools": [
         "task_taken"
       ],
@@ -442,6 +460,7 @@
       "file": "mae_garnen",
       "sindarin": "Mae garnen.",
       "english": "Well done.",
+      "attestation": "neo",
       "pools": [
         "completion"
       ],
@@ -466,6 +485,7 @@
       "file": "avon_1",
       "sindarin": "Avon.",
       "english": "I will not.",
+      "attestation": "attested",
       "pools": [
         "refuse_speak"
       ],
@@ -490,6 +510,7 @@
       "file": "avon_2",
       "sindarin": "Avon.",
       "english": "I will not.",
+      "attestation": "attested",
       "pools": [
         "refuse_speak"
       ],
@@ -514,6 +535,7 @@
       "file": "avam",
       "sindarin": "Avam.",
       "english": "We will not.",
+      "attestation": "attested",
       "pools": [
         "refuse_speak"
       ],
@@ -538,6 +560,7 @@
       "file": "daro",
       "sindarin": "Daro!",
       "english": "Halt!",
+      "attestation": "attested",
       "pools": [
         "combat_start"
       ],
@@ -562,6 +585,7 @@
       "file": "baw",
       "sindarin": "Baw!",
       "english": "Don't!",
+      "attestation": "attested",
       "pools": [
         "combat_start"
       ],
@@ -586,6 +610,7 @@
       "file": "avo_garo",
       "sindarin": "Avo garo!",
       "english": "Don't do it!",
+      "attestation": "attested",
       "pools": [
         "combat_start"
       ],
@@ -610,6 +635,7 @@
       "file": "cuio_mae_1",
       "sindarin": "Cuio mae.",
       "english": "Live well.",
+      "attestation": "neo",
       "pools": [
         "healing"
       ],
@@ -634,6 +660,7 @@
       "file": "cuio_mae_2",
       "sindarin": "Cuio mae.",
       "english": "Live well.",
+      "attestation": "neo",
       "pools": [
         "healing"
       ],
@@ -658,6 +685,7 @@
       "file": "cuio_mae_3",
       "sindarin": "Cuio mae.",
       "english": "Live well.",
+      "attestation": "neo",
       "pools": [
         "healing"
       ],

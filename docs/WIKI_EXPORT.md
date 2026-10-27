@@ -29,3 +29,13 @@ This is a temporary Git snapshot of the working files for full export validation
 no branch or normal staging index was changed. The manifest marks preview true.
 A release export should select the eventual normal source commit containing the
 reviewed gameplay and wiki files, as described in workspace docs/wiki.md.
+
+## Sindarin phrasebook (2026-10-27)
+
+Added the exported phrasebook: 20 phrases from the 28 recorded takes, with
+attestation labels, context labels, speakers and credits (Eldamo / Paul Strack;
+Tolkien's works as cited by Eldamo). Source: `lines.json` + `wiki/project.json`
+`phrasebooks`; see [`SINDARIN_VOICE_PHRASES.md`](SINDARIN_VOICE_PHRASES.md). The
+preview passed from a temporary `git stash create` snapshot with the wiki
+overlay (84 features, 55 recipes). The website consumer does not render
+`phrasebooks` yet.
