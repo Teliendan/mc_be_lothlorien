@@ -33,7 +33,22 @@ function rig(options = {}) {
   if (options.warm !== false) service.observe(attachment);
   const activate = () => service.onPiston({ dimension, position: P, axis: { x: 1, y: 0, z: 0 }, isExpanding: true, piston });
   const finish = () => { piston.isMoving = false; advance(12); };
-  return { put, service, activate, finish, advance, cells, drops, gone, settled, errors, dimension, attachment, piston };
+  return { put, service, activate, finish, advance, cells, drops, gone, settled, errors, dimension, attachment, piston, scheduled };
+}
+
+// A piston with nothing captured at sample zero stops sampling: one settle callback
+// at the usual tick when a mod listens, nothing at all when it does not.
+{
+  const quiet = rig({ warm: false, onSettled: undefined });
+  quiet.put(A, "minecraft:air");
+  quiet.activate();
+  assert.equal(quiet.scheduled.length, 0, "no listener, nothing captured: no follow-up samples");
+  const r = rig({ warm: false });
+  r.put(A, "minecraft:air");
+  r.activate();
+  assert.deepEqual(r.scheduled.map(s => s.at), [9], "one jump to the settle sample");
+  r.finish();
+  assert.equal(r.settled.length, 1, "settle callback still runs once");
 }
 
 // No timer/random callback before the first piston event: discover motion locally.

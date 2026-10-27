@@ -8,7 +8,7 @@ const NEIGHBOURS = [{ x: 0, y: 0, z: 0 }, { x: 1, y: 0, z: 0 }, { x: -1, y: 0, z
 const ADJACENT = NEIGHBOURS.slice(1);
 
 export function createSupportMotionService({ now, schedule, describe, read, remove,
-  onGone = () => {}, onMove = () => {}, onSettled = () => {},
+  onGone = () => {}, onMove = () => {}, onSettled,
   warn = message => console.warn(message), maxRecords = 16384 }) {
   const records = new Map(), bySupport = new Map();
   const address = (dim, p) => `${dim.id}|${key(p)}`;
@@ -185,7 +185,7 @@ export function createSupportMotionService({ now, schedule, describe, read, remo
         // Unloaded original is unknown: retain history for scheduled recovery.
         } catch (error) { warn(`[support-motion] reconciliation: ${error}`); }
       }
-      try { onSettled(dimension, [...candidates.values()]); }
+      try { onSettled?.(dimension, [...candidates.values()]); }
       catch (error) { warn(`[support-motion] settled callback: ${error}`); }
     }
     function step() {
@@ -196,6 +196,15 @@ export function createSupportMotionService({ now, schedule, describe, read, remo
       if (samples >= 40) {
         // Do not interpret unresolved moving cells as destroyed/settled blocks.
         for (const record of frozen) record.pending--;
+        return;
+      }
+      // Nothing captured at sample zero: the attached list is already complete then
+      // (in-game probe, 2026-10-27), so later samples cannot capture any.
+      // Skip to the settle sample, or stop if nobody listens for it.
+      if (samples === 1 && !frozen.size) {
+        if (!onSettled) return;
+        samples = 9;
+        schedule(step, 9);
         return;
       }
       schedule(step, 1);
