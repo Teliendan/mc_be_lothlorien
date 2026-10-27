@@ -3,7 +3,7 @@
 ## Status
 
 Final, owner-accepted 2026-10-25 by listening (audition rounds 2026-10-16 and
-2026-10-23..25). 28 files cover all 20 texts. They are bound in the
+2026-10-23..25; warden thanks 2026-10-28). 31 files cover all 22 texts. They are bound in the
 pack by `tools/install_sindarin_voice.py` (`--check` verifies it) and wired in
 script (2026-10-25), **not yet heard in game**; the owner's game test is pending:
 [`SINDARIN_VOICE_EVENTS.md`](SINDARIN_VOICE_EVENTS.md). Language provenance:
@@ -39,6 +39,8 @@ random variants of one sound event.
 | Baw! | Don't! | combat_start | baw | shout |
 | Avo garo! | Don't do it! | combat_start | avo_garo | shout |
 | Cuio mae. | Live well. | healing | cuio_mae_1, _2, _3 | gentle |
+| Annon allen. | I thank you. | thanks | annon_allen_1, _2 | gentle |
+| Annon allen, mellon. | I thank you, friend. | thanks_warm | annon_allen_mellon | gentle |
 
 ## Voice and settings
 
@@ -187,3 +189,5 @@ In `tools/audio/sindarin_voice/`:
 - 2026-10-25: warden combat lines are shouts with the VoiceGenerator guides,
   though they are not clones of the actor.
 - 2026-10-25: the 28-file set is final, with variants where listed above.
+- 2026-10-28: warden thanks added (`Ánnon álen.`, `Ánnon álen mélon.`, gentle, 6 seeds each; owner kept
+  annon_allen_1, _2 and annon_allen_mellon_3, exported as annon_allen_mellon). OGG via soundfile Vorbis.

@@ -442,6 +442,28 @@
           "weight": 1
         }
       ]
+    },
+    "lothlorien.voice.thanks": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/voice/lothlorien/annon_allen_1",
+          "weight": 1
+        },
+        {
+          "name": "sounds/voice/lothlorien/annon_allen_2",
+          "weight": 1
+        }
+      ]
+    },
+    "lothlorien.voice.thanks_warm": {
+      "category": "neutral",
+      "sounds": [
+        {
+          "name": "sounds/voice/lothlorien/annon_allen_mellon",
+          "weight": 1
+        }
+      ]
     }
   }
 }

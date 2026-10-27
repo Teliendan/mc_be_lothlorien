@@ -62,6 +62,15 @@ test("voice: 4 s per elf, 30 s per greeting pair, commits skip the wait but neve
   assert.ok(ask(s, "opening_neutral", V.GREETING_GAP_TICKS, { listener: "p1" }));
 });
 
+test("voice: Harmony picks the thanks; a warden thanks at most every 10 s", () => {
+  assert.deepEqual(["hated", "shunned", "uneasy", "guest", "friend"].map(V.thanksPool), [null, "thanks", "thanks", "thanks", "thanks_warm"]);
+  const s = V.newVoiceState();
+  assert.ok(ask(s, "thanks", 0, { speaker: "w1" }));
+  assert.ok(!ask(s, "thanks_warm", V.THANKS_GAP_TICKS - 1, { speaker: "w1" }), "both pools share the gap");
+  assert.ok(ask(s, "thanks", 100, { speaker: "w2" }), "another warden");
+  assert.ok(ask(s, "thanks_warm", V.THANKS_GAP_TICKS, { speaker: "w1" }));
+});
+
 test("voice: combat 15 s per warden, one shout per fight within 16 blocks and 3 s", () => {
   const s = V.newVoiceState();
   assert.ok(ask(s, "combat_start", 0, { speaker: "w1" }));

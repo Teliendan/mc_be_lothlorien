@@ -837,6 +837,18 @@
             "lothlorien:elf"
           ]
         },
+        "thanks": {
+          "label": "Warden thanking a visitor who slew its foe",
+          "speakers": [
+            "lothlorien:elven_warden"
+          ]
+        },
+        "thanks_warm": {
+          "label": "Warden thanking a friend who slew its foe",
+          "speakers": [
+            "lothlorien:elven_warden"
+          ]
+        },
         "trade_positive": {
           "label": "Accepting a trade",
           "speakers": [

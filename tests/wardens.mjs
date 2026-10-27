@@ -190,3 +190,20 @@ test("warden replace: only engine-default movement is replaced", () => {
 });
 
 finish();
+
+test("elven warden: thanks - the warden that shot a victim within 30 s is found once; old shots are pruned", () => {
+  const shots = new Map();
+  EW.recordShot(shots, "z1", "w1", 0);
+  assert.equal(EW.takeShot(shots, "z1", EW.SHOT_MEMORY_MS), "w1");
+  assert.equal(EW.takeShot(shots, "z1", EW.SHOT_MEMORY_MS), undefined, "consumed");
+  EW.recordShot(shots, "z2", "w1", 0); EW.recordShot(shots, "z2", "w2", 10);
+  assert.equal(EW.takeShot(shots, "z2", 20), "w2", "the last shooter");
+  EW.recordShot(shots, "z3", "w1", 0);
+  assert.equal(EW.takeShot(shots, "z3", EW.SHOT_MEMORY_MS + 1), undefined, "too old");
+  for (let i = 0; i <= EW.SHOT_PRUNE_SIZE; i++) EW.recordShot(shots, `old${i}`, "w1", 0);
+  EW.recordShot(shots, "new", "w1", EW.SHOT_MEMORY_MS + 1);
+  assert.deepEqual([...shots.keys()], ["new"]);
+  const src = readFileSync(new URL("../lothlorien_bp/scripts/elven_warden.js", import.meta.url), "utf8");
+  assert.ok(/else if \(hated \|\| foe \|\| fams\.includes\("monster"\)\)[\s\S]*recordShot/.test(src), "only monsters and hunted players are quarry");
+  assert.ok(/takeShot[\s\S]*fighting\(killer\)[\s\S]*thanksPool\(bandOf\(killer\)\)/.test(src), "the killer must not be fighting the wardens");
+});

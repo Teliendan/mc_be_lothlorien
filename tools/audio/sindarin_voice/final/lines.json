@@ -705,6 +705,81 @@
       "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
       "seconds": 0.84,
       "sha256": "0930436d89aa30e0c44ab327d0916bb6d3daafeb0d5ae411003a50eb013932ed"
+    },
+    {
+      "file": "annon_allen_1",
+      "sindarin": "Annon allen.",
+      "english": "I thank you.",
+      "attestation": "neo",
+      "pools": [
+        "thanks"
+      ],
+      "generator_text": "Ánnon álen.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 27102026,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "warden_thanks/annon_allen_1",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.94,
+      "sha256": "69a4ce1d074c6afed83040e9df590ac8a3219476f6dde080f849ee1a6761f16d"
+    },
+    {
+      "file": "annon_allen_2",
+      "sindarin": "Annon allen.",
+      "english": "I thank you.",
+      "attestation": "neo",
+      "pools": [
+        "thanks"
+      ],
+      "generator_text": "Ánnon álen.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 27102027,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "warden_thanks/annon_allen_2",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 0.96,
+      "sha256": "92c242bb9667746d1346565826333ab232c7ccbd7bf4634a2f871ebcb610cc1e"
+    },
+    {
+      "file": "annon_allen_mellon",
+      "sindarin": "Annon allen, mellon.",
+      "english": "I thank you, friend.",
+      "attestation": "neo",
+      "pools": [
+        "thanks_warm"
+      ],
+      "generator_text": "Ánnon álen mélon.",
+      "language": "es",
+      "guide": "actor_reference.wav",
+      "seed": 27102042,
+      "params": {
+        "exaggeration": 0.4,
+        "cfg_weight": 0.3,
+        "temperature": 0.65,
+        "repetition_penalty": 2.0,
+        "min_p": 0.05,
+        "top_p": 1.0
+      },
+      "source": "warden_thanks/annon_allen_mellon_3",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "seconds": 1.53,
+      "sha256": "bd964aa7afc948506e4693fbbe7426d8767c8f9cfbcd388a634ea4b7cd02ef8f"
     }
   ]
 }

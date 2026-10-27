@@ -7,14 +7,17 @@
 //  - beforeEvents.playerInteractWithEntity: a click greets by Harmony band (never cancelled; silent while fighting that player).
 //  - afterEvents.entityHurt: remembers which player hurt a warden, so that player's retaliation target is not shielded;
 //    the first hit after PROVOKE_MS without one is a new fight and costs the player harmony (harmony_game.js).
+//  - afterEvents.entityDie: a player who kills what a warden was shooting (monster or hunted player) is thanked by that warden.
 import { EntityInitializationCause, EquipmentSlot, ItemStack, system, world } from "@minecraft/server";
-import { ANGRY_EVENT, BOW_ID, DECK_BLOCKS, WARDEN_ID, isFriendlyFire, isNewFight, keepNaturalSpawn, PLAYER_ID } from "./elven_warden_rules.js";
+import { ANGRY_EVENT, BOW_ID, DECK_BLOCKS, WARDEN_ID, isFriendlyFire, isNewFight, keepNaturalSpawn, PLAYER_ID, recordShot, takeShot } from "./elven_warden_rules.js";
 import { HATED_TAG, recordWardenFight } from "./harmony_game.js";
 import { FOE_TAG } from "./elf_rules.js";
 import { nativeElfUse } from "./elf_native_use.js";
 import { greet, speak } from "./voice.js";
+import { thanksPool } from "./voice_rules.js";
 
 const provoked = new Map(); // player id -> Date.now() of the last hit on a warden (Date: readable in restricted mode)
+const shots = new Map(); // victim id -> { wardenId, at }: the warden's quarry, for thanks (elven_warden_rules.js)
 
 function families(entity) {
   try {
@@ -102,10 +105,26 @@ export function startElvenWardens(depthAt, bandOf) {
       const shooter = event.damageSource.damagingEntity;
       if (shooter?.typeId !== WARDEN_ID) return;
       const victim = event.hurtEntity;
-      const at = provoked.get(victim.id);
-      if (isFriendlyFire({ shooterId: shooter.typeId, victim: { typeId: victim.typeId, families: families(victim) }, hated: victim.typeId === PLAYER_ID && victim.hasTag(HATED_TAG), foe: victim.typeId === PLAYER_ID && victim.hasTag(FOE_TAG), sinceProvokedMs: at === undefined ? undefined : Date.now() - at })) {
+      const at = provoked.get(victim.id), fams = families(victim);
+      const hated = victim.typeId === PLAYER_ID && victim.hasTag(HATED_TAG), foe = victim.typeId === PLAYER_ID && victim.hasTag(FOE_TAG);
+      if (isFriendlyFire({ shooterId: shooter.typeId, victim: { typeId: victim.typeId, families: fams }, hated, foe, sinceProvokedMs: at === undefined ? undefined : Date.now() - at })) {
         event.cancel = true;
+      } else if (hated || foe || fams.includes("monster")) {
+        recordShot(shots, victim.id, shooter.id, Date.now()); // the warden's quarry; villagers in the line are not
       }
+    } catch {
+      // entity gone
+    }
+  });
+  // Thanks: the killer of a warden's quarry (free kills, harmony.js) hears that warden; not while fighting the wardens.
+  world.afterEvents.entityDie.subscribe(({ deadEntity, damageSource }) => {
+    try {
+      if (!shots.size) return;
+      const wardenId = takeShot(shots, deadEntity.id, Date.now());
+      const killer = damageSource.damagingEntity;
+      if (wardenId === undefined || killer?.typeId !== PLAYER_ID || fighting(killer)) return;
+      const warden = world.getEntity(wardenId), pool = thanksPool(bandOf(killer));
+      if (warden && pool) speak(warden, pool, killer);
     } catch {
       // entity gone
     }

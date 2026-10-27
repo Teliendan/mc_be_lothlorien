@@ -20,7 +20,7 @@ TARGET = "sounds/voice/lothlorien"
 DEFS = RP / "sounds/sound_definitions.json"
 PREFIX = "lothlorien.voice."
 POOLS = ("opening_neutral", "opening_warm", "trade_positive", "explain", "task_taken",
-         "completion", "refuse_speak", "combat_start", "healing")
+         "completion", "refuse_speak", "combat_start", "healing", "thanks", "thanks_warm")
 
 
 def load_lines():

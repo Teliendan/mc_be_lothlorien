@@ -27,7 +27,7 @@ works it cites; update them in `wiki/project.json` when a new source is used.
 - **N**: Neo-Sindarin, a modern composition or usage, mostly from Tolkien's
   vocabulary. A proposal, not a certified translation.
 
-## Selected texts (20, all recorded)
+## Selected texts (22, all recorded)
 
 | Sindarin | English | Label | Pool(s) |
 | --- | --- | --- | --- |
@@ -51,6 +51,8 @@ works it cites; update them in `wiki/project.json` when a new source is used.
 | Baw! | Don't! | T | combat_start |
 | Avo garo! | Don't do it! | T | combat_start |
 | Cuio mae. | Live well. | N | healing |
+| Annon allen. | I thank you. | N | thanks |
+| Annon allen, mellon. | I thank you, friend. | N | thanks_warm |
 
 ## Vocabulary bank (not recorded)
 
@@ -60,7 +62,6 @@ Candidates for later lines. Who / when is a suggestion.
 | --- | --- | --- | --- |
 | Novaer. | Farewell; be well. | N | any elf, farewell |
 | Tiro. | Look. | T | trader showing wares |
-| Annon allen. | I thank you. | N | receiving a requested delivery |
 | I loth bain. | The flower is beautiful. | N | gardener |
 | Tiro i loth. | Look at the flower. | N | gardener |
 | I gû maer. | The bow is good. | N | woodwright |

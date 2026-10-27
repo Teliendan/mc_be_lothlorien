@@ -20,7 +20,7 @@ completion are separate commits with their own hooks.
 
 ## Pools and trigger points
 
-Nine pool rows; `explain` covers lessons and quest offers. Each pool is one
+Eleven pool rows; `explain` covers lessons and quest offers. Each pool is one
 sound event whose files are random variants. Files are in
 `tools/audio/sindarin_voice/final/` (`.ogg` for the pack); `ma_*` and `mae_*`
 serve two pools.
@@ -36,6 +36,8 @@ serve two pools.
 | `refuse_speak` | Traders or loremaster | Existing Shunned refusal branch; Hated stays silent | avon_1, avon_2, avam |
 | `combat_start` | Warden | `minecraft:on_target_acquired` -> `lothlorien:become_angry` (hostile targets, retaliation, joining combat) | daro, baw, avo_garo |
 | `healing` | Healer | `blessNearby()` batch with `blessed === true` (blessing animation) | cuio_mae_1, cuio_mae_2, cuio_mae_3 |
+| `thanks` | Warden | A player kills what this warden's arrows hit in the last 30 s (monster or hunted player; `entityDie`, `elven_warden_rules.js` `takeShot`); band Guest, Uneasy or Shunned; not while the player fights the wardens; 10 s per warden | annon_allen_1, annon_allen_2 |
+| `thanks_warm` | Warden | Same, Friend band (Hated: silence) | annon_allen_mellon |
 
 `completion` is generic approval, so it also fits understanding a lore lesson.
 No rank-up, chapter-opened, task-ready or item-specific pools; existing UI, chat
