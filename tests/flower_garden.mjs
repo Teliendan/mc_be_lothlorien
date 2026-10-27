@@ -79,7 +79,8 @@ assert.notEqual(gardenSet.placement.salt, treeSet.placement.salt);
 const giant = JSON.parse(asset("worldgen/structures/giant_mallorn.json"))["minecraft:jigsaw"];
 const gardenDef = flowerGardenWorldgen().structures["minecraft:jigsaw"];
 assert.deepEqual(gardenDef.biome_filters, giant.biome_filters, "same biome eligibility as giants");
-assert.equal(gardenDef.heightmap_projection, giant.heightmap_projection);
+// Gardens keep world_surface (their soil replaces a water top); giants use ocean_floor since 2026-10-27.
+assert.equal(gardenDef.heightmap_projection, "world_surface");
 // Vertical placement uses encoded template height, not the named jigsaw's Y.
 const shipped = readNbt(asset("structures/lothlorien/flower_garden_01.mcstructure"));
 const shippedPalette = shipped.structure.palette.default.block_palette;

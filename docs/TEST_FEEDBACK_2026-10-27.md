@@ -16,5 +16,16 @@ strip, the forest started roughly 100 blocks away.
   water above the dirt bed.
 
 So the engine did what the JSON allows: `biome_filters` only checks the biome tag at the start, and no
-native jigsaw field can reject a water site (see WORLDGEN_FIXES_2026-10-20.md, row 4b). Nothing was changed.
-Open owner decision: how giant Mallorns should behave on water sites.
+native jigsaw field can reject a water site (see WORLDGEN_FIXES_2026-10-20.md, row 4b).
+
+## Owner decision and change (2026-10-27)
+
+Owner chose: measure giants from the lake bed. `giant_mallorn`, `tree_grid_plain`, `tree_grid_platform` and
+`tree_grid_shrine` now use `heightmap_projection: ocean_floor` (start -5 unchanged). On land this should equal
+`world_surface` (structures run before trees exist); on water the trunk starts 5 below the bed top. A lone giant in
+a small all-water patch still happens; deep lakes can submerge the lower crown. Villages, gardens and memorials keep
+`world_surface` (villages root down by script; garden/memorial soil replaces the water top).
+Wiki limitation `lothlorien:great_mallorn/lake-sites` added.
+
+**In-game check (new world):** giants on dry land sit exactly as before (no sunk or raised trunks); a giant in a
+lake stands on the bed. Not verified in game yet.

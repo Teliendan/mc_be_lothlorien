@@ -206,5 +206,24 @@
         "sha256": "5a6fe67e36b29f549205a80f863cbef1fe1941969158b722db8e37ec80373d48"
       }
     ]
+  },
+  {
+    "featureId": "lothlorien:great_mallorn",
+    "id": "lothlorien:great_mallorn/lake-sites",
+    "text": "A Great Mallorn can generate in a lake or river inside Lothlorien. Its trunk then rises from the lake bed, and the lower part of its crown can be under water in a deep lake.",
+    "evidence": [
+      {
+        "path": "lothlorien_bp/worldgen/structures/tree_grid_plain.json",
+        "sha256": "967dc9f48d2bb42e90d729f997f4a001ea69ef91dc900511d071a58ea38a7b09"
+      },
+      {
+        "path": "lothlorien_bp/worldgen/structures/tree_grid_platform.json",
+        "sha256": "c3aab514e54d72ea058ce90265e1db71485f1a7890ad4e47cdab94d14e599762"
+      },
+      {
+        "path": "lothlorien_bp/worldgen/structures/tree_grid_shrine.json",
+        "sha256": "9a16ada2665d5ef4a639a50ab99247a9ddbfbb024d9bf61a1c71b9c8945c2241"
+      }
+    ]
   }
 ]

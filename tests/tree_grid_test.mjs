@@ -42,7 +42,9 @@ for (const kind of TREE_GRID_KINDS) {
   const name = kind.structure.split(":")[1];
   const structure = json(`worldgen/structures/${name}.json`)["minecraft:jigsaw"];
   assert.deepEqual(structure.biome_filters, [{ test: "has_biome_tag", value: "lothlorien" }]);
-  assert.equal(structure.heightmap_projection, "world_surface", "use terrain rather than sky fixture height");
+  // Giants measure from the lake bed (ocean_floor) so a trunk on a water site does not hover; villages keep world_surface.
+  assert.equal(structure.heightmap_projection, kind.id === "village" ? "world_surface" : "ocean_floor",
+    "use terrain rather than sky fixture height");
   const pool = pools.get(structure.start_pool);
   assert.ok(pool, `start pool for ${kind.structure}`);
   if (kind.id === "village") {
