@@ -39,3 +39,23 @@ export function siteFeature({ identifier, structure, groundLevel, adjustmentRadi
     },
   };
 }
+
+// Shuffled lattice (owner 2026-10-28: the plain lattice read as a fixed grid). Each cell of `cell` x `cell` chunks has one
+// candidate chunk at a scrambled index 0..cell-2 per axis, so candidates in neighbouring cells stay at least 2 chunks
+// (32 blocks) apart. A feature rule sees no world seed and no other chunk, so the scramble is a fixed function of the cell
+// position (the same layout in every world): t = (a cx + b cz + c) mod 97, index = (t^2 mod 97) mod (cell - 1). All values stay
+// small integers, exact in Molang floats for |cx|, |cz| below ~150000 cells.
+export const SHUFFLE = Object.freeze({ x: [31, 17, 7], z: [13, 29, 41], prime: 97 });
+export function shuffledLatticeIterations(cell) {
+  const c = (ax) => `math.floor(variable.origin${ax} / ${16 * cell})`;
+  const pmod = (e, m) => `math.mod(math.mod(${e}, ${m}) + ${m}, ${m})`;
+  const pick = ([a, b, k]) => `math.mod(math.mod(math.pow(${pmod(`${a} * ${c("x")} + ${b} * ${c("z")} + ${k}`, SHUFFLE.prime)}, 2), ${SHUFFLE.prime}), ${cell - 1})`;
+  const idx = (ax) => `(variable.origin${ax} / 16 - ${cell} * ${c(ax)})`;
+  return `(${idx("x")} == ${pick(SHUFFLE.x)} && ${idx("z")} == ${pick(SHUFFLE.z)}) ? 1 : 0`;
+}
+// The same choice in JavaScript (tests, test instructions): chunk index of the candidate in cell (cx, cz).
+export function shuffledPick(cell, cx, cz) {
+  const pmod = (v, m) => ((v % m) + m) % m;
+  const pick = ([a, b, k]) => ((pmod(a * cx + b * cz + k, SHUFFLE.prime) ** 2) % SHUFFLE.prime) % (cell - 1);
+  return [cell * cx + pick(SHUFFLE.x), cell * cz + pick(SHUFFLE.z)];
+}

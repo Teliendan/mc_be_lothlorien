@@ -1,6 +1,6 @@
 // Small, open woodland garden; only existing blocks and native deferred container loot.
 import { addSoilSkirt } from "./ground_skirt.mjs";
-import { siteFeature } from "./site_feature.mjs";
+import { shuffledLatticeIterations, siteFeature } from "./site_feature.mjs";
 
 // Natural `structure_template_feature` (TEST BUILD 2026-10-28). 13 x 13 centred box (beds and aisles +-5, one ragged shoulder ring
 // to +-6), soil 3 deep (grass + 2 dirt), 4 free cells above the grass, no jigsaw anchor. Local y: grass row -1, planting 0..3.
@@ -74,13 +74,13 @@ export function flowerGardenLoot() {
   ] };
 }
 
-// Lattice: one candidate chunk per 4 x 4 chunks (minimum gap 64 blocks, the old random-spread minimum) with the garden at the
-// chunk centre. GARDEN_CHANCE is the share of candidates that attempt a garden; refused attempts (water, slope, trees) place nothing.
+// Shuffled lattice (site_feature.mjs): one candidate chunk per 4 x 4 chunks at a scrambled position (owner 2026-10-28: the
+// plain lattice read as a fixed grid), candidates at least 32 blocks apart, the garden at the chunk centre. GARDEN_CHANCE is the share of candidates that attempt a garden; refused attempts (water, slope, trees) place nothing.
 // Chance 1 is written as no scatter_chance: the engine rejects numerator >= denominator (Content Log 2026-10-28,
 // "denominator should be greater than the numerator") and drops the whole rule.
-// TEST BUILD: 1/1 so the in-game test measures acceptance (docs/GARDEN_FEATURE_TEST.md). To keep the old garden count
-// (one per 162 chunks) tune it to 8 / (81 a), a = measured acceptance, capped at 1 (simulation: a about 0.2, chance about 0.5).
-export const GARDEN_CHANCE = Object.freeze({ numerator: 1, denominator: 1 });
+// Test world "Test Gardens" (2026-10-28) at chance 1: 117 gardens per km2 of Lothlorien, acceptance about 0.5. Owner: back to
+// the old ~24 per km2, so 1 in 5.
+export const GARDEN_CHANCE = Object.freeze({ numerator: 1, denominator: 5 });
 export const GARDEN_LATTICE = 4;
 // Whole footprint incl. the 1-block adjustment stays in one chunk: half width 6 + radius 1 = 7, so the centre is 7 or 8.
 export const GARDEN_EXTENT = Object.freeze([7, 8]);
@@ -91,7 +91,6 @@ export function flowerGardenFeature() {
 }
 
 export function flowerGardenFeatureRule() {
-  const lattice = (axis) => `math.mod(variable.origin${axis} / 16, ${GARDEN_LATTICE}) == 0`;
   return { format_version: "1.13.0", "minecraft:feature_rules": {
     description: { identifier: GARDEN.rule, places_feature: GARDEN.feature },
     conditions: {
@@ -99,7 +98,7 @@ export function flowerGardenFeatureRule() {
       "minecraft:biome_filter": [{ test: "has_biome_tag", value: "lothlorien" }],
     },
     distribution: {
-      iterations: `(${lattice("x")} && ${lattice("z")}) ? 1 : 0`,
+      iterations: shuffledLatticeIterations(GARDEN_LATTICE),
       ...(GARDEN_CHANCE.numerator < GARDEN_CHANCE.denominator ? { scatter_chance: { ...GARDEN_CHANCE } } : {}),
       x: { distribution: "uniform", extent: [...GARDEN_EXTENT] },
       y: "query.heightmap(variable.worldx, variable.worldz) - 1",

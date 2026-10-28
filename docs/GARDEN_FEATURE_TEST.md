@@ -1,5 +1,9 @@
 # Garden feature test (TEST BUILD 2026-10-28, not accepted)
 
+Round 1 done (world "Test Gardens", results in `FLOWER_GARDEN.md`). Round 2: shuffled lattice, chance 1/5; candidate
+chunks are no longer at fixed points (`shuffledPick` in `tools/site_feature.mjs` gives them), so read the save instead of
+visiting points.
+
 What is under test: the flower garden as a natural `structure_template_feature` (chance 1 on a 4 x 4 chunk lattice) and a
 command-only memorial feature. Design: `FLOWER_GARDEN.md`, `MEMORIAL.md`; plan and simulation in workspace
 `temp/garden-features/`. Worldgen needs a **new world**. Record results (game version, date, seed, owner-seen) in these docs.

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { GARDEN, GARDEN_CHANCE, GARDEN_EXTENT, GARDEN_FILES, GARDEN_LATTICE, buildFlowerGarden, flowerGardenFeature, flowerGardenFeatureRule, flowerGardenLoot } from "../tools/flower_garden.mjs";
-import { SITE_ALLOWLIST } from "../tools/site_feature.mjs";
+import { SITE_ALLOWLIST, shuffledLatticeIterations, shuffledPick } from "../tools/site_feature.mjs";
 import { toMcstructure } from "../tools/build_structures.mjs";
 import { readNbt } from "../tools/village_sim.mjs";
 import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs";
@@ -91,7 +91,16 @@ assert.deepEqual(cond["minecraft:biome_filter"], [{ test: "has_biome_tag", value
 const half = (GARDEN.size[0] - 1) / 2 + f.adjustment_radius;
 for (const c of GARDEN_EXTENT) assert.ok(c - half >= 0 && c + half <= 15, `centre ${c} keeps the footprint in its chunk`);
 assert.deepEqual([dist.x.extent, dist.z.extent], [[...GARDEN_EXTENT], [...GARDEN_EXTENT]]);
-assert.ok(dist.iterations.includes(`, ${GARDEN_LATTICE}) == 0`), "one candidate chunk per lattice cell");
+assert.equal(dist.iterations, shuffledLatticeIterations(GARDEN_LATTICE), "shuffled lattice");
+// the JS mirror of the Molang scramble: one candidate per cell, index 0..cell-2 (neighbours >= 2 chunks apart), and it varies
+const picks = new Map();
+for (let cx = -40; cx < 40; cx++) for (let cz = -40; cz < 40; cz++) {
+  const [x, z] = shuffledPick(GARDEN_LATTICE, cx, cz), ix = x - GARDEN_LATTICE * cx, iz = z - GARDEN_LATTICE * cz;
+  assert.ok(ix >= 0 && ix <= GARDEN_LATTICE - 2 && iz >= 0 && iz <= GARDEN_LATTICE - 2, `cell ${cx},${cz} picks ${ix},${iz}`);
+  picks.set(`${ix},${iz}`, (picks.get(`${ix},${iz}`) ?? 0) + 1);
+}
+assert.equal(picks.size, (GARDEN_LATTICE - 1) ** 2, "every in-cell position is used");
+for (const n of picks.values()) assert.ok(n > 6400 / 9 * 0.5, "no position dominates: " + JSON.stringify([...picks]));
 // the engine drops a rule whose scatter_chance has numerator >= denominator: chance 1 is no scatter_chance
 if (GARDEN_CHANCE.numerator >= GARDEN_CHANCE.denominator) assert.equal(dist.scatter_chance, undefined, "chance 1: no scatter_chance");
 else assert.deepEqual(dist.scatter_chance, GARDEN_CHANCE);
