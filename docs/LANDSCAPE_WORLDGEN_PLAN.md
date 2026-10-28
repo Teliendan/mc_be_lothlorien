@@ -402,3 +402,21 @@ Existing giant, garden and memorial sets already have different salts. Salt
 distinguishes scatter patterns; it is not a clearance radius. An avoid/exclusion
 list from a Java mod cannot be assumed to exist in native Bedrock JSON. The
 current documented Bedrock placement fields expose no such list.
+
+## Survey of other Bedrock add-ons: owner decisions (2026-10-28)
+
+Findings: `.claude/skills/bedrock-modding/references/24-structure-placement-survey.md` (read from source,
+not tested in game). Owner decisions on them:
+
+- Village recipe of others (terrain-matching streets, each rigid house at its own height): not used here;
+  our village stays one rigid chain with high bridges.
+- Script-placed builds on approach (RPG++ seed blocks, `placeJigsawStructure`): still rejected, no pop-in.
+- Deep piles in templates: not used; the post-load root-down repair is enough.
+- Beard terrain adaptation: conflicts with our deep buried roots (likely carves a pit); not pursued.
+- Trees rooting on garden grass is acceptable. Still open: gardens/memorials as constrained
+  `structure_template_feature`s in a pass before trees (native, no pop-in), which must keep the whole
+  footprint inside one chunk (`extent [0, 16 - width]`).
+- Owner saw a balcony/lookout pillar left hanging after repair. Root-down reach is already 48 blocks
+  (`REPAIR.rootReach`, `village_repair.js`) against a measured worst drop of 24, so the cause is more likely
+  a skip (blocked column, unloaded cell, pillar not found from its marker) than the length. Needs the
+  coordinates or the repair log before changing anything.
