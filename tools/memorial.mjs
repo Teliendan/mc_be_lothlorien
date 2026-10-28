@@ -1,6 +1,7 @@
 // Accepted leaf memorial. Existing assets, standalone woodland worldgen.
 import { SILVER_WATCH } from "./watch_camp_rules.mjs";
 import { addSoilSkirt, SKIRT } from "./ground_skirt.mjs";
+import { siteFeature } from "./site_feature.mjs";
 
 // start offsets the template bottom from world_surface. Deck planks are at encoded y SKIRT.depth:
 // bury all the soil beneath them so the deck replaces the terrain top (owner, 2026-10-24).
@@ -9,10 +10,37 @@ export const MEMORIAL = Object.freeze({
   id: "lothlorien:memorial_leaf_01", size: [15, 6 + SKIRT.depth, 18], offset: [7, SKIRT.depth, 8], start: -SKIRT.depth, clear: 4,
   anchor: "lothlorien:memorial_ground",
 });
+// Command-only `structure_template_feature` copy (TEST BUILD 2026-10-28, no feature rule: /place feature to test whether the
+// template's sound entity is placed). 11 x 15 centred box (apron x +-5, z -6..7; row z -7 stays void), no shoulder, no anchor,
+// soil 3 deep. Local deck row 0 = encoded y 3 = ground_level; the grass row below it is -1.
+export const MEMORIAL_FEATURE = Object.freeze({
+  id: "lothlorien:memorial_leaf_feature_01", size: [11, 9, 15], offset: [5, 3, 7], groundLevel: 3, clear: 4,
+  feature: "lothlorien:memorial_feature", adjustmentRadius: 0, soil: { depth: 3, ring1: 0, ring2: false, seed: 23 },
+});
+export function memorialFeature() {
+  return siteFeature({ identifier: MEMORIAL_FEATURE.feature, structure: MEMORIAL_FEATURE.id,
+    groundLevel: MEMORIAL_FEATURE.groundLevel, adjustmentRadius: MEMORIAL_FEATURE.adjustmentRadius });
+}
+
+// The memorial stays a natural jigsaw (its sound entity needs it) on its own random-spread set, memorials only since 2026-10-28.
+// Old shared garden+memorial set: spacing 9 = one site per 81 chunks, half memorials = one per 162. Spacing 13 = one per 169 chunks
+// (4 % fewer; 12.7 would be exact), separation 4 < 13 / 2 as the engine requires. Owner: memorials looked too rare in game;
+// tune these two constants after the garden test (docs/MEMORIAL.md).
+export const MEMORIAL_SITES = Object.freeze({ file: "worldgen/structure_sets/memorial_sites.json", salt: 794231583, spacing: 13, separation: 4 });
+export function memorialSitesSet() {
+  return { format_version: "1.21.100", "minecraft:structure_set": {
+    description: { identifier: "lothlorien:memorial_sites" },
+    placement: { type: "minecraft:random_spread", salt: MEMORIAL_SITES.salt,
+      spacing: MEMORIAL_SITES.spacing, separation: MEMORIAL_SITES.separation, spread_type: "linear" },
+    structures: [{ structure: "lothlorien:memorial", weight: 1 }],
+  } };
+}
+
 const L = "lothlorien:", M = "minecraft:";
 const key = (x, y, z) => `${x},${y},${z}`;
 
-export function buildMemorial() {
+export function buildMemorial({ feature = false } = {}) {
+  const clear = feature ? MEMORIAL_FEATURE.clear : MEMORIAL.clear;
   const blocks = new Map(), flowers = [], seats = [];
   const put = (x, y, z, name, states = {}, extra = {}) =>
     blocks.set(key(x, y, z), { name, states, ...extra });
@@ -34,7 +62,7 @@ export function buildMemorial() {
     const [x, z] = k.split(",").map(Number);
     put(x, -2, z, M + "dirt");
     put(x, -1, z, M + "grass_block");
-    for (let y = 0; y <= MEMORIAL.clear; y++) put(x, y, z, M + "air");
+    for (let y = 0; y <= clear; y++) put(x, y, z, M + "air");
   }
   for (const k of leaf) {
     const [x, z] = k.split(",").map(Number);
@@ -78,11 +106,11 @@ export function buildMemorial() {
     if (!blocks.has(key(x, y, z))) put(x, y, z, M + "air");
   // Same centred ground alignment as the garden. Natural jigsaw placement
   // consumes the buried anchor to dirt; no visible deck cell changes.
-  put(0, -2, 0, M + "jigsaw", { facing_direction: 0, rotation: 0 }, {
+  if (!feature) put(0, -2, 0, M + "jigsaw", { facing_direction: 0, rotation: 0 }, {
     jigsaw: MEMORIAL.anchor, finalState: M + "dirt",
   });
   // Deep soil under the apron and a ragged shoulder round it (tools/ground_skirt.mjs).
-  const skirt = addSoilSkirt(put, (x, y, z) => blocks.has(key(x, y, z)), ground, { top: -1, seed: 23 });
+  const skirt = addSoilSkirt(put, (x, y, z) => blocks.has(key(x, y, z)), ground, { top: -1, seed: 23, ...(feature ? MEMORIAL_FEATURE.soil : {}) });
   // Invisible sound source just above the pillar's cap (docs/SOUNDSCAPE_PLAN.md): its native ambient timer plays the memorial tones.
   const entities = [{ id: "lothlorien:memorial_sound", x: 0.5, y: 5.6, z: 3.5 }];
   return { blocks, flowers, seats, entities, leaf, ground, skirt };

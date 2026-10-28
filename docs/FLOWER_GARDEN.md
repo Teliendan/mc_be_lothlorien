@@ -3,7 +3,7 @@
 Accepted by the owner on 2026-10-16: "I like it." Second standalone woodland place,
 following the root shrine. Target: Bedrock 1.26.52 / API 2.8.0. Overall garden
 acceptance; individual barrel observations were not supplied. Natural generation
-requested the same day and still needs in-game terrain/distribution review.
+was a jigsaw until 2026-10-28; it is now a feature (below).
 
 ## Design and supplies
 
@@ -23,64 +23,46 @@ Corrected two item IDs in the owner's otherwise valid loot layout:
 `minecraft:wood_hoe` -> `minecraft:wooden_hoe`. The separate guaranteed tool pools
 and increased nut count are preserved in both the table and its generator.
 
-## Placement and rebuilding
+## Natural placement: TEST BUILD 2026-10-28, not accepted
 
-**Since 2026-10-21 (owner) gardens and memorials share one grid**: set `lothlorien:garden_sites`
-(`structure_sets/garden_sites.json`, salt 794231583, spacing 9 / separation 3, linear), garden and memorial
-weight 1 each, so the two never pair up; combined count about 11 % below the two old 12/4 grids. The paragraph
-below is the earlier design.
+Plan and simulation: workspace `temp/garden-features/PLAN.md`, `SIMULATION.md`. Test procedure:
+`GARDEN_FEATURE_TEST.md`. Owner decisions for this build: option A footprint, tuned constraints, chance 1,
+flora may grow in the aisles, trees may root on the garden grass.
 
-Natural generation adds gardens to Lothlorien at about one per four big trees,
-counting all plain, platform and shrine variants together. A separate structure set
-uses spacing 12, separation 4, salt 794231583 and linear random spread. The existing
-Great Mallorn set remains spacing 6, separation 2, salt 518204731, with its pool
-weights unchanged (including 25% shrines). One attempt per 12 x 12 chunk cell versus
-one per 6 x 6 gives a 1:4 attempt ratio without replacing existing tree attempts.
-This is a long-run density target, not a quota in every small patch; biome boundaries
-and placement success affect observed counts. Independent sets do not exclude each
-other, so natural terrain and occasional proximity to trees need an in-game review.
-The garden shares the giants' biome filter and world-surface projection. Its buried
-anchor becomes dirt and centres horizontal placement. Start height is `1 - SKIRT.depth`
-(currently -5), cancelling the grass surface's encoded y 5 so it replaces the terrain top.
-Owner correction, 2026-10-24: retain deep soil underground without raising the beds.
-The former start 0 raised the six-layer template five blocks; the anchor's Y does not
-cancel that offset. Offline checked for Bedrock 1.26.52, native placement pending.
-See `WORLDGEN_FIXES_2026-10-20.md`. Worldgen changes need a new world.
+- `features/flower_garden_feature.json`: `structure_template_feature` of `lothlorien:flower_garden_01`,
+  `rotate_around_center`, `facing_direction random`, `adjustment_radius 1`, `ground_level 2`, constraints
+  `grounded`, `unburied`, `leveled {max_steepness 2}`, `block_intersection` with a terrain-only allowlist
+  (air, soils, stone types, gravel, sand, clay, ground plants; no water, logs, leaves or built blocks).
+  Allowlist and constraints are shared with the memorial feature (`tools/site_feature.mjs`).
+- `feature_rules/flower_garden_feature_rules.json`: pass `before_surface_pass`, biome tag `lothlorien`
+  (as the old jigsaw), one candidate chunk per 4 x 4 chunks (64-block minimum gap), `x`/`z` extent `[7, 8]`,
+  `y = query.heightmap(worldx, worldz) - 1`.
+- Template 13 x 7 x 13, offset [6, 3, 6]: beds and aisles to +-5, one ragged shoulder ring to +-6, soil 3 deep
+  (grass + 2 dirt), 4 free cells above the grass, no buried jigsaw. The old 15 x 10 x 15 template, two shoulder
+  rings and six soil layers are gone: `leveled` and `block_intersection` refuse slopes and water instead.
+- Vertical reasoning: `q.heightmap` is the first air cell above the top block, so `- 1` is the top block.
+  `ground_level` 2 is the encoded row of the grass (local y -1, 3 rows of soil under it start at encoded 0).
+  A feature puts the template's `ground_level` row at the rule y, so the grass lands exactly on the
+  top terrain block and replaces it, as the owner required on 2026-10-24; the planting layer is then level
+  with the surrounding grass top. Calibrate in T1 (off by one is a one-line change).
+- Chunk fit: half width 6 plus adjustment 1 is 7, so centres 7 or 8 keep every facing inside one chunk.
+- Density: `GARDEN_CHANCE` in `tools/flower_garden.mjs` is 1/1 for the test (every lattice point is an
+  attempt, so T2 measures acceptance a). Production value to keep the old garden count (one per 162 chunks):
+  `8 / (81 a)`, capped at 1. Simulation: a about 0.2 on real Lothlorien terrain, so about 0.5.
+- Retired with this build: `worldgen/structures/flower_garden.json`, `template_pools/flower_garden.json`,
+  shared set `garden_sites.json` (the memorial now has `memorial_sites`, see `MEMORIAL.md`). Existing worlds
+  keep built gardens; new gardens need a new world. `/locate structure` no longer finds gardens.
+- Wiki: untouched in this build; update its garden records only after acceptance.
 
-Leave and re-enter the world after deployment. Stand on level grass and load a
-fresh garden centred roughly seven blocks ahead:
+Manual check on level grass (the template origin is the centre column; the grass row is at foot height - 1):
 
 ```mcfunction
-/structure load lothlorien:flower_garden_01 ~-7 ~-6 ~
+/place feature lothlorien:flower_garden_feature ~ ~ ~
 ```
 
-Template: 15 x 10 x 15; offset [7, 6, 7]. Top of soil is at player foot height.
-Unused cells remain structure void. Six soil layers under the patch and a ragged
-one-/two-step shoulder (`tools/ground_skirt.mjs`) carry it on gentle slopes and over
-water; this is not a slope-fitting generator and cannot reject a bad site. The manual template load retains one buried
-jigsaw block at its centre; `/place structure lothlorien:flower_garden` consumes it
-to dirt when using the jigsaw definition in a world that recognises the new definition.
+From the mod repo, `node tools/build_flower_garden.mjs` rebuilds the template, loot table, feature and rule
+and deletes the retired jigsaw files. Add `--preview` for disposable views in `temp/flower-garden/`.
 
-From the mod repo, `node tools/build_flower_garden.mjs` rebuilds the template,
-loot table, jigsaw definition and pool. Add `--preview` for disposable textured
-views in `temp/flower-garden/`. Accepted review scratch was removed; no unused
-composition variants remain.
-
-`tests/flower_garden.mjs` is part of `mods verify lothlorien`. It checks all four
-approaches, bench/barrel access without jumping, flower/edging support, guaranteed
-nuts, serialized native barrel loot and coordinates, unchanged chest identity,
-buried anchor, unused void, no residents/saplings, deterministic rebuilds, shipped
-asset equality, separate guaranteed tools, the 1:4 attempt ratio, same biome filter
-and unchanged existing tree grid. Offline checks do not establish natural terrain
-placement or exact in-game counts.
-Implementation commit: `Add accepted flower gardens with additive one-to-four worldgen`.
-
-Initial implementation passed full verification and deployment on 2026-10-16:
-0 errors, 0 warnings, 15 documented exceptions. Owner then accepted the garden.
-Reusable container evidence: workspace commit `54fb600`,
-`Document generated barrel loot and flower preview evidence`.
-Additive-density evidence: workspace commit `041d7c5`,
-`Document additive structure density from random-spread grids`.
-Final owner loot and natural-generation registration passed full
-`mods verify lothlorien` on 2026-10-16: 0 errors, 0 warnings,
-15 existing documented exceptions. Natural terrain/count review remains pending.
+`tests/flower_garden.mjs` (part of `mods verify lothlorien`) checks access, support, barrel loot, no jigsaw,
+odd centred box, ground_level row, allowlist, chunk fit for the whole extent, lattice and chance, feature and
+rule equal to the generator, shipped template and determinism. Offline checks do not establish in-game placement.

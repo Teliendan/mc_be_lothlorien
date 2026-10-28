@@ -2,20 +2,16 @@
   "format_version": "1.21.100",
   "minecraft:structure_set": {
     "description": {
-      "identifier": "lothlorien:garden_sites"
+      "identifier": "lothlorien:memorial_sites"
     },
     "placement": {
       "type": "minecraft:random_spread",
       "salt": 794231583,
-      "spacing": 9,
-      "separation": 3,
+      "spacing": 13,
+      "separation": 4,
       "spread_type": "linear"
     },
     "structures": [
-      {
-        "structure": "lothlorien:flower_garden",
-        "weight": 1
-      },
       {
         "structure": "lothlorien:memorial",
         "weight": 1

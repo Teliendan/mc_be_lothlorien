@@ -9,24 +9,25 @@ const hash = (x, z, i) => { let h = (Math.imul(x, 73856093) ^ Math.imul(z, 19349
 const N8 = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]], N4 = N8.slice(0, 4);
 
 // put(x, y, z, name), has(x, y, z); footprint: Set of "x,z" whose grass the caller laid at `top`. Never overwrites a cell the caller wrote.
-// -> { ring1: [[x, z]], ring2: [[x, z]] } (the shoulder cells laid)
-export function addSoilSkirt(put, has, footprint, { top = -1, seed = 0 } = {}) {
+// Options: depth (soil layers incl. the grass row, default SKIRT.depth), ring1 (share of first-ring cells laid, 0 = no shoulder),
+// ring2 (false drops the second ring). -> { ring1: [[x, z]], ring2: [[x, z]] } (the shoulder cells laid)
+export function addSoilSkirt(put, has, footprint, { top = -1, seed = 0, depth = SKIRT.depth, ring1: share1 = SKIRT.ring1, ring2: second = true } = {}) {
   const lay = (x, z, grass) => {
     if (!has(x, grass, z)) put(x, grass, z, "minecraft:grass_block");
-    for (let y = grass - 1; y > top - SKIRT.depth; y--) if (!has(x, y, z)) put(x, y, z, "minecraft:dirt");
+    for (let y = grass - 1; y > top - depth; y--) if (!has(x, y, z)) put(x, y, z, "minecraft:dirt");
   };
   const cells = [...footprint].map((k) => k.split(",").map(Number));
-  for (const [x, z] of cells) for (let y = top - 1; y > top - SKIRT.depth; y--) if (!has(x, y, z)) put(x, y, z, "minecraft:dirt");
+  for (const [x, z] of cells) for (let y = top - 1; y > top - depth; y--) if (!has(x, y, z)) put(x, y, z, "minecraft:dirt");
   const ring = (inner, skip) => {
     const out = new Map();
     for (const [x, z] of inner) for (const [a, b] of N8) { const k = `${x + a},${z + b}`; if (!skip.has(k)) out.set(k, [x + a, z + b]); }
     return [...out.values()];
   };
-  const ring1 = ring(cells, footprint).filter(([x, z]) => hash(x, z, seed) < SKIRT.ring1);
+  const ring1 = ring(cells, footprint).filter(([x, z]) => hash(x, z, seed) < share1);
   const r1 = new Set(ring1.map(([x, z]) => `${x},${z}`));
   for (const [x, z] of ring1) lay(x, z, top - 1);
   const ring2 = ring(ring1, new Set([...footprint, ...ring(cells, footprint).map(([x, z]) => `${x},${z}`)]))
-    .filter(([x, z]) => N4.some(([a, b]) => r1.has(`${x + a},${z + b}`)) && hash(x, z, seed + 1) < SKIRT.ring2);
+    .filter(([x, z]) => second && N4.some(([a, b]) => r1.has(`${x + a},${z + b}`)) && hash(x, z, seed + 1) < SKIRT.ring2);
   for (const [x, z] of ring2) lay(x, z, top - 2);
   return { ring1, ring2 };
 }

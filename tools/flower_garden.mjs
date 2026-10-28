@@ -1,13 +1,16 @@
 // Small, open woodland garden; only existing blocks and native deferred container loot.
-import { addSoilSkirt, SKIRT } from "./ground_skirt.mjs";
+import { addSoilSkirt } from "./ground_skirt.mjs";
+import { siteFeature } from "./site_feature.mjs";
 
-// start offsets the template bottom from world_surface, not the named jigsaw's Y.
-// Grass is at encoded y SKIRT.depth - 1: bury the foundation so grass replaces the terrain top
-// (owner, 2026-10-24). The named jigsaw centres horizontal placement/rotation.
+// Natural `structure_template_feature` (TEST BUILD 2026-10-28). 13 x 13 centred box (beds and aisles +-5, one ragged shoulder ring
+// to +-6), soil 3 deep (grass + 2 dirt), 4 free cells above the grass, no jigsaw anchor. Local y: grass row -1, planting 0..3.
+// Encoded y 0 is local -3, so the grass row is encoded y 2 = ground_level. The rule puts the top terrain block (q.heightmap - 1)
+// at ground_level, so the grass replaces the terrain top block (owner, 2026-10-24).
 export const GARDEN = Object.freeze({
-  id: "lothlorien:flower_garden_01", size: [15, 4 + SKIRT.depth, 15], offset: [7, SKIRT.depth, 7], start: 1 - SKIRT.depth, clear: 4,
+  id: "lothlorien:flower_garden_01", size: [13, 7, 13], offset: [6, 3, 6], groundLevel: 2, clear: 4,
   loot: "loot_tables/chests/flower_garden.json", barrel: [4, 0, 5],
-  anchor: "lothlorien:garden_ground",
+  feature: "lothlorien:flower_garden_feature", rule: "lothlorien:flower_garden_feature_rules",
+  adjustmentRadius: 1, soil: { depth: 3, ring2: false, seed: 11 },
 });
 
 export function buildFlowerGarden() {
@@ -53,12 +56,8 @@ export function buildFlowerGarden() {
   footprint.add("5,5");
   for (const x of [3, 4, 5]) for (let y = 0; y < GARDEN.clear; y++) put(x, y, 5, "minecraft:air");
   put(...GARDEN.barrel, "minecraft:barrel", { facing_direction: 1, open_bit: false }, { loot: GARDEN.loot });
-  // Buried anchor keeps rotation centred and places the soil surface at ground.
-  put(0, -2, 0, "minecraft:jigsaw", { facing_direction: 0, rotation: 0 }, {
-    jigsaw: GARDEN.anchor, finalState: "minecraft:dirt",
-  });
-  // Deep soil under the patch and a ragged shoulder round it (tools/ground_skirt.mjs).
-  const skirt = addSoilSkirt(put, (x, y, z) => blocks.has(`${x},${y},${z}`), footprint, { top: -1, seed: 11 });
+  // Soil under the patch and a ragged one-step shoulder round it (tools/ground_skirt.mjs).
+  const skirt = addSoilSkirt(put, (x, y, z) => blocks.has(`${x},${y},${z}`), footprint, { top: -1, ...GARDEN.soil });
   return { blocks, flowers, entities: [], footprint, skirt };
 }
 
@@ -75,32 +74,41 @@ export function flowerGardenLoot() {
   ] };
 }
 
-// Gardens and memorials share one grid (owner, 2026-10-21): each candidate places one of them, so the two never
-// pair up. Spacing 9 / separation 3 keeps about the old combined count (1/81 per chunk² against 2/144 from two
-// separate 12-chunk grids); neighbouring sites stay at least three chunks apart. Salt is the old garden one.
-export const GARDEN_SITES = Object.freeze({ file: "worldgen/structure_sets/garden_sites.json", salt: 794231583, spacing: 9, separation: 3 });
-export function gardenSitesSet() {
-  return { format_version: "1.21.100", "minecraft:structure_set": {
-    description: { identifier: "lothlorien:garden_sites" },
-    placement: { type: "minecraft:random_spread", salt: GARDEN_SITES.salt,
-      spacing: GARDEN_SITES.spacing, separation: GARDEN_SITES.separation, spread_type: "linear" },
-    structures: [{ structure: "lothlorien:flower_garden", weight: 1 }, { structure: "lothlorien:memorial", weight: 1 }],
+// Lattice: one candidate chunk per 4 x 4 chunks (minimum gap 64 blocks, the old random-spread minimum) with the garden at the
+// chunk centre. GARDEN_CHANCE is the share of candidates that attempt a garden; refused attempts (water, slope, trees) place nothing.
+// TEST BUILD: 1/1 so the in-game test measures acceptance (docs/GARDEN_FEATURE_TEST.md). To keep the old garden count
+// (one per 162 chunks) tune it to 8 / (81 a), a = measured acceptance, capped at 1 (simulation: a about 0.2, chance about 0.5).
+export const GARDEN_CHANCE = Object.freeze({ numerator: 1, denominator: 1 });
+export const GARDEN_LATTICE = 4;
+// Whole footprint incl. the 1-block adjustment stays in one chunk: half width 6 + radius 1 = 7, so the centre is 7 or 8.
+export const GARDEN_EXTENT = Object.freeze([7, 8]);
+
+export function flowerGardenFeature() {
+  return siteFeature({ identifier: GARDEN.feature, structure: GARDEN.id, groundLevel: GARDEN.groundLevel,
+    adjustmentRadius: GARDEN.adjustmentRadius });
+}
+
+export function flowerGardenFeatureRule() {
+  const lattice = (axis) => `math.mod(variable.origin${axis} / 16, ${GARDEN_LATTICE}) == 0`;
+  return { format_version: "1.13.0", "minecraft:feature_rules": {
+    description: { identifier: GARDEN.rule, places_feature: GARDEN.feature },
+    conditions: {
+      placement_pass: "before_surface_pass",
+      "minecraft:biome_filter": [{ test: "has_biome_tag", value: "lothlorien" }],
+    },
+    distribution: {
+      iterations: `(${lattice("x")} && ${lattice("z")}) ? 1 : 0`,
+      scatter_chance: { ...GARDEN_CHANCE },
+      x: { distribution: "uniform", extent: [...GARDEN_EXTENT] },
+      y: "query.heightmap(variable.worldx, variable.worldz) - 1",
+      z: { distribution: "uniform", extent: [...GARDEN_EXTENT] },
+    },
   } };
 }
 
-export function flowerGardenWorldgen() {
-  return {
-    template_pools: { format_version: "1.21.100", "minecraft:template_pool": {
-      description: { identifier: "lothlorien:flower_garden" },
-      elements: [{ element: { element_type: "minecraft:single_pool_element", location: GARDEN.id.replace(":", "/") }, weight: 1 }],
-    } },
-    structures: { format_version: "1.21.100", "minecraft:jigsaw": {
-      description: { identifier: "lothlorien:flower_garden" },
-      biome_filters: [{ test: "has_biome_tag", value: "lothlorien" }],
-      step: "surface_structures", terrain_adaptation: "none",
-      start_pool: "lothlorien:flower_garden", start_jigsaw_name: GARDEN.anchor,
-      max_depth: 1, start_height: { type: "constant", value: { absolute: GARDEN.start } },
-      heightmap_projection: "world_surface", max_distance_from_center: { horizontal: 32, vertical: 32 },
-    } },
-  };
-}
+// Files the garden builder writes (relative to the BP) and the retired jigsaw files it deletes.
+export const GARDEN_FILES = Object.freeze({
+  feature: "features/flower_garden_feature.json", rule: "feature_rules/flower_garden_feature_rules.json",
+  retired: ["worldgen/structures/flower_garden.json", "worldgen/template_pools/flower_garden.json",
+    "worldgen/structure_sets/flower_garden.json", "worldgen/structure_sets/garden_sites.json"],
+});

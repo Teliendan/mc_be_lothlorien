@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { MEMORIAL, buildMemorial, memorialWorldgen } from "../tools/memorial.mjs";
-import { GARDEN_SITES } from "../tools/flower_garden.mjs";
+import { readFileSync, readdirSync } from "node:fs";
+import { MEMORIAL, MEMORIAL_FEATURE, MEMORIAL_SITES, buildMemorial, memorialFeature, memorialSitesSet, memorialWorldgen } from "../tools/memorial.mjs";
 import { placeEntities, toMcstructure } from "../tools/build_structures.mjs";
 import { readNbt } from "../tools/village_sim.mjs";
 import { SILVER_WATCH } from "../tools/watch_camp_rules.mjs";
@@ -63,17 +62,21 @@ const asset = (path) => JSON.parse(readFileSync(new URL(`../lothlorien_bp/${path
 const generated = memorialWorldgen();
 for (const [kind, data] of Object.entries(generated))
   assert.deepEqual(data, asset(`worldgen/${kind}/memorial.json`));
-const sites = asset(GARDEN_SITES.file)["minecraft:structure_set"];
+const sites = asset(MEMORIAL_SITES.file)["minecraft:structure_set"];
 const giantSet = asset("worldgen/structure_sets/giant_mallorn.json")["minecraft:structure_set"];
-assert.equal(generated.structure_sets, undefined, "memorials have no grid of their own since 2026-10-21");
-assert.ok(sites.structures.some(e => e.structure === "lothlorien:memorial" && e.weight === 1), "memorial shares the garden grid");
+assert.equal(generated.structure_sets, undefined);
+assert.deepEqual(asset(MEMORIAL_SITES.file), memorialSitesSet());
+assert.deepEqual(sites.structures, [{ structure: "lothlorien:memorial", weight: 1 }], "memorial-only set since the garden became a feature");
+// old shared set: spacing 9 = 1 site per 81 chunks, half memorials = 1 per 162; spacing 13 = 1 per 169
+const { spacing, separation } = sites.placement;
+assert.ok(separation * 2 < spacing, "engine rule: separation < spacing / 2");
+assert.ok(Math.abs(spacing ** 2 / 162 - 1) < 0.06, "memorial density stays within 6 % of the old shared set");
 assert.notEqual(sites.placement.salt, giantSet.placement.salt);
-assert.ok(giantSet.structures.every(e => e.structure !== "lothlorien:memorial"),
-  "memorial stays off the village/tree grid");
+assert.ok(giantSet.structures.every(e => e.structure !== "lothlorien:memorial"), "memorial stays off the village/tree grid");
 const definition = generated.structures["minecraft:jigsaw"];
-const gardenDef = asset("worldgen/structures/flower_garden.json")["minecraft:jigsaw"];
-for (const field of ["biome_filters", "heightmap_projection", "step", "terrain_adaptation"])
-  assert.deepEqual(definition[field], gardenDef[field], `${field}: same garden terrain eligibility`);
+const giantDef = asset("worldgen/structures/giant_mallorn.json")["minecraft:jigsaw"];
+assert.deepEqual(definition.biome_filters, giantDef.biome_filters, "same biome eligibility as giants");
+assert.equal(definition.heightmap_projection, "world_surface");
 // Vertical placement uses encoded template height, not the named jigsaw's Y.
 const shipped = readNbt(readFileSync(new URL("../lothlorien_bp/structures/lothlorien/memorial_leaf_01.mcstructure", import.meta.url)));
 const shippedPalette = shipped.structure.palette.default.block_palette;
@@ -98,4 +101,33 @@ assert.deepEqual(generated.template_pools["minecraft:template_pool"].elements, [
 }]);
 assert.deepEqual(encoded.buffer, readFileSync(new URL("../lothlorien_bp/structures/lothlorien/memorial_leaf_01.mcstructure", import.meta.url)));
 assert.deepEqual(toMcstructure(buildMemorial().blocks, MEMORIAL.size, MEMORIAL.offset, placeEntities(memorial.entities, MEMORIAL.offset)).buffer, encoded.buffer);
-console.log("ok   leaf memorial: connected approaches, supported planting, native banners, ground anchor, shared garden grid, deterministic asset");
+
+// Command-only feature copy (TEST BUILD 2026-10-28): no rule, no anchor, 11 x 15 centred box, same constraints as the garden.
+const copy = buildMemorial({ feature: true });
+assert.ok(![...copy.blocks.values()].some((b) => b.name === "minecraft:jigsaw"), "feature copy has no jigsaw anchor");
+assert.deepEqual(copy.entities.map((e) => e.id), ["lothlorien:memorial_sound"]);
+assert.deepEqual([MEMORIAL_FEATURE.size[0], MEMORIAL_FEATURE.size[2]], [11, 15]);
+assert.deepEqual([MEMORIAL_FEATURE.offset[0], MEMORIAL_FEATURE.offset[2]], [5, 7], "odd centred box");
+assert.equal(copy.skirt.ring1.length + copy.skirt.ring2.length, 0, "option C: no shoulder");
+for (const [k] of copy.blocks) {
+  const [x, y, z] = k.split(",").map(Number);
+  assert.ok(Math.abs(x) <= 5 && z >= -7 && z <= 7 && y >= -3 && y <= 5, `feature cell ${k} inside the box`);
+}
+const featureAsset = readFileSync(new URL("../lothlorien_bp/structures/lothlorien/memorial_leaf_feature_01.mcstructure", import.meta.url));
+const enc = toMcstructure(copy.blocks, MEMORIAL_FEATURE.size, MEMORIAL_FEATURE.offset, placeEntities(copy.entities, MEMORIAL_FEATURE.offset));
+assert.equal(enc.clipped, 0);
+assert.deepEqual(enc.buffer, featureAsset);
+const featureNbt = readNbt(featureAsset);
+assert.equal(featureNbt.structure.palette.default.block_palette.some((p) => p.name === "minecraft:jigsaw"), false);
+assert.equal(featureNbt.structure.entities.length, 1, "sound entity saved in the template");
+const mf = asset("features/memorial_feature.json"), mfSpec = memorialFeature();
+assert.deepEqual(mf, mfSpec);
+const spec = mf["minecraft:structure_template_feature"], gspec = asset("features/flower_garden_feature.json")["minecraft:structure_template_feature"];
+assert.equal(spec.structure_name, MEMORIAL_FEATURE.id);
+assert.equal(spec.ground_level, MEMORIAL_FEATURE.groundLevel);
+assert.equal(MEMORIAL_FEATURE.groundLevel, MEMORIAL_FEATURE.offset[1], "ground_level is the deck row (local y 0)");
+assert.equal(spec.adjustment_radius, 0);
+assert.deepEqual(spec.constraints, gspec.constraints, "same tuned constraints as the garden");
+assert.equal(spec.rotate_around_center, true);
+assert.ok(!readdirSync(new URL("../lothlorien_bp/feature_rules/", import.meta.url)).some((f) => /memorial/.test(f)), "no feature rule: command test only");
+console.log("ok   leaf memorial: connected approaches, supported planting, native banners, ground anchor, memorial-only set 13/4, command-only 11x15 feature copy, deterministic assets");

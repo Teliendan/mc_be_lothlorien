@@ -1,9 +1,9 @@
 // node tools/build_memorial.mjs [--preview]
-import { mkdirSync, writeFileSync, realpathSync } from "node:fs";
+import { mkdirSync, writeFileSync, realpathSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { placeEntities, toMcstructure } from "./build_structures.mjs";
-import { MEMORIAL, buildMemorial, memorialWorldgen } from "./memorial.mjs";
+import { MEMORIAL, MEMORIAL_FEATURE, MEMORIAL_SITES, buildMemorial, memorialFeature, memorialSitesSet, memorialWorldgen } from "./memorial.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 export function writeMemorial() {
@@ -18,6 +18,17 @@ export function writeMemorial() {
     mkdirSync(worldgenDir, { recursive: true });
     writeFileSync(join(worldgenDir, "memorial.json"), JSON.stringify(data, null, 2) + "\n");
   }
+  // Memorial-only random-spread set (replaces the shared garden_sites set).
+  const setPath = join(root, "lothlorien_bp", MEMORIAL_SITES.file);
+  writeFileSync(setPath, JSON.stringify(memorialSitesSet(), null, 2) + "\n");
+  rmSync(join(root, "lothlorien_bp", "worldgen", "structure_sets", "garden_sites.json"), { force: true });
+  // Command-only feature copy, no feature rule (test T1).
+  const copy = buildMemorial({ feature: true });
+  const encoded = toMcstructure(copy.blocks, MEMORIAL_FEATURE.size, MEMORIAL_FEATURE.offset, placeEntities(copy.entities, MEMORIAL_FEATURE.offset));
+  if (encoded.clipped) throw new Error(`memorial feature clips ${encoded.clipped} blocks`);
+  writeFileSync(join(dir, MEMORIAL_FEATURE.id.split(":")[1] + ".mcstructure"), encoded.buffer);
+  mkdirSync(join(root, "lothlorien_bp", "features"), { recursive: true });
+  writeFileSync(join(root, "lothlorien_bp", "features", "memorial_feature.json"), JSON.stringify(memorialFeature(), null, 2) + "\n");
   console.log(`${MEMORIAL.id}: ${buffer.length} bytes, leaf deck, banner pillar and two benches`);
   return memorial;
 }

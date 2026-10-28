@@ -1,0 +1,49 @@
+{
+  "format_version": "1.26.30",
+  "minecraft:structure_template_feature": {
+    "description": {
+      "identifier": "lothlorien:flower_garden_feature"
+    },
+    "structure_name": "lothlorien:flower_garden_01",
+    "adjustment_radius": 1,
+    "facing_direction": "random",
+    "ground_level": 2,
+    "rotate_around_center": true,
+    "constraints": {
+      "grounded": {},
+      "unburied": {},
+      "leveled": {
+        "max_steepness": 2
+      },
+      "block_intersection": {
+        "only_check_intersection_for_motion_blocking_blocks": false,
+        "block_allowlist": [
+          "minecraft:air",
+          "minecraft:grass_block",
+          "minecraft:dirt",
+          "minecraft:coarse_dirt",
+          "minecraft:podzol",
+          "minecraft:dirt_with_roots",
+          "minecraft:gravel",
+          "minecraft:sand",
+          "minecraft:clay",
+          "minecraft:moss_block",
+          "minecraft:stone",
+          "minecraft:granite",
+          "minecraft:diorite",
+          "minecraft:andesite",
+          "minecraft:coal_ore",
+          "minecraft:iron_ore",
+          "minecraft:copper_ore",
+          "minecraft:short_grass",
+          "minecraft:fern",
+          "minecraft:leaf_litter",
+          "lothlorien:elanor",
+          "lothlorien:niphredil",
+          "lothlorien:athelas",
+          "lothlorien:golden_fern"
+        ]
+      }
+    }
+  }
+}

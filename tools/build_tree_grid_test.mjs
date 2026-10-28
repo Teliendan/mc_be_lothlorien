@@ -68,8 +68,8 @@ export function writeTreeGridTest({ restore = false } = {}) {
     mkdirSync(dirname(file), { recursive: true });
     writeFileSync(file, JSON.stringify(definition, null, 2) + "\n");
   }
-  console.log(restore ? "Original tree/shrine selection restored; gardens and memorials retain their separate grids."
-    : "Dense tree-grid test enabled: village/platform/plain/shrine 10/19/33/18; gardens and memorials share their own grid.");
+  console.log(restore ? "Original tree/shrine selection restored; the memorial keeps its own grid, gardens are a feature."
+    : "Dense tree-grid test enabled: village/platform/plain/shrine 10/19/33/18; the memorial has its own grid, gardens are a feature.");
 }
 
 if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))) {

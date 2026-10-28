@@ -27,29 +27,29 @@ previews were removed; the generator retains only this final design.
 
 ## Natural generation
 
-**Since 2026-10-21 (owner) gardens and memorials share one grid**: set `lothlorien:garden_sites`
-(`structure_sets/garden_sites.json`, salt 794231583, spacing 9 / separation 3, linear), garden and memorial
-weight 1 each, so the two never pair up; combined count about 11 % below the two old 12/4 grids. The paragraph
-below is the earlier design.
+The memorial stays a natural jigsaw (`structures/memorial.json`, pool `memorial`, 15 x 12 x 18 template
+`memorial_leaf_01`, buried anchor, six soil layers, two shoulder rings) because it carries the
+`memorial_sound` entity and it is unknown whether a feature places template entities.
 
-Owner requested the same frequency as elven gardens on 2026-10-16. The memorial's
-independent structure set uses spacing 12, separation 4, linear random spread
-and salt 936184257. Gardens keep their existing spacing 12 / separation 4 / salt
-794231583; Great Mallorns keep spacing 6 / separation 2 / salt 518204731 and
-their existing pool. Each memorial grid cell attempts one memorial, giving the
-same long-run attempt density as gardens, about one per four big-tree attempts.
-This is not an exact quota per biome patch: terrain, biome edges and placement
-success affect observed counts. Independent sets can place sites near each other.
+**Since 2026-10-28 (TEST BUILD, not accepted)** it has its own set `lothlorien:memorial_sites`
+(`structure_sets/memorial_sites.json`), replacing the shared `garden_sites` set now that gardens are a feature.
+The shared set was spacing 9 / separation 3 (one site per 81 chunks, half memorials = one per 162 chunks).
+Memorials alone: spacing 13 / separation 4 (one per 169 chunks, 4 % fewer; 12.7 would be exact; separation
+below spacing / 2 as the engine requires). Constants `MEMORIAL_SITES.spacing` / `.separation` in
+`tools/memorial.mjs` set it; the tests pin the density to within 6 % of the old one.
 
-The memorial uses the garden's Lothlorien biome filter, world-surface projection
-and start height `-SKIRT.depth` (currently -6): encoded deck y 6 lands at terrain level,
-with the foundation beneath it (owner correction, 2026-10-24). The former start -1
-raised it five blocks. Offline checked for Bedrock 1.26.52; native placement pending. A buried central
-jigsaw anchor becomes dirt during natural placement and preserves the accepted deck.
-Six soil layers, a ragged shoulder and four free cells above the deck, as the garden
-(`WORLDGEN_FIXES_2026-10-20.md`); it does not fit steep slopes. **Worldgen changes need a new world.**
-Natural terrain/distribution review remains pending; the owner accepted the
-manually placed structure, not natural counts.
+**Open follow-up (owner, 2026-10-28):** memorials already looked too rare in game. After the garden tests choose a
+denser spacing/separation (count the memorials seen during T2, `GARDEN_FEATURE_TEST.md`). Not changed in this build.
+
+### Command-only feature copy (test T1)
+
+`features/memorial_feature.json` places `lothlorien:memorial_leaf_feature_01` (11 x 9 x 15, offset [5, 3, 7]):
+deck, one-cell apron, no shoulder, soil 3 deep, no anchor, with the sound entity. Same constraints as the garden
+(`tools/site_feature.mjs`), `adjustment_radius 0`, `ground_level 3` (the deck row, which replaces the terrain top).
+**No feature rule**: it is never placed by worldgen. Run
+`/place feature lothlorien:memorial_feature ~ ~ ~` on flat ground, then
+`/testfor @e[type=lothlorien:memorial_sound,r=12]`: if the entity exists, features place template entities and the
+memorial can become a feature (then give it a rule, centre extent `[7, 8]`). The jigsaw files stay until then.
 
 ### Missing-memorial investigation (2026-10-24)
 
@@ -75,8 +75,8 @@ From `C:\mcmods\mods\lothlorien`:
 node tools/build_memorial.mjs
 ```
 
-Writes `lothlorien:memorial_leaf_01`, a 15 x 12 x 18 template with offset [7, 6, 8],
-and its three worldgen definitions. Optional `--preview` renders four textured
+Writes `lothlorien:memorial_leaf_01`, a 15 x 12 x 18 template with offset [7, 6, 8], its jigsaw
+definition and pool, the `memorial_sites` set, and the feature copy (template + feature JSON). Optional `--preview` renders four textured
 views into disposable `temp/memorial/` for future changes.
 
 After deployment, leave and re-enter the world. On level ground, place a fresh
@@ -93,9 +93,8 @@ the new registration. Existing placed copies retain their saved blocks.
 `tests/memorial.mjs` runs in the standard mod suite: four connected approaches,
 bench access, supported soil/flowers/seats, native six-layer banner data and
 hanging clearance, no clipped template cells, preserved void, deterministic
-output and equality with the shipped binary, serialized ground anchor, matching
-garden frequency/biome rules, independent salts and unchanged garden membership.
-Shared garden tests also pin the existing Great Mallorn grid.
+output and equality with the shipped binary, serialized ground anchor, memorial-only set density, giant biome rules, independent salts, and the feature
+copy (no anchor, entity saved, centred box, constraints equal to the garden, no rule).
 Reusable placement evidence: workspace knowledge commit `041d7c5`,
 `Document additive structure density from random-spread grids`.
 
