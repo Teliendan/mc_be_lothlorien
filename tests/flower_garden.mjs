@@ -92,8 +92,9 @@ const half = (GARDEN.size[0] - 1) / 2 + f.adjustment_radius;
 for (const c of GARDEN_EXTENT) assert.ok(c - half >= 0 && c + half <= 15, `centre ${c} keeps the footprint in its chunk`);
 assert.deepEqual([dist.x.extent, dist.z.extent], [[...GARDEN_EXTENT], [...GARDEN_EXTENT]]);
 assert.ok(dist.iterations.includes(`, ${GARDEN_LATTICE}) == 0`), "one candidate chunk per lattice cell");
-assert.deepEqual(dist.scatter_chance, GARDEN_CHANCE);
-assert.ok(GARDEN_CHANCE.numerator <= GARDEN_CHANCE.denominator);
+// the engine drops a rule whose scatter_chance has numerator >= denominator: chance 1 is no scatter_chance
+if (GARDEN_CHANCE.numerator >= GARDEN_CHANCE.denominator) assert.equal(dist.scatter_chance, undefined, "chance 1: no scatter_chance");
+else assert.deepEqual(dist.scatter_chance, GARDEN_CHANCE);
 const treeSet = JSON.parse(asset("worldgen/structure_sets/giant_mallorn.json"))["minecraft:structure_set"];
 assert.deepEqual(treeSet.placement, { type: "minecraft:random_spread", salt: 518204731,
   separation: 2, spacing: 6, spread_type: "linear" }, "existing big-tree placement rate and grid remain unchanged");

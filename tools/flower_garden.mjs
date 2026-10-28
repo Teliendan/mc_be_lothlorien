@@ -76,6 +76,8 @@ export function flowerGardenLoot() {
 
 // Lattice: one candidate chunk per 4 x 4 chunks (minimum gap 64 blocks, the old random-spread minimum) with the garden at the
 // chunk centre. GARDEN_CHANCE is the share of candidates that attempt a garden; refused attempts (water, slope, trees) place nothing.
+// Chance 1 is written as no scatter_chance: the engine rejects numerator >= denominator (Content Log 2026-10-28,
+// "denominator should be greater than the numerator") and drops the whole rule.
 // TEST BUILD: 1/1 so the in-game test measures acceptance (docs/GARDEN_FEATURE_TEST.md). To keep the old garden count
 // (one per 162 chunks) tune it to 8 / (81 a), a = measured acceptance, capped at 1 (simulation: a about 0.2, chance about 0.5).
 export const GARDEN_CHANCE = Object.freeze({ numerator: 1, denominator: 1 });
@@ -98,7 +100,7 @@ export function flowerGardenFeatureRule() {
     },
     distribution: {
       iterations: `(${lattice("x")} && ${lattice("z")}) ? 1 : 0`,
-      scatter_chance: { ...GARDEN_CHANCE },
+      ...(GARDEN_CHANCE.numerator < GARDEN_CHANCE.denominator ? { scatter_chance: { ...GARDEN_CHANCE } } : {}),
       x: { distribution: "uniform", extent: [...GARDEN_EXTENT] },
       y: "query.heightmap(variable.worldx, variable.worldz) - 1",
       z: { distribution: "uniform", extent: [...GARDEN_EXTENT] },

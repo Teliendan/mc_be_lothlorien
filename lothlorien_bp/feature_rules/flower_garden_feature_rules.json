@@ -16,10 +16,6 @@
     },
     "distribution": {
       "iterations": "(math.mod(variable.originx / 16, 4) == 0 && math.mod(variable.originz / 16, 4) == 0) ? 1 : 0",
-      "scatter_chance": {
-        "numerator": 1,
-        "denominator": 1
-      },
       "x": {
         "distribution": "uniform",
         "extent": [
