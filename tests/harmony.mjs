@@ -70,7 +70,7 @@ test("harmony: victims are classified into deed kinds (inanimate counts nothing,
   assert.equal(k(EW.WARDEN_ID, ["lothlorien_warden", "irongolem", "mob"]), "warden_kill");
   assert.equal(k("minecraft:player", ["player"]), "player");
   assert.equal(k("minecraft:player", ["player"], true), undefined, "a player the wardens hunt (Hated, elf foe) is free");
-  assert.equal(k("minecraft:zombie", ["zombie", "monster", "mob"], true), "monster", "quarry only concerns players");
+  assert.equal(k("minecraft:horse", ["horse", "mob"], true), undefined, "a jockey mount is free");
   assert.equal(k("minecraft:cow"), "animal");
   assert.equal(k("lothlorien:elf", ["lothlorien_elf", "mob"]), "elf_kill", "a civilian elf is its own kind (was a plain animal, 3)");
   assert.equal(k("lothlorien:elf_post", ["lothlorien_elf_post", "elf_post_home", "inanimate"]), undefined, "a post counts nothing");
@@ -161,6 +161,20 @@ test("harmony: the timer is a game-tick clock - one second per 20 game ticks (at
   assert.deepEqual([s.harmony, s.timer], [-5, 59]);
   H.tick(s, true, 1);
   assert.deepEqual([s.harmony, s.timer], [-4, 0], "60 runs of the 20-tick interval = +1");
+});
+
+
+test("harmony: jockey mounts - a hit while a monster rides marks the mob for 10 s, consumed by the kill, old marks pruned", () => {
+  const m = new Map();
+  H.markMount(m, "horse", 0);
+  assert.equal(H.wasMount(m, "horse", H.JOCKEY_MEMORY_MS), true);
+  assert.equal(H.wasMount(m, "horse", H.JOCKEY_MEMORY_MS), false, "consumed");
+  H.markMount(m, "cow", 0);
+  assert.equal(H.wasMount(m, "cow", H.JOCKEY_MEMORY_MS + 1), false, "too old");
+  assert.equal(H.wasMount(m, "never", 0), false);
+  for (let i = 0; i <= H.MOUNT_PRUNE_SIZE; i++) H.markMount(m, `old${i}`, 0);
+  H.markMount(m, "new", H.JOCKEY_MEMORY_MS + 1);
+  assert.deepEqual([...m.keys()], ["new"]);
 });
 
 finish();

@@ -438,6 +438,15 @@ await scenario("harmony: inside the forest monsters and players the wardens hunt
   assert.equal(HG.harmonyOf(hated).harmony, H.HATED_DEATH_HARMONY, "the Hated victim's own death reset still applies");
   mock.fire("entityDie", { deadEntity: other, damageSource: { damagingEntity: player } });
   assert.equal(harmony(), -H.deedCost("player"), "an ordinary player still costs");
+  const rideable = (riders) => ({ components: { "minecraft:type_family": { getTypeFamilies: () => ["horse", "mob"] }, "minecraft:rideable": { getRiders: () => riders } } });
+  const baby = mock.addEntity("minecraft:zombie", { x: 5, y: 70, z: 5 }, fam(["zombie", "monster", "mob"]));
+  const jockeyHorse = mock.addEntity("minecraft:horse", { x: 5, y: 70, z: 5 }, rideable([baby])), plainHorse = mock.addEntity("minecraft:horse", { x: 6, y: 70, z: 6 }, rideable([]));
+  for (const horse of [jockeyHorse, plainHorse]) mock.fire("entityHurt", { hurtEntity: horse, damageSource: { damagingEntity: player } }, "before");
+  const before = harmony();
+  mock.fire("entityDie", { deadEntity: jockeyHorse, damageSource: { damagingEntity: player } });
+  assert.equal(harmony(), before, "a horse that carried a zombie when hit is free");
+  mock.fire("entityDie", { deadEntity: plainHorse, damageSource: { damagingEntity: player } });
+  assert.ok(harmony() < before, "a riderless horse still costs");
 });
 
 // ---- planner speed: the time-boxed job driver and the timing log ----

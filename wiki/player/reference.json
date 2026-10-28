@@ -207,11 +207,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/elven_warden.js",
-        "sha256": "cb568e62c48ec156e4dc086a134eb2dde94b2ba903ebfef7388921946f2a231d"
+        "sha256": "becbfffcaceebf10fa0e5beff938051c326e6ed15459727d012408397d80850d"
       },
       {
         "path": "lothlorien_bp/scripts/elven_warden_rules.js",
-        "sha256": "c8d1339fe14922bd84a005817f7c2a9cac1d70ae17bfd259c71f3e7a30d3f334"
+        "sha256": "a7d8a8e859cf8f4f439ea5b26a81876c71869adbe8089fb73ed5978fcefdf01f"
       }
     ]
   },

@@ -1303,11 +1303,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/elven_warden.js",
-        "sha256": "cb568e62c48ec156e4dc086a134eb2dde94b2ba903ebfef7388921946f2a231d"
+        "sha256": "becbfffcaceebf10fa0e5beff938051c326e6ed15459727d012408397d80850d"
       },
       {
         "path": "lothlorien_bp/scripts/elven_warden_rules.js",
-        "sha256": "c8d1339fe14922bd84a005817f7c2a9cac1d70ae17bfd259c71f3e7a30d3f334"
+        "sha256": "a7d8a8e859cf8f4f439ea5b26a81876c71869adbe8089fb73ed5978fcefdf01f"
       }
     ]
   },
@@ -1460,45 +1460,45 @@
       },
       {
         "path": "lothlorien_bp/scripts/harmony.js",
-        "sha256": "0136236c6f5c854758225436ac65a574c4036446be9ebeab5d6623792ac9ee28"
+        "sha256": "aca67865d6518fa6f3ae67f39acb07829953898037e446c1efc30527ec243889"
       },
       {
         "path": "lothlorien_bp/scripts/harmony_game.js",
-        "sha256": "aaa6f4848f660d66af620774b30f394b5a33bf1feb03f60d2e6f70e491f31993"
+        "sha256": "d92edae5708efc7dff36091ae24822a3d5ae1d89709cb21e7e8e96a90733d082"
       }
     ]
   },
   {
     "featureId": "lothlorien:harmony",
     "id": "lothlorien:harmony/defending",
-    "text": "Defending the forest is welcome: killing monsters, or players the wardens are hunting, never lowers your Harmony.",
+    "text": "Defending the forest is welcome: killing monsters, the animals they ride, or players the wardens are hunting never lowers your Harmony.",
     "evidence": [
       {
         "path": "lothlorien_bp/scripts/harmony.js",
-        "sha256": "0136236c6f5c854758225436ac65a574c4036446be9ebeab5d6623792ac9ee28"
+        "sha256": "aca67865d6518fa6f3ae67f39acb07829953898037e446c1efc30527ec243889"
       },
       {
         "path": "lothlorien_bp/scripts/harmony_game.js",
-        "sha256": "aaa6f4848f660d66af620774b30f394b5a33bf1feb03f60d2e6f70e491f31993"
+        "sha256": "d92edae5708efc7dff36091ae24822a3d5ae1d89709cb21e7e8e96a90733d082"
       }
     ]
   },
   {
     "featureId": "lothlorien:elven_warden",
     "id": "lothlorien:elven_warden/thanks",
-    "text": "Kill a monster a warden has been shooting and that warden thanks you in Sindarin; a Friend is called friend.",
+    "text": "Kill a monster near a warden and the nearest warden thanks you in Sindarin; a Friend is called friend.",
     "evidence": [
       {
         "path": "lothlorien_bp/scripts/elven_warden.js",
-        "sha256": "cb568e62c48ec156e4dc086a134eb2dde94b2ba903ebfef7388921946f2a231d"
+        "sha256": "becbfffcaceebf10fa0e5beff938051c326e6ed15459727d012408397d80850d"
       },
       {
         "path": "lothlorien_bp/scripts/elven_warden_rules.js",
-        "sha256": "c8d1339fe14922bd84a005817f7c2a9cac1d70ae17bfd259c71f3e7a30d3f334"
+        "sha256": "a7d8a8e859cf8f4f439ea5b26a81876c71869adbe8089fb73ed5978fcefdf01f"
       },
       {
         "path": "lothlorien_bp/scripts/voice_rules.js",
-        "sha256": "937b804698d5ba3af484fe610f9cb7dd3e90a7e7b2fdbbc0ed67bcd55ced215e"
+        "sha256": "109e32606b7e8f9702a4ffde20ccf7d625fc8bfc9f25b91408eb54bdb0a1d235"
       }
     ]
   },

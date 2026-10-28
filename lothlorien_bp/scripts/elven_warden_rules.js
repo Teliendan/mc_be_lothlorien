@@ -56,23 +56,9 @@ export function isFriendlyFire({ shooterId, victim, sinceProvokedMs, hated = fal
 }
 
 // ---- Thanks ----
-// A warden thanks the player who kills its quarry (voice pools thanks / thanks_warm). Entity.target is beta-only, so the quarry
-// is what the warden's arrows hit: elven_warden.js records every warden hit on a monster or a hunted player (not friendly fire)
-// and asks takeShot when that victim dies. A hit older than SHOT_MEMORY_MS no longer counts.
-export const SHOT_MEMORY_MS = 30000;
-export const SHOT_PRUNE_SIZE = 64;
-
-// shots: Map victimId -> { wardenId, at }. Old entries go when the map grows: no timer.
-export function recordShot(shots, victimId, wardenId, now) {
-  shots.set(victimId, { wardenId, at: now });
-  if (shots.size <= SHOT_PRUNE_SIZE) return;
-  for (const [id, shot] of shots) if (now - shot.at > SHOT_MEMORY_MS) shots.delete(id);
-}
-
-// The id of the warden that shot `victimId` within SHOT_MEMORY_MS, or undefined; the entry is consumed.
-export function takeShot(shots, victimId, now) {
-  const shot = shots.get(victimId);
-  if (!shot) return undefined;
-  shots.delete(victimId);
-  return now - shot.at <= SHOT_MEMORY_MS ? shot.wardenId : undefined;
-}
+// A player who kills a monster the wardens hunt is thanked by the nearest warden within THANKS_RADIUS of the player (voice
+// pools thanks / thanks_warm). Entity.target is beta-only, and attributing warden arrow hits was not confirmed in game, so the
+// warden's quarry is anything its target filter accepts (entities/elven_warden.json; a test keeps the lists equal).
+export const THANKS_RADIUS = 24; // the warden's within_radius
+export const NOT_HUNTED_FAMILIES = ["enderman", "warden", "wither", "zombie_pigman", "piglin", "creaking", "aquatic", "shulker"];
+export const isWardenQuarry = (families) => families.includes("monster") && !families.some((f) => NOT_HUNTED_FAMILIES.includes(f));

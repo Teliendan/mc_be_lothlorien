@@ -214,7 +214,7 @@ test("elf: wardens defend elves - the foe tag is a target and is not shielded fr
   assert.equal(EW.isFriendlyFire({ shooterId: EW.WARDEN_ID, victim: { typeId: EL.ELF_ID, families: [EL.ELF_FAMILY, "mob"] } }), true, "warden arrows never hurt elves");
   assert.equal(EL.FOE_MS, EW.PROVOKE_MS, "a foe is shot for as long as a provoked player");
   const src = readFileSync(new URL("../lothlorien_bp/scripts/elven_warden.js", import.meta.url), "utf8");
-  assert.ok(src.includes("hasTag(FOE_TAG)") && /isFriendlyFire\(\{[^)]*\bfoe\b/.test(src), "friendly fire reads the foe tag");
+  assert.ok(src.includes("hasTag(FOE_TAG)") && /isFriendlyFire\(\{.*\bhated, foe,/.test(src), "friendly fire reads the foe tag");
 });
 
 test("elf homeSite: open 5x5 gives 5, a fence shrinks it, a single cell gives null, the square always contains the cell", () => {

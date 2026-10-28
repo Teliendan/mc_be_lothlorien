@@ -4,7 +4,7 @@ export const POOLS = ["opening_neutral", "opening_warm", "trade_positive", "expl
 export const soundIdOf = (pool) => `lothlorien.voice.${pool}`;
 const SCRIPT_POOLS = new Set(POOLS.filter((p) => p !== "trade_positive")); // trade_positive is native haggle.yes (sounds.json)
 // Commits (a taken task, an accepted completion, a combat start) skip the ordinary wait but never start over a playing line.
-export const COMMIT_POOLS = new Set(["task_taken", "completion", "combat_start"]);
+export const COMMIT_POOLS = new Set(["task_taken", "completion", "combat_start", "thanks", "thanks_warm"]); // thanks: right after a combat shout
 export const GREETING_POOLS = new Set(["opening_neutral", "opening_warm", "refuse_speak"]); // the refusal replaces the greeting
 export const ELF_GAP_TICKS = 80; // 4 s between ordinary lines of one elf
 export const LINE_TICKS = 32; // longest clip 1.53 s
@@ -20,7 +20,7 @@ export const VOICE_HEIGHT = 1.6; // mouth height above the feet
 const MENU = 0.7; // menu chatter quieter than world speech
 export const VOLUME = {
   opening_neutral: MENU, opening_warm: MENU, trade_positive: MENU, explain: MENU, task_taken: MENU,
-  completion: MENU, refuse_speak: MENU, healing: 0.8, combat_start: 1.0, thanks: 0.8, thanks_warm: 0.8,
+  completion: MENU, refuse_speak: MENU, healing: 0.8, combat_start: 1.0, thanks: 1.0, thanks_warm: 1.0,
 };
 
 // Harmony band -> opening pool: Hated silence, Shunned a curt refusal, Friend warm, Guest/Uneasy neutral.

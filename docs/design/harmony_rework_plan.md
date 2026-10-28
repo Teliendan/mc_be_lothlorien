@@ -24,7 +24,7 @@ One per-player number, **harmony**, an integer from **-60 to +10**. One point is
 | Deed | Cost | Notes |
 |---|---|---|
 | Animal (any non-monster mob: deer, swan, squirrel, vanilla animals, villagers...) | -3 | Not family `inanimate` (armor stands) |
-| Monster (family `monster`, `entity.matches({families: ["monster"]})`) | 0 | **Free since 2026-10-27** (owner: players, the owner's children included, want to help the elves defend the forest; the earlier -1 "lead monsters to the wardens" tactic did not work in play). Also free: a player the wardens hunt (tag `lothlorien_hated` or `lothlorien_elf_foe`, read before the victim's own death reset) |
+| Monster (family `monster`, `entity.matches({families: ["monster"]})`) | 0 | **Free since 2026-10-27** (owner: players, the owner's children included, want to help the elves defend the forest; the earlier -1 "lead monsters to the wardens" tactic did not work in play). Also free: a player the wardens hunt (tag `lothlorien_hated` or `lothlorien_elf_foe`, read before the victim's own death reset), and a jockey mount (a mob a player hit within the last 10 s while a monster rode it; owner 2026-10-28) |
 | White deer | -6 | |
 | Unicorn | -10 | The forest's most sacred creature |
 | Fighting a warden | -1 per fight | A fight = first player hit on a warden after 60 s without one (`provoked` map in `elven_warden.js`, `PROVOKE_MS`) |

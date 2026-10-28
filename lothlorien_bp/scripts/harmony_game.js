@@ -3,7 +3,7 @@ import { message } from "./messages.js";
 // property (survives relogging, independent between players) and written only when harmony changes.
 import { world, system } from "@minecraft/server";
 import { FOE_TAG } from "./elf_rules.js";
-import { EVERYWHERE_DEEDS, MAX_HARMONY, MIN_HARMONY, bandOf, changeMessages, deedCounts, deedKindOf, hintDue, isFriend, isHated, parse, recordDeath, recordDeed, serialize, statusText, tick } from "./harmony.js";
+import { EVERYWHERE_DEEDS, MAX_HARMONY, MIN_HARMONY, bandOf, markMount, wasMount, changeMessages, deedCounts, deedKindOf, hintDue, isFriend, isHated, parse, recordDeath, recordDeed, serialize, statusText, tick } from "./harmony.js";
 
 const PROPERTY = "lothlorien:harmony";
 export const HATED_TAG = "lothlorien_hated"; // read by entities/elven_warden.json (wardens attack tagged players on sight)
@@ -13,6 +13,7 @@ const PLAYER_ID = "minecraft:player";
 
 const states = new Map();
 const lastHint = new Map(); // player id -> Date.now() of the last deed hint
+const mounts = new Map(); // mob id -> Date.now() of a player hit while a monster rode it (harmony.js markMount)
 let isInside = () => false;
 
 // Current state of a player (loaded from the dynamic property on first use). Consumers read bandOf(state.harmony).
@@ -113,15 +114,27 @@ export function startHarmony(inside, debugTag) {
     try {
       // read before recordDeath: a Hated player dying inside drops to Shunned and loses the tag
       const quarry = deadEntity.typeId === PLAYER_ID && (deadEntity.hasTag(HATED_TAG) || deadEntity.hasTag(FOE_TAG));
+      const mount = mounts.size > 0 && wasMount(mounts, deadEntity.id, Date.now());
       if (deadEntity.typeId === PLAYER_ID) {
         const state = harmonyOf(deadEntity);
         update(deadEntity, state, () => recordDeath(state, inside(deadEntity.dimension, deadEntity.location)));
       }
       const killer = damageSource.damagingEntity;
       if (killer?.typeId !== PLAYER_ID || killer.id === deadEntity.id) return;
-      deed(killer, deadEntity, deedKindOf(deadEntity.typeId, familiesOf(deadEntity), quarry));
+      deed(killer, deadEntity, deedKindOf(deadEntity.typeId, familiesOf(deadEntity), quarry || mount));
     } catch {
       // entity already gone
+    }
+  });
+
+  // A player hitting a mob that carries a monster (jockey): read-only, so allowed in the before event.
+  world.beforeEvents.entityHurt.subscribe(({ hurtEntity, damageSource }) => {
+    try {
+      if (damageSource.damagingEntity?.typeId !== PLAYER_ID) return;
+      const riders = hurtEntity.getComponent("minecraft:rideable")?.getRiders();
+      if (riders?.some((rider) => familiesOf(rider).includes("monster"))) markMount(mounts, hurtEntity.id, Date.now());
+    } catch {
+      // entity gone
     }
   });
 

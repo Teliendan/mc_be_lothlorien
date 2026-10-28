@@ -87,6 +87,9 @@ noise or babble burst, up to -0.5 dBFS. Edge-silence trimming keeps it.
    of the peak: quiet mumble.
 4. 10 ms fade-in, 50 ms fade-out.
 5. Level to -26 dBFS RMS, capped at -3 dBFS peak.
+6. Warden thanks only: `louden` to -20 dBFS RMS with a 5 ms limiter at -1 dBFS (owner 2026-10-28:
+   at -26 the thanks was "much more silent than the sound of fighting"; game volume 1.0). The owner also
+   finds the voices in general quiet: raising the other lines the same way is an open question.
 
 Limits:
 - In multi-word lines the model sometimes pauses ~0.4 s before the last word.

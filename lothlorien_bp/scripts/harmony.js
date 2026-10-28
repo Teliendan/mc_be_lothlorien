@@ -46,17 +46,34 @@ const WARDEN = "lothlorien:elven_warden";
 const ELF = "lothlorien:elf";
 const PLAYER = "minecraft:player";
 
-// Deed kind of a victim, or undefined when it counts nothing (armor stands and the like: family `inanimate`; a player the
-// wardens hunt). `families` = the victim's type families; `quarry` = a player tagged Hated or elf foe (warden targets).
-export function deedKindOf(typeId, families = [], quarry = false) {
-  if (families.includes("inanimate")) return undefined;
-  if (typeId === PLAYER && quarry) return undefined;
+// Deed kind of a victim, or undefined when it counts nothing (armor stands and the like: family `inanimate`; free kills).
+// `families` = the victim's type families; `free` = defending the forest: a player tagged Hated or elf foe (warden targets),
+// or a mount that carried a monster (a baby zombie rides horses, cows, wolves..., see markMount).
+export function deedKindOf(typeId, families = [], free = false) {
+  if (families.includes("inanimate") || free) return undefined;
   if (typeId === WHITE_DEER) return "white_deer";
   if (typeId === UNICORN) return "unicorn";
   if (typeId === WARDEN) return "warden_kill";
   if (typeId === ELF) return "elf_kill";
   if (typeId === PLAYER) return "player";
   return families.includes("monster") ? "monster" : "animal";
+}
+
+// Jockey mounts: a player hit on a mob carrying a monster marks it (death throws the riders off, so the hit is the moment
+// to look); a kill within JOCKEY_MEMORY_MS of that hit is free. mounts: Map id -> ms of the hit; old entries go when it grows.
+export const JOCKEY_MEMORY_MS = 10000;
+export const MOUNT_PRUNE_SIZE = 64;
+export function markMount(mounts, id, now) {
+  mounts.set(id, now);
+  if (mounts.size <= MOUNT_PRUNE_SIZE) return;
+  for (const [key, at] of mounts) if (now - at > JOCKEY_MEMORY_MS) mounts.delete(key);
+}
+// True when `id` was marked within JOCKEY_MEMORY_MS; the entry is consumed.
+export function wasMount(mounts, id, now) {
+  const at = mounts.get(id);
+  if (at === undefined) return false;
+  mounts.delete(id);
+  return now - at <= JOCKEY_MEMORY_MS;
 }
 
 const clamp = (v) => Math.max(MIN_HARMONY, Math.min(MAX_HARMONY, v));

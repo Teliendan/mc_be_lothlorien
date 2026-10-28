@@ -145,6 +145,20 @@ def level(audio, rms_db=-26, peak_db=-3):
                        10 ** (peak_db / 20) / np.max(np.abs(audio)))
 
 
+def louden(audio, rate, rms_db=-20, ceiling_db=-1, window=0.005):
+    """Raise to rms_db RMS; peaks above ceiling_db are pulled down by a short limiter instead of capping the gain.
+
+    Used for lines that must carry over combat (warden thanks, owner 2026-10-28: -26 dBFS was too quiet).
+    Gain = per-sample need, min-filtered over +-window, then averaged over +-window/2, so every peak stays under the ceiling.
+    """
+    from scipy.ndimage import minimum_filter1d, uniform_filter1d
+    y = audio * 10 ** (rms_db / 20) / np.sqrt(np.mean(audio ** 2))
+    need = np.minimum(1.0, 10 ** (ceiling_db / 20) / np.maximum(np.abs(y), 1e-9))
+    w = max(1, int(window * rate))
+    gain = uniform_filter1d(minimum_filter1d(need, 2 * w + 1), w + 1)
+    return np.clip(y * gain, -(10 ** (ceiling_db / 20)), 10 ** (ceiling_db / 20))
+
+
 def print_envelope(audio, rate, start=0.0, end=None):
     """Print 10 ms levels, for reading dips, pauses and tail bursts by eye."""
     db = frames_db(audio, rate)
