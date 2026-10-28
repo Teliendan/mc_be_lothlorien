@@ -23,9 +23,9 @@
         "top_p": 1.0
       },
       "source": "batch2/mae_govannen_s1",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 1.11,
-      "sha256": "af4c54479dbfa52e364c281bc7873515a8583b1c6a695f8f5c95bbbb2e723d89"
+      "sha256": "0012755e49ab753a6f1f994dc0173225c56baa7b0d35b99dc515895ce073dd34"
     },
     {
       "file": "suilad",
@@ -48,9 +48,9 @@
         "top_p": 1.0
       },
       "source": "batch2/suilad_mellon_s1",
-      "edit": "Splice: first 0.515 s (\"Suila\") of batch 2 suilad_mellon_s1 after the cut, joined with a 10 ms crossfade to batch 9 suilade_5 (input \"Súilade.\") from 0.415 s to 20 ms after its D release (0.46 s); 10 ms fade-out.",
+      "edit": "Splice: first 0.515 s (\"Suila\") of batch 2 suilad_mellon_s1 after the cut, joined with a 10 ms crossfade to batch 9 suilade_5 (input \"Súilade.\") from 0.415 s to 20 ms after its D release (0.46 s); 10 ms fade-out.; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.57,
-      "sha256": "2f3e6c4187b78346f342a21cab875008180718828d885d57d31d6c9a9ea47443"
+      "sha256": "5ffe28c5f05c575a3e3c00f9d5000c12e88a9b44e83bf6050a110eec8262d0f1"
     },
     {
       "file": "tolo",
@@ -73,9 +73,9 @@
         "top_p": 1.0
       },
       "source": "batch5/tolo_6",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.43,
-      "sha256": "faf49a384e37a495a28acb429cafb7ef9e726b1a339bc85783807af357b46b76"
+      "sha256": "92217d850e6a33cd6e20bbf43723fbe289461114de346123aa96b473ab8cd21c"
     },
     {
       "file": "mae_govannen_mellon",
@@ -98,9 +98,9 @@
         "top_p": 1.0
       },
       "source": "batch6/mae_govannen_mellon_nc_4",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 1.53,
-      "sha256": "2135e725eeeeb553f1c00d7dd1f68b6a532106f0231e20da30f6a0b78f71915a"
+      "sha256": "e9f22d7e7fbc924c073b6c9fb08876d47ad25a8912dc9199a6effe7c46943e1f"
     },
     {
       "file": "suilad_mellon_1",
@@ -123,9 +123,9 @@
         "top_p": 1.0
       },
       "source": "batch2/suilad_mellon_s1",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 1.2,
-      "sha256": "37b2659dc0acd68c44346d1f051b5698836a1dbfdbad8ae3096bdc3bcd8d1b82"
+      "sha256": "f6c383ac676b0dead3b14c54a23cef9082b15bf5cd33e6d0134884885c54fdb2"
     },
     {
       "file": "suilad_mellon_2",
@@ -148,9 +148,9 @@
         "top_p": 1.0
       },
       "source": "batch2/suylad_mellon_s1",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 1.24,
-      "sha256": "f484673ee1595f705ccb483dc896e08c2e0e289f59a225c50a420a3fe2b53470"
+      "sha256": "564f1ea277160df9fbbafbcb00f22209605a7cfd7ffba02d0dac9abdc7efce4b"
     },
     {
       "file": "tolo_mellon",
@@ -173,9 +173,9 @@
         "top_p": 1.0
       },
       "source": "batch2/tolo_mellon_s1",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.86,
-      "sha256": "157e4839cdc10212ffc28ca3d2e9f391ae1fc9440f77d13243194ffd0cc17e68"
+      "sha256": "03e5ad62d998fa83374869e40b9843c0e415a4bba6fce5f34dcbf049ac1e4476"
     },
     {
       "file": "ma_1",
@@ -199,9 +199,9 @@
         "top_p": 1.0
       },
       "source": "batch2/ma_s2",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.6,
-      "sha256": "7f2f41614a98e22788fe752c1b728c5c9b7b70a88947c2fa83de9ad7f136d3d1"
+      "sha256": "39d68b157680c554758fbae6a170a4d0ad5f6237a137eb07dc4709ace48dcee1"
     },
     {
       "file": "ma_2",
@@ -225,9 +225,9 @@
         "top_p": 1.0
       },
       "source": "batch2/ma_s3",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.35,
-      "sha256": "e781909e04ab8906c22a91835971a2a64eb56beeec5737857d6aacec42505266"
+      "sha256": "c5117becb397c335b909113e9212a73477db12e0071b14d0ebb47bb289afcb38"
     },
     {
       "file": "mae_1",
@@ -251,9 +251,9 @@
         "top_p": 1.0
       },
       "source": "batch5/mae_5",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.56,
-      "sha256": "fef9c7625bc073368df556d3e82960c3514c9140604d28d52ae16207d4f25679"
+      "sha256": "8bd2125f36aedb6ba77a0a3764a38647905e084db797fc2ca39f62ff95195863"
     },
     {
       "file": "mae_2",
@@ -277,9 +277,9 @@
         "top_p": 1.0
       },
       "source": "batch5/mae_6",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.49,
-      "sha256": "b9c049e4affb440c70e722976d33aaaafae3c0f0054b18d88f03e6fbfaf02d4f"
+      "sha256": "0e5e43d807afe3cb2e111a92647d4faa14d8790929a46bb3a5d3d6522293b4ea"
     },
     {
       "file": "lasto_1",
@@ -302,9 +302,9 @@
         "top_p": 1.0
       },
       "source": "batch5/lasto_2",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.67,
-      "sha256": "97f645ce71ba84b0701f4047cee93865543c1c6851f94ab4d62fe4768a7c754a"
+      "sha256": "c8599dbe5058561b41e11ee69b79104a8ef2380ecc2b69c802757abfde20897e"
     },
     {
       "file": "lasto_2",
@@ -327,9 +327,9 @@
         "top_p": 1.0
       },
       "source": "batch5/lasto_6",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.55,
-      "sha256": "f9bbed5efb4507ba7aa15f44d7c25f61e6a9a6e22041b8ec43fe7803318556a4"
+      "sha256": "d5eab55547913d09c50425e2b820fcf3251cbef5c8e5b4dcadd3c5b25fa16651"
     },
     {
       "file": "lasto_beth_lammen",
@@ -352,9 +352,9 @@
         "top_p": 1.0
       },
       "source": "batch5/lasto_beth_lammen_2",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 1.32,
-      "sha256": "0ba37d2c383d95254f35e8f78245170d3f93ce8ff5a67a9b38315c53d54b2824"
+      "sha256": "77cf3774b01f12f14cb34a3fc712a829df586cef7fc6a658829840bf2958c680"
     },
     {
       "file": "tolo_a_lasto",
@@ -377,9 +377,9 @@
         "top_p": 1.0
       },
       "source": "batch2/tolo_a_lasto_s4",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 1.14,
-      "sha256": "6f09f8906cbae981c0dd94e43088a14a3114599fdc6a351e06703f3ab0b69a61"
+      "sha256": "fcd0ea21b50d3246ddce9c4dc90842651e79692832d884529a59dc960fadbd2d"
     },
     {
       "file": "caro_mae",
@@ -402,9 +402,9 @@
         "top_p": 1.0
       },
       "source": "batch5/caro_mae_2",
-      "edit": "Hand cut: raw 0.06-0.76 s (the words end before 0.7 s of quiet breath), 10 ms fade-in, 50 ms fade-out.",
+      "edit": "Hand cut: raw 0.06-0.76 s (the words end before 0.7 s of quiet breath), 10 ms fade-in, 50 ms fade-out.; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.7,
-      "sha256": "84358e3a94cef1ceda485aba531aa6826e1aa4d507de07e3722a905f4f460186"
+      "sha256": "c5262d6f2bb758db5b478246bfbaf7635ae2eae0bafa2b102d21efbc9634a50a"
     },
     {
       "file": "dandolo_1",
@@ -427,9 +427,9 @@
         "top_p": 1.0
       },
       "source": "batch2/dandolo_s2",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.68,
-      "sha256": "eeb1b1740a647f30d436910622ce61bca5f116deebd47ff5da723b919d7baf3a"
+      "sha256": "8dd1d75262017d5f40932b6b68e2672a00ef91c1124f23ae9b69a34f78e281b4"
     },
     {
       "file": "dandolo_2",
@@ -452,9 +452,9 @@
         "top_p": 1.0
       },
       "source": "batch2/dandolo_s4",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.62,
-      "sha256": "1af2aeb01234796c2d9f43aedeb222dfb569f90712ead0776e183cf1699663ab"
+      "sha256": "8bfd576802ed9006546129e1c011f8c7eb4f20cccd3d0de1b7b09ccd0119ad74"
     },
     {
       "file": "mae_garnen",
@@ -477,9 +477,9 @@
         "top_p": 1.0
       },
       "source": "batch2/mae_garnen_s3",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 1.12,
-      "sha256": "ded4684f8bff8d31b0882adbb60575e2a4c9f23df5a1a51e63b542f5fd5b6e5a"
+      "sha256": "2774a312e5566bbbdc8c93fbfe668568a383429ca16cb0f0e1a56e35c547273f"
     },
     {
       "file": "avon_1",
@@ -502,9 +502,9 @@
         "top_p": 1.0
       },
       "source": "batch2/avon_firm",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.48,
-      "sha256": "fa24a521c3d334eeccb7242d863b3ab4b75d1c1315d3a68690cb96e825251c6a"
+      "sha256": "2f8d3e2fd7dd89e5c4f5f730a574fb0104340a0ef971fc66680691a6fad03224"
     },
     {
       "file": "avon_2",
@@ -527,9 +527,9 @@
         "top_p": 1.0
       },
       "source": "batch3/avon_5",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.53,
-      "sha256": "6eb0c80828f3c85cabd53831c15c87e631d58139502608da5ae3b9998a629a8f"
+      "sha256": "1cce14db7ecb354baf226efad8c7e47273813e5602e9d0a8a4c0e8a230eb175a"
     },
     {
       "file": "avam",
@@ -552,9 +552,9 @@
         "top_p": 1.0
       },
       "source": "batch5/avam_5",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.69,
-      "sha256": "a4183327f6b8570ea00c3f724e42505c45aa27407c45112787088b32aa2e848e"
+      "sha256": "3bf2b5c88481585e3505028684231e23fbf54ddf910d059893d8a9aa57326cdb"
     },
     {
       "file": "daro",
@@ -577,9 +577,9 @@
         "top_p": 1.0
       },
       "source": "batch4/daro_4",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-18 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.66,
-      "sha256": "a693fcfc86eb3428ad9c4c279cee7d1a780ea854f2032e0e766e067fbb7228e4"
+      "sha256": "335b6cbe80774a8d326ff7319bbdaddb769ce527d25f54b40e5ed01b27b8fda3"
     },
     {
       "file": "baw",
@@ -602,9 +602,9 @@
         "top_p": 1.0
       },
       "source": "batch4/baw_4",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-18 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.71,
-      "sha256": "8457e2ffdb9c6872bacf527f7b7a7831feab0e60980e76880d9b5989e6e0dfbb"
+      "sha256": "0efc4ca2393a46f5ee695cda64f88fd012df4cfc51e59dde43b5464d50ef6003"
     },
     {
       "file": "avo_garo",
@@ -627,9 +627,9 @@
         "top_p": 1.0
       },
       "source": "batch4/avo_garo_6",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-18 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.93,
-      "sha256": "a072852a5902d0906b5044d1c3c504c467779ab9d1ea369075161dcfd34c2842"
+      "sha256": "657ad093eab0ddee15b8707f3f58b8548a4049ed9b1247d6e43a57a0147b7598"
     },
     {
       "file": "cuio_mae_1",
@@ -652,9 +652,9 @@
         "top_p": 1.0
       },
       "source": "batch3/cuio_mae_2",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.88,
-      "sha256": "dbd761944275dbc05784e69cb21dd0e161a8e78d209805df1e58c86fa9daabdb"
+      "sha256": "85a54dfcee2275e097feaaa7fa801d672b2431db599cdc9c9525cf22260e142a"
     },
     {
       "file": "cuio_mae_2",
@@ -677,9 +677,9 @@
         "top_p": 1.0
       },
       "source": "batch3/cuio_mae_3",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.9,
-      "sha256": "4e0307f29cec9c635f75687bf682c6ac375c9c1aaa482afdb21951fecdc153b2"
+      "sha256": "237ea4bd24a8a743d63578b0313bb5f98a8a4f5105c1f8078d0a6fe5280a931f"
     },
     {
       "file": "cuio_mae_3",
@@ -702,9 +702,9 @@
         "top_p": 1.0
       },
       "source": "batch3/cuio_mae_b_2",
-      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak",
+      "edit": "speech-end cut (tools/sindarin_voice_post.cut_utterance defaults), levelled to -26 dBFS RMS / -3 dBFS peak; then louden(-20 dBFS RMS, -1 dBFS ceiling limiter), owner 2026-10-28: voices too quiet in game",
       "seconds": 0.84,
-      "sha256": "0930436d89aa30e0c44ab327d0916bb6d3daafeb0d5ae411003a50eb013932ed"
+      "sha256": "f6dfb6c2da609143f84d6991a4172844d67093ceef0532f27b2006e007c6d7fe"
     },
     {
       "file": "annon_allen_1",

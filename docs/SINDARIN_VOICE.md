@@ -87,9 +87,14 @@ noise or babble burst, up to -0.5 dBFS. Edge-silence trimming keeps it.
    of the peak: quiet mumble.
 4. 10 ms fade-in, 50 ms fade-out.
 5. Level to -26 dBFS RMS, capped at -3 dBFS peak.
-6. Warden thanks only: `louden` to -20 dBFS RMS with a 5 ms limiter at -1 dBFS (owner 2026-10-28:
-   at -26 the thanks was "much more silent than the sound of fighting"; game volume 1.0). The owner also
-   finds the voices in general quiet: raising the other lines the same way is an open question.
+6. Louder for the game (owner 2026-10-28, after in-game listening: the thanks was "much more silent than
+   the sound of fighting", and the voices in general were quiet): `louden` to -20 dBFS RMS, warden
+   combat shouts to -18, with a 5 ms limiter at -1 dBFS. Peaky lines (lasto_1, lasto_2) end ~1 dB short.
+   Game volumes stay: menu lines 0.7, healing 0.8, combat and thanks 1.0. Not yet heard in game.
+   Villager comparison (Java OGG assets, same recordings assumed): villager idle -27, yes/no/haggle
+   -24..-25 dBFS RMS, zombie say -23, all at game volume 1.0. So the old -26 at 0.7 was ~4 dB under a
+   villager; now menu lines are ~2 dB above one, thanks ~5 dB, shouts ~5 dB above a zombie's groan.
+   Details: `.claude/skills/bedrock-mobs/references/sounds.md`.
 
 Limits:
 - In multi-word lines the model sometimes pauses ~0.4 s before the last word.
@@ -157,7 +162,7 @@ Owner-heard 2026-10-16..25 unless noted.
 6. Export each keeper: the levelled cut WAV (byte-identical to the audio on the
    page) to `final/<file>.wav` plus a Vorbis `final/<file>.ogg`. All 26 plain-cut
    finals were verified to rebuild exactly from their raw takes with
-   `sindarin_voice_post`, so no raw takes are kept. Add a `lines.json` entry with the same fields as the
+   `sindarin_voice_post` (step 6 of Post-processing is applied on top), so no raw takes are kept. Add a `lines.json` entry with the same fields as the
    existing ones (file, sindarin, english, pools, generator_text, language,
    guide, seed, params, source, edit, seconds, sha256).
 7. Add the text to `SINDARIN_VOICE_PHRASES.md` with its T/E/N label, and the
