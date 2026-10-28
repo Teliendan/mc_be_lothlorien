@@ -319,7 +319,7 @@ test("loop closer (long spans): bridges and landing are lit to >= 8 on every wal
   console.log(`loop closer long spans: ${count} walk cells, darkest ${worst}`);
 });
 
-test("loop closer (pier): stands on any ground, goes through leaves and a lake to its bottom, refuses lava, no ground within 48 blocks and unloaded columns", () => {
+test("loop closer (pier): stands on any ground, goes through leaves and a lake to its bottom, refuses lava, no ground within reach and unloaded columns", () => {
   const A = E(0, 0, [0, 1]), B = E(0, 24, [0, -1]), f = fixtureWorld([A, B]);
   const L = LEG.decide(withGround(f.at, 20), A).plan.landing; // centre (0, 40, 10 + 2 = 12)
   assert.equal(L.z, 12);
@@ -332,12 +332,13 @@ test("loop closer (pier): stands on any ground, goes through leaves and a lake t
   const leaves = plan(20, (x, y, z) => (y === 30 && z === 12 && x === 0 ? "lothlorien:mallorn_leaves" : undefined));
   assert.equal(leaves.action, "build"); assert.equal(LOOP.finalBlocks(leaves.plan).get("0,30,12")?.id, LOGN, "leaves are replaced");
   assert.equal(plan(20, (x, y, z) => (x === 0 && z === 12 && y === 25 ? "minecraft:lava" : undefined)).reason, "pier over lava");
-  assert.match(plan(-10).reason, /no ground within 48/);
-  assert.equal(plan(-9).action, "build", "48 free cells below the deck (y 39 .. -8) and ground at -9 is just in reach");
+  const D = LOOP.LOOP.pierMaxDepth; // ground at 39 - D is just in reach (D free cells below the deck at 39)
+  assert.match(plan(38 - D).reason, new RegExp(`no ground within ${D}`));
+  assert.equal(plan(39 - D).action, "build", "ground just in reach");
   assert.equal(LEG.decide((x, y, z) => (y < 38 && x === 0 && z === 12 ? undefined : withGround(f.at, 20)(x, y, z)), A).reason, "pier column not loaded");
   // a span that cannot get a pier falls back to a nearer target if there is one, otherwise none
   const near = fixtureWorld([A, E(0, 24, [0, -1])]); addPlatform(near.w, -3, 3, 12, 20);
-  assert.equal(LEG.decide(withGround(near.at, -50), A).kind, "side", "pier impossible, the platform side is nearer anyway");
+  assert.equal(LEG.decide(withGround(near.at, 38 - LOOP.LOOP.pierMaxDepth), A).kind, "side", "pier impossible, the platform side is nearer anyway");
 });
 
 test("loop closer (lantern on a rim post): a bridge into a platform side may replace the lantern that stands next to the opening", () => {

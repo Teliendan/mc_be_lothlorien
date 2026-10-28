@@ -20,7 +20,10 @@ import { hullOf, growRect, drive } from "./village_planner.js";
 import { FENCE_IDS, LINKS, POST_IDS } from "./rail_mender_rules.js";
 
 export const ROPE_ID = "lothlorien:elven_rope_hanging";
-export const REPAIR = { maxHang: 24, minAbove: 2, scanChunk: 512, flareScan: 48, flareStep: 1, PILLAR_LEAF_CLEAR: 4, rootReach: 48, rootScan: 40 };
+// rootReach / flareScan: the whole overworld height (-64..320), so a village on a hilltop still reaches the foot of the hill (owner 2026-10-28:
+// a 48-block reach left a pillar hanging at the far edge of a hilltop village).
+export const WORLD_HEIGHT = 384;
+export const REPAIR = { maxHang: 24, minAbove: 2, scanChunk: 512, flareScan: WORLD_HEIGHT, flareStep: 1, PILLAR_LEAF_CLEAR: 4, rootReach: WORLD_HEIGHT, rootScan: 40 };
 const LEAF_ID = "lothlorien:mallorn_leaves";
 const LOGS = new Set(["lothlorien:mallorn_log", "lothlorien:mallorn_wood"]);
 const FACE_OF = { "1,0": "west", "-1,0": "east", "0,1": "north", "0,-1": "south" }; // wall offset from the piece -> rope face (the wall lies opposite)
@@ -205,7 +208,7 @@ export function planPillarClear(at, pillar, ground) {
 // two blocks into the ground. Roots (o.roots !== false): on land 1-3 logs lying on the ground out from the foot, following the terrain within a step;
 // where the foot stands in water, prop roots leave the trunk just above the water and step out and down two blocks per step (every log touches
 // the next by a face, never a thin diagonal), then drop to the bed. No leaves (owner: none under water). A column that meets a village block
-// stays as it is; a drop beyond REPAIR.rootReach leaves the whole tree as it is.
+// stays as it is; no ground down to the world floor (REPAIR.rootReach) leaves the whole tree as it is.
 // cells: [[x, z]] log cells of the trunk at layer y0. -> { blocks, columns, roots, drop, wet, x, z } | { error } | { skip: reason }
 const ROOT_FREE = (n) => isAir(n) || WET(n) || SOFT.test(n ?? "") || /leaves/.test(n ?? "");
 export function planRootDown(at, cells, y0, o = {}) {

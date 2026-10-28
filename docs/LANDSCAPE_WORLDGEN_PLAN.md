@@ -416,7 +416,7 @@ not tested in game). Owner decisions on them:
 - Trees rooting on garden grass is acceptable. Still open: gardens/memorials as constrained
   `structure_template_feature`s in a pass before trees (native, no pop-in), which must keep the whole
   footprint inside one chunk (`extent [0, 16 - width]`).
-- Owner saw a balcony/lookout pillar left hanging after repair. Root-down reach is already 48 blocks
-  (`REPAIR.rootReach`, `village_repair.js`) against a measured worst drop of 24, so the cause is more likely
-  a skip (blocked column, unloaded cell, pillar not found from its marker) than the length. Needs the
-  coordinates or the repair log before changing anything.
+- Owner saw a balcony/lookout pillar left hanging at the far edge of a hilltop village (the hill was higher
+  than the 48-block reach). Owner decision: supports must reach the ground whatever the height. Root down,
+  root flare and loop piers now search the whole overworld height (`WORLD_HEIGHT` 384 in `village_repair.js`,
+  `LOOP.pierMaxDepth` in `village_loop.js`). Offline tests pass; in-game check pending (new world).

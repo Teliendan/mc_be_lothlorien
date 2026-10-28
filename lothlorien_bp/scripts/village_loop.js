@@ -33,7 +33,8 @@ export const lightLevel = (n) => (n === LANTERN || n === LANTERN_GOLD ? 14 : LIG
 // Round 2 (owner 2026-10-09): minDist 6 -> 2 with a flat deck for length <= flatMax (F2), maxOffset 5 -> 8 (F3), sideSearch = how far along a rim a
 // side marker looks for its 5-run (F1), clutterMargin = no foreign deck within that many cells of a NEW kind of join. legacyMinDist / legacyMaxOffset
 // are the old limits: a join inside them is the old kind (no clutter test). LOOP.corner = F5 L-join limits (legs of `minLeg`..maxDist blocks).
-export const LOOP = { minDist: 2, maxDist: 17, maxSpan: 30, maxOffset: 8, maxSpanOffset: 8, landing: 5, pierMaxDepth: 48, lightTarget: 8, lanternLight: 14,
+// pierMaxDepth: the whole overworld height (-64..320), as the repair's root down (owner 2026-10-28: hilltop villages).
+export const LOOP = { minDist: 2, maxDist: 17, maxSpan: 30, maxOffset: 8, maxSpanOffset: 8, landing: 5, pierMaxDepth: 384, lightTarget: 8, lanternLight: 14,
   flatMax: 5, sideSearch: 6, sideStarts: 8, clutterMargin: 2, legacyMinDist: 6, legacyMaxOffset: 5, minLeg: 3 };
 // F4 plaza: filled deck over the bounding rectangle of two facing exits that no bridge can join (dist 1..maxDist, |lat| <= maxLat), fill cells at most
 // `cantilever` (Chebyshev) from an existing deck cell, a log pier under the patch when a fill cell is more than `needPier` from the old deck.

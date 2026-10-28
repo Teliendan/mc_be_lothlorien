@@ -119,7 +119,7 @@ test("root flare: a pillar that ends above the ground, unloaded cells and missin
   const short = pillarWorld({ bottom: 6 }), s = RP.planFlare(short.at, short.pillar);
   assert.match(s.skip, /ends above the ground/);
   assert.match(RP.planFlare(pillarWorld({ extra: { "7,-1,5": "UNLOADED" } }).at, pillarWorld().pillar).error ?? "", /unloaded/);
-  assert.match(RP.planFlare(pillarWorld({ ground: () => -90 }).at, pillarWorld().pillar).skip, /no ground/);
+  assert.match(RP.planFlare(pillarWorld({ ground: () => -500 }).at, pillarWorld().pillar).skip, /no ground/);
   // the repair pass no longer skips it: root down carries the short pillar to the ground first (owner, Test G 2026-10-20), then it flares
   const log = [], out = PL.drive(RP.repairGen(PL.overlay(PL.boundedReader(short.at, { x0: -30, x1: 30, z0: -30, z1: 30 })), [short.marker], { rect: { x0: -30, x1: 30, z0: -30, z1: 30 }, log }));
   assert.ok(out.some((p) => p.kind === "rootdown") && out.some((p) => p.kind === "flare") && !log.some((l) => /^flare 5,5: skipped/.test(l)), log.join("|"));
@@ -150,7 +150,7 @@ test("pillar foot: no decoration leaves from the ground up to ground + 4 round t
 
 test("pillar foot: unloaded cells error; a pillar without ground is left alone", () => {
   assert.match(RP.planPillarClear(pillarWorld({ extra: { "7,2,5": "UNLOADED" } }).at, { x: 5, z: 5, y: 16 }, -1).error ?? "", /unloaded/);
-  const w = pillarWorld({ ground: () => -90, extra: { "7,2,6": "lothlorien:mallorn_leaves" } }), rect = { x0: -30, x1: 30, z0: -30, z1: 30 };
+  const w = pillarWorld({ ground: () => -500, extra: { "7,2,6": "lothlorien:mallorn_leaves" } }), rect = { x0: -30, x1: 30, z0: -30, z1: 30 };
   assert.deepEqual(PL.drive(RP.repairGen(PL.overlay(PL.boundedReader(w.at, rect)), [w.marker], { rect })), []);
 });
 
@@ -215,7 +215,7 @@ test("root down: through water to the bed; prop roots leave the trunk 2 above th
 });
 
 test("root down: too deep is skipped, unloaded is an error, a village block under a column keeps that column", () => {
-  assert.ok(RP.planRootDown(trunkWorld({ bottom: 10, ground: () => -60 }).at, TRUNK3, 30).skip);
+  assert.ok(RP.planRootDown(trunkWorld({ bottom: 10, ground: () => 7 - RP.REPAIR.rootReach }).at, TRUNK3, 30).skip);
   assert.ok(RP.planRootDown(trunkWorld({ bottom: 10, extra: { "0,5,0": "UNLOADED" } }).at, TRUNK3, 30).error);
   const r = RP.planRootDown(trunkWorld({ bottom: 10, extra: { "2,6,2": PLANKS } }).at, TRUNK3, 30);
   assert.ok(!r.blocks.some((q) => q.x === 2 && q.z === 2 && q.y < 10));
