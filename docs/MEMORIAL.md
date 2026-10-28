@@ -27,29 +27,25 @@ previews were removed; the generator retains only this final design.
 
 ## Natural generation
 
-The memorial stays a natural jigsaw (`structures/memorial.json`, pool `memorial`, 15 x 12 x 18 template
-`memorial_leaf_01`, buried anchor, six soil layers, two shoulder rings) because it carries the
-`memorial_sound` entity and it is unknown whether a feature places template entities.
+**Since 2026-10-28 (TEST BUILD round 2, not accepted)** the memorial is a native constrained feature like the
+garden: `features/memorial_feature.json` places `lothlorien:memorial_leaf_feature_01` (11 x 9 x 15, offset
+[5, 3, 7]: deck, one-cell apron, no shoulder, soil 3 deep, no anchor, with the `memorial_sound` entity), rule
+`feature_rules/memorial_feature_rules.json`. Same constraints, pass, biome and chance (1/5) as the garden
+(`tools/site_feature.mjs`), on the same 4 x 4-chunk shuffled lattice with its own scramble (`MEMORIAL_SHUFFLE`),
+so it shares a chunk with the garden in about 1 cell in 9; there the second one is refused. Centre extent [7, 8]
+(always 7) keeps the rotated 15-long side inside the chunk; `adjustment_radius 0`.
 
-**Since 2026-10-28 (TEST BUILD, not accepted)** it has its own set `lothlorien:memorial_sites`
-(`structure_sets/memorial_sites.json`), replacing the shared `garden_sites` set now that gardens are a feature.
-The shared set was spacing 9 / separation 3 (one site per 81 chunks, half memorials = one per 162 chunks).
-Memorials alone: spacing 13 / separation 4 (one per 169 chunks, 4 % fewer; 12.7 would be exact; separation
-below spacing / 2 as the engine requires). Constants `MEMORIAL_SITES.spacing` / `.separation` in
-`tools/memorial.mjs` set it; the tests pin the density to within 6 % of the old one.
+Owner decisions 2026-10-28: memorials as dense as gardens (~24 per km2); several jigsaw memorials stood in water;
+the deck was flush with the ground and its border one lower, reading as a trench, so `ground_level 2` (the grass
+row under the deck) now meets the terrain top and the deck stands 1 block above it.
 
-**Open follow-up (owner, 2026-10-28):** memorials already looked too rare in game. After the garden tests choose a
-denser spacing/separation (count the memorials seen during T2, `GARDEN_FEATURE_TEST.md`). Not changed in this build.
+The jigsaw (`structures/memorial.json`, pool `memorial`, template `memorial_leaf_01`) is kept for
+`/place structure` only; its set `memorial_sites` (spacing 13 / separation 4) was removed.
 
-### Command-only feature copy (test T1)
-
-`features/memorial_feature.json` places `lothlorien:memorial_leaf_feature_01` (11 x 9 x 15, offset [5, 3, 7]):
-deck, one-cell apron, no shoulder, soil 3 deep, no anchor, with the sound entity. Same constraints as the garden
-(`tools/site_feature.mjs`), `adjustment_radius 0`, `ground_level 3` (the deck row, which replaces the terrain top).
-**No feature rule**: it is never placed by worldgen. Run
-`/place feature lothlorien:memorial_feature ~ ~ ~` on flat ground, then
-`/testfor @e[type=lothlorien:memorial_sound,r=12]`: if the entity exists, features place template entities and the
-memorial can become a feature (then give it a rule, centre extent `[7, 8]`). The jigsaw files stay until then.
+Engine note: `/place feature lothlorien:memorial_feature` answered with a syntax error while no feature rule used
+the feature, and the garden feature (with a rule) was known (owner, 2026-10-28). Still to check in game: whether
+the feature places the template's sound entity (`/testfor @e[type=lothlorien:memorial_sound,r=12]` at a memorial).
+If not, the fallback is a hidden marker block that spawns the entity when its chunk ticks.
 
 ### Missing-memorial investigation (2026-10-24)
 

@@ -1,7 +1,7 @@
 // Accepted leaf memorial. Existing assets, standalone woodland worldgen.
 import { SILVER_WATCH } from "./watch_camp_rules.mjs";
 import { addSoilSkirt, SKIRT } from "./ground_skirt.mjs";
-import { siteFeature } from "./site_feature.mjs";
+import { shuffledLatticeIterations, siteFeature } from "./site_feature.mjs";
 
 // start offsets the template bottom from world_surface. Deck planks are at encoded y SKIRT.depth:
 // bury all the soil beneath them so the deck replaces the terrain top (owner, 2026-10-24).
@@ -10,29 +10,46 @@ export const MEMORIAL = Object.freeze({
   id: "lothlorien:memorial_leaf_01", size: [15, 6 + SKIRT.depth, 18], offset: [7, SKIRT.depth, 8], start: -SKIRT.depth, clear: 4,
   anchor: "lothlorien:memorial_ground",
 });
-// Command-only `structure_template_feature` copy (TEST BUILD 2026-10-28, no feature rule: /place feature to test whether the
-// template's sound entity is placed). 11 x 15 centred box (apron x +-5, z -6..7; row z -7 stays void), no shoulder, no anchor,
-// soil 3 deep. Local deck row 0 = encoded y 3 = ground_level; the grass row below it is -1.
+// Natural `structure_template_feature` copy (TEST BUILD 2026-10-28, docs/GARDEN_FEATURE_TEST.md). 11 x 15 centred box
+// (apron x +-5, z -6..7; row z -7 stays void), no shoulder, no anchor, soil 3 deep. Local deck row 0 = encoded y 3; the grass
+// row below it (encoded y 2) is ground_level, so it replaces the terrain top and the deck stands 1 above the ground (owner
+// 2026-10-28: the flush deck with its lower border read as a trench).
+// /place feature found no memorial_feature while no rule placed it (owner, 2026-10-28), so the rule also makes it placeable.
 export const MEMORIAL_FEATURE = Object.freeze({
-  id: "lothlorien:memorial_leaf_feature_01", size: [11, 9, 15], offset: [5, 3, 7], groundLevel: 3, clear: 4,
-  feature: "lothlorien:memorial_feature", adjustmentRadius: 0, soil: { depth: 3, ring1: 0, ring2: false, seed: 23 },
+  id: "lothlorien:memorial_leaf_feature_01", size: [11, 9, 15], offset: [5, 3, 7], groundLevel: 2, clear: 4,
+  feature: "lothlorien:memorial_feature", rule: "lothlorien:memorial_feature_rules", adjustmentRadius: 0,
+  soil: { depth: 3, ring1: 0, ring2: false, seed: 23 },
 });
 export function memorialFeature() {
   return siteFeature({ identifier: MEMORIAL_FEATURE.feature, structure: MEMORIAL_FEATURE.id,
     groundLevel: MEMORIAL_FEATURE.groundLevel, adjustmentRadius: MEMORIAL_FEATURE.adjustmentRadius });
 }
 
-// The memorial stays a natural jigsaw (its sound entity needs it) on its own random-spread set, memorials only since 2026-10-28.
-// Old shared garden+memorial set: spacing 9 = one site per 81 chunks, half memorials = one per 162. Spacing 13 = one per 169 chunks
-// (4 % fewer; 12.7 would be exact), separation 4 < 13 / 2 as the engine requires. Owner: memorials looked too rare in game;
-// tune these two constants after the garden test (docs/MEMORIAL.md).
-export const MEMORIAL_SITES = Object.freeze({ file: "worldgen/structure_sets/memorial_sites.json", salt: 794231583, spacing: 13, separation: 4 });
-export function memorialSitesSet() {
-  return { format_version: "1.21.100", "minecraft:structure_set": {
-    description: { identifier: "lothlorien:memorial_sites" },
-    placement: { type: "minecraft:random_spread", salt: MEMORIAL_SITES.salt,
-      spacing: MEMORIAL_SITES.spacing, separation: MEMORIAL_SITES.separation, spread_type: "linear" },
-    structures: [{ structure: "lothlorien:memorial", weight: 1 }],
+// Same shuffled lattice and chance as the garden (owner 2026-10-28: memorials ~24 per km2, "same as gardens"), with its own
+// scramble so the two pick the same chunk in only ~1 cell in 9; there the constraints refuse whichever comes second.
+// Centre 7 keeps the rotated 15-long side inside the chunk (0..14) with radius 0.
+export const MEMORIAL_LATTICE = 4;
+export const MEMORIAL_SHUFFLE = Object.freeze({ x: [23, 11, 53], z: [19, 37, 5], prime: 97 });
+export const MEMORIAL_CHANCE = Object.freeze({ numerator: 1, denominator: 5 });
+export const MEMORIAL_EXTENT = Object.freeze([7, 8]);
+export const MEMORIAL_FILES = Object.freeze({
+  feature: "features/memorial_feature.json", rule: "feature_rules/memorial_feature_rules.json",
+  retired: ["worldgen/structure_sets/memorial_sites.json"],
+});
+export function memorialFeatureRule() {
+  return { format_version: "1.13.0", "minecraft:feature_rules": {
+    description: { identifier: MEMORIAL_FEATURE.rule, places_feature: MEMORIAL_FEATURE.feature },
+    conditions: {
+      placement_pass: "before_surface_pass",
+      "minecraft:biome_filter": [{ test: "has_biome_tag", value: "lothlorien" }],
+    },
+    distribution: {
+      iterations: shuffledLatticeIterations(MEMORIAL_LATTICE, MEMORIAL_SHUFFLE),
+      ...(MEMORIAL_CHANCE.numerator < MEMORIAL_CHANCE.denominator ? { scatter_chance: { ...MEMORIAL_CHANCE } } : {}),
+      x: { distribution: "uniform", extent: [...MEMORIAL_EXTENT] },
+      y: "query.heightmap(variable.worldx, variable.worldz) - 1",
+      z: { distribution: "uniform", extent: [...MEMORIAL_EXTENT] },
+    },
   } };
 }
 

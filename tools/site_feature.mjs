@@ -1,4 +1,4 @@
-// Shared builders for the natural `structure_template_feature` garden and the command-only memorial feature.
+// Shared builders for the natural `structure_template_feature` garden and memorial.
 // TEST BUILD 2026-10-28 (docs/GARDEN_FEATURE_TEST.md). Semantics follow Microsoft Learn and the vanilla sulfur springs.
 
 // Terrain the clearance may carve or the soil may replace; nothing built, no water, logs or leaves.
@@ -45,17 +45,18 @@ export function siteFeature({ identifier, structure, groundLevel, adjustmentRadi
 // (32 blocks) apart. A feature rule sees no world seed and no other chunk, so the scramble is a fixed function of the cell
 // position (the same layout in every world): t = (a cx + b cz + c) mod 97, index = (t^2 mod 97) mod (cell - 1). All values stay
 // small integers, exact in Molang floats for |cx|, |cz| below ~150000 cells.
+// Each feature passes its own constants so two features on the same lattice rarely pick the same chunk.
 export const SHUFFLE = Object.freeze({ x: [31, 17, 7], z: [13, 29, 41], prime: 97 });
-export function shuffledLatticeIterations(cell) {
+export function shuffledLatticeIterations(cell, shuffle = SHUFFLE) {
   const c = (ax) => `math.floor(variable.origin${ax} / ${16 * cell})`;
   const pmod = (e, m) => `math.mod(math.mod(${e}, ${m}) + ${m}, ${m})`;
-  const pick = ([a, b, k]) => `math.mod(math.mod(math.pow(${pmod(`${a} * ${c("x")} + ${b} * ${c("z")} + ${k}`, SHUFFLE.prime)}, 2), ${SHUFFLE.prime}), ${cell - 1})`;
+  const pick = ([a, b, k]) => `math.mod(math.mod(math.pow(${pmod(`${a} * ${c("x")} + ${b} * ${c("z")} + ${k}`, shuffle.prime)}, 2), ${shuffle.prime}), ${cell - 1})`;
   const idx = (ax) => `(variable.origin${ax} / 16 - ${cell} * ${c(ax)})`;
-  return `(${idx("x")} == ${pick(SHUFFLE.x)} && ${idx("z")} == ${pick(SHUFFLE.z)}) ? 1 : 0`;
+  return `(${idx("x")} == ${pick(shuffle.x)} && ${idx("z")} == ${pick(shuffle.z)}) ? 1 : 0`;
 }
 // The same choice in JavaScript (tests, test instructions): chunk index of the candidate in cell (cx, cz).
-export function shuffledPick(cell, cx, cz) {
+export function shuffledPick(cell, cx, cz, shuffle = SHUFFLE) {
   const pmod = (v, m) => ((v % m) + m) % m;
-  const pick = ([a, b, k]) => ((pmod(a * cx + b * cz + k, SHUFFLE.prime) ** 2) % SHUFFLE.prime) % (cell - 1);
-  return [cell * cx + pick(SHUFFLE.x), cell * cz + pick(SHUFFLE.z)];
+  const pick = ([a, b, k]) => ((pmod(a * cx + b * cz + k, shuffle.prime) ** 2) % shuffle.prime) % (cell - 1);
+  return [cell * cx + pick(shuffle.x), cell * cz + pick(shuffle.z)];
 }

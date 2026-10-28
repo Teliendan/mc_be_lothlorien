@@ -2,7 +2,7 @@
 
 Round 1 done (world "Test Gardens", results in `FLOWER_GARDEN.md`). Round 2: shuffled lattice, chance 1/5; candidate
 chunks are no longer at fixed points (`shuffledPick` in `tools/site_feature.mjs` gives them), so read the save instead of
-visiting points.
+visiting points. Memorials are now a feature on their own shuffled lattice, also 1/5 (`docs/MEMORIAL.md`).
 
 What is under test: the flower garden as a natural `structure_template_feature` (chance 1 on a 4 x 4 chunk lattice) and a
 command-only memorial feature. Design: `FLOWER_GARDEN.md`, `MEMORIAL.md`; plan and simulation in workspace
@@ -40,8 +40,8 @@ on the grass (accepted), flora in the aisles (look acceptable?), facings, the ba
 Acceptance a = built / lattice points in the biome. Then the production chance is `8 / (81 a)` capped at 1
 (`GARDEN_CHANCE` in `tools/flower_garden.mjs`).
 
-**Also count memorials** seen on the way (and the area flown): the owner finds them too rare and wants to choose a new
-`MEMORIAL_SITES` spacing/separation (`tools/memorial.mjs`, now 13 / 4, one per 169 chunks) after this test.
+**Also count memorials** seen on the way (and the area flown). Round 2: memorials are a feature too (`docs/MEMORIAL.md`);
+check the deck stands 1 above the ground, none in water, and the sound entity at one memorial.
 
 ## T3 Jigsaw order
 
