@@ -17,18 +17,37 @@ Commit: `Finalize selected Galadriel worn gifts`.
 **Current verdict (2026-10-04): all current graphics accepted by the owner.**
 The dated pending-art and placeholder entries below are historical; this verdict supersedes them.
 
-**Pack icon final (2026-10-07): accepted by the owner, installed in both packs.**
-`lothlorien_bp/pack_icon.png` and `lothlorien_rp/pack_icon.png` share the same 256x256 PNG.
-Final design: straight silver log trunk, irregular connected block canopy with green tops and
-silver undersides, deep teal twilight background, sparse fireflies and a small grassy base.
-Owner requires live green-silver foliage and a tree shape resembling the mod's actual trees;
-older golden-foliage concept notes do not describe live tree art. Gold is a separate crafted variant.
-Built-in imagegen used a geometry reference from `buildBigMallorn(makeRandom(6))` in
-`lothlorien_bp/scripts/mallorn_tree.js` and the accepted texture preview. The reference came
-from the big sapling generator, not an in-game screenshot of worldgen. Resized the accepted
-image for pack thumbnails. Verification passed (0 errors, 7 warnings), both packs deployed;
-Minecraft's pack-menu rendering is not separately confirmed. No worldgen change.
-Commit: `Add accepted green-silver Mallorn pack icon`. Review scratch removed after acceptance.
+**Pack icon final (2026-10-28): owner chose the "night" scene; installed in both packs.**
+`lothlorien_bp/pack_icon.png` and `lothlorien_rp/pack_icon.png` share the same 512x512 PNG (owner picked the 512 version).
+Goal (owner): make players curious with an honest feature showcase and adventure promise, in-game graphics only.
+Design: night in a Mallorn forest; the white hart large in the lower left among Elanor and Niphredil, fireflies around it;
+behind it a real village fragment (central Mallorn + crown, tower with the 11-block bridge, node with the 7-block bridge,
+crowns) lit warm by its own light sources, dense ordinary Mallorns, four giant worldgen Mallorns, stars.
+How it was made: a software renderer of the mod's real block/entity geometry and textures; the village is assembled
+from its `.mcstructure` files by their jigsaw connectors and sunk like worldgen (village start_height -17, giant
+Mallorns -5); block light uses the structures' real emitters with Minecraft's falloff and brightness curve. The
+ordinary forest trees approximate the fancy/simple/mega tree features (engine code cannot run offline). Grading, fog,
+glow halos, firefly dots and stars are post-processing. Owner decisions: no unicorn; warden only where he fits (left
+out of the icon: ~8 px at that scale; reserved for the promo banner); more forest; greener night chosen over a day
+variant with songbirds and butterflies. Previous tree icon (2026-10-07) is replaced; git history has it.
+Minecraft's pack-menu rendering of the new icon is not separately confirmed.
+
+**Promo banner final (2026-10-28): owner chose the "moon" variant.** `docs/media/promo_banner_1920.png` (1920x1080)
+and `promo_banner_1280.png`; `docs/media/logo_512.png` is the square site logo (same image as the pack icon).
+Same night world as the icon, wider: the white hart on the left, the Elven Warden on the meadow holding the Galadhrim
+bow, four village pieces across the width (a fourth tower on the central Mallorn's north connector, rotated 180 like
+the jigsaw does), seven elves on the decks, the vanilla full moon (additive, like the game) in open sky.
+Owner decisions: moon variant (over plain and over a title in the vanilla font); no firefly on or touching a figure;
+elves only inside the railings, doing things (leaning, talking, lighting a lantern, walking, looking at the sky,
+tending), "alive, not a school photo". Limits: the held bow approximates the engine's texture-mesh transform (real
+sprite, extruded, upright in the hand; not compared with the game); elves read as small figures (heads and shoulders
+above the railing).
+
+**Key-art generator.** `python -B mods/lothlorien/tools/key_art/make_key_art.py [icon] [banner]` rebuilds both images
+into `temp/key_art/` (verified pixel-identical to the accepted files, 2026-10-28); install by copying (see its
+docstring). Generic parts (perspective renderer, `.mcstructure` reader, vanilla font) are in
+`.claude/skills/bedrock-art/scripts/`. Scratch removed after acceptance. Commit: `Add night key art: pack icon,
+promo banner, logo and generator`.
 
 Work list for whoever makes the art (image generator + manual cleanup). Each step lists the
 files to produce, where they go, and what the code assumes about them. Textures live in

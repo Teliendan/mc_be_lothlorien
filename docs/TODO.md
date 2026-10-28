@@ -60,7 +60,8 @@ Target: tester build on the weekend of 2026-10-24/25.
 - [ ] **Background music.** There is no `music_definitions.json` yet; the biome still uses vanilla
   `forest` music (`lothlorien_rp/biomes/lothlorien.client_biome.json`).
 - [ ] **Soundscape** (`SOUNDSCAPE_PLAN.md`): forest-wide ambience, root shrine and leaf memorial sounds.
-- [ ] **Pack icon.** The current one is accepted, but the owner may want a different one.
+- [x] **Pack icon.** Night scene with the white hart and the lit village, accepted 2026-10-28 (`GRAPHICS_TASKS.md`).
+- [x] **Promo banner** and site logo, accepted 2026-10-28 (`docs/media/`, `GRAPHICS_TASKS.md`).
 - [ ] **LICENSE.** Base it on `C:\Users\karel\Documents\Teliendan\docs\licence_template.md`. Review notes:
   - Add "provided as is, without warranty or liability". Worldgen changes players' worlds.
   - Add a third-party section:
