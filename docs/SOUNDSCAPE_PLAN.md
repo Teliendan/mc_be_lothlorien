@@ -77,6 +77,10 @@ sounds have a position and fade with distance as the listener approaches or
 leaves. They do not take over the player's soundtrack. Keep village transitions
 stable so briefly crossing a boundary does not repeatedly restart a piece.
 
+Owner decision 2026-10-28: keep the village music area and timing as they are
+(stops ~10 s after leaving plus a 5 s fade; outlying benches may start it).
+Shorter tail and a deck-density start check were offered and declined.
+
 Existing accepted birdsong, deer and swan calls remain separate. Avoid filling
 the environmental layer with duplicate animal recordings.
 
