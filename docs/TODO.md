@@ -86,7 +86,8 @@ Target: tester build on the weekend of 2026-10-24/25.
   - Check where `design/banner_inspiration.jpeg` came from, since the repo is public.
   - Clear workspace `temp/localization/` once the translations are final.
 - [ ] **Tester feedback** worked in.
-- [ ] **Release package:** version bump, `.\mods package lothlorien --release`, and a first
+- [ ] **Release package:** version bump, `.\mods package lothlorien --release`, a Defender scan of
+  `dist/lothlorien` (two scans minutes apart; skill `bedrock-modding` reference 05), and a first
   release note written by hand.
 - The website (wiki, documents, download) is a separate project.
 
