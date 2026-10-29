@@ -2,7 +2,7 @@
   {
     "featureId": "lothlorien:athelas",
     "id": "lothlorien:athelas/use",
-    "text": "Plant as woodland decoration, propagate with bone meal, or prepare Athelas Salve. Healers also request it. Snow layers can cover the planted plant. Remove the snow to reach it again.",
+    "text": "Plant as woodland decoration, propagate with bone meal, or prepare Athelas Salve. Healers also request it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -120,7 +120,7 @@
   {
     "featureId": "lothlorien:elanor",
     "id": "lothlorien:elanor/use",
-    "text": "Plant as decoration or propagate with bone meal. It lures and feeds butterflies, and is used in unicorn bonding and healing. Healers request it. Snow layers can cover the planted plant. Remove the snow to reach it again.",
+    "text": "Plant as decoration or propagate with bone meal. It lures and feeds butterflies, and is used in unicorn bonding and healing. Healers request it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -280,7 +280,7 @@
   {
     "featureId": "lothlorien:golden_fern",
     "id": "lothlorien:golden_fern/use",
-    "text": "Plant as decoration and use bone meal to spread more onto suitable nearby ground. Collect it with any tool or by hand; it drops one fern, with no extra seeds or Fortune bonus. Snow layers can cover the planted fern. Remove the snow to reach it again.",
+    "text": "Plant as decoration and use bone meal to spread more onto suitable nearby ground. Collect it with any tool or by hand; it drops one fern, with no extra seeds or Fortune bonus.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -401,7 +401,7 @@
   {
     "featureId": "lothlorien:mallorn_boat",
     "id": "lothlorien:mallorn_boat/use",
-    "text": "Place on water and ride it. Use its matching chest-boat recipe when you want storage. Dispensers require water in front.",
+    "text": "Place on water and ride it. Use its matching chest-boat recipe when you want storage.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -443,7 +443,7 @@
   {
     "featureId": "lothlorien:mallorn_chest_boat",
     "id": "lothlorien:mallorn_chest_boat/use",
-    "text": "Place on water and ride it. The chest variant also carries an inventory; its wood type changes its appearance. Dispensers require water in front.",
+    "text": "Place on water and ride it. The chest variant also carries an inventory; its wood type changes its appearance.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -546,7 +546,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_boat",
     "id": "lothlorien:mallorn_heartwood_boat/use",
-    "text": "Place on water and ride it. Use its matching chest-boat recipe when you want storage. Dispensers require water in front.",
+    "text": "Place on water and ride it. Use its matching chest-boat recipe when you want storage.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -588,7 +588,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_chest_boat",
     "id": "lothlorien:mallorn_heartwood_chest_boat/use",
-    "text": "Place on water and ride it. The chest variant also carries an inventory; its wood type changes its appearance. Dispensers require water in front.",
+    "text": "Place on water and ride it. The chest variant also carries an inventory; its wood type changes its appearance.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -1060,7 +1060,7 @@
   {
     "featureId": "lothlorien:niphredil",
     "id": "lothlorien:niphredil/use",
-    "text": "Plant as decoration or propagate with bone meal. It lures and feeds butterflies, contributes to Miruvor, and is requested by healers. Snow layers can cover the planted plant. Remove the snow to reach it again.",
+    "text": "Plant as decoration or propagate with bone meal. It lures and feeds butterflies, contributes to Miruvor, and is requested by healers.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
