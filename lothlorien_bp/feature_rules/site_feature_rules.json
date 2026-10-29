@@ -2,8 +2,8 @@
   "format_version": "1.13.0",
   "minecraft:feature_rules": {
     "description": {
-      "identifier": "lothlorien:memorial_feature_rules",
-      "places_feature": "lothlorien:memorial_feature"
+      "identifier": "lothlorien:site_feature_rules",
+      "places_feature": "lothlorien:site_select_feature"
     },
     "conditions": {
       "placement_pass": "before_surface_pass",
@@ -15,9 +15,9 @@
       ]
     },
     "distribution": {
-      "iterations": "((variable.originx / 16 - 4 * math.floor(variable.originx / 64)) == math.mod(math.mod(math.pow(math.mod(math.mod(23 * math.floor(variable.originx / 64) + 11 * math.floor(variable.originz / 64) + 53, 97) + 97, 97), 2), 97), 3) && (variable.originz / 16 - 4 * math.floor(variable.originz / 64)) == math.mod(math.mod(math.pow(math.mod(math.mod(19 * math.floor(variable.originx / 64) + 37 * math.floor(variable.originz / 64) + 5, 97) + 97, 97), 2), 97), 3)) ? 1 : 0",
+      "iterations": "((variable.originx / 16 - 4 * math.floor(variable.originx / 64)) == math.mod(math.mod(math.pow(math.mod(math.mod(31 * math.floor(variable.originx / 64) + 17 * math.floor(variable.originz / 64) + 7, 97) + 97, 97), 2), 97), 3) && (variable.originz / 16 - 4 * math.floor(variable.originz / 64)) == math.mod(math.mod(math.pow(math.mod(math.mod(13 * math.floor(variable.originx / 64) + 29 * math.floor(variable.originz / 64) + 41, 97) + 97, 97), 2), 97), 3)) ? 1 : 0",
       "scatter_chance": {
-        "numerator": 1,
+        "numerator": 2,
         "denominator": 5
       },
       "x": {

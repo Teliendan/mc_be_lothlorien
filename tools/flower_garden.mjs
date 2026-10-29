@@ -1,6 +1,6 @@
 // Small, open woodland garden; only existing blocks and native deferred container loot.
 import { addSoilSkirt } from "./ground_skirt.mjs";
-import { shuffledLatticeIterations, siteFeature } from "./site_feature.mjs";
+import { siteFeature } from "./site_feature.mjs";
 
 // Natural `structure_template_feature` (TEST BUILD 2026-10-28). 13 x 13 centred box (beds and aisles +-5, one ragged shoulder ring
 // to +-6), soil 3 deep (grass + 2 dirt), 4 free cells above the grass, no jigsaw anchor. Local y: grass row -1, planting 0..3.
@@ -74,42 +74,14 @@ export function flowerGardenLoot() {
   ] };
 }
 
-// Shuffled lattice (site_feature.mjs): one candidate chunk per 4 x 4 chunks at a scrambled position (owner 2026-10-28: the
-// plain lattice read as a fixed grid), candidates at least 32 blocks apart, the garden at the chunk centre. GARDEN_CHANCE is the share of candidates that attempt a garden; refused attempts (water, slope, trees) place nothing.
-// Chance 1 is written as no scatter_chance: the engine rejects numerator >= denominator (Content Log 2026-10-28,
-// "denominator should be greater than the numerator") and drops the whole rule.
-// Test world "Test Gardens" (2026-10-28) at chance 1: 117 gardens per km2 of Lothlorien, acceptance about 0.5. Owner: back to
-// the old ~24 per km2, so 1 in 5.
-export const GARDEN_CHANCE = Object.freeze({ numerator: 1, denominator: 5 });
-export const GARDEN_LATTICE = 4;
-// Whole footprint incl. the 1-block adjustment stays in one chunk: half width 6 + radius 1 = 7, so the centre is 7 or 8.
-export const GARDEN_EXTENT = Object.freeze([7, 8]);
-
 export function flowerGardenFeature() {
   return siteFeature({ identifier: GARDEN.feature, structure: GARDEN.id, groundLevel: GARDEN.groundLevel,
     adjustmentRadius: GARDEN.adjustmentRadius });
 }
 
-export function flowerGardenFeatureRule() {
-  return { format_version: "1.13.0", "minecraft:feature_rules": {
-    description: { identifier: GARDEN.rule, places_feature: GARDEN.feature },
-    conditions: {
-      placement_pass: "before_surface_pass",
-      "minecraft:biome_filter": [{ test: "has_biome_tag", value: "lothlorien" }],
-    },
-    distribution: {
-      iterations: shuffledLatticeIterations(GARDEN_LATTICE),
-      ...(GARDEN_CHANCE.numerator < GARDEN_CHANCE.denominator ? { scatter_chance: { ...GARDEN_CHANCE } } : {}),
-      x: { distribution: "uniform", extent: [...GARDEN_EXTENT] },
-      y: "query.heightmap(variable.worldx, variable.worldz) - 1",
-      z: { distribution: "uniform", extent: [...GARDEN_EXTENT] },
-    },
-  } };
-}
-
 // Files the garden builder writes (relative to the BP) and the retired jigsaw files it deletes.
 export const GARDEN_FILES = Object.freeze({
-  feature: "features/flower_garden_feature.json", rule: "feature_rules/flower_garden_feature_rules.json",
+  feature: "features/flower_garden_feature.json",
   retired: ["worldgen/structures/flower_garden.json", "worldgen/template_pools/flower_garden.json",
     "worldgen/structure_sets/flower_garden.json", "worldgen/structure_sets/garden_sites.json"],
 });

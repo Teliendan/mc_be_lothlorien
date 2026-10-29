@@ -1,0 +1,18 @@
+{
+  "format_version": "1.26.30",
+  "minecraft:weighted_random_feature": {
+    "description": {
+      "identifier": "lothlorien:site_select_feature"
+    },
+    "features": [
+      [
+        "lothlorien:flower_garden_feature",
+        1
+      ],
+      [
+        "lothlorien:memorial_feature",
+        1
+      ]
+    ]
+  }
+}

@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { MEMORIAL, MEMORIAL_FEATURE, MEMORIAL_CHANCE, MEMORIAL_FILES, MEMORIAL_SHUFFLE, buildMemorial, memorialFeature, memorialFeatureRule, memorialWorldgen } from "../tools/memorial.mjs";
+import { MEMORIAL, MEMORIAL_FEATURE, MEMORIAL_FILES, buildMemorial, memorialFeature, memorialWorldgen } from "../tools/memorial.mjs";
 import { placeEntities, toMcstructure } from "../tools/build_structures.mjs";
 import { readNbt } from "../tools/village_sim.mjs";
-import { shuffledPick } from "../tools/site_feature.mjs";
+import { SITES } from "../tools/site_feature.mjs";
 import { SILVER_WATCH } from "../tools/watch_camp_rules.mjs";
 import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs";
 
@@ -102,7 +102,7 @@ assert.deepEqual(generated.template_pools["minecraft:template_pool"].elements, [
 assert.deepEqual(encoded.buffer, readFileSync(new URL("../lothlorien_bp/structures/lothlorien/memorial_leaf_01.mcstructure", import.meta.url)));
 assert.deepEqual(toMcstructure(buildMemorial().blocks, MEMORIAL.size, MEMORIAL.offset, placeEntities(memorial.entities, MEMORIAL.offset)).buffer, encoded.buffer);
 
-// Natural feature copy (TEST BUILD 2026-10-28): no anchor, 11 x 15 centred box, same constraints and lattice as the garden.
+// Natural feature copy: no anchor, 11 x 15 centred box, same constraints as the garden, shared site lattice.
 const copy = buildMemorial({ feature: true });
 assert.ok(![...copy.blocks.values()].some((b) => b.name === "minecraft:jigsaw"), "feature copy has no jigsaw anchor");
 assert.deepEqual(copy.entities, [], "a feature drops template entities (owner, 2026-10-28)");
@@ -139,19 +139,7 @@ assert.equal(MEMORIAL_FEATURE.groundLevel, MEMORIAL_FEATURE.offset[1], "ground_l
 assert.equal(spec.adjustment_radius, 0);
 assert.deepEqual(spec.constraints, gspec.constraints, "same tuned constraints as the garden");
 assert.equal(spec.rotate_around_center, true);
-const mr = asset(MEMORIAL_FILES.rule), gr = asset("feature_rules/flower_garden_feature_rules.json");
-assert.deepEqual(mr, memorialFeatureRule());
-const md = mr["minecraft:feature_rules"].distribution, gd = gr["minecraft:feature_rules"].distribution;
-assert.deepEqual(mr["minecraft:feature_rules"].conditions, gr["minecraft:feature_rules"].conditions, "same pass and biome as the garden");
-assert.deepEqual(md.scatter_chance, gd.scatter_chance, "owner: same density as gardens");
-assert.deepEqual([md.x, md.y, md.z], [gd.x, gd.y, gd.z]);
-assert.notEqual(md.iterations, gd.iterations, "own scramble");
-// Rotated 15-long side from centre 7 stays inside the chunk (no border cut), radius 0.
-assert.ok(md.x.extent[0] - 7 >= 0 && md.x.extent[0] + 7 <= 15);
-// Same chunk as the garden in about 1 cell in 9, never always.
-let same = 0;
-for (let cx = -30; cx < 30; cx++) for (let cz = -30; cz < 30; cz++)
-  if (String(shuffledPick(4, cx, cz, MEMORIAL_SHUFFLE)) === String(shuffledPick(4, cx, cz))) same++;
-assert.ok(same / 3600 > 0.05 && same / 3600 < 0.2, `memorial/garden chunk overlap ${same / 3600}`);
-assert.deepEqual(MEMORIAL_CHANCE, { numerator: 1, denominator: 5 });
-console.log("ok   leaf memorial: connected approaches, supported planting, native banners, ground anchor, memorial feature on its own shuffled lattice 1/5, flush deck, sound seed log, deterministic assets");
+// Placed by the shared garden/memorial site rule; the rotated 15-long side from centre 7 stays in the chunk (radius 0).
+assert.ok(SITES.features.some(([id]) => id === MEMORIAL_FEATURE.feature));
+for (const c of SITES.extent) assert.ok(c - 7 >= 0 && c + 7 <= 15);
+console.log("ok   leaf memorial: connected approaches, supported planting, native banners, ground anchor, memorial feature on the shared site lattice, flush deck, sound seed log, deterministic assets");

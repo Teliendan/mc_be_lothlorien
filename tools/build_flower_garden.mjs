@@ -3,7 +3,8 @@ import { writeFileSync, mkdirSync, realpathSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { toMcstructure } from "./build_structures.mjs";
-import { GARDEN, GARDEN_FILES, buildFlowerGarden, flowerGardenFeature, flowerGardenFeatureRule, flowerGardenLoot } from "./flower_garden.mjs";
+import { GARDEN, GARDEN_FILES, buildFlowerGarden, flowerGardenFeature, flowerGardenLoot } from "./flower_garden.mjs";
+import { SITES, siteFeatureRule, siteSelectFeature } from "./site_feature.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 export function writeFlowerGarden() {
@@ -13,11 +14,12 @@ export function writeFlowerGarden() {
   const write = (path, data) => { mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, data); };
   write(join(bp, "structures", "lothlorien", "flower_garden_01.mcstructure"), buffer);
   write(join(bp, GARDEN.loot), JSON.stringify(flowerGardenLoot(), null, 2) + "\n");
-  // Natural feature + rule; the jigsaw definition, pool and shared set of earlier builds are retired.
+  // Natural feature, plus the shared garden/memorial site pick and rule; jigsaw files and per-feature rules are retired.
   write(join(bp, GARDEN_FILES.feature), JSON.stringify(flowerGardenFeature(), null, 2) + "\n");
-  write(join(bp, GARDEN_FILES.rule), JSON.stringify(flowerGardenFeatureRule(), null, 2) + "\n");
-  for (const f of GARDEN_FILES.retired) rmSync(join(bp, f), { force: true });
-  console.log(`${GARDEN.id}: ${buffer.length} bytes, four flower beds and one supply barrel; feature + rule written, jigsaw files removed`);
+  write(join(bp, SITES.files.select), JSON.stringify(siteSelectFeature(), null, 2) + "\n");
+  write(join(bp, SITES.files.rule), JSON.stringify(siteFeatureRule(), null, 2) + "\n");
+  for (const f of [...GARDEN_FILES.retired, ...SITES.retired]) rmSync(join(bp, f), { force: true });
+  console.log(`${GARDEN.id}: ${buffer.length} bytes, four flower beds and one supply barrel; feature and shared site rule written`);
   return garden;
 }
 

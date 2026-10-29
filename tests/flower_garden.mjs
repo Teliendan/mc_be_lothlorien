@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
-import { GARDEN, GARDEN_CHANCE, GARDEN_EXTENT, GARDEN_FILES, GARDEN_LATTICE, buildFlowerGarden, flowerGardenFeature, flowerGardenFeatureRule, flowerGardenLoot } from "../tools/flower_garden.mjs";
-import { SITE_ALLOWLIST, shuffledLatticeIterations, shuffledPick } from "../tools/site_feature.mjs";
+import { GARDEN, GARDEN_FILES, buildFlowerGarden, flowerGardenFeature, flowerGardenLoot } from "../tools/flower_garden.mjs";
+import { SITES, SITE_ALLOWLIST, shuffledLatticeIterations, shuffledPick, siteFeatureRule, siteSelectFeature } from "../tools/site_feature.mjs";
 import { toMcstructure } from "../tools/build_structures.mjs";
 import { readNbt } from "../tools/village_sim.mjs";
 import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs";
@@ -61,10 +61,16 @@ for (const [i, name] of [[3, "minecraft:wooden_hoe"], [4, "minecraft:shears"]]) 
 const asset = (path) => readFileSync(new URL(`../lothlorien_bp/${path}`, import.meta.url));
 assert.deepEqual(encoded.buffer, asset("structures/lothlorien/flower_garden_01.mcstructure"));
 assert.deepEqual(loot, JSON.parse(asset(GARDEN.loot)));
-const feature = flowerGardenFeature(), rule = flowerGardenFeatureRule();
+const feature = flowerGardenFeature(), rule = siteFeatureRule();
 assert.deepEqual(feature, JSON.parse(asset(GARDEN_FILES.feature)));
-assert.deepEqual(rule, JSON.parse(asset(GARDEN_FILES.rule)));
-for (const f of GARDEN_FILES.retired) assert.throws(() => asset(f), `${f} is retired`);
+assert.deepEqual(rule, JSON.parse(asset(SITES.files.rule)));
+assert.deepEqual(siteSelectFeature(), JSON.parse(asset(SITES.files.select)));
+for (const f of [...GARDEN_FILES.retired, ...SITES.retired]) assert.throws(() => asset(f), `${f} is retired`);
+// owner 2026-10-28: gardens and memorials share one lattice, one site per cell, 1:1
+assert.deepEqual(siteSelectFeature()["minecraft:weighted_random_feature"].features,
+  [[GARDEN.feature, 1], ["lothlorien:memorial_feature", 1]]);
+assert.ok(!readdirSync(new URL("../lothlorien_bp/feature_rules/", import.meta.url)).some((n) => /garden|memorial/.test(n)),
+  "no per-feature rule: one site rule places both");
 assert.ok(!readdirSync(new URL("../lothlorien_bp/worldgen/structure_sets/", import.meta.url)).includes("garden_sites.json"));
 const f = feature["minecraft:structure_template_feature"];
 assert.equal(f.structure_name, GARDEN.id);
@@ -85,25 +91,27 @@ assert.equal(get(0, -1, 0).name, "minecraft:grass_block");
 const dist = rule["minecraft:feature_rules"].distribution, cond = rule["minecraft:feature_rules"].conditions;
 assert.equal(dist.y, "query.heightmap(variable.worldx, variable.worldz) - 1");
 assert.equal(cond.placement_pass, "before_surface_pass");
-assert.equal(rule["minecraft:feature_rules"].description.places_feature, GARDEN.feature);
+assert.equal(rule["minecraft:feature_rules"].description.places_feature, SITES.select);
 assert.deepEqual(cond["minecraft:biome_filter"], [{ test: "has_biome_tag", value: "lothlorien" }], "same biome eligibility as the old garden");
 // the whole box plus the adjustment stays in one chunk for every centre in the extent (all four facings are the same box)
 const half = (GARDEN.size[0] - 1) / 2 + f.adjustment_radius;
-for (const c of GARDEN_EXTENT) assert.ok(c - half >= 0 && c + half <= 15, `centre ${c} keeps the footprint in its chunk`);
-assert.deepEqual([dist.x.extent, dist.z.extent], [[...GARDEN_EXTENT], [...GARDEN_EXTENT]]);
-assert.equal(dist.iterations, shuffledLatticeIterations(GARDEN_LATTICE), "shuffled lattice");
+for (const c of SITES.extent) assert.ok(c - half >= 0 && c + half <= 15, `centre ${c} keeps the footprint in its chunk`);
+assert.deepEqual([dist.x.extent, dist.z.extent], [[...SITES.extent], [...SITES.extent]]);
+assert.equal(dist.iterations, shuffledLatticeIterations(SITES.lattice), "shuffled lattice");
 // the JS mirror of the Molang scramble: one candidate per cell, index 0..cell-2 (neighbours >= 2 chunks apart), and it varies
 const picks = new Map();
 for (let cx = -40; cx < 40; cx++) for (let cz = -40; cz < 40; cz++) {
-  const [x, z] = shuffledPick(GARDEN_LATTICE, cx, cz), ix = x - GARDEN_LATTICE * cx, iz = z - GARDEN_LATTICE * cz;
-  assert.ok(ix >= 0 && ix <= GARDEN_LATTICE - 2 && iz >= 0 && iz <= GARDEN_LATTICE - 2, `cell ${cx},${cz} picks ${ix},${iz}`);
+  const [x, z] = shuffledPick(SITES.lattice, cx, cz), ix = x - SITES.lattice * cx, iz = z - SITES.lattice * cz;
+  assert.ok(ix >= 0 && ix <= SITES.lattice - 2 && iz >= 0 && iz <= SITES.lattice - 2, `cell ${cx},${cz} picks ${ix},${iz}`);
   picks.set(`${ix},${iz}`, (picks.get(`${ix},${iz}`) ?? 0) + 1);
 }
-assert.equal(picks.size, (GARDEN_LATTICE - 1) ** 2, "every in-cell position is used");
+assert.equal(picks.size, (SITES.lattice - 1) ** 2, "every in-cell position is used");
 for (const n of picks.values()) assert.ok(n > 6400 / 9 * 0.5, "no position dominates: " + JSON.stringify([...picks]));
 // the engine drops a rule whose scatter_chance has numerator >= denominator: chance 1 is no scatter_chance
-if (GARDEN_CHANCE.numerator >= GARDEN_CHANCE.denominator) assert.equal(dist.scatter_chance, undefined, "chance 1: no scatter_chance");
-else assert.deepEqual(dist.scatter_chance, GARDEN_CHANCE);
+if (SITES.chance.numerator >= SITES.chance.denominator) assert.equal(dist.scatter_chance, undefined, "chance 1: no scatter_chance");
+else assert.deepEqual(dist.scatter_chance, SITES.chance);
+// owner: ~24 per km2 each; half the sites each, so 2/5 per cell
+assert.deepEqual(SITES.chance, { numerator: 2, denominator: 5 });
 const treeSet = JSON.parse(asset("worldgen/structure_sets/giant_mallorn.json"))["minecraft:structure_set"];
 assert.deepEqual(treeSet.placement, { type: "minecraft:random_spread", salt: 518204731,
   separation: 2, spacing: 6, spread_type: "linear" }, "existing big-tree placement rate and grid remain unchanged");
@@ -127,4 +135,4 @@ for (const k of garden.footprint) {
 assert.ok(garden.skirt.ring1.length > 20 && garden.skirt.ring2.length === 0, "one shoulder ring, no second");
 for (const [x, z] of garden.skirt.ring1) assert.equal(get(x, -2, z)?.name, "minecraft:grass_block", "shoulder steps down one");
 assert.deepEqual(toMcstructure(buildFlowerGarden().blocks, GARDEN.size, GARDEN.offset).buffer, encoded.buffer);
-console.log("ok   flower garden: supported beds, native barrel, owner loot, natural 13x13 template feature + lattice rule (test build), deterministic shipped assets");
+console.log("ok   flower garden: supported beds, native barrel, owner loot, natural 13x13 template feature on the shared site lattice, deterministic shipped assets");
