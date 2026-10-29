@@ -2193,7 +2193,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/elf_rules.js",
-          "sha256": "d9034ba5033d24a9787277d707a7c19a19d9ec38465c1148bea044002f6677e9"
+          "sha256": "baf95aeff61c7bd8aab2b467f7370b086fc164f0b2901b5026d5911ec8e43b71"
         },
         {
           "path": "lothlorien_bp/scripts/elf_village.js",
@@ -2234,7 +2234,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/elven_warden_rules.js",
-          "sha256": "a7d8a8e859cf8f4f439ea5b26a81876c71869adbe8089fb73ed5978fcefdf01f"
+          "sha256": "5eb6cbc5f351c1d13d80b12155c7b8c4ff6af69459d78dcc4907d02fe517169a"
         }
       ]
     },
@@ -2485,11 +2485,11 @@
         },
         {
           "path": "lothlorien_bp/scripts/harmony.js",
-          "sha256": "aca67865d6518fa6f3ae67f39acb07829953898037e446c1efc30527ec243889"
+          "sha256": "bb2c79ee3089335f8e51208d47e2c7e7d7dde6fa59a1664f853eb04e2faf6365"
         },
         {
           "path": "lothlorien_bp/scripts/harmony_game.js",
-          "sha256": "d92edae5708efc7dff36091ae24822a3d5ae1d89709cb21e7e8e96a90733d082"
+          "sha256": "22a274746fd19045f2145cf9af48fa995533f7fdd967e2118797bb5a8f88c7ac"
         }
       ]
     },
@@ -2733,7 +2733,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/main.js",
-          "sha256": "96b1259e1c0d1ddab6e87e56b87f658435854ab232ee4e92508d7b1b6e28bdee"
+          "sha256": "1f9a807f85e4f4577d0dbc82ab83cd1bd052bae103fb6b7ad27f992e1756578b"
         },
         {
           "path": "lothlorien_bp/scripts/mallorn_tree.js",
