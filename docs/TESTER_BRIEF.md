@@ -19,7 +19,7 @@ If you have an older Lothlórien copy installed, remove it first (Settings > Sto
 ## 3. World advice
 
 - **Use a new world.** The biome and its buildings appear only in newly generated chunks. Adding the pack to an old world changes nothing in explored areas. If you try an existing world anyway, back it up first.
-- **Finding the biome.** It is rare. Try `/locate biome lothlorien:lothlorien` (not confirmed to work for this exact build; tell us if it does not). It points to the nearest part of the biome, often its edge, sometimes shallow water, so walk inland to see the centre. `/locate structure` does **not** find flower gardens or forest memorials; look for them in open, level woodland inside the biome.
+- **Finding the biome.** It is rare. Use `/locate biome lothlorien:lothlorien`: it points to the nearest part of the biome, often its edge, sometimes shallow water, so walk inland to see the centre. `/locate structure` does **not** find flower gardens or forest memorials; look for them in open, level woodland inside the biome.
 - A **Creative scouting world** (same seed idea, or just a fresh one) is a good way to find the biome fast, then play Survival in another new world.
 
 ## 4. What to test
