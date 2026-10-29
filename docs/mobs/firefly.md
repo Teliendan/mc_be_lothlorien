@@ -3,12 +3,12 @@
 2026-10-11 care update (source/offline evidence; Bedrock 1.26.52; owner accepted as done; no new game test results supplied): Bottle-only care: use a full Bottle of Fireflies against a block face with adjacent air to release one persistent firefly and receive an empty bottle. Wild fireflies retain normal despawn. Catch and release share a debounce and recheck the live hand. No lead, lure, feeding, healing or breeding. Catching and release are scripted; the former native transform was replaced.
 See [Bringing wildlife home](BRINGING_HOME.md) for current policy and acceptance checks.
 
-Archetype: tiny hovering night flyer (analogue: bee `navigation.hover` / `random_hover`). Phase 14, built 2026-10-02.
+Archetype: tiny hovering night flyer (analogue: bee `navigation.hover` / `random_hover`). Built in `715d705`.
 **In game (1.26.52, Vibrant Visuals): glow, bottle icon, night spawning and catching with a glass bottle all work (owner, 2026-10-02).**
 Files: BP `entities/firefly.json`, `spawn_rules/firefly.json`, `items/bottle_of_fireflies.json`. RP `entity/firefly.entity.json`,
 `models/entity/firefly.geo.json`, `animations/firefly.animation.json`, `render_controllers/firefly.render_controllers.json`,
 `textures/entity/firefly.png` (+ `firefly_mers.tga`, `firefly.texture_set.json`), `textures/items/bottle_of_fireflies.png`, `.lang`, `item_texture.json`.
-Art: `tools/make_firefly.py` (generated; green abdomen glows). Feature commit: `715d705`.
+Art: `tools/make_firefly.py` (generated; green abdomen glows).
 
 | Area | Decision |
 | --- | --- |
@@ -27,7 +27,7 @@ The water cues were rejected. Capture plays vanilla `bottle.dragonbreath`
 sound at pitch 1.3 (retest pending). No generated audio needed. Native file identity checked in installed vanilla
 `sounds/sound_definitions.json`; no native audio assets copied into the mod.
 
-## To test in game (1.26.52)
+## Not separately confirmed in game
 
 1. Do the wings flutter in the right plane; is the model visible at size 0.2?
 

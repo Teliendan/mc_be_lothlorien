@@ -93,8 +93,8 @@
     "text": "Stripping works and wears the axe, but the usual axe swing animation does not play.",
     "evidence": [
       {
-        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
-        "sha256": "afc78133e21db4708b2ce4160f5e463f7052c0cd0c3409a0007016a8c6a2cf7f"
+        "path": "docs/OWNER_CHECKS.md",
+        "sha256": "9d2f20eedb85e6488d906b9443ed14ec2029fdde0f37f14ac735694fd535900b"
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
@@ -108,8 +108,8 @@
     "text": "Stripping works and wears the axe, but the usual axe swing animation does not play.",
     "evidence": [
       {
-        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
-        "sha256": "afc78133e21db4708b2ce4160f5e463f7052c0cd0c3409a0007016a8c6a2cf7f"
+        "path": "docs/OWNER_CHECKS.md",
+        "sha256": "9d2f20eedb85e6488d906b9443ed14ec2029fdde0f37f14ac735694fd535900b"
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
@@ -123,8 +123,8 @@
     "text": "The gate lowers beside a cobblestone wall, but the wall does not draw its arm toward the gate.",
     "evidence": [
       {
-        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
-        "sha256": "afc78133e21db4708b2ce4160f5e463f7052c0cd0c3409a0007016a8c6a2cf7f"
+        "path": "docs/OWNER_CHECKS.md",
+        "sha256": "9d2f20eedb85e6488d906b9443ed14ec2029fdde0f37f14ac735694fd535900b"
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_fence_gate.json",
@@ -138,8 +138,8 @@
     "text": "The gate lowers beside a cobblestone wall, but the wall does not draw its arm toward the gate.",
     "evidence": [
       {
-        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
-        "sha256": "afc78133e21db4708b2ce4160f5e463f7052c0cd0c3409a0007016a8c6a2cf7f"
+        "path": "docs/OWNER_CHECKS.md",
+        "sha256": "9d2f20eedb85e6488d906b9443ed14ec2029fdde0f37f14ac735694fd535900b"
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_heartwood_fence_gate.json",
@@ -153,8 +153,8 @@
     "text": "The long hull can rise over the dispenser when dispensed. Place the boat by hand to avoid that dispenser placement.",
     "evidence": [
       {
-        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
-        "sha256": "afc78133e21db4708b2ce4160f5e463f7052c0cd0c3409a0007016a8c6a2cf7f"
+        "path": "docs/OWNER_CHECKS.md",
+        "sha256": "9d2f20eedb85e6488d906b9443ed14ec2029fdde0f37f14ac735694fd535900b"
       },
       {
         "path": "lothlorien_bp/items/mallorn_boat.json",
@@ -168,8 +168,8 @@
     "text": "The long hull can rise over the dispenser when dispensed. Place the boat by hand to avoid that dispenser placement.",
     "evidence": [
       {
-        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
-        "sha256": "afc78133e21db4708b2ce4160f5e463f7052c0cd0c3409a0007016a8c6a2cf7f"
+        "path": "docs/OWNER_CHECKS.md",
+        "sha256": "9d2f20eedb85e6488d906b9443ed14ec2029fdde0f37f14ac735694fd535900b"
       },
       {
         "path": "lothlorien_bp/items/mallorn_chest_boat.json",
@@ -183,8 +183,8 @@
     "text": "The long hull can rise over the dispenser when dispensed. Place the boat by hand to avoid that dispenser placement.",
     "evidence": [
       {
-        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
-        "sha256": "afc78133e21db4708b2ce4160f5e463f7052c0cd0c3409a0007016a8c6a2cf7f"
+        "path": "docs/OWNER_CHECKS.md",
+        "sha256": "9d2f20eedb85e6488d906b9443ed14ec2029fdde0f37f14ac735694fd535900b"
       },
       {
         "path": "lothlorien_bp/items/mallorn_heartwood_boat.json",
@@ -198,8 +198,8 @@
     "text": "The long hull can rise over the dispenser when dispensed. Place the boat by hand to avoid that dispenser placement.",
     "evidence": [
       {
-        "path": "docs/TEST_FEEDBACK_2026-10-25.md",
-        "sha256": "afc78133e21db4708b2ce4160f5e463f7052c0cd0c3409a0007016a8c6a2cf7f"
+        "path": "docs/OWNER_CHECKS.md",
+        "sha256": "9d2f20eedb85e6488d906b9443ed14ec2029fdde0f37f14ac735694fd535900b"
       },
       {
         "path": "lothlorien_bp/items/mallorn_heartwood_chest_boat.json",

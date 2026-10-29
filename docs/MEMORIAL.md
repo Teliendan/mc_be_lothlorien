@@ -3,7 +3,7 @@
 Accepted by the owner on 2026-10-16, including the corrected straight pillar:
 "It's OK now." Third standalone woodland place, after the root shrine and garden.
 Target Bedrock 1.26.52 / Script API 2.8.0. Existing blocks only.
-Implementation commit: `Add accepted leaf memorials at garden frequency`.
+Commit: `Add accepted leaf memorials at garden frequency`.
 
 ## Final design and decisions
 
@@ -52,22 +52,6 @@ seen working in game (owner, 2026-10-28).
 Engine note: `/place feature lothlorien:memorial_feature` answered with a syntax error while nothing placed the
 feature; once a rule used it, the command knew it.
 
-### Missing-memorial investigation (2026-10-24)
-
-Bedrock 1.26.52, saved-world evidence from the owner's `Test` world: an intact
-memorial is centred at X -1152, deck Y 104, Z 80. All 77 distinctive solid blocks
-(deck, pillar, banners, benches and flowers) match the shipped template after
-rotation; the buried jigsaw is dirt. Nearby terrain and leaves may obscure it
-from above. The same saved snapshot contains three intact garden matches.
-This confirms a placed memorial, not the generation date or a large-sample ratio.
-
-Source and deployed definitions retain the intended equal weights (1 garden :
-1 memorial) on the shared grid. The latest height correction lowered both
-definitions by five blocks; no memorial-specific registration or template fault
-was found. Scoped `flower-garden` and `memorial` verification passed: 0 errors,
-0 warnings, 15 existing documented exceptions. Owner accepted that this was
-probably normal variation; no pack change was made for this investigation.
-
 ## Build and verification
 
 From `C:\mcmods\mods\lothlorien`:
@@ -95,13 +79,5 @@ the new registration. Existing placed copies retain their saved blocks.
 `tests/memorial.mjs` runs in the standard mod suite: four connected approaches,
 bench access, supported soil/flowers/seats, native six-layer banner data and
 hanging clearance, no clipped template cells, preserved void, deterministic
-output and equality with the shipped binary, serialized ground anchor, memorial-only set density, giant biome rules, independent salts, and the feature
+output and equality with the shipped binary, serialized ground anchor, and the feature
 copy (no anchor, entity saved, centred box, constraints equal to the garden, no rule).
-Reusable placement evidence: workspace knowledge commit `041d7c5`,
-`Document additive structure density from random-spread grids`.
-
-Final full `mods verify lothlorien` passed on 2026-10-16: 0 errors, 0 warnings,
-15 existing documented exceptions. Deployment then ran the shared quick checks,
-copied the memorial template and its three worldgen files, and confirmed both
-BP and RP in sync with `mods status lothlorien`. Natural terrain/distribution
-has offline configuration evidence only; the accepted art was checked in game.

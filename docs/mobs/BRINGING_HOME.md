@@ -38,7 +38,7 @@ Flying lures work vertically. Swans use their existing surface-water navigation.
 Cygnets use the existing swan model scaled to 45%, with no separate art pass.
 Persistence prevents ordinary despawn; it does not stop wandering or damage.
 
-Owner clarification2026-10-20: only domesticated squirrels stay. Preserve the
+Owner clarification 2026-10-20: only domesticated squirrels stay. Preserve the
 existing outside/leashed feeding paths that add kept persistence. Inside wild
 healing and errand acceptance do not add it; already kept animals retain it.
 Handlers use one ordinary food/eligibility decision, with no additional food consumer for native breeders. Decisions:

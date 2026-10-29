@@ -1,88 +1,50 @@
 ﻿# Root shrine
 
-Accepted by the owner on 2026-10-16: "Good, this is done." Target Bedrock 1.26.52.
-Implementation commit pending; shared files also contain unrelated changes.
-This records overall acceptance;
-individual observations of pot retrieval and Mending were not supplied separately.
+Accepted by the owner on 2026-10-16: "Good, this is done." Target Bedrock 1.26.52. Acceptance is overall; pot retrieval and
+Mending were not reported separately. The hillside result of the 2026-10-24 foundation fix is not recorded as checked in game.
 
 ## Final design and owner decisions
 
-A complete plain round Great Mallorn shelters an uninhabited, ground-level nook
-among unequal spreading roots. The roughly 5 x 4 interior has standing headroom,
-a moss floor, four niphredil, two elanor and modest moss accents. Existing assets
-only; no stone, new items/models, residents or recurring scripts.
+A complete plain round Great Mallorn shelters an uninhabited, ground-level nook among unequal spreading roots. The roughly
+5 x 4 interior has standing headroom, a moss floor, four niphredil, two elanor and modest moss accents. Existing assets only; no
+stone, new items or models, residents or recurring scripts.
 
-Two log feet carry a three-slab silver offering shelf with a heartwood centre.
-The decorated pot contains one full `lothlorien:morning_dew` bottle (eight drops).
-A full air cell above the pot exposes its neck. Two shelf groups of three/two lit
-white candles and a three-candle floor group surround a white/green kneeling mat.
-The main green/lime banner hangs inside on the east root, facing the mat. Its six
-layers retain their order; only the light-gray border changes to white here.
+Two log feet carry a three-slab silver offering shelf with a heartwood centre. The decorated pot holds one full
+`lothlorien:morning_dew` bottle (eight drops); a full air cell above it exposes the neck. Two shelf groups of three and two lit
+white candles and a three-candle floor group surround a white and green kneeling mat. The main green/lime banner hangs inside on
+the east root, facing the mat; its six layers keep their order and only the light-gray border changes to white.
 
-A concealed chest in the west root has open lid clearance and standing access.
-It guarantees one Mending I book, plus provisions and herbs/salve. No emeralds,
-Great Mallorn nuts or final elf gifts. The guaranteed book was an implementation
-choice explicitly left to the implementer by the owner.
+A concealed chest in the west root has open lid clearance and standing access. It guarantees one Mending I book (an
+implementation choice the owner left open), plus provisions and herbs/salve. No emeralds, Great Mallorn nuts or final elf
+gifts. Leaves are persistent. Unused template cells are structure void; explicit air only carves the recess, approach and
+display/hanging clearance.
 
-Leaves are persistent. Unused template cells are structure void; explicit air
-only carves the small recess, approach and display/hanging clearance.
+Owner correction, 2026-10-24: hills can expose the roots and the thin interior floor, so dirt now fills beneath the moss and
+flower floor and the short approach down to the roots' lowest layer (local y -5), preserving buried wood. The visible floor,
+roots and placement height are unchanged. This gives the interior a solid foundation; it does not fit the whole tree to a slope.
 
-Owner correction, 2026-10-24 (Bedrock 1.26.52): hills can expose the roots and
-the thin interior floor. Dirt now fills beneath the existing moss/flower floor
-and short approach down to the roots' lowest layer (local y -5), preserving
-buried wood. The visible floor, roots and placement height are unchanged.
-This supplies a solid interior foundation; it does not fit the whole tree to a
-slope or extend roots farther down. Offline geometry/asset checks passed;
-the hillside result still needs an in-game check.
+## Generation
 
-## Generation and placement
+The shrine is one of four kinds on the natural tree grid: `lothlorien:tree_grid_shrine`, weight 18 of 80 (22.5 % of grid
+candidates; random per candidate, not one in every four). Spacing, salt, biome filter and height projection are those of the
+giants (`WORLDGEN.md`). A shared trunk anchor sits five blocks below ground at template [19, 0, 19] with the final state Mallorn
+log, so the shrine uses the same rotation and ground alignment as the other giants. Worldgen changes need a new world.
 
-**Natural generation: 25% of Great Mallorn placements in Lothlorien**, requested by
-the owner on 2026-10-16. The existing `lothlorien:giant_mallorn` pool chooses the
-shrine with weight 16 and the six existing tree variants with weights 6, 6, 9, 9,
-9, 9 (total 64). The existing variants retain their relative proportions. This is
-a random choice per placement, not a guarantee of exactly one shrine in every four.
-
-The structure set, salt, spacing 6/separation 2, biome filter and height projection
-are unchanged. No additional spawn attempts or separate structure set: the total
-Great Mallorn density stays the same. A shared trunk anchor sits five blocks below
-ground at template [19, 0, 19], with final state Mallorn log, so the shrine uses the
-same rotation and ground alignment as the other giants. Unused cells remain void.
-Worldgen registration and serialized anchors are checked offline; natural terrain
-placement has not yet been reviewed in game (target 1.26.52, 2026-10-16).
-Worldgen changes need a new world.
-
-ID: `lothlorien:root_shrine_01`. Size: 40 x 54 x 40; offset: [18, 5, 18].
-Leave/re-enter after deployment, then place a fresh copy on level ground:
+ID `lothlorien:root_shrine_01`, size 40 x 54 x 40, offset [18, 5, 18]. To place a copy by hand on level ground:
 
 ```mcfunction
 /structure load lothlorien:root_shrine_01 ~-19 ~-5 ~-8
 ```
 
-The entrance is about four blocks south (+Z). The full tree is included. Previously
-placed copies retain their saved blocks and pot contents. Manual structure loads
-retain the invisible buried jigsaw anchor; natural jigsaw placement replaces it
-with a Mallorn log.
+The entrance is about four blocks south (+Z); the full tree is included. A manual load keeps the invisible buried jigsaw anchor,
+which natural placement replaces with a Mallorn log. Placed copies keep their saved blocks and pot contents.
 
-## Build and evidence
+## Build and tests
 
-From `C:\mcmods\mods\lothlorien`, run `node tools/build_root_shrine.mjs` to rebuild
-this structure, its chest loot table and the shared weighted placement pool.
-`node tools/build_structures.mjs` rebuilds all six selected giants plus the shrine
-and preserves the same pool weights. `--preview` on the shrine builder uses the shared
-block-texture renderer and writes disposable images into `temp/root-shrine/`.
-Accepted-iteration scratch has been removed; no unused build variants remain.
-
-`tests/root_shrine.mjs` runs through the standard regression suite. It checks
-walkability, root connections, display/flower/banner supports, chest clearance,
-persistent crown, no clipped cells, deterministic output, native fixed pot contents,
-banner NBT, guaranteed Mending, no emeralds, the serialized placement anchor, exact
-25% pool share and unchanged placement density. Full verification and deployment
-including the worldgen extension passed on 2026-10-16: 0 errors, 0 warnings and
-15 documented exceptions; BP and RP confirmed in sync. Natural terrain placement
-still needs in-game review in a new world.
-
-Native pot fields were checked against engine-saved world data. Reusable evidence:
-workspace `.claude/skills/bedrock-modding/references/16-native-pot-contents.md`
-(knowledge commit `a26fde2`). Preview shapes approximate native pots/candles;
-owner acceptance comes from the game review.
+`node tools/build_root_shrine.mjs` rebuilds the structure, its chest loot table and the shared weighted pool;
+`node tools/build_structures.mjs` rebuilds all selected giants plus the shrine. `--preview` on the shrine builder renders
+disposable images into `temp/root-shrine/` (they approximate native pots and candles). `tests/root_shrine.mjs` checks
+walkability, root connections, display/flower/banner supports, chest clearance, persistent crown, no clipped cells,
+determinism, the native fixed pot contents, banner NBT, guaranteed Mending, no emeralds, the serialized anchor and the
+placement weights. Native pot fields were checked against engine-saved data; reusable evidence: workspace
+`.claude/skills/bedrock-modding/references/16-native-pot-contents.md`.

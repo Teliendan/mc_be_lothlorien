@@ -22,7 +22,7 @@ magic water allowed in the trees; ground under the village dressed as living for
 Finishing feedback (2026-10-16, Codex; implemented and owner accepted in game): restore two adjacent cushions under slab seat roofs;
 wood posts start on the deck; link rails to moss and slabs consistently; close unused jigsaw mouths; keep flower pots out of cushion views;
 frame every available bed side without closing paths or future furnished-home access. Count real lamps before adding hidden-light gap fill.
-Lag of concern is in an already loaded village; a slower initial build is acceptable. Measurements and retest steps: `../VILLAGE_POLISH_2026-10-16.md`.
+Lag of concern is in an already loaded village; a slower initial build is acceptable. Measurements and retest steps: `../VILLAGES.md`.
 Owner follow-up: "The rest looks good"; moss borders remained incomplete in a fresh village. Corrective pass covers thin path-facing skirts and runtime home beds, preserving bridges and cushions; deployed, verified and owner accepted: "I love it, villages done" (see the finishing report).
 Later rounds (2026-10-16): up to one more banner per tree and 3-4 on the Hall; fences link to log posts (generator + rail mender); no jar
 between a cushion and its view; a pot on a bridge always stands beside a lamp post, bridge lamp posts in left-right pairs; standing banners
@@ -259,4 +259,4 @@ No new blocks for now; each proposal is answered with existing blocks:
    dressing on every tree, bridges and runtime loop bridges in the new style, cushions, the healer's furnishing at runtime.
 3. **Complete, accepted 2026-10-16:** profession furnishings, crown stars and fallback leaf caps, upper tower lookouts, paired view seats, connections and rails, complete moss-bed borders, and loaded-village performance checks. The central reading circle serves the Loremaster; new block proposals remain deferred by owner decision.
 
-Final commit: **Finish accepted elven villages**. Final design and validation: [finishing record](../VILLAGE_POLISH_2026-10-16.md).
+Final commit: **Finish accepted elven villages**. Final design and validation: [finishing record](../VILLAGES.md).

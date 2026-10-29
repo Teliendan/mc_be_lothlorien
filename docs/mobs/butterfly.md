@@ -3,7 +3,7 @@
 2026-10-11 care update (source/offline evidence; Bedrock 1.26.52; owner accepted as done; no new game test results supplied): Lead support added. Vanilla flowers and Lothlorien Elanor, Niphredil, Mallorn blossom and nectar bloom lure vertically and feed/heal by 2 HP. Feeding keeps it persistent; no breeding.
 See [Bringing wildlife home](BRINGING_HOME.md) for current policy and acceptance checks.
 
-Archetype: tiny hovering day flyer (firefly's `random_hover`, see `firefly.md`). Phase 14c, built 2026-10-02. **Not yet tested in game.**
+Archetype: tiny hovering day flyer (firefly's `random_hover`, see `firefly.md`). Built in `e4087a7`; owner accepted the care update as done (see above). Colour variety, wing flap and density have no separate in-game verdict in the docs.
 Files: BP `entities/butterfly.json`, `spawn_rules/butterfly.json`. RP `entity/butterfly.entity.json`, `models/entity/butterfly.geo.json`,
 `animations/butterfly.animation.json`, `render_controllers/butterfly.render_controllers.json`, `textures/entity/butterfly/butterfly_<colour>.png`, `.lang`.
 Art: `tools/make_butterfly.py` (generated; add a colour by adding it to `COLOURS`, the BP property range/randomize and the RP texture list).
@@ -17,7 +17,7 @@ Art: `tools/make_butterfly.py` (generated; add a colour by adding it to `COLOURS
 | Behaviour | float, panic, `random_hover` (xz 8, y 2, height 1-2 above ground (integers only: fractions fail to load)), look around. No flower targeting or pollination by design; bee integration remains owner-deferred after unsuccessful tests, not a universal engine-impossibility claim |
 | Model | 1x1x4 body, 2x2x2 head, two flat 6x6 wings (`mirror` on the right one), 32x32 texture; wings flap +-45 deg about the body (z), body bobs |
 
-## To test in game
+## Not separately confirmed in game
 
 1. Is the variety right in a herd of 3-5 (all 8 colours seen)? Are the colours bright enough in Vibrant Visuals?
 2. Do the wings flap up/down (not twist), is the wing outline right side up on top and underneath, is the size good at 0.3?

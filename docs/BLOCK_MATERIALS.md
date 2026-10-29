@@ -8,7 +8,7 @@ vanilla light-block mining parity. Empty loot prevents collection. It emits 14,
 blocks no movement or sight selection, dampens no light, conducts no redstone
 and pops without drops under piston movement so it cannot leave an untracked
 relocated helper. Source/mock reviewed; native light, fluid and piston behavior
-needs Bedrock1.26.52 acceptance. See [M5_PHIAL_NOTES.md](M5_PHIAL_NOTES.md).
+needs Bedrock 1.26.52 acceptance. See [GIFTS.md](GIFTS.md).
 
 2026-10-09, Bedrock 1.26.52. Policy: `lothlorien_bp/block_materials.json`.
 Shared standard: `C:/mcmods/.claude/skills/bedrock-blocks/references/materials.md`.
@@ -34,15 +34,15 @@ Owner answers, 2026-10-10: golden fern stays nonreplaceable; framed lights keep
 wood sounds and ropes keep grass sounds as approved exceptions. These choices
 now have checked property records (including absence and RP sound precedence).
 Trapdoors should match vanilla Bedrock. Correction to the earlier question:
-extracted Bedrock1.26.30 trapdoor thickness is0.1825block=2.92units, already our
-collision size. Retain matching selection and the existing2.9-unit recipe mesh;
-do not substitute3units from a generic/Java trapdoor assumption. Mesh/selection
+extracted Bedrock 1.26.30 trapdoor thickness is 0.1825 block = 2.92 units, already our
+collision size. Retain matching selection and the existing 2.9-unit recipe mesh;
+do not substitute 3 units from a generic/Java trapdoor assumption. Mesh/selection
 native parity is not independently measured; collision source and limits are
 in the shared support reference. Exact base boxes are recorded against drift.
 
-Vanilla particle choice: eight full wood cubes/double slabs currently use100;
-four single slabs/stairs and12other partials use48. Evidence correction:100 is
-the custom component default and48 comes from wool/concrete shapes; neither
+Vanilla particle choice: eight full wood cubes/double slabs currently use 100;
+four single slabs/stairs and 12 other partials use 48. Evidence correction: 100 is
+the custom component default and 48 comes from wool/concrete shapes; neither
 proves native oak counts. All are candidates awaiting engine measurement.
 Owner requests vanilla; no aesthetic exception is approved.
 The support post-pass restores reviewed counts after regeneration. The normal

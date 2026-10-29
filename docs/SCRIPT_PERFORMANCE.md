@@ -1,7 +1,7 @@
 # Script performance
 
 Village finishing follow-up, 2026-10-16: [measured offline workload and engine
-profiling steps](VILLAGE_POLISH_2026-10-16.md). Decorative village foliage now
+profiling steps](VILLAGES.md). Decorative village foliage now
 skips decay BFS, debug-only depth caching skips non-debug players, hidden lighting
 counts real emitters, and fence repair remains finite/event-local. TPS diagnostics
 also log p95/p99 tick gaps and counts above 100 ms. No lower-end FPS claim yet.

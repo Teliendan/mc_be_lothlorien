@@ -2,7 +2,7 @@
 
 Mod-specific: what the owner wants from the Mallorn wood set and how we got there. General art and engine lessons
 live in the shared skills (`.claude/skills/bedrock-art/references/generated-art.md`, `bedrock-block-families/references/families.md`).
-Status of each asset: `GRAPHICS_TASKS.md` step 1. How the blocks are built: `TECHNICAL_NOTES.md` Phase 3.
+Status of each asset: `GRAPHICS_TASKS.md` "Mallorn wood set". How the blocks are built: `TECHNICAL_NOTES.md` Phase 3.
 
 ## The owner's taste (apply to every remaining piece: gate, door, trapdoor, button, plate)
 
@@ -72,8 +72,8 @@ Status of each asset: `GRAPHICS_TASKS.md` step 1. How the blocks are built: `TEC
   the frame, which the owner saw as a 3-texel recess. Keep fields level with the frame on vanilla-flat blocks; relief
   only for small carved details (roots, mouldings, leaves).
 - The owner tests in game and reports precisely (round 1 hinge side was right; round 2 mirrored the inside): trust
-  that over a derivation. See `GRAPHICS_TASKS.md` "Door, round 3" and the shared note "Doors with cutouts".
+  that over a derivation. See `GRAPHICS_TASKS.md` "Door final" and the shared note "Doors with cutouts".
 - The owner reads a door by its frame, hinges and handle; plain silver on silver planks blended into the wall.
 - A tree reads at 16 texels as a solid dome on a trunk; open branch-work and sky-specked leaf crowns read as rays,
   candelabras or hedges. A regular leaf grid reads as fish scales: nudge the leaves by a fixed pattern.
-- Status and sheets: `GRAPHICS_TASKS.md` "Door, sketch round 1".
+- Status and sheets: `GRAPHICS_TASKS.md` "Door final".

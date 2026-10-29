@@ -7,8 +7,8 @@ Namespace: `lothlorien:`
 
 Packs: `lothlorien_bp/` + `lothlorien_rp/`. Deploy with `mods deploy lothlorien` from the workspace.
 
-- Design: `docs/design/` (concept, knowledge base, phased implementation plan)
-- Technical findings and test checklists: `docs/TECHNICAL_NOTES.md`
+- Documentation index (design, decisions, limits): `docs/README.md`
+- Remaining work: `docs/TODO.md`
 
 ## Status
 

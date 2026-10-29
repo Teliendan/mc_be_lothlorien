@@ -46,5 +46,5 @@ scratch and are removed on acceptance; original sources remain linked above.
 4. Dedicated fawn/cygnet voices if finer animal polish is wanted later.
 
 The unicorn's current horse sounds remain a low priority. Sindarin elf voice
-lines are recorded and owner-accepted (2026-10-25) but not yet in the pack; see
+lines are recorded, owner-accepted (2026-10-25) and wired into the pack (`96a5386`); see
 [`SINDARIN_VOICE.md`](SINDARIN_VOICE.md).

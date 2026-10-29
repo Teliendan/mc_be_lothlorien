@@ -20,7 +20,7 @@ Owner decisions, implemented 2026-10-13:
    an existing regression explicitly asserts group-owned families. No current
    practical benefit was found for the proposed base-family addition.
 
-Group16 exception2026-10-20: owner approved adding `wandering_trader` to civilian
+Group 16 exception 2026-10-20: owner approved adding `wandering_trader` to civilian
 elves so ordinary zombie/illager targeting includes them while skeleton civilian
 targeting remains absent. See [parity/CREATURES.md](parity/CREATURES.md).
 Retain all other families and block tags/omissions. Animals already use distinct mod families plus `mob`; there is no need for a blanket `animal` family. Keep the Warden's intentional `irongolem` family, the arrow's `projectile`/`arrow`, boat families and existing helper classifications. Do not substitute vanilla prey families (`rabbit`, `chicken`, etc.). Keep both `leaves` and `minecraft:leaves`: local tree `may_replace` predicates still query the bare spelling, while current vanilla trees use the namespaced spelling. Leaf carpet remains a thin cover, not full leaves.
@@ -34,7 +34,7 @@ recipe slots allow any mixture; no tag is added to blocks, jars, chandeliers or
 vanilla lanterns. Consumer: `recipes/elven_chandelier.json`; native recipe
 acceptance remains pending. Generator/post-pass and regression membership agree.
 
-## Runtime Friend tag2026-10-20
+## Runtime Friend tag (2026-10-20)
 
 `lothlorien_friend` is a runtime player tag, not a family or item/block tag.
 Authority: persisted `lothlorien:harmony` state and its cached Harmony band.
@@ -111,7 +111,7 @@ Inspected all block permutations: 0 tag-component overrides. Other components st
 | --- | --- | --- |
 | [lothlorien:butterfly](../lothlorien_bp/entities/butterfly.json) | `lothlorien_butterfly`, `mob`, `arthropod` | Approved arthropod classification implemented |
 | [lothlorien:deer](../lothlorien_bp/entities/deer.json) | `lothlorien_deer`, `mob` | Retain |
-| [lothlorien:elf](../lothlorien_bp/entities/elf.json) | `lothlorien_elf`, `wandering_trader`, `mob` | Group16 owner-approved2026-10-20: native civilian-target recognition; prior elf retain choice superseded, engine acceptance pending |
+| [lothlorien:elf](../lothlorien_bp/entities/elf.json) | `lothlorien_elf`, `wandering_trader`, `mob` | Group 16 owner-approved 2026-10-20: native civilian-target recognition; prior elf retain choice superseded, engine acceptance pending |
 | [lothlorien:elf_post](../lothlorien_bp/entities/elf_post.json) | omitted | `lothlorien:post_loremaster`: `lothlorien_elf_post`, `elf_post_loremaster`, `inanimate`; `lothlorien:post_reserve`: `lothlorien_elf_post`, `elf_post_reserve`, `inanimate`; `lothlorien:post_home`: `lothlorien_elf_post`, `elf_post_home`, `inanimate`; Retain role-group ownership; no useful current base-family consumer |
 | [lothlorien:elven_warden](../lothlorien_bp/entities/elven_warden.json) | `lothlorien_warden`, `irongolem`, `mob` | Retain |
 | [lothlorien:firefly](../lothlorien_bp/entities/firefly.json) | `lothlorien_firefly`, `mob`, `arthropod` | Approved arthropod classification implemented |

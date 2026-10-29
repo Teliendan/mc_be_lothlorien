@@ -1,460 +1,187 @@
-# Lothl?rien ? graphics tasks
+# Lothlórien: graphics status
 
-**Leaf memorial (2026-10-16): final, accepted in game.** Silver leaf deck, golden
-vein, straight capped pillar, benches and white flowers. Owner accepted the
-correction removing the cross-shaped arms. Existing assets only; iteration scratch
-removed. Commit: `Add accepted leaf memorials at garden frequency`.
-See [MEMORIAL.md](MEMORIAL.md).
+Status record of the art as shipped. Every texture and model is generated: edit the generator named in each entry, not the
+PNG/JSON, then re-run it (it overwrites its files). Textures live in `lothlorien_rp/textures/`. General rules: PNG, 16x16 unless
+stated, block textures tile on all four sides, no baked lighting, colours baked in (no biome tint). Review tools:
+`.claude/skills/bedrock-art/scripts/` (`icon_sheet.py`, `block_sheet.py`, `bb_render.py`). Owner verdict 2026-10-04: all
+graphics then existing accepted ("All graphics is good now"); later art was accepted individually, as dated below. Design
+intent: `design/lothlorien.md`. Wood-set taste, gold budget and traps: `MALLORN_WOOD_LESSONS.md`.
 
-**M5 gifts (2026-10-12): final art selected/accepted from previews.** Bow C,
-arrow 3, phial D/P4, belt B4-v2 including its icon, and worn cloak C2-v2 with the
-separately selected Golden Mallorn inventory icon. Deterministic generators keep
-only the final designs. Owner confirmed belt/phial mechanics and corrected
-invisibility; final worn fit and corrected bow rendering/0.6s speed/zoom still
-need engine checks. [M5 checklist](M5_GIFTS_TEST.md).
-Commit: `Finalize selected Galadriel worn gifts`.
+## Pack icon
 
-**Current verdict (2026-10-04): all current graphics accepted by the owner.**
-The dated pending-art and placeholder entries below are historical; this verdict supersedes them.
+Final 2026-10-28: owner chose the "night" scene; `lothlorien_bp/pack_icon.png` and `lothlorien_rp/pack_icon.png` share one
+512x512 PNG. Goal (owner): make players curious with an honest feature showcase, in-game graphics only. Night in a Mallorn
+forest; the white hart large at lower left among Elanor and Niphredil with fireflies; behind it a real village fragment (central
+Mallorn with crown, tower with the 11-block bridge, node with the 7-block bridge) lit by its own light sources; dense ordinary
+Mallorns, four giant Mallorns, stars. Made by a software renderer of the mod's real block/entity geometry and textures; the
+village is assembled from its `.mcstructure` files by their jigsaw connectors and sunk like worldgen (village -17, giants -5);
+block light uses the structures' real emitters. Ordinary forest trees approximate the tree features; grading, fog, glow halos,
+firefly dots and stars are post-processing. Owner decisions: no unicorn; warden only where he fits (left out of the icon,
+reserved for the banner); more forest; greener night over a day variant. Minecraft's pack-menu rendering of the icon is not
+separately confirmed.
 
-**Pack icon final (2026-10-28): owner chose the "night" scene; installed in both packs.**
-`lothlorien_bp/pack_icon.png` and `lothlorien_rp/pack_icon.png` share the same 512x512 PNG (owner picked the 512 version).
-Goal (owner): make players curious with an honest feature showcase and adventure promise, in-game graphics only.
-Design: night in a Mallorn forest; the white hart large in the lower left among Elanor and Niphredil, fireflies around it;
-behind it a real village fragment (central Mallorn + crown, tower with the 11-block bridge, node with the 7-block bridge,
-crowns) lit warm by its own light sources, dense ordinary Mallorns, four giant worldgen Mallorns, stars.
-How it was made: a software renderer of the mod's real block/entity geometry and textures; the village is assembled
-from its `.mcstructure` files by their jigsaw connectors and sunk like worldgen (village start_height -17, giant
-Mallorns -5); block light uses the structures' real emitters with Minecraft's falloff and brightness curve. The
-ordinary forest trees approximate the fancy/simple/mega tree features (engine code cannot run offline). Grading, fog,
-glow halos, firefly dots and stars are post-processing. Owner decisions: no unicorn; warden only where he fits (left
-out of the icon: ~8 px at that scale; reserved for the promo banner); more forest; greener night chosen over a day
-variant with songbirds and butterflies. Previous tree icon (2026-10-07) is replaced; git history has it.
-Minecraft's pack-menu rendering of the new icon is not separately confirmed.
+## Promo banner
 
-**Promo banner final (2026-10-28): owner chose the "moon" variant.** `docs/media/promo_banner_1920.png` (1920x1080)
-and `promo_banner_1280.png`; `docs/media/logo_512.png` is the square site logo (same image as the pack icon).
-Same night world as the icon, wider: the white hart on the left, the Elven Warden on the meadow holding the Galadhrim
-bow, four village pieces across the width (a fourth tower on the central Mallorn's north connector, rotated 180 like
-the jigsaw does), seven elves on the decks, the vanilla full moon (additive, like the game) in open sky.
-Owner decisions: moon variant (over plain and over a title in the vanilla font); no firefly on or touching a figure;
-elves only inside the railings, doing things (leaning, talking, lighting a lantern, walking, looking at the sky,
-tending), "alive, not a school photo". Limits: the held bow approximates the engine's texture-mesh transform (real
-sprite, extruded, upright in the hand; not compared with the game); elves read as small figures (heads and shoulders
-above the railing).
+Final 2026-10-28: owner chose the "moon" variant. `docs/media/promo_banner_1920.png` (1920x1080), `promo_banner_1280.png`, and
+`docs/media/logo_512.png` (square site logo, same image as the pack icon). Same night world, wider: white hart on the left, the
+Elven Warden on the meadow holding the Galadhrim bow, four village pieces across, seven elves on the decks, the vanilla full
+moon in open sky. Owner decisions: moon variant over plain and over a title in the vanilla font; no firefly on or touching a
+figure; elves only inside the railings, doing things ("alive, not a school photo"). Limits: the held bow approximates the
+engine's texture-mesh transform (not compared with the game); elves read as small figures.
 
-**Key-art generator.** `python -B mods/lothlorien/tools/key_art/make_key_art.py [icon] [banner]` rebuilds both images
-into `temp/key_art/` (verified pixel-identical to the accepted files, 2026-10-28); install by copying (see its
-docstring). Generic parts (perspective renderer, `.mcstructure` reader, vanilla font) are in
-`.claude/skills/bedrock-art/scripts/`. Scratch removed after acceptance. Commit: `Add night key art: pack icon,
-promo banner, logo and generator`.
+Key-art generator: `python -B mods/lothlorien/tools/key_art/make_key_art.py [icon] [banner]` rebuilds both images into
+`temp/key_art/` (pixel-identical to the accepted files, 2026-10-28); install by copying (see its docstring). Generic parts
+(perspective renderer, `.mcstructure` reader, vanilla font) are in `.claude/skills/bedrock-art/scripts/`. Commit: `Add night
+key art: pack icon, promo banner, logo and generator`. The in-game banner pattern is `design/banner.png`.
 
-Work list for whoever makes the art (image generator + manual cleanup). Each step lists the
-files to produce, where they go, and what the code assumes about them. Textures live in
-`lothlorien_rp/textures/`. **Claude appends requirements to the "Requirements" section of a step
-whenever a code change creates a new constraint on the art** — read that section before starting a step.
+## Mallorn wood set
 
-General rules for every texture: PNG, 16×16 unless a step says otherwise, tileable on all four
-sides for block textures, no per-tile lighting baked in (Minecraft lights it), replace the file
-in place (same name) so no JSON changes are needed.
+All final, generated by the `tools/make_mallorn_*.py` scripts. Two sets by the owner's decision (2026-09-30): logs and wood are
+silver (`mallorn_*`), stripped logs and wood are golden (`mallorn_heartwood_*`); **heartwood art is always a recolour of the
+silver art** through `SILVER_TO_GOLD` in `make_mallorn_wood.py` (exact map for our palette; keep silver art in the
+`PLANK`/`BARK`/`GOLD` palette). Geometry is shared. Map colours follow the texture averages.
 
----
-
-## Step 1 — Mallorn wood set (Phase 3)
-
-**Read `docs/MALLORN_WOOD_LESSONS.md` first** (the owner's taste, gold budget, workflow, generators, traps).
-
-### Status (end of 2026-10-01): continue here
-
-| Piece | Both sets? | State |
+| Piece | Generator | Verdict |
 |---|---|---|
-| Log, wood, stripped log, stripped wood | one set (logs are silver) | **final** (owner accepted 2026-09-30) |
-| Planks, stairs, slab, double slab | silver + heartwood | **final**; stair icon grain rotated and owner accepted the icon set 2026-10-03 |
-| Menu icons of all non-cube wood blocks | silver + heartwood | **final**; stair grain update accepted with the icon set 2026-10-03 |
-| Fence | silver + heartwood | **final** (owner loves it, 2026-10-01; rail colour and icon fix rechecked "perfect") |
-| Fence gate (variant C) | silver + heartwood | **final** (works in game, liked, 2026-10-01) |
-| Door (+ 2D item icon) | silver + heartwood | **final** (tree door, owner loves it, 2026-10-01) |
-| Trapdoor | silver + heartwood | **final** (star window, owner loves it, 2026-10-01) |
-| Button, pressure plate | silver + heartwood | **final** (planks); east/west wall buttons fixed to lie flat (2026-10-01, check in game) |
-| Leaves (`mallorn_leaves_side/top/bottom.png`) | `tools/make_mallorn_leaves.py` | **final** (owner, 2026-10-01): spring look, green top, silver bottom 25 % with a 2 px blend, big overlapping leaves in 3 layers, 64 of 256 px see-through, untinted |
-| Golden leaves block (`mallorn_golden_leaves.png`) | `tools/make_mallorn_leaves.py` | **final** (owner, 2026-10-01): same layout, all gold, crafted from litter + stick, persistent |
-| Leaf litter (`mallorn_leaf_carpet.png` + icon) | `tools/make_mallorn_leaves.py` (sprites from `tools/make_falling_leaf.py`), geometry `tools/make_leaf_litter_geo.py` | **redrawn 2026-10-02 (owner: so much better), to check in game**: one whole falling-leaf sprite per 8x8 segment (the same drawing as the drifting particle), the icon shows the same four leaves; flat plane, ground visible between them. The old version had 2-3 tiny fragments per segment |
-| Blossoms (`mallorn_blossom.png` + icon) | `tools/make_mallorn_blossoms.py`, geometry `tools/make_leaf_litter_geo.py` | **final** (owner, 2026-10-01): flat plane, small yellow flowers + petals (dandelion yellows) |
-| Boats: 4 boats, default + "Prettier boats" models, icons (`tools/make_mallorn_boat_family.py`) | silver + heartwood | **final** models (owner, 2026-10-01); chest boat icon revisions accepted with the icon set 2026-10-03 (`docs/mobs/mallorn_boat.md`) |
-
-All plank-family pieces, the leaves, the golden leaves and the leaf litter / blossoms are final. Every Mallorn texture and model is
-generated: edit the `tools/make_mallorn_*.py` scripts, not the PNG/JSON. Design rounds were deleted after acceptance
-(owner's rule); git history has them.
-
-**Logs final (accepted by the owner 2026-09-30):** `mallorn_log_side/top` and `mallorn_stripped_log_side/top` are generated by
-`tools/make_mallorn_wood.py`. Bark: silver-grey, calm vertical light bands from a tone field, beech lenticels and two gold
-glints per tile (picked over ridge and curving-strand versions). Cut end: silver rim, **gold sap ring**, pale golden rings.
-Stripped: pale honey wood with long straight grain. Map colours in the four block files follow the texture averages.
-Review sheet: `.claude/skills/bedrock-art/scripts/block_sheet.py`.
-
-**Planks (2026-09-30), in game, no objections:** four full-length silver boards of uneven width (4/5/3/4 px), soft seams with
-a few "very soft" pegs, long grain strokes (owner's design: long boards, pure silver).
-
-**Two plank sets (owner's decision 2026-09-30).** Logs/wood -> silver `mallorn_*` family; stripped logs/wood -> golden
-`mallorn_heartwood_*` family. **Heartwood art is always a recolour of the silver art** through `SILVER_TO_GOLD` in
-`make_mallorn_wood.py` (exact map for our palette; gold accents become silver). Every generator writes both twins; keep
-silver art in the `PLANK`/`BARK`/`GOLD` palette so the map stays exact. Geometry is shared by both sets.
-
-**Fence final (2026-10-01, owner loves it):** vanilla 4x4 post and two 2x2 rails bent into an **inverted V** (22.5 deg up to
-a peak at the block edge); post texture `mallorn_fence_post`: grain streaks, two knots, **one painted gold leaf per side**
-(like the falling-leaf particle) at different heights; a **small diamond cap** on every post; rails and cap wear a
-leaf-free strip of the post texture. `tools/make_mallorn_fence.py` (geometry + icon), `make_mallorn_wood.py` (texture).
-Owner's decisions: quiet beauty, one or two gold touches (gold collars, tips, drops and tall spires were "too posh").
-
-**Fence gate final (2026-10-01, works in game, liked):** the fence line runs through: the fence's own rails (low at a 4-wide
-centre post carrying the painted leaf, peak at the block edge, meeting the neighbours' rails), plain 2x2 end posts, no
-caps; the leaf splits in half when the gate opens. `tools/make_mallorn_gate.py`. Picked over two capped variants.
-
-**Button, pressure plate:** they wear the planks (owner: fine as they are). Wall buttons on east/west walls stood upright
-(the 6x4 floor box tilted about z); fixed 2026-10-01 with their own 4x6 geometry (`mallorn_button_ew`, `_ew_pressed`), so
-every wall button lies flat like vanilla (6 wide, 4 high); the turned box also turns its texture back (`uv_rotation` 90)
-so the grain stays horizontal. Plates now need a block below (`placement_filter` up only). In-game check pending.
-
-**Door final (2026-10-01): the tree door, owner loves it.** `tools/make_mallorn_door.py` (no arguments) writes silver +
-heartwood textures, the hand-drawn icon and the four geometries. Half a mallorn per door: the trunk stands at the free
-edge, so a double door shows one whole tree; a loose arc of gold leaves over a fan of silver branches, cut out against
-the sky; below a painted mid rail the trunk and roots over vertical boards. Owner's decisions over five rounds:
-- vanilla geometry: one flat 16x16x3 cube per half, no real or painted depth (a recessed panel and a field shaded one
-  step below its frame were both rejected); the frame is colour only: outline + frame line on the hinge, top and bottom
-  edges, none on the free edge (no line in the middle of a double door); painted hinges and handle;
-- more gold and more cut-through than the fence's "one or two gold touches": picked the open wreath crown over a solid
-  gold dome and a lace crown; a carved-arch variant and a lattice variant lost;
-- icon: a whole small tree in one narrow door, 10x14 like every vanilla door icon (16 tall was "too tall").
-Engine facts (hinge side, face directions, the ledge seen through cutouts) are in the shared note
-`bedrock-block-families/references/families.md` "Doors with cutouts". The design rounds, sheets and sheet scripts are in
-git history (commit ade8e24, `docs/art/door/`), removed from the tree after acceptance.
-
-**Trapdoor final (2026-10-01): the star window, owner loves it.** `tools/make_mallorn_trapdoor.py` (no arguments)
-writes silver + heartwood and points the trapdoor's edge faces at the frame line. A gold eight-pointed star (a sparkle:
-four-point body with concave sides, short diagonal points; hand-drawn, a computed star read as a plus sign) in a silver
-ring, sky between, inside the door's painted 2-texel frame. Owner's brief: cut-through and a star in the middle; chose it
-over a star with gold corner leaves and a star-shaped opening in boards ("both awesome"; not kept).
-
-Design intent (from `design/lothlorien.md`): silver-grey bark, gold leaves; planks ideally with
-straight grain rather than zig-zag; fence, door and trapdoor "should look like carved" (they can get
-their own textures later — the door and trapdoor already have separate files, the fence/gate share planks).
-
-### Requirements (Claude adds to this list)
-
-- **Leaves render with `alpha_test_to_opaque` (owner verified 2026-10-02: leaves were invisible from far away with `alpha_test`).** The texels under the holes carry a dark neighbour colour (`shade_hidden` in `make_mallorn_leaves.py`), not black: the far render turns the holes opaque in that colour.
-- **Leaves: the gold colour is baked into the PNG.** The block applies *no* biome tint, so what is
-  in the file is what the player sees, in every biome. Transparent holes stay (alpha 0 pixels): the
-  block renders `alpha_test`, so alpha is cutout only (fully opaque or fully transparent, no soft edges).
-- **Log side/top must share one wood tone**; the ring layout on `_top` should match the inset of
-  `_side`. Logs rotate (axis follows the clicked face) and the side texture is rotated 90° on
-  horizontal logs, so avoid grain that only reads correctly in one direction, or accept the rotation.
-- **`mallorn_log_side` also skins the "wood" block on all six faces** (bark on every side). It must
-  look right on a top face too. Same for `mallorn_stripped_log_side` and stripped wood.
-- **Planks are the texture of six other blocks.** Stairs and slabs sample the same 16×16 tile
-  (half-height sides use the matching half), and the fence/gate/button/plate models cut small
-  pieces out of it. Avoid a single large feature centred on the tile. Check tiling as a 20×20 wall
-  and floor (plan, Phase 3).
-- **Door halves**: one flat 16×16×3 cube each; the full face is the front and back (mirrored on the hinge-right door).
-  Column 0 is the hinge side. The edge faces stretch the frame line (column 1), the top face row 1, the bottom face row 14
-  of the bottom texture: keep those opaque; cutouts are allowed everywhere else. Generated: edit `make_mallorn_door.py`.
-- **Trapdoor** renders `alpha_test_single_sided`: cutouts allowed inside the frame. Its four edge faces stretch the frame
-  line (row 1): keep that row and column 1 opaque. Generated: edit `make_mallorn_trapdoor.py`.
-- **Stripped variants** should read as the same log with the bark removed.
-- **Vibrant Visuals / PBR:** the pack declares `pbr`. With no `.texture_set.json` the blocks use
-  default material values. Optional later: `<name>.texture_set.json` plus a `_mers` map (metalness,
-  emissive, roughness) per tile; vanilla ships both for every wood tile.
-- **Higher resolution is possible** (32×32, 64×64) if every texture of the step uses the same
-  size; model UVs are relative to the tile. Tell Claude if you go above 16×16 so the docs are updated.
-
----
-
-## Later steps
-
-Added as phases arrive (Elanor/Niphredil flowers, golden leaf carpet, acorn, Elven lamp, ...).
-Mallorn boats (see `NOT_IMPLEMENTED.md`) will need an entity model + texture and item icons.
-Claude will append one section per phase with the file list and constraints.
-
----
-
-## Step 1b - Acorn, sapling, Great Mallorn nut and sprout (redrawn 2026-10-01, deployed, to check in game)
-
-All four are generated by `tools/make_mallorn_seeds.py` (edit the script, not the PNGs; it replaced `make_great_nut.py`). Lore (Tolkien Gateway, "Sam's garden box", "Mallorn"): Galadriel's seed is "a small nut with a silver shell"; the tree has silver-grey bark, leaves green above and silver beneath, golden flowers in spring.
-
-| File | Design |
-|---|---|
-| `items/mallorn_acorn.png` | the common acorn: slim, honey-gold nut in a silver scaled cap, brown stem with a tiny gold leaf |
-| `items/great_mallorn_nut.png` | the lore nut: plump silver-shelled egg, small gold scaled cap, gold leaf (colours inverted against the acorn so they never look alike) |
-| `blocks/mallorn_sapling.png` (geometry fixed 2026-10-02: no more solid line along the top, see the shared note in `bedrock-block-families`) | young Mallorn: silver trunk, long pointed leaves green above and silver beneath, one yellow blossom |
-| `blocks/great_mallorn_sprout.png` | silver stem with big gold leaves (the Great Mallorn is golden), no shell: shell halves and chips were tried and read as grey lumps (owner, 2026-10-02) |
-
-Plants are two crossed planes, cutout, standing on the bottom row; the generator checks that no piece floats and pads transparent texels with neighbour colour.
-
----
-
-## Step 6 - Ground identity and flora (Phase 6)
-
-All files below are **placeholders** (vanilla flowers, a gold-tinted vanilla fern, a hand-drawn leaf).
-Replace each in place (same name); no JSON changes needed. Plants are two crossed planes with
-`alpha_test` (cutout, no soft alpha) and are also used as the 2D inventory icon, so each plant needs
-**both** a block texture and an item texture (same picture, may differ in framing).
-
-| Block file (`textures/blocks/`) | Item file (`textures/items/`) | Used by | Placeholder |
-|---|---|---|---|
-| `mallorn_leaf_carpet.png` | `mallorn_leaf_carpet.png` | leaf litter, 1-4 segments per block (final, see the table above) | generated |
-| `elanor.png` | `elanor.png` | Elanor, small golden star-shaped flower | **drawn 2026-10-01, to check in game** (proposal A: one gold star, amber eye) |
-| `niphredil.png` | `niphredil.png` | Niphredil, delicate pale/white flower | **drawn 2026-10-01, to check in game** (proposal A: nodding snowdrop) |
-| `athelas.png` | `athelas.png` | Athelas, medicinal herb (later ingredient of salve / Miruvor) | **drawn 2026-10-01, to check in game** (proposal B: long-leaf rosette, two pale flower stalks) |
-| `golden_fern.png` | `golden_fern.png` | golden fern, ambient ground cover | **drawn 2026-10-01, to check in game** (proposal A: green root, gold fronds) |
-| `mallorn_blossom.png` | `mallorn_blossom.png` | fallen Mallorn blossoms, 1-4 segments per block (final, see the table above) | generated |
-
-**Flora art (2026-10-01):** Elanor, Niphredil, Athelas and the golden fern are generated by `tools/make_lothlorien_flora.py` (block texture = item icon; Mallorn leaf GREEN/GOLD/SILVER palettes; edit the script, not the PNGs). Lore: Elanor = golden star, silver ones on the same plant (pimpernel); Niphredil = pale snowdrop; Athelas = humble long-leaf herb (flowers are our invention); fern is ours. Owner picked A/A/B/A from three proposals each (Athelas B for variety). Greens must be darker than the grass or stems vanish. In-game check pending; the flicker question (below) is not settled by it.
-
-Round 4 (2026-10-02, owner in game): Elanor, golden fern and corn good. Niphredil redrawn symmetric about the centre because the two crossed planes duplicated its off-centre stem and head; Athelas lost its flower stalks (the heads outweighed the leaves) and got bigger leaves.
-
-Round 5 (2026-10-11, owner decision): Niphredil head was too big. Now one small 4x4 nodding bell per side of the mirror-symmetric texture = four bells in the world with the crossed planes (a 4-bell texture shows 8). A shared 2px stem rises to row 9 (~55 % of the height), then forks into two thin arching stalks that hook into the bells; one leaf pair. Generated by `niphredil()` in `tools/make_lothlorien_flora.py`; `niphredil_mers.tga` is a flat constant, unaffected. Rejected: 3/4 bells per side, fork at row 7 (arms read as parallel stalks). To check in game.
-
-Particle: `textures/particle/mallorn_leaf.png` is now a **40x8 sheet of five 8x8 sprites** (four gold leaves of different shape, one pale yellow blossom), generated by `tools/make_falling_leaf.py` (2026-10-02, to check in game). `particles/falling_leaf.json` picks one per particle (`variable.particle_random_1/2`, a blossom about 1 in 7), draws it 0.10-0.14 blocks wide and spins it, so each sprite must read by its silhouette at a few pixels. Owner liked the single leaf; this adds variety.
-
-### Requirements (Claude adds to this list)
-
-- **Litter and blossoms are segmented like vanilla leaf litter, and flat** (zero-thickness plane, `geometry.lothlorien.leaf_litter_N` / `blossom_N`,
-  no sides): a block shows 1 to 4 quarter tiles (segment 1 = top-left 8x8 quadrant of the 16x16 texture, 2 top-right, 3 bottom-right, 4
-  bottom-left), rotated per block. Each quadrant must look complete on its own. No colour on the edges, ground visible between the leaves.
-- **Blossoms are cutout** (alpha 0 between petals); the ground shows through.
-- **Leaf carpet is opaque and seen from above**: it covers the grass texture under trees, so it must
-  tile on all four sides and look good in large patches. Its top face uses the whole 16x16 tile; the
-  1 px sides use the bottom row (`v = 15`), so keep that row a plausible leaf-edge colour. Patches
-  are scattered (gaps between blocks show grass), so neighbouring blocks should not need to line up.
-- **Golden fern and Athelas must be clearly different silhouettes** (fern: arching fronds; Athelas:
-  low herb with small pale flowers) and Athelas must not read as "grass" from a distance.
-- **Elanor vs Niphredil**: golden vs white must be distinguishable at a glance, in shade and at night.
-- Colours are baked in: none of these blocks receives a biome tint.
-- Plants sit on grass in a vivid-green, gold-foliage biome; avoid dark outlines that fight the gold.
-- **PBR maps:** each step 6 block texture has a placeholder `<name>.texture_set.json` and `<name>_mers.tga` (flat values). When you
-  replace a texture keep the set file; optionally paint a real MERS map (R metalness, G emissive, B roughness, A subsurface).
-
-### Open problem: cutout flicker (for the graphics agent; also needs a code-side look)
-
-**Status 2026-10-02:** the saplings and great sprout are SOLVED (their model had degenerate faces, see `bedrock-block-families`). The flowers and corn were not reported flickering after the redraw. **The Mallorn leaves (and golden leaves) still flicker: UNSOLVED**, details and the tests already done in `TECHNICAL_NOTES.md` "Flicker". The text below is the original 2026-09-29 report.
-
-Seen in game (user, 2026-09-29): the custom cutout blocks shimmer at high frequency while the camera moves or looks at them
-(golden fern, Niphredil, Mallorn leaves; vanilla grass next to them is static). It is subtle, the plants do not disappear.
-It happens with **both Fancy and Vibrant Visuals**, so it is not (only) a PBR/Vibrant problem. Ruled out: semi-transparent pixels
-(all placeholder alpha is 0 or 255). Adding flat MERS maps did not settle it (that fix was tried before the user reported "both modes").
-Things to check, cheapest first:
-
-1. **Texture content.** Do the final textures have hard, clean silhouettes with no isolated single opaque pixels or 1 px gaps
-   (cutout edges plus mipmaps shimmer when they are thin)? Compare with the vanilla fern / poplar leaf tiles: thicker shapes, coloured
-   pixels under the transparent ones (edge padding, not black or white bleed). Transparent pixels should carry the neighbouring
-   colour, not (0,0,0).
-2. **Mip levels / padding** in `textures/terrain_texture.json` (`padding 8`, `num_mip_levels 4`): try 0-1 mip levels, or compare with
-   the vanilla atlas settings.
-3. **Code side (Claude):** `render_method` `alpha_test` vs `alpha_test_single_sided` on the plants, and whether the leaves show it too
-   with a vanilla leaf texture swapped in (isolates art from block definition).
-
----
-
-## Step 7 - Western Corn and Lembas (Phase 7)
-
-**Western Corn art (2026-10-01, deployed, to check in game):** the 8 stages and the seeds / grain icons are generated by `tools/make_western_corn.py` (edit the script, not the PNGs). Lore: Tolkien's "corn" is wheat-like grain that Yavanna made for the lembas; the plant is not described, so the look is ours: tall straw stalks with ears nodding under their weight and long silver awns over cool blue-green blades (vanilla wheat: upright yellow-green spikes). Owner picked this "nodding ears" concept over a plumed millet and a maize cob. Stages 0-4 blades only (more and taller), 5 stalks with a swelling bud, 6 upright pale green-gold ears, 7 ripe: gold ears, the only stage with gold. Dough, cake and wrapped Lembas were redrawn 2026-10-04; see the provision icon review below. **2026-10-02:** the owner saw the crop flicker; it used the built-in `minecraft:geometry.cross`, so `western_corn.json` now uses `geometry.lothlorien.plant_cross` like the flowers (result pending).
-
-All files are **placeholders** (vanilla wheat stages, seeds, wheat and bread, tinted gold; dough and wrapped Lembas hand-drawn
-in a few pixels). Replace each in place (same name); no JSON changes needed.
-
-| File | Used by | Placeholder |
-|---|---|---|
-| `textures/blocks/western_corn_stage_0.png` ... `_7.png` (8 files) | crop block, one per growth stage (0 seedling, 7 ripe) | vanilla `wheat_stage_N`, tinted gold |
-| `textures/items/western_corn_seeds.png` | seeds (plant on farmland) | vanilla wheat seeds |
-| `textures/items/western_corn_grain.png` | harvested grain | vanilla wheat, tinted |
-| `textures/items/lembas_dough.png` | dough (grain + sugar) | final, owner accepted 2026-10-04 |
-| `textures/items/lembas_cake.png` | baked, unwrapped cake | final, owner accepted 2026-10-04 |
-| `textures/items/lembas_wrapped.png` | wrapped Lembas (the final food) | final, owner accepted 2026-10-04 |
-
-### Requirements (Claude adds to this list)
-
-- **The crop is `minecraft:geometry.cross`** (two crossed planes, `alpha_test`), not the four-plane hash of vanilla wheat, so a
-  stage texture is drawn on a full 16x16 tile and seen from both diagonals. Cutout only (alpha 0 or 255). If a real four-plane
-  crop geometry is wanted, tell Claude: it needs a `.geo.json` (Blockbench) and one line in the block file.
-- **Ripe (stage 7) must be unmistakable from a distance**: the crop is meant to be found in wild clearings, where every plant
-  is stage 7. Make the ripe stage clearly golden/eared and the young stages green, so a farm reads as growing.
-- **Western Corn must not look like wheat** at a glance (design: a special crop; also do not reuse wheat's colours exactly).
-- Stages 0-7 are shown as a plant that fills the tile more with each stage; the tile bottom edge must sit on the soil line.
-- **PBR maps:** each stage has a placeholder `.texture_set.json` and `_mers.tga` (flat vanilla-plant values), like step 6.
-  Keep the set files when replacing a texture.
-- Item icons are 2D 16x16, no baked lighting. Lembas cake and wrapped Lembas must be **distinct silhouettes** (the wrapped one
-  is the leaf-wrapped, lighter, "elven" version) and the wrapped one is the one players eat most, so make it the nicest.
-- The cutout flicker problem from step 6 applies to the crop textures too; check the same list.
-
----
-
-## Step 8 - Athelas salve and Miruvor (Phase 8)
-
-Final, owner accepted 2026-10-04; generated by `tools/make_provisions.py`: `athelas_salve.png` is a short glass vial with green contents and a cork; `miruvor.png` is an asymmetric leather wineskin with a narrow gold spout and gold leaf emblem. Miruvor now matches the existing four-sip skin item rather than the old bottle placeholder.
-
-
----
-
-## Step 11 - Deer (Phase 11)
-
-Generated by `tools/make_deer.py` and `tools/make_antler_block.py` (re-run after any change; they overwrite their files).
-
-| File | Used by | State |
-| --- | --- | --- |
-| `models/entity/deer.geo.json` (`geometry.lothlorien.deer`, `deer_buck`, `deer_baby`) | doe, buck, fawn; 64x64 texture, 1 px = 1 unit | **final** (accepted in game 2026-09-30) |
-| `textures/entity/deer/deer.png`, `deer_baby.png` | adult (doe and buck share one sheet), fawn | **final** (accepted in game 2026-09-30) |
-| `textures/items/deer_antler.png` | antler item | **final**: a pair on a skull plate, like the block (accepted in game 2026-09-30) |
-| `textures/blocks/deer_antler.png` + `models/blocks/deer_antler_{wall,floor,ceiling}.geo.json` | placed antler block | skull remodelled and painted 2026-09-30 (checked in Blockbench), **to check in game** (see 11b) |
-| `textures/items/venison_raw.png`, `venison_cooked.png` | items | **final, owner accepted 2026-10-04** |
-
-### To do
-
-- **Venison icons**: redrawn as narrow rib chops with an ivory shank. Raw has a pale fat rim and pink muscle seams; cooked has a browned cut face and seared marks. `make_deer.py` calls the shared `make_provisions.py` drawer so regenerating deer cannot restore the placeholders. Owner accepted 2026-10-04.
-- **Antler block** (step 11b): check the new skull and colouring in game on a wall, floor and ceiling.
-- **White deer (Phase 12, entity `lothlorien:white_deer`, adults only)**: `deer_white.png` exists (a generated palette swap of the tawny layout by `tools/make_deer.py`: white coat with cool shadows, pale pink nose, ears and hooves; used on the buck geometry only: the white deer is always an antlered hart since 2026-09-30). The white fawn texture was dropped (the white deer has no babies). Placeholder: judge in game, then hand-tune; optional faint silver shimmer not done. Spawn egg: drawn icon since 2026-10-25 (see Spawn eggs). `guide_beacon.png` is a deliberately empty 16x16 transparent texture on a zero-size cube (the helper must stay invisible): no art needed.
-- **Great Mallorn nut** (white deer gift, 2026-09-30): `textures/items/great_mallorn_nut.png` (plump golden nut, silver scaled cap, stem and
-  gold leaf; glint from the item) and `textures/blocks/great_mallorn_sprout.png` (the Mallorn sapling's silhouette recoloured: silver stem,
-  gold leaves, pale blossom glints). Redrawn 2026-10-01 by `tools/make_mallorn_seeds.py` (see step 1b).
-  **To check in game.**
-- Sound: placeholder vanilla horse sounds until Phase 18 (not graphics, listed so it is not forgotten).
-
-### Requirements (Claude adds to this list)
-
-- **Bone names are contracts**: `body neck_joint head_joint ear_l ear_r antler_l antler_r tail leg0..leg3` (leg0 hind right, leg1 hind left,
-  leg2 front right, leg3 front left). The animations (`animations/deer.animation.json`, including the deer's own `look_at_target` for
-  `head_joint`) depend on them. **No bone may be called `head`**: the engine derives an armour locator from it and the fawn's differs
-  from the adult's (content-log error). The adult exists as two geometries on one texture layout: `geometry.lothlorien.deer` (does) and
-  `geometry.lothlorien.deer_buck` (the same plus `antler_l`/`antler_r`); the render controller picks by sex and age. Keep them in step.
-- The baby geometry is authored at its **real in-game size** (the BP scales the baby by 0.5, the client entity scales the model by 2 to undo it).
-- Box UV with **whole-number cube sizes only** (fractional sizes leave see-through holes).
-- Both body textures share one sheet per model; if you go above 64x64 keep one size for adult and fawn (no mixels).
-
-### Step 11b - Deer antler block
-
-`textures/blocks/deer_antler.png` has two halves. Columns 0-7 are strip palettes (antler 0-3, burr 4-7; each four columns =
-face shades down, south/west, north/east, up; rows are a length ramp, row 0 ivory tips ... row 15 red-brown at the skull): every antler
-face samples a 1-texel-wide strip whose rows match the cube's height on the wall model. Columns 8-15 are **painted** skull faces mapped
-1 texel = 1 unit (cranium 5x4x4, snout 3x3x3: eye sockets, nasal ridge, centre seam). The floor and ceiling models are the wall cubes
-turned over, so their skull faces use mirrored and `uv_rotation`-ed UVs (geometry format 1.21.0), checked by rendering all sides in
-Blockbench (`.claude/skills/bedrock-art/scripts/bb_render.py`). Generated by `tools/make_antler_block.py`; edit the art there, not the PNG. Keep the geometry
-identifiers and the orientation: wall model back at +z, front at -z; the floor shed lies along z.
-
----
-
-## Icon review (2026-09-30)
-
-`python -B .claude/skills/bedrock-art/scripts/icon_sheet.py temp/icons.png mods/lothlorien/lothlorien_rp/textures/items/*.png`
-flagged these as flat or thin (largest one-colour area over 15 %, or few shades; accepted antler icon 2 %, vanilla meats
-4-9 %). Redo with the `bedrock-art` workflow (ramp with hue shift, top-left light, material traits, derived outline):
-
-| Icon | Finding |
-| --- | --- |
-| `athelas_salve.png`, `miruvor.png` | 51 % / 50 % one colour: the liquid is a flat block; needs a light-to-dark ramp, a glass highlight and rim |
-| `lembas_dough.png` | 51 % one colour, 3 colours: a flat disc |
-| `mallorn_acorn.png` | 27 %, 5 colours, low contrast |
-| `venison_raw.png`, `venison_cooked.png` | 19 % / 17 % (see step 11) |
-| `lembas_wrapped.png`, `niphredil.png` | 16 % / 21 %: borderline, look again |
-| `mallorn_blossom.png` | low contrast (0.14), 3 colours; it may be meant as soft petals, check next to vanilla flowers |
-
-## Swan and ground squirrel (2026-10-02, generated by `tools/make_swan_squirrel.py`)
-
-Swan (white, orange beak) and squirrel (three browns) textures and box models are generated and seen only in a Blockbench render
-(swan) and flat texture preview (squirrel), then seen in game by the owner, who raised no art complaint (accepted). Owner brief: no gold or silver on the animals.
-
-## Elven rope (2026-10-02, generated by `tools/make_elven_rope.py`)
-
-Placed rope (one knot per block): liked by the owner. After several icon studies, the owner accepted the
-single overhand knot on 2026-10-03. Its one-pixel hole makes the knot readable; dark-grey edge pixels replace
-the former near-black outline. `tools/make_elven_rope.py` regenerates the accepted icon exactly. Deployed;
-the final in-game rendering has not been separately reported.
-
-## Elven lamps (2026-10-02, generated by `tools/make_elven_lamps.py`)
-
-| Piece | State |
-| --- | --- |
-| Elven chandelier (model, textures) | **final** (owner, round 2) |
-| Elven lantern: silver arch canopy, open four-sided glow chamber, one-layer foot | **Final**; owner accepted the arch design and requested lowest narrow foot removed 2026-10-03. |
-| Golden Elven Lantern: stripped Mallorn heartwood palette | **Accepted** with the icon and lantern set 2026-10-03; uses the shared silver-to-gold map. |
-| Firefly jar: 7 high, blend glass, moss bed, wandering flies | **accepted** (owner: beautiful, round 2) |
-| Icons: chandelier, jar (Bottle of Fireflies style) | **Accepted** with the icon set 2026-10-03. |
-| Icon: lantern (compact hand-drawn silver canopy and amber light) | **Accepted** 2026-10-03; golden version accepted with the set. |
-
-Final design and test status: `docs/TECHNICAL_NOTES.md` "Phase 17".
-Commit: `Elven lighting and inventory icons`.
-
-
-## Provision icon review (2026-10-04)
-
-Seven replacement 16x16 icons generated by `tools/make_provisions.py`: salve, Miruvor skin,
-raw/cooked venison, Lembas dough, cake and wrapped Lembas. Edit the generator, not the PNGs.
-Reviewed at 1x/2x, in a hotbar and at 8x beside vanilla potion, beef and bread using
-`icon_sheet.py`. Crisp binary alpha, no canvas-edge clipping; top-left light with hue-shifted
-material ramps. Lembas: soft folded dough, square scored pale waybread with a brown crust,
-angular green/silver-backed Mallorn leaf packet with a golden fibre tie.
-**Status: final, owner accepted 2026-10-04: "All graphics is good now."**
-Verification passed (0 errors, 5 warnings); BP and RP deployed and in sync.
-Commit: `Finish accepted provision graphics`.
-No gameplay or world generation change. Review scratch removed after acceptance.
-
-The owner's 2026-10-04 acceptance covers all current graphics, including the white hart and
-earlier art whose individual verdicts were pending. Earlier placeholder and pending-art
-labels are superseded by this acceptance. No graphics redraw remains requested.
-This verdict does not separately establish whether the recorded leaf flicker engine issue is fixed.
-Older placeholder paragraphs and the 2026-09-30 icon findings are historical, superseded by
-later dated entries and accepted artwork.
-
-## Galadriel gifts (final selections, 2026-10-12)
-
-Owner accepted the revised wearable previews ("Much better"): B4-v2 Broad clasp
-belt with matching icon, and C2-v2 Silver river worn cloak. The previously chosen
-C4 Golden Mallorn inventory icon remains explicit. Other final art: bow C slender
-mallorn longbow, arrow 3 broad silver point/green feathers, phial D/P4 faceted moon
-crystal. Whole-unit worn meshes use one texture pixel per model unit and painted
-ornaments; the belt stays offhand at its raised waist position.
-
-Generated by `make_worn_gifts.py`, `make_galadhrim_archery.py` and `make_phial.py`.
-Vanilla icon comparisons and actual Blockbench previews support the selections;
-engine fit and animation checks remain in [M5_GIFTS_TEST.md](M5_GIFTS_TEST.md).
-Corrected invisibility is owner-confirmed in game. No claim of full M5 engine
-acceptance is implied by these art selections.
-Commit: `Finalize selected Galadriel worn gifts`.
-
-## Swan feather shake and meat (2026-10-14)
-
-**Final: owner accepted and declared swans finished.** Target Bedrock 1.26.52.
-Natural shedding, 1-5 minute interval and 1.35-second shake are owner-confirmed.
-Meat icons: angled poultry leg with full meaty end, tapered neck and ivory bone;
-raw pink with a pale fat edge / cooked golden-brown, shared 16x16 silhouette.
-The original boneless oval was rejected as a ball. Final review: 87 painted
-pixels, 12 raw / 10 cooked colours, largest flat area under 15%, no review warnings.
-Generators: `tools/make_swan_shedding.py` (Blockbench) and `make_swan_meat.py`.
-Accepted iteration scratch removed; no unused variants retained. Runtime test
-group/events removed from BP; only production art/controller ship in RP.
-Feature commit: `2810ce3` (`Finish swan drops and visible feather shedding`).
-Final art/cleanup commit: `Finalize swan art and remove runtime diagnostics`.
-
-
-## Empty Miruvor skin (2026-10-25)
-
-Owner requested a separate empty-skin icon: keep the filled skin's basis, but
-make the leather flatter, hanging and slack. `tools/make_provisions.py` now
-owns both icons; `--only empty-miruvor-skin` regenerates only the new asset.
-The empty skin keeps the gold neck, strap and folded leaf badge, with a narrower
-asymmetric belly and long leather folds. Filled-skin art is unchanged.
-
-Reviewed at 1x/2x, hotbar and 8x beside the filled skin and vanilla leather/rabbit
-hide. New icon: 16x16, binary alpha, 60 painted pixels, 11 colours, 0.59 value
-range, largest same-colour area 13%, no clipping or review warnings.
-Item, atlas and wiki media bind the separate empty-skin texture. Miruvor scoped
-pack verification passes with zero errors/warnings; native acceptance remains
-an in-game visual check on Bedrock 1.26.52.
-
-**Status: generated and visually reviewed; owner acceptance pending.**
-
-**Spawn eggs: final, owner accepted from the review sheet 2026-10-26** (commit "Draw spawn eggs in the current
-vanilla style"). The ten spawnable mobs (deer, white deer, unicorn, swan, songbird, ground squirrel, butterfly,
-firefly, elf, Elven Warden) have drawn egg icons instead of the old two-colour eggs:
-`lothlorien_rp/textures/items/spawn_eggs/`, generated by `tools/make_spawn_eggs.py` (`--sheet` for a review sheet).
-The client entities use `"spawn_egg": {"texture": "lothlorien:spawn_egg_<mob>"}`; the elf, warden and unicorn
-generators write the same line. Owner decisions: the unicorn follows the vanilla horse egg (front view, horn,
-forelock); butterfly and firefly are plain eggs with wings and antennae, no insect drawn on them (vanilla bee
-style). Butterfly and songbird eggs show the blue variant, the elf egg the gardener. Not yet seen in game.
+| Log, wood, stripped log, stripped wood | `make_mallorn_wood.py` | accepted 2026-09-30. Bark: silver-grey calm vertical bands, beech lenticels, two gold glints per tile; cut end: silver rim, gold sap ring, pale golden rings; stripped: pale honey wood with long straight grain |
+| Planks, stairs, slab, double slab | `make_mallorn_wood.py` | final; four full-length silver boards (4/5/3/4 px), soft seams and pegs. Stair icon grain rotated, icon set accepted 2026-10-03 |
+| Menu icons of non-cube wood blocks | | final, accepted with the icon set 2026-10-03 |
+| Fence | `make_mallorn_fence.py` (geometry, icon), `make_mallorn_wood.py` | final, "owner loves it" 2026-10-01: vanilla 4x4 post, two 2x2 rails bent into an inverted V, one painted gold leaf per side, small diamond cap. Owner: quiet beauty, one or two gold touches (collars, tips, spires were "too posh") |
+| Fence gate | `make_mallorn_gate.py` | final, liked 2026-10-01: the fence line runs through (low 4-wide centre post with the leaf, peak at the block edge), plain 2x2 end posts, no caps; the leaf splits when it opens |
+| Door | `make_mallorn_door.py` | final, "owner loves it" 2026-10-01 (see Door final below) |
+| Trapdoor | `make_mallorn_trapdoor.py` | final, "owner loves it" 2026-10-01: gold eight-pointed star in a silver ring, sky between, inside the door's 2-texel frame; chosen over a star with gold corner leaves and a star-shaped opening |
+| Button, pressure plate | wear the planks | final. East/west wall buttons have their own 4x6 geometry (`mallorn_button_ew`, `_ew_pressed`) with `uv_rotation` 90 so they lie flat; plates need a block below. Wall-button in-game check pending |
+| Leaves (side/top/bottom) | `make_mallorn_leaves.py` | final 2026-10-01: spring look, green top, silver bottom 25 % with a 2 px blend, big overlapping leaves in 3 layers, 64 of 256 px see-through, untinted |
+| Golden leaves | `make_mallorn_leaves.py` | final 2026-10-01: same layout, all gold, crafted from litter and a stick, persistent |
+| Leaf litter | `make_mallorn_leaves.py`, sprites `make_falling_leaf.py`, geometry `make_leaf_litter_geo.py` | redrawn 2026-10-02 ("so much better"): one whole falling-leaf sprite per 8x8 segment on a flat plane; to check in game |
+| Blossoms | `make_mallorn_blossoms.py`, geometry `make_leaf_litter_geo.py` | final 2026-10-01: flat plane, small yellow flowers and petals |
+| Boats (4, default and "Prettier boats" models, icons) | `make_mallorn_boat_family.py` | final models 2026-10-01; chest-boat icons accepted 2026-10-03 (`mobs/mallorn_boat.md`) |
+
+### Door final
+
+The tree door (2026-10-01). `make_mallorn_door.py` (no arguments) writes silver and heartwood textures, the hand-drawn icon and
+the four geometries. Half a mallorn per door, so a double door shows one whole tree: a loose arc of gold leaves over a fan of
+silver branches, cut out against the sky; below a painted mid rail, trunk and roots over vertical boards. Owner decisions over
+five rounds: vanilla geometry (one flat 16x16x3 cube per half, no real or painted depth); the frame is colour only (outline and
+frame line on hinge, top and bottom edges, none on the free edge); painted hinges and handle; more gold and cut-through than the
+fence, with the open wreath crown over a solid gold dome and a lace crown (carved-arch and lattice variants lost); the icon is a
+whole small tree in one narrow door, 10x14 like every vanilla door icon. Engine facts (hinge side, face directions, the ledge
+seen through cutouts): skill `bedrock-block-families`, `references/families.md` "Doors with cutouts". Design rounds are in git
+(commit `ade8e24`, `docs/art/door/`).
+
+### Texture requirements the code relies on
+
+- Leaves render `alpha_test_to_opaque` (owner verified 2026-10-02: they were invisible from far away with `alpha_test`). Texels
+  under the holes carry a dark neighbour colour (`shade_hidden` in `make_mallorn_leaves.py`), not black. Alpha is cutout only.
+- Log side and top share one wood tone; `mallorn_log_side` also skins the "wood" block on all six faces, so it must read on a top
+  face; logs rotate, so avoid grain that only reads in one direction. Stripped variants read as the same log with bark removed.
+- Planks are the texture of six other blocks (stairs, slabs, fence, gate, button, plate): no large feature centred on the tile.
+- Door halves: column 0 is the hinge side; the edge faces stretch the frame line (column 1), the top face row 1, the bottom face
+  row 14 of the bottom texture: keep those opaque. Trapdoor renders `alpha_test_single_sided`; keep row 1 and column 1 opaque.
+- PBR: the pack declares `pbr`; per-tile `.texture_set.json` plus `_mers.tga` are flat placeholders (keep the set files when
+  replacing a texture). Higher resolution is possible if every texture of a step uses the same size.
+
+## Seeds and saplings
+
+`tools/make_mallorn_seeds.py` (redrawn 2026-10-01): `items/mallorn_acorn.png` (slim honey-gold nut in a silver scaled cap, brown
+stem, tiny gold leaf), `items/great_mallorn_nut.png` (plump silver-shelled egg, small gold cap, colours inverted against the
+acorn), `blocks/mallorn_sapling.png` (silver trunk, long pointed leaves green above and silver beneath, one yellow blossom;
+geometry fixed 2026-10-02, see `bedrock-block-families`), `blocks/great_mallorn_sprout.png` (silver stem, big gold leaves; shell
+halves were tried and read as grey lumps). Plants are two crossed planes standing on the bottom row; the generator checks that
+no piece floats and pads transparent texels with neighbour colour.
+
+## Flora
+
+`tools/make_lothlorien_flora.py` (block texture = item icon). Owner picked A/A/B/A from three proposals each (2026-10-01). Greens
+must be darker than the grass or stems vanish. Elanor: golden star, amber eye. Niphredil: pale nodding snowdrop; redrawn
+symmetric (2026-10-02) and again 2026-10-11 (owner: head too big): one small 4x4 bell per side of the mirror-symmetric texture,
+so four bells show with the crossed planes; shared 2 px stem to row 9, then two thin arching stalks (`niphredil()`; rejected 3 or
+4 bells per side and a fork at row 7); to check in game. Athelas: long-leaf rosette, flower stalks removed (heads outweighed the
+leaves), bigger leaves. Golden fern: green root, gold fronds, arching silhouette. Owner in game 2026-10-02: Elanor, golden fern
+and corn good. Elanor (golden) and Niphredil (white) must be distinguishable at a glance, in shade and at night; fern and Athelas
+must have clearly different silhouettes. Litter and blossoms are flat, segmented like vanilla leaf litter: a block shows 1 to 4
+quarter tiles (1 top-left, 2 top-right, 3 bottom-right, 4 bottom-left), each complete on its own; blossoms are cutout; the leaf
+carpet is opaque and seen from above (the 1 px sides use row 15).
+
+Falling-leaf particle: `textures/particle/mallorn_leaf.png`, a 40x8 sheet of five 8x8 sprites (four gold leaves, one pale
+blossom) from `make_falling_leaf.py`; `particles/falling_leaf.json` picks one per particle (blossom about 1 in 7) at 0.10-0.14
+blocks wide, so each sprite must read by silhouette. Owner liked the single leaf.
+
+## Western Corn and Lembas
+
+`tools/make_western_corn.py` (8 stages plus seed and grain icons). Tolkien's "corn" is wheat-like grain; the look is ours: tall
+straw stalks, ears nodding under their weight, long silver awns over cool blue-green blades (owner picked "nodding ears" over a
+plumed millet and a maize cob). Stages 0-4 blades only, 5 stalks with a swelling bud, 6 upright pale green-gold ears, 7 ripe:
+the only gold stage, unmistakable from a distance (wild clearings hold only ripe plants). The crop uses
+`geometry.lothlorien.plant_cross` (not the built-in `minecraft:geometry.cross`, which flickered; result pending); the bottom edge
+sits on the soil line. Lembas dough, cake and wrapped Lembas: owner accepted 2026-10-04; the cake and the leaf-wrapped packet are
+distinct silhouettes.
+
+## Provisions, venison and swan meat
+
+`tools/make_provisions.py` draws salve (short glass vial, green contents, cork), Miruvor skin (asymmetric leather wineskin, narrow
+gold spout, gold leaf emblem), raw and cooked venison, Lembas dough, cake and wrapped Lembas (`make_deer.py` calls the same
+drawer so regenerating deer cannot restore placeholders). Crisp binary alpha, top-left light, hue-shifted ramps. Final, owner
+2026-10-04: "All graphics is good now." Venison: narrow rib chops with an ivory shank, raw with a pale fat rim, cooked browned.
+
+Empty Miruvor skin (2026-10-25): a separate flat, slack icon (narrower belly, long leather folds, same gold neck, strap and leaf
+badge); `make_provisions.py --only empty-miruvor-skin`. Owner: "Looks good" (2026-10-26).
+
+Swan meat (2026-10-14, owner accepted and declared swans finished): angled poultry leg with full meaty end, tapered neck and ivory
+bone, raw pink with a pale fat edge, cooked golden-brown; `make_swan_meat.py`. Feather shedding: `make_swan_shedding.py`
+(Blockbench); natural shedding every 1-5 minutes with a 1.35 s shake, owner-confirmed. Commits `2810ce3` and `Finalize swan art
+and remove runtime diagnostics`.
+
+## Creatures
+
+- **Deer** (`make_deer.py`, `make_antler_block.py`): geometries `deer`, `deer_buck`, `deer_baby` on 64x64 sheets, adult textures
+  shared by doe and buck, fawn separate; model, textures and antler icon accepted in game 2026-09-30. White deer: `deer_white.png`,
+  a generated palette swap on the buck geometry only (the white deer is always an antlered hart, no white fawn); judge and
+  hand-tune in game. `guide_beacon.png` is a deliberately empty 16x16 texture on a zero-size cube (the helper stays invisible).
+  Contracts: bone names `body neck_joint head_joint ear_l ear_r antler_l antler_r tail leg0..leg3` (leg0 hind right, leg1 hind
+  left, leg2 front right, leg3 front left) feed the animations; **no bone may be called `head`** (armour locator error); the baby
+  is authored at real size (BP scales it 0.5, client entity scales the model 2); box UV with whole-number sizes only; one sheet
+  size for adult and fawn. Sounds: see `AMBIENT_SOUNDS.md`.
+- **Antler block** (`deer_antler.png`, `models/blocks/deer_antler_{wall,floor,ceiling}.geo.json`): columns 0-7 are strip palettes
+  (antler 0-3, burr 4-7; each four columns = shades down, south/west, north/east, up; rows are a length ramp from ivory tips to
+  red-brown at the skull), columns 8-15 painted skull faces at 1 texel = 1 unit. Floor and ceiling models are the wall cubes turned
+  over (mirrored and `uv_rotation`-ed UVs, format 1.21.0), checked by Blockbench renders. Keep identifiers and orientation (wall
+  back at +z, front at -z). Skull remodelled 2026-09-30; to check in game on wall, floor and ceiling.
+- **Swan and ground squirrel** (`make_swan_squirrel.py`): owner brief no gold or silver on the animals; seen in game, no art
+  complaint (accepted 2026-10-02).
+- **Spawn eggs** (`make_spawn_eggs.py`, `--sheet` for a review sheet): drawn icons for the ten spawnable mobs in
+  `lothlorien_rp/textures/items/spawn_eggs/`; client entities use `"spawn_egg": {"texture": "lothlorien:spawn_egg_<mob>"}` (the
+  elf, warden and unicorn generators write the same line). Owner accepted the review sheet 2026-10-26 (commit "Draw spawn eggs in
+  the current vanilla style"); the unicorn follows the vanilla horse egg, butterfly and firefly are plain eggs with wings and
+  antennae (vanilla bee style), butterfly and songbird show the blue variant, the elf egg the gardener. Not yet seen in game.
+  Deferred: creature-shaped egg art, see `OWNER_CHECKS.md`.
+
+## Lighting and rope
+
+- **Elven rope** (`make_elven_rope.py`): placed rope liked by the owner; single overhand knot icon accepted 2026-10-03 (a
+  one-pixel hole makes the knot readable; dark-grey edge pixels replace near-black outlines).
+- **Elven lamps** (`make_elven_lamps.py`, design in `TECHNICAL_NOTES.md` "Phase 17"): chandelier final (owner, round 2); lantern
+  with silver arch canopy, open four-sided glow chamber and one-layer foot, final (lowest narrow foot removed 2026-10-03);
+  Golden Elven Lantern uses the stripped-heartwood palette through the shared silver-to-gold map; firefly jar (7 high, blend
+  glass, moss bed, wandering flies) accepted ("beautiful"); icons accepted with the set 2026-10-03. Commit: `Elven lighting and
+  inventory icons`.
+
+## Memorial, gifts and village art
+
+- **Leaf memorial** (2026-10-16): accepted in game, no cross-shaped arms; `MEMORIAL.md`.
+- **Galadriel's gifts** (2026-10-12): bow C, arrow 3, phial D/P4, belt B4-v2 with its icon, cloak C2-v2 with the C4 Golden Mallorn
+  icon; whole-unit worn meshes with one texel per model unit and painted ornaments; generators `make_worn_gifts.py`,
+  `make_galadhrim_archery.py`, `make_phial.py`. Engine fit and animation checks remain open: `GIFTS.md`.
+- Village, elf and warden art: `make_elves.py`, `make_elven_warden.py`, `design/village_style.md`, `mobs/elves.md`.
+
+## Known issue: cutout flicker (Mallorn leaves)
+
+Seen in game (2026-09-29): custom cutout blocks shimmered at high frequency while the camera moved, in both Fancy and Vibrant
+Visuals. The saplings and Great Mallorn sprout are **solved** (their model had degenerate faces, see `bedrock-block-families`);
+flowers and corn were not reported after the redraw (the crop's geometry change is unconfirmed). **The Mallorn leaves and golden
+leaves still flicker: unsolved.** This is z-fighting between the coplanar faces of touching leaf blocks; the known fixes (an
+inset cube was tried 2026-10-02) look worse, so the owner accepted it as a known issue (2026-10-24, `TODO.md` section 4).
+Tests already done and the parameter comparison with vanilla leaves: `TECHNICAL_NOTES.md` "Flicker" and "Mallorn leaves vs vanilla
+leaves". Checklist if it is ever revisited: (1) clean hard silhouettes, no isolated single opaque pixels or 1 px gaps, transparent
+texels carrying the neighbour colour; (2) `terrain_texture.json` `padding 8` and `num_mip_levels 4` (try 0-1 mips); (3)
+`alpha_test` against `alpha_test_single_sided`, and a vanilla leaf texture swapped in to isolate art from block definition.

@@ -1,9 +1,8 @@
 # Elven inhabitants: professions, Renown, trades, gifts (design)
 
 Status: **M0-M4, M6 and M7 accepted; M5 final art selected and belt/phial/invisibility work; bow speed/zoom and broader engine checks pending** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
-Supersedes the profession stock lists and trade-state details in `lothlorien_elven_settlements_plan.md` ("Initial professions",
-"Harmony-aware trading", "Proposed reputation trade states") and the stock part of `harmony_rework_plan.md` section 5. The trade
-**architecture** of that section 5 (native trade screen, per-band tables pre-swapped by script, refusal in `beforeEvents.playerInteractWithEntity`) stays.
+This page holds the profession stock lists and trade-state details (the earlier settlements plan was removed; it stays in git)
+and the stock part of `harmony_rework_plan.md` section 5. The trade **architecture** of that section 5 (native trade screen, per-band tables pre-swapped by script, refusal in `beforeEvents.playerInteractWithEntity`) stays.
 Looks: `docs/mobs/elves.md` (`tools/make_elves.py`, review sheets in `temp/elves/`). Warden: `docs/mobs/elven_warden.md`.
 
 ## 0. Milestones
@@ -13,15 +12,19 @@ Looks: `docs/mobs/elves.md` (`tools/make_elves.py`, review sheets in `temp/elves
 | M0 | Spikes: custom bow, arrows, belt (section 8) | done, owner-tested 2026-10-10. Spike files kept in `temp/elven_inhabitants/spike_files/` as the M5 starting point |
 | M1 | Civilian elves placed in villages, Harmony, wardens defend, leads, healer roaming (sections 1, 7, 10) + village polish (rope foot, crowns fit their box, bare branches, living pillars with planner root flares) | done, accepted in game 2026-10-10 (commits 30e1eb1, 5631c22, 6f79109, 7b57536, 6b97311; the ivy start of 6b97311 not yet seen) |
 | M2 | Renown + Loremaster dialog: lessons and requests (sections 2, 3) | done, accepted in game 2026-10-11 (commits 88dbbe2, 6019c88, f854117, ff61ae2, eb1cc5e dew, a10653f niphredil). Notes: `docs/TECHNICAL_NOTES.md` "Renown and the Loremaster (M2)" |
-| M3 | Shops: trade-table generator (band x rank), table swapping by script, refusal (section 4) | complete, accepted in game 2026-10-11: shops 7f86c87 ("It all works"), Trade hover guidance 9cdd1a0 confirmed on deployed 405d482 ("It works"); [regression checklist](../M3_TRADES_TEST.md) |
-| M4 | Healer heals elves and Friends (section 7) | complete, owner accepted 2026-10-11 (bc1da69); [regression checklist](../M4_HEALER_TEST.md) |
-| M5 | Final items (Galadriel's gifts) + Galadhrim arrows (sections 5, 6); then the bow template for `bedrock-items` | implemented; final art selected/accepted from previews 2026-10-12: bow C, arrow 3, phial D/P4, belt B4-v2 with icon, worn cloak C2-v2 with Golden Mallorn icon. Belt/phial/corrected invisibility owner-confirmed; 0.6s bow feel/zoom and broader engine checks pending; [checklist](../M5_GIFTS_TEST.md). Shared template in `.claude/skills/bedrock-items/templates/custom_archery/` |
-| M6 | Great Mallorn upgrade (section 9) | complete, owner accepted 2026-10-13 after bed/banner correction; final implementation `0630cdf`; owner's loot tuning retained; [record](../M6_WATCH_CAMPS_TEST.md) |
-| M7 | Homes + village look (section 10; `lothlorien_jigsaw_settlement.md` section 6) | complete, owner accepted 2026-10-16: "I love it, villages done"; final commit **Finish accepted elven villages**, [record](../VILLAGE_POLISH_2026-10-16.md) |
+| M3 | Shops: trade-table generator (band x rank), table swapping by script, refusal (section 4) | complete, accepted in game 2026-10-11: shops 7f86c87 ("It all works"), Trade hover guidance 9cdd1a0 confirmed on deployed 405d482 ("It works"); [checks](../ELF_SERVICES.md) |
+| M4 | Healer heals elves and Friends (section 7) | complete, owner accepted 2026-10-11 (bc1da69); [checks](../ELF_SERVICES.md) |
+| M5 | Final items (Galadriel's gifts) + Galadhrim arrows (sections 5, 6); then the bow template for `bedrock-items` | implemented; final art selected/accepted from previews 2026-10-12: bow C, arrow 3, phial D/P4, belt B4-v2 with icon, worn cloak C2-v2 with Golden Mallorn icon. Belt/phial/corrected invisibility owner-confirmed; 0.6s bow feel/zoom and broader engine checks pending; [record](../GIFTS.md). Shared template in `.claude/skills/bedrock-items/templates/custom_archery/` |
+| M6 | Great Mallorn upgrade (section 9) | complete, owner accepted 2026-10-13 after bed/banner correction; final implementation `0630cdf`; owner's loot tuning retained; [record](../ELF_SERVICES.md) |
+| M7 | Homes + village look (section 10; `lothlorien_jigsaw_settlement.md` section 6) | complete, owner accepted 2026-10-16: "I love it, villages done"; final commit **Finish accepted elven villages**, [record](../VILLAGES.md) |
 
 **Working agreement (owner, 2026-10-10).** Stop after each milestone for the owner's in-game test. Before a milestone starts, show the owner one batch
 of proposed values (table with reasons; all values in one tunable rules file); escalate design decisions as options with a recommendation. Commit per
 milestone once verify and tests pass, before the in-game test; deploy before handing anything over.
+
+**Owner decisions 2026-10-24.** Zombies and illagers may hunt elves, and killed elves are not replaced (intended; testers will report
+how it feels). The full Renown reward is the unlocked trades, nothing more. Elves keep their normal behaviour at night.
+There is no dew lantern (lanterns exist).
 
 ## 1. Roster
 
@@ -133,7 +136,7 @@ Owner decisions 2026-10-11:
   player with a request gets the refusal line, not the request form. **Pin**: a player whose click opened the trade screen keeps the elf's table
   for up to 30 s while within 6 blocks; another player's click still swaps and says "use again".
 
-**M3 as built (2026-10-11).** Four professions each have nine generated tables: Uneasy (starting stock), Guest 0-3 and Friend 0-3; `none` removes trading. A six-block player query every ten ticks selects the nearest player's table, with property-guarded swaps and a thirty-second nearby-player pin. Refusal precedes the request form. Trade grants a one-use, ten-second pass on that elf; repeated events from the same use have a bounded half-second grace. Native goals stop the elf and face the customer. Fixed price multipliers, no trader/player XP, high use limits; final gifts/arrows wait for M5. Offline tests cover prices, no arbitrage, request-stock separation, generated bindings and click/timer glue. Owner accepted the shops in game on 2026-10-11 (7f86c87); see the [regression checklist](../M3_TRADES_TEST.md).
+**M3 as built (2026-10-11).** Four professions each have nine generated tables: Uneasy (starting stock), Guest 0-3 and Friend 0-3; `none` removes trading. A six-block player query every ten ticks selects the nearest player's table, with property-guarded swaps and a thirty-second nearby-player pin. Refusal precedes the request form. Trade grants a one-use, ten-second pass on that elf; repeated events from the same use have a bounded half-second grace. Native goals stop the elf and face the customer. Fixed price multipliers, no trader/player XP, high use limits; final gifts/arrows wait for M5. Offline tests cover prices, no arbitrage, request-stock separation, generated bindings and click/timer glue. Owner accepted the shops in game on 2026-10-11 (7f86c87); see the [checks](../ELF_SERVICES.md).
 
 ## 5. Final items (Galadriel's gifts)
 
@@ -170,7 +173,7 @@ Belt mechanics, phial gameplay and corrected cloak invisibility are owner-confir
 in game. Cloak renews before expiry; bow zoom uses `EasingType.Linear`, pull frames
 include an arrow, and native charge/custom critical/visual charge/zoom ease match
 0.6s (12 ticks). The requested faster bow feel, zoom, final worn fit and broader
-engine cases remain pending in [M5_GIFTS_TEST.md](../M5_GIFTS_TEST.md).
+engine cases remain pending in [GIFTS.md](../GIFTS.md).
 Finalization commit: `Finalize selected Galadriel worn gifts`. M6 is complete (section 9).
 
 Dropped: Box of Lórien earth (not unique enough), Elessar (Aragorn's alone; became the belt), Mirror of Galadriel, Circlet of Elanor (cloak is better).
@@ -204,7 +207,7 @@ Head-to-head solid-block sight is required except for self. Effects last 3 secon
 and avoiding repeated refreshes of their timing. No cooldown; no Renown gate. Each new grant has green sparkles and a finite arm raise authored
 by `make_elves.py`. Event-based discovery/unload cleanup, one startup reconciliation, two local patient queries per healer/check; no timer when
 no healer is loaded. Existing healers work after reload; no worldgen change. Implementation commit: `Implement M4 healer blessings for elves and Friends`.
-Offline evidence and regression cases: [M4_HEALER_TEST.md](../M4_HEALER_TEST.md). Owner accepted M4 after confirming that only injured targets are blessed.
+Offline evidence and regression cases: [ELF_SERVICES.md](../ELF_SERVICES.md). Owner accepted M4 after confirming that only injured targets are blessed.
 Individual in-game observations were not supplied; this records overall acceptance. M5 is next and starts on the owner's request.
 
 ## 8. Engine facts (M0 spike, owner-tested in game 2026-10-10, Bedrock 1.26.52, [V])
@@ -254,5 +257,5 @@ Rule (owner decisions 2026-10-10, details `docs/mobs/elves.md`, implementation c
 
 - A reward or purpose for requests after full Renown (all 12 requests done; Elf-friend reached). Not part of M2.
 - Rank names are gender-marked in some locales (titles such as Přítel elfů, Amigo de los elfos); a neutral wording needs a native reviewer.
-- Final-item values are now set for M5; native rendering and balance acceptance remain in [M5_GIFTS_TEST.md](../M5_GIFTS_TEST.md).
+- Final-item values are now set for M5; native rendering and balance acceptance remain in [GIFTS.md](../GIFTS.md).
 - What elves do at night (gathering, lamplighter at dusk); M1 decided: no change at night.

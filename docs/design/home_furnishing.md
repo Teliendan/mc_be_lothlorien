@@ -23,7 +23,7 @@ furniture layout. These moss-mounted thin skirts may extend onto the neighboring
 aisle or one-cell pavilion margin; they do not reserve furniture cells. The runtime
 writer applies them after furniture/structures and excludes existing cushion
 actors. It also completes adjacent static beds after the furniture reservation
-is resolved. Details: `../VILLAGE_POLISH_2026-10-16.md`.
+is resolved. Details: `../VILLAGES.md`.
 
 Same mechanics as the healer's set (`SETS` in `home_furnish.js`, sets for k 4, 5, 6, 7; k >= 8 uses the 7 set); the healer retains its approved layout.
 
@@ -40,4 +40,4 @@ Same mechanics as the healer's set (`SETS` in `home_furnish.js`, sets for k 4, 5
   A cushion is placed only when no cushion stands in its cell yet. The chain may sit at +3 (the only thing besides the marker lantern); `findHome` ignores it.
 - **Owner's rules honoured**: nothing floats (supportScan in tests and the sim), no lantern beside a fence (sim + test), nothing hanging below +3 over a walk cell, decorated pots only on
   the floor (planted pots only on barrels, never on rails inside), seats are cushions, the original watch banner is the main banner.
-- Final border, seat-view and connection rules and the accepted performance evidence are in [the finishing record](../VILLAGE_POLISH_2026-10-16.md).
+- Final border, seat-view and connection rules and the accepted performance evidence are in [the finishing record](../VILLAGES.md).

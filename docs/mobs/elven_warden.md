@@ -6,12 +6,10 @@ lifecycle; accepted combat/rewards stay. Native lead/reload/home/AI behaviour st
 The opening status below is historical; later dated owner observations remain
 authoritative within their scope. No new in-game observations.
 
-Archetype: ranged defender, "iron golem with a bow", natural spawner plus persistent village guards. Status 2026-10-07 (game 1.26.52,
-Script API 2.8.0): part A (BP entity, spawn rule, scripts, village pieces, offline tests) is **built**, part B (RP art) is built by a
-second worker, **nothing is tested in game yet**; see section 10 for the owner decisions that override sections 1-9 where different. Every engine assumption is tagged **[V]** verified against a file on disk, **[D]**
-documented only (MS docs / d.ts), **[U]** unverified, test first. Owner requirements of 2026-10-07 are the spec; the settlement
-plan (`docs/design/lothlorien_elven_settlements_plan.md`, "Elven Guardians") is the long-term context. The plan's "persistent
-watchpost guardians" are NOT this mob: this one is a normal natural spawn (owner decision), watchposts can add persistent ones later.
+Archetype: ranged defender, "iron golem with a bow", natural spawner plus persistent village guards. Design of 2026-10-07 (game 1.26.52,
+Script API 2.8.0), in use in the villages and owner-tested in game since; see section 10 for the owner decisions that override sections 1-9 where different. Every engine assumption is tagged **[V]** verified against a file on disk, **[D]**
+documented only (MS docs / d.ts), **[U]** unverified, test first. Owner requirements of 2026-10-07 are the spec. The original settlement plan (removed; see git) had separate "persistent
+watchpost guardians"; they are NOT this mob: this one is a normal natural spawn (owner decision), watchposts can add persistent ones later.
 
 **Pool change 2026-10-07 (owner test, game 1.26.52):** a long walk along the edge met no natural warden (summoned ones worked).
 Cause: the Overworld surface `animal` cap is 4 per 9×9 chunks, shared with deer, squirrels, butterflies, fireflies, songbirds,
@@ -304,7 +302,7 @@ it spawns a fresh warden (same place, rotation, nameTag, spawn event `lothlorien
 `console.warn` ("warden replace"). The structures are not regenerated (builder comment in `tools/build_structures.mjs`). Generic note:
 `.claude/skills/bedrock-mobs/references/lifecycle.md`. [U] in game: replaced wardens keep their post and the bow (the equipment table runs on the new spawn).
 
-## Defending civilian elves (M1, 2026-10-10, built; not seen in game)
+## Defending civilian elves (M1, 2026-10-10; accepted in game with M1)
 
 Wardens defend the civilian elves (`docs/mobs/elves.md`) against players. A script cannot set a mob's target in 2.8.0, so `scripts/elven_warden.js` (elf section) tags a player who hurts an elf with `lothlorien_elf_foe`
 for 60 s after the last hit (`FOE_MS`, per-player token timer; the tag is dropped on a first join). `entities/elven_warden.json` `nearest_attackable_target` has a third entry (player + `has_tag lothlorien_elf_foe`,

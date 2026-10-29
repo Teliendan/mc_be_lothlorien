@@ -106,7 +106,7 @@ Final commit: **Finish accepted elven villages**. The final design is in
 `village_style.md`, the central Hall in `village_central.md`, profession furnishings
 in `home_furnishing.md`, and crown fallback geometry in `village_crowns.md`.
 Final polish, validation and accepted tick-cadence measurements:
-`../VILLAGE_POLISH_2026-10-16.md`.
+`../VILLAGES.md`.
 
 Homes and dressing derive their sites from the actual deck shape. Small crown
 fallbacks and intrinsic leaf caps below deck +6 replace the former bare-stub

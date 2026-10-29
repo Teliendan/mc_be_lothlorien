@@ -1,1297 +1,450 @@
-# Lothlórien — technical notes
+# Lothlórien: technical notes
 
-Facts checked against the installed game data (`C:\mcmods\reference\vanilla\current`) and the docs,
-kept here so later phases do not re-derive them. Design lives in `design/`.
+Engine facts checked against the installed game data (`C:\mcmods\reference\vanilla\current`) and the docs, kept so nobody re-derives
+them. Design lives in `design/`, mob sheets in `mobs/`, the natural placement of builds in `WORLDGEN.md`. This file holds the final
+design, verified behaviour, owner decisions and real limits; the build-by-build history is in git. Section titles keep the old phase
+numbers in parentheses because skills and other docs link to them. Statuses: "owner-verified" means seen in game by the owner;
+"status unverified" means no record of a game check was found.
 
-Owner plan (2026-10-23): when the mod is finished, condense the whole `docs/` folder (this file
-included) to final design, decisions and limits; phase history stays in git.
+Pointers for later interaction audits (owner-approved decisions, deferred-use snapshots, native engine checks): [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md)
+and [parity/CREATURES.md](parity/CREATURES.md). Water and snow policies: [WATER.md](WATER.md), [SNOW.md](SNOW.md). Post-passes that keep data
+policies stable across art regeneration run from `tools/configure_support.py` (flora, decor/rope, food and remedy, leaf and tree interactions,
+controls); they preserve rope fuel 15, chandelier stack 64, lantern item tags and the one-antler/four-lantern recipe. Bone meal on leaf litter
+and blossoms was removed by the owner (2026-10-19): they are fallen material.
 
-Water update (2026-10-09): [WATER.md](WATER.md) supersedes the older missing-waterlogging
-and water-flow-breaking notes below. All 44 blocks now declare a policy; actual engine
-flow, rendering and drops still need validation.
-
-Flora/crop interaction update (2026-10-19): [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md)
-records approved recipes/soils, deferred-use snapshots, and corn's saved wild/farmed
-state. `tools/configure_support.py` runs the art-independent flora post-pass before
-deriving support lists. Native farmed permutation and support adapter agree;
-worldgen explicitly writes wild=true. No legacy migration, extra wheat uses or
-bee workaround. Eight production handler scenarios are offline verified; native
-game acceptance and scripted permission/engine-write boundaries remain open.
-
-2026-10-19 decor/rope interaction follow-up: [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md)
-records container source/context guards and limits, naturally expiring one-tick
-rope effects (never remove or replay external potions), actual dimension bounds,
-safe unknown supports and per-piece precharge/refund rules. Ambiguous engine-write
-failures cannot guarantee item recovery or atomicity. Native one-tick timing and
-speed continuity require new game acceptance despite earlier movement approval.
-The art-independent `tools/configure_decor_rope_interactions.py` runs from the
-support post-pass and preserves rope fuel15, chandelier stack64, exact lantern
-item-tag membership and one-antler/four-lantern recipe. The lamp art generator
-also writes the same tags/stack/recipe; accepted assets were not rebuilt.
-15 new production-handler scenarios and10 selected feature runners pass offline.
-
-## Biome (Phase 1)
-
-Files:
+## Biome (was Phase 1)
 
 | File | Role |
 |---|---|
 | `lothlorien_bp/biomes/lothlorien.biome.json` | server biome: climate, surface, replacement, tags |
-| `lothlorien_rp/biomes/lothlorien.client_biome.json` | grass/foliage/water/sky colours, fog, music, VV identifiers |
+| `lothlorien_rp/biomes/lothlorien.client_biome.json` | grass/foliage/water/sky colours, fog, music, Vibrant Visuals identifiers |
 | `lothlorien_rp/fogs/lothlorien_fog_setting.json` | `lothlorien:fog_lothlorien` |
 
-- **Only `minecraft:replace_biomes` makes a custom biome generate**, stable (no experiment)
-  since 1.21.110; `format_version` must be ≥ `1.21.110`. It re-labels part of the areas the
-  vanilla generator already chose as a target biome. It **cannot change terrain shape**:
-  Lothlórien has forest terrain because it only replaces forests.
-- `targets` are **namespaced** ids (`minecraft:forest`). Bare `forest` (what the wiki
-  and older docs show) fails in 1.26 with "No biome found with name: 'forest'" and the
-  whole biome is dropped. Custom biomes cannot be targets, so
-  a nested "heart" biome is not possible (see design KB §3).
-- `amount` (0–1] ≈ fraction of target area replaced; `noise_frequency_scale` (0–100]:
-  higher = smaller, more frequent patches. Tuning log: `0.35`/`10` gave a mid-sized, long narrow
-  region; then `0.5`/`4` plus old-growth birch (`birch_forest_mutated`); then `0.45`/`1`, which in game
-  (2026-09-29) still cut a `minecraft:forest` at a taiga edge into a few-tree strip beside a large
-  unconverted forest. Now `0.45`/`0.25` plus `dappled_forest` (new temperate forest, 1.26.50) in the **same**
-  entry, so one noise field covers all forest types and adjacent ones merge. `roofed_forest` was
-  tried and dropped: replaced dark forest would likely lose woodland mansions. Considered, not
-  added: `meadow`/`cherry_grove` (mountain biomes), `mega_taiga` (cold); no old-growth oak biome
-  exists (old birch = `birch_forest_mutated`, already in). `plains` would widen regions most (our
-  trees fill it) but is very common and shares this entry's `amount`; undecided.
-  In game (2026-09-29): `0.45`/`0.25` gave a region too big to find its end while flying. Likely
-  cause: near 0.5 the replaced side of the noise is one connected web (percolation), so blobs chain
-  across forests. Now `0.3`/`0.25`: amount is the dial for both coverage and connectivity;
-  frequency only sets the scale. Compare on the same seed.
-  `0.3`/`0.25`: still near-endless. Reading: with five temperate forest types as targets their
-  union is itself huge, so the noise blob, not the forest, now bounds a region. Now `0.3`/`0.5`.
-  `0.3`/`0.5` (new world, same seed): still endless, same place. Reading: since `10` gave
-  mid-sized regions, any frequency <= 1 makes blobs thousands of blocks wide, far larger than
-  any forest. Now `0.3`/`2` and targets cut to `forest`, `flower_forest`, `birch_forest_mutated`
-  (dropped `birch_forest`, `dappled_forest`) so the forest outline bounds regions again.
-  Expect some forests to be cut by blob edges again; that is the price of a bounded size.
-  `0.3`/`2` in game over several seeds: much better, bounded regions (one long narrow one, due to
-  that forest's shape); most too small for a heart. River-transparent depth liked. Now `0.3`/`1.25`.
-  `0.3`/`1.25`: rarer, not bigger (2 small regions after minutes of flying). Once blobs exceed the
-  forests, size is set by the target union and lower frequency only spaces regions out. Now
-  `0.4`/`1.25` with `birch_forest` back (bigger union, more regions). **Untested in game**: whether
-  0.25 is accepted (if not, the biome is dropped and `/locate` fails) and the resulting region sizes.
-  Goal (user): a forest is converted **whole or not at all**, and neighbouring forest types
-  join into one region. JSON cannot select per forest; the approximation is noise so slow
-  that it is nearly constant across one forest, so `amount` decides roughly what share of
-  forests convert. The biome can never be wider than the forests it replaces: its outline
-  follows the vanilla forest shape.
-- Append new replacement entries at the **end** of the array; inserting earlier shifts the
-  noise of existing ones.
-- Stable server components: `climate`, `creature_spawn_probability`, `humidity`,
-  `map_tints`, `mountain_parameters`, `partially_frozen`, `replace_biomes`,
-  `surface_builder`, `surface_material_adjustments`, `tags`. Fog/sky/grass colour are
-  **client** components (`minecraft:client_biome`), not server ones — some tutorials put
-  `fog_appearance` / `surface_parameters` in the server file; the vanilla files do not.
-- Client grass/foliage take a flat colour (`"color": "#rrggbb"`, as vanilla `pale_garden`)
-  or `{"color_map": ...}`.
-
-### Tags decide almost everything
-
-Spawn rules and feature rules find biomes only by tag.
-
-- `overworld` → vanilla overworld features (ores, grass, flowers...).
-- `forest` → vanilla forest trees (`forest_surface_trees_feature`). Kept for now as the
-  placeholder tree cover; the golden foliage tint makes them read as "not a normal forest".
-  Drop it once Mallorns exist, and re-add the vanilla features we still want explicitly.
-- `animal` → vanilla passive spawns.
-- **No `monster`** → vanilla hostile surface spawn rules (zombie, skeleton, creeper, spider,
-  witch, enderman...) do not match. Not covered by this: phantoms (player insomnia, not
-  biome), patrols/raids, spawners, mobs walking in, other add-ons' mobs. Also check
-  slimes and drowned during the spike.
-- `lothlorien` → our own tag for our feature/spawn rules.
-- The biome is 3D: caves under a replaced forest may also be Lothlórien, and then equally
-  monster-free. Test it; decide whether that is acceptable.
-
-## Pack cleanup (2026-09-30)
-
-Helper `/scriptevent` commands that only served development were taken out of `lothlorien_bp/scripts/`:
-`showcase`, `grow`, `growbig`, `treestats`, `treecount`, `critters`, `deer`, `survey` and the world-load biome
-registration message. Copies live in `tools/dev_scripts/` (see its README); the last commit that still had them
-in the pack is `dc1182e` (`git show dc1182e:lothlorien_bp/scripts/<file>`). Kept in the pack: `depth`, `debug`
-(its actionbar shows depth; since 2026-10-29 it also switches on the diagnostic content-log lines) and `harmony [value]` (the deer test plan needs it; was `disharmony [points]` before 2026-10-07). Dev tooling belongs outside the packs.
-
-## Debug instrument
-
-`/scriptevent lothlorien:debug` toggles an actionbar showing the biome id underfoot, the depth
-level and the hostile mobs within 64 blocks (in-biome / total). Kept in the pack (it shows the depth).
-**Removed from the pack (2026-09-30 cleanup, code in `tools/dev_scripts/biome_debug.js`, git `dc1182e`):**
-`/scriptevent lothlorien:survey` (Lothlórien share and centre within 160 blocks) and the world-load chat
-line saying whether the biome registered.
-
-`/locate biome` returns the **nearest** point of the biome, often its edge, and that edge
-can be shallow coastal water: vanilla forest extends into water where the terrain dips
-below sea level, and replacement keeps the terrain. Survey, then walk to the centre.
-
-General biome knowledge (for any mod) is in `.claude/skills/bedrock-modding/references/06-biomes.md`.
-
-## Phase 1 test checklist (new world each time the biome JSON changes)
-
-Worldgen changes affect only newly generated chunks — always test in a fresh world.
-
-1. `/locate biome lothlorien:lothlorien` finds it; teleport there.
-2. Region size: large contiguous areas, not confetti. Tune `noise_frequency_scale` / `amount`.
-3. Border: walk across; grass/foliage/water/fog change should be clearly visible.
-4. Night, Normal/Hard: debug readout shows 0 hostiles inside over several minutes, while
-   the surrounding forest has some. Mobs can still walk in.
-5. Caves under the biome: hostiles or not?
-6. Vibrant Visuals on/off: colours and fog still look right.
-
-## Phase 2 — edge/heart spike
-
-**A. Runtime depth** (`scripts/depth.js`, pure; sampler in `main.js`): probes rings at
-8/16/24/32/40 blocks (probes at most 10 blocks apart, 83 in total) at the **surface** under
-each point; the first ring with a foreign point bounds the border distance. Levels: edge
-(border <= 16), inner (<= 40), heart (farther). `minecraft:river` counts as inside. Runs every
-3 s per player, never per tick. `/scriptevent lothlorien:depth` prints the estimate and the
-ms per estimate (200-run average) — **record it here**: `_ms per estimate: ?_`.
-
-Fixed 2026-09-29 (user saw "inner" from one side and "heart" from the other): `getBiome`
-throws in unloaded chunks and those probes were skipped, so a border ahead of a flying player
-(chunks not loaded yet) was ignored and the rings ran out as "heart". Now an unreadable probe
-stops the search and the level is the lowest one still certain, shown with `?` in the debug
-bar. Probes also sampled at the player's height; biomes are 3D, so flying sampled the air.
-Old limits were 24/60 on rings to 80 (partly beyond the loaded area). Tests: `tests/run.mjs`.
-The outline follows vanilla forest shapes, so "heart" means far from any border, not a
-designed centre. Verified in game after the fix (2026-09-29, user). Known: the level updates
-only every 3 s (`DEPTH_INTERVAL_TICKS`), which reads as a lag when crossing a border; not yet
-addressed.
-
-**B. Worldgen heart approximation**: feature rule
-`lothlorien:grove_flowers_feature_rules` (after_surface_pass, tag `lothlorien`) places
-dense dandelion patches only where `query.noise(origin/120)` > 0.3, so grove-like zones
-appear as large slow-varying regions independent of the biome border. Superseded in Phase 6: the dandelion patches were replaced by Elanor/Niphredil (see below). Noise is world-position based, so a grove can fall
-on the edge; it is not tied to depth. That is the honest limit of JSON worldgen.
-
-Test (fresh world): fly over a Lothlórien region; patches should cluster in a few large
-zones. Judge whether that reads as "deeper = richer". If not, the next option is scripted
-post-generation decoration keyed to `estimateDepth` (not committed to; see plan).
-
-## Phase 3 — Mallorn wood set
-
-Block format is **1.26.50** and both manifests need `min_engine_version` 1.26.50 (multi-box
-collision, `minecraft:tags` and `minecraft:sound` are format-gated; `tag:*` keys no longer work).
-Reference implementations used: Bedrock Wiki custom fences, trapdoors, multi-blocks, block traits.
-
-Blocks (`lothlorien:` + `mallorn_`): `log`, `stripped_log`, `wood`, `stripped_wood`, `planks`,
-`leaves`, `stairs`, `slab`, `double_slab` (hidden), `fence`, `fence_gate`, `door`, `trapdoor`,
-`button`, `pressure_plate`. Textures and models are generated by `tools/make_mallorn_*.py` (final; only the
-leaves are a placeholder); art status is in `GRAPHICS_TASKS.md`. Every block except double slab has an item
-that *replaces* the auto block item (needed for `minecraft:fuel`; the door also gets a 2D icon).
-Recipes and unlocks mirror vanilla wood types (planks from log/stripped log/wood/stripped wood
-unlock on that item; the rest on planks; wood/stripped wood on log/stripped log).
-
-**Two plank sets (2026-09-30).** Planks from log/wood are the silver `mallorn_planks`; planks from stripped
-log/wood are `mallorn_heartwood_planks` (recipes `mallorn_heartwood_planks_from_stripped_{log,wood}`). The
-heartwood family (`mallorn_heartwood_` + planks, stairs, slab, double_slab, fence, fence_gate, door, trapdoor,
-button, pressure_plate) is **generated** by `tools/make_heartwood_set.py` from the silver files: identifiers,
-texture keys and map colour swapped, geometry shared. Change the silver block, then re-run it (the test "two
-plank sets" fails when they drift). `blocks.js` lists both sets in `WOODS` (slab merge, button/plate support
-loss); a double door pairs only with the same kind of door. Silver and heartwood fences connect to each other.
-
-**Carved fence (2026-10-01, owner: "beautiful" in game; icon and rail colour fixed after, recheck).** `tools/make_mallorn_fence.py` writes
-`mallorn_fence.geo.json` (bones `post`, `north_rails`, `south_rails`, `west_rails`, `east_rails`: same names and
-`bone_visibility` as before) and `mallorn_fence_carried.geo.json` (icon; its `item_display_transforms` are read
-back and kept). Each rail is one 2x2 cube tilted 22.5 deg about x (inverted V towards the block edge); the other sides
-are the north rails turned in quarter steps. Post faces use the block's `*` material (`mallorn_fence_post`, 4 sides x 4
-columns); the rails and cap read a leaf-free strip of it (columns 5-6), grain turned along the rail with per-face
-`uv_rotation` (owner: rails on the planks' lit edge looked white). Geometry format **1.26.50**: the icon keeps a `shelf`
-display transform, which the game only accepts from 1.26.40 and otherwise drops the whole file (icons vanished, 2026-10-01).
-Selection and collision boxes are unchanged. The test "fence: every material instance ..." checks both sets.
-
-**Carved fence gate (2026-10-01, variant C; owner: works in game, liked).** `tools/make_mallorn_gate.py` (`VARIANT = "C"`) writes
-`mallorn_fence_gate_closed.geo.json` (bones `posts`, `rails`; its `item_display_transforms` are read back, icon pose
-`[30,135,0]` kept) and `_open.geo.json` (bones `posts`, `leaves`), sharing `seg()`/`turn()`/`geometry()` with the fence
-generator. The +x half is built along z, turned onto +x; the -x half is it turned 180 deg. Open = each half turned a quarter
-about its post (+x about (7,0) once, -x about (-7,0) three times), so the leaves lie at z -1..-7 like the old open model and
-inside the open selection box. Both sets now use the `*` texture `mallorn_fence_post` / `mallorn_heartwood_fence_post`
-(no new texture key). States, permutations, boxes, sounds, redstone and recipes unchanged. Test "gate: ...".
-
-- Tools: every wood block carries `minecraft:is_axe_item_destructible`; leaves use the hoe tag.
-- Logs and bark-covered wood: `block_face` trait + three-axis rotation permutations. Stripping is the guarded world interaction in `blocks.js`, using native/tagged axes and native durability chance; no registered `lothlorien:strippable` component is implied. See [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md) for the 2026-10-18 owner-approved audit and pending engine cases.
-- Stairs: native corners. `placement_direction` with `minecraft:corner_and_cardinal_direction`
-  gives `minecraft:cardinal_direction` + `minecraft:corner` (none/inner_left/inner_right/
-  outer_left/outer_right), and the engine keeps `corner` updated when neighbours change; no script.
-  Left/right follow Java: for a north-facing stair, left = west, right = east. 5 shapes x 2 halves
-  x 4 directions = 40 permutations, multi-box collision.
-  **Axis trap:** block geometry draws x mirrored (a cube at +x lands on the block's WEST side),
-  while `collision_box` uses world x. The first corner attempts (both the engine state and a
-  script-computed one) wrote the models like collision boxes, so every corner showed mirrored and
-  no rotation could fix it. The geometry cubes are the collision boxes with x negated.
-  Confirmed in game 2026-09-29. Regenerate block + geos with the shared
-  `.claude/skills/bedrock-blocks/scripts/gen_stairs.py` (see the bedrock-blocks skill).
-- Slabs: `vertical_half`; merging in a `playerInteractWithBlock` world event (clicking the slab, or a
-  neighbouring block whose face points into a cell holding a slab). Stripping logs is the same
-  kind of event: a block component's `onPlayerInteract` blocks placement against the block.
-  The 2026-10-18 guard revalidates target/water and original selected slot/item/mode before deferred writes. Both slabs use Bedrock 15-second fuel and native combine sound. Stair generation/postprocessing retains native `chest_obstruction: never`; source checks do not establish native chest/shape behavior.
-- Fence: wiki example; the `connection` trait connects to fences, gates and solid blocks; vanilla
-  fences connect via `minecraft:has_fence_connections`.
-- Door: 2-part multi-block, `open` + `hinge_right` states; script picks the hinge on placement
-  (same-facing bottom neighbors with their handles toward the new door form a pair; full solid-face selection remains open). Rotations are derived, not copied.
-- Trapdoor/gate/door open by interact and by redstone (`lothlorien:redstone_toggle`: edge-detected
-  against a stored `powered` state because the engine also fires updates on placement/chunk load).
-- Button/plate: `minecraft:redstone_producer`; button releases after 30 ticks, plate polls
-  every 4 ticks idle / 20 ticks powered with a finite minimum-hold guard (`minecraft:tick`). Buttons release through a powered-only native tick plus release component, not a transient JS timeout. East/west wall buttons use `mallorn_button_ew(_pressed)` (a 4x6 box; the
-  z-axis tilt of the 6x4 box stood them upright; `uv_rotation` 90 keeps the plank grain horizontal). The plate has
-  `minecraft:placement_filter` `allowed_faces: ["up"]`: placed only on top of a block, popped off when it goes. Support loss is handled in `blocks.js` (breaking the block they sit on).
-- 2026-10-18 controls follow-up: [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md) records gate facing/wall lowering, precise door pairing, plate collision bounds and remaining projectile/AI/sculk/native-timing gaps. `tools/configure_controls.py` maintains the six changed block definitions without rewriting art. Synchronized double doors are owner-approved custom behavior, not vanilla equivalence.
-- Left out (signs, shelf, ...): see `NOT_IMPLEMENTED.md` for reasons and retry notes.
-- **Icons (2026-09-30; owner confirmed in game 2026-10-01 that the menu icons look right, 1.26.52).** Owner saw the stairs and gate icons turned, the slab big and high, the fence turned. Every non-cube plank-family block now names an icon geometry in `minecraft:item_visual` whose `item_display_transforms.gui` sets rotation, scale 0.625 and `fit_to_frame: false`: stairs `mallorn_stairs_item` (straight stair, tall half east, `[30,135,0]`, written by `gen_stairs.py`), gate `fence_gate_closed` `[30,135,0]`, slab `slab_bottom`, trapdoor, pressure plate `[30,225,0]`, fence `fence_carried` `[30,225,0]` translation -1 scale 0.62, button `mallorn_button_item` `[30,225,0]` (Java's 6x4x4 box looked turned and too wide in game, 2026-10-01; now 2x4x6 with the long face east; owner confirmed it in game 2026-10-01). Placed blocks, permutations and boxes are unchanged. Door keeps its 2D icon; planks/logs/wood are cubes. Poses come from Kaioga's 1.26.50 templates; the rule is in `bedrock-block-families/references/families.md` "Item icons", the test is "icons: ..." in `tests/run.mjs`. Check in game next to vanilla oak: stairs (tall half back left), slab (low, vanilla size), fence and gate (same diagonal as vanilla), trapdoor, plate, button.
-- **Untested in game** (no game access while writing): everything above. Check first: door swing/hinge, gate open pose, slab merge, log rotation, redstone opening.
-
-## Phase 4 — small Mallorn and the acorn loop
-
-Files: `scripts/mallorn_tree.js` (pure generator, no Minecraft imports), `scripts/trees.js` (growth,
-bone meal, leaf decay, instruments), `blocks/mallorn_sapling.json`, `items/mallorn_acorn.json`.
-
-- **Loop:** leaves drop acorns (2% per leaf, `loot_tables/blocks/mallorn_leaves.json`), the acorn item
-  places `mallorn_sapling` (hidden from the menu; its loot is one acorn), the sapling grows a tree.
-  Saplings need the approved soil list including mycelium (`placement_filter` plus the event-driven support service). Random growth reads light >=9 in the block above; ordinary bone meal can work in darkness.
-- **Growth:** `lothlorien:sapling` random tick; stage 0 -> 1 -> tree, each step 1/7 per tick (vanilla-like).
-  The trunk needs room (air/leaves/soft plants); branches and leaves are placed only where free.
-  Bone meal: 45% to advance one step, handled in a `playerInteractWithBlock` world event.
-- **Tree:** each tree draws an archetype (slender, round, spreading, tiered, tall) that sets trunk height
-  (6-13), crown size and branch habit. Straight trunk. Branches: 3-5 **level** branches (different
-  directions, same height, no rise) just under the crown = a base for a platform; 0-3 short lower branches at
-  random heights; 1-5 rising branches through the crown. Every branch may carry a leaf blob; the crown is a
-  main blob (maybe off-centre) + blobs, so crown bottoms are uneven. Seed-based, ~all trees distinct.
-  Average ~32 logs (~127 planks) and ~200 leaves (5-95%: ~100-320).
-- **Big Mallorn:** four saplings in a 2x2 square grow one tree with a 2x2 trunk (like vanilla dark oak): 15-24
-  high, flared root logs, crown of a big blob plus 3-5 satellites, 5-8 level platform branches (3-7 long) under the
-  crown, 2-5 low and 3-6 rising branches. ~140 logs (~560 planks), ~1500 leaves (~30 acorns if all cleared, for the
-  4 planted). Placement is spread over ticks with `system.runJob`. Debug command `growbig`: removed from the pack, see `tools/dev_scripts/tree_debug.js`.
-- **Where trees come from:** the generators run in script, so they work for saplings only (the old debug commands are in `tools/dev_scripts/tree_debug.js`).
-  Feature rules cannot call script, so **world generation cannot use them directly**; natural Mallorns need
-  pre-generated `.mcstructure` files placed by a feature (Phase 5).
-- **Leaf decay:** leaves have state `lothlorien:persistent`. Player placement sets it true (never decays);
-  grown/worldgen leaves are false and, on a random tick, break with drops if no supported vanilla/Mallorn log/wood is
-  within 10 steps through leaves (unloaded neighbour = assume connected). Reach was 6 at first and stripped
-  leaves off live big trees (crown leaves sit 8+ steps from any log; game-tested 2026-09-29). Verdicts are
-  cached per leaf for 60 s (path marking) to keep random-tick cost down; a felled tree's leaves therefore
-  start decaying up to a minute later.
-- **Balance (estimate):** 2% per leaf x ~200 leaves = ~4 acorns if every leaf is cleared; clearing about
-  half gives ~2, so a tree replaces itself with margin without acorns raining; bigger trees pay more. `node tests/tree_stats.mjs [n] [chance]`
-  prints the numbers offline. The in-game helpers `grow`, `growbig` and `treestats` were removed from the pack in the 2026-09-30 cleanup
-  (`tools/dev_scripts/tree_debug.js`, git `dc1182e`); copy it back in for the test, or plant saplings. **The 20-tree cut-down test is still to do.**
-- **Untested in game** (written without game access): random ticking without a `minecraft:random_ticking`
-  component (if leaves never decay or saplings never grow, add it first), `block.getLightLevel()` values,
-  `crop_growth_emitter` particle name, bone meal event cancel, sapling `placement_filter` with the
-  block-item route. Plain-Node generator stats are verified.
-
-## Phase 4b — natural Mallorns (native worldgen, no script)
-
-`feature_rules/mallorn_trees_feature_rules.json` (surface_pass, tag `lothlorien`, 5 tries per chunk) places
-`select_mallorn_tree_feature` (weighted: 25 simple, 60 fancy, 15 mega/2x2). The three are vanilla
-`minecraft:tree_feature`s with our log and leaf blocks: `mallorn_simple_tree_feature` (trunk+canopy, 6-10),
-`mallorn_fancy_tree_feature` (fancy_trunk with branches, ~7-16) and `mallorn_mega_tree_feature` (2x2 trunk,
-branch canopies). Shapes are vanilla's; they lack our platform branches and archetypes, which stay for
-sapling-grown trees. The `forest` tag was removed from the biome so vanilla forest trees stop generating.
-Leaves come out with the default state `persistent=false`, so they decay like grown ones.
-Test without a new world: `/place feature lothlorien:select_mallorn_tree_feature ~ ~ ~` (or one of the three
-directly) on grass. **Untested in game:** custom blocks inside `tree_feature`, log orientation (default state),
-density (5/chunk is a guess), mega tree size.
-Density check (helper removed from the pack, now `tools/dev_scripts/tree_debug.js`): `/scriptevent lothlorien:treecount [radius]` reports trees per chunk of biome and canopy cover around you (loaded chunks only; stand inside the biome in a freshly generated area).
-
-## Phase 5 - giant Mallorns (DONE 2026-09-30, accepted in game by the user)
-
-Shipped: two lookout trees (round 5 and 7: flet, ladder, loot chest) and four plain giants (roundplain 2, 3, 6 and
-8), generated as one jigsaw structure (`lothlorien:giant_mallorn`) in the biome, about 1 in 4 with a flet.
-Accepted in game but not measured separately: whether the trunk anchor keeps trunks at least 48 apart, and
-whether any jigsaw block is left at a trunk base. Recheck these if two giants ever look too close.
-The history below is kept because it records the traps.
-
-- **What:** round trunk (owner's design, 2026-10-01: the 4x4 with its four corner cells cut, 12 cells), 30-38 high (tip
-  narrows to 2x2), sunk 5 blocks into the ground. Its foot is a flare of `mallorn_wood` (see **Round trunk** below).
-  A plank platform (radius 5.5-7, fence rim) sits on 6-8 level branches 9-12 below the top. A vanilla
-  ladder runs up the north face of the trunk (column x 1, z -1) through a hole in the floor. A chest
-  against the east face uses `loot_tables/chests/mallorn_flet.json`. There are no leaves from the floor
-  to 3 above it within radius+4, so the view is open.
-- **Leaves** are normal worldgen leaves (`persistent` false). Any leaf more than 8 steps through leaves
-  from a log is dropped at generation time (decay reach is 10), so nothing thins out later. There are
-  about 5-10 such leaves per tree.
-- **Variants** (`VARIANTS` in `tools/build_structures.mjs`, options of `buildFletMallorn`). Tree NN of every
-  variant uses the same seed. Two ship: `round` (lookout tree) and `roundplain` (`flet: false`: no platform, ladder
-  or chest). Both use `woven` + `lush` + `round`.
-  - `woven`: the support branches run at floor level through the platform, planks fill the gaps, and their leafy
-    ends reach past the rim. `lush`: 1-2 whorls of leafy level branches on the bare trunk plus longer leafy low branches.
-  - The older square-trunk variants (`flet`, `woven`, `plain`, shipped until 2026-10-01) were dropped; the options
-    still exist in `buildFletMallorn`, so they can be recreated (git before the round-trunk commit `d09188f`).
-  - To experiment, add an entry to `VARIANTS` and the name to `VARIANTS` in `tools/dev_scripts/showcase.js`, then run
-    `node tools/build_structures.mjs <variant>`.
-- **Round trunk** (owner, 2026-10-01, seen in game in a flat world; accepted). Built from scratch after a first try
-  (square roots plus corner patches) looked blocky:
-  - The trunk is the 4x4 without its corner cells. Diagonal branches start on the face cell beside the missing
-    corner (their first step is along x), a straight north branch never starts on the ladder column, and the ladder
-    moved to x 1.
-  - `roundFoot`: a skirt 2 high round the trunk plus 5-7 buttress ridges (reach 1-3 cells, up to 4 high at the
-    trunk, narrowing and dropping outwards), uneven by design, filling the cut corners where wide. Above ground it
-    is `mallorn_wood` (bark on top too), below ground logs down to -5. It has its own random generator, so the rest
-    of a tree is the same for a seed. The ladder column and the cell in front stay free.
-  - Trap: a root beside a cut corner touches the trunk only diagonally, and per-slot roots looked like columns.
-    A radial flare does not have either problem.
-- **Chosen for worldgen (seeds 2026-09-29, round trunk 2026-10-01): round 5 and round 7** (`CHOSEN` in `tools/build_structures.mjs`). Only
-  these ship in the pack. `node tools/build_structures.mjs` rebuilds exactly that set, and
-  `node tools/build_structures.mjs <variant|all>` adds curation candidates for the showcase. They never enter
-  worldgen; run the plain command again before committing.
-- **Pipeline:** the shape is in `tools/flet_mallorn.mjs` (pure; reuses `makeBuilder` from
-  `mallorn_tree.js`). `node tools/build_structures.mjs [variant|all] [count] [firstSeed]` writes
-  `structures/lothlorien/mallorn_<variant>_NN.mcstructure` (40x54x40, trunk NW cell at x/z 18, ground at y 5,
-  about 700 KB each) and `scripts/giant_trees.js` (the CHOSEN names). Rerunning a variant replaces that
-  variant only.
-  The format and the traps are in `.claude/skills/bedrock-modding/references/09-structures.md`.
-- **Worldgen: jigsaw structure `lothlorien:giant_mallorn`** (stable since 1.21.120; no experiment needed).
-  - `worldgen/structures/giant_mallorn.json`: biome tag `lothlorien`, step `surface_structures`, no terrain
-    adaptation. `max_depth` is 0 (one piece, no jigsaw blocks). `start_height` is -5 from `world_surface`, so
-    the roots go into the ground.
-  - `worldgen/template_pools/giant_mallorn.json`: generated from CHOSEN.
-  - `worldgen/structure_sets/giant_mallorn.json`: random_spread, now spacing 13 / separation 6 (see below).
-    An early separation 3 with spacing 6 was rejected by the engine (separation must be less than spacing / 2),
-    so nothing generated (2026-09-30).
-  - With that fixed, `/locate` found giants but nothing was built (2026-09-30).
-    - `/place structure` said "Jigsaw structure generation failed. Structure placed out of bounds".
-    - Six one-change test structures were placed in one new world. **The cause was `max_depth: 0`**: only
-      the tests with depth 1 or 3 built. Size, height, reach, the `.mcstructure` format and `"rigid"` made
-      no difference. `max_depth` is now 1.
-    - `max_distance_from_center` is 116 as in vanilla's camp. The earlier 32 was not the cause.
-  - **Working in game (2026-09-30):** `/place structure` and natural generation build whole giants across
-    chunk borders.
-  - Spacing 6 / separation 2 was far too dense: about 5 giants in a medium Lothlorien patch, one pair of
-    trunks only about 28 blocks apart. The piece is rotated around its corner, so a trunk can move by
-    about the piece width. Spacing 13 / separation 6 was tried next; the user asked for about 11.
-  - **Now (2026-09-30, not yet seen in game): one set for all giants, with the trunk anchored.**
-    - The pool (`CHOSEN`, with weights) holds the flet trees round 5 and 7 at weight 2 each and the plain
-      giants (roundplain) 2, 3, 6 and 8 at weight 3 each, so about 1 giant in 4 has a flet.
-    - The set is spacing 6 / separation 2. About 5 giants per medium patch, about 1-2 of them flets, which
-      is roughly what a separate flet grid of spacing 12 would give.
-    - One set means two giants never compete for space. Structure sets cannot exclude each other; Java's
-      `exclusion_zone` is not in Bedrock's documented fields.
-    - Trunk anchor: every piece's bottom trunk cell (1, -5, 1) is a `minecraft:jigsaw` block
-      (`JigsawBlock` entity: name `lothlorien:giant_trunk`, target and pool `minecraft:empty`, final_state
-      `lothlorien:mallorn_log`), and the structure's `start_jigsaw_name` is that name. The trunk should
-      then sit on the start point however the piece is rotated, so trunks are at least 3 chunks (48
-      blocks) apart.
-    - Plain giants are variant `roundplain` (`flet: false`; `plain` before 2026-10-01): woven branches and lush foliage, no platform, ladder
-      or chest. `showcase` (now `tools/dev_scripts/showcase.js`, removed from the pack) showed them.
-    - The user found their crowns too flat (2026-09-30). Plain giants now get 3-6 ring branches instead of
-      6-8, each starting 4 below to 3 above the old floor level. They tilt up 20-55% per step, may bend 45
-      degrees on the way (`bentBranch`), and grow leaves along their top as well as a blob at the tip.
-      Their crown branches start just above the ring, not 4 blocks up. Lookout trees are unchanged.
-  - `/locate structure lothlorien:giant_mallorn` and `/place structure lothlorien:giant_mallorn` work.
-- **History:**
-  - 2026-09-29: a 40-wide `structure_template_feature` was cut badly at chunk borders.
-  - 2026-09-30: a script-grown marker (`structureManager.place` once the footprint was loaded) replaced it.
-    It was dropped the same day, unseen, because trees appeared only within simulation distance.
-- **Written 2026-09-30, not yet seen in game.** Open questions:
-  - Is the trunk base exactly at ground level? The surface heightmap may be off by one.
-  - Jigsaw may rotate the piece. Do custom `minecraft:block_face` logs and fence connections rotate
-    correctly? Test with the dev-only `showcase round 7 90` (`tools/dev_scripts/showcase.js`). If branch logs point the wrong way,
-    use `mallorn_wood` (the same on every side) for branches.
-- **Curation** (helper moved out of the pack 2026-09-30 to `tools/dev_scripts/showcase.js`; git `dc1182e`): `/scriptevent lothlorien:showcase [variant]` lays out candidates on a grid (4 per row, 48
-  apart, variants in separate rows) south-east of the player, with a sign such as "round 3" in front of
-  each ladder. Trees in unloaded chunks are retried for 3 minutes. `/scriptevent lothlorien:showcase round 3`
-  places one tree next to you (a bare number means round).
-- **Chest loot is verified in game** (2026-09-29): the chest `LootTable` field in the structure fills the
-  chest when it is opened. Still unchecked: do the fence connections hold? Does the ladder face the right way
-  (`facing_direction` 2)? Do normal Mallorns grow into the platform?
-- **Section 9 watch-camp upgrade (2026-10-13):** lookouts 5/7 now carry native straw beds/cushions,
-  two persistent wardens, silver-pattern wall banners, four rim lamps, and a one-shot rail mender.
-  Values/loot: `tools/watch_camp_rules.mjs`; assembly: `tools/watch_camp.mjs`; generated by
-  `node tools/build_structures.mjs`. Owner accepted 2026-10-13: heads-to-trunk beds,
-  three-tooth banner edges and owner loot tuning. Final implementation: `0630cdf`
-  (`Shelter watch-camp sleepers and correct indented banner edges`). Acceptance record:
-  [M6_WATCH_CAMPS_TEST.md](M6_WATCH_CAMPS_TEST.md). Scratch removed on acceptance.
-- **Loot generation (2026-10-13):** edit `tools/watch_camp_rules.mjs`, then run `node tools/build_structures.mjs`.
-  Output: `lothlorien_bp/loot_tables/chests/mallorn_flet.json`. Pool 1 rolls once
-  (miruvor or lembas). Pool 2 rolls 3-5 times from a weighted list. `weight` is relative chance, and
-  `set_count` sets the stack size. Pool 3 has the owner's 50% chance of one silver-pattern shield. Item ids have to exist; `.\mods verify lothlorien` catches typos. Then run
-  `.\mods deploy lothlorien` and re-enter the world. The table is rolled when a chest is first opened, so
-  unopened chests pick up the change. To see a roll without a chest, `/loot spawn ~ ~1 ~ loot "chests/mallorn_flet"`
-  should work (not tested).
-- Tests: `tests/run.mjs` checks, over 30 seeds per variant, that the ladder is unbroken, there is a floor at the
-  exit, the chest has room, leaves are within reach and everything fits the box.
-
-## Phase 6 - ground identity and flora (step 5, procedural trees, postponed on purpose)
-
-Blocks: plants `elanor`, `niphredil`, `athelas`, `golden_fern` (`minecraft:geometry.cross`, `alpha_test`, no
-collision, break instantly, soil-only `placement_filter`) and two **segmented ground covers**, `mallorn_leaf_carpet`
-(opaque) and `mallorn_blossom` (cutout), made by `tools/generate_ground_cover.py`
-(the mod entrypoint for the shared generator, which reapplies production support and segment loot).
-Covers work like vanilla leaf litter: state `lothlorien:amount` 1-4 = that many 8x8 quarter-tiles (1 px tall, one geo per
-amount, `geometry.lothlorien.ground_cover_1..4`), rotated by `placement_direction` permutations. Using the item on
-the cover (or on the ground under it) adds a segment; breaking drops one item per segment (`scripts/ground_cover.js`).
-Worldgen places weighted amounts (carpet 4:3:2:1, blossoms 6:3:1:1) in random directions: 16 single-block features
-each, states given in `places_block`. Each plant has an **item with the same identifier**
-(`replace_block_item`, 2D `icon`, creative group flower) and a block with no menu category, the door pattern.
-All art is placeholder; the list for the graphics agent is in `GRAPHICS_TASKS.md` step 6.
-
-Worldgen (all native JSON, no script):
-
-- **Litter with trees**: `mallorn_trees_feature_rules` now places `select_mallorn_tree_with_litter_feature`, an
-  `aggregate_feature` (`early_out: first_failure`) of the tree, a carpet scatter (90 tries, gaussian +-5) and a
-  blossom scatter (5 tries), all around the tree origin. Same idea as vanilla `*_with_leaf_litter`.
-- **Elanor**: the old dandelion grove rule, now `elanor_patch_feature_rules` (`query.noise` > 0.3, 3 patches per chunk).
-- **Niphredil**: same idea with an offset, slower noise and a stricter threshold (0.35), so its zones are separate
-  from Elanor's and rarer. The design says "more common deeper in", which JSON cannot express (no depth
-  in worldgen); noise zones are the approximation.
-- **Athelas**: 1 in 5 chunks gets one small clump (10 tries, +-3). **Golden fern**: 1 in 2 chunks, 22 tries, +-6.
-- Old `grove_flower_*` files removed. `single_block_feature` uses `enforce_placement_rules: true`, so the plants'
-  `placement_filter` (grass, dirt, podzol, moss, ...) decides where they can stand.
-
-Falling leaves: `rp/particles/falling_leaf.json` (`lothlorien:falling_leaf`, slow drifting fall, expires on
-contact) spawned by `fallLeaves` in `main.js` every 12 ticks per player inside the biome: a random column within
-14 blocks, topmost block must be a Mallorn leaf, `leaf_fall.js` (pure, tested) walks down to the first leaf with
-open air below. One particle per player per 12 ticks, so it is sparse by design. Since 2026-10-02 the texture is a 40x8 sheet (4 leaf shapes + 1 blossom, `tools/make_falling_leaf.py`) and the particle picks a frame with molang in `uv` (`particle_random_1 < 0.14 ? 4 : floor(particle_random_2 * 4)`) and a size 0.10-0.14; to check in game.
-
-**Untested in game** (written without game access): everything above. Check first: (1) plants and carpet appear
-in the creative menu and place on grass; (2) `/place feature lothlorien:select_mallorn_tree_with_litter_feature`
-leaves carpet and blossoms around the trunk; (3) heightmap y in `after_surface_pass` may land on canopy, in
-which case flowers only appear in the open (expected); (4) `scatter_chance` is accepted in the rules;
-(5) particle spawns, falls and disappears on the ground; (6) creative groups `itemGroup.name.flower` / `.leaves`.
-
-### Vanilla plants in the biome (checked against the 1.26.50 feature rules, 2026-09-29)
-
-Vanilla places plants by biome tag, and the only removal lever is the tag. The biome has `overworld` (needed for
-ores, caves, structures, spawns), `bee_habitat`, `lothlorien`, no `forest`. Rules that still match:
-`scatter_tall_grass_feature` (grass and tall grass, the wanted ground cover), `scatter_overworld_flower_feature`
-(dandelion/poppy mix, 1 chunk in 32), pumpkins (1 in 300), reeds near water (1 in 6), extra mushrooms.
-Ferns, forest flowers and forest grass belong to `forest`/`taiga`/... tags and do not apply. The leftovers are rare and
-deliberately not fought: excluding them needs a tag such as `plains` or `mooshroom_island`, which also switches on
-villages or mooshroom spawns. Decorative wild flowers were tried and removed (see below). **Wild flowers REMOVED 2026-10-02 (owner).** The custom two-block rose bush / peony / lilac features never showed up in game; the native route (our own rule calling `minecraft:legacy:flower_forest_flower_feature`, no biome tag, because the `flower_forest` tag also brings vanilla trees, bee and rabbit spawns and camps) produced poppies and bushes but no big flowers. All `wild_*` features and `wild_flower_patch_feature_rules` were deleted. Maybe later: Elven roses as our own plant (owner idea). The two-block placement notes in the Phase 6 tuning text above are historical.
-**Untested in game**: segment merging and break drops, the 16 permutations, `states` inside `places_block`.
-
-### Tuning after the first in-game look (2026-09-29)
-
-Elanor was too common in the inner zone: noise threshold 0.3 -> 0.5, 2 patches per chunk, 18 tries per patch.
-Athelas is now confined to rare noise zones (threshold 0.45 on its own offset field), 1 chunk in 2 within them, 8 tries.
-Worldgen cannot see depth, so "scarce until the heart" is approximated with rare zones; a scripted post-generation
-pass keyed to `estimateDepth` is the real fix if that is not enough. Carpet density was judged fine.
-
-**Bone meal** (`scripts/bonemeal.js`, table in `flora_table.js`): vanilla bone meal on grass in the biome grew dandelions and
-poppies. The script cancels bone meal used on a grass block inside the biome and scatters 12 tries within 3 blocks: short
-grass 58, Elanor 14, Niphredil 12, golden fern 12, Athelas 4 (weights). Consumes one bone meal in survival.
-**Untested in game**: that cancelling the event stops the vanilla effect, and the `crop_growth_emitter` particle name.
-
-Second tuning (same day): Elanor zones (noise field A) and Niphredil zones (field B) are independent, so in one region
-you can see one without the other; that is what happened in the inner zone (Niphredil zones were also stricter than
-Elanor's original ones, and after Elanor was cut to 0.5 Niphredil at 0.35 was the rarer of the two by accident).
-Now Niphredil has a sparse baseline everywhere (1 chunk in 3, 6 tries) plus zones at threshold 0.25. Athelas: sparse baseline
-everywhere (1 chunk in 10, 4 tries, "rare but obtainable") plus zones at threshold 0.3 (1 in 2 chunks, 8 tries), the
-"mediocre inside" part. Both zone fields are noise, not depth (see above).
-
-Third tuning: golden fern cut to 1 chunk in 4 with 12 tries (was 1 in 2, 22). Added vanilla `minecraft:fern` (`plain_fern_patch_feature_rules`,
-1 chunk in 2, 14 tries) and extra `minecraft:short_grass` (`extra_grass_patch_feature_rules`, every chunk, 26 tries, on top of vanilla's
-own grass). Bone meal table: golden fern 12 -> 8, plain fern 6. **Owner 2026-10-02: too much golden fern (huge patches, the floor is already golden from litter and leaves): the rule is now 1 iteration (was 2) at 1 chunk in 2, the patch 10 tries (was 16) within a gaussian +-4 (was +-6): about 3.5x fewer ferns, in small patches.** Bone meal table unchanged.
-
-Fourth tuning (in game: only Niphredil showed among the custom flowers). Lesson: `query.noise` thresholds are very steep. 0.3 gave "many"
-Elanor, 0.5 gave none, so a zone-only rule can vanish entirely. Every flower now has a sparse baseline everywhere plus noise zones:
-Elanor zone 0.4 (2 patches) + baseline 1 chunk in 3 (5 tries); Niphredil zone 0.35 (2 patches) + baseline 1 in 5 (5 tries, was 1 in 3);
-Athelas unchanged (zone 0.3, baseline 1 in 10). Do not go above ~0.4 on a zone rule without a baseline.
-
-Fifth tuning: flower frequency was good, patches too dense: Elanor patch 18 -> 9 tries, Niphredil patch 26 -> 11. More ground cover: plain fern every
-chunk with 22 tries, golden fern 1 chunk in 2 with 16, extra grass 60 tries. Athelas a little more: baseline 1 in 7, zones 2 in 3.
-
-Sixth tuning. Patches: Elanor and Niphredil zone patches are now 4 tries within +-2 (about 2-4 flowers, some tries fail), baselines 3 tries +-2.
-Wild decorative flowers are now the **two-block vanilla plants** (rose bush 5, peony 3, lilac 3) instead of poppy/cornflower/allium.
-A two-block plant is an `aggregate_feature` (`early_out: first_failure`): `wild_<plant>_lower_feature` (`upper_block_bit: false`,
-placement rules on) then `wild_<plant>_top_feature`, a one-iteration `scatter_feature` with `y: 1` that places the upper half
-(`upper_block_bit: true`, no placement rules). Patch size 4 tries +-2. **Untested in game**: the `y: 1` offset in a scatter, the state name
-`upper_block_bit` on rose_bush/peony/lilac (it is what vanilla `tall_grass` uses), and a lower half left alone if the upper cannot be placed.
-
-**Flicker** (user report: custom cutout plants, ferns and Mallorn leaves shimmer at high frequency; vanilla grass does not). The textures
-have strictly binary alpha, so it is not semi-transparent pixels. Hypothesis (later disproved as the sole cause: the user sees it in Fancy and Vibrant Visuals alike): the pack declares `pbr` but had no `.texture_set.json`, so
-these blocks got default material values, unlike vanilla plants which ship a MERS map (metalness 0, emissive 0, roughness ~170,
-subsurface ~105). Added `<name>.texture_set.json` + `<name>_mers.tga` (flat vanilla-like values) for elanor, niphredil, athelas, golden_fern,
-mallorn_blossom, mallorn_leaves, mallorn_sapling, mallorn_leaf_carpet. **Unconfirmed**: check in game; if it still flickers, try
-`alpha_test_single_sided` on the plants and note whether it happens with Vibrant Visuals off. Replacement art needs its own MERS map.
-
-Flicker follow-up: user confirmed it flickers in both Fancy and Vibrant Visuals, so the MERS maps are not the fix (kept, harmless). Open; the
-**Flicker, 2026-10-02 (owner in game):** the two saplings STOPPED flickering when their geometry changed from box-UV zero-thickness cubes (which carried degenerate top/bottom faces) to the single-face `plant_cross` model. So the cause there was the model, not the texture. The Mallorn leaves still flicker; they are `minecraft:geometry.full_block` with three textures (up/down/side) and `alpha_test`. Next test ideas, cheapest first: (1) leaves with a vanilla leaf texture on all faces (art vs block definition); (2) a custom cube inset by 0.01 so faces of neighbouring leaf blocks are not coplanar (top green / bottom silver textures fight on stacked leaves; side faces meet mirrored). **Test 1 (2026-10-02, owner in game): vanilla `leaves_oak_carried` on all faces of the Mallorn leaves STILL flickered, vanilla leaves do not**, so the cause is the block definition / texture data, not our art. Online search: Microsoft's material_instances reference lists the render method `alpha_test_to_opaque` ("used for a block like the leaves": cutout near, opaque far; vanilla leaves use it; `alpha_test_single_sided_to_opaque` is "used for a block like the sugar cane"), and the wiki says custom leaves should use `minecraft:culling_layer.leaves` (needs creator features, not used, see `bedrock-blocks` notes). **Test 2, deployed 2026-10-02:** `mallorn_leaves` uses `alpha_test_to_opaque` on all instances; `mallorn_golden_leaves` stays `alpha_test` as the control. Both leaf textures now carry a dark neighbour colour under their transparent texels (`shade_hidden` in `make_mallorn_leaves.py`; vanilla leaves keep dark green there, ours was black, which the far render shows as black holes). **Result (owner in game, 2026-10-02): the flicker is unchanged on both leaf blocks, BUT the leaves were invisible from far away before and are now visible: `alpha_test_to_opaque` (with the dark hidden colour) fixed that. KEEP IT. Both leaf blocks use it now (the golden leaves too, since the control is no longer needed).** The flicker is still open; remaining ideas: an inset cube (0.01) so neighbouring faces are not coplanar, `minecraft:culling_layer.leaves` (creator features), comparing every other component of vanilla leaves with ours (`light_dampening`, tags, `isotropic`, face dimming). **Test 3, culling (2026-10-02): it STOPPED the flicker on the Mallorn leaves (owner: only the golden leaves, still on `full_block`, flickered), but the canopy looked hollow and it needs the experimental 'upcoming creator features' toggle, so it was reverted.** Custom 16x16x16 cube + `block_culling` rules (format 1.21.80, `same_culling_layer`, six faces) + `culling_layer: minecraft:culling_layer.leaves`. Conclusion: the flicker is z-fighting between the coplanar faces of touching leaf blocks (green top vs silver bottom, mirrored sides). (The content log of that session held only Molang errors of other packs' player animations, none from lothlorien.) **Test 4, inset cube (deployed 2026-10-02):** both leaf blocks use `geometry.lothlorien.mallorn_leaf_cube` (`tools/make_leaf_cube_geo.py`, inset 0.1 model unit per side: all faces drawn, no hollow canopy, no toggle; the faces of two touching blocks are 0.2 unit apart). Material instance names `up` / `down` / `side` (golden leaves alias all three to one picture). **Result (owner, 2026-10-02): the flicker was gone at inset 0.1 (isotropic off) but the gap between leaf blocks was slightly visible; at inset 0.05 with `isotropic` on, the flicker CAME BACK. The owner turned the inset cube OFF (both leaf blocks are `minecraft:geometry.full_block` again, material instances `up`/`down`/`*`) and kept `isotropic` on up/down (the trees look better). LEAF FLICKER IS UNSOLVED.** What is known: it stops with data-driven culling (hollow canopy, experimental toggle) and with a 0.1 inset cube (visible gap); it does not depend on the texture (vanilla texture still flickers), the render method (`alpha_test_to_opaque` fixed the far-away invisibility but not the flicker) or the colour under the holes. Not known whether `isotropic` or the smaller inset brought it back at 0.05. Cheap next tests: inset 0.1 with isotropic on (separates the two causes); inset only on the faces that are up, north, east (halves the visible gap); the remaining comparison items (friction, face_dimming, `ambient_occlusion` 0.8 on the sides). **Test 5, culling layer on the built-in cube (deployed 2026-10-02):** `mallorn_leaves` has `"culling_layer": "minecraft:culling_layer.leaves"` on `minecraft:geometry.full_block`, no custom cube, no `block_culling` file, experimental toggle OFF (copied from Kaioga's Block Templates 1.26.50 leaves, which claim no toggle; Microsoft still calls it experimental). `mallorn_golden_leaves` is unchanged as the control. Check: does the green canopy still flicker, does it look hollow, and is there a content-log error about `culling_layer`? **Result (owner in game, 2026-10-02): the flicker is still there; no content-log error about `culling_layer` with the toggle off. Reverted.** Owner, same day: no inset-cube tests for now; the leaf flicker stays open.
-
-### Mallorn leaves vs vanilla leaves, parameter by parameter (2026-10-02)
-
-"Disk" = read from the vanilla resource pack in `reference/vanilla/current/resource_packs/vanilla/blocks.json` (client side). Vanilla's behaviour
-values are hardcoded in the engine (no JSON on disk); those rows come from the Minecraft wiki and Microsoft's reference and are marked "docs".
-
-| Parameter | Vanilla leaves | Ours | Verdict |
-|---|---|---|---|
-| render_method | `alpha_test_to_opaque` (docs) | `alpha_test_to_opaque` | same since 2026-10-02 (fixed the invisibility from far away) |
-| faces sharing a plane | culled by `culling_layer.leaves` (docs) | plain `full_block` again (inset cube tried 2026-10-02, flicker unsolved; `make_leaf_cube_geo.py` kept, not in use) | culling stopped the flicker but made the canopy hollow and needs the experimental toggle; the 0.1 inset cube stopped it too but showed a gap |
-| ambient_occlusion | exponent 0.8 (disk) | 0.0 | deliberate: faces next to logs went black (verified in game); keep |
-| isotropic | `up` and `down` true (disk): the top and bottom texture is turned randomly per position | not set | **deployed 2026-10-02** on `up` and `down` of both leaf blocks (owner agreed, "may be good for other reasons"); to check in game: the canopy seen from above should not repeat one pattern, and the green top / silver bottom must still look right turned by 90 degrees |
-| textures | atlas entry `leaves` holds 4 textures plus 4 `_opaque` twins (disk) | one texture per face; hole texels carry a dark neighbour colour | equivalent (the opaque far render shows that colour) |
-| tint | foliage tint by biome (carried texture pre-tinted) | colours baked, never tinted | by design |
-| sound | `grass` (disk) | `grass` | same |
-| hardness / blast resistance | 0.2 / 0.2 (docs) | 0.2 / 0.2 | same |
-| flammable | 30 / 60 (docs, Java values) | 30 / 60, lava always | same |
-| light dampening | partial, 1 (docs) | 1 | same |
-| redstone conductor | no | no | same |
-| tool | hoe and shears; drops only with shears / silk touch (docs) | `is_hoe_item_destructible` only | gameplay difference, not visual |
-| states | `persistent_bit`, `update_bit` | `lothlorien:persistent` + script decay (reach 10, vanilla 4 in Bedrock) | by design (big trees) |
-| waterlogging, composting 30 % | yes (docs) | no | not done, not visual |
-| friction | engine default for leaves, not on disk | default | not compared |
-
-checklist is in `GRAPHICS_TASKS.md` ("Open problem: cutout flicker"). Suspects: thin cutout silhouettes plus mipmaps, transparent-pixel
-colour bleed, `alpha_test` mode.
-
-Bone meal on our flora (`scripts/bonemeal.js`, `flora_table.js`) grows Elanor, Niphredil and golden fern with4 nearby tries, Athelas with2; every try requires grass and air. It works outside the biome and uses guarded deferred consumption. The old repeated-event bug was owner-observed; repeated uses remain debounced. **Owner2026-10-19 removed all bone-meal growth/duplication for BOTH leaf litter and blossoms**, which are fallen material. The old claim that vanilla litter duplicates was from memory and was not game verification; it is superseded. See [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md) for guarded merging/dew, native5-second litter fuel, both30% compost, yellow blossom dye and expanded decorative support.
-
-## Phase 7 - Western Corn and Lembas
-
-Files: `blocks/western_corn.json`, `scripts/crop.js` (component + bone meal helpers), `scripts/crop_rules.js` (pure growth numbers,
-tested), `scripts/lembas.js`, items `western_corn_seeds`, `western_corn_grain`, `lembas_dough`, `lembas_cake`, `lembas_wrapped`,
-recipes `lembas_dough`, `lembas_wrapped`, `furnace_/smoker_lembas_cake`, loot tables `western_corn(.json|_mature.json)`, features
-`western_corn_*` + two feature rules. All art is placeholder (`GRAPHICS_TASKS.md` step 7).
-
-**The loop:** find wild corn in Lothlorien -> harvest (2026-10-10 wheat-counterpart update: mature one grain plus Binomial(3+Fortune, 8/15) seeds at standard I–III; young one seed; see `WESTERN_CORN_HARVEST.md`) -> plant seeds on farmland
-anywhere -> grow -> craft **dough** (2x2 shaped: 3 grain + 1 sugar -> 2 dough) -> smelt in furnace or smoker -> **Lembas cake**
-(6 nutrition, "good" saturation, 1.6 s, a bit better than bread) -> craft with one Mallorn leaves block (leaf above cake) ->
-**wrapped Lembas** (8 nutrition, "supernatural" saturation = 19.2, eaten in 1.0 s, lifts the Hunger effect through the item
-component `lothlorien:lembas`). Numbers are a first guess: the plan (Phase 7 test list) asks for a balance pass.
-
-- **Crop block:** state `lothlorien:growth` 0-7, `minecraft:geometry.cross`, stage texture chosen by 7 permutations, mature
-  loot table chosen by a permutation that overrides `minecraft:loot`. Seeds place only on farmland (`block_placer.use_on`);
-  the block's own `placement_filter` also allows grass/dirt/podzol so that **worldgen** can stand mature wild corn on grass. Random-tick growth
-  (`lothlorien:crop`, `growChance` in `crop_rules.js`) happens only when the soil is farmland: 1/3 per tick on wet farmland, 1/5 dry;
-  x0.6 at light 6-8, x0.3 at light 4-5, none below 4 (wheat stops below 9, so corn also grows slowly at night and in dim glades).
-  Random ticks reach a block about once a minute, so ripening takes roughly 20-35 minutes. Bone meal (`bonemeal.js`) adds 2-5 stages.
-- **Worldgen (native JSON):** `western_corn_patch_feature_rules` (own noise field, threshold 0.4, 1 in 2 chunks in a zone, 7 tries +-2) and a very
-  sparse baseline `western_corn_sparse_feature_rules` (1 chunk in 14, 3 tries +-1) so it is always findable. Both place growth 7. "Rare clearings /
-  deeper" cannot be expressed in JSON (no depth in worldgen); the noise zones approximate it. Plan for Phase 19: tune density; the design
-  says the mandatory item needs a non-trader fallback source, which this is.
-**Game-tested 2026-09-29 (user, 1.26.52): phase done.** Wild corn found in Lothlorien; the crop grows with bone meal; dough recipe and baking work; Lembas cake and wrapped Lembas can be eaten. Two Content Log fixes were needed: `saturation_modifier` must be a number (named values are format 1.10 only), and food needs `minecraft:use_animation: "eat"` (else it could not be eaten). **Still not observed** (the list below is otherwise superseded): natural growth speed and low-light behaviour on farmland, wet vs dry farmland, mature vs young harvest drops (permutation loot override), the Hunger lift of wrapped Lembas, and hunger/saturation balance (Phase 20).
-- **Was untested when written, check first:** (1) seeds plant on farmland and only there; (2) the stage textures change as it
-  grows (permutation material_instances); (3) breaking a ripe crop gives grain and seeds, a young one only a seed (a `minecraft:loot` override in a
-  permutation is unverified; fallback if not honoured: mature drops would be seeds only, so move the drop into a `onPlayerBreak` script);
-  (4) wild corn appears in Lothlorien in small clumps on grass; (5) random ticks grow the crop (also needs no `minecraft:random_ticking` component, like the
-  sapling: if it never grows, add that first); (6) `moisturized_amount` is readable and wet farmland is faster; (7) recipes appear in the recipe book and
-  the furnace/smoker accept dough; (8) `minecraft:use_modifiers` use_duration 1.0 for wrapped Lembas and `onConsume` firing; (9) creative groups
-  `itemGroup.name.seed`, `.crop`, `.miscFood`.
-- **Not done on purpose:** trampled farmland leaving the crop on dirt (it survives on dirt but stops growing); water-flow breaking; fortune.
-
-## Phase 8 - Athelas salve and Miruvor
-
-Files: items `athelas_salve`, `miruvor`; recipes `athelas_salve`, `miruvor`; `scripts/athelas.js` (components `lothlorien:salve`,
-`lothlorien:miruvor` applying effects in `onCompleteUse`; salve uses `onConsume`, like `lembas.js`). Accepted provision art: `GRAPHICS_TASKS.md`.
-**Status:** owner confirmed the cooldown fix in game and accepted it 2026-10-14
-(target 1.26.52). Cancelled attempts impose no cooldown; a completed sip applies
-effects, spends one sip and starts 600 ticks. The native category remains with
-automatic duration zero. Full verification and `tests/miruvor.mjs` pass.
-Commit: `fix(miruvor): start cooldown only after a completed sip`.
-
-- **Harvest:** unchanged. Athelas is a plant block; breaking it drops the Athelas item (default self-drop, no loot table). Raw Athelas is
-  *not* edible: the item already places the block, and one item cannot both place and be eaten. "Raw = weak healing" from the design is dropped
-  in favour of the salve.
-- **Salve:** 2 Athelas (vertical) over a glass bottle -> 1 salve. Drink 1.6 s, always drinkable, stack 16. Regeneration II 6 s (about 5 HP), lifts Poison. Group10 adds native glass-bottle return on consumption; crafting remainders remain pending.
-- **Miruvor (Skin):** a reusable skin, not a stack. `minecraft:durability` 4 = 4 sips, stack 1, 30 s cooldown between sips
-  (native category `lothlorien_miruvor`, explicitly started after completion), drink 2.0 s. Not food: `use_modifiers` + `use_animation: drink`, and the effects and
-  the durability loss run in `onCompleteUse` (`athelas.js`); the last sip removes the item. Per sip: instant health I (4 HP), Regeneration II 8 s
-  (about 6 HP), Speed I 30 s, lifts Poison. Recipe (3x3): `ESE / SHS / NLN` = 2 Elanor, 2 Niphredil, 3 salves (6 Athelas), 1 Mallorn nectar (Phase 14b; was a honey bottle), 1 leather. Pattern corrected from source2026-10-19; no recipe change.
-  Balance: one sip is a Healing II potion plus a run, so the skin is paid up front (about 10 items, 4 glass bottles' worth including nectar) and throttled by the cooldown.
-  **Verified in game (was unverified):** `onCompleteUse` firing for a non-food item with `use_modifiers`, the old cooldown starting on use (replaced 2026-10-14), durability bar showing, `durability.damage`
-  write-back via the mainhand slot. Preserve native completion authority; no fallback timer or unverified chargeable-hook dependency.
-- **Group10 owner approved2026-10-19:** [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md) records current event/live-skin validation, Creative sip preservation, category duplicate guard, effect coexistence and partial-error/cooldown handling, independent wrapped-Lembas Hunger cure/deed feedback, plain Lembas compost85 and both meats' soul-campfire cooking. Offline production tests pass; these changes and native container/consumer acceptance are not new game observations. Run the art-independent `tools/configure_food_remedy_interactions.py` post-pass (also invoked by `configure_support.py`) to preserve data policies. Food balance, ingredient-only nectar, no extra corn uses and no raw-swan debuff remain intentional.
-- Effects come from script because item-JSON food effects are not available in format 1.26.50 (not verified; scripts are the working pattern here).
-- **Test list:** items appear in the creative menu and recipe book (salve unlocks on picking up Athelas, Miruvor on getting a salve); drink
-  animation and can-drink at full hunger; effects apply; numbers feel expensive but not silly (Phase 20 balance pass).
-
-## Harmony (2026-10-07, built; unit tests only, NOT yet tested in game)
-
-Replaces Disharmony (the Phase 9 section below is superseded). Spec, numbers and in-game checks: `docs/design/harmony_rework_plan.md`.
-
-- **Files.** `scripts/harmony.js` (pure, tested: constants, `bandOf`, `DEED_COSTS`, `applyPenalty`, `recordDeed`, `recordDeath`, `tick`,
-  `statusText`, `BAND_ICONS`, `serialize`/`parse`), `scripts/harmony_game.js` (wiring), consumers `deer.js`/`deer_rules.js` (wariness per band),
-  `squirrel_rules.js`, `white_deer_rules.js`, `unicorn_rules.js` (refusals), `elven_warden.js` (fight hook). Commit `5587e94` (rules, consumers, Hated
-  wardens, texts); icons and docs came after it.
-- **Model.** One integer -60...+10 per player. +1 per 60 s inside the forest (to +10), +1 per 120 s outside but never above 0. A deed restarts the minute
-  timer; above 0 a cost counts double. Bands: Friend +10, Guest 0..9, Uneasy -1..-14, Shunned -15..-29, Hated -30..-60.
-- **Storage.** Dynamic property `lothlorien:harmony` = `{harmony, timer}`, **written only when the value changes** (the old code wrote every second). No
-  migration: the old `lothlorien:disharmony` property is ignored. Debug: `/scriptevent lothlorien:harmony [value]` shows or sets it.
-- **Deed classification** (`entityDie`, only `damageSource.damagingEntity` = player, projectiles included; counts when the player **or** the victim is inside
-  the forest): `inanimate` family nothing; `lothlorien:unicorn` 10; `lothlorien:white_deer` 6; `lothlorien:elven_warden` kill 6; `lothlorien:elf` kill 6; player 3; `monster` family 1; any other mob (animal) 3.
-  A warden *fight* costs 1 (first player hit after 60 s, `recordWardenFight` in `harmony_game.js`, called by `elven_warden.js`); an elf fight costs 1 the same way (`recordElfFight`, called by `elven_warden.js`, M1, not seen in game). Dying changes nothing except
-  dying inside the forest while Hated: set to -29.
-- **Hated tag.** The script keeps the player tag `lothlorien_hated` in step with the band (set on entering Hated, removed on leaving, checked on join);
-  `entities/elven_warden.json` `nearest_attackable_target` has an entry for players with `has_tag lothlorien_hated`. Not yet seen in game.
-- **Display.** Action bar, inside the forest only: `<icon> <band name>`, no number. Icons are a custom font glyph page `lothlorien_rp/font/glyph_E5.png`
-  (256x256, 16x16 cells, cell n = U+E500+n: friend, guest, uneasy, shunned, hated), generated by `tools/make_harmony_icons.py`; `BAND_ICONS` in `harmony.js`
-  holds the characters. **Documented, not yet verified in game: that an add-on glyph page renders in the action bar** (technique in the `bedrock-art` skill,
-  `references/font-glyphs.md`). Chat: one line per band change, a rate-limited hint (30 s) for a deed that keeps the band; texts are in `localization/catalog.json`.
-  The glossary entry `glossary.disharmony` is still the old word (changing the glossary would invalidate every translation).
-
-## Disharmony core (Phase 9, 2026-09-30) - SUPERSEDED by Harmony above (kept as history)
-
-- Rules in `scripts/disharmony.js` (pure, tested), wiring in `scripts/disharmony_game.js`; state per player in dynamic
-  property `lothlorien:disharmony` (`{points, calm, friend}`). `/scriptevent lothlorien:disharmony [points]` shows or sets it.
-- Decided with the user: a point decays after **3 min inside** the biome, **6 min outside** (KB said "inside only"; changed).
-  Status text is shown on the actionbar only inside the biome. **The actionbar belongs to this status** (and the dev debug readout):
-  one-off messages (white deer, Great Mallorn sprout) go to chat, or they overwrite the status (owner, 2026-09-30; a test checks it). A kill restarts the decay timer; **player death resets
-  points and all timers**. Friend = 10 minutes at 0 points inside; progress is paused outside (neither gained nor lost) and Friend lasts
-  outside (status just hidden); only a kill or a death loses it.
-- A kill counts when a player is `damageSource.damagingEntity` (projectile shooters included) and the victim stood in the biome.
-  It adds `killWeight(typeId)` points (`KILL_WEIGHTS` in `disharmony.js`): 1 for anything, **2 for the white deer** (owner, 2026-09-30:
-  a white hart counts as two deer; 0 points -> Disharmony II at once, each point still decays on its own timer).
-- Later phases read the state with `disharmonyOf(player)` + `levelFor` / `isFriend`.
-
-## Fauna spawning spike (Phase 10, 2026-09-30, built; v3 despawn game-tested OK)
-
-- Placeholder `lothlorien:test_critter` (gold rabbit model/texture, vanilla walk AI, has a spawn egg). Files: `entities/test_critter.json`,
-  `spawn_rules/test_critter.json`, RP `entity/test_critter.entity.json`. Delete or reuse for Phase 11.
-- Spawn rule: surface, grass, light 7-15, herd 1-2, `density_limit.surface 6`, `distance_filter` 12-44, biome tag `lothlorien` only.
-  `population_control: "animal"` is a fixed engine pool shared with cows, sheep, etc. (no custom pools exist): the critter
-  competes with vanilla animals for that cap. Watch whether Lórien animals crowd out (or are crowded out by) vanilla ones.
-- Despawn v2 (after game test 1): not persistent, `random_chance` 20, farther than 54 blocks from a player. v1 also had `inactivity_timer` 300 (copied from vanilla rabbit/sheep, which also require light < 8, i.e. they despawn only at night): a rabbit trapped in a hole, 100+ blocks away, never despawned. Suspects: (a) the inactivity timer never elapses for a mob that keeps trying to walk; (b) despawn filters only run while the entity ticks, i.e. inside simulation distance, so the working window is only "54 blocks .. simulation distance"; a mob left far away is saved with its chunk and is not evaluated. Retest v2 by standing ~58-62 blocks from a critter (simulation distance 4 = 64 blocks).
-  (Correction: the note that "no vanilla entity uses `despawn_from_distance`" was wrong; the search only covered the old base
-  `vanilla/` folder. Every current vanilla mob (1.26.x update packs) uses `{"despawn_from_distance": {}}`.)
-- Despawn v3 (2026-09-30): `{"despawn_from_distance": {}}`, the engine's standard rules. Per the docs, `filters` REPLACE those rules,
-  including the instant despawn at the simulation edge, so v1/v2 could never remove a critter left beyond simulation distance.
-  Standard rules (documented defaults): > 128 blocks from every player = removed at once; 32-128 = 1-in-800 roll after 30 s
-  inactive; at the simulation edge = removed at once. Retest: (a) leave a critter behind, go past simulation distance, come
-  back: it must be gone; (b) stand ~40-60 blocks away for a few minutes: numbers should thin out slowly; (c) name-tag one and
-  repeat (a): it must stay. Knowledge: `.claude/skills/bedrock-mobs/references/spawning.md`.
-  **Game-tested 2026-09-30 (1.26.52): works** - critters despawn, including ones spawned under v1/v2 (the rule comes from
-  the current pack when the chunk loads). Name-tagged critter stays (c): OK. Phase 10 spike done.
-- Instrument `/scriptevent lothlorien:critters [watch]` (counts): removed from the pack 2026-09-30, now `tools/dev_scripts/critter_watch.js` (git `dc1182e`).
-- Test in a NEW world (spawn rules need no new chunks, but the biome does): (1) stand in Lórien, `watch` on, count should climb to
-  the density limit and stay; (2) run 200+ blocks away and back several times, count near you must recover, "farther loaded" must
-  not grow unbounded; (3) leave 2-3 min far away, then return: old critters gone or few; (4) compare with vanilla animals in the
-  adjacent forest (same pool); (5) two players in different places if possible. Record numbers here.
-
-
-## Deer (Phase 11, 2026-09-30, built; static checks only, not yet tested in game)
-
-- Design sheet with every decision: `docs/mobs/deer.md`. Replaced the Phase 10 `test_critter` (files deleted; the
-  dev-only critters counter counted deer; it has since left the pack).
-- **Harmony avoidance without per-player filters** (was Disharmony until 2026-10-07): entity filters cannot read a player's Harmony (it is a
-  dynamic property). So the entity has one component group per wariness state (`lothlorien:state_calm|l1|l2|l3|friend|alarmed`),
-  each holding its own `behavior.avoid_mob_type` (flight distance, sneaking halves it) and, where allowed, `behavior.tempt`.
-  `scripts/deer.js` runs every 2 s: each player votes with their own state for the deer within 40 blocks, the most severe state among
-  players inside their own state's flight radius wins (none close enough: the nearest player), and the script fires `lothlorien:set_<state>` only when the `lothlorien:wariness` property differs. Trade-off: the avoid component still flees from every player at the winning state's distance.
-- **Alarm**: a player hurting (or killing) a deer fires `lothlorien:alarm` on every deer within 20 blocks: group `state_alarmed`
-  (flee 36, no luring) with a `minecraft:timer` of 20 s whose event `lothlorien:alarm_over` re-triggers the state stored in
-  the property. The script skips deer with `lothlorien:alarmed` so it never cuts an alarm short.
-- **Food**: Western Corn grain (`lothlorien:western_corn_grain`) is the deer's only food since 2026-09-30 (owner): tempt, `breed_items` and the
-  fawn's `ageable.feed_items`. Before it was Mallorn acorn or apple; the acorn now belongs to the white deer only. Seeds do not count.
-- **Goal priorities matter**: breed 2, tempt 3, avoid 4. Tempt must outrank avoid or a deer lured with corn would run away
-  the moment the player comes within flight distance (edge oscillation). Breeding must outrank both or it never completes
-  with the player standing next to the pair.
-- **Priority alone does not keep a lured deer (playtest 2026-09-30)**: deer walked up to a player holding corn, then fled even when
-  the player stood still. Tempt stops once the deer has arrived, and avoid (flight 10 blocks) takes over. Fix: in calm and Friend, the
-  player entries of `avoid_mob_type` also need `has_equipment` (subject other, domain hand, operator !=, the lure item), and
-  `can_get_scared` is false. Fed deer get `lothlorien:tame` -> `state_tame` (no flight from players): `set_calm`/`set_friend` are
-  sequences (reset, then add `state_calm`/`state_friend` or `state_tame` by the property); every state event removes `state_tame`.
-  `deer.js` tames on corn interaction and untames the one a player hurts; `white_deer.js` tames at guide start.
-  Tame and untame are entity events (`become_tame`, `untame`), not `setProperty`: a property set by script is invisible to
-  getProperty and event filters until the next tick, so `set_calm` in the same tick would still add `state_calm` (bug in the
-  first version, caught before a playtest). The state event is re-applied one tick later.
-- **Tame or leashed deer are kept** (owner, 2026-09-30: "mimic tamed animals"): group `lothlorien:kept` = `minecraft:persistent`.
-  The engine exempts vanilla tamed mobs (`minecraft:is_tamed`), not our property, so persistence is explicit. `untame` removes it
-  only when `is_leashed` is false; `unleashed` only when `lothlorien:tame` is false.
-- Sex and antlers: enum property `lothlorien:sex` (client synced) picked by `minecraft:entity_spawned` / `entity_born`; the render
-  controller shows bones `antler_*` only for `buck` adults (`part_visibility`). Loot differs by sex through two adult groups
-  (`adult_doe`, `adult_buck`), because loot-table conditions cannot test a custom property; babies have no loot group.
-- Venison is classified as meat with the item tag `minecraft:is_meat`. Audit2026-10-19: the tag alone does not prove wolf healing/breeding/growth; installed26.50 wolf consumers list explicit vanilla IDs. Native recognition remains open in `parity/BLOCKS_ITEMS.md`. **Not** `is_meat` inside `minecraft:food`: item format 1.26.50 rejects that field (game log, 2026-09-30: "Failed to parse field minecraft:food -> is_meat"), and the items did not load. One furnace recipe carries furnace, smoker, campfire; newest installed vanilla `furnace_beef` also has soul_campfire, proposed for the food group.
-- Animations are procedural Molang (no keyframes): walk = `query.modified_distance_moved` diagonal legs; run = gallop pairs with
-  weight `clamp((query.ground_speed - 3.5) / 2.5, 0, 1)`. **The 3.5 m/s threshold is a guess**; if the gallop never shows or shows
-  when strolling, tune it in `entity/deer.entity.json` (and `run` weight). Bone rotation convention used by the preview and the
-  model (from vanilla horse): bone x rotation positive = top leans towards -z (forward); z rotation is right-handed.
-- Model and textures come from `tools/make_deer.py` (see `GRAPHICS_TASKS.md` step 11). Sounds are placeholder vanilla horse sounds.
-
-### Deer test plan (new world not required for the entity; the biome needs new chunks)
-
-1. `/summon lothlorien:deer` several times: adult does (no antlers), bucks (antlers), a fawn now and then; spawn egg works; egg on an adult makes a fawn.
-2. Walk at a deer: it should flee at ~10 blocks (5 when sneaking). Hold Western Corn grain: it comes closer (acorn, apple and corn seeds do not lure); run at it: it gets scared.
-3. `/scriptevent lothlorien:harmony -40` then approach: flight at ~30 blocks (Hated), corn no longer lures. `... 0`, wait: back to 10. Friend (`... 10`, or 10 peaceful minutes inside the biome): you can walk up to ~3 blocks.
-4. Hit one deer (or shoot): the rest of the herd within 20 blocks bolts for ~20 s.
-5. Run animation: does the gallop show while fleeing? Does it show while strolling (it must not)? Adjust the 3.5 threshold.
-6. Kill a few: venison, leather, bucks sometimes antlers; cook venison in furnace, smoker, campfire; eat it.
-7. Breed two with Western Corn grain: fawn appears, follows parent, grows up in about 20 min (corn grain speeds it up), a buck fawn gets antlers when grown. Acorns do nothing to deer.
-8. Spawning: dev-only `critters watch` (copy `tools/dev_scripts/critter_watch.js` back in): herds of 2-4 appear in the biome, stay bounded after travelling (Phase 10 protocol); do they crowd cows/sheep?
-9. Look: side, front and back views of adult doe, buck and fawn; note what to redo for the graphics pass.
-
-## Deer antler block (Phase 11, 2026-09-30, built; static checks only, not yet seen in game)
-
-- `lothlorien:deer_antler` is a block; the item of the same name (bucks drop it) is its `block_placer`. Traits `placement_position`
-  (`minecraft:block_face`) and `placement_direction` (`minecraft:cardinal_direction`). **Top face = a shed antler lying on the
-  floor** (geometry `deer_antler_floor`, rotated by cardinal direction); **side face = antler trophy on a wooden plaque** (geometry
-  `deer_antler_wall`, back against the wall, rotated by the clicked face: north 0, west 90, south 180, east 270 as for stairs). No ceiling
-  placement. Whether the rotations are right (plaque really against the wall, front out) is the first thing to check in game.
-- **Placement (final form, 2026-09-30)**: one model, a big pair of mounted antlers filling the 16x16 face (same cube list for all three
-  placements; floor and ceiling versions are the wall model turned by coordinates in `tools/make_antler_block.py`). The user wanted it
-  placeable like an item frame: **any face of any block, ceiling too**. So the block has **no `minecraft:placement_filter`** (a filter's
-  `block_filter` can only name blocks or tags, and two earlier list/tag attempts were rejected as a strange workaround). The survival
-  check an item frame has comes from script, **event-driven like Starstone's surface devices (which also use script: `beforeOnPlayerPlace`
-  plus checks on break events; there is no data-only route)**: `scripts/antler.js` (`lothlorien:antler_support`, pure rule in
-  `antler_rules.js`). `beforeOnPlayerPlace` refuses an unreadable or air/liquid support; after `playerBreakBlock` and `blockExplode` the
-  six neighbours are checked and an antler whose support (opposite of its `minecraft:block_face`) is air or liquid is destroyed with `setblock
-  ... air destroy`. No polling tick (an earlier version used `minecraft:tick`). Not covered: pistons, water flow, other mods removing blocks.
-  Untested: whether the support offsets match the face semantics, and whether `destroy` drops the item.
-  Permutations: block_face `up` = floor (4 rotations by cardinal direction), `down` = ceiling (4), four wall faces (rotated by face).
-- **Natural drop only on ground blocks, never on litter**: the worldgen feature (`single_block_feature`) has its own support rule,
-  `may_attach_to: { bottom: [grass, dirt, coarse dirt, podzol, dirt with roots, moss, mud, stone], min_sides_must_attach: 1 }` and
-  `may_replace: [air]`. Leaf carpet or a blossom in the target cell blocks the placement (cell not air), and a cell above litter has litter
-  below (not in the list), so an antler can never float on litter. The price is that about a third of the floor is excluded, so the real
-  frequency is lower than the 1/16 per chunk on paper. (An earlier version replaced the litter; the user did not want antlers to look like they float.)
-- **Natural drop (owner decision 2026-10-24: solo antlers, no batches)**: rule `deer_antler_drop_feature_rules` (after surface pass,
-  biome tag, `scatter_chance` 1/16 per chunk) -> one placement attempt within about 3 blocks -> weighted pick of four facings,
-  all `up`. Reduced from three attempts after the owner found three neighbouring antlers. Each site now places at most one;
-  independent sites have no minimum-distance guarantee. Existing generated antlers remain; check the change in a new world.
-  Source regression checked for Bedrock 1.26.52; updated worldgen not yet verified in game. Was 1/64 (between giants, ~1/36, and lookout trees,
-  ~1/144); raised to 1/16 on 2026-10-02, see below; a test pins it. Real frequency will be lower (tries on leaves, water or off-biome fail): tune
-  the denominator after walking around.
-- **Worldgen verified in a save (2026-10-02, 1.26.5x, `tools/world_scan.py`)**: world "T" had 97 Lothlorien chunks saved and antlers in
-  2 of them (4 antlers: one at -97 106 -159, three at 10..11 98 -181..-184), all `up` on grass. So the feature works and the rate is
-  about 1/50 chunks as planned; the owner roamed several Lothloriens without seeing one, so on the floor under the canopy that is too rare to find.
-  **Owner decision: raised to 1/16 per chunk** (about one site per ~12 chunks); not yet seen in game.
-- **Chest**: `loot_tables/chests/mallorn_flet.json` pool 2 has the antler, `set_count 1`, weight 2 (of 19).
-- Verifier: a block that also mounts on walls is no longer classed as a "plant" (no composter / flower pot / bone-meal demands).
-- Selection boxes: floor 16x4.5x16, wall 16x16x4.5 against the back, ceiling 16x4.5x16 at the top.
-
-### Deer model changes after the first look (2026-09-30)
-
-- User feedback: neck too long, **antlers leaned inward and met in the middle**, legs of two thicknesses unclear, antlers should be bigger; texture liked.
-- **Rotation convention learned**: bone z rotation has the same negated handedness as x (see `bedrock-mobs/references/client.md`). Ears and antlers had
-  the wrong sign (ears too, although that was not noticed); all four flipped, and `preview_entity.py` corrected.
-- Neck 11 -> 8 units (head, ears and antlers moved down 3). Fawn neck 4 -> 3.
-- **Legs: one slim cube per leg (2x13x2 adult, 1.5x6x1.5 fawn) instead of a 3-wide thigh over a 2-wide cannon.** Rendered the three options in the
-  preview (`DEER_LEGS=slim|sturdy|step`): the stepped one looked like a sleeve, the 3-wide one was chunky for a deer, the slim one read best and is
-  fewer elements (style guide). The texture paints coat down to 45 % then pale lower leg and a dark hoof.
-- Antlers: each side now has a 9.5-unit beam, brow, bez and back tines, two upright crown prongs and two side tines (was a beam and three small bits).
-- Blockbench MCP tools were not available in this session (they load after a restart); these edits were made in `tools/make_deer.py`.
-
-### Fawn legs and whole-number box sizes (2026-09-30)
-
-- The fawn showed a hole in the upper legs. Two causes removed: its legs were 1.5 wide (a fractional box size puts box-UV faces between texels),
-  and the leg texture had a dithered dark notch at the coat/pale border that read as a hole on a 6-unit leg. Fawn legs are now 2x6x2, antler
-  cubes have whole-number sizes (positions can stay fractional), and `tools/make_deer.py` now **fails if any size is fractional or any face texel is unpainted**.
-
-### Spotted back, second pass (2026-09-30)
-
-- From photos: the spots run along the whole back up to the rump patch (they stopped at about 3/4 before), and the field is outlined in **light**,
-  not dark. Adult: rump patch 2 columns wide (was 3), no dark edge, back line and flank line in the lightest coat tone, one spot per column up to
-  column 12. Fawn: same idea on its 2 coat rows, sparser so it does not read as a checkerboard.
-
-### Game-log errors after the first full deploy (2026-09-30)
-
-- `minecraft:food -> is_meat ... not present in the Schema` (both venison items failed to load): removed the field, tag `minecraft:is_meat` stays. The
-  verifier now errors on it for item format 1.21+ (it only knew the old 1.10 field), and its compostable exemption for meat reads the tag.
-- `Geometry: model already has a locator armor_offset.default_neck that doesn't exactly match the one wanting to be added` for `geometry.lothlorien.deer`.
-  Not documented anywhere; cause not proven. Hypothesis: the engine derives an armor locator from a bone named `neck`, adds it twice with different
-  values, and keeps the first ("skipping new definition", so probably harmless). The bone is now `neck_joint` (geometry, baby geometry, animations) to
-  avoid the trigger. **That did not help** (same log text after the rename; the rename stays, it is harmless). New hypothesis: the error comes from the
-  render controller's `part_visibility` hiding the antler bones on does and fawns (the fawn geometry has no antlers and logged nothing). Antlers are now a
-  separate geometry `geometry.lothlorien.deer_buck` (adult + antlers) next to `deer` (no antlers) and `deer_baby`, all on the same texture layout; the render
-  controller picks by `query.property('lothlorien:sex')`. **If the error is still there, report it again.**
-
-### Grass under plants and covers (DONE, owner verified in game 1.26.52, 2026-10-01)
-
-All plants, covers and thin blocks have `"minecraft:light_dampening": 0` (the default 15 casts a full shadow).
-That is not enough under the canopy: Bedrock bug **MCPE-184249** (https://bugs-legacy.mojang.com/browse/MCPE-184249)
-turns grass under custom plants into dirt in low light anyway; vanilla plants are exempt. Background and failed
-attempts: `.claude/skills/bedrock-blocks/references/blocks.md` ("WORKAROUND: grass under custom plants").
-
-**WORKAROUND (owner's idea; remove when Mojang fixes the bug):** the grass may die, the plant hides it. Elanor,
-Niphredil, Athelas, golden fern, leaf carpet and blossoms have state `lothlorien:on_grass`; when true they draw a
-biome-tinted grass top 0.1 px above the ground (`*_grass` geometry twins, material `grass_overlay` = vanilla
-`grass_top`, `tint_method: grass`). The flowers use `geometry.lothlorien.plant_cross` (a copy of the built-in cross).
-Applied by `.claude/skills/bedrock-block-families/scripts/add_grass_overlay.py` (re-run after `gen_ground_cover.py`).
-`scripts/grass_overlay.js` sets the state on player placement when the block below is grass; worldgen features
-place it true; bone meal calls `markOnGrass`. Breaking a plant with the state turns the dirt below back into grass.
-Only place/break events, no timers (owner: no regularly running scripts). Deer and white deer also spawn on `dirt`.
-
-- Not covered: removal without a player (explosion, water, piston, fire) leaves dirt; slope edges show dirt sides.
-- Rejected on the way (owner, 2026-10-01): a 15-30 s tick restoring the grass (`afc6019`); test components
-  `precipitation_interactions none` / `replaceable` (`506c5da`) did not help.
-- **To switch off:** revert `defae73`, then remove `add_grass_overlay.py` and its notes in the skills.
-
-## White deer guidance (Phase 12, 2026-09-30, rebuilt with engine pathfinding; DONE: owner playtest 1.26.52 - guidance, gift and nut growth work)
-
-**Gift (owner, 2026-09-30, replaces leading to flet giants; static checks only):** leading to the nearest flet marker was no better
-than wandering (the 80-block, loaded-chunk search only found trees already in sight). Finding farther trees is not possible from
-script: the placed jigsaw instances live in the world save with no API; `/locate structure` finds them but `runCommand` returns only
-`successCount`; Script API 2.8.0 has no world seed (random_spread positions need it); `getBiome`/`getBlock` throw in unloaded
-chunks; and random_spread cannot be made a fixed grid (separation must be under half the spacing). So the deer now chooses the
-destination itself: `findGiftSpot` (white_deer.js) samples the surface biome on an 8-block grid within 96 blocks (loaded chunks
-only; other biomes = known border, rivers ignored), then 16 headings on rings 56..36 blocks (`GIFT_RINGS`, great_mallorn_rules.js;
-inside the default simulation distance of 4 chunks whatever the player's setting, owner's wish) with Lothlorien biome and standable
-ground (`groundFeet`). `pickGiftSpot`: farthest from any known border wins, ties within 8 blocks go to the longer walk. First version
-(same day) took the farthest ring with any spot inside and used depth only within it: the owner was led to the edge (a far edge spot
-beat a nearer deep one, and `depthAt` at a far spot probes 40 more blocks out, into unloaded chunks, so it reads low).
-Dynamic properties on the deer:
-`lothlorien:gift_spot` (JSON, kept until the gift is laid, so a broken guidance resumes with another acorn) and `lothlorien:gifted`.
-On arrival `giveGift` spawns the nut (lore set by script: JSON items have no lore) with totem particles. `ARRIVE_DIST` 3 (the spot is
-standable; `pickWaypoint`'s final ring now starts at radius 0). The marker block (`lothlorien:structure_marker`) and its search were removed
-the same day (owner): gone from the flet giants (rebuilt; plain giants byte-identical), the block file, lang and tests. Worlds generated
-before keep one buried block per flet giant, 4 below the ground inside the trunk, which now loads as an unknown block.
-The nut (`items/great_mallorn_nut.json`, `blocks/great_mallorn_sprout.json`, `scripts/great_mallorn.js` + `great_mallorn_rules.js`, art
-`tools/make_mallorn_seeds.py`): the sprout copies the sapling's states, soil filter and geometry; random tick stage 0 -> 1 -> grow. Owner decision 2026-10-16: selects only plain Great Mallorns (`roundplain` seeds 2, 3, 6, 8), with no platform, banners, chest or elves. Offline structure/regression checks target Bedrock 1.26.52 / API 2.8.0; changed selection awaits in-game confirmation. Growing
-reads the structure's filled cells once per session (`Structure.getBlockPermutation` over 40x54x40 in job steps), checks each against the
-world with `isNatural` (terrain, plants, leaves, unstripped logs, water; anything else = built = wait and tell players within 32 blocks,
-at most every 5 min), then `structureManager.place` with the sprout in trunk cell TRUNK_AT+1 at ground level (`treeOrigin`). The
-jigsaw anchor block in the bottom trunk cell is replaced by `mallorn_wood` after placing (script placement keeps jigsaw blocks). Any
-part of the space unloaded = try again on a later tick. Untested: growth time, the obstruction message, rotation (none: always north).
-
-History: the first build (commit `3426cec`) made the white deer a coat variant of `lothlorien:deer`, lured and offered with
-Western Corn grain, and walked it by script teleport steps. The owner rejected teleport-walking and asked for a separate
-animal offered a Mallorn acorn; this section describes the rebuild. Second owner round (2026-09-30, built the same day, static checks
-only): leashable with "a lead always wins", always an antlered hart with a sure antler drop, a kill costs Harmony (6 since 2026-10-07; 2 Disharmony points before), natural
-spawns thinned by depth, markers only in Mallorns with a chest (markers later removed, see Gift); ordinary deer eat only Western Corn grain.
-
-Files: BP `entities/white_deer.json`, `spawn_rules/white_deer.json`, `loot_tables/entities/white_deer.json`, `entities/guide_beacon.json`,
-`scripts/white_deer.js` (game wiring, gift spot and delivery), `scripts/white_deer_rules.js` (pure numbers, waypoints, leash rule, depth
-spawn table, tested), `scripts/deer.js` + `deer_rules.js` (wariness and alarm for both deer types), `scripts/harmony.js` (deed cost),
-`scripts/main.js` (`depthAt`), the gift files (see Gift). RP `entity/white_deer.entity.json`,
-`render_controllers/white_deer.render_controllers.json`, `entity/guide_beacon.entity.json`, `models/entity/guide_beacon.geo.json` (one zero-size
-cube: renders nothing but passes the verifier's "geometry has no cubes" check), `textures/entity/guide_beacon.png` (16x16, fully transparent),
-`textures/entity/deer/deer_white.png` (from `tools/make_deer.py`), `sounds.json`, `texts/en_US.lang`. Dev only (not shipped):
-`tools/dev_scripts/guide_goal/` (goal variants, switch script, experiment steps).
-
-**Decisions (change any of them if the owner wants otherwise):**
-
-- **Separate entity `lothlorien:white_deer`, "White Deer"**, spawn egg (drawn icon since 2026-10-25, `tools/make_spawn_eggs.py`; first colours white `#e3e7ee` / grey `#a6adbb`). A **loner**: the deer has no herd
-  goal in its entity (its groups come from the spawn rule's `herd` and its breeding), so the white deer simply has neither: spawn herd 1-1, no
-  `breedable`/`behavior.breed`/`offspring`, no baby group, no `ageable`/`follow_parent`, no `spawn_egg_interaction` (an egg on it makes no fawn),
-  not tamable. **Leashable** since the owner's second round (2026-09-30, "I would like lead to work on him"): `minecraft:leashable {}` in
-  `components`, as the vanilla cow (defaults: soft/hard/break distances, can be stolen); no `leashable_to` (nothing is tied to it). No balloon:
-  `minecraft:balloonable` is an Education Edition feature, leaving it out costs nothing. Own family `lothlorien_white_deer` (+ `mob`).
-- **Lead vs guidance (rule "a lead always wins")**: `offerRefusal` and `phase` in `white_deer_rules.js`, read in `white_deer.js` through
-  `getComponent("minecraft:leashable")?.isLeashed` (2.8.0 `EntityLeashableComponent.isLeashed`). A leashed white deer refuses the acorn
-  (acorn kept; checked again when the gift spot search finishes); leashing it while it guides ends the guidance on the next 5-tick check
-  (beacon removed, `guide_end` back to its wariness). Picked over "unleash it when guidance starts" (takes the player's lead away) and
-  "ignore the lead" (the follow goal and the lead would tug against each other).
-- **Always antlered (white hart)**: no `lothlorien:sex` property, no doe/buck groups or events; the client entity has one geometry,
-  `geometry.lothlorien.deer_buck`, and the render controller uses `Geometry.default`. One texture `deer_white.png` (the unused white fawn
-  texture was deleted and `make_deer.py` no longer writes it). The ordinary deer keeps its sexes. A white deer saved before this change
-  may keep an old `adult_*` group name the entity no longer defines (expected to be dropped by the engine; its loot now comes from `components`).
-- **Drops (consistent with `design/drops.md`, "Deer and white deer")**: own table `loot_tables/entities/white_deer.json` in `components`:
-  leather 0-2 and venison 1-3 exactly as a buck deer, plus **one deer antler every time, on any death** (no `killed_by_player`, no chance:
-  it cannot breed, so there is nothing to farm, and a hart killed by a wolf still leaves its antlers). XP 1-3 on a player kill.
-  Killing it costs **6 Harmony** (see Harmony).
-- **Spawn rule** (`spawn_rules/white_deer.json`): same surface, grass, light 7-15 and biome tag as the deer; **weight 3** (deer 10, whose herds
-  are 2-4), **herd 1** with herd `event` `lothlorien:spawn_natural`, `density_limit.surface` **1** (at most one white deer in a player's spawn
-  area), `distance_filter` 24-44 (a bit farther than the deer's 12, so it is not seen popping in), pool `animal`. Then thinned by depth (below).
-- **Spawn by depth** (owner, 2026-09-30: fewer near the edges, more in the heart). Spawn rules cannot read the mod's depth, so: the spawn
-  rule spawns everywhere in the biome; its herd event sets the entity property `lothlorien:natural`; `white_deer.js` listens to
-  `world.afterEvents.entitySpawn` (cause not `Loaded`), one tick later reads the flag, clears it, estimates `depth.js` at the deer's own spot
-  (the same ring probe as the player readout, `depthAt` from `main.js`, about 80 probes, only for this rare mob) and keeps it with
-  `SPAWN_KEEP_BY_DEPTH` = outside 0, edge 0.15, inner 0.5, heart 1, else `entity.remove()`. **One place to tune**: `SPAWN_WEIGHT` and
-  `SPAWN_KEEP_BY_DEPTH` in `white_deer_rules.js` (a test keeps `SPAWN_WEIGHT` equal to the spawn rule's weight).
-  Expected frequency, before the density limit: weight 3 against the deer's 10 x ~3 per herd = about 1 white deer per 10 deer spawned in
-  the heart, 1 per 20 in the inner forest, 1 per ~67 at the edge (was 1 per 30 everywhere). With `density_limit` 1 you meet at most one at a
-  time; in the heart one should usually show up within a visit of some minutes. Unverified in game: tune after walking around.
-  Options weighed: (a) spawn-rule conditions that correlate with depth (none exist: no biome-distance filter, height does not follow depth);
-  (b) script-driven spawning near players (full control, but bypasses the engine's cap, light and placement rules and needs its own counting);
-  (c) **chosen**: data-driven spawn + script filter, cheap (runs only when a white deer spawns) and safe: `/summon` and the spawn egg do not
-  fire the herd event, so they are never filtered, and if the herd event does not reach the entity the filter simply never fires (base rate
-  everywhere: fails open). The herd `event` was preferred over `minecraft:permute_type` with `<event>` because vanilla relies on it for
-  natural spawns (fox babies, horse colours). Test hook: `/summon lothlorien:white_deer ~ ~ ~ ~ ~ lothlorien:spawn_natural` goes through the filter.
-  Residual effects: a removed spawn was a spawn attempt used up (that cycle spawns nothing else there); the pool and density limit count
-  live entities, so the cap is free again at once; `remove()` drops no loot, gives no XP and is not a death (no Harmony cost, no alarm). The
-  deer exists for one tick at 24-44 blocks (not normally seen). Assumptions: that the herd event replaces or runs along with
-  `minecraft:entity_spawned` (both paths end in `set_calm`, so either works), and that the flag is readable one tick after the spawn event.
-- **Wariness**: the same state groups and flight distances as the deer (`calm` 10 / 5 sneaking ... `l3` 30, alarmed 36 for 20 s), driven by
-  `deer.js` (`DEER_TYPES` in `deer_rules.js`). Only the **Mallorn acorn** lures it (calm and Friend only; the held acorn stops its flight, see "Priority alone does not keep a lured deer"); apples do not.
-  Hurting or killing it alarms deer within 20 blocks, and hurting a deer nearby alarms it too (it is shy, not deaf); an alarm ends a guidance.
-- **Ordinary deer**: back to its pre-`3426cec` entity, client entity and render controller (no coat, no guiding state); since 2026-09-30 its
-  only food is Western Corn grain (see Deer).
-
-**The offer**: right-click an adult white deer holding a **Mallorn acorn** (`lothlorien:mallorn_acorn`) as a **Friend of Lothlórien** (owner rule, 2026-10-02: gifts
-need Friend; before that Disharmony 0 was enough). Harmony below 0: "shies from your restless spirit"; calm but not yet Friend: "watches you,
-but does not trust you yet" (acorn kept). The entity has a `minecraft:interact` entry for a hand holding the acorn
-(`use_item false`, text "Offer Acorn"): the 2.8.0 declarations say `playerInteractWithEntity` fires after a *successful* interaction, so
-without an interaction on the entity the script might never hear of it (**unverified** which is needed). The script then picks the gift spot
-(see Gift); the acorn is consumed (survival) **only when guidance starts** (spot found, first waypoint found, beacon spawned).
-Corn grain does nothing to the white deer (it is the ordinary deer's food).
-
-- **Target**: the gift spot (see Gift at the top of this section). Until 2026-09-30 it was the nearest hidden marker block in a flet giant
-  within 80 blocks (loaded chunks, `getBlocks` over chunk columns in a job); removed with the markers.
-
-**Walking = engine pathfinding towards a moving helper (design from "Pathfinding options / decision" below):**
-
-- `lothlorien:guide_beacon`: no gravity, no collision, not pushable (no `pushable_by_*`; `minecraft:pushable` made the entity fail to load in format 1.26.50, game log 2026-09-30), no damage (`damage_sensor` all), fire immune, knockback resistance 1,
-  collision box 0.1, not spawnable, summonable, no spawn egg; `minecraft:timer` 330 s -> event `lothlorien:expire` -> `minecraft:instant_despawn`
-  (safety net: a session lasts at most 300 s). Family `lothlorien_guide_beacon`.
-- **One beacon per session**, `dimension.spawnEntity` at the first waypoint. `guide_start` puts the deer in `state_guiding`:
-  **`minecraft:behavior.follow_target_leader`** priority 2 (panic 1 stays above, avoid 4 below; no tempt), `leader_filters` is_family
-  `lothlorien_guide_beacon`, `follow_distance 1`, `within_radius 24`, `speed_multiplier 1.0`, `always_look_for_leader true`,
-  `search_cooldown 5`; plus the wolf/monster avoid goal. The deer's stroll (6) and look goals are left alone.
-- **The goal choice lives in one place**: `state_guiding` in `entities/white_deer.json`. `tools/dev_scripts/guide_goal/switch_guide_goal.mjs`
-  rewrites it to `follow_mob` or `target` (see "How to test and how to switch goals" below); `tests/run.mjs` fails if the group holds anything
-  but one of the three prepared variants, and names the shipped one.
-- Script, every **5 ticks** (`GUIDE_TICKS`): deer within 3 blocks of the waypoint -> next waypoint (`pickWaypoint`: 14 blocks ahead, shorter
-  down to 8, headings 0, +-30, +-60, +-90 degrees, last-turned side first); **no progress towards the waypoint for 5 s** -> skip that heading and
-  pick another (all failed: start the round again); **player lags** (more than 12 blocks) -> the beacon moves to the deer's feet, so it stands
-  and waits, and goes back to the waypoint when the player catches up; **final hop** = the spot itself or the nearest standable column
-  within 5 blocks of it, reached = arrived. A lost beacon (unloaded, `/kill`) is respawned.
-- Standable column (`stand()` in `white_deer.js`): a downward ray from 6 above to 6 below the deer's feet; leaves are looked through (canopy
-  over the forest floor), liquid and any `*log*`/`*_wood` block reject the column, passable plants are ignored (ray default), and an upward
-  ray needs 1.9 blocks of headroom. The deer itself is **never teleported**.
-- **Session end** (arrived, gave up, player gone, hurt): the beacon is removed, `guide_end` restores the stored wariness via `alarm_over`.
-  Endings: player beyond 48 blocks, player loses Harmony (a deed), 30 s without getting a block closer to the spot (counts as arrived
-  within 14 blocks), 5 minutes, arrived within 3 blocks (horizontal) of the spot or at the final waypoint. Arrived = the nut is laid.
-- **Stray beacons**: sessions are not saved, so on world load and then every 100 ticks every `guide_beacon` without a live session is removed
-  (all three dimensions, loaded chunks). Exception for the experiment: a beacon **named or tagged `guide_beacon`** is left alone (its own timer
-  removes it). A white deer still in `state_guiding` after a reload is released by `deer.js` within 2 s of a player being near.
-- Two white deer guiding close together may follow each other's beacon: accepted by the owner (no per-area limit).
-- **Not done**: sounds on the way and at arrival (totem particles only).
-
-**Unverified assumptions (the experiment settles the first three):** (1) that `follow_target_leader` accepts a non-mob helper entity (no
-movement, no AI) as leader at all; the docs only say "entities passing `leader_filters`"; (2) whether its leader search range is `within_radius`
-(24) or something shorter, and whether it re-paths at once when the leader is teleported (`always_look_for_leader`, `search_cooldown 5`); (3) that
-`follow_distance 1` makes it stop near a beacon at its feet (the "wait") rather than fidget; (4) that the beacon is truly invisible: zero-size cube
-and transparent texture, but it may still cast a small shadow or show a hit box outline; (5) whether `playerInteractWithEntity` needs the
-`minecraft:interact` entry, and whether the acorn (a block placer item) places a sapling instead when you miss the deer; (6) all the old items:
-probe rays under custom ground cover, placeholder white texture; (7) second round: that the
-spawn rule's herd `event` reaches a herd of one (skip count 0) and the flag is set one tick later, that `entitySpawn` does not report a
-natural spawn as `Loaded`, that `isLeashed` turns true as soon as a lead attaches, and that the `follow_target_leader` goal does not fight a lead
-in the 5 ticks before the guidance ends.
-
-### How to test and how to switch goals if the first does not work
-
-1. **Goal experiment first** (about 10 minutes, old world fine): `tools/dev_scripts/guide_goal/README.md` has the exact steps. In short:
-   `node mods/lothlorien/tools/dev_scripts/guide_goal/switch_guide_goal.mjs --experiment`, `.\mods deploy lothlorien --quick`, then in game
-   `/summon lothlorien:white_deer`, an armor stand tagged `guide_beacon` 12 blocks away, `/event entity @e[type=lothlorien:white_deer,c=1]
-   lothlorien:test_leader` (then `test_follow_mob`, `test_target`, `test_off`), and the same with a named, tagged real `lothlorien:guide_beacon`.
-   Afterwards `--clean` (tests fail while the test groups are in the file; the quick pre-commit verify would not stop them).
-2. **If follow_target_leader does not follow**: `node mods/lothlorien/tools/dev_scripts/guide_goal/switch_guide_goal.mjs follow_mob` (or `target`),
-   change the line `assert.equal(variant, "leader", ...)` in `tests/run.mjs`, `.\mods deploy lothlorien`, commit. If no variant follows the real
-   beacon but one follows the armor stand, the helper must be more mob-like: give `guide_beacon.json` a `minecraft:movement` 0,
-   `navigation.walk` and `movement.basic` and retest (not done yet, to keep it inert).
-3. If the deer wanders at a waypoint instead of standing: override its stroll inside `state_guiding` with
-   `"minecraft:behavior.random_stroll": {"priority": 6, "interval": 1000000}` (a group component of the same name replaces the base one while the
-   group is on; not tested for this deer).
-4. Then the full test plan below.
-
-### Pathfinding options / decision (2026-09-30, research only, nothing run in game)
-
-The owner rejected teleport-walking (jerky, fights `random_stroll`, animation doubtful). Full comparison, verified component
-names and the experiment: `.claude/skills/bedrock-mobs/references/pathfinding.md`.
-
-- **Dolphins do not help**: `behavior.find_underwater_treasure` is hard-wired to vanilla underwater ruins/shipwrecks
-  (with `minecraft:bribeable` for the feeding); it cannot target a custom spot. Script API 2.8.0 has no way to set a navigation target;
-  `home`/`go_home` (spawn point), POI/dweller/village goals cannot be pointed at a custom spot.
-- **Chosen design: waypoint beacon** (built 2026-09-30, see above). Fallbacks in order: `follow_mob` with the same filter, then
-  `nearest_attackable_target` + `move_towards_target`, ready in `tools/dev_scripts/guide_goal/`.
-
-### White deer test plan (nothing here has been run in game; natural spawns need a NEW world)
-
-Leave and re-enter the world to load the entity and script changes. `/summon` works in an old world: steps 1, 3, 3b and 4-7 (and the
-`spawn_natural` filter check in step 2) do not need a new world; step 2's natural spawns (fresh chunks) do.
-
-1. `/summon lothlorien:white_deer` a few times: white coat, pale pink ears, nose and hooves; **every one has antlers**; never a fawn. Spawn egg
-   "White Deer Spawn Egg" in the creative menu; using an egg on a white deer does nothing special. Content log clean (watch for
-   `guide_beacon` geometry or render errors, and for unknown-group messages from white deer saved before this change).
-   **Lead**: a lead attaches and it follows on the lead; while leashed, offer an acorn: "will not lead while it is held on a lead", acorn kept.
-2. NEW world, natural spawns: walk the biome; white deer appear alone, never in herds; noticeably more in the heart than near the edges
-   (`/scriptevent lothlorien:debug` shows the depth). Count deer and white deer per depth level over a while and note the numbers here.
-   Filter check in any world: `/summon lothlorien:white_deer ~ ~ ~ ~ ~ lothlorien:spawn_natural` at the edge should vanish about 85 times in
-   100 (heart: never; outside the biome: always); plain `/summon` and the egg always stay.
-3. `/give @s lothlorien:mallorn_acorn 16`; as a Guest or Friend (Harmony 0 or more) hold it: a calm white deer comes to you (tempt), an apple or corn does not lure it.
-   Ordinary deer: only Western Corn grain lures them (acorn, apple and seeds do not); two deer fed corn grain breed.
-3b. Kill a white deer (survival, inside the biome, Harmony 0): always one deer antler plus leather 0-2 and venison 1-3; Harmony drops to -6
-   (`/scriptevent lothlorien:harmony` shows it; chat says the forest frowns). A white deer killed by `/kill` or a wolf also drops the antler.
-4. No spot: right-click an adult white deer with the acorn outside Lothlorien, far from its edge: "has nowhere to lead you from here",
-   acorn NOT consumed. The hover text says "Offer Acorn".
-5. Gift walk, inside the biome: offer the acorn: "takes the acorn ... Follow it", acorn consumed (survival only). **Watch the walk**: real
-   walk animation, jumps up blocks, goes round trees and pits, avoids water, no sliding or teleporting; it moves in hops, stops and waits
-   when you are more than 12 blocks behind, carries on when you catch up, and after about 36-56 blocks stops with "bows its head ... a Great
-   Mallorn nut"; the nut lies there with totem particles, glint and lore. No visible beacon, no shadow travelling ahead of it. Offer another
-   acorn: "has given its gift already", acorn kept. Break a walk off (walk away) and offer again: it resumes towards the same spot.
-6. Refusals and endings: `/scriptevent lothlorien:harmony -1`, offer: "shies from your restless spirit". Start a guidance, then
-   a deed (or `... -3`) or hit the deer: it stops (hit: deer nearby bolt). Walk 50 blocks away: it gives up. Put a lead on
-   it mid-guidance: "is held on a lead and stops leading you", it stays on the lead. After each ending
-   `/testfor @e[type=lothlorien:guide_beacon]` should find nothing within about 5 s.
-7. Save and reload mid-guidance: the deer returns to normal wariness within about 2 s of you being near; no beacon left
-   (`/testfor @e[type=lothlorien:guide_beacon]`).
-8. Great Mallorn nut (any world; `/give @s lothlorien:great_mallorn_nut` or creative Nature tab): planting on grass shows the space
-   warning; bone meal: "will not be hurried", no bone meal used. Next to a small build (planks within 20 blocks): chat names the block in
-   the way (at most every 5 min). In the open, `/gamerule randomtickspeed 100` for a moment: a plain Great Mallorn (no platform, banners, chest or elves)
-   grows with the trunk on the sprout at ground level; no jigsaw block left at the bottom of the trunk. Break a sprout: the nut drops.
-   A creeper blast next to a sprout leaves it standing.
-9. Two players: only the offering player is followed; a second player with low Harmony nearby does not change the guidance. Two white deer
-   guiding close together may swap beacons (accepted).
-10. Performance: the gift spot search and the tree's space check must not spike a tick (job-sliced).
-
-## Phase 14b - Mallorn nectar, morning dew, Star canopy (2026-10-02; static checks + unit tests only, NOT yet seen in game)
-
-- **Nectar bloom** `lothlorien:nectar_bloom` (`scripts/nectar.js`, rules `nectar_rules.js`): state `lothlorien:nectar` 0-3, four crossed-plane
-  textures (`tools/make_nectar_bloom.py` writes block, item, loot and art). Hangs under a block via `placement_filter` (`allowed_faces: ["down"]`,
-  filter = Mallorn leaves, logs, planks). Random tick, 1/7 per stage, only with Mallorn leaves (green or golden) directly above. Glass bottle on a
-  full bloom -> `lothlorien:mallorn_nectar`, bloom back to 0. Owner clarification 2026-10-11: shears or Silk Touch collect one bloom; native explosion decay follows the count. Worldgen: `nectar_bloom_scatter_feature`
-  (8 tries, y +2..18, gaussian x/z +-4) places `nectar_bloom_full_feature` (stage 3, `may_attach_to.top` = leaves) at the end of
-  `select_mallorn_tree_with_litter_feature`, after blossoms and litter. Sapling-grown trees get 0-2 dry blooms (`trees.js`, `treeBloomCount`).
-- **Morning dew** (`scripts/dew.js`, `dew_rules.js`): bool state `lothlorien:dew` on leaf litter and blossoms, component `lothlorien:dew_cover`
-  (random tick). Window = time of day 23000..3000 with share f = 0 at 23000, 1 at 3000 (`dawnShare`); per random tick a dry cover turns dewy with `DEW_APPEAR * (1 - f)` (litter 1/8, blossom 1/4) if Mallorn leaves are within
-  40 blocks above (checked only after the dice succeed), a dewy one dries with `1/2 * f`; outside the window any random tick dries it (chance 1), so leftover dew vanishes during the day. A visible dewy patch is always collectable (no time check on use: the owner wants no empty outcome). Reason (owner report: 21 bottles and collecting at 5079): dew lingered until its next random tick. Expected about 10 bottles for an eager player over a whole window, about 5 casual, 8 drops per bottle. Not yet seen in game. Dewy cover swaps its `*` material to `<name>_dew` (a permutation,
-  `tools/make_dew_textures.py`). Glass bottle on dewy cover -> `lothlorien:dew_bottle` (durability 8, damage = missing drops, new = 1 drop); each
-  further use adds a drop; at 8 it becomes `lothlorien:morning_dew`. Bottle icons: `tools/make_nectar_dew.py`.
-- **Star canopy** `lothlorien:star_canopy` (`tools/make_star_canopy.py`): full block, `light_emission` 6, 6-frame blended flipbook
-  (`textures/flipbook_textures.json`, `ticks_per_frame` 40), emissive MERS strip. Recipe LLL/DDD/TTT = 3 Mallorn leaves, 3 Bottles of morning dew,
-  3 deepslate tiles -> 9. Unknown until seen: whether flipbook + MERS strip work on a custom block.
-- Miruvor now takes Mallorn nectar. Blossoms are placed before leaf litter in the tree aggregate.
-- Not done / open: trader honey trades (settlements), tick-rate measurement, tuning, in-game test of all of the above.
-
-## Phase 15 - swan and ground squirrel (built and tried in game 2026-10-02: squirrel and deer work very well, swan floats with an occasional dip, left as is)
-
-Design sheets: `docs/mobs/swan.md`, `docs/mobs/squirrel.md`. What to know when touching them:
-
-- **Shared wariness.** Swan and squirrel carry the deer's state groups, events (`lothlorien:set_<state>`, `alarm`, `alarm_over`) and
-  properties (`wariness`, `alarmed`), so `deer.js` drives all four (`WARY_TYPES` in `deer_rules.js`); a test pins the flight radii of
-  both new entities to `FLIGHT_RADIUS`. Alarms cross species: hurting a deer alarms the swans and squirrels within 20 blocks.
-- **Swan spawns in rivers.** Rivers are separate biomes; the swan's spawn filter is `any_of` the `lothlorien` or `river` tag and
-  `swan.js` removes natural spawns with no Lothlorien biome within 48 blocks (25 biome samples, once per spawn).
-  Owner2026-10-20 requires a positive-readable forest sample; missing-only data does not authorize a natural swan.
-- **Squirrel errand = white deer machinery.** `squirrel.js` drives the engine's `follow_target_leader` with a moved
-  `guide_beacon` (away point, dig, onto the player); `white_deer.js` exports `stand` and `addBeaconSource` for it
-  (the stray-beacon sweep would otherwise delete the squirrel's beacon). Acceptance consumes the stack synchronously;
-  the unchanged four-entry gift table is rolled with LootTableManager and every stack is spawned at the squirrel's feet
-  (player within 2.5 blocks horizontally, 2 vertically). Cooldown is set at delivery; particles/deeds are optional.
-- **Owner2026-10-20 domestication:** outside/leashed squirrel feeding adds kept; inside wild healing/errands do not.
-  Added native squirrel powder-snow walking/lead anchor and swan fall immunity, retaining air+water breathing.
-  Decisions, limits and in-game checks for all creatures: [parity/CREATURES.md](parity/CREATURES.md).
-- **Unicorn (2026-10-20/23):** swimming data equals the installed 1.26.50 horse; bonded healing is native `healable`
-  (Elanor 2 HP, `force_use:false`); Friend-only lure is `follow_target_leader` filtered by the Friend tag + Elanor,
-  negated in the flight exemption, and the existing Harmony 20-tick update syncs the tag; owner-only naming, no
-  equipment; the owner is told when the bonded unicorn dies.
-- **Gifts need Friend of Lothlorien** (owner rule 2026-10-02): the squirrel's offer and, since the same day, the white deer's
-  (`offerRefusal` in both `*_rules.js`). Luring and taming stay open to calm players.
-- **Verified in game 2026-10-02**: the squirrel errand (beacon following, `/loot spawn` from script) and the Friend gating work. The swan floats
-  with the chicken's float goal but dips now and then (the turtle's `navigation.generic` + `random_swim` dived like a fish, `minecraft:buoyant` sank it).
-  River spawning of swans was not specifically checked.
-
-## Phase 15 - unicorn (built and tried in game 2026-10-02, owner accepted)
-
-Design sheet: `docs/mobs/unicorn.md`. What to know when touching it:
-
-- **Generated.** `tools/make_unicorn.py` writes the BP entity (the state groups are repetitive) and all client files; edit the generator, not the output.
-  It reads the vanilla horse geometry, animations and white-horse texture from `reference/vanilla/current`.
-- **Shares the deer's wariness** (`WARY_TYPES`, same events `set_<state>`, `alarm`, `alarm_over`; `deer.js` drives it). Its `calm` group flees like `l1`
-  and only `friend` has the Elanor lure, so a test pins calm to the `l1` radius and the rest to `FLIGHT_RADIUS`.
-- **Bond = three Elanor offers** (`unicorn.js`): `lothlorien:trust` (entity property), `lothlorien:last_offer` and `lothlorien:owner` (dynamic properties).
-  `lothlorien:become_tame` adds `lothlorien:bonded` (rideable, jump, persistent), a separate group that the state events never remove; `bond()` re-applies the
-  wariness event a tick later so `state_tame` replaces the player flight.
-- **No `minecraft:tameable`/`tamemount`**: both would consume items or tame by their own rules without the Friend check.
-
-## Phase 17b - Elven rope (2026-10-02, commit 903a520; climbing and icon accepted by the owner in game, 1.26.52)
-
-Owner's design: 1 Bottle of morning dew over 1 golden fern -> 1 rope (shaped recipe, the workspace forbids shapeless). Item
-`lothlorien:elven_rope` (stack 64, item component `lothlorien:rope`, `onUseOn`); block `lothlorien:elven_rope`, state
-`lothlorien:face` north/south/east/west = the clicked face (the wall is on the opposite side), flat on the wall like a ladder,
-dark grey, a knot every 8 units. Art: `tools/make_elven_rope.py`.
-- **Placing** (`scripts/elven_rope.js`, pure rules in `elven_rope_rules.js`): on a side face, one piece per item in the stack: down
-  from the clicked cell first, then up. Top/bottom faces do nothing. Using the rope on any piece extends that rope: down from its
-  bottom, then up from its top. A piece needs air and a wall behind it.
-- **Breaking any piece breaks the whole rope**: every piece drops as one stack at the broken piece (no rain of ropes), nothing in
-  creative. The block has no loot table on purpose. Losing the wall of any piece (a block broken by a player or an explosion next to
-  it; not pistons or other causes) drops the whole rope as well.
-- **WORKAROUND - climbing is by script** (no data-driven climbable for a custom block in 1.26.52; listed in the workspace's
-  `docs/workarounds.md`, re-check after every game update and replace with the real feature when it exists), every tick for a player standing in a rope cell
-  (`startRopeClimbing`). **Final, accepted by the owner:**
-  - Up (Jump or forward): levitation only. `levitationStep` picks the level each tick from the levitation formula (`LEVITATION`;
-    level n settles at ~0.91 n blocks/s after ~5 ticks) to reach `CLIMB.jumpSpeed` / `forwardSpeed` = 4 at once and hold it.
-  - Down (no input): slow falling, plus one tick of levitation I whenever the last tick fell faster than `CLIMB.downSpeed` = 4
-    (`brakes`). Lands at about 3.3 blocks/s; the levitation icon flickers while sliding. Owner: both acceptable.
-  - Targets come from the owner's measurements of a vanilla ladder (speeds up to about 4 both ways), taken with
-    `tools/dev_scripts/ladder_speed.js`.
-  - Failed, do not retry: teleporting a step per tick (jumpy, blocks going down), steering velocity with `applyKnockback`,
-    slow falling while climbing up (only added an icon), slow falling alone going down (passes 7 blocks/s).
-  - Trap hit: `brakes` was once not imported; the tick's try/catch hid the ReferenceError and the brake silently did nothing.
-    A test now checks the imports.
-  - **HUD icons** cannot be hidden per effect (`showParticles: false` does not do it; one hardcoded `mob_effects_renderer`).
-    Options weighed: hide the whole strip while on a rope via a JSON UI override and a title marker (fragile, untried), replace the
-    vanilla icon textures (changes potions too, rejected by the owner). Owner kept the icons.
-- Art: the placed rope has one knot per block (owner liked it). The final item icon is a short rope with one
-  overhand knot, a one-pixel hole and dark-grey edge pixels. The owner accepted this version on 2026-10-03;
-  earlier coiled-hank and loop studies are retained in git history.
-- The two lookout giants (`round_05`, `round_07`) use the rope instead of the vanilla ladder (`tools/flet_mallorn.mjs`, `B.rope`);
-  structures rebuilt with `node tools/build_structures.mjs`. Existing worlds keep their ladders, new chunks get ropes.
-
-## Phase 17 - Elven lighting (2026-10-03)
-
-Generator: `tools/make_elven_lamps.py`. Owner accepted the silver Elven Lantern design and preferred its compact
-hand-drawn inventory icon on 2026-10-03. The lantern has a small foot, open four-sided amber chamber framed
-by real silver-wood arches, a broad stepped canopy, and a silver collar beneath its gold finial. It can stand or
-hang by the finial. Its previous lean/vine studies and the temporary Arch Study item are retired; git retains them.
-The original two-sided missing-glow problem came from the older core's face UVs. The current core paints every
-outward side. The lowest foot layer was removed at the owner's request; this revision awaits an in-game check.
-
-- Silver lantern: `lothlorien:elven_lantern`, light 14, crafted from two Mallorn trapdoors and a Bottle of Fireflies.
-- Golden lantern: `lothlorien:elven_lantern_heartwood`, the same geometry with the established stripped Mallorn
-  silver-to-heartwood palette mapping (`make_mallorn_wood.to_gold`), silver collar and finial, two heartwood
-  trapdoors in its recipe. Generated and previewed 2026-10-03; in-game verdict pending.
-- Elven chandelier: light 15, ceiling only. Antler arms and five hanging lights; crafted from four deer antlers,
-  Elven rope and the silver lantern. Owner accepted the placed model in game 2026-10-02. Icon redrawn at inventory
-  scale 2026-10-03; in-game verdict pending.
-- Firefly jar: light 11, floor only, blend glass, moss and animated flies. Owner accepted the placed model in game
-  2026-10-02. Icon redrawn with a compact glass rim and two flies 2026-10-03; in-game verdict pending.
-- All four lamp items use `items` / `itemGroup.name.lanterns`. The animated glow and fly tiles use MERS maps.
-
-Static verification and deployment do not prove rendering or Creative menu placement. Check the golden palette,
-icon scale and all lamp groups in game, plus the jar's glass sorting and the lantern's four-sided glow.
-
-## Elven village (jigsaw, accepted 2026-10-09)
-
-Final design, owner decisions (quoted), verified-vs-sim status, commit history, toolkit and next steps: `docs/design/lothlorien_jigsaw_settlement.md`. Engine notes:
-`.claude/skills/bedrock-modding/references/10-jigsaw-pieces.md`. Rebuild everything (pieces, pools, structure; deletes the old ones first): `node tools/build_village.mjs`, then
-`.\mods verify lothlorien`. The generator output is byte-stable (checked 2026-10-09 when the dog-leg path was removed).
-
-**Connector standard** (every piece obeys it; generator and `tests/run.mjs` check it):
-- One `minecraft:jigsaw` per connection in the deck layer on the outer face of the piece box, in the middle of a 3-wide walk opening, facing outward. `name` = `lothlorien:village_deck`
-  (upper-level connectors of towers: `village_deck_hi`, parent only), `target` = `village_deck`, joint `aligned`, `final_state` planks.
-- Cross-section at the connector: deck under 5 cells, walk cells -1..+1 with 3 air above, rails (`RAIL`, now `lothlorien:mallorn_fence`) at +-2. Platform connectors are rim connectors on a box face at an
-  offset 0..+-3. Rails are straight runs and square corners; `writeRails` stores `minecraft:connection_*` states (another rail block needs its own states).
-- Heights: `FLOOR_H` 16, `LEVEL_H` 8, `ROOTS` 18. Pieces are `rigid`.
-- **Crowns:** a tree = platform piece + crown piece. The platform has an upward jigsaw (`facing_direction` 1, joint `rollable`, name = target `lothlorien:village_crown`, `final_state` plain mallorn log) on its
-  trunk axis, 5 above the highest deck; the crown's jigsaw faces down in its box bottom centre. A crown box starts 6 above the deck (above the headroom and a rise-2 arch), so it may overhang a bridge. [V]
-
-| Piece (structure `lothlorien:village/<name>`) | Box x*y*z | Connectors | Points at pool |
-|---|---|---|---|
-| `central_mallorn_01` start, 21x21 octagon deck, 5x5 round trunk, rope, anchor | 21x40x21 | 4 | combos (crown: crowns_central) |
-| `combo_<node>_<entry face>_bridge_<L>` (23 files): ONE piece = straight slab-arched bridge (7..15) + the node/tower it leads to; entry = bridge far end (north face, `village_deck`, pool empty), exits = the node's other connectors (`village_deck_hi`), crown jigsaw on the trunk | 11-17 x 40 (48 with a tower) x 18-32 | 1 entry + 1-4 exits | combos (crown: crowns) |
-| `crown_small / medium / large`, `crown_central_a / b` | 15x16x15 .. 33x34x33 | down jigsaw | empty |
-| `balcony_braced` half-round rim balcony on a log pillar 40 below the deck with 8 log braces | 7x44x7 | 1 | empty |
-| `lookout_01` platform on a pillar; `railing_end` plug | 9x38x9; 5x2x1 | 1 | empty |
-
-- **Trees (giant Mallorn style):** `flet_mallorn.mjs` shapes (`roundFoot`, `bentBranch`, `trimFarLeaves`): trunk 3x3 (central 5x5 round), root flare at nominal ground, trunk down to ROOTS as logs, bent low branches,
-  woven struts under each deck; crowns keep the 3x3 trunk up to 40 % (central 30 %) and taper, 7-14 bent branches with blobs. Straight bridges are 7..15 so neighbouring crowns do not collide.
-- **Bridges:** surface in half blocks `k(z) = min(z, L-1-z, top)`, top 2 (rise 1) for L <= 7, 4 (rise 2) for L >= 9; even k = planks, odd k = bottom `lothlorien:mallorn_slab`, so every step is 0.5 block. Rails
-  stand one cell above the walking block; the body is never one slab thin (top slab under a bottom-slab surface); stepped rails get the vertical link. `scripts/village_bridge.js` `bridgeShape(length, offset, rise)`
-  is shared by the generator and the runtime planner (offset = sideways diagonal, used only by planner bridges now).
-- **Spiral stair** (towers): the 16 cells of the 5x5 ring round the 3x3 trunk, one half-step per cell; the upper deck is full over ring cells 0..8, one top slab over cell 9 (carries the rail), cells 10..13 open and
-  railed, 14/15 are the exit. Walkability rules (owner 2026-10-08) are enforced by `.claude/skills/bedrock-modding/scripts/structure_walk.mjs` inside `build_village.mjs` (stops on any violation) and by fixtures + a
-  shipped-piece sweep in `tests/run.mjs`: headroom incl. the step straddle, connector connectivity, unguarded edges, free ring round the trunk on both tower decks, rail links (`linkRails` up-forward post),
-  rails stay in their layer and win over leaves. [S: the 2026-10-08 stair fixes were not reported back as walked in game]
-- **Pools:** `start` central; `combos` (every combo weight 3, +2 for tower combos; early ends railing 10, balcony 6, lookout 2; fallback `exits`); `exits` (railing 4, braced balcony 2, lookout 1; fallback
-  `plugs`); `plugs`; `crowns` (large 3, medium 2; fallback `crowns_fallback` large 12, medium 8, small 1: a tree at max_depth only sees the fallback); `crowns_small`; `crowns_central`.
-- **Structure** `lothlorien:elven_village`: start pool `village/start`, `start_jigsaw_name` `lothlorien:village_anchor`, `max_depth` 2 (central 0, combo 1, combo 2; a crown is a sibling; exits left at the end get
-  railing / balcony / lookout), `start_height` -17 (= -(ROOTS - 1), polish round 2026-10-10, not yet seen in game: Bedrock's `world_surface` is the TOP SOLID block, not the first air cell, so absolute N puts the start jigsaw N blocks from the top solid block; with -18 the lowest rope piece replaced the grass block in the owner's flat world "ET"; -17 puts tree y 0 on the first air cell and the whole village 1 block higher), `heightmap_projection` `world_surface`, `terrain_adaptation` none, biome filter `lothlorien`, max distance 116. **No structure set** (owner): only `/place structure`.
-- **Engine-state facts [V]:** vanilla-namespace states (`minecraft:block_face`, `minecraft:connection_*`) turn with the piece, `lothlorien:*` do not (rope uses the structure-only twin
-  `lothlorien:elven_rope_hanging` with `minecraft:cardinal_direction`); Bedrock may drop a fence link toward the later-placed neighbour, repaired by `rail_mender` (template entity, once on load, own fences only);
-  template entities ARE placed in jigsaw pieces (wardens, markers); orphan leaves are trimmed last in `buildTree` / `buildCrown` (tested for every shipped structure).
-- **Known limits:** a crown beside an upper-level balcony or bridge, or a tower combo box 6-7 blocks from the trunk, may find no room (sim 300 seeds: 81 stubs in 71 villages, 0.27 per village; the trunk then ends in a 3x3 log stub). Deferred by the owner to the village look milestone M7 (tree pieces carry their crown, jigsaw fallback element at deck level, `docs/design/lothlorien_jigsaw_settlement.md` section 6); stacked towers climb 8 per step (a 4th level's
-  trunk would end above ground; the sim peaks at 3); rigid placement on uneven terrain; the walk checker treats a rail post directly above a half-high surface as a barrier cell, not a low ceiling.
-
-**Simulator** `node tools/village_sim.mjs [seeds] [firstSeed]` (PNGs of 6 seeds in `temp/village_sim/`; `VILLAGE_MAX_DEPTH=n` overrides max_depth): reads the real `.mcstructure` and pool files, assembles villages with the
-Java algorithm (geometry verified against a real world save, 2026-10-07) and checks connectors, rails across joints, crown trunk continuity, box overlaps, termination, 3D walkability (2 blocks clear, steps <= 0.5, every
-cell reachable from the central deck), rope sides, leaf decay, one-way rail links; then runs the planner. Final run 2026-10-09, 300 seeds: 0 failures, 300 distinct layouts, pieces 6/30.8/51, trees 1/8.7/14 (towers
-1.8), 234/300 villages with 2+ levels, 0 bridges without a destination, 0 unsupported balconies, 0 unreachable cells, 0 overlaps, 0 wrong ropes, 0 decaying leaves.
-
-**Loop planner [V in game 2026-10-09] (owner: "I think it is finally working!").** Replaces the per-marker closer (removed; its plan builders `planSpan` / `planPlaza` / `planL` / `planPier` / lanterns / `clutter` /
-`blockedCells` stay in `village_loop.js`). Why: with the closer 44 live markers per village never decided, because each waited for every chunk within 36 blocks to be loaded, which never happens beyond the simulation
-distance. Owner: "Yes, build the planner", up to 3 extra links, "trigger it at the first tree discovered", "I don't want to try the hybrid. Just jigsaw + planner".
-- *Trigger and identity.* Every tree / platform piece carries `lothlorien:loop_marker` entities (`build_village.mjs sideMarkerCells`: one per straight rim run on its middle cell, a fallback on the lowest rail cell; crowns
-  none). The FIRST marker that loads or spawns (`entityLoad` / `entitySpawn`, `START_DELAY_TICKS` 5 (was 20), serial queue) starts the planner. No stored village id: the village is found by flood fill; idempotence = the world
-  dynamic property `lothlorien:village_plans` (JSON list of at most 64 rectangles); a marker inside a done / running / failed rectangle is removed or skipped; all markers in the area are removed after the build.
-- *Ticking area* (`world.tickingAreaManager`): `discoverVillage` (pure, `village_planner.js`): round 1 = 48 blocks round the first marker (`AREA.seed`), later rounds = chunk-aligned hull of the known markers + margin 32
-  (28, 24 when `hasCapacity` says no), repeat until no new marker (at most 8 rounds), previous area removed once the next is up, areas always removed in `finally`. VERIFIED: `maxChunkCount` = 300, a manual run of
-  4 rounds (25 + 81 + 132 + 143 chunks) took about 13 s; now about 2-3 rounds. Sim: every marker as the first one finds the whole village (10953 / 10953), margin 24 loses 1 % of starts, 16 loses 40 %. Over quota with
-  nothing loaded: "over chunk limit", markers stay, 3 tries per marker.
-- *Selection* (`village_planner.js`, `PLAN`): candidates exit-exit / exit-side / side-side / plaza / L; value = min(walking distance saved, 140) - 2 length - kind cost (exit 0, plaza 3, side 3, side-side 6, L 8) - 6 for a
-  landing - 0.5 |offset|; eligible with a saving >= 30 and >= 2.5 x the length; greedy: build the real plan (blocked corridor, clutter, pier, lanterns), apply to an overlay, enumerate again, spread penalty 15 within 12
-  blocks of a chosen end; budget 3, minimum value 10. L-joins: total length <= `lMaxLen` 16, each leg <= `lMaxLeg` 10 (owner 2026-10-09: "I think we may exclude big L shapes"). Plan builders: arched slab bridge
-  (length 5..17 between rows, flat deck <= 5, sideways <= 8), two bridges with a 5 x 5 landing on a log pier for spans up to 30 (`planSpan`, `planPier`, scans the live world, through water, max 48), plaza deck over the
-  bounding rectangle of two facing exits at dist 1..6 (on a pier when a fill cell is > 2 from old deck), L with a landing; clutter rule: a NEW kind of join is refused within 2 cells of another structure's deck;
-  only air and leaves are crossed (leaves cleared). Every join keeps light >= 8 (greedy lanterns) and the walk rules.
-- *Runtime* (`scripts/loop_marker.js`): after the last round waits 40 ticks, plans (yielding between candidates) and builds in ONE `system.runJob` (32 writes per pause, `WRITES_PER_TICK`, then the fence-link fix of `rail_mender_rules`),
-  removes markers, writes the done-list. Regression test of the glue with the mocked server: `tests/script_glue.mjs` (one planner run per village, markers removed, areas created = removed, straggler does not
-  replan, too small quota gives up cleanly, manual replan). Trap fixed in bbd72e5: `done?.(await planVillageAt(...))` skipped the call when `done` was nullish.
-- *Debug (2026-10-29 cleanup).* `village plan|debug` were removed. `/scriptevent lothlorien:debug` now also switches on every diagnostic content-log line through `village_debug.js` (`loop_marker.js` `dlog`; the elf village summary, rail mender count and warden replace use the same flag); all lines read `planner: (debug) ...`: start, quota, timings, the run summary (`village at x,z: N markers (N removed), R area round(s) of ... chunks, ... link(s)`), and one line per merge, link, repair and rejected candidate. Only failures log unconditionally (`gave up`, write failures, elf population errors, `could not spawn`).
-- *Numbers (sim, 300 seeds, one start marker per village):* 1.4 links per village, 220/300 villages with a link (exit 0.39, side 0.59, side-side 0.32, plaza 0.10, L 0.01), landings with pier 0.3, 0 walk / light
-  failures, areas 1 / 2.4 / 4 rounds, biggest 182 chunks (mean 132). Real V2 (fixture `tests/fixtures/village_v2.json.gz`, dump of the owner's world TT, 44 markers): plaza 81,343 / 85,347 (gap6) and
-  side-side 49,295 -> 61,293 (gap7).
-- *Merge join [V]* (`findMerges` / `planMerge`, `MERGE`; owner screenshots gap8 / gap9; 2026-10-09 verdict after 96fedd2: "It works. It is not super pretty (just 1 block wide connection), but works."). Two pieces whose decks
-  touch (gap 0) or are one cell apart (gap 1) are opened into one deck. The CORE of a stretch = rim pairs on the same height facing each other with standing deck behind both; with a real end post (the pieces' corner
-  posts) beyond each end the whole core opens (both railings and their lanterns go, a 1-cell gap is planked, a fence cap stands beyond each end); without a post the end cell stays as post and `openMinTrim` 2 cells must
-  remain. Real case (world TT, new village V x 364..370, z 470 / 471): two 5-wide end caps staggered by 2 cells share 3 rim cells but only ONE core cell, so the door is 1 cell wide (the owner's "just 1 block"). Heights
-  (half slab / 1 block) are skipped. Merges run first in the planner, on the overlay, so links are scored on the merged network; skipped when an open walk < 10 steps already joins the decks; lanterns are added until
-  light >= 8; they do not count in the budget, cap 6 (`PLAN.mergeCap`); sim: 26/300 villages. Next: widen the door (see the design doc, open wishes).
-
-**Pillar life, crown fit and root flare 2026-10-10 (built, NOT yet seen in game; deployed after the owner approved the preview sheets).**
-- *Pillar decoration (`decoratePillar` in `tools/flet_mallorn.mjs`, called by `build_village.mjs`).* `balcony_braced` gets the light amount (0.7), `lookout_01` the full one (1.4); `PILLARS=bare|light|full` forces one amount for a preview, `PILLAR_PREVIEW=<dir>` writes the whole build under `<dir>/bp` instead of the pack. Derived from the piece (deck = lowest planks layer, pillar = lowest log layer), inside the box and below the deck, so deck headroom and walk cells never change. Ivy: strands of leaves climb the 8 cells that touch the plus-shaped pillar (per-side weight, gaps, a few runs reaching 20+ cells down, sometimes a second leaf outside); a canopy under the deck with hanging strands 1-4 long; 2-5 thin branches (out sideways, optionally diagonal out-and-up, 1-3 logs `up`, a ragged leaf tuft on the tip). Wood is never a mass: the generator throws when an added log has more than 2 wood neighbours (the pillar not counted). Bare branch ends are tufted or cut back, `trimFarLeaves` keeps the decay reach. The owner rejected bulging bark ridges, floating leaf blobs and 2-4 log stubs hidden in clumps on the way here.
-- *Crown fit (`buildCrown(..., fit)` in `tools/village_mallorn.mjs`, default on in `build_village.mjs`; `CROWN_FIT=0` = the old clipped crowns).* The owner saw crowns cut flat at the box faces. With `fit` the same seeded crown is rebuilt with the branch-tip blobs and the two trunk blobs scaled 1.0 down to 0.5 (steps of 0.02) until nothing lies in the outermost cell layer (the four sides and the top); diagonal branch reach 1.25 x room (was 1.5), cap blob one layer lower. Asserted in `build_village.mjs` for every crown piece (`crown_small`, `_medium`, `_large`, `_central_a`, `_central_b`). `crown_central_a` keeps about 80 % of its leaves.
-- *Root flare (`scripts/village_repair.js` `findPillar` + `planFlare`, run by `repairGen` after the rope fit).* The flare cannot be part of the piece (the real ground height is unknown at generation). From each loop marker the planner looks 3 and 4 cells along the axes for a plus of mallorn logs just under the deck (no diagonals: trunks are 3x3 or round) and dedupes by pillar. It scans the 4 columns beside the arms down to the first ground block (<= 48 reads each, no layer scan), drops a side whose ground differs by more than 2 from the median (pit, carved cell, water), and skips the pillar (logged `flare x,z: skipped, ...`) when the pillar centre is no log at ground height (it ends above the ground), when no ground is found, or on unloaded cells. 2-4 sides chosen by a position hash (deterministic): one sideways mallorn log on the ground cell beside the arm, sometimes a second further out when its own ground is within a step. Only into air or plants; rule: no root cell has more than 2 wood neighbours (pillar not counted), tested. Idempotent. The plan is `{ kind: "flare", blocks }`, written like the rope repair; `describeRepair` prints `pillar at x,z: N roots`. Sim (20 seeds, flat ground): 4.65 pillars per village, 221 roots, 304 logs, 1 skip (a pillar ending above the carved ground). Tests: `tests/run.mjs` (flat, slope, plants/water/solid, ends above ground, unloaded, simulator); `tests/script_glue.mjs` counts rope repairs and flares separately.
-- *Bare pillar foot (`planPillarClear` in `village_repair.js`, `REPAIR.PILLAR_LEAF_CLEAR` = 4; owner 2026-10-10: "the leaves shouldn't start at the ground level, like trees, 4 blocks or such"; NOT yet seen in game).* The ivy is baked into the piece, which does not know the ground, so `repairGen` takes the ground height `planFlare` finds (median of the 4 side columns; also given when the pillar ends above the ground; no ground, water all round or unloaded = nothing happens) and turns every `mallorn_leaves` of the pillar's ring (|dx|,|dz| <= 3 round the axis, plus excluded) from ground + 1 to ground + 4 into air (leaves start at the 5th block; buried leaves, leaves above, other blocks stay). A twig (log component of the ring with more than one level; roots lie on one level, so a second run is a no-op) whose top log is within one block above the band is removed whole with the leaves within 2 of it, so no bare wood remains. Runs before the roots (leaves would block them). Plan `{ kind: "pillarclear", leaves, twigs, blocks }`, about 270 reads per pillar. Tests: `tests/run.mjs` "pillar foot". Sim (20 seeds): 93 pillars, 1397 leaves, 10 twigs cleared.
-
-**Polish and fix round 2026-10-10 (built, NOT yet seen in game; deployed).**
-- *Rope fit (`scripts/village_repair.js`, called by `planGen` after the links; `opts.repairs === false` turns it off).* Finds the rope pieces (`elven_rope_hanging`) in the lowest deck layer, reads the real ground, turns buried lowest pieces back into the terrain block in
-  front of them and hangs more pieces down to the ground (at most 24; stops at water, leaves, anything but air or a 1-high plant; the wall must carry them; an unloaded cell gives an error and writes nothing). The face is derived from the wall, never hard-coded.
-  A repair is a plan with `blocks` (`finalBlocks` writes `plan.blocks`); `loop_marker.js` writes it with the links and logs `N repair(s)` plus one `rope at x,z: -k buried, +n hung` line. The V2 fixture (the owner's old-offset village) gets exactly one buried piece repaired.
-  Generator: below tree y 0 the rope column and the column in front of it are structure void (terrain kept; no exposed flare log under the rope). Simulator: terrain model (top block at ROOTS - 1 above the start jigsaw, `opts.terrain(x, z)` overrides), `ropeFeet` check (every rope bottom on the ground, none buried).
-- *Bare branch.* `bentBranch(..., maxY)` caps the rise (`buildCrown` passes `H - 2 - ceil(0.8 blobR)`, so the tip blob fits under the box top; callers without it are byte-identical). `bareBranchEnds(blocks, 6)` in `flet_mallorn.mjs` (a horizontal mallorn log with at most one log/wood among its 26
-  neighbours is a branch end; it needs >= 6 leaves within Chebyshev 2) is checked for every village piece in `writePiece` and every giant tree in `build_structures.mjs`; `tuftBareEnds` gives the giants' blobless low branches a leaf tuft without touching the random stream
-  (only `mallorn_round_05` changed). Only `crown_central_a`, `crown_central_b` and `central_mallorn_01` changed among the village pieces. Test: every shipped village piece, plus fixtures.
-- *Planner speed.* `START_DELAY_TICKS` 20 -> 5; `sliced(gen, JOB_SLICE_MS)` (loop_marker.js; now 2 ms) runs the planner's inner steps until the slice is used, then yields once (was: possibly one inner step per tick, about 200 steps = 10 s); numeric memo keys in `boundedReader` / `overlay`
-  (sim numbers identical to the string keys: 300 seeds, 1.4 links per village, 220/300 villages with a link, 4.3 candidates). Timing log (debug mode): per discovery round `chunks in ms`, `settle ms`, `plan+build ms wall, ticks, inner steps, ms inside them,
-  distinct reads, cells written`, `populate ms`; the summary line always ends with `in N.N s`. Not changed: `SETTLE_TICKS` 40, discovery seed 48 (S4: decide from the owner's timing lines; sim says seed 80 gives 1.54 rounds instead of 2.47).
-- *Elves.* Models inflated against z-fighting, leashable elves that take a new home where released, healer 64 by day / 10 from dusk, second healer with 6+ outer trees, Harmony for elf and warden deeds everywhere: see `docs/mobs/elves.md` "Fix round".
-
-**Elf posts and the population step (M1, 2026-10-10, not seen in game).** Tree pieces carry invisible `lothlorien:elf_post` entities (written by `writePiece` from `postCells` in `build_village.mjs`, kind through the
-definitions group `lothlorien:post_<kind>`): `central_mallorn_01` 1 `loremaster` + 4 `reserve`, every `combo_*` piece 1 `home` post. The loop planner run calls `elf_village.js` `populateVillage` after the links and before it removes
-the markers (own `try`): it assigns the professions (`elf_rules.js` `assignHomes`), spawns the elves and removes the posts. A post whose elf could not be spawned stays. Crowns and ends carry no posts, so they stayed
-byte-identical when the pieces were regenerated. Details, record format and numbers: `docs/mobs/elves.md`.
-
-**In-game test checklist (new village):** (1) `/place structure lothlorien:elven_village` places without an error; (2) central tree with rope to the deck, crowns on every tree, continuous trunks; (3) bridges meet
-platforms in all 4 rotations and walk without jumping; towers: stair walkable, 2 blocks headroom; (4) rails continuous, lanterns on decks (no dark spot); (5) after a few seconds the planner log lines appear and links /
-merges show up, no `loop_marker` left (`/testfor @e[type=lothlorien:loop_marker]`); (6) walk the new links: rails, light, headroom; (7) wardens present (template entities).
-
-## Civilian elves (M1, 2026-10-10, built; static checks, unit and glue tests only, NOT yet seen in game, not deployed)
-
-Design sheet, owner decisions, placement rule, record format and the open game checks: `docs/mobs/elves.md`; population rule for the home milestone: `docs/design/elven_inhabitants.md` section 10.
-- **Files.** `scripts/elf_rules.js` (pure: ids, `PROFESSIONS`, `STATS`, `HOME_RADIUS`, generator tunables `POST_SPACING` 3 / `ROPE_CLEARANCE` 2 / `RESERVE_POSTS` 4 / `HOME_MIN` 5 / `HOME_MAX` 7, `FOE_TAG`, `FOE_MS`,
-  `homeSite`, `assignHomes`, record helpers), `scripts/elf_village.js` (population inside the planner run), `scripts/elven_warden.js` (elf section, hurt-by-player: fight cost, foe tag), `entities/elf.json`, `entities/elf_post.json` + RP `entity/elf_post.entity.json`.
-  `build_village.mjs`, `village_sim.mjs` and the tests import the same rules file.
-- **Entity.** Persistent, no despawn, no spawn rule; panic 1.25 and flee monsters within 6; fall damage off; `blocks_to_avoid` the two rope blocks (`name` descriptors: goat uses `name` for powder snow, [U] for custom blocks);
-  base `minecraft:home {}` and radius groups (Loremaster 6, others 10, healer 64 by day / 10 from dusk); leashable (fix round, see `docs/mobs/elves.md`). Movement 0.3 stays under `WRONG_MOVEMENT_ABOVE` of `warden_replace_rules.js`. Nothing to use: no trade, interact, inventory, loot, XP (a lead is allowed).
-- **Home post cells.** Warden-like margins (planks under the cell and its 8 neighbours, 3x3x3 air, no rail within 2) on the central tree; on nodes a home post needs only its own cell open (small nodes such as `node_e` have no cell with the full margin)
-  and prefers the cell with the biggest free square, then open margins, then nearest the trunk.
-- **Tests.** `tests/run.mjs` section "civilian elves (M1)" (entity invariants, client in step, wardens defend, `homeSite`, `assignHomes`, posts in pieces, 30 villages), `tests/script_glue.mjs` (planner run with posts, 2 home posts + reserves,
-  spawn error, `elven_warden.js` elf hits and timers). `node tools/village_sim.mjs 300 1` prints the `elves:` line.
-
-## Elven Warden (2026-10-07, built; static checks and unit tests only, NOT yet seen in game)
-
-Design and owner decisions: `docs/mobs/elven_warden.md` (section 10). Bow-armed defender `lothlorien:elven_warden` (family `irongolem`: vanilla
-monsters hunt it), natural spawns (spawn rule + one-time depth / deck judge in `scripts/elven_warden.js`, tuning constants in
-`elven_warden_rules.js`) and persistent village wardens (template entities in `central_mallorn_01` x2, `node_b/c/f`, `tower_a/c` x1; group
-`lothlorien:village_warden` via the structure `definitions` list; `build_village.mjs` `WARDENS` / `wardenCells`). Friendly-fire guard on
-`world.beforeEvents.entityHurt`. Event-driven only, no `runInterval`. Despawn: standard `despawn_from_distance`, no filters (Phase 10 trap);
-only the village group adds `minecraft:persistent`. Harmony: fight -1, kill -6, Hated players shot on sight (see Harmony). Open: template entities in jigsaw pieces, home point,
-bow from the equipment table. Depth-estimate cost per natural spawn still unmeasured (`/scriptevent lothlorien:depth`).
-
-## Renown and the Loremaster (M2, done, accepted in game 2026-10-11)
-Design: `design/elven_inhabitants.md` sections 2-3. Commits: 88dbbe2 (Renown + dialog), 6019c88 (text review), f854117 (dialog redesign), ff61ae2 (hand-over to the trader), eb1cc5e (time-shaped morning dew), a10653f (niphredil round 5); the outside-sapling chat line came with the M2 closing commit.
-- **Files:** `renown_rules.js` (pure: ranks and points, lessons, chapters, task slot, requests, rotation, delivery plan, `directionTo` / `nearestOf` / `deliveryPlace`, `tagSync`, `saplingOutsideNotice`, parse / serialize), `deeds.js` (hook bus),
-  `renown_game.js` (state in the player dynamic property `lothlorien:renown`, deed listener, sapling watch, Harmony nudge, inventory, turn-in and hand-over feedback, deliver tag, debug), `loremaster.js` (interception, forms, trader hand-over form, direction line),
-  `fireflies.js` (script-owned firefly catch), `dew.js` / `dew_rules.js` (dew deed, time-shaped morning dew), `entities/elf.json` (prompts), tests `tests/renown.mjs`. Every text goes through `message()`, keys `lothlorien.message.lore.*` (catalog, `.\mods localize build lothlorien`).
-- **State v2:** `{ v, points, done, task, offer, queue }`, `task = null | { kind: "lesson", id, ready, since } | { kind: "request", id, spots }`. v1 migrates on read (points, done, offer, queue kept; the v1 request becomes the task; v1 `active` lessons dropped). `parse` tolerates junk and unknown ids.
-- **Debug:** `/scriptevent lothlorien:renown` shows the state; `points N`, `reset`, `deed <id>` (dew, nectar, lembas, rope, fireflies, squirrel; counts only while that lesson is the task), `take <lesson id>`, `chapter N`, `offer <request id>` (re-opens a request already done).
-  Bands: `/scriptevent lothlorien:harmony <value>`.
-- **Interaction (M2; M3 separates the trader handler below):** `beforeEvents.playerInteractWithEntity` on a `lothlorien:elf`: originally the Loremaster (variant 4) and the four trader professions shared one handler; cancel, then `system.run` opens the form. Lead and name tag return early. `elf.json`: prompt-only "Speak" in the `lothlorien:loremaster` group;
-  a conditional "Hand over" prompt in each trader group, filter `has_tag` (subject `other`) on `lothlorien_deliver_<profession>`; `saveRenown` -> `syncDeliverTag` keeps exactly that player tag while the current request is of that profession (also on join).
-- **Forms:** `ActionFormData` screen loop; icons from this pack's items and vanilla `textures/ui/*`; no header / label / divider; the set-aside confirm is a two-button `ActionFormData` (not `MessageFormData`, whose button order is a trap). `UserBusy` retried 10 times every 10 ticks; answers apply only within 12 blocks of the Loremaster; a dropped answer sends a chat line.
-- **Delivery:** `tradersAround` = `getEntities({ type, location, maxDistance: 96 })` (live positions, loaded chunks only); none found -> the Loremaster takes the request himself (fallback line). Direction: 8 compass words, north = -Z, "close by" under 8 blocks.
-- **Firefly catch:** the prompt stays in `firefly.json`; `fireflies.js` owns the real before-event/deferred capture/release boundary. `firefly_bottle.js` prepares visible localized raw-lore name/current-health data before removal and restores it before release bottle exchange. Offhand bottles do not catch; stack16 retained, no stackable dynamic properties. Healthy unnamed bottles remain plain; bottle anvil title is not animal identity. Native raw-lore persistence/merging remains an in-game check; see [parity/CREATURES.md](parity/CREATURES.md). Songbird follow_mob removed by owner choice; songbird/butterfly native lead anchors and silent insect flap game events added.
-- **Sapling request:** `afterEvents.playerPlaceBlock` with `lothlorien:mallorn_sapling`; inside the biome it is remembered as a distinct cell (checked at turn-in); outside it prints `lore.saplings.outside` ("does not count"), only while the task is the sapling request.
-- **Verified in game 2026-10-11 (owner):** dialog redesign (one task slot, turn-in, chat feedback, icons, two-line buttons); trader hand-over with the `has_tag`-gated "Hand over" prompt; directions; the missing-trader fallback line; script-owned firefly catch; Harmony nudge; the acorn request; time-shaped morning dew ("dew looks OK"); Niphredil round 5.
-- **Not verified in game:** the outside-sapling chat line; the Uneasy / Shunned / Hated dialog bands; a v1 save migrating; two players on one firefly; Czech and the other locales in the forms (all `ai-draft`); completing all 12 requests (the Elf-friend path).
-
-## Shops (M3, accepted in game 2026-10-11)
-
-Implementation commit: `Implement M3 elven shops and request trade flow`.
-Design and all approved prices: `design/elven_inhabitants.md` section 4.
-
-- **Single source:** `scripts/trade_rules.js` defines four traders, stock/prices, nine keys (`uneasy`, `guest_0..3`, `friend_0..3`), click decisions, nearest/pinned player selection and the empty M5 final-trade hook. Uneasy always has starting stock. Galadhrim arrows and final gifts are absent until M5.
-- **Generator:** `node tools/build_trades.mjs` writes 36 `trading/lothlorien/*.json` files and only the generated trade property/groups/events in `entities/elf.json`; `--check` detects drift/stale tables without writing. One tier, one deterministic trade per group, 9,999,999 uses, zero trader XP, no XP rewards, explicit zero price multipliers. Uses real paths for CLI detection through the workspace junction; preserves the entity's CRLF and hand-maintained fields.
-- **Entity:** enum `lothlorien:trade` defaults to `none`, persists the selected key without client sync. Ten events remove other keys and add one profession's group by variant; Loremaster has no table. `persist_trades: false` requests rebuilding offers. Native `trade_with_player` stops navigation, and separate `look_at_trading_player` faces the customer. Four delivery interactions exclude `lothlorien_trade_pass` as well as lead/name tag.
-- **Runtime:** `scripts/trade.js`, injected from `main.js`, issues one bounded six-block query/player every ten ticks. It lazily reads band/rank only when a trader is near, deduplicates elves and triggers swaps only when the property changes. A trading player's pin lasts at most 600 ticks while within range; another player's mismatch click overrides it.
-- **Click flow:** Shunned/Hated refuse first; matching request without a pass opens `openTraderForm` from `loremaster.js`; stale table cancels/swaps/asks for another click; otherwise native trading. Trade in the form grants that player's next use on that elf for 200 ticks. Used passes cover repeat events for ten ticks, anchored once. Pass tokens protect replacements from stale timers; leave/initial join clear state and tags. Queued callbacks/form answers check session, request, band, entity and distance. Before handlers only read/cancel/change JavaScript maps; tags, swaps, chat and forms are deferred.
-- **Debug:** the `/scriptevent lothlorien:trade` report was removed 2026-10-29. Chat/buttons/titles use the localization catalog in all shipped locales; translations remain `ai-draft`.
-- **Offline validation:** `tests/trade.mjs` covers prices/stock, no cross-band arbitrage, request separation, ids, deterministic generation and bindings; `tests/trade_glue.mjs` covers actual runtime callbacks/timers against the shared fake server, plus real trader-form button mapping, payment and stale-answer guards with a mocked UI. The glue suite is awaited after static imports to avoid sharing a fake clock concurrently with the existing village glue tests. Full checks run through `.\mods verify lothlorien`.
-- **Engine acceptance:** owner reports "It all works" on 2026-10-11 for 7f86c87. This is overall acceptance; individual engine-question answers were not separately logged. Keep [M3_TRADES_TEST.md](M3_TRADES_TEST.md) for regressions and future detailed investigations. Existing M1 elves gain shops after reload; M3 needs no new world.
-- **Trade guidance follow-up:** commit 9cdd1a0, `Explain the second elf click on the Trade button`. The label appends a newline, grey `§7` formatting and localized "Then click the elf again", matching the Loremaster's active-quest button pattern. The owner confirmed Trade's hover guidance works on 2026-10-11 ("It works", deployed revision 405d482); no separate hover handler or tooltip argument is involved. Offline form selection/payment regressions pass. No click-flow change. M3 is complete, including this follow-up. Workspace `.claude/skills/bedrock-modding/references/08-trading.md` records the observation and API distinction.
-
-Plan corrections from source/doc review: add the separate native trading look goal; set price multipliers explicitly to zero (documented omitted default is 0.05); woodwright rank 2 stays unchanged until M5. Reusable evidence and sources: workspace `.claude/skills/bedrock-modding/references/08-trading.md` (`.claude/` is read-only for this agent).
-
-2026-10-19 leaf/tree interaction group: see [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md) for native item compost/smelting/fuel/pots, mixed canopy support, guarded deferred growth/use, above-block light/soil and remaining automation/nest/native checks. Art/harvest/worldgen distributions are unchanged. Regenerate data with `tools/configure_leaf_tree_interactions.py`; `configure_support.py` runs it before deriving policies. New explicit leaf items reuse existing translated block names and native cube rendering. Great structure obstacle scans remain yielded and nontransactional; no full-volume synchronous recheck was added.
+- **Only `minecraft:replace_biomes` makes a custom biome generate** (stable since 1.21.110; `format_version` at least `1.21.110`). It re-labels part of the
+  areas the vanilla generator chose as a target biome and **cannot change terrain shape**: Lothlórien has forest terrain because it replaces forests.
+- `targets` are **namespaced** ids; bare `forest` (older docs) fails in 1.26 with "No biome found with name" and the whole biome is dropped. Custom
+  biomes cannot be targets, so a nested "heart" biome is not possible.
+- **Shipped replacement:** targets `minecraft:forest`, `birch_forest`, `birch_forest_mutated`, `flower_forest`, `amount` 0.4, `noise_frequency_scale` 1.25.
+  Findings from the tuning series (several seeds, owner in game): `amount` is the dial for both coverage and connectivity (near 0.5 the replaced side of the
+  noise is one connected web); frequency only sets the scale, and at 1 or below the blobs are larger than any forest, so the target union bounds the
+  region and lower frequency just spaces regions out. A forest cannot be converted "whole or not at all" from JSON; the outline follows vanilla forest
+  shapes. Append new replacement entries at the end of the array, inserting earlier shifts the noise of existing ones. `roofed_forest` was dropped
+  (dark forest would likely lose woodland mansions); `plains` would widen regions most but is very common (undecided). River-transparent depth is liked.
+  Final region size is judged by testers (`TODO.md` section 2).
+- Stable server components: `climate`, `creature_spawn_probability`, `humidity`, `map_tints`, `mountain_parameters`, `partially_frozen`, `replace_biomes`,
+  `surface_builder`, `surface_material_adjustments`, `tags`. Fog, sky and grass colour are **client** components (`minecraft:client_biome`). Client
+  grass/foliage take a flat `"color": "#rrggbb"` or a `color_map`.
+- General biome knowledge: `.claude/skills/bedrock-modding/references/06-biomes.md`. `/locate biome` returns the nearest point of the biome, often its edge
+  (possibly shallow water, because replacement keeps the terrain); walk to the centre. The biome is 3D, so caves under a replaced forest are Lothlórien too.
+
+### Tags decide almost everything (No monster)
+
+Spawn rules and feature rules find biomes only by tag. The biome has `overworld` (vanilla ores, caves, structures, spawns), `bee_habitat` and `lothlorien`
+(our rules). `animal` gives vanilla passive spawns where wanted. There is **no `monster` tag**, so vanilla hostile surface spawn rules do not match. Not
+covered: phantoms, patrols and raids, spawners, mobs walking in, other add-ons' mobs. The `forest` tag was removed once Mallorns existed (vanilla forest
+trees stopped). Vanilla plants still matching by tag: tall grass and grass, the dandelion/poppy scatter (1 chunk in 32), pumpkins (1 in 300), reeds near
+water, extra mushrooms. They are rare and deliberately not fought: excluding them needs a tag such as `plains` that also switches on villages or mooshroom
+spawns. Ferns, forest flowers and forest grass belong to other tags and do not apply.
+
+### Debug commands that stay in the pack
+
+`/scriptevent lothlorien:debug` toggles an action-bar readout (biome id, depth level, hostile mobs within 64 blocks) and switches on every diagnostic
+content-log line through `village_debug.js` (planner, elf village summary, rail mender, warden replace); only failures log unconditionally. `depth`
+prints the depth estimate and its cost; `harmony [value]` shows or sets Harmony; `renown ...` is described under Renown. Everything else (showcase, grow,
+growbig, treestats, treecount, critters, deer, survey, speed, tps, village, elf, trade and the landscape probe) was removed from the pack (cleanups
+2026-09-30 and 2026-10-29); copies of the useful ones are in `tools/dev_scripts/` (see its README), the last commit with them in the pack for the first
+cleanup is `dc1182e`.
+
+## Depth estimate and the heart (was Phase 2)
+
+`scripts/depth.js` (pure; sampler in `main.js`, `depthAt`) probes rings at 8/16/24/32/40 blocks at the surface under each point (at most 10 blocks apart,
+83 probes); the first ring with a foreign biome bounds the border distance. Levels: edge (border <= 16), inner (<= 40), heart (farther);
+`minecraft:river` counts as inside. It runs every 3 s per player (`DEPTH_INTERVAL_TICKS`, which reads as lag when crossing a border; accepted), never per
+tick. `getBiome` throws in unloaded chunks: an unreadable probe stops the search and the level is the lowest one still certain (shown with `?` in the debug
+bar); probes sample at the surface, since biomes are 3D. Owner-verified after that fix (2026-09-29). "Heart" means far from any border, not a designed
+centre. The cost per estimate (`/scriptevent lothlorien:depth`, 200-run average) was never recorded; it matters for natural warden and white deer spawns.
+
+Worldgen cannot see depth. The "deeper is richer" feel is approximated by world-position noise zones in the flora rules (below), independent of the biome
+border; a scripted post-generation pass keyed to `estimateDepth` is the fallback that was never needed.
+
+## Mallorn wood set (was Phase 3)
+
+Block format **1.26.50**; both manifests need `min_engine_version` 1.26.50 (multi-box collision, `minecraft:tags` and `minecraft:sound` are format-gated; `tag:*`
+keys no longer work). Blocks (`lothlorien:mallorn_` + `log`, `stripped_log`, `wood`, `stripped_wood`, `planks`, `leaves`, `stairs`, `slab`, `double_slab` (hidden),
+`fence`, `fence_gate`, `door`, `trapdoor`, `button`, `pressure_plate`). Art generators: `tools/make_mallorn_*.py` (status `GRAPHICS_TASKS.md`; lessons
+`MALLORN_WOOD_LESSONS.md`). Every block except the double slab has an item that replaces the auto block item (needed for `minecraft:fuel`); the door also has a
+2D icon. Recipes and unlocks mirror vanilla wood types.
+
+- **Two plank sets.** Planks from log/wood are silver `mallorn_planks`; planks from stripped log/wood are `mallorn_heartwood_planks`. The heartwood family
+  (planks, stairs, slab, double_slab, fence, fence_gate, door, trapdoor, button, pressure_plate) is generated by `tools/make_heartwood_set.py` from the silver
+  files (identifiers, texture keys and map colour swapped, geometry shared): change the silver block, then re-run it (a test fails on drift). `blocks.js` lists
+  both in `WOODS`; a double door pairs only with the same kind of door; silver and heartwood fences connect to each other.
+- **Carved fence and gate** (owner: beautiful, works): `tools/make_mallorn_fence.py` and `make_mallorn_gate.py` (variant C). Each fence rail is one tilted 2x2
+  cube (inverted V); post faces use the `*` material `mallorn_fence_post`; selection and collision boxes unchanged. Geometry format 1.26.50: a `shelf` display
+  transform is only accepted from 1.26.40, otherwise the whole file is dropped (icons vanished once).
+- Tools: every wood block carries `minecraft:is_axe_item_destructible`; leaves use the hoe tag. Logs and bark-covered wood: `block_face` trait plus three-axis
+  rotation permutations. Stripping is a guarded world interaction in `blocks.js` (native or tagged axes, native durability chance); the axe swing does not play
+  (`OWNER_CHECKS.md`).
+- **Stairs:** native corners from `placement_direction` with `minecraft:corner_and_cardinal_direction` (5 shapes x 2 halves x 4 directions = 40 permutations,
+  multi-box collision); the engine updates `corner` itself. Left/right follow Java. **Axis trap:** block geometry draws x mirrored while `collision_box` uses world
+  x, so the geometry cubes are the collision boxes with x negated (owner-verified 2026-09-29). Regenerate with `.claude/skills/bedrock-blocks/scripts/gen_stairs.py`.
+- **Slabs:** `vertical_half`; merging in a `playerInteractWithBlock` world event (also for a neighbouring block whose face points into a slab cell); deferred
+  writes revalidate target, water and the original selected slot and item. Both slabs have 15-second fuel and the native combine sound.
+- **Fence:** the `connection` trait connects to fences, gates and solid blocks (vanilla uses `minecraft:has_fence_connections`). **Door:** two-part multi-block
+  with `open` and `hinge_right` states; a script picks the hinge (same-facing bottom neighbours with their handles toward the new door pair; the full solid-face
+  rule is an open limit, see `NOT_IMPLEMENTED.md`); synchronized double doors are owner-approved custom behaviour.
+- **Redstone:** trapdoor, gate and door open by interaction and by redstone through `lothlorien:redstone_toggle`, edge-detected against a stored `powered`
+  state because the engine also fires updates on placement and chunk load. Button and plate are `minecraft:redstone_producer`; buttons release after 30 ticks
+  through a powered-only native tick; the plate polls every 4 ticks idle / 20 ticks powered with a minimum-hold guard and `placement_filter` `allowed_faces: ["up"]`.
+  East/west wall buttons use `mallorn_button_ew(_pressed)` (a 4x6 box with `uv_rotation` 90). Support loss for buttons and plates is handled in `blocks.js`.
+- **Icons:** every non-cube plank-family block names an icon geometry in `minecraft:item_visual` whose `item_display_transforms.gui` sets rotation, scale 0.625 and
+  `fit_to_frame: false` (poses from Kaioga's 1.26.50 templates; rule in `bedrock-block-families/references/families.md` "Item icons"). Owner-verified 2026-10-01.
+- Items left out (signs, shelf, ...): `NOT_IMPLEMENTED.md`.
+
+## Saplings, small and big Mallorns, leaf decay (was Phase 4 and 4b)
+
+Files: `scripts/mallorn_tree.js` (pure generator), `scripts/trees.js` (growth, bone meal, decay), `blocks/mallorn_sapling.json`, `items/mallorn_acorn.json`.
+
+- **Loop:** leaves drop acorns (2 % per leaf, `loot_tables/blocks/mallorn_leaves.json`), the acorn places `mallorn_sapling` (hidden from the menu, loot one acorn), the
+  sapling grows a tree. Saplings need the approved soil list including mycelium (`placement_filter` plus the event-driven support service); random growth reads
+  light >= 9 above, ordinary bone meal can work in darkness. Stage 0 -> 1 -> tree, each step 1/7 per random tick; bone meal advances a step with 45 %. The trunk needs
+  room (air, leaves, soft plants). Balance estimate: about 4 acorns if every leaf of a small tree is cleared, so a tree replaces itself; `node tests/tree_stats.mjs [n] [chance]`.
+- **Tree:** each tree draws an archetype (slender, round, spreading, tiered, tall): trunk 6-13, 3-5 level branches just under the crown (a base for a platform), 0-3 low
+  branches, 1-5 rising ones, leaf blobs. Average about 32 logs and 200 leaves. **Big Mallorn:** four saplings in a 2x2 square grow one tree with a 2x2 trunk (15-24
+  high, about 140 logs, about 1500 leaves), placed over ticks with `system.runJob`.
+- **Natural trees** (native, no script): `feature_rules/mallorn_trees_feature_rules.json` (surface pass, tag `lothlorien`, 5 tries per chunk) places
+  `select_mallorn_tree_with_litter_feature`: weighted 25 simple, 60 fancy (fancy_trunk with branches), 15 mega (2x2 trunk), vanilla `minecraft:tree_feature` shapes with our
+  blocks, then a leaf-carpet scatter (90 tries, gaussian +-5), a blossom scatter and nectar blooms (see Nectar). Worldgen leaves have `persistent` false and decay.
+  Test: `/place feature lothlorien:select_mallorn_tree_feature ~ ~ ~`. Feature rules cannot call script, so generator archetypes and platform branches exist only for
+  saplings; large builds are structures (next section).
+- **Leaf decay:** state `lothlorien:persistent`; player-placed leaves are persistent; grown and worldgen leaves break with drops on a random tick if no supported vanilla or
+  Mallorn log/wood is within **10** steps through leaves (an unloaded neighbour counts as connected; Bedrock's own reach is 4). Reach 6 stripped live big trees (crown
+  leaves sit 8+ steps from a log; game-tested 2026-09-29). Search bound 4000 nodes, verdicts cached 60 s per leaf (a felled tree decays up to a minute later). Details
+  `LEAF_HARVEST.md`. The 20-tree cut-down balance test was never run (status unverified).
+
+## Giant Mallorns (was Phase 5; owner-accepted in game 2026-09-30)
+
+Shipped: two lookout trees (`mallorn_round_05`, `round_07`: flet, rope, loot chest) and four plain giants (`roundplain` 2, 3, 6, 8). Placement: `WORLDGEN.md`.
+
+- **Shape.** Round trunk (owner design 2026-10-01: the 4x4 without its corner cells, 12 cells), 30-38 high (tip narrows to 2x2), sunk 5 blocks. Its foot (`roundFoot`) is a skirt
+  2 high plus 5-7 buttress ridges of `mallorn_wood` above ground and logs down to -5. A plank platform (radius 5.5-7, fence rim) sits on 6-8 level branches 9-12 below the top;
+  an Elven rope (since 2026-10-02; existing worlds keep ladders) runs up the north face through a floor hole; a chest against the east face uses `loot_tables/chests/mallorn_flet.json`;
+  no leaves from the floor to 3 above it within radius+4. Variants: `round` (lookout) and `roundplain` (`flet: false`); options `woven` (support branches through the platform)
+  and `lush` (whorls of leafy branches); plain giants have 3-6 tilted ring branches (`bentBranch`) with leaves along their tops. Leaves further than 8 steps from a log are
+  dropped at generation. Older square-trunk variants are in git before `d09188f`.
+- **Pipeline.** Shape in `tools/flet_mallorn.mjs` (pure); `node tools/build_structures.mjs [variant|all] [count] [firstSeed]` writes `structures/lothlorien/mallorn_<variant>_NN.mcstructure`
+  (40x54x40, trunk NW cell at x/z 18, ground at y 5, about 700 KB each), `scripts/giant_trees.js` and the legacy pool; the plain command rebuilds exactly `CHOSEN` (curation candidates never enter
+  worldgen). Tree NN of every variant uses the same seed. Format traps: `.claude/skills/bedrock-modding/references/09-structures.md`. Tests (`tests/run.mjs`) check over 30 seeds that the
+  rope is unbroken, the exit floor exists, the chest has room, leaves are within reach and everything fits the box.
+- **Engine facts [V].** Jigsaw structures are stable since 1.21.120. `max_depth` 0 builds nothing (the one cause found after six one-change tests; now 1); `separation` must be less than half of
+  `spacing`. `max_distance_from_center` 116. A 40-wide `structure_template_feature` is cut at chunk borders; script-grown markers only appear within simulation distance; jigsaw spans chunks.
+  Every piece has a trunk anchor: the bottom trunk cell is a `minecraft:jigsaw` (name `lothlorien:giant_trunk`, empty target and pool, final state `mallorn_log`) named by `start_jigsaw_name`, so
+  the trunk sits on the start point however the piece rotates. Spacing and density are discussed in `WORLDGEN.md`.
+- **Loot** (`tools/watch_camp_rules.mjs`, then `build_structures.mjs`): pool 1 rolls once (miruvor or lembas); pool 2 rolls 3-5 times from a weighted list (arrows weight 6, rope, antler weight 2, ...);
+  pool 3 is the owner's 50 % silver-pattern shield. Chest `LootTable` fills when first opened (owner-verified 2026-09-29), so unopened chests pick up changes. Watch camps: `ELF_SERVICES.md`.
+
+## Flora, ground cover and worldgen tuning (was Phase 6)
+
+- **Plants** `elanor`, `niphredil`, `athelas`, `golden_fern`: `minecraft:geometry.cross` (their own `plant_cross` copy), `alpha_test`, no collision, break instantly, soil-only `placement_filter`; each
+  has an item of the same identifier (2D icon, creative group flower) and a block with no menu category. **Ground covers** `mallorn_leaf_carpet` (opaque) and `mallorn_blossom` (cutout), made by
+  `tools/generate_ground_cover.py`: state `lothlorien:amount` 1-4 quarter-tiles (`geometry.lothlorien.ground_cover_1..4`), rotated by `placement_direction`; using the item adds a segment, breaking
+  drops one item per segment (`scripts/ground_cover.js`). Worldgen places weighted amounts (carpet 4:3:2:1, blossoms 6:3:1:1). All plants and thin blocks have `light_dampening` 0. Art: `GRAPHICS_TASKS.md`.
+- **Worldgen (native JSON).** `single_block_feature` uses `enforce_placement_rules: true`, so the plants' `placement_filter` decides where they stand. Zone rules use `query.noise(origin/120)`;
+  the lesson of the tuning: **noise thresholds are very steep** (0.3 gave "many", 0.5 gave none), so every flower has a sparse baseline everywhere plus noise zones; do not go above about 0.4 on a
+  zone rule without a baseline. Elanor and Niphredil zones are independent noise fields. Current values live in `feature_rules/*_patch_*` and `*_sparse_*` (e.g. Elanor zone threshold 0.4, 2 iterations;
+  golden fern 1 iteration, 1 chunk in 2, small gaussian +-4 patches after the owner found it too much on 2026-10-02); densities and their owner decisions: `FLORA_DENSITY.md`. Extra vanilla fern and
+  `short_grass` rules add ground cover. The decorative two-block wild flowers (rose bush, peony, lilac) never worked natively and were removed (owner, 2026-10-02); "Elven roses" as our own plant is an idea only.
+- **Bone meal** (`scripts/bonemeal.js`, table in `flora_table.js`): on a grass block in the biome it cancels the vanilla effect and scatters tries within 3 blocks (short grass, Elanor, Niphredil, golden
+  fern, Athelas, plain fern by weight); on our flora it grows Elanor, Niphredil and golden fern with 4 nearby tries, Athelas with 2 (grass and air required); guarded deferred consumption and debounce
+  for the old repeated-event bug.
+- **Falling leaves:** `rp/particles/falling_leaf.json` spawned by `fallLeaves` in `main.js` every 12 ticks per player inside the biome in a random column within 14 blocks (`leaf_fall.js` walks down to the
+  first leaf with open air below); sparse by design; the texture is a 40x8 sheet picked by Molang (`tools/make_falling_leaf.py`). Rendering status unverified.
+- **Grass under plants (owner-verified 2026-10-01).** Bedrock bug MCPE-184249 turns grass under custom plants into dirt in low light even with `light_dampening` 0. **Workaround (remove when Mojang fixes it):**
+  Elanor, Niphredil, Athelas, golden fern, leaf carpet and blossoms have state `lothlorien:on_grass`; when true they draw a biome-tinted grass top (`*_grass` geometry twins, material `grass_overlay`).
+  Applied by `.claude/skills/bedrock-block-families/scripts/add_grass_overlay.py` (re-run after `gen_ground_cover.py`); `scripts/grass_overlay.js` sets the state on placement over grass, worldgen places it true,
+  bone meal calls `markOnGrass`, breaking such a plant turns the dirt back into grass. Place/break events only, no timers (owner). Not covered: removal by explosion, water, piston or fire; slope edges.
+  To switch off: revert `defae73`, remove the script and its skill notes. Background: `.claude/skills/bedrock-blocks/references/blocks.md`.
+
+### Mallorn leaf flicker (unsolved; accepted as a known issue, `TODO.md` section 4)
+
+The leaves shimmer at high frequency; vanilla leaves do not. Established with the owner in game (2026-10-02): it is not the art (a vanilla leaf texture on all faces still flickered), not the MERS maps, not
+binary alpha. The two saplings stopped flickering when their model changed from box-UV zero-thickness cubes to the single-face `plant_cross`. For the leaves: `alpha_test_to_opaque` fixed the leaves being invisible
+from far away (with a dark colour under the transparent texels, `shade_hidden` in `make_mallorn_leaves.py`) and stays, but not the flicker. Data-driven culling (`minecraft:culling_layer.leaves`, with or without a
+custom cube) stopped it but made the canopy hollow and needs the experimental toggle (on the plain cube with the toggle off the flicker remained). An inset cube (0.1) stopped it but showed a gap; at 0.05 with
+`isotropic` it returned, and the inset-cube experiment was dropped (its generator is deleted, git has it). Conclusion: z-fighting between coplanar faces of touching leaf blocks; the known fixes look worse
+(`GRAPHICS_TASKS.md`). Both leaf blocks are plain `geometry.full_block` with `alpha_test_to_opaque` and `isotropic` on up/down.
+
+Mallorn leaves versus vanilla (parameter audit): same render method, sound `grass`, hardness and blast resistance 0.2, flammability 30/60, light dampening 1, no redstone conduction. Deliberate differences:
+ambient occlusion 0 (faces next to logs went black, game-verified); colours baked, never biome-tinted; hoe-only tool tag (vanilla drops only with shears or Silk Touch, see `LEAF_HARVEST.md`); persistence state
+plus script decay with reach 10; no waterlogging or composting in the first pass (since added, see parity doc).
+
+## Western Corn and Lembas (was Phase 7; game-tested 2026-09-29, owner)
+
+Files: `blocks/western_corn.json`, `scripts/crop.js` (component and bone meal helpers), `scripts/crop_rules.js` (pure growth numbers), `scripts/lembas.js`, items `western_corn_seeds`, `western_corn_grain`,
+`lembas_dough`, `lembas_cake`, `lembas_wrapped`, recipes and the `western_corn(.json|_mature.json)` loot tables.
+
+- **Loop:** find wild corn in Lothlórien -> harvest (mature: one grain plus Binomial(3+Fortune, 8/15) seeds; young: one seed, `WESTERN_CORN_HARVEST.md`) -> plant seeds on farmland anywhere -> craft **dough**
+  (3 grain + 1 sugar -> 2) -> smelt in furnace or smoker -> **Lembas cake** (6 nutrition, 1.6 s) -> with one Mallorn leaves block -> **wrapped Lembas** (8 nutrition, saturation 19.2, eaten in 1.0 s, lifts Hunger through
+  the item component `lothlorien:lembas`). Two Content Log fixes were needed: `saturation_modifier` must be a number, and food needs `minecraft:use_animation: "eat"`.
+- **Crop block:** state `lothlorien:growth` 0-7, `geometry.cross`, stage texture by 7 permutations, mature loot chosen by a permutation that overrides `minecraft:loot`. Seeds place only on farmland
+  (`block_placer.use_on`); the block's `placement_filter` also allows grass, dirt and podzol so worldgen can stand wild corn on grass. Random-tick growth only on farmland: 1/3 per tick wet, 1/5 dry; x0.6 at light 6-8, x0.3 at
+  4-5, none below 4; about 20-35 minutes to ripen; bone meal adds 2-5 stages. Corn keeps a saved wild/farmed state.
+- **Worldgen:** `western_corn_patch_feature_rules` (own noise field, threshold 0.4, 1 in 2 chunks in a zone, 7 tries +-2) plus a sparse baseline (1 chunk in 14) so it is always findable; both place growth 7.
+- Observed in game: wild corn, growth with bone meal, dough, baking, eating. Status unverified: natural growth speed and low-light behaviour, wet versus dry farmland, the Hunger lift, food balance.
+  Not done on purpose: trampled farmland leaving the crop on dirt (it survives but stops growing), water-flow breaking, fortune.
+
+## Athelas salve and Miruvor (was Phase 8)
+
+Items `athelas_salve`, `miruvor`; `scripts/athelas.js` (components `lothlorien:salve`, `lothlorien:miruvor`; effects come from script because item-JSON food effects are not available in 1.26.50).
+
+- **Athelas** drops the plant item (raw Athelas is not edible: one item cannot both place and be eaten). **Salve:** 2 Athelas over a glass bottle; drink 1.6 s, stack 16, Regeneration II 6 s, lifts Poison, returns
+  the glass bottle.
+- **Miruvor (skin):** `minecraft:durability` 4 = 4 sips, stack 1, 30 s cooldown (native category `lothlorien_miruvor`, started explicitly after completion), drink 2.0 s, `use_modifiers` + `use_animation: drink`; the
+  effects and durability loss run in `onCompleteUse`; the last sip removes the item (an empty reusable skin with refill is in `OWNER_CHECKS.md` retests). Per sip: instant health I, Regeneration II 8 s, Speed I
+  30 s, lifts Poison. Recipe `ESE / SHS / NLN` = 2 Elanor, 2 Niphredil, 3 salves, 1 Mallorn nectar, 1 leather. Cancelled attempts impose no cooldown (owner-accepted 2026-10-14, `tests/miruvor.mjs`); `onCompleteUse`
+  firing for a non-food item, the durability bar and write-back through the main-hand slot are verified in game. Creative sip preservation, plain Lembas compost 85 % and soul-campfire cooking: parity doc.
+  Food balance, ingredient-only nectar, no extra corn uses and no raw-swan debuff are intentional.
+
+## Harmony (replaces the earlier Disharmony; spec `design/harmony_rework_plan.md`)
+
+- **Files.** `scripts/harmony.js` (pure: constants, `bandOf`, `DEED_COSTS`, `applyPenalty`, `recordDeed`, `recordDeath`, `tick`, `statusText`, `BAND_ICONS`, serialize/parse), `harmony_game.js` (wiring),
+  consumers `deer.js`/`deer_rules.js`, `squirrel_rules.js`, `white_deer_rules.js`, `unicorn_rules.js`, `elven_warden.js` (fight hook).
+- **Model.** One integer -60...+10 per player. +1 per 60 s inside the forest (to +10), +1 per 120 s outside but never above 0. A deed restarts the minute timer; above 0 a cost counts double. Bands: Friend +10,
+  Guest 0..9, Uneasy -1..-14, Shunned -15..-29, Hated -30..-60. Storage: dynamic property `lothlorien:harmony` = `{harmony, timer}`, written only when the value changes.
+- **Deeds** (`entityDie`, only `damageSource.damagingEntity` = player, projectiles included; counts when the player or the victim is in the forest; monster kills and warden-hunted players are free): `inanimate` nothing;
+  unicorn 10; white deer 6; Elven Warden kill 6; elf kill 6; player 3; any other animal 3. A warden fight costs 1 (first player hit after 60 s), an elf fight 1 the same way. Dying changes nothing except dying in the
+  forest while Hated (set to -29).
+- **Hated tag.** The player tag `lothlorien_hated` follows the band; `entities/elven_warden.json` `nearest_attackable_target` has an entry for players with it.
+- **Display.** Action bar, inside the forest only: `<icon> <band name>`, no number. Icons are glyphs of `lothlorien_rp/font/glyph_E5.png` (U+E500+n: friend ... hated), generated by `tools/make_harmony_icons.py`
+  (technique `bedrock-art/references/font-glyphs.md`). Owner-checked OK in game (2026-10-24). One chat line per band change plus a rate-limited hint (30 s); texts in `localization/catalog.json`.
+  The action bar belongs to this status: one-off messages go to chat. The glossary entry `glossary.disharmony` keeps the old word (changing it would invalidate every translation).
+
+## Fauna spawning and despawn (was Phase 10)
+
+Findings from the spike (owner-tested 2026-09-30, 1.26.52). `population_control: "animal"` is a fixed engine pool shared with cows and sheep: Lórien animals compete with vanilla ones for that cap.
+**Despawn: use `{"despawn_from_distance": {}}` with no filters**: `filters` replace the engine's standard rules including the instant despawn at the simulation edge, so a mob left far away was never removed.
+Standard rules: more than 128 blocks from every player removed at once; 32-128 a 1-in-800 roll after 30 s inactive; at the simulation edge removed at once; name-tagged mobs stay. Every current vanilla mob uses
+this. Knowledge: `.claude/skills/bedrock-mobs/references/spawning.md`. The spike entity `test_critter` was replaced by the deer. The sampling tool is `tools/dev_scripts/critter_watch.js`.
+
+## Deer (was Phase 11; sheet `mobs/deer.md`)
+
+- **Wariness without per-player filters.** Entity filters cannot read a player's Harmony (a dynamic property), so the entity has one component group per wariness state
+  (`lothlorien:state_calm|l1|l2|l3|friend|alarmed|tame`), each holding its own `behavior.avoid_mob_type` (flight distance, sneaking halves it) and, where allowed, `behavior.tempt`. `scripts/deer.js` runs every 2 s: each
+  player votes for deer within 40 blocks, the most severe state among players inside their own state's flight radius wins, and the script fires `lothlorien:set_<state>` only when the `lothlorien:wariness` property
+  differs. Trade-off: the avoid component flees from every player at the winning state's distance.
+- **Alarm:** hurting or killing a deer fires `lothlorien:alarm` on every deer within 20 blocks: group `state_alarmed` (flee 36, no luring) with a 20 s `minecraft:timer` whose event `alarm_over` re-triggers the stored state;
+  the script skips alarmed deer. Alarms cross species (swans, squirrels, white deer).
+- **Food:** Western Corn grain only (tempt, `breed_items`, fawn `feed_items`); the acorn belongs to the white deer; seeds do not count.
+- **Goal priorities:** breed 2, tempt 3, avoid 4 (tempt must outrank avoid or a lured deer runs at the edge; breeding must outrank both). Priority alone does not keep a lured deer: tempt stops on arrival and avoid takes
+  over, so in calm and Friend the player entries of `avoid_mob_type` also need `has_equipment` (hand, the lure item) and `can_get_scared` is false. Fed deer get `lothlorien:tame` -> `state_tame`. Tame and untame are
+  entity events (`become_tame`, `untame`), not `setProperty`: a property set by script is invisible to event filters until the next tick, so the state event is re-applied one tick later.
+- **Kept deer:** tame or leashed adds group `lothlorien:kept` (`minecraft:persistent`); `untame` removes it only when not leashed, `unleashed` only when not tame.
+- **Sex and antlers:** enum property `lothlorien:sex` (client synced) from `entity_spawned`/`entity_born`; geometry `deer_buck` (adult with antlers), `deer` (no antlers), `deer_baby`, picked by
+  `query.property` in the render controller. Loot differs by sex through two adult groups (loot conditions cannot test custom properties). Venison carries item tag `minecraft:is_meat` (not inside `minecraft:food`:
+  item format 1.26.50 rejects `is_meat` there, which stopped the items loading); the tag alone does not prove wolf feeding (parity doc). One furnace recipe carries furnace, smoker, campfire.
+- **Model and animation:** procedural Molang (walk by `query.modified_distance_moved`, gallop pairs weighted `clamp((ground_speed - 3.5) / 2.5, 0, 1)`; the 3.5 m/s threshold is a guess); one slim cube per leg;
+  all box sizes whole numbers (a fractional size put box-UV faces between texels and showed holes; `tools/make_deer.py` fails on fractional sizes or unpainted texels); bone z rotation has the same negated handedness
+  as x. The engine logs `armor_offset.default_neck` locator warnings for a bone named `neck` (bone renamed `neck_joint`, antlers split into a separate geometry; the log text was not confirmed gone, status unverified).
+  Art: `GRAPHICS_TASKS.md`. Sounds: `AMBIENT_SOUNDS.md`.
+- Test protocol: `/summon lothlorien:deer`, approach (flight 10 blocks, 5 sneaking), corn lure, `/scriptevent lothlorien:harmony -40` for Hated flight 30, hurt one (herd bolts for 20 s), breeding with corn grain.
+
+### Deer antler block
+
+- `lothlorien:deer_antler` is a block; the same-named item (bucks drop it) is its `block_placer`. Traits `placement_position` (`minecraft:block_face`) and `placement_direction`. **Top face = a shed antler on the floor**,
+  **side face = mounted antlers on a plaque** against the wall, **ceiling** too; one model (a big mounted pair filling the 16x16 face), rotated by coordinates in `tools/make_antler_block.py`. Selection boxes: floor/ceiling
+  16x4.5x16, wall 16x16x4.5. There is **no `placement_filter`** (it can only name blocks or tags); the item-frame-like survival check is event-driven script (`scripts/antler.js`, `lothlorien:antler_support`,
+  rules `antler_rules.js`): `beforeOnPlayerPlace` refuses unreadable or air/liquid support, and after `playerBreakBlock` and `blockExplode` neighbours are checked and an unsupported antler is destroyed. No polling.
+  Not covered: pistons, water flow, other mods.
+- **Natural drop:** `deer_antler_drop_feature_rules` (after surface pass, tag `lothlorien`, `scatter_chance` 1/16 per chunk, raised from 1/64 on 2026-10-02 because the owner found none), one placement attempt
+  within about 3 blocks with a weighted pick of four facings, all `up`. **Owner decision 2026-10-24: solo antlers, no batches** (three attempts looked like a clump). The feature has its own support rule
+  (`may_attach_to.bottom`: grass, dirt, coarse dirt, podzol, dirt with roots, moss, mud, stone; `may_replace: [air]`), so an antler never floats on litter; this excludes about a third of the floor. A save scan found
+  the rate about 1/50 chunks at 1/64. Status unverified after the 1/16 change and the solo change. Chest loot: the antler in `mallorn_flet.json` pool 2 (weight 2).
+
+## White deer guidance (was Phase 12; owner playtest 1.26.52: guidance, gift and nut growth work; sheet `mobs/white_deer.md`)
+
+**The gift.** Leading the player to hidden flet markers was dropped (2026-09-30): script cannot find placed jigsaw instances, has no world seed, and `getBiome`/`getBlock` throw in unloaded chunks. The deer now picks
+the destination: `findGiftSpot` (`white_deer.js`) samples the surface biome on an 8-block grid within 96 blocks (loaded chunks only), then 16 headings on rings 56..36 blocks (`GIFT_RINGS` in
+`great_mallorn_rules.js`, inside a 4-chunk simulation distance whatever the player's setting) for Lothlórien biome and standable ground; `pickGiftSpot` takes the spot farthest from any known border (ties within 8
+blocks go to the longer walk). Dynamic properties on the deer: `lothlorien:gift_spot` (kept until the gift is laid, so a broken guidance resumes) and `lothlorien:gifted`. On arrival (`ARRIVE_DIST` 3) `giveGift` spawns
+the Great Mallorn nut (lore set by script) with totem particles. The marker block and its search were removed (worlds generated before keep one buried unknown block per flet giant).
+
+**The nut** (`items/great_mallorn_nut.json`, `blocks/great_mallorn_sprout.json`, `scripts/great_mallorn.js` + `great_mallorn_rules.js`, art `tools/make_mallorn_seeds.py`): the sprout copies the sapling's states, soil
+filter and geometry; random tick stage 0 -> 1 -> grow. Owner decision 2026-10-16: it grows only plain Great Mallorns (`roundplain` 2, 3, 6, 8; no platform, banners, chest or elves). Growing reads the structure's
+filled cells once per session (job steps), checks each against the world with `isNatural` (terrain, plants, leaves, unstripped logs, water; anything else is built: wait and tell players within 32 blocks, at most every
+5 minutes), then `structureManager.place` with the sprout in trunk cell TRUNK_AT+1 at ground level; the jigsaw anchor is replaced by `mallorn_wood`. Unloaded space means retry; rotation is always north. Growth time
+and the obstruction message: status unverified.
+
+**Entity decisions.** Separate `lothlorien:white_deer`, a loner (spawn herd 1, no breeding, baby, ageable or spawn-egg interaction), **leashable** (a lead always wins: a leashed deer refuses the acorn, leashing it
+mid-guidance ends it), **always an antlered hart** (geometry `deer_buck`, texture `deer_white.png`). Drops: leather 0-2, venison 1-3 and **one antler on any death**; XP 1-3 on a player kill; killing it costs 6 Harmony.
+Spawn rule: weight 3 (deer 10), herd 1 with event `lothlorien:spawn_natural`, `density_limit.surface` 1, `distance_filter` 24-44, pool `animal`. **Spawn thinned by depth** (owner: fewer near edges): the herd event
+sets property `lothlorien:natural`; `white_deer.js` on `entitySpawn` (cause not `Loaded`) reads it one tick later, estimates depth at the deer's spot and keeps it with `SPAWN_KEEP_BY_DEPTH` outside 0, edge 0.15, inner
+0.5, heart 1, else `entity.remove()` (no loot, no Harmony, no alarm; fails open if the event never arrives; `SPAWN_WEIGHT` is pinned to the spawn rule by a test; `/summon ... lothlorien:spawn_natural` goes through the filter).
+Wariness uses the deer's state groups; only the **Mallorn acorn** lures it.
+
+**The offer.** Right-click an adult white deer with a Mallorn acorn as a **Friend** (owner rule 2026-10-02; below 0 "shies from your restless spirit", not yet Friend "does not trust you yet", acorn kept). The entity has a
+`minecraft:interact` entry for the held acorn ("Offer Acorn"); whether `playerInteractWithEntity` fires without it is unverified. The acorn is consumed only when guidance starts.
+
+**Walking = engine pathfinding towards a moving helper.** Teleport-walking was rejected (jerky). `lothlorien:guide_beacon`: no gravity, collision or pushability (`minecraft:pushable` made the entity fail to load),
+invulnerable, fire immune, 330 s `minecraft:timer` -> `instant_despawn`, a zero-size cube and transparent texture. One beacon per session is spawned at the first waypoint; `state_guiding` adds
+`behavior.follow_target_leader` priority 2 (`leader_filters` family `lothlorien_guide_beacon`, `follow_distance` 1, `within_radius` 24, `search_cooldown` 5) plus the wolf/monster avoid goal. The goal choice lives in
+`state_guiding`; `tools/dev_scripts/guide_goal/` holds the prepared alternatives (`follow_mob`, `target`) and a switch script, and `tests/run.mjs` fails if the group holds anything else. Every 5 ticks the script:
+next waypoint when within 3 blocks (`pickWaypoint`: 14 blocks ahead, down to 8, headings 0, +-30, +-60, +-90), skips a heading after 5 s without progress, moves the beacon to the deer's feet when the player lags
+more than 12 blocks, and ends with a final hop to the spot or a standable column within 5 blocks. `stand()` uses a ray from 6 above to 6 below (leaves looked through, liquid and logs reject, 1.9 headroom). The deer is
+never teleported.
+
+**Session end:** beacon removed and `guide_end` restores wariness via `alarm_over` when arrived within 3 blocks, the player is beyond 48 blocks, the player loses Harmony, 30 s pass without getting closer (counts as
+arrived within 14 blocks), 5 minutes, or the deer is hurt. Sessions are not saved: on load and every 100 ticks every `guide_beacon` without a live session is removed (a beacon named or tagged `guide_beacon` is left
+alone); a deer still in `state_guiding` after a reload is released by `deer.js`. Two deer guiding close together may follow each other's beacon (accepted). Not done: sounds on the way and at arrival.
+Fallback research and the pathfinding comparison: `.claude/skills/bedrock-mobs/references/pathfinding.md` (dolphin treasure goals cannot target a custom spot; script has no navigation target API).
+
+## Nectar, morning dew and Star canopy (was Phase 14b; status unverified except where noted)
+
+- **Nectar bloom** `lothlorien:nectar_bloom` (`scripts/nectar.js`, `nectar_rules.js`, `tools/make_nectar_bloom.py`): state `lothlorien:nectar` 0-3, hangs under Mallorn leaves, logs or planks (`allowed_faces: ["down"]`),
+  grows 1/7 per stage on random ticks only with Mallorn leaves above. A glass bottle on a full bloom gives `lothlorien:mallorn_nectar` and resets it; shears or Silk Touch collect one bloom. Worldgen: scatter
+  (8 tries, y +2..18) at the end of the tree-with-litter aggregate; sapling-grown trees get 0-2 dry blooms.
+- **Morning dew** (`dew.js`, `dew_rules.js`): bool state `lothlorien:dew` on leaf litter and blossoms (component `lothlorien:dew_cover`, random tick). Window time of day 23000..3000 with share `f` (0 at 23000, 1 at 3000):
+  dry cover turns dewy with `DEW_APPEAR * (1 - f)` (litter 1/8, blossom 1/4) if Mallorn leaves are within 40 blocks above; dewy cover dries with `1/2 * f`; outside the window any random tick dries it. A visible dewy patch
+  is always collectable (owner wants no empty outcome). Glass bottle -> `dew_bottle` (durability 8 = drops); the eighth drop makes `morning_dew`. Owner: "dew looks OK" (2026-10-11).
+- **Star canopy** `lothlorien:star_canopy`: full block, light 6, 6-frame blended flipbook plus emissive MERS strip. Recipe LLL/DDD/TTT = 3 Mallorn leaves, 3 morning dew, 3 deepslate tiles -> 9. Unlock is the Bottle of
+  Morning Dew (`OWNER_CHECKS.md`). Whether flipbook and MERS strip render correctly: status unverified.
+
+## Swan, ground squirrel, unicorn (was Phase 15)
+
+Sheets: `mobs/swan.md`, `mobs/squirrel.md`, `mobs/unicorn.md`. Owner tried squirrel and deer in game 2026-10-02 (very good); the swan floats with an occasional dip, left as is.
+
+- **Shared wariness:** swan, squirrel and unicorn carry the deer's state groups, events and properties; `deer.js` drives all (`WARY_TYPES` in `deer_rules.js`); a test pins their flight radii to `FLIGHT_RADIUS` (the unicorn's
+  `calm` flees like `l1`, only `friend` has the Elanor lure).
+- **Swan** spawns in rivers too (spawn filter `any_of` tag `lothlorien` or `river`); `swan.js` removes natural spawns with no positively read Lothlórien sample within 48 blocks (25 samples, once per spawn). It floats with
+  the chicken's float goal (turtle navigation dived, `minecraft:buoyant` sank it).
+- **Squirrel errand** reuses the white deer machinery: `squirrel.js` drives `follow_target_leader` with a moved `guide_beacon`; `white_deer.js` exports `stand` and `addBeaconSource` (the stray-beacon sweep would
+  delete it); acceptance consumes the stack synchronously and the four-entry gift table is rolled with `LootTableManager`. Gifts need **Friend** (owner rule 2026-10-02, for squirrel and white deer); luring and taming stay open to
+  calm players. Outside or leashed squirrel feeding adds `kept`; inside wild healing and errands do not (owner 2026-10-20). Decisions and limits: parity doc.
+- **Unicorn:** generated by `tools/make_unicorn.py` from the vanilla horse geometry, animations and white-horse texture (edit the generator). Swimming data equals the installed horse; bonded healing is native `healable`
+  (Elanor 2 HP). **Bond = three Elanor offers** (`unicorn.js`: entity property `lothlorien:trust`, dynamic `last_offer` and `owner`); `lothlorien:become_tame` adds group `lothlorien:bonded` (rideable, persistent), which the
+  state events never remove. No `minecraft:tameable`/`tamemount` (both consume items or tame without the Friend check). The Friend lure is vanilla `tempt` in a Friend-only group (final design: `OWNER_CHECKS.md`).
+
+## Elven rope (was Phase 17b; owner-accepted 2026-10-02/03)
+
+Recipe: 1 Bottle of morning dew over 1 golden fern -> 1 rope. Item `lothlorien:elven_rope` (stack 64, component `lothlorien:rope`, `onUseOn`); block with state `lothlorien:face` (the clicked face, wall opposite), flat on the wall
+like a ladder, a knot every 8 units (art `tools/make_elven_rope.py`; the final icon is a short rope with one overhand knot). Placing (`scripts/elven_rope.js`, rules `elven_rope_rules.js`): on a side face one piece per item
+down from the clicked cell, then up; using it on a piece extends that rope. **Breaking any piece breaks the whole rope** (one stack, nothing in Creative; no loot table on purpose); losing the wall of any piece (player or
+explosion) drops it too.
+
+**WORKAROUND, climbing by script** (no data-driven climbable for custom blocks in 1.26.52; listed in the workspace `docs/workarounds.md`, re-check after every game update), every tick for a player in a rope cell:
+up (jump or forward) is levitation only (`levitationStep` picks the level from the levitation formula to hold `CLIMB.jumpSpeed`/`forwardSpeed` = 4); down is slow falling plus one tick of levitation I whenever the last
+tick fell faster than `CLIMB.downSpeed` = 4 (`brakes`; lands at about 3.3 blocks/s, the icon flickers). Targets come from measuring a vanilla ladder. Failed, do not retry: teleporting a step per tick, steering with
+`applyKnockback`, slow falling while climbing up, slow falling alone going down. Trap: a missing `brakes` import was hidden by the tick's try/catch (a test checks imports). Effect icons cannot be hidden per effect; replacing
+vanilla icon textures was rejected. One-tick effects expire naturally and never remove or replay external potions. The lookout giants and the village use the rope (existing worlds keep ladders).
+
+## Elven lighting (was Phase 17; generator `tools/make_elven_lamps.py`)
+
+Silver **Elven Lantern** `lothlorien:elven_lantern` (light 14; two Mallorn trapdoors + Bottle of Fireflies; stands or hangs by the finial; owner-accepted design and compact icon 2026-10-03) and golden
+`elven_lantern_heartwood` (same geometry with the silver-to-heartwood mapping `make_mallorn_wood.to_gold`, silver collar, heartwood trapdoors; in-game verdict unverified). **Elven chandelier** (light 15, ceiling only,
+antler arms, five hanging lights; four antlers + Elven rope + silver lantern; placed model owner-accepted 2026-10-02). **Firefly jar** (light 11, floor only, blend glass, moss, animated flies; owner-accepted placed model). All four
+use `itemGroup.name.lanterns`; glow and fly tiles use MERS maps. Face-only filters are in `VERIFIER_WARNINGS.md`.
+
+## Elven village (jigsaw; accepted 2026-10-09, finished 2026-10-16)
+
+Final design, owner decisions and toolkit: `design/lothlorien_jigsaw_settlement.md`; finish: `VILLAGES.md`; natural placement: `WORLDGEN.md`. Engine notes: `.claude/skills/bedrock-modding/references/10-jigsaw-pieces.md`.
+Rebuild everything (deletes the old pieces first, byte-stable): `node tools/build_village.mjs`, then `.\mods verify lothlorien`.
+
+**Connector standard** (generator and `tests/run.mjs` check it): one `minecraft:jigsaw` per connection in the deck layer on the outer face of the piece box, in the middle of a 3-wide walk opening, facing outward; `name`
+`lothlorien:village_deck` (tower upper-level connectors `village_deck_hi`, parent only), `target` `village_deck`, joint `aligned`, `final_state` planks. Cross-section: deck under 5 cells, walk cells -1..+1 with 3 air above, rails
+(`lothlorien:mallorn_fence`) at +-2; `writeRails` stores `minecraft:connection_*` states. Heights: `FLOOR_H` 16, `LEVEL_H` 8, `ROOTS` 18; pieces are `rigid`. A tree is platform piece + crown piece: the platform has an upward
+jigsaw (joint `rollable`, name = target `lothlorien:village_crown`, final state plain mallorn log) on its trunk axis 5 above the highest deck; the crown box starts 6 above the deck.
+
+| Piece (`lothlorien:village/<name>`) | Box x*y*z | Connectors |
+|---|---|---|
+| `central_mallorn_01` start: 23x23 octagon court, round trunk, rope, anchor | 23x48x23 | 4, points at combos (crown pool `crowns_central`) |
+| `combo_<node>_<entry face>_bridge_<L>` (23 files): one slab-arched straight bridge (7..15) + the node or tower it leads to | 11-17 x 40 (48 with a tower) x 18-32 | 1 entry + 1-4 exits |
+| `crown_small / medium / large`, `crown_central_a / b` | 15x16x15 .. 33x34x33 | down jigsaw |
+| `balcony_braced` (rim balcony on a log pillar with 8 braces), `lookout_01`, `railing_end` plug | 7x44x7; 9x38x9; 5x2x1 | 1 |
+
+- **Trees:** `flet_mallorn.mjs` shapes (`roundFoot`, `bentBranch`, `trimFarLeaves`); trunk 3x3 (central round), root flare at nominal ground, logs down to ROOTS, woven struts under each deck; crowns keep the trunk up to 40 % and taper,
+  7-14 bent branches with blobs. **Bridges:** surface in half blocks `k(z) = min(z, L-1-z, top)` (top 2 for L <= 7, 4 for L >= 9), even k planks, odd k bottom `mallorn_slab`, every step 0.5 block; `scripts/village_bridge.js`
+  `bridgeShape(length, offset, rise)` is shared by generator and runtime planner. **Spiral stair** (towers): the 16 ring cells round the 3x3 trunk, one half-step per cell; walkability rules (owner 2026-10-08) are enforced by
+  `.claude/skills/bedrock-modding/scripts/structure_walk.mjs` inside `build_village.mjs` and by a shipped-piece sweep in `tests/run.mjs`.
+- **Pools:** `start`; `combos` (weight 3, +2 tower combos; early ends railing 10, balcony 6, lookout 2; fallback `exits`); `exits` (railing 4, braced balcony 2, lookout 1; fallback `plugs`); `crowns` (large 3, medium 2; fallback
+  `crowns_fallback` large 12, medium 8, small 1); `crowns_small`; `crowns_central`. **Structure** `lothlorien:elven_village`: `max_depth` 2, `start_height` -17 (Bedrock's `world_surface` is the top solid block, so -17 puts tree y 0
+  on the first air cell), `terrain_adaptation` none, max distance 116.
+- **Engine facts [V]:** vanilla-namespace states (`minecraft:block_face`, `connection_*`) turn with the piece, `lothlorien:*` states do not (the rope uses the structure-only twin `elven_rope_hanging`); Bedrock may drop a fence link toward the
+  later-placed neighbour, repaired by `rail_mender` (template entity, once on load, own fences only); template entities are placed in jigsaw pieces (wardens, markers, posts); orphan leaves are trimmed last in `buildTree`/`buildCrown`.
+- **Known limits:** a crown beside an upper-level balcony or bridge, or a tower combo box 6-7 blocks from the trunk, may find no room (sim: 0.27 stubs per village; the trunk then ends in a 3x3 log stub); stacked towers
+  climb 8 per step (the sim peaks at 3 levels); rigid placement on uneven terrain; the walk checker treats a rail post above a half-high surface as a barrier cell.
+- **Simulator** `node tools/village_sim.mjs [seeds] [firstSeed]` reads the real structures and pools, assembles villages with the Java algorithm (geometry verified against a real save) and checks connectors, rails across joints, crown
+  continuity, overlaps, termination, 3D walkability, ropes, leaf decay, then runs the planner. 300 seeds: 0 failures, 300 distinct layouts, 6/30.8/51 pieces, 1/8.7/14 trees.
+
+**Loop planner [V in game 2026-10-09: "I think it is finally working!"].** Replaced the per-marker closer (whose 44 markers per village never decided because each waited for every chunk within 36 blocks).
+- *Trigger.* Tree and platform pieces carry `lothlorien:loop_marker` entities (one per straight rim run, a fallback on the lowest rail cell; crowns none). The first marker that loads or spawns (`entityLoad`/`entitySpawn`,
+  `START_DELAY_TICKS` 5, serial queue) starts the planner. The village is found by flood fill; idempotence is the world property `lothlorien:village_plans` (at most 64 rectangles); markers in a done, running or failed rectangle are removed
+  or skipped; all markers in the area are removed after the build.
+- *Ticking area.* `discoverVillage` (`village_planner.js`): round 1 is 48 blocks round the first marker, later rounds the chunk-aligned hull of the known markers + margin 32 (28, 24 when `hasCapacity` says no), until no new marker (at most 8
+  rounds); the previous area is removed once the next is up, always in `finally`. Verified: `maxChunkCount` 300, 2-3 rounds typical (about 13 s for a manual 4-round run). Over quota with nothing loaded: "over chunk limit", 3 tries per marker.
+- *Selection.* Candidates exit-exit, exit-side, side-side, plaza, L; value = min(walking distance saved, 140) - 2 x length - kind cost (exit 0, plaza 3, side 3, side-side 6, L 8) - 6 for a landing - 0.5 |offset|; eligible with a saving
+  >= 30 and >= 2.5 x length; greedy with overlay re-enumeration, spread penalty 15 within 12 blocks, budget 3 links, minimum value 10. L-joins: total <= 16, each leg <= 10 (owner: no big L shapes). Builders: arched slab bridge
+  (5..17 between rows), two bridges with a 5x5 landing on a log pier for spans up to 30, plaza deck over the rectangle of two facing exits at distance 1..6, L with a landing; a NEW kind of join is refused within 2 cells of another
+  structure's deck; only air and leaves are crossed; every join keeps light >= 8 (greedy lanterns) and the walk rules.
+- *Runtime* (`scripts/loop_marker.js`): after the last round waits 40 ticks, plans (yielding between candidates) and builds in one `system.runJob` (32 writes per pause, then the fence-link fix), removes markers, writes the done list.
+  `sliced(gen, JOB_SLICE_MS)` (2 ms) runs the planner's inner steps until the slice is used. Glue test: `tests/script_glue.mjs`. Trap: `done?.(await planVillageAt(...))` skipped the call when `done` was nullish.
+- *Merge join [V]* (`findMerges`/`planMerge`; owner 2026-10-09: "It works. It is not super pretty (just 1 block wide connection), but works."): two pieces whose decks touch (gap 0) or are one cell apart are opened into one deck along the core
+  of a stretch of facing rim pairs; the end cell stays as post with `openMinTrim` 2; runs first on the overlay, skipped when an open walk < 10 steps already joins the decks, cap 6, lanterns until light >= 8. Widening the door is an open wish
+  in the settlement design doc.
+- *Numbers (sim, 300 seeds):* 1.4 links per village, 220/300 villages with a link, 0 walk or light failures, areas 1/2.4/4 rounds, biggest 182 chunks.
+
+**Repairs run after the links** (`scripts/village_repair.js`, `repairGen`; plan shapes `{ kind, blocks }` written like the links): *rope fit* (turns buried lowest pieces back into terrain and hangs more pieces to the ground, at most 24,
+stops at water or leaves), *root down* and *root flare* (`planRootDown`, `findPillar`/`planFlare`: from each marker looks 3-4 cells along the axes for a plus of logs under the deck, scans four columns to the ground, 2-4 sides chosen by a
+position hash, no root cell with more than 2 wood neighbours), *bare pillar foot* (`planPillarClear`, `REPAIR.PILLAR_LEAF_CLEAR` 4: owner "the leaves shouldn't start at the ground level, like trees"), then forest floor and rails. Pillar life and
+crown fit in the generator: `decoratePillar` (ivy, canopy, thin branches; wood is never a mass, the generator throws when an added log has more than 2 wood neighbours), `buildCrown(..., fit)` scales branch-tip blobs 1.0 to 0.5 until
+nothing lies in the outermost layer, `bareBranchEnds` (a horizontal log with at most one log neighbour needs >= 6 leaves within Chebyshev 2) is checked for every piece. Owner-accepted in the finished villages (`VILLAGES.md`).
+
+**Elf posts and population (M1).** Tree pieces carry invisible `lothlorien:elf_post` entities (from `postCells` in `build_village.mjs`; `central_mallorn_01` 1 `loremaster` + 4 `reserve`, every `combo_*` 1 `home` post). The planner run
+calls `elf_village.js` `populateVillage` after the links and before removing markers: it assigns professions (`elf_rules.js` `assignHomes`), spawns the elves and removes the posts (a post whose elf could not be spawned stays).
+
+## Civilian elves (M1; owner-accepted in game 2026-10-10; sheet `mobs/elves.md`)
+
+Files: `scripts/elf_rules.js` (pure: ids, `PROFESSIONS`, `STATS`, `HOME_RADIUS`, generator tunables `POST_SPACING` 3, `ROPE_CLEARANCE` 2, `RESERVE_POSTS` 4, `HOME_MIN` 5, `HOME_MAX` 7, `FOE_TAG`, `FOE_MS`, `homeSite`, `assignHomes`),
+`elf_village.js`, `elven_warden.js` (elf section: hurt-by-player fight cost, foe tag), `entities/elf.json`, `entities/elf_post.json`. Persistent, no despawn, no spawn rule; panic 1.25 and flee monsters within 6; fall damage off;
+`blocks_to_avoid` the two rope blocks; base `minecraft:home` and radius groups (Loremaster 6, others 10, healer 64 by day / 10 from dusk); leashable (a released elf takes a new home there). Movement 0.3 stays under
+`WRONG_MOVEMENT_ABOVE` of `warden_replace_rules.js`. Home post cells need warden-like margins on the central tree, on nodes only their own cell open. Tests: "civilian elves (M1)" in `tests/run.mjs`, `tests/script_glue.mjs`.
+
+## Elven Warden (sheet and owner decisions `mobs/elven_warden.md`)
+
+Bow-armed defender `lothlorien:elven_warden` (family `irongolem`: vanilla monsters hunt it), natural spawns (spawn rule plus a one-time depth/deck judge in `scripts/elven_warden.js`, constants in `elven_warden_rules.js`) and persistent
+village wardens (template entities in `central_mallorn_01` x2, `node_b/c/f`, `tower_a/c` x1; group `lothlorien:village_warden`). A friendly-fire guard sits on `world.beforeEvents.entityHurt`. Event-driven only; despawn is the
+standard `despawn_from_distance` with no filters (see Fauna); only the village group adds `minecraft:persistent`. Harmony: fight -1, kill -6, Hated players shot on sight. The depth-estimate cost per natural spawn was never measured
+(status unverified).
+
+## Renown and the Loremaster (M2; accepted in game 2026-10-11)
+
+Design: `design/elven_inhabitants.md` sections 2-3. Commits 88dbbe2 (Renown + dialog), 6019c88, f854117, ff61ae2, eb1cc5e, a10653f.
+
+- **Files:** `renown_rules.js` (pure: ranks, points, lessons, chapters, task slot, requests, rotation, delivery plan, `directionTo`, `nearestOf`, `deliveryPlace`, `tagSync`, parse/serialize), `deeds.js` (hook bus), `renown_game.js` (state in the player
+  dynamic property `lothlorien:renown`, deed listener, sapling watch, Harmony nudge, inventory, turn-in and hand-over feedback, deliver tag), `loremaster.js` (interception, forms, trader hand-over form, direction line), `fireflies.js`,
+  `dew.js`, `entities/elf.json` (prompts), tests `tests/renown.mjs`. Every text goes through `message()` with keys `lothlorien.message.lore.*` (catalog, `.\mods localize build lothlorien`).
+- **State v2:** `{ v, points, done, task, offer, queue }`, `task = null | { kind: "lesson", id, ready, since } | { kind: "request", id, spots }`; v1 migrates on read; `parse` tolerates junk.
+- **Debug:** `/scriptevent lothlorien:renown` shows the state; `points N`, `reset`, `deed <id>`, `take <lesson id>`, `chapter N`, `offer <request id>`; bands via `harmony <value>`.
+- **Interaction:** `beforeEvents.playerInteractWithEntity` on `lothlorien:elf`: cancel, then `system.run` opens the form; lead and name tag return early. `elf.json` has a prompt-only "Speak" in the `lothlorien:loremaster` group and a
+  conditional "Hand over" prompt per trader group filtered by `has_tag` `lothlorien_deliver_<profession>` (`syncDeliverTag` keeps exactly that player tag). Forms: `ActionFormData` loop, icons from this pack and `textures/ui/*`; the
+  set-aside confirm is a two-button `ActionFormData` (not `MessageFormData`, whose button order is a trap); `UserBusy` retried 10 times every 10 ticks; answers apply only within 12 blocks.
+- **Delivery:** `tradersAround` uses `getEntities({ type, location, maxDistance: 96 })` (loaded chunks); none found -> the Loremaster takes the request himself. Direction: 8 compass words, north = -Z, "close by" under 8 blocks.
+- **Firefly catch:** the prompt stays in `firefly.json`; `fireflies.js` owns the before-event, deferred capture and release; `firefly_bottle.js` stores name and current health as visible localized raw lore (stackable items cannot hold
+  dynamic properties). Offhand bottles do not catch; healthy unnamed bottles stay plain. Details `mobs/firefly.md`.
+- **Sapling request:** `afterEvents.playerPlaceBlock` with `mallorn_sapling`; inside the biome it is remembered as a distinct cell (checked at turn-in); outside it prints `lore.saplings.outside`.
+- Verified in game 2026-10-11 (owner): dialog redesign, trader hand-over, directions, the missing-trader fallback, firefly catch, Harmony nudge, the acorn request, time-shaped morning dew, Niphredil round 5. Status unverified: the outside-sapling
+  line, the Uneasy/Shunned/Hated dialog bands, a v1 save migrating, two players on one firefly, the forms in the AI-drafted locales, completing all 12 requests (testers, `TODO.md` section 2).
+
+## Shops (M3; accepted in game 2026-10-11)
+
+Design and prices: `design/elven_inhabitants.md` section 4; regression checks: `ELF_SERVICES.md`. Reusable evidence: `.claude/skills/bedrock-modding/references/08-trading.md`.
+
+- **Single source:** `scripts/trade_rules.js` (four traders, stock and prices, nine keys `uneasy`, `guest_0..3`, `friend_0..3`, click decisions, nearest/pinned player selection, the final-gift hook). Uneasy always has starting stock.
+- **Generator:** `node tools/build_trades.mjs` writes 36 `trading/lothlorien/*.json` and only the generated trade property, groups and events in `entities/elf.json`; `--check` detects drift. One tier, one deterministic trade per group,
+  9,999,999 uses, zero trader XP, explicit zero price multipliers (the documented omitted default is 0.05).
+- **Entity:** enum `lothlorien:trade` (default `none`, persisted, not client synced); ten events swap the group by profession; the Loremaster has no table; `persist_trades: false` requests rebuilding offers; `trade_with_player` stops
+  navigation and a separate `look_at_trading_player` faces the customer; delivery interactions exclude `lothlorien_trade_pass` as well as lead and name tag.
+- **Runtime** (`scripts/trade.js`): one bounded six-block query per player every ten ticks, lazy band/rank reads, swaps only when the property changes; a trading player's pin lasts at most 600 ticks while within range, another
+  player's mismatch click overrides it. **Click flow:** Shunned/Hated refuse first; a matching request without a pass opens `openTraderForm` (`loremaster.js`); a stale table cancels, swaps and asks for another click; otherwise native
+  trading. The Trade button grants that player's next use on that elf for 200 ticks; used passes cover repeat events for ten ticks; pass tokens protect replacements from stale timers; leave/join clear state and tags. Before-handlers only
+  read, cancel and touch JS maps; tags, swaps, chat and forms are deferred. The trade debug report was removed 2026-10-29. Hover guidance on the Trade button (grey second line) owner-confirmed (9cdd1a0 on 405d482).
+- **Tests:** `tests/trade.mjs` (prices, stock, no cross-band arbitrage, request separation, ids, generation, bindings) and `tests/trade_glue.mjs` (callbacks, timers, form mapping, payment, stale-answer guards; awaited after
+  static imports so the fake clock is not shared with the village glue tests).

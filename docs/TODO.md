@@ -1,8 +1,8 @@
 # Lothlorien: what is left
 
-The main plan for this mod from 2026-10-24 on. It replaces the phase list in
-`design/lothlorien_implementation_plan.md`. Tick items off here and delete this file when
-the mod is released.
+The main plan for this mod from 2026-10-24 on. It replaced the old phase list (git history keeps
+`design/lothlorien_implementation_plan.md`). Documentation index: `README.md`. Tick items off here and delete this
+file when the mod is released.
 
 Target: tester build on the weekend of 2026-10-24/25.
 
@@ -21,7 +21,7 @@ Target: tester build on the weekend of 2026-10-24/25.
   `build_landscape_probe.mjs`, its test). `verification_exceptions.json` stays in the repo; `mods package`
   does not exclude it yet (needs `verification_exceptions.json` added to `SKIP_NAMES` in workspace `tools/mods.py`).
 - [ ] **Feedback retests only.** Owner completed the broad checks on 2026-10-25.
-  Accepted results and fixes: `TEST_FEEDBACK_2026-10-25.md`; remaining focused
+  Accepted results and fixes: `OWNER_CHECKS.md`; remaining focused
   checks: workspace `docs/game-checks.md`. L8 is untested and L9 inconclusive.
 - [x] **Snow on blocks.** Native snowlogging enabled for Elanor, Niphredil, Athelas and Golden Fern
   (2026-10-25); counterpart scope and remaining game checks: `SNOW.md`.
@@ -48,7 +48,7 @@ Target: tester build on the weekend of 2026-10-24/25.
   ("Sindarin - Good"). Bindings: `SINDARIN_VOICE_EVENTS.md`.
 - [x] **Music and soundscape** (`SOUNDSCAPE_PLAN.md`): village harp music, root shrine and leaf
   memorial sounds, forest leaf rustles. Outside villages the biome keeps vanilla `forest` music.
-- [x] **Pack icon.** Night scene with the white hart and the lit village, accepted 2026-10-28 (`GRAPHICS_TASKS.md`).
+- [x] **Pack icon.** Night scene with the white hart and the lit village, accepted 2026-10-28 (`GRAPHICS_TASKS.md`, "Pack icon").
 - [x] **Promo banner** and site logo, accepted 2026-10-28 (`docs/media/`, `GRAPHICS_TASKS.md`).
 - [ ] **LICENSE.** Base it on `C:\Users\karel\Documents\Teliendan\docs\licence_template.md`. Review notes:
   - Add "provided as is, without warranty or liability". Worldgen changes players' worlds.
@@ -70,21 +70,12 @@ Target: tester build on the weekend of 2026-10-24/25.
   - disclaimer: an unofficial Tolkien fan work, not affiliated with Mojang or Microsoft
 
   Also set the GitHub repo description and topics.
-- [ ] **Big docs cleanup** (owner rule). Condense `docs/` to the final design, decisions and
-  limits; phase history stays in git.
-  - Fix contradictions and stale "open" items:
-    - `NOT_IMPLEMENTED.md`: the hinge/wall filter and white deer sounds are done
-    - `ROOT_SHRINE.md:4`: "commit pending"
-    - the Phase 14 firefly items
-  - Fix broken dashes shown as `?` and missing spaces.
-  - Fold in section 5 below.
-  - Remove the probe docs: `CONSTRAINED_FEATURE_PROBE.md` and the mentions in
-    `LANDSCAPE_WORLDGEN_PLAN.md`, workspace `docs/worldgen-test-packs.md` and skill reference
-    `bedrock-modding/references/21-jigsaw-worldgen-policy.md`.
-  - Drop unused tools: `tools/make_leaf_cube_geo.py`, `tools/make_dialog_review.py`.
-  - Rename or retire the "temporary" `tree_grid` naming (`build_tree_grid_test.mjs`, `TREE_GRID_TEST.md`).
-  - Check where `design/banner_inspiration.jpeg` came from, since the repo is public.
-  - Clear workspace `temp/localization/` once the translations are final.
+- [x] **Big docs cleanup** (owner rule), done 2026-10-29. `docs/` is condensed to the final design, decisions and limits
+  (index: `README.md`); phase history and dated test narratives are in git only. Worldgen is `WORLDGEN.md`; the 2026-10-24
+  decisions of section 5 are folded into it and into `OWNER_CHECKS.md`. The probe docs, the probe mentions in the workspace
+  docs and skill reference 21, the two unused tools, `banner_inspiration.jpeg` and the "temporary" `tree_grid_test` naming
+  (now `tools/build_tree_grid.mjs`, `tests/tree_grid.mjs`, suite `tree-grid`) are gone.
+  - [ ] Clear workspace `temp/localization/` once the translations are final.
 - [ ] **Tester feedback** worked in.
 - [ ] **Release package:** version bump, `.\mods package lothlorien --release`, a Defender scan of
   `dist/lothlorien` (two scans minutes apart; skill `bedrock-modding` reference 05), and a first
@@ -94,27 +85,20 @@ Target: tester build on the weekend of 2026-10-24/25.
 ## 4. Known issues (go into the tester brief and README)
 
 - Mallorn and golden leaves flicker. This is z-fighting between leaf faces; the known fixes look
-  worse (`GRAPHICS_TASKS.md:219`).
+  worse (`GRAPHICS_TASKS.md`, "Known issue: cutout flicker").
 - Where independent worldgen starts overlap, a build can be cut. The engine allows no better.
 - Accepted engine limits: `parity/BLOCKS_ITEMS.md:97-106`, `NOT_IMPLEMENTED.md`.
 
 ## 5. Owner decisions 2026-10-24
 
-- **Worldgen:** the 2026-10-20/21 fixes were tested in a new world and accepted: "as good as we
-  can make it". The current tree-grid layout is the release design, overlaps included.
-- **Checked OK in game:** the Harmony action-bar icons, the elven bow, and the unicorn art.
-- **Elves:** zombies and illagers hunting elves, with no replacement, stays.
-- **Leaf flicker:** accepted as a known issue.
-- **Closed ideas:**
-  - full Renown's reward is the unlocked trades
-  - elves keep their normal behaviour at night
-  - no dew lantern (lanterns exist)
-- **Not to-dos (testers will report):** biome size, natural placement, performance, Loremaster
-  edge cases, survival balance, translations.
+Folded into the design docs: worldgen (the tree-grid layout is the release design, overlaps included) in `WORLDGEN.md`; the
+checked-OK items (Harmony action-bar icons, elven bow, unicorn art) and the leaf flicker in `OWNER_CHECKS.md`; the elf and
+Renown decisions in `design/elven_inhabitants.md`; the closed ideas in `NOT_IMPLEMENTED.md`. Biome size, natural placement,
+performance, Loremaster edge cases, survival balance and translations are not to-dos: testers will report them (section 2).
 
 ## Owner feedback backlog - 2026-10-25
 
-Completed source fixes and accepted checks: `TEST_FEEDBACK_2026-10-25.md`.
+Completed source fixes and accepted checks, and where each open retest below is described: `OWNER_CHECKS.md`.
 
 - [ ] **Retest bounded fixes:** Miruvor empty skin/refill/last sip; Star Canopy
   survival unlock; Friend unicorn lure; wind-charge controls; rope with an
