@@ -28,8 +28,8 @@ Target: tester build on the weekend of 2026-10-24/25.
 - [x] **Mob hurt and death sounds.** Owner checked them in game on 2026-10-28 and kept all of them:
   elves and Elven Wardens use the player sounds; the deer, fawn, swan, songbird, unicorn and squirrel
   borrow vanilla sounds (`lothlorien_rp/sounds.json`).
-- [ ] **Package and smoke-test.** Run `.\mods package lothlorien`, install the `.mcaddon` on a clean
-  device, create a new world and check that it loads.
+- [x] **Tester package.** Pre-release v0.8.0 published 2026-10-29 on GitHub Releases (Defender scans clean).
+- [ ] **Smoke test:** install the released `.mcaddon` on a clean device, create a new world and check that it loads.
 - [x] **Tester brief.** Done 2026-10-29 (`TESTER_BRIEF.md`). Covers install steps, "new world, or back up before adding to an existing
   world", known issues (section 4), what to test (section 2), and how to report.
 
