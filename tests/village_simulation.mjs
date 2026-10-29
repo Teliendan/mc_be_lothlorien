@@ -159,7 +159,7 @@ test("loop planner: every tree / platform piece carries a loop marker (the first
   assert.equal(entity.description.identifier, LOOP.MARKER_ID);
   assert.ok(entity.components["minecraft:persistent"] && entity.components["minecraft:physics"].has_collision === false && entity.description.is_spawnable === false);
   assert.ok(existsSync(new URL("../lothlorien_rp/entity/loop_marker.entity.json", import.meta.url)) && existsSync(new URL("../lothlorien_rp/models/entity/loop_marker.geo.json", import.meta.url)));
-  assert.ok(readFileSync(new URL("../lothlorien_bp/scripts/main.js", import.meta.url), "utf8").includes('from "./loop_marker.js"'));
+  assert.ok(readFileSync(new URL("../lothlorien_bp/scripts/main.js", import.meta.url), "utf8").includes('import "./loop_marker.js"'));
   const js = readFileSync(new URL("../lothlorien_bp/scripts/loop_marker.js", import.meta.url), "utf8");
   assert.ok(js.includes("entityLoad") && js.includes("entitySpawn") && js.includes("e.remove()") && js.includes("system.runJob") && !js.includes("runInterval") && !js.includes("isChunkLoaded"));
   assert.ok(js.includes("createTickingArea") && js.includes("removeTickingArea") && js.includes("finally"), "ticking area is created and always removed");

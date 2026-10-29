@@ -117,12 +117,10 @@ test("elf healer roam: by day a far stroll and a long path reach cross bridges; 
     assert.ok(!("minecraft:behavior.random_stroll" in g) && !("minecraft:follow_range" in g), `${name}: other professions keep the base stroll and reach`);
   }
   assert.ok(!("minecraft:follow_range" in e.components), "base reach is the engine default");
-  // debug marker: every radius group, unique values, nothing else carries one; script maps it back
+  // debug marker: every radius group, unique values, nothing else carries one
   const marks = EL.RADIUS_GROUPS.map((g) => e.component_groups[g]["minecraft:mark_variant"]?.value);
   assert.deepEqual(marks, EL.RADIUS_GROUPS.map((g) => EL.RADIUS_MARK[g])); assert.equal(new Set(marks).size, marks.length);
   assert.ok(!("minecraft:mark_variant" in e.components) && EL.PROFESSIONS.every((p) => !("minecraft:mark_variant" in e.component_groups[GROUP(p)])));
-  assert.deepEqual(EL.radiusGroupOfMark(3), { group: "healer_day", radius: 64 }); assert.deepEqual(EL.radiusGroupOfMark(4), { group: "healer_night", radius: EL.HOME_RADIUS.healerNight });
-  assert.equal(EL.radiusGroupOfMark(undefined), null); assert.equal(EL.radiusGroupOfMark(0), null);
   for (const f of ["entity/elf.entity.json", "render_controllers/elf.render_controllers.json"]) assert.ok(!/mark_variant/.test(readFileSync(new URL(`../lothlorien_rp/${f}`, import.meta.url), "utf8")), `${f}: the client does not use the marker`);
 });
 

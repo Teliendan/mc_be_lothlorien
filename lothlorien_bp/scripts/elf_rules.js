@@ -43,15 +43,9 @@ export const HEALER_DAWN_EVENT = "lothlorien:healer_dawn";
 // home across bridges need more (vanilla iron golem 64 with xz 16, villager 128). y stays small: decks are 16+ above the ground, crowns 6 above the deck.
 export const STROLL = { xz: 8, y: 3 };
 export const HEALER_ROAM = { xz: 32, y: 4, followRange: 64 };
-// Debug marker: every radius group carries `minecraft:mark_variant` with this value (no client use), so `/scriptevent lothlorien:elf home` can show which
-// group the engine has on the elf (script cannot read minecraft:home). No marker = no radius group (on a lead).
+// Debug marker: every radius group carries `minecraft:mark_variant` with this value (no client use; it only tells which radius group the engine has on the elf,
+// readable in an entity dump). No marker = no radius group (on a lead).
 export const RADIUS_MARK = { [HOME_NEAR_GROUP]: 1, [HOME_LORE_GROUP]: 2, [HEALER_DAY_GROUP]: 3, [HEALER_NIGHT_GROUP]: 4 };
-export const RADIUS_OF_GROUP = { [HOME_NEAR_GROUP]: HOME_RADIUS.near, [HOME_LORE_GROUP]: HOME_RADIUS.loremaster, [HEALER_DAY_GROUP]: HOME_RADIUS.healerDay, [HEALER_NIGHT_GROUP]: HOME_RADIUS.healerNight };
-// mark_variant value -> { group: "healer_day", radius: 64 }, or null for no / an unknown marker
-export const radiusGroupOfMark = (mark) => {
-  const group = RADIUS_GROUPS.find((g) => RADIUS_MARK[g] === mark);
-  return group ? { group: group.replace(/^lothlorien:/, ""), radius: RADIUS_OF_GROUP[group] } : null;
-};
 // Leads (entities/elf.json `minecraft:leashable`): the elf is led freely (no radius while leashed); a release of any kind (untie, cut, break by
 // distance) fires REHOME_EVENT, which sets the engine home to where the elf stands and gives the radius group back.
 export const LEASH = { soft: 4, hard: 6, max: 10 };

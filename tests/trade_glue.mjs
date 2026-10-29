@@ -184,14 +184,12 @@ await scenario("a pending form cannot grant trading after refusal, lost request 
   assert.equal(p.hasTag(PASS_TAG), false);
 });
 
-await scenario("initial spawn removes a persisted pass tag and debug wiring reports the table", async () => {
+await scenario("initial spawn removes a persisted pass tag", async () => {
   const p = player(), e = elf(); p.addTag(PASS_TAG);
   const mod = await start();
   mock.fire("playerSpawn", { player: p, initialSpawn: true });
   assert.equal(p.hasTag(PASS_TAG), false); await mock.advance(10);
-  assert.equal(mod.handleTradeEvent({ id: "other:event" }, p), false);
-  assert.equal(mod.handleTradeEvent({ id: "lothlorien:trade" }, p), true);
-  assert.equal(chatCount(p, "trade.debug"), 1); assert.equal(e.table, "guest_0");
+  assert.equal(e.table, "guest_0");
 });
 
 // Keep the UI substitute local to this test. The actual Loremaster and renown code still runs.

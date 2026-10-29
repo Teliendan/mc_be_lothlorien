@@ -199,7 +199,9 @@ single giants at that spacing. Existing independent placement sets must be
 removed from natural generation when the coordinated set is enabled; leaving
 them running would defeat exclusion.
 
-## First engine probe, now implemented
+## First engine probe (REMOVED 2026-10-29)
+
+**Removed 2026-10-29 (owner decision, debug leftovers cleanup):** the two command-only probe structures, their template pools, the `structures/lothlorien/landscape_probe/` assets, `tools/build_landscape_probe.mjs` and `tests/landscape_probe.mjs` are gone; the feature-based path (flower garden, memorial, root shrine as `structure_template_feature`, giant trees by feature) replaced it. Git history keeps them (the commit just before the cleanup). The text below is the historical design.
 
 Command-only structures:
 

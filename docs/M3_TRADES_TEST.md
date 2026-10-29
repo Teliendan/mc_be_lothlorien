@@ -25,7 +25,6 @@ Commands:
 /scriptevent lothlorien:renown points 3
 /scriptevent lothlorien:renown points 8
 /scriptevent lothlorien:renown points 15
-/scriptevent lothlorien:trade
 ```
 
 The Harmony values above select Friend, Guest, Uneasy, Shunned and Hated.

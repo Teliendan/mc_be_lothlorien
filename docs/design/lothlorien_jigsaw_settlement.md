@@ -83,9 +83,8 @@ weights (`EXIT_WEIGHTS`, `EARLY_END`, `WARDENS`), pools, structure. Runtime shap
 - `node tools/village_sim.mjs [seeds] [first]` the assembly simulator + planner + all checks (300 seeds take about 80 s). The reusable mocked `@minecraft/server` is in
   `.claude/skills/bedrock-scripting/scripts/` (see `tests/script_glue.mjs`).
 
-**Test in game:** `/place structure lothlorien:elven_village` (deploy first, leave and re-enter the world; worldgen changes need a NEW village). `/scriptevent lothlorien:village plan`
-re-runs the planner for the nearest marker (only works while markers remain; chat reports the links), `/scriptevent lothlorien:village debug` toggles the stage log, `/scriptevent lothlorien:speed [dash]`
-measures mob speed. Content log lines: `[lothlorien] planner: ticking area quota maxChunkCount=N`, `planner: start for village near x,z`, `planner: village at x,z: N markers ... link(s)`.
+**Test in game:** `/place structure lothlorien:elven_village` (deploy first, leave and re-enter the world; worldgen changes need a NEW village). `/scriptevent lothlorien:debug` turns the debug log on (planner stages, summaries and per-link lines then appear in the content log; failures always log).
+Content log lines (debug mode): `[lothlorien] planner: ticking area quota maxChunkCount=N`, `planner: start for village near x,z`, `planner: village at x,z: N markers ... link(s)`.
 Inspect a saved world without the game: `python -B tools/world_scan.py "<world>" --dump X0 Y0 Z0 X1 Y1 Z1 out.json` (then `village_render.mjs dump`), and
 `python -B tools/world_scan.py "<world>" --actors lothlorien:loop_marker --json m.json` (marker positions for the planner; without `--json` it prints mob attributes).
 

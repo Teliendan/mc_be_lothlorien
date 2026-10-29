@@ -43,9 +43,6 @@ export const supportMotion = createSupportMotionService({ now: () => system.curr
     dropWholeRope(dimension, record.position, face);
   },
 });
-// Debug counter for `/scriptevent lothlorien:tps`: sparse random-tick callbacks; `paused` skips their work
-// during a measurement window (the `off` option), so the cost of these checks can be compared.
-export const supportTickStats = { calls: 0, paused: false };
 system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
   blockComponentRegistry.registerCustomComponent("lothlorien:motion_support", {
     beforeOnPlayerPlace(event) {
@@ -61,8 +58,7 @@ system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
       if (!support || support.isAir || support.isLiquid) event.cancel = true;
     },
     onRandomTick({ block }) {
-      supportTickStats.calls++;
-      if (!supportTickStats.paused) supportMotion.observe(block);
+      supportMotion.observe(block);
     },
     onPlace({ block }) { supportMotion.observe(block, { reset: true }); },
   });

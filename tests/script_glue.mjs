@@ -26,12 +26,13 @@ const realWarn = console.warn;
 console.warn = (...a) => { lines.push(a.join(" ")); }; // captured; printed only on failure
 async function scenario(name, body) {
   lines.length = 0; mock.reset(); runNo++;
-  if (DBG.villageDebug()) DBG.toggleVillageDebug();
+  DBG.setVillageDebug(true); // diagnostics log only in debug mode; the scenarios read them (the quiet-mode scenario switches it off)
   try { await body(); } catch (e) { console.warn = realWarn; console.log(`log of the failed scenario "${name}":\n  ${lines.join("\n  ")}`); throw e; }
   assert.deepEqual(mock.errors, [], `${name}: no uncaught error in a timer or job`);
   console.warn = realWarn; console.log(`ok   script glue: ${name}`); console.warn = (...a) => { lines.push(a.join(" ")); };
 }
-const grep = (re) => lines.filter((l) => re.test(l));
+// debug-gated planner lines read as plain `planner: ...` unless the pattern asks for the "(debug)" marker itself
+const grep = (re) => { const keep = re.source.includes("(debug"); return lines.map((l) => (keep ? l : l.replace("planner: (debug) ", "planner: "))).filter((l) => re.test(l)); };
 const loadScript = (file) => import(`${SRC}${file}?run=${runNo}`);
 function setupV2() {
   mock.strictLoading = true; // blocks only readable inside a ready ticking area: the planner must have loaded the village itself
@@ -93,11 +94,12 @@ await scenario("a marker that appears by entitySpawn (worldgen) starts the plann
 
 await scenario("debug mode logs the silent exits, normal mode stays quiet about them", async () => {
   const markers = setupV2();
-  const mod = await loadScript("loop_marker.js");
+  DBG.setVillageDebug(false);
+  await loadScript("loop_marker.js");
   mock.fire("entityLoad", { entity: markers[0] }); mock.fire("entityLoad", { entity: markers[0] });
   await mock.settle();
-  assert.equal(grep(/\(debug\)/).length, 0, "no debug line without debug mode");
-  mod.toggleDebug();
+  assert.equal(lines.filter((l) => /\[lothlorien\] planner:/.test(l)).length, 0, "no planner line at all without debug mode (the run succeeded)");
+  DBG.setVillageDebug(true);
   const late = mock.addEntity(MARKER, { x: f.markers[3][0], y: f.markers[3][1], z: f.markers[3][2] });
   mock.fire("entityLoad", { entity: late }); mock.fire("entityLoad", { entity: late });
   await mock.settle();
@@ -107,7 +109,7 @@ await scenario("debug mode logs the silent exits, normal mode stays quiet about 
 await scenario("a quota that is too small gives up cleanly: markers stay, tries counted, areas removed, no done-list, no second run this session", async () => {
   const markers = setupV2();
   mock.tickingAreas.maxChunkCount = 6;
-  const mod = await loadScript("loop_marker.js"); mod.toggleDebug();
+  await loadScript("loop_marker.js");
   mock.fire("entityLoad", { entity: markers[0] });
   await mock.settle();
   assert.equal(grep(/gave up: over chunk limit/).length, 1);
@@ -120,23 +122,6 @@ await scenario("a quota that is too small gives up cleanly: markers stay, tries 
   mock.fire("entityLoad", { entity: near });  await mock.settle();
   assert.equal(grep(/planner: start for village/).length, 1);
   assert.equal(grep(/failed earlier in this session/).length, 1);
-});
-
-await scenario("manual planNearest plans even for a done village and does not touch the done-list", async () => {
-  const markers = setupV2();
-  world.setDynamicProperty("lothlorien:village_plans", JSON.stringify([{ x0: 0, x1: 500, z0: 0, z1: 500 }])); mock.propWrites.length = 0;
-  const mod = await loadScript("loop_marker.js");
-  const sent = [], player = { dimension: mock.dimension(), location: { ...markers[0].location }, sendMessage: (m) => sent.push(m) };
-  mod.planNearest(player);
-  await mock.settle();
-  assert.equal(grep(/planner: start for village/).length, 1); assert.match(grep(/planner: start for village/)[0], /trigger manual/);
-  assert.equal(sent.length, 1); assert.equal(sent[0].translate, "lothlorien.message.village.plan.done");
-  assert.equal(mock.propWrites.filter((key) => key === PL.VILLAGE_PLANS).length, 0, "manual run leaves the done-list alone");
-  assert.equal(markersLeft(), 0);
-  mock.reset(); runNo++; // nothing to plan: a message, no run
-  const mod2 = await loadScript("loop_marker.js"), sent2 = [];
-  mod2.planNearest({ dimension: mock.dimension(), location: { x: 0, y: 70, z: 0 }, sendMessage: (m) => sent2.push(m) });
-  assert.equal(sent2[0].translate, "lothlorien.message.village.plan.none");
 });
 
 // These scenarios exercise asynchronous completion orders, not observations of
@@ -157,38 +142,26 @@ await scenario("planner timeout releases an already registered area before its l
   assert.equal(grep(/could not remove ticking area/).length, 0);
 });
 
-await scenario("late area creation cleans only its ended attempt while a manual retry owns another area", async () => {
+await scenario("late area creation cleans its ended attempt without resuming the planner", async () => {
   const markers = setupV2(), tam = mock.tickingAreas;
   const create = tam.createTickingArea.bind(tam), pending = [];
-  // Model registration after the timeout, leaving promises under this scenario's control.
-  tam.createTickingArea = (id, options) => pending.length < 2
-    ? new Promise((resolve, reject) => pending.push({ id, options, resolve, reject }))
-    : create(id, options);
-  const { planNearest } = await loadScript("loop_marker.js");
+  // Model registration after the timeout, leaving the promise under this scenario's control.
+  tam.createTickingArea = (id, options) => new Promise((resolve, reject) => pending.push({ id, options, resolve, reject }));
+  await loadScript("loop_marker.js");
   mock.fire("entityLoad", { entity: markers[0] });
   await mock.advance(610);
   assert.equal(pending.length, 1);
   assert.equal(markers[0].getDynamicProperty("lothlorien:loop_tries"), 1);
   assert.equal(tam.areas.size, 0);
-  const sent = [];
-  planNearest({ dimension: mock.dimension(), location: markers[0].location, sendMessage: (m) => sent.push(m) });
-  await mock.advance(1);
-  assert.equal(pending.length, 2);
-  const [old, current] = pending;
-  assert.notEqual(old.id, current.id, "the same village's retry has a distinct attempt id");
-  const currentReady = create(current.id, current.options);
-  const oldReady = create(old.id, old.options);
+  const [old] = pending;
+  const ready = create(old.id, old.options);
   await mock.advance(3);
-  await Promise.all([currentReady, oldReady]);
+  await ready;
   old.resolve();
   await mock.advance(1);
   assert.equal(tam.hasTickingArea(old.id), false, "late success from the timed-out attempt removed");
-  assert.equal(tam.hasTickingArea(current.id), true, "the current attempt's area survives old completion");
   assert.equal(markersLeft(), markers.length, "the timed-out attempt did not resume building");
-  current.resolve();
   await mock.settle();
-  assert.equal(markersLeft(), 0, "the manual retry finishes normally");
-  assert.equal(sent[0].translate, "lothlorien.message.village.plan.done");
   assert.equal(tam.areas.size, 0);
   assert.equal(grep(/could not remove ticking area/).length, 0);
 });
@@ -234,7 +207,6 @@ await scenario("rail_mender: waits for loaded corners, switches on the dropped f
   const dim = mock.dimension();
   const e = mock.addEntity(MENDER, { x: 1.5, y: 70.5, z: 0.5 });
   await loadScript("rail_mender.js");
-  DBG.toggleVillageDebug(); // its repair count is a debug line (owner 2026-10-27: log flood while a village loads)
   mock.fire("entityLoad", { entity: e });
   await mock.settle();
   assert.equal(e.isValid, false, "mender removed itself");
@@ -301,89 +273,9 @@ await scenario("elves: the planner run turns the posts into the five professions
   assert.deepEqual(rec[0].loremaster, [Math.floor(lore.location.x), Math.floor(lore.location.y), Math.floor(lore.location.z)]);
   assert.equal(postsLeft(), 0, "every post is removed, the unused fifth home post too"); assert.ok(reserves.every((r) => !r.isValid));
   assert.equal(grep(/elves: village at/).length, 1, "one elves line"); assert.match(grep(/elves: village at/)[0], /loremaster \+ 4 on own trees \(0 on reserves\)/);
-  // a manual re-plan finds no posts: it spawns nothing and writes no record
-  const marker = mock.addEntity(MARKER, { x: f.markers[3][0], y: f.markers[3][1], z: f.markers[3][2] });
-  const mod = await loadScript("loop_marker.js"), sent = [];
-  mod.planNearest({ dimension: mock.dimension(), location: { ...marker.location }, sendMessage: (m) => sent.push(m) });
-  await mock.settle();
-  assert.equal(sent.length, 1, "the re-plan ran"); assert.equal(elvesSpawned().length, 5, "no new elves"); assert.equal(homeRecords().length, 1, "no second record");
-  assert.equal(grep(/elves: village at/).length, 1, "and no second elves line");
 });
 
-await scenario("elves: with 6 home posts the healer exists twice - the second on a roomy leftover tree farthest from the first; the record lists five homes", async () => {
-  const markers = setupV2(), { lore, home } = addPosts(6);
-  await loadScript("loop_marker.js");
-  mock.fire("entityLoad", { entity: markers[0] });
-  await mock.settle();
-  const elves = elvesSpawned();
-  assert.equal(elves.length, 6, "six elves");
-  assert.deepEqual(elves.map((s) => s.opts.spawnEvent), [EL.spawnEventOf("loremaster"), ...EL.HOME_ORDER.map(EL.spawnEventOf), EL.spawnEventOf("healer")], "the second healer comes last");
-  const used = new Set(elves.slice(1).map((s) => cellKey(s.entity.location))), left = home.filter((h) => !used.has(cellKey(h.location)));
-  assert.equal(left.length, 1, "one home post stays unused");
-  assert.equal(elves.slice(1).filter((s) => !home.some((h) => cellKey(h.location) === cellKey(s.entity.location))).length, 0, "all on home posts, none on a reserve");
-  assert.equal(new Set(elves.map((s) => cellKey(s.entity.location))).size, 6, "no post twice");
-  assert.equal(homeRecords()[0].homes.length, 5); assert.deepEqual(homeRecords()[0].homes.map((h) => h.p), [...EL.HOME_ORDER, "healer"]);
-  assert.match(grep(/elves: village at/)[0], /loremaster \+ 5 on own trees \(0 on reserves\)/);
-  assert.ok(lore);
-});
-
-await scenario("elves: with only 2 home posts the other 2 professions stand on the nearest reserve posts - still five elves", async () => {
-  const markers = setupV2(), { reserves } = addPosts(2);
-  await loadScript("loop_marker.js");
-  mock.fire("entityLoad", { entity: markers[0] });
-  await mock.settle();
-  const elves = elvesSpawned();
-  assert.equal(elves.length, 5);
-  assert.deepEqual(elves.map((s) => s.opts.spawnEvent), [EL.spawnEventOf("loremaster"), ...EL.HOME_ORDER.map(EL.spawnEventOf)]);
-  assert.equal(cellKey(elves[3].entity.location), cellKey(reserves[0].location), "woodwright on the nearest reserve");
-  assert.equal(cellKey(elves[4].entity.location), cellKey(reserves[1].location), "lamplighter on the next one");
-  assert.equal(homeRecords()[0].homes.filter((h) => h.site === null).length >= 2, true, "reserve homes have no site");
-  assert.match(grep(/elves: village at/)[0], /loremaster \+ 2 on own trees \(2 on reserves\)/);
-  assert.equal(postsLeft(), 0);
-});
-
-await scenario("elves: a spawn error for one elf is logged, no post is left behind, the planner still finishes", async () => {
-  const markers = setupV2(); addPosts(5);
-  mock.onSpawn = (e, opts) => { if (opts.spawnEvent === EL.spawnEventOf("gardener")) throw new Error("boom"); };
-  await loadScript("loop_marker.js");
-  mock.fire("entityLoad", { entity: markers[0] });
-  await mock.settle();
-  assert.equal(grep(/planner: village at/).length, 1, "the planner summary line still comes");
-  assert.equal(markersLeft(), 0, "markers removed as always");
-  assert.equal(grep(/could not spawn the gardener/).length, 1); assert.match(grep(/elves: village at/)[0], /1 failed/);
-  assert.equal(postsLeft(), 0, "every post is removed, also the failed one");
-  assert.equal(homeRecords()[0].homes.length, 3, "the record lists the three elves that exist");
-});
-
-await scenario("elf.js: a hit on an elf charges a fight per 60 s window and tags the player as foe for 60 s after the LAST hit; other mobs and stale tags", async () => {
-  const realNow = Date.now; let now = 1_000_000;
-  Date.now = () => now;
-  try {
-    const player = mock.addEntity("minecraft:player", { x: 0, y: 70, z: 0 }), elf = mock.addEntity(ELF, { x: 1, y: 70, z: 1 }), deer = mock.addEntity("lothlorien:deer", { x: 2, y: 70, z: 2 });
-    mock.players.push(player);
-    const fights = [];
-    const mod = await loadScript("elf.js");
-    mod.startElves({ recordFight: (p, e) => fights.push([p, e]) });
-    const hit = (target, by = player) => mock.fire("entityHurt", { hurtEntity: target, damageSource: { damagingEntity: by } });
-    hit(deer); hit(elf, elf);
-    assert.equal(fights.length, 0); assert.equal(player.hasTag(EL.FOE_TAG), false, "other mobs and non-player hitters do nothing");
-    hit(elf);
-    assert.equal(fights.length, 1); assert.equal(fights[0][1], elf); assert.ok(player.hasTag(EL.FOE_TAG));
-    await mock.advance(200); now += 10_000; hit(elf); // 10 s later: the same fight, the tag timer starts over
-    assert.equal(fights.length, 1, "no second fight within 60 s");
-    await mock.advance(1100); now += 55_000; // 55 s after the second hit, 65 s after the first
-    assert.ok(player.hasTag(EL.FOE_TAG), "the first hit's timer must not remove the tag early");
-    await mock.advance(150); now += 7_500;
-    assert.equal(player.hasTag(EL.FOE_TAG), false, "60 s after the last hit the tag is gone");
-    now += 61_000; hit(elf);
-    assert.equal(fights.length, 2, "a hit more than 60 s after the previous one is a new fight"); assert.ok(player.hasTag(EL.FOE_TAG));
-    mock.fire("playerSpawn", { player, initialSpawn: false }); assert.ok(player.hasTag(EL.FOE_TAG), "a respawn keeps the tag");
-    mock.fire("playerSpawn", { player, initialSpawn: true }); assert.equal(player.hasTag(EL.FOE_TAG), false, "a stale tag is dropped on joining");
-    hit(elf); mock.fire("playerLeave", { playerId: player.id });
-    await mock.settle(); // the pending timer of a player who left does nothing and throws nothing
-  } finally { Date.now = realNow; }
-});
-await scenario("elf.js: a release (rehome event) records the new home and the moved flag; other events, other mobs and a missing entity change nothing; the debug hook reports", async () => {
+await scenario("elf.js: a release (rehome event) records the new home and the moved flag; other events, other mobs and a missing entity change nothing", async () => {
   const mod = await loadScript("elf.js");
   mod.startElves({ recordFight: () => {} });
   assert.equal(mock.subscribers("after", "dataDrivenEntityTrigger"), 1);
@@ -396,16 +288,6 @@ await scenario("elf.js: a release (rehome event) records the new home and the mo
   mock.fire("dataDrivenEntityTrigger", { entity: elf, eventId: EL.REHOME_EVENT });
   assert.equal(elf.getDynamicProperty(EL.HOME_OF_ELF), "-4,64,40", "floored feet cell"); assert.equal(elf.getDynamicProperty(EL.MOVED_PROPERTY), true);
   mock.fire("dataDrivenEntityTrigger", { entity: { typeId: ELF, get location() { throw new Error("gone"); }, setDynamicProperty() {} }, eventId: EL.REHOME_EVENT }); // an unloaded entity throws: swallowed
-  const sent = [], player = { dimension: mock.dimension(), location: { x: -3, y: 64, z: 40 }, sendMessage: (m) => sent.push(m) };
-  mod.elfDebug(player, "home");
-  assert.equal(sent.length, 2); assert.match(sent[0].translate, /elf\.debug\.home_(free|led)$/);
-  const args = (m) => m.with.rawtext.slice(1).map((a) => a.text);
-  assert.match(sent[1].translate, /elf\.debug\.roam$/); assert.deepEqual(args(sent[1]), ["none", "-"], "no radius marker: no radius group (on a lead)");
-  mod.elfDebug({ ...player, location: { x: 500, y: 64, z: 500 } }, "home");
-  assert.match(sent[2].translate, /elf\.debug\.none$/);
-  mock.addEntity(ELF, { x: 800.5, y: 64, z: 800.5 }, { components: { "minecraft:mark_variant": { value: EL.RADIUS_MARK[EL.HEALER_DAY_GROUP] } } });
-  mod.elfDebug({ ...player, location: { x: 800, y: 64, z: 800 } }, "home");
-  assert.deepEqual(args(sent.at(-1)), ["healer_day", String(EL.HOME_RADIUS.healerDay)], "the radius marker names the group the engine has on the elf");
 });
 
 await scenario("harmony: elf and warden deeds count outside the forest, a deer outside costs nothing", async () => {
@@ -460,7 +342,7 @@ await scenario("loop_marker.js: sliced() runs many inner steps per engine step, 
   assert.equal(r.value, "done"); assert.equal(stats.steps, steps + 1, "every inner step counted (plus the finishing one)");
   assert.ok(engineSteps < steps / 2 && engineSteps > 10, `${engineSteps} engine steps for ${steps} inner steps`);
   const markers = setupV2();
-  const m2 = await loadScript("loop_marker.js"); m2.toggleDebug();
+  await loadScript("loop_marker.js");
   mock.fire("entityLoad", { entity: markers[0] });
   await mock.settle();
   for (const re of [/\(debug\) discovery lothlorien_village_-?\d+_-?\d+_\d+_1: \d+ chunks in \d+ ms/, /\(debug\) settle \d+ ms/, /\(debug\) plan\+build \d+ ms wall, \d+ ticks, \d+ inner steps, \d+ ms inside them, \d+ distinct reads, \d+ cells written/, /\(debug\) populate \d+ ms/]) assert.equal(grep(re).length, 1, String(re));

@@ -2185,7 +2185,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/elf.js",
-          "sha256": "3f4dae1c6e491d96fcb30c9ce721a65a7629bb52928e64ab5f5585bf3ebad6a4"
+          "sha256": "01c643ca207efca9082bc584576b8d1083f1a828df66fbf68ec5f519e8fbc3bd"
         },
         {
           "path": "lothlorien_bp/scripts/elf_native_use.js",
@@ -2193,11 +2193,11 @@
         },
         {
           "path": "lothlorien_bp/scripts/elf_rules.js",
-          "sha256": "96f37be2215d690d5da64464b14aab6fc60a6efd1df7b6f5e707ec9b43b94711"
+          "sha256": "d9034ba5033d24a9787277d707a7c19a19d9ec38465c1148bea044002f6677e9"
         },
         {
           "path": "lothlorien_bp/scripts/elf_village.js",
-          "sha256": "c78dfd2f26767d428edea314d6f9a07e4295786b09696f4db7b0d22b5e9b640d"
+          "sha256": "edbb602bbfad7a3cfa0afb84f6777285f12f7c454a408e354d709bb610ba35f5"
         }
       ]
     },
@@ -2582,7 +2582,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/trade.js",
-          "sha256": "986ede5e675f2c2f7e3587bb60ecdecbc3f273a59e4635eb5c16f4714ea17c3e"
+          "sha256": "f289d5511ca333208f740bda0a9be4e0e783f72630fc158967356289eb104489"
         },
         {
           "path": "lothlorien_bp/scripts/trade_rules.js",
@@ -2725,7 +2725,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/loop_marker.js",
-          "sha256": "d8091957ae7db4cfeca468f00f9ff2fea50a22b33503955789b0884f702cad5a"
+          "sha256": "2ae5741f71ba366038783f8881c78edf1fc56046ca6ba114d211b1e87c7ad480"
         },
         {
           "path": "lothlorien_bp/scripts/loremaster.js",
@@ -2733,7 +2733,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/main.js",
-          "sha256": "06ba7b26a878c48bb13297163a4e3bd014d600f1f036c6a83980dbcd80692621"
+          "sha256": "96b1259e1c0d1ddab6e87e56b87f658435854ab232ee4e92508d7b1b6e28bdee"
         },
         {
           "path": "lothlorien_bp/scripts/mallorn_tree.js",
@@ -2772,16 +2772,8 @@
           "sha256": "6118bd6509889630e9fee4827198cbcf0f866137060e63fb20cdeb8d21443fe1"
         },
         {
-          "path": "lothlorien_bp/scripts/speed_probe.js",
-          "sha256": "7a47174be3159cfeed9afcffbb3f0e9a922f87eb9b8ccfa71491880d898e659b"
-        },
-        {
-          "path": "lothlorien_bp/scripts/speed_stats.js",
-          "sha256": "377eb46fe20cec8e72ab6975b6bcc9d013869991f7d886008df8bac6e7a5182c"
-        },
-        {
           "path": "lothlorien_bp/scripts/support_motion.js",
-          "sha256": "cd79233bd9b62247b4dce961fd20b524e7f18ac4d40442496b0f29e98859c505"
+          "sha256": "a24913d3661c4a2e7ff3e43353c3bcc70f6f29381ba009a0a880867ffe54d3c0"
         },
         {
           "path": "lothlorien_bp/scripts/support_motion_service.js",
@@ -2790,14 +2782,6 @@
         {
           "path": "lothlorien_bp/scripts/support_policies.js",
           "sha256": "77306429404658e47f4a88dcd81c7837a6064f424d1c2a349407fe2f141d95f5"
-        },
-        {
-          "path": "lothlorien_bp/scripts/tick_rate.js",
-          "sha256": "04514ae451878f7d0a1f5796f6dbf347ebd840f91fbfe4629e12671936257fcc"
-        },
-        {
-          "path": "lothlorien_bp/scripts/tick_rate_rules.js",
-          "sha256": "2bd0529c862bc78b9ab9b41c93bd963574bb33d049eb7f6ca6b673e6b6ada1e0"
         },
         {
           "path": "lothlorien_bp/scripts/tree_interaction_rules.js",
@@ -2869,10 +2853,6 @@
           "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
         },
         {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_shrine.mcstructure",
-          "sha256": "a2b6916b1180de3704bc276f82f23fb24bda7db003c03370fc3cc28d679c7b46"
-        },
-        {
           "path": "lothlorien_bp/structures/lothlorien/root_shrine_01.mcstructure",
           "sha256": "899333fd5462971eecd809b6f0b999241f8d68c7dac4359ead5d044bf1a54d80"
         }
@@ -2935,10 +2915,6 @@
         {
           "path": "docs/parity/CREATURES.md",
           "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/memorial.mcstructure",
-          "sha256": "c09addf7368d5d3fe6ff35082911b24327307d19f3739fe7a0b418f494851ad6"
         },
         {
           "path": "lothlorien_bp/structures/lothlorien/memorial_leaf_01.mcstructure",
@@ -3110,66 +3086,6 @@
         {
           "path": "lothlorien_bp/structures/lothlorien/furnish/pot_white_tulip.mcstructure",
           "sha256": "f7253a1c6e5c53939f98a69b3cd0985c4305a456cb686607f3f2a09a74ac82d8"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/garden.mcstructure",
-          "sha256": "9843da85cf5f0807365cb0ba31a2624c94d8e9af4c707466ea020b9716afc681"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_round_05.mcstructure",
-          "sha256": "b7d0f044a7fe7340cd8e39fdd03344d697883b9d60b7ca61ef44efbcef9cd7ad"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_round_07.mcstructure",
-          "sha256": "42bbe2f40b9b5b6f81a279d8f6dafddc131796d005e7d62021c85e7e37e29927"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_02.mcstructure",
-          "sha256": "f4ee219ccac7d474793448ab0bdf02683e8f995ae306fe856b96a4ba56d9f8ba"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_03.mcstructure",
-          "sha256": "685a209ea5985457adfef9de5772e5a71b2bdb9da59741d088fb2e48f1ab7400"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_06.mcstructure",
-          "sha256": "17cdd1a2f5a50039201c19b6a246329bf779925be70b460bebf2549860ccf800"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_08.mcstructure",
-          "sha256": "d42f8ebb40e6e36f5036f53f6b16dbf751db6c820682d9fb50b72aa5df12b8da"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/small_spacer.mcstructure",
-          "sha256": "a0d22df783432d98cff24ee4febfc7c692ee884fd0775b362e30b73a25c6b594"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_round_05.mcstructure",
-          "sha256": "a34cd90b185a094fde415fd55c6b1d6883bd60c0f03e994b55c45e06386a0064"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_round_07.mcstructure",
-          "sha256": "55b3db9f77edd593acb8fbce848e9ca4189433bf6623500a7e0bc15df37538a8"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_02.mcstructure",
-          "sha256": "22b7bf30db8820ddf56b19f365a7c67b76279de0823e2cbdfafa250df73b8dd0"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_03.mcstructure",
-          "sha256": "f14b8b0f65f2b9cac176c3b7cdb735e951adaadf007a933af5f7bd9ed73aaf87"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_06.mcstructure",
-          "sha256": "da5ac5c4320b874f206de38c25f96549af015758dc2a122b6b1be79dac7da21a"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_08.mcstructure",
-          "sha256": "6b2a7dc4dae2b9e5c2f9b43843b8c442ae5537b35a0189e8944c7319112c372d"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_spacer.mcstructure",
-          "sha256": "05fdadf0aec4c158f0c16f121e4ba7bbb3774879c7f951831b005b71dd322380"
         },
         {
           "path": "lothlorien_bp/structures/lothlorien/mallorn_round_05.mcstructure",

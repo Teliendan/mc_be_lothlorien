@@ -3,8 +3,7 @@
 // carries the tag lothlorien_elf_foe for FOE_MS, which the village wardens read (entities/elven_warden.json target entry, and
 // elven_warden.js stops shielding that player from warden arrows). Kills are charged by harmony_game.js (entityDie).
 import { system, world } from "@minecraft/server";
-import { ELF_ID, FOE_MS, FOE_TAG, HOME_OF_ELF, MOVED_PROPERTY, PROFESSIONS, REHOME_EVENT, homeCell, radiusGroupOfMark } from "./elf_rules.js";
-import { message } from "./messages.js";
+import { ELF_ID, FOE_MS, FOE_TAG, HOME_OF_ELF, MOVED_PROPERTY, REHOME_EVENT, homeCell } from "./elf_rules.js";
 import { PLAYER_ID, isNewFight } from "./elven_warden_rules.js";
 
 const TICKS_PER_MS = 20 / 1000;
@@ -21,40 +20,9 @@ function removeTag(id) {
   }
 }
 
-const DEBUG_RADIUS = 16;
-const professionLabel = (elf) => {
-  let v; try { v = elf.getComponent("minecraft:variant")?.value; } catch { /* no component */ }
-  return { translate: `lothlorien.elf.profession.${PROFESSIONS[v] ?? PROFESSIONS[0]}` };
-};
-const parseCell = (s) => (typeof s === "string" ? s.split(",").map(Number) : undefined);
-
-// `/scriptevent lothlorien:elf home | rehome`: the nearest elf within DEBUG_RADIUS. The engine home itself cannot be read by script, so `home`
-// shows the recorded cell (HOME_OF_ELF: the village tree, or where the elf was released) and whether the elf is on a lead, then the radius group the
-// engine has on the elf right now (its minecraft:mark_variant marker, elf_rules.js RADIUS_MARK; "none" = no radius, on a lead).
-export function elfDebug(player, arg) {
-  try {
-    const [elf] = player.dimension.getEntities({ type: ELF_ID, location: player.location, maxDistance: DEBUG_RADIUS, closest: 1 });
-    if (!elf) { player.sendMessage(message("elf.debug.none")); return; }
-    if (arg === "rehome") {
-      elf.triggerEvent(REHOME_EVENT); // the dataDrivenEntityTrigger handler below records the move
-      player.sendMessage(message("elf.debug.rehomed", professionLabel(elf), homeCell(elf.location)));
-      return;
-    }
-    const home = elf.getDynamicProperty(HOME_OF_ELF), c = parseCell(home), l = elf.location;
-    const dist = c && c.every(Number.isFinite) ? Math.hypot(l.x - (c[0] + 0.5), l.y - c[1], l.z - (c[2] + 0.5)).toFixed(1) : "?";
-    const led = elf.getComponent("minecraft:leashable")?.isLeashed === true;
-    player.sendMessage(message(led ? "elf.debug.home_led" : "elf.debug.home_free", professionLabel(elf), home ?? "?", dist));
-    let mark; try { mark = elf.getComponent("minecraft:mark_variant")?.value; } catch { /* no marker */ }
-    const roam = radiusGroupOfMark(mark);
-    player.sendMessage(message("elf.debug.roam", professionLabel(elf), roam?.group ?? "none", roam ? String(roam.radius) : "-"));
-  } catch {
-    // entity gone or chunk unloaded
-  }
-}
-
 // recordFight(player, elf): harmony_game.js recordElfFight
 export function startElves({ recordFight }) {
-  // A lead released the elf (or /scriptevent lothlorien:elf rehome): entities/elf.json set the engine home to where it stands; script only records it.
+  // A lead released the elf: entities/elf.json set the engine home to where it stands; script only records it.
   world.afterEvents.dataDrivenEntityTrigger.subscribe(({ entity, eventId }) => {
     try {
       if (eventId !== REHOME_EVENT || entity?.typeId !== ELF_ID) return;

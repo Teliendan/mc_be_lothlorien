@@ -178,19 +178,3 @@ export function startTrade(dependencies) {
   });
   world.afterEvents.playerLeave.subscribe(({ playerId }) => clearPlayer(playerId));
 }
-
-export function handleTradeEvent(event, player) {
-  if (event.id !== "lothlorien:trade") return false;
-  try {
-    const elf = player.dimension.getEntities({ type: ELF_ID, location: player.location, maxDistance: 8 })
-      .filter((e) => traderProfession(e)).sort((a, b) => {
-        const distance = (e) => Math.hypot(e.location.x - player.location.x, e.location.y - player.location.y, e.location.z - player.location.z);
-        return distance(a) - distance(b);
-      })[0];
-    const pass = passes.get(player.id);
-    player.sendMessage(message("trade.debug", elf ? { translate: `lothlorien.elf.profession.${traderProfession(elf)}` } : "?",
-      elf?.getProperty(TABLE_PROPERTY) ?? NO_TABLE, keyFor(player) ?? NO_TABLE,
-      pass ? `${pass.elfId}:${pass.usedAt === undefined ? "ready" : "used"}` : NO_TABLE));
-  } catch { /* player left */ }
-  return true;
-}

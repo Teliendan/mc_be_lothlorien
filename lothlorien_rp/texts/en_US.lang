@@ -383,38 +383,6 @@ lothlorien.message.harmony.better.guest=§aThe woods forgive you.
 lothlorien.message.harmony.hint=§7The trees grow quiet around you.
 ## Context: Developer diagnostic displayed to players who invoke /scriptevent lothlorien:harmony: [lothlorien] harmony=%s band=%s timer=%s s. Translate labels; retain technical tokens and commands. Harmony is a per-player number from -60 to +10 with five bands: Friend (+10), Guest (0 to +9), Uneasy (-1 to -14), Shunned (-15 to -29), Hated (-30 to -60). Deeds against the forest's creatures lower it; peaceful time inside the forest raises it.
 lothlorien.message.harmony.debug=[lothlorien] harmony=%s band=%s timer=%s s
-## Context: Announces the start of the speed measurement.
-lothlorien.message.speed.started=[lothlorien] speed probe: measuring mobs within %s blocks for %s seconds.
-## Context: One result line per entity type: count of mobs, minimum, average and maximum horizontal speed, and the share of samples in which the mob was moving.
-lothlorien.message.speed.row=%s: %s mobs, speed min %s / avg %s / max %s blocks per second, moving in %s percent of %s samples
-## Context: Extra line for guards: average speed while a monster stood nearby versus while none did.
-lothlorien.message.speed.threat=%s with a monster within %s blocks: average %s blocks per second (%s samples); otherwise average %s blocks per second (%s samples)
-## Context: Reports that the measurement found no mobs.
-lothlorien.message.speed.none=[lothlorien] speed probe: no mobs within range.
-## Context: Reports that a second measurement was requested while one is running.
-lothlorien.message.speed.busy=[lothlorien] speed probe: a measurement is already running.
-## Context: Announces the start of the speed spike detector.
-lothlorien.message.dash.started=[lothlorien] dash detector: watching mobs within %s blocks for %s seconds; spikes go to the content log.
-## Context: One result line per entity type: tracked mobs, number of speed spikes and the highest spike speed.
-lothlorien.message.dash.row=%s: %s mobs, %s speed spikes, peak %s blocks per second
-## Context: Reports that the detector window ended without any speed spike, or with no mobs in range.
-lothlorien.message.dash.none=[lothlorien] dash detector: no speed spikes found (details are in the content log).
-## Context: Announces the start of the tick-rate measurement.
-lothlorien.message.tps.started=[lothlorien] tick rate: measuring for %s seconds of real time. Keep the game unpaused.
-## Context: Announces the start of the tick-rate measurement in comparison mode: the scripted checks that plants, lamps and ropes still stand on their support are paused during the window.
-lothlorien.message.tps.started_off=[lothlorien] tick rate: measuring for %s seconds of real time with the support checks of plants and lamps paused. Keep the game unpaused.
-## Context: Reports that a second tick-rate measurement was requested while one is running.
-lothlorien.message.tps.busy=[lothlorien] tick rate: a measurement is already running.
-## Context: First result line of the tick-rate measurement: game ticks counted, real seconds elapsed, ticks per second, and game speed as a percentage of real time (100 is normal).
-lothlorien.message.tps.result=[lothlorien] tick rate: %s game ticks in %s s = %s tps (normal 20); game time runs at %s percent of real time.
-## Context: Second result line of the tick-rate measurement: average and longest real duration of one game tick, how many scripted support checks of plants, lamps and ropes ran per second, and how many such blocks the script remembers.
-lothlorien.message.tps.detail=[lothlorien] tick rate: average tick %s ms (normal 50), longest %s ms; support checks %s per second, %s blocks remembered.
-## Context: Developer diagnostic: /scriptevent lothlorien:village plan found no loop marker within 160 blocks, so there is nothing to plan.
-lothlorien.message.village.plan.none=[lothlorien] village planner: no village markers near you (the village was already planned, or none is loaded).
-## Context: Developer diagnostic: the village planner finished a run started by /scriptevent lothlorien:village plan.
-lothlorien.message.village.plan.done=[lothlorien] village planner: %s link(s) built (%s).
-## Context: Developer diagnostic: the village planner run started by /scriptevent lothlorien:village plan failed, for example the ticking area quota was too small or loading timed out.
-lothlorien.message.village.plan.failed=[lothlorien] village planner: this village could not be planned (see the content log).
 ## Context: Elf: a civilian elf, an inhabitant of the Elven tree villages of Lothlorien. One name for all professions.
 entity.lothlorien:elf.name=Elf
 ## Context: Creative spawn egg for Elf. Spawn Egg is the Minecraft item type; do not translate as an animal-laid egg.
@@ -429,16 +397,6 @@ lothlorien.elf.profession.woodwright=Woodwright
 lothlorien.elf.profession.lamplighter=Lamplighter
 ## Context: Profession title of the wise elf who keeps the lore and tales of the forest.
 lothlorien.elf.profession.loremaster=Loremaster
-## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] elf %s: home %s, %s blocks away, not on a lead. Translate labels; keep technical tokens and coordinates.
-lothlorien.message.elf.debug.home_free=[lothlorien] elf %s: home %s, %s blocks away, not on a lead
-## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] elf %s: home %s, %s blocks away, on a lead. Translate labels; keep technical tokens and coordinates.
-lothlorien.message.elf.debug.home_led=[lothlorien] elf %s: home %s, %s blocks away, on a lead
-## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] elf %s: new home set here (%s). Translate labels; keep technical tokens and coordinates.
-lothlorien.message.elf.debug.rehomed=[lothlorien] elf %s: new home set here (%s)
-## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] no elf within 16 blocks. Translate labels; keep technical tokens and coordinates.
-lothlorien.message.elf.debug.none=[lothlorien] no elf within 16 blocks
-## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf home next to a civilian elf, after the home line: [lothlorien] elf %s: radius group %s (%s blocks). Names the home-radius component group the elf has right now (how far it may wander from its home). Translate labels; keep technical tokens and coordinates.
-lothlorien.message.elf.debug.roam=[lothlorien] elf %s: radius group %s (%s blocks)
 ## Context: Title of the Loremaster dialog forms when the elf has no name tag. The Loremaster is the elf who teaches the player and passes on the requests of the other elves.
 lothlorien.message.lore.title=Loremaster
 ## Context: Greeting at the top of the main Loremaster form for a player in the Friend band (Harmony +10). Mae govannen is Sindarin for well met.
@@ -711,8 +669,6 @@ lothlorien.message.trade.refused.hated=§7The elf turns away and will not trade 
 lothlorien.message.trade.again=§7The elf is ready to trade. Use the elf again.
 ## Context: Button in a trader’s request form. It closes the form and permits the player’s next interaction with this elf to open the native trade screen; the request remains active.
 lothlorien.message.lore.btn.trade=Trade
-## Context: Developer diagnostic for the nearest trader: localized profession, its current table key, the invoking player’s eligible key and current trade-pass state. Technical keys and pass values are supplied verbatim.
-lothlorien.message.trade.debug=Trade debug: %s, table %s, yours %s, pass %s
 ## Context: Selecting Trade closes the request form. The player must then click the same elf again to open the native trade screen. This instruction is shown before selecting the button.
 lothlorien.message.lore.btn.trade_hint=Then click the elf again
 ## Context: Chest armour with leather-level protection. Grants invisibility after sneaking without moving for one second.

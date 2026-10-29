@@ -4,6 +4,7 @@
 // where (the Loremaster on the central tree, healer / gardener / woodwright / lamplighter on trees of their own, leftovers on reserve posts),
 // spawns one elf per assignment with the profession event, records the result for the home milestone and removes the posts.
 // Idempotent by construction: the posts are gone after one run, so a second run finds none and spawns nothing.
+import { villageDebug } from "./village_debug.js";
 import { BlockPermutation, world } from "@minecraft/server";
 import { ELF_ID, HOMES_PROPERTY, HOME_OF_ELF, POST_ID, addHomes, assignHomes, parseHomes, spawnEventOf } from "./elf_rules.js";
 import { findHome, hasLayout, planFurnish, siteOf } from "./home_furnish.js";
@@ -97,6 +98,6 @@ export function populateVillage(dimension, rect, at) {
     try { post.entity.remove(); } catch { /* unloaded meanwhile */ }
   }
   const total = assigned.length;
-  console.warn(`[lothlorien] elves: village at ${at[0]},${at[1]}: ${lore ? (failedPosts.has(lore) ? "loremaster FAILED" : "loremaster") : "no loremaster post"} + ${result.own} on own trees (${result.reserve} on reserves)${total < 4 ? `, only ${total} of 4 other professions found a post` : ""}${result.failed ? `, ${result.failed} failed` : ""}`);
+  if (villageDebug()) console.warn(`[lothlorien] elves: village at ${at[0]},${at[1]}: ${lore ? (failedPosts.has(lore) ? "loremaster FAILED" : "loremaster") : "no loremaster post"} + ${result.own} on own trees (${result.reserve} on reserves)${total < 4 ? `, only ${total} of 4 other professions found a post` : ""}${result.failed ? `, ${result.failed} failed` : ""}`);
   return result;
 }

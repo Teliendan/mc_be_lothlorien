@@ -229,14 +229,6 @@
       "pattern": "lothlorien_bp/scripts/renown_rules.js"
     },
     {
-      "featureId": "lothlorien:growing",
-      "pattern": "lothlorien_bp/scripts/speed_probe.js"
-    },
-    {
-      "featureId": "lothlorien:growing",
-      "pattern": "lothlorien_bp/scripts/speed_stats.js"
-    },
-    {
       "featureId": "lothlorien:squirrel",
       "pattern": "lothlorien_bp/scripts/squirrel.js"
     },
@@ -263,14 +255,6 @@
     {
       "featureId": "lothlorien:swan",
       "pattern": "lothlorien_bp/scripts/swan_rules.js"
-    },
-    {
-      "featureId": "lothlorien:growing",
-      "pattern": "lothlorien_bp/scripts/tick_rate.js"
-    },
-    {
-      "featureId": "lothlorien:growing",
-      "pattern": "lothlorien_bp/scripts/tick_rate_rules.js"
     },
     {
       "featureId": "lothlorien:trading",
@@ -479,74 +463,6 @@
     {
       "featureId": "lothlorien:great_mallorn",
       "pattern": "lothlorien_bp/structures/lothlorien/furnish/pot_white_tulip.mcstructure"
-    },
-    {
-      "featureId": "lothlorien:great_mallorn",
-      "pattern": "lothlorien_bp/structures/lothlorien/landscape_probe/garden.mcstructure"
-    },
-    {
-      "featureId": "lothlorien:memorial",
-      "pattern": "lothlorien_bp/structures/lothlorien/landscape_probe/memorial.mcstructure"
-    },
-    {
-      "featureId": "lothlorien:root_shrine",
-      "pattern": "lothlorien_bp/structures/lothlorien/landscape_probe/root_shrine.mcstructure"
-    },
-    {
-      "featureId": "lothlorien:great_mallorn",
-      "pattern": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_round_05.mcstructure"
-    },
-    {
-      "featureId": "lothlorien:great_mallorn",
-      "pattern": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_round_07.mcstructure"
-    },
-    {
-      "featureId": "lothlorien:great_mallorn",
-      "pattern": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_02.mcstructure"
-    },
-    {
-      "featureId": "lothlorien:great_mallorn",
-      "pattern": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_03.mcstructure"
-    },
-    {
-      "featureId": "lothlorien:great_mallorn",
-      "pattern": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_06.mcstructure"
-    },
-    {
-      "featureId": "lothlorien:great_mallorn",
-      "pattern": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_08.mcstructure"
-    },
-    {
-      "featureId": "lothlorien:great_mallorn",
-      "pattern": "lothlorien_bp/structures/lothlorien/landscape_probe/small_spacer.mcstructure"
-    },
-    {
-      "featureId": "lothlorien:great_mallorn",
-      "pattern": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_round_05.mcstructure"
-    },
-    {
-      "featureId": "lothlorien:great_mallorn",
-      "pattern": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_round_07.mcstructure"
-    },
-    {
-      "featureId": "lothlorien:great_mallorn",
-      "pattern": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_02.mcstructure"
-    },
-    {
-      "featureId": "lothlorien:great_mallorn",
-      "pattern": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_03.mcstructure"
-    },
-    {
-      "featureId": "lothlorien:great_mallorn",
-      "pattern": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_06.mcstructure"
-    },
-    {
-      "featureId": "lothlorien:great_mallorn",
-      "pattern": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_08.mcstructure"
-    },
-    {
-      "featureId": "lothlorien:great_mallorn",
-      "pattern": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_spacer.mcstructure"
     },
     {
       "featureId": "lothlorien:great_mallorn",
@@ -1338,10 +1254,6 @@
     {
       "evidence": [
         {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_shrine.mcstructure",
-          "sha256": "a2b6916b1180de3704bc276f82f23fb24bda7db003c03370fc3cc28d679c7b46"
-        },
-        {
           "path": "lothlorien_bp/structures/lothlorien/root_shrine_01.mcstructure",
           "sha256": "899333fd5462971eecd809b6f0b999241f8d68c7dac4359ead5d044bf1a54d80"
         },
@@ -1516,66 +1428,6 @@
         {
           "path": "lothlorien_bp/structures/lothlorien/furnish/pot_white_tulip.mcstructure",
           "sha256": "f7253a1c6e5c53939f98a69b3cd0985c4305a456cb686607f3f2a09a74ac82d8"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/garden.mcstructure",
-          "sha256": "9843da85cf5f0807365cb0ba31a2624c94d8e9af4c707466ea020b9716afc681"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_round_05.mcstructure",
-          "sha256": "b7d0f044a7fe7340cd8e39fdd03344d697883b9d60b7ca61ef44efbcef9cd7ad"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_round_07.mcstructure",
-          "sha256": "42bbe2f40b9b5b6f81a279d8f6dafddc131796d005e7d62021c85e7e37e29927"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_02.mcstructure",
-          "sha256": "f4ee219ccac7d474793448ab0bdf02683e8f995ae306fe856b96a4ba56d9f8ba"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_03.mcstructure",
-          "sha256": "685a209ea5985457adfef9de5772e5a71b2bdb9da59741d088fb2e48f1ab7400"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_06.mcstructure",
-          "sha256": "17cdd1a2f5a50039201c19b6a246329bf779925be70b460bebf2549860ccf800"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_roundplain_08.mcstructure",
-          "sha256": "d42f8ebb40e6e36f5036f53f6b16dbf751db6c820682d9fb50b72aa5df12b8da"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/small_spacer.mcstructure",
-          "sha256": "a0d22df783432d98cff24ee4febfc7c692ee884fd0775b362e30b73a25c6b594"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_round_05.mcstructure",
-          "sha256": "a34cd90b185a094fde415fd55c6b1d6883bd60c0f03e994b55c45e06386a0064"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_round_07.mcstructure",
-          "sha256": "55b3db9f77edd593acb8fbce848e9ca4189433bf6623500a7e0bc15df37538a8"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_02.mcstructure",
-          "sha256": "22b7bf30db8820ddf56b19f365a7c67b76279de0823e2cbdfafa250df73b8dd0"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_03.mcstructure",
-          "sha256": "f14b8b0f65f2b9cac176c3b7cdb735e951adaadf007a933af5f7bd9ed73aaf87"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_06.mcstructure",
-          "sha256": "da5ac5c4320b874f206de38c25f96549af015758dc2a122b6b1be79dac7da21a"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_roundplain_08.mcstructure",
-          "sha256": "6b2a7dc4dae2b9e5c2f9b43843b8c442ae5537b35a0189e8944c7319112c372d"
-        },
-        {
-          "path": "lothlorien_bp/structures/lothlorien/landscape_probe/tree_spacer.mcstructure",
-          "sha256": "05fdadf0aec4c158f0c16f121e4ba7bbb3774879c7f951831b005b71dd322380"
         },
         {
           "path": "lothlorien_bp/structures/lothlorien/mallorn_round_05.mcstructure",

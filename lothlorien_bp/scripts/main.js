@@ -18,7 +18,8 @@ import "./trees.js";
 import "./great_mallorn.js";
 import "./rail_mender.js";
 import "./memorial_seed.js";
-import { planNearest, toggleDebug } from "./loop_marker.js";
+import "./loop_marker.js";
+import { setVillageDebug } from "./village_debug.js";
 import { inVillageArea } from "./village_area.js";
 import { startVillageMusic } from "./village_music.js";
 import "./warden_replace.js";
@@ -28,7 +29,7 @@ import { bandOf } from "./harmony.js";
 import { startDeer } from "./deer.js";
 import { startWhiteDeer } from "./white_deer.js";
 import { startElvenWardens } from "./elven_warden.js";
-import { elfDebug, startElves } from "./elf.js";
+import { startElves } from "./elf.js";
 import { startHealers } from "./healer.js";
 import { startArchery } from "./archery.js";
 import { startWornGifts } from "./worn_gifts.js";
@@ -39,10 +40,8 @@ import { startUnicorns } from "./unicorn.js";
 import { handleRenownEvent, renownOf, startRenown } from "./renown_game.js";
 import { rankIndexOf, requestProfession } from "./renown_rules.js";
 import { openTraderForm, startLoremaster } from "./loremaster.js";
-import { handleTradeEvent, startTrade } from "./trade.js";
+import { startTrade } from "./trade.js";
 import { DEPTH_NAMES, estimateDepth, probeCount } from "./depth.js";
-import { startSpeedProbe } from "./speed_probe.js";
-import { startTickRateProbe } from "./tick_rate.js";
 
 const BIOME_ID = "lothlorien:lothlorien";
 
@@ -161,33 +160,15 @@ function onScriptEvent(event) {
   if (!player || player.typeId !== "minecraft:player") return;
   if (handleHarmonyEvent(event, player)) return;
   if (handleRenownEvent(event, player)) return; // debug: /scriptevent lothlorien:renown [points N | reset | deed <id> | chapter N | offer <request id>]
-  if (handleTradeEvent(event, player)) return;
-  if (event.id === "lothlorien:village") { // debug: plan the loop links of the nearest village now (see loop_marker.js)
-    const arg = event.message.trim();
-    if (arg === "plan") planNearest(player);
-    else if (arg === "debug") player.sendMessage(message(toggleDebug() ? "debug.on" : "debug.off")); // planner stage logging (loop_marker.js)
-    return;
-  }
-  if (event.id === "lothlorien:elf") { // debug: `home` shows the nearest elf's recorded home, `rehome` re-homes it where it stands (see elf.js)
-    elfDebug(player, event.message.trim());
-    return;
-  }
   if (event.id === "lothlorien:depth") {
     reportDepth(player);
-    return;
-  }
-  if (event.id === "lothlorien:speed") {
-    startSpeedProbe(player, event.message);
-    return;
-  }
-  if (event.id === "lothlorien:tps") { // debug: game ticks per real second; `off` pauses the support checks (tick_rate.js)
-    startTickRateProbe(player, event.message);
     return;
   }
   if (event.id !== "lothlorien:debug") return;
   const on = !player.hasTag(DEBUG_TAG);
   if (on) player.addTag(DEBUG_TAG);
   else player.removeTag(DEBUG_TAG);
+  setVillageDebug(on); // the diagnostic content-log lines (village planner, elf village, rail mender, warden replace) follow the switch
   player.sendMessage(message(on ? "debug.on" : "debug.off"));
 }
 

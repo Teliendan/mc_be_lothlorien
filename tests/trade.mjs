@@ -194,14 +194,14 @@ test("generated elf property, groups and events are idempotent and preserve hand
   assert.deepEqual(patchElf(custom), custom);
 });
 
-test("shop text and runtime startup/debug hooks stay bound", () => {
+test("shop text and runtime startup hooks stay bound", () => {
   const entries = json("../localization/catalog.json").packs.lothlorien_rp.entries;
-  for (const suffix of ["trade.refused.shunned", "trade.refused.hated", "trade.again", "trade.debug", "lore.btn.trade"]) {
+  for (const suffix of ["trade.refused.shunned", "trade.refused.hated", "trade.again", "lore.btn.trade"]) {
     assert.ok(entries[`lothlorien.message.${suffix}`], suffix);
   }
   for (const profession of T.TRADERS) assert.ok(entries[T.displayNameOf(profession)], profession);
   const main = text(`${bp}scripts/main.js`);
   assert.match(main, /startTrade\(\{/);
   assert.match(main, /openRequestForm:\s*openTraderForm/);
-  assert.match(main, /handleTradeEvent\(event, player\)/);
+  assert.doesNotMatch(main, /handleTradeEvent/, "the trade debug scriptevent is gone");
 });

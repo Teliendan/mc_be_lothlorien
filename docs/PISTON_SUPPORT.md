@@ -58,6 +58,5 @@ sides at a new head, remote attached positions, a stationary-body guard, deferre
 native popping and the real cold player-break adapter. Specific engine timing
 and cold native rope popping still need their own game checks.
 No algorithm can reconstruct a support change completed before its first
-observation when no motion evidence remains. `/scriptevent lothlorien:tps 10`
-reports game speed and the remaining random fallback callbacks per second;
-`off` pauses only that fallback, leaving event handling active.
+observation when no motion evidence remains. The former
+`/scriptevent lothlorien:tps` probe (game speed, fallback callbacks per second, `off` to pause the fallback) was removed on 2026-10-29.

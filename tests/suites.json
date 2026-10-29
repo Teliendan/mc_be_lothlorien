@@ -97,9 +97,6 @@
     "support": [
       "support_motion.mjs"
     ],
-    "diagnostics": [
-      "diagnostics.mjs"
-    ],
     "performance": [
       "script_performance.mjs"
     ],
@@ -180,9 +177,6 @@
     ],
     "memorial": [
       "memorial.mjs"
-    ],
-    "landscape-probe": [
-      "landscape_probe.mjs"
     ],
     "suite-layout": [
       "suite_layout.mjs"

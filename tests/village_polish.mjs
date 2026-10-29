@@ -7,7 +7,6 @@ import { relinkFences } from "../tools/village_dress.mjs";
 import { connectionChanges, isLinkTarget, LINKS } from "../lothlorien_bp/scripts/rail_mender_rules.js";
 import { closeUnusedExitsGen } from "../lothlorien_bp/scripts/village_repair.js";
 import { drive, overlay, walkDist, walkDistGen } from "../lothlorien_bp/scripts/village_planner.js";
-import { createTickClock, addTick, summarizeTicks } from "../lothlorien_bp/scripts/tick_rate_rules.js";
 
 const key = (x,y,z) => `${x},${y},${z}`;
 const PL = "lothlorien:mallorn_planks", F = "lothlorien:mallorn_fence";
@@ -73,11 +72,7 @@ const walk = (x,y,z) => y===0 && x>=0 && x<100 && z===0 ? PL : "minecraft:air";
 const gen = walkDistGen(walk,{x:0,y:0,z:0}); let yields=0,r;
 while(!(r=gen.next()).done) yields++;
 assert.ok(yields>=4); assert.deepEqual(r.value,walkDist(walk,{x:0,y:0,z:0}));
-const clock=createTickClock(0,0); let now=0;
-for(let i=0;i<100;i++) addTick(clock,now+=i===99?250:50);
-const timing=summarizeTicks(clock,now,100);
-assert.equal(timing.p95Ms,50); assert.equal(timing.p99Ms,50); assert.equal(timing.longestMs,250); assert.equal(timing.over100Ms,1);
-console.log("ok   village polish: walking search yields, cadence percentiles retain isolated stalls");
+console.log("ok   village polish: walking search yields");
 
 const {benchmark}=await import("../tools/village_performance.mjs");
 const workload=await benchmark();

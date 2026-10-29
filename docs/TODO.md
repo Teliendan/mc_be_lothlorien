@@ -10,19 +10,16 @@ Target: tester build on the weekend of 2026-10-24/25.
 
 - [x] **Remove the worldgen test pack.** `lothlorien_feature_probe_bp`, its test and its build
   script were removed on 2026-10-24, because `mods package` would have shipped it. It is still in git history.
-- [ ] **Debug log cleanup.** Village planning writes many lines to the Content Log, including one
-  per rejected candidate. Send these through the debug-gated `dlog`: `scripts/loop_marker.js:138-160`,
-  `scripts/elf_village.js:100`, `rail_mender.js`, `warden_replace.js`.
-- [ ] **Debug leftovers cleanup.** Decide which `/scriptevent` commands ship and remove the rest
-  (`scripts/main.js:158-191`):
-  - `harmony [value]` and `renown points|reset|deed|chapter|offer`
-  - `speed`, `tps` (`off` pauses support checks), `depth` (200x benchmark)
-  - `debug`, `village plan|debug`, `elf home|rehome`, trade debug
-
-  Also decide on these files in the main BP:
-  - command-only landscape probe structures: `worldgen/structures/{landscape_probe,woodland_group_probe}.json`,
-    `template_pools/landscape_probe_*.json`, `structures/lothlorien/landscape_probe/`
-  - `verification_exceptions.json`, a dev-only file that ships
+- [x] **Debug log cleanup.** All diagnostics (village planner start/summary/per-merge/link/repair/rejected
+  lines, elf village summary, rail mender count, warden replace) now log only through the debug switch
+  (`village_debug.js`, set by `/scriptevent lothlorien:debug`); only failures (`gave up`, write failures,
+  `could not spawn`, caught exceptions) log unconditionally. Done 2026-10-29.
+- [x] **Debug leftovers cleanup.** Done 2026-10-29. Kept `harmony`, `renown`, `depth`, `debug`; removed
+  `speed`, `tps`, `village`, `elf` and the trade debug command with their helpers (`speed_probe.js`,
+  `speed_stats.js`, `tick_rate*.js`, `planNearest`, `elfDebug`, `handleTradeEvent`, 22 catalog keys, `diagnostics.mjs`).
+  Also removed the landscape probe (two structures, six pools, `structures/lothlorien/landscape_probe/`,
+  `build_landscape_probe.mjs`, its test). `verification_exceptions.json` stays in the repo; `mods package`
+  does not exclude it yet (needs `verification_exceptions.json` added to `SKIP_NAMES` in workspace `tools/mods.py`).
 - [ ] **Feedback retests only.** Owner completed the broad checks on 2026-10-25.
   Accepted results and fixes: `TEST_FEEDBACK_2026-10-25.md`; remaining focused
   checks: workspace `docs/game-checks.md`. L8 is untested and L9 inconclusive.

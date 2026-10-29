@@ -383,38 +383,6 @@ lothlorien.message.harmony.better.guest=§aLos bosques te perdonan.
 lothlorien.message.harmony.hint=§7Los árboles callan a tu alrededor.
 ## Context: Developer diagnostic displayed to players who invoke /scriptevent lothlorien:harmony: [lothlorien] harmony=%s band=%s timer=%s s. Translate labels; retain technical tokens and commands. Harmony is a per-player number from -60 to +10 with five bands: Friend (+10), Guest (0 to +9), Uneasy (-1 to -14), Shunned (-15 to -29), Hated (-30 to -60). Deeds against the forest's creatures lower it; peaceful time inside the forest raises it.
 lothlorien.message.harmony.debug=[lothlorien] armonía=%s banda=%s temporizador=%s s
-## Context: Announces the start of the speed measurement.
-lothlorien.message.speed.started=[lothlorien] medición de velocidad: midiendo mobs a menos de %s bloques durante %s segundos.
-## Context: One result line per entity type: count of mobs, minimum, average and maximum horizontal speed, and the share of samples in which the mob was moving.
-lothlorien.message.speed.row=%s: %s mobs, velocidad mín. %s / promedio %s / máx. %s bloques por segundo, en movimiento en el %s por ciento de %s muestras
-## Context: Extra line for guards: average speed while a monster stood nearby versus while none did.
-lothlorien.message.speed.threat=%s con un monstruo a menos de %s bloques: promedio de %s bloques por segundo (%s muestras); en caso contrario, promedio de %s bloques por segundo (%s muestras)
-## Context: Reports that the measurement found no mobs.
-lothlorien.message.speed.none=[lothlorien] medición de velocidad: no hay mobs dentro del radio.
-## Context: Reports that a second measurement was requested while one is running.
-lothlorien.message.speed.busy=[lothlorien] medición de velocidad: ya hay una medición en curso.
-## Context: Announces the start of the speed spike detector.
-lothlorien.message.dash.started=[lothlorien] detector de aceleraciones: vigilando mobs a menos de %s bloques durante %s segundos; los picos van al registro de contenido.
-## Context: One result line per entity type: tracked mobs, number of speed spikes and the highest spike speed.
-lothlorien.message.dash.row=%s: %s mobs, %s picos de velocidad, máximo %s bloques por segundo
-## Context: Reports that the detector window ended without any speed spike, or with no mobs in range.
-lothlorien.message.dash.none=[lothlorien] detector de aceleraciones: no se encontraron picos de velocidad (los detalles están en el registro de contenido).
-## Context: Announces the start of the tick-rate measurement.
-lothlorien.message.tps.started=[lothlorien] ritmo de ticks: midiendo durante %s segundos de tiempo real. No pauses el juego.
-## Context: Announces the start of the tick-rate measurement in comparison mode: the scripted checks that plants, lamps and ropes still stand on their support are paused during the window.
-lothlorien.message.tps.started_off=[lothlorien] ritmo de ticks: midiendo durante %s segundos de tiempo real con la comprobación de soporte de plantas y lámparas en pausa. No pauses el juego.
-## Context: Reports that a second tick-rate measurement was requested while one is running.
-lothlorien.message.tps.busy=[lothlorien] ritmo de ticks: ya hay una medición en curso.
-## Context: First result line of the tick-rate measurement: game ticks counted, real seconds elapsed, ticks per second, and game speed as a percentage of real time (100 is normal).
-lothlorien.message.tps.result=[lothlorien] ritmo de ticks: %s ticks de juego en %s s = %s tps (normal 20); el tiempo de juego va al %s por ciento del tiempo real.
-## Context: Second result line of the tick-rate measurement: average and longest real duration of one game tick, how many scripted support checks of plants, lamps and ropes ran per second, and how many such blocks the script remembers.
-lothlorien.message.tps.detail=[lothlorien] ritmo de ticks: tick promedio %s ms (normal 50), el más largo %s ms; comprobaciones de soporte %s por segundo, bloques recordados: %s.
-## Context: Developer diagnostic: /scriptevent lothlorien:village plan found no loop marker within 160 blocks, so there is nothing to plan.
-lothlorien.message.village.plan.none=[lothlorien] planificador de aldea: no hay marcadores de aldea cerca (la aldea ya se planificó o no hay ninguna cargada).
-## Context: Developer diagnostic: the village planner finished a run started by /scriptevent lothlorien:village plan.
-lothlorien.message.village.plan.done=[lothlorien] planificador de aldea: enlaces construidos: %s (%s).
-## Context: Developer diagnostic: the village planner run started by /scriptevent lothlorien:village plan failed, for example the ticking area quota was too small or loading timed out.
-lothlorien.message.village.plan.failed=[lothlorien] planificador de aldea: no se pudo planificar esta aldea (consulta el registro de contenido).
 ## Context: Elf: a civilian elf, an inhabitant of the Elven tree villages of Lothlorien. One name for all professions.
 entity.lothlorien:elf.name=Elfo
 ## Context: Creative spawn egg for Elf. Spawn Egg is the Minecraft item type; do not translate as an animal-laid egg.
@@ -429,16 +397,6 @@ lothlorien.elf.profession.woodwright=Carpintero
 lothlorien.elf.profession.lamplighter=Farolero
 ## Context: Profession title of the wise elf who keeps the lore and tales of the forest.
 lothlorien.elf.profession.loremaster=Maestro del saber
-## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] elf %s: home %s, %s blocks away, not on a lead. Translate labels; keep technical tokens and coordinates.
-lothlorien.message.elf.debug.home_free=[lothlorien] elfo %s: hogar %s, a %s bloques, sin cuerda
-## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] elf %s: home %s, %s blocks away, on a lead. Translate labels; keep technical tokens and coordinates.
-lothlorien.message.elf.debug.home_led=[lothlorien] elfo %s: hogar %s, a %s bloques, con cuerda
-## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] elf %s: new home set here (%s). Translate labels; keep technical tokens and coordinates.
-lothlorien.message.elf.debug.rehomed=[lothlorien] elfo %s: nuevo hogar fijado aquí (%s)
-## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf (home | rehome) next to a civilian elf: [lothlorien] no elf within 16 blocks. Translate labels; keep technical tokens and coordinates.
-lothlorien.message.elf.debug.none=[lothlorien] ningún elfo a menos de 16 bloques
-## Context: Developer diagnostic shown to the player who runs /scriptevent lothlorien:elf home next to a civilian elf, after the home line: [lothlorien] elf %s: radius group %s (%s blocks). Names the home-radius component group the elf has right now (how far it may wander from its home). Translate labels; keep technical tokens and coordinates.
-lothlorien.message.elf.debug.roam=[lothlorien] elfo %s: grupo de radio %s (%s bloques)
 ## Context: Title of the Loremaster dialog forms when the elf has no name tag. The Loremaster is the elf who teaches the player and passes on the requests of the other elves.
 lothlorien.message.lore.title=Maestro del saber
 ## Context: Greeting at the top of the main Loremaster form for a player in the Friend band (Harmony +10). Mae govannen is Sindarin for well met.
@@ -711,8 +669,6 @@ lothlorien.message.trade.refused.hated=§7El elfo se da la vuelta y no comerciar
 lothlorien.message.trade.again=§7El elfo está listo para comerciar. Interactúa de nuevo con él.
 ## Context: Button in a trader’s request form. It closes the form and permits the player’s next interaction with this elf to open the native trade screen; the request remains active.
 lothlorien.message.lore.btn.trade=Comerciar
-## Context: Developer diagnostic for the nearest trader: localized profession, its current table key, the invoking player’s eligible key and current trade-pass state. Technical keys and pass values are supplied verbatim.
-lothlorien.message.trade.debug=Depuración de comercio: %s, tabla %s, la tuya %s, permiso %s
 ## Context: Selecting Trade closes the request form. The player must then click the same elf again to open the native trade screen. This instruction is shown before selecting the button.
 lothlorien.message.lore.btn.trade_hint=Luego, vuelve a pulsar al elfo
 ## Context: Chest armour with leather-level protection. Grants invisibility after sneaking without moving for one second.

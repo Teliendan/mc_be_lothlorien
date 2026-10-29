@@ -51,8 +51,8 @@ Owner-reported loaded-village samples, 2026-10-16:
 | 1 | 601 | 20.0 (100%) | 49.9 ms | 63 ms | 65 ms | 80 ms | 0 | 6 | 180 |
 | 2 | 601 | 20.0 (100%) | 50.0 ms | 63 ms | 64 ms | 64 ms | 0 | 7 | 341 |
 
-Owner accepted these results and keeps `/scriptevent lothlorien:tps 30` for future
-suspected lag. These windows establish healthy tick cadence; they do not measure
+Owner accepted these results (the `/scriptevent lothlorien:tps` probe that produced them was removed
+on 2026-10-29; git history keeps it). These windows establish healthy tick cadence; they do not measure
 FPS, isolate callback CPU or certify every device. No further profiling is required
 for this accepted milestone.
 

@@ -11,17 +11,16 @@
 //   4 build      all picks are written in the same job (a few hundred blocks per tick), then every marker in the area is removed.
 //   5 populate   civilian elves: the tree pieces' `lothlorien:elf_post` entities are read, assigned and replaced by elves (elf_village.js).
 // The planner is one-shot: no polling, no retry loop. A failed run (quota, timeout, error) keeps the markers; they retry after world re-entry, at
-// most AREA.maxTries times per marker. `/scriptevent lothlorien:village plan` re-runs it by hand for the nearest marker (see planNearest).
+// most AREA.maxTries times per marker.
 import { BlockPermutation, system, world } from "@minecraft/server";
 import { MARKER_ID, finalBlocks } from "./village_loop.js";
-import { villageDebug, toggleVillageDebug } from "./village_debug.js";
+import { villageDebug } from "./village_debug.js";
 import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, growRect, hullOf, chunksIn, describePick, describeMerge, VILLAGE_PLANS } from "./village_planner.js";
 import { rememberVillageArea } from "./village_area.js";
 import { describeRepair } from "./village_repair.js";
 import { LINKS, missingLinks } from "./rail_mender_rules.js";
 import { mendFence } from "./rail_connections.js";
 import { PANEL_ID,planterWalkName } from "./planter_panels.js";
-import { message } from "./messages.js";
 import { populateVillage } from "./elf_village.js";
 
 // START_DELAY_TICKS 5 (was 20, owner 2026-10-10: the village looked empty for a long time). JOB_SLICE_MS: one engine job step runs the planner's inner steps
@@ -31,11 +30,10 @@ const TRIES = "lothlorien:loop_tries", DONE = VILLAGE_PLANS;
 const seen = new Set(), queue = [], failed = [];
 let claim = null, running = false, loggedQuota = false, areaAttempt = 0;
 
-// Stage logging: the start and the summary of every planner run are always logged; every silent exit (marker skipped, invalid, queued, retried)
-// logs only in debug mode, which `/scriptevent lothlorien:village debug` toggles (see toggleDebug).
+// Stage logging: all diagnostics (start, timings, per-merge/pick/repair/rejected lines, the run summary, silent exits) log only in debug mode,
+// which `/scriptevent lothlorien:debug` switches on (village_debug.js). Only failures ("gave up", elf population errors) log unconditionally.
+const dlog = (msg) => { if (villageDebug()) console.warn(`[lothlorien] planner: (debug) ${msg}`); };
 const log = (msg) => console.warn(`[lothlorien] planner: ${msg}`);
-const dlog = (msg) => { if (villageDebug()) log(`(debug) ${msg}`); };
-export const toggleDebug = toggleVillageDebug;
 
 const cellOf = (e) => { const p = e.location; return [Math.floor(p.x), Math.floor(p.y) - 1, Math.floor(p.z)]; }; // the deck cell under the marker
 const sleep = (ticks) => new Promise((resolve) => system.runTimeout(resolve, ticks));
@@ -109,7 +107,7 @@ function* planAndBuild(dimension, found, budget, stats) {
   return { ...res, blocks: count, failedWrites };
 }
 
-async function planVillageAt(entity, force, trigger) {
+async function planVillageAt(entity, trigger) {
   const dimension = entity.dimension, first = cellOf(entity), tam = world.tickingAreaManager, base = `lothlorien_village_${first[0]}_${first[2]}_${++areaAttempt}`;
   const areas = new Map();
   let ended = false;
@@ -142,8 +140,8 @@ async function planVillageAt(entity, force, trigger) {
     markersIn: (r) => dimension.getEntities(boxQuery(r)).map(cellOf),
   };
   const t0 = Date.now(), ms = (since) => Date.now() - since;
-  log(`start for village near ${first[0]},${first[2]}, trigger ${trigger}`);
-  if (!loggedQuota) { loggedQuota = true; log(`ticking area quota maxChunkCount=${tam.maxChunkCount}`); }
+  dlog(`start for village near ${first[0]},${first[2]}, trigger ${trigger}`);
+  if (!loggedQuota) { loggedQuota = true; dlog(`ticking area quota maxChunkCount=${tam.maxChunkCount}`); }
   let found = null;
   try {
     found = await discoverVillage(env, first, base);
@@ -160,15 +158,16 @@ async function planVillageAt(entity, force, trigger) {
     try { populateVillage(dimension, found.rect, [first[0], first[2]]); } catch (e) { log(`elves: ${e?.message ?? e}`); }
     dlog(`populate ${ms(tPop)} ms`);
     const removed = removeMarkers(dimension, found.rect);
-    if (!force) world.setDynamicProperty(DONE, JSON.stringify(addDone(parseDone(world.getDynamicProperty(DONE)), found.rect)));
-    console.warn(`[lothlorien] planner: village at ${first[0]},${first[2]}: ${found.known.length} markers (${removed} removed), ${found.rounds} area round(s) of ${found.sizes.join("+")} chunks${found.stable ? "" : ", NOT stable"}, ${result.nRaw} candidates, ${result.merges.length} merge(s), ${result.picks.length} link(s), ${result.repairs.length} repair(s), ${result.blocks} blocks${result.failedWrites ? `, ${result.failedWrites} write(s) failed` : ""} in ${(ms(t0) / 1000).toFixed(1)} s`);
-    for (const m of result.merges) console.warn(`[lothlorien] planner:   ${describeMerge(m)}`);
-    for (const p of result.picks) console.warn(`[lothlorien] planner:   ${describePick(p)}`);
-    for (const p of result.repairs) console.warn(`[lothlorien] planner:   ${describeRepair(p)}`);
-    for (const l of result.log) console.warn(`[lothlorien] planner:   rejected ${l}`);
+    world.setDynamicProperty(DONE, JSON.stringify(addDone(parseDone(world.getDynamicProperty(DONE)), found.rect)));
+    dlog(`village at ${first[0]},${first[2]}: ${found.known.length} markers (${removed} removed), ${found.rounds} area round(s) of ${found.sizes.join("+")} chunks${found.stable ? "" : ", NOT stable"}, ${result.nRaw} candidates, ${result.merges.length} merge(s), ${result.picks.length} link(s), ${result.repairs.length} repair(s), ${result.blocks} blocks${result.failedWrites ? `, ${result.failedWrites} write(s) failed` : ""} in ${(ms(t0) / 1000).toFixed(1)} s`);
+    for (const m of result.merges) dlog(`  ${describeMerge(m)}`);
+    for (const p of result.picks) dlog(`  ${describePick(p)}`);
+    for (const p of result.repairs) dlog(`  ${describeRepair(p)}`);
+    for (const l of result.log) dlog(`  rejected ${l}`);
+    if (result.failedWrites) log(`village at ${first[0]},${first[2]}: ${result.failedWrites} write(s) failed`);
     return result;
   } catch (e) {
-    console.warn(`[lothlorien] planner: village at ${first[0]},${first[2]} gave up: ${e?.message ?? e}`);
+    log(`village at ${first[0]},${first[2]} gave up: ${e?.message ?? e}`);
     failed.push(found?.rect ?? { x0: first[0] - 40, x1: first[0] + 40, z0: first[2] - 40, z1: first[2] + 40 });
     try {
       if (entity.isValid) {
@@ -189,16 +188,15 @@ async function drain() {
   running = true;
   try {
     while (queue.length) {
-      const { entity, force, done, trigger } = queue.shift();
+      const { entity, trigger } = queue.shift();
       try {
-        if (!entity.isValid) { dlog("skip: marker no longer valid"); done?.(null); continue; }
+        if (!entity.isValid) { dlog("skip: marker no longer valid"); continue; }
         const [x, , z] = cellOf(entity);
-        if (!force && claim && inRect(claim, x, z)) { dlog(`skip ${x},${z}: inside the village being planned`); done?.(null); continue; }
-        if (!force && failed.some((r) => inRect(r, x, z))) { dlog(`skip ${x},${z}: this village failed earlier in this session`); done?.(null); continue; }
-        if (!force && isDone(parseDone(world.getDynamicProperty(DONE)), x, z)) { entity.remove(); dlog(`skip ${x},${z}: straggler of a planned village, marker removed`); done?.(null); continue; } // a straggler of a planned village
-        const result = await planVillageAt(entity, force, trigger); // not `done?.(await ...)`: an optional call skips its arguments when done is unset
-        done?.(result);
-      } catch (e) { log(`${e}`); done?.(null); }
+        if (claim && inRect(claim, x, z)) { dlog(`skip ${x},${z}: inside the village being planned`); continue; }
+        if (failed.some((r) => inRect(r, x, z))) { dlog(`skip ${x},${z}: this village failed earlier in this session`); continue; }
+        if (isDone(parseDone(world.getDynamicProperty(DONE)), x, z)) { entity.remove(); dlog(`skip ${x},${z}: straggler of a planned village, marker removed`); continue; } // a straggler of a planned village
+        await planVillageAt(entity, trigger);
+      } catch (e) { log(`${e}`); }
     }
   } finally { running = false; }
 }
@@ -212,16 +210,6 @@ function onMarker(entity, trigger) {
   seen.add(entity.id);
   dlog(`marker ${entity.id} noticed (${trigger}), queued in ${START_DELAY_TICKS} ticks`);
   system.runTimeout(() => { try { if (entity.isValid) { queue.push({ entity, trigger }); drain(); } else dlog(`marker ${entity.id} gone before its turn`); } catch { /* unloaded */ } }, START_DELAY_TICKS);
-}
-
-// `/scriptevent lothlorien:village plan`: plan again for the village of the marker nearest to the player (done-list ignored, budget 3).
-// A planned village has no markers left, so this only works while some are left (an old village waiting for its first plan, or a failed run).
-export function planNearest(player) {
-  const near = player.dimension.getEntities({ type: MARKER_ID, location: player.location, maxDistance: 160, closest: 1 })[0];
-  if (!near) { player.sendMessage(message("village.plan.none")); return; }
-  seen.add(near.id);
-  queue.push({ entity: near, force: true, trigger: "manual", done: (r) => player.sendMessage(r ? message("village.plan.done", r.picks.length, r.picks.map((p) => p.kind).join(", ") || "-") : message("village.plan.failed")) });
-  drain();
 }
 
 world.afterEvents.entityLoad.subscribe(({ entity }) => onMarker(entity, "entityLoad"));
