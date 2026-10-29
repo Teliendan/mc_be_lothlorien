@@ -225,5 +225,35 @@
         "sha256": "9a16ada2665d5ef4a639a50ab99247a9ddbfbb024d9bf61a1c71b9c8945c2241"
       }
     ]
+  },
+  {
+    "featureId": "lothlorien:flower_garden",
+    "id": "lothlorien:flower_garden/locate",
+    "text": "/locate structure does not find Flower Gardens. Look for them in open, level Lothlorien woodland.",
+    "evidence": [
+      {
+        "path": "lothlorien_bp/feature_rules/site_feature_rules.json",
+        "sha256": "4b158bed5c265803e6d33f723fec75fd1e3d866489c417cf98b92d1ff0679a57"
+      },
+      {
+        "path": "lothlorien_bp/features/flower_garden_feature.json",
+        "sha256": "9c71603c817083ec3b83fe71da13b35eedd21faab65cfe1f84547f552412e58a"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:memorial",
+    "id": "lothlorien:memorial/locate",
+    "text": "/locate structure does not find Forest Memorials. Look for them in open, level Lothlorien woodland.",
+    "evidence": [
+      {
+        "path": "lothlorien_bp/feature_rules/site_feature_rules.json",
+        "sha256": "4b158bed5c265803e6d33f723fec75fd1e3d866489c417cf98b92d1ff0679a57"
+      },
+      {
+        "path": "lothlorien_bp/features/memorial_feature.json",
+        "sha256": "7191fd172ebebc5904b3bd03fea8ae28e6663f6f7e948d4491a647da70488bef"
+      }
+    ]
   }
 ]

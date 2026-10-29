@@ -577,6 +577,10 @@
       "pattern": "lothlorien_bp/structures/lothlorien/memorial_leaf_01.mcstructure"
     },
     {
+      "featureId": "lothlorien:memorial",
+      "pattern": "lothlorien_bp/structures/lothlorien/memorial_leaf_feature_01.mcstructure"
+    },
+    {
       "featureId": "lothlorien:root_shrine",
       "pattern": "lothlorien_bp/structures/lothlorien/root_shrine_01.mcstructure"
     },
@@ -743,6 +747,10 @@
     {
       "featureId": "lothlorien:memorial",
       "pattern": "lothlorien_rp/entity/memorial_sound.entity.json"
+    },
+    {
+      "featureId": "lothlorien:memorial",
+      "pattern": "lothlorien_bp/scripts/memorial_seed.js"
     },
     {
       "featureId": "lothlorien:root_shrine",
@@ -1351,11 +1359,11 @@
       "evidence": [
         {
           "path": "lothlorien_bp/structures/lothlorien/flower_garden_01.mcstructure",
-          "sha256": "6a4d0770d82d1973dabc42de8e5168311800d00ffb7d70148dfc496de63c9da6"
+          "sha256": "23ba904472c55d54490fae37fa6134ec72309382318ceadb87599c1426a09f65"
         },
         {
           "path": "tools/flower_garden.mjs",
-          "sha256": "599c363c11a4b4e67bbaa432f22205ecffbfbe27e6e933193bbae92c08a1a6fb"
+          "sha256": "c4b9f53fcf4c2f701af5e1a8d18b86ae10ecf8c49af1714429f4fe7eba3f547a"
         }
       ],
       "featureId": "lothlorien:flower_garden",
@@ -1511,7 +1519,7 @@
         },
         {
           "path": "lothlorien_bp/structures/lothlorien/landscape_probe/garden.mcstructure",
-          "sha256": "f3ec203e0b2f9444bcf499017dd663287683124ff954a12f7fa06dc3c0f5bc4d"
+          "sha256": "9843da85cf5f0807365cb0ba31a2624c94d8e9af4c707466ea020b9716afc681"
         },
         {
           "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_round_05.mcstructure",

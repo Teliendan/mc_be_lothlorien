@@ -1694,7 +1694,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/main.js",
-        "sha256": "a955f4d96dc2d72b91c0e6a2d005f2100abddfc283257a4e2abe0f0ccce41f1f"
+        "sha256": "06ba7b26a878c48bb13297163a4e3bd014d600f1f036c6a83980dbcd80692621"
       },
       {
         "path": "lothlorien_bp/scripts/mallorn_tree.js",
@@ -1778,7 +1778,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/village_loop.js",
-        "sha256": "4c848a3af60dbb6f81b9a5b939adac3862ff57312f14cb46b0dad746aa0c9f09"
+        "sha256": "c4fb95758d574a50546c76453a9600bfd2838de03ef2de56c206b7047921f791"
       },
       {
         "path": "lothlorien_bp/scripts/village_planner.js",
@@ -1786,7 +1786,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/village_repair.js",
-        "sha256": "e6493becc68a645cded62ce74912d5f6b52f6a1c48470b5b737dd6e628fb0de4"
+        "sha256": "10db76112b0f2cf2f8e1b0e22833ddc0871dbfb85e9bc31c9ff00637dd387205"
       },
       {
         "path": "lothlorien_bp/scripts/warden_replace.js",
@@ -1840,7 +1840,7 @@
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/flower_garden_01.mcstructure",
-        "sha256": "6a4d0770d82d1973dabc42de8e5168311800d00ffb7d70148dfc496de63c9da6"
+        "sha256": "23ba904472c55d54490fae37fa6134ec72309382318ceadb87599c1426a09f65"
       }
     ]
   },
@@ -1859,11 +1859,11 @@
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/landscape_probe/memorial.mcstructure",
-        "sha256": "89409ff1143ff1dbb0162ffe274f28f780c7de15f7bf9c3df939a9933b098f4d"
+        "sha256": "c09addf7368d5d3fe6ff35082911b24327307d19f3739fe7a0b418f494851ad6"
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/memorial_leaf_01.mcstructure",
-        "sha256": "354f483329d101270b5aac9c552b50fd343f370a30a793844205d9990995d867"
+        "sha256": "369d5d75914ea10dcc05c122dbcd7124f0649cfe66486e5724ea8e2e469db5bb"
       }
     ]
   },
@@ -2022,7 +2022,7 @@
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/landscape_probe/garden.mcstructure",
-        "sha256": "f3ec203e0b2f9444bcf499017dd663287683124ff954a12f7fa06dc3c0f5bc4d"
+        "sha256": "9843da85cf5f0807365cb0ba31a2624c94d8e9af4c707466ea020b9716afc681"
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/landscape_probe/root_tree_round_05.mcstructure",
@@ -2268,7 +2268,7 @@
     "evidence": [
       {
         "path": "lothlorien_bp/scripts/main.js",
-        "sha256": "a955f4d96dc2d72b91c0e6a2d005f2100abddfc283257a4e2abe0f0ccce41f1f"
+        "sha256": "06ba7b26a878c48bb13297163a4e3bd014d600f1f036c6a83980dbcd80692621"
       },
       {
         "path": "lothlorien_bp/scripts/loop_marker.js",
@@ -2291,7 +2291,7 @@
     "evidence": [
       {
         "path": "lothlorien_bp/scripts/main.js",
-        "sha256": "a955f4d96dc2d72b91c0e6a2d005f2100abddfc283257a4e2abe0f0ccce41f1f"
+        "sha256": "06ba7b26a878c48bb13297163a4e3bd014d600f1f036c6a83980dbcd80692621"
       },
       {
         "path": "lothlorien_bp/scripts/loop_marker.js",
