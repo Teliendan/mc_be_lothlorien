@@ -6,6 +6,8 @@ A rare, peaceful Lothlórien biome for Minecraft Bedrock Edition: golden Mallorn
 
 > **Status: pre-release 0.8.0, private testing.** Things may still change a lot.
 
+Testers: see [docs/TESTER_BRIEF.md](docs/TESTER_BRIEF.md).
+
 **Wiki:** [teliendan.com/wiki/lothlorien](https://teliendan.com/wiki/lothlorien/): blocks, items, creatures, recipes and how everything works.
 
 ## Features

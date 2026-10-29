@@ -11,6 +11,7 @@ Start with `TODO.md` for what is left before release.
 | `OWNER_CHECKS.md` | accepted in-game results, engine limits, open owner retests |
 | `NOT_IMPLEMENTED.md` | features left out and why |
 | `parity/` | vanilla-parity decisions: `BLOCKS_ITEMS.md`, `CREATURES.md` |
+| `TESTER_BRIEF.md` | private tester brief for 0.8.0 |
 | `TESTING.md`, `VERIFIER_WARNINGS.md`, `WIKI_EXPORT.md`, `LOCALIZATION.md` | test layout, documented verifier exceptions, wiki export status, translation notes |
 | `media/`, `design/banner.png` | logo, promo banners, the silver banner |
 

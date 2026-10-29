@@ -30,7 +30,7 @@ Target: tester build on the weekend of 2026-10-24/25.
   borrow vanilla sounds (`lothlorien_rp/sounds.json`).
 - [ ] **Package and smoke-test.** Run `.\mods package lothlorien`, install the `.mcaddon` on a clean
   device, create a new world and check that it loads.
-- [ ] **Tester brief.** Cover install steps, "new world, or back up before adding to an existing
+- [x] **Tester brief.** Done 2026-10-29 (`TESTER_BRIEF.md`). Covers install steps, "new world, or back up before adding to an existing
   world", known issues (section 4), what to test (section 2), and how to report.
 
 ## 2. For testers (no work for us; goes into the tester brief)
