@@ -8,7 +8,7 @@ This project is shared freely to encourage learning, curiosity, and community gr
 
 If you have an idea, want to port this project, or are unsure whether your use case is okay - please just reach out! We can always talk it through. Don't let formalities discourage you from asking.
 
-Contact: <EMAIL TO BE ADDED>
+Contact: [hello@teliendan.com](mailto:hello@teliendan.com) · [teliendan.com](https://teliendan.com)
 Or open an issue in this project's GitHub repository.
 
 ***

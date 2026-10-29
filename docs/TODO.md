@@ -60,7 +60,7 @@ Target: tester build on the weekend of 2026-10-24/25.
     code, and section 3 forbids selling "this project".
   - Add a contact (website or GitHub issues).
   - Asset reuse rules for AI-generated art and audio may be hard to enforce. As a polite request it is fine.
-- [ ] **Fill in the contact email in LICENSE.md** (placeholder `<EMAIL TO BE ADDED>`).
+- [x] **Contact in LICENSE.md:** hello@teliendan.com (2026-10-29).
 - [x] **README rewrite** (done 2026-10-29; the GitHub description and topics are still to be set) for the public repo, replacing the stale "Phase 1" status:
   - features
   - install
@@ -105,7 +105,7 @@ Completed source fixes and accepted checks, and where each open retest below is 
   survival unlock; Friend unicorn lure; wind-charge controls; rope with an
   existing Slow Falling potion; full-inventory named/injured firefly capture;
   water-only boat dispensing; rising-bridge exit closure.
-- [ ] **Spawn egg graphics (deferred):** replace generic eggs with the current
+- [x] **Spawn egg graphics:** the current eggs are final; owner confirmed 2026-10-29 (`GRAPHICS_TASKS.md`). Old note: replace generic eggs with the current
   creature-recognizable vanilla visual language, using the shared Bedrock art
   guide and reproducible asset generators. No artwork overhaul in this pass.
 - [ ] **Stripping swing (deferred API limit):** keep correct stripping/wear;

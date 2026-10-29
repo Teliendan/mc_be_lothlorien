@@ -49,5 +49,5 @@ Source fixes made, owner retest pending:
 Untested, no result inferred: **L8** deer with a blocked kept gift spot, **L9** squirrel with an unreachable destination
 (explicit setups in the workspace checklist).
 
-Deferred work: creature-recognizable spawn egg art (shared Bedrock art guide, reproducible generators), the stripping swing,
+Deferred work: the stripping swing,
 the wall arm, the boat hull lift.

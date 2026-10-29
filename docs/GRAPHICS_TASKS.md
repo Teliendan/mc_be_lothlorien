@@ -153,8 +153,7 @@ and remove runtime diagnostics`.
   `lothlorien_rp/textures/items/spawn_eggs/`; client entities use `"spawn_egg": {"texture": "lothlorien:spawn_egg_<mob>"}` (the
   elf, warden and unicorn generators write the same line). Owner accepted the review sheet 2026-10-26 (commit "Draw spawn eggs in
   the current vanilla style"); the unicorn follows the vanilla horse egg, butterfly and firefly are plain eggs with wings and
-  antennae (vanilla bee style), butterfly and songbird show the blue variant, the elf egg the gardener. Not yet seen in game.
-  Deferred: creature-shaped egg art, see `OWNER_CHECKS.md`.
+  antennae (vanilla bee style), butterfly and songbird show the blue variant, the elf egg the gardener. Owner confirmed them final 2026-10-29.
 
 ## Lighting and rope
 

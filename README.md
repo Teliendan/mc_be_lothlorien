@@ -6,6 +6,8 @@ A rare, peaceful Lothlórien biome for Minecraft Bedrock Edition: golden Mallorn
 
 > **Status: pre-release 0.8.0, private testing.** Things may still change a lot.
 
+**Wiki:** [teliendan.com/wiki/lothlorien](https://teliendan.com/wiki/lothlorien/): blocks, items, creatures, recipes and how everything works.
+
 ## Features
 
 - **The biome:** a Lothlórien forest with golden light, its own sky and fog, and plentiful flora: Elanor, Niphredil, Athelas, Golden Fern, Nectar Bloom, western corn and more.
@@ -40,14 +42,15 @@ The biome and its structures appear only in **newly generated chunks**. Use a ne
 
 ## Feedback
 
-Please report bugs and ideas as [GitHub issues](https://github.com/Teliendan/mc_be_lothlorien/issues). Note your Minecraft version, device, and whether the world was new.
+Look things up in the [Lothlórien wiki](https://teliendan.com/wiki/lothlorien/). Please report bugs and ideas as [GitHub issues](https://github.com/Teliendan/mc_be_lothlorien/issues). Note your Minecraft version, device, and whether the world was new.
 
 ## Credits
 
-Made by Teliendan (karel-murgas).
+Made by [Teliendan](https://teliendan.com) (karel-murgas). Contact: [hello@teliendan.com](mailto:hello@teliendan.com).
 
+- Code written with the AI coding agents **Claude Code** (Anthropic) and **Codex** (OpenAI), directed and tested by Teliendan.
 - Textures, models and key art are made with scripts written for this project.
-- The **music**, the **shrine and memorial sounds** and the **Sindarin voice lines** are AI-generated with locally run models and then edited. The voice lines speak phrases checked against published Sindarin sources.
+- The **music**, the **shrine and memorial sounds** and the **Sindarin voice lines**, including the reference voice, are AI-generated with locally run models and then edited: music with ACE-Step 1.5, sounds with MOSS-SoundEffect, voices with Chatterbox multilingual and MOSS-TTS / MOSS-VoiceGenerator. No real person's voice was recorded or cloned. The voice lines speak phrases checked against published Sindarin sources.
 - Sindarin words and phrases rest on Tolkien's published works as compiled in [Eldamo: An Elvish Lexicon](https://eldamo.org) by Paul Strack. Some phrases are Neo-Sindarin constructions, not Tolkien's own.
 - The forest rustles in the biome are Minecraft's own vanilla sounds.
 
