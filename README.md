@@ -22,7 +22,7 @@ A rare, peaceful Lothlórien biome for Minecraft Bedrock Edition: golden Mallorn
 
 ## Install
 
-1. Download the latest `.mcaddon` from the [Releases page](../../releases) (pre-releases are listed there).
+1. Download the latest `.mcaddon` from the [Releases page](https://github.com/Teliendan/mc_be_lothlorien/releases) (pre-releases are listed there).
 2. Open the file with Minecraft; it imports both packs. The resource pack comes with it.
 3. Create a world and enable the Lothlórien **behavior pack** (the resource pack is attached to it).
 
@@ -40,7 +40,7 @@ The biome and its structures appear only in **newly generated chunks**. Use a ne
 
 ## Feedback
 
-Please report bugs and ideas as [GitHub issues](../../issues). Note your Minecraft version, device, and whether the world was new.
+Please report bugs and ideas as [GitHub issues](https://github.com/Teliendan/mc_be_lothlorien/issues). Note your Minecraft version, device, and whether the world was new.
 
 ## Credits
 
