@@ -11,13 +11,14 @@ export const MEMORIAL = Object.freeze({
   anchor: "lothlorien:memorial_ground",
 });
 // Natural `structure_template_feature` copy (TEST BUILD 2026-10-28, docs/GARDEN_FEATURE_TEST.md). 11 x 15 centred box
-// (apron x +-5, z -6..7; row z -7 stays void), no shoulder, no anchor, soil 3 deep. Local deck row 0 = encoded y 3; the grass
-// row below it (encoded y 2) is ground_level, so it replaces the terrain top and the deck stands 1 above the ground (owner
-// 2026-10-28: the flush deck with its lower border read as a trench).
+// (apron x +-5, z -6..7; row z -7 stays void), no shoulder, no anchor, soil 3 deep. Local deck row 0 = encoded y 3 =
+// ground_level, so the deck replaces the terrain top (owner 2026-10-28: raised by 1 the slab edge read as steps; back flush).
+// The feature drops template entities, so the top pillar log is the look-alike `memorial_seed` (scripts/memorial_seed.js).
 // /place feature found no memorial_feature while no rule placed it (owner, 2026-10-28), so the rule also makes it placeable.
 export const MEMORIAL_FEATURE = Object.freeze({
-  id: "lothlorien:memorial_leaf_feature_01", size: [11, 9, 15], offset: [5, 3, 7], groundLevel: 2, clear: 4,
+  id: "lothlorien:memorial_leaf_feature_01", size: [11, 9, 15], offset: [5, 3, 7], groundLevel: 3, clear: 4,
   feature: "lothlorien:memorial_feature", rule: "lothlorien:memorial_feature_rules", adjustmentRadius: 0,
+  seed: "lothlorien:memorial_seed", seedAt: [0, 4, 3],
   soil: { depth: 3, ring1: 0, ring2: false, seed: 23 },
 });
 export function memorialFeature() {
@@ -129,7 +130,9 @@ export function buildMemorial({ feature = false } = {}) {
   // Deep soil under the apron and a ragged shoulder round it (tools/ground_skirt.mjs).
   const skirt = addSoilSkirt(put, (x, y, z) => blocks.has(key(x, y, z)), ground, { top: -1, seed: 23, ...(feature ? MEMORIAL_FEATURE.soil : {}) });
   // Invisible sound source just above the pillar's cap (docs/SOUNDSCAPE_PLAN.md): its native ambient timer plays the memorial tones.
-  const entities = [{ id: "lothlorien:memorial_sound", x: 0.5, y: 5.6, z: 3.5 }];
+  // The jigsaw places it from the template; the feature copy gets it from the seed log (memorial_seed.js offset 0.5, 1.6, 0.5).
+  const entities = feature ? [] : [{ id: "lothlorien:memorial_sound", x: 0.5, y: 5.6, z: 3.5 }];
+  if (feature) put(...MEMORIAL_FEATURE.seedAt, MEMORIAL_FEATURE.seed);
   return { blocks, flowers, seats, entities, leaf, ground, skirt };
 }
 

@@ -9,6 +9,7 @@ import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-mod
 
 const memorial = buildMemorial(), { blocks } = memorial;
 const get = (x, y, z) => blocks.get(`${x},${y},${z}`);
+const get2 = (build, x, y, z) => build.blocks.get(`${x},${y},${z}`);
 // All four approaches, the central aisle and the inner side of each bench.
 // Stairs are treated conservatively as full cubes; the must points are access
 // cells beside the seats, not an assertion that the bench itself is a path.
@@ -99,7 +100,17 @@ assert.deepEqual(toMcstructure(buildMemorial().blocks, MEMORIAL.size, MEMORIAL.o
 // Natural feature copy (TEST BUILD 2026-10-28): no anchor, 11 x 15 centred box, same constraints and lattice as the garden.
 const copy = buildMemorial({ feature: true });
 assert.ok(![...copy.blocks.values()].some((b) => b.name === "minecraft:jigsaw"), "feature copy has no jigsaw anchor");
-assert.deepEqual(copy.entities.map((e) => e.id), ["lothlorien:memorial_sound"]);
+assert.deepEqual(copy.entities, [], "a feature drops template entities (owner, 2026-10-28)");
+assert.equal(get2(copy, ...MEMORIAL_FEATURE.seedAt).name, MEMORIAL_FEATURE.seed, "top pillar log is the sound seed");
+assert.equal(get2(memorial, ...MEMORIAL_FEATURE.seedAt).name, "lothlorien:mallorn_log");
+const [jigSound] = memorial.entities;
+const seedJs = readFileSync(new URL("../lothlorien_bp/scripts/memorial_seed.js", import.meta.url), "utf8");
+assert.match(seedJs, /offset: \{ x: 0\.5, y: 1\.6, z: 0\.5 \}/, "script offset matches the template sound position");
+assert.deepEqual([jigSound.x, jigSound.y, jigSound.z], [MEMORIAL_FEATURE.seedAt[0] + 0.5, MEMORIAL_FEATURE.seedAt[1] + 1.6, MEMORIAL_FEATURE.seedAt[2] + 0.5],
+  "seed spawns the sound where the jigsaw template has it");
+const seedBlock = asset("blocks/memorial_seed.json")["minecraft:block"], logBlock = asset("blocks/mallorn_log.json")["minecraft:block"];
+for (const [k, v] of Object.entries(logBlock.components)) assert.deepEqual(seedBlock.components[k], v, `seed looks and behaves like the log: ${k}`);
+assert.deepEqual(seedBlock.components["minecraft:tick"], { interval_range: [10, 20], looping: false });
 assert.deepEqual([MEMORIAL_FEATURE.size[0], MEMORIAL_FEATURE.size[2]], [11, 15]);
 assert.deepEqual([MEMORIAL_FEATURE.offset[0], MEMORIAL_FEATURE.offset[2]], [5, 7], "odd centred box");
 assert.equal(copy.skirt.ring1.length + copy.skirt.ring2.length, 0, "option C: no shoulder");
@@ -113,13 +124,13 @@ assert.equal(enc.clipped, 0);
 assert.deepEqual(enc.buffer, featureAsset);
 const featureNbt = readNbt(featureAsset);
 assert.equal(featureNbt.structure.palette.default.block_palette.some((p) => p.name === "minecraft:jigsaw"), false);
-assert.equal(featureNbt.structure.entities.length, 1, "sound entity saved in the template");
+assert.equal(featureNbt.structure.entities.length, 0);
 const mf = asset("features/memorial_feature.json"), mfSpec = memorialFeature();
 assert.deepEqual(mf, mfSpec);
 const spec = mf["minecraft:structure_template_feature"], gspec = asset("features/flower_garden_feature.json")["minecraft:structure_template_feature"];
 assert.equal(spec.structure_name, MEMORIAL_FEATURE.id);
 assert.equal(spec.ground_level, MEMORIAL_FEATURE.groundLevel);
-assert.equal(MEMORIAL_FEATURE.groundLevel, MEMORIAL_FEATURE.offset[1] - 1, "ground_level is the grass row under the deck: deck 1 above the ground");
+assert.equal(MEMORIAL_FEATURE.groundLevel, MEMORIAL_FEATURE.offset[1], "ground_level is the deck row: deck flush with the terrain (owner 2026-10-28)");
 assert.equal(spec.adjustment_radius, 0);
 assert.deepEqual(spec.constraints, gspec.constraints, "same tuned constraints as the garden");
 assert.equal(spec.rotate_around_center, true);
@@ -138,4 +149,4 @@ for (let cx = -30; cx < 30; cx++) for (let cz = -30; cz < 30; cz++)
   if (String(shuffledPick(4, cx, cz, MEMORIAL_SHUFFLE)) === String(shuffledPick(4, cx, cz))) same++;
 assert.ok(same / 3600 > 0.05 && same / 3600 < 0.2, `memorial/garden chunk overlap ${same / 3600}`);
 assert.deepEqual(MEMORIAL_CHANCE, { numerator: 1, denominator: 5 });
-console.log("ok   leaf memorial: connected approaches, supported planting, native banners, ground anchor, memorial feature on its own shuffled lattice 1/5, deck 1 above ground, deterministic assets");
+console.log("ok   leaf memorial: connected approaches, supported planting, native banners, ground anchor, memorial feature on its own shuffled lattice 1/5, flush deck, sound seed log, deterministic assets");

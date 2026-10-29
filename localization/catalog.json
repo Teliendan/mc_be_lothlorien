@@ -183,6 +183,60 @@
             }
           }
         },
+        "tile.lothlorien:memorial_seed.name": {
+          "source": "Mallorn Log",
+          "context": {
+            "meaning": "Mallorn Log. Mallorn is a fictional tree. Log is the trunk block with end grain; Wood is the all-bark block; Planks are sawn boards. Heartwood is the golden inner wood, not a heart-shaped block.",
+            "location": "lothlorien_rp: inventory/block tooltip, entity name or spawn egg",
+            "trigger": "Viewed in inventory, Creative inventory, block targeting or entity UI, as appropriate to this key.",
+            "tone": "Clear Minecraft UI",
+            "grammar": "Standalone noun phrase, no sentence punctuation.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Poleno mallornu",
+              "based_on": "459ed9eda48025771e53db49dcd0a98d8dbf63b04cecd2e120f24880d6354388",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Tronco de mallorn",
+              "based_on": "459ed9eda48025771e53db49dcd0a98d8dbf63b04cecd2e120f24880d6354388",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Tronco de mallorn",
+              "based_on": "459ed9eda48025771e53db49dcd0a98d8dbf63b04cecd2e120f24880d6354388",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Toro de mallorn",
+              "based_on": "459ed9eda48025771e53db49dcd0a98d8dbf63b04cecd2e120f24880d6354388",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Tora de mallorn",
+              "based_on": "459ed9eda48025771e53db49dcd0a98d8dbf63b04cecd2e120f24880d6354388",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Mallornstamm",
+              "based_on": "459ed9eda48025771e53db49dcd0a98d8dbf63b04cecd2e120f24880d6354388",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Bûche de mallorn",
+              "based_on": "459ed9eda48025771e53db49dcd0a98d8dbf63b04cecd2e120f24880d6354388",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Kłoda mallornu",
+              "based_on": "459ed9eda48025771e53db49dcd0a98d8dbf63b04cecd2e120f24880d6354388",
+              "status": "ai-draft"
+            }
+          }
+        },
         "item.lothlorien:mallorn_log": {
           "source": "Mallorn Log",
           "context": {

@@ -408,6 +408,19 @@
         }
       }
     },
+    "lothlorien:memorial_seed": {
+      "profile": "wood_log",
+      "harvest": "Worldgen-only look-alike of the upright Mallorn log in natural memorials; its one-shot tick turns it into the log within a second of a player coming within simulation distance, before it can be reached (scripts/memorial_seed.js).",
+      "property_checks": {
+        "minecraft:destruction_particles": {
+          "counterpart": "minecraft:oak_log",
+          "expected": {
+            "particle_count": 100
+          },
+          "source": "references/particle-parity.md: configured candidate only; custom default100 / data-driven wool-concrete48 do not establish hardcoded oak counts. Owner requests vanilla; native measurement pending."
+        }
+      }
+    },
     "lothlorien:mallorn_planks": {
       "profile": "wood_planks",
       "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction.",

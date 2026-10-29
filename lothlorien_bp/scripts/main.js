@@ -17,6 +17,7 @@ import "./athelas.js";
 import "./trees.js";
 import "./great_mallorn.js";
 import "./rail_mender.js";
+import "./memorial_seed.js";
 import { planNearest, toggleDebug } from "./loop_marker.js";
 import { inVillageArea } from "./village_area.js";
 import { startVillageMusic } from "./village_music.js";

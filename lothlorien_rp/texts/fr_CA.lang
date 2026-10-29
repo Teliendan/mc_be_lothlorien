@@ -3,6 +3,8 @@
 ## Context: Mallorn Log. Mallorn is a fictional tree. Log is the trunk block with end grain; Wood is the all-bark block; Planks are sawn boards. Heartwood is the golden inner wood, not a heart-shaped block.
 tile.lothlorien:mallorn_log.name=Bûche de mallorn
 ## Context: Mallorn Log. Mallorn is a fictional tree. Log is the trunk block with end grain; Wood is the all-bark block; Planks are sawn boards. Heartwood is the golden inner wood, not a heart-shaped block.
+tile.lothlorien:memorial_seed.name=Bûche de mallorn
+## Context: Mallorn Log. Mallorn is a fictional tree. Log is the trunk block with end grain; Wood is the all-bark block; Planks are sawn boards. Heartwood is the golden inner wood, not a heart-shaped block.
 item.lothlorien:mallorn_log=Bûche de mallorn
 ## Context: Stripped Mallorn Log. Mallorn is a fictional tree. Log is the trunk block with end grain; Wood is the all-bark block; Planks are sawn boards. Heartwood is the golden inner wood, not a heart-shaped block.
 tile.lothlorien:mallorn_stripped_log.name=Bûche de mallorn écorcée
