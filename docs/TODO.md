@@ -50,7 +50,7 @@ Target: tester build on the weekend of 2026-10-24/25.
   memorial sounds, forest leaf rustles. Outside villages the biome keeps vanilla `forest` music.
 - [x] **Pack icon.** Night scene with the white hart and the lit village, accepted 2026-10-28 (`GRAPHICS_TASKS.md`, "Pack icon").
 - [x] **Promo banner** and site logo, accepted 2026-10-28 (`docs/media/`, `GRAPHICS_TASKS.md`).
-- [ ] **LICENSE.** Base it on `C:\Users\karel\Documents\Teliendan\docs\licence_template.md`. Review notes:
+- [x] **LICENSE.** Done 2026-10-29 (`LICENSE.md`), except the contact email (next item). Based on `C:\Users\karel\Documents\Teliendan\docs\licence_template.md`. Review notes:
   - Add "provided as is, without warranty or liability". Worldgen changes players' worlds.
   - Add a third-party section:
     - not affiliated with Mojang/Microsoft or the Tolkien Estate
@@ -60,7 +60,8 @@ Target: tester build on the weekend of 2026-10-24/25.
     code, and section 3 forbids selling "this project".
   - Add a contact (website or GitHub issues).
   - Asset reuse rules for AI-generated art and audio may be hard to enforce. As a polite request it is fine.
-- [ ] **README rewrite** for the public repo, replacing the stale "Phase 1" status:
+- [ ] **Fill in the contact email in LICENSE.md** (placeholder `<EMAIL TO BE ADDED>`).
+- [x] **README rewrite** (done 2026-10-29; the GitHub description and topics are still to be set) for the public repo, replacing the stale "Phase 1" status:
   - features
   - install
   - requirements (Bedrock 1.26.50+, no experiments)
