@@ -5,8 +5,8 @@
         "description": "pack.description",
         "uuid": "f1017fe8-4525-4d1b-9e5d-8e1c13851057",
         "version": [
-            1,
             0,
+            8,
             0
         ],
         "min_engine_version": [
@@ -20,8 +20,8 @@
             "type": "data",
             "uuid": "67c2d9a5-6eb4-4950-958d-52a7d0639c49",
             "version": [
-                1,
                 0,
+                8,
                 0
             ]
         },
@@ -30,8 +30,8 @@
             "language": "javascript",
             "uuid": "e513d385-763b-4f43-b456-3278849e489a",
             "version": [
-                1,
                 0,
+                8,
                 0
             ],
             "entry": "scripts/main.js"
@@ -49,8 +49,8 @@
         {
             "uuid": "d535a52f-4844-41f8-a99f-343476d5c9dd",
             "version": [
-                1,
                 0,
+                8,
                 0
             ]
         }
