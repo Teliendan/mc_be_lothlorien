@@ -13,7 +13,7 @@ export const SITE_ALLOWLIST = Object.freeze([
   "lothlorien:elanor", "lothlorien:niphredil", "lothlorien:athelas", "lothlorien:golden_fern",
 ]);
 
-// The "tuned" configuration of temp/garden-features/SIMULATION.md: ground_level is the grass/deck row (the layer that replaces
+// The tuned configuration (simulated before the 2026-10-28 game test): ground_level is the grass/deck row (the layer that replaces
 // the terrain top block), the rule y is that top block, and max_steepness 2 gives a symmetric +-1 band.
 export const SITE_STEEPNESS = 2;
 

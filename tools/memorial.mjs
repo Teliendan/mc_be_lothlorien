@@ -10,7 +10,7 @@ export const MEMORIAL = Object.freeze({
   id: "lothlorien:memorial_leaf_01", size: [15, 6 + SKIRT.depth, 18], offset: [7, SKIRT.depth, 8], start: -SKIRT.depth, clear: 4,
   anchor: "lothlorien:memorial_ground",
 });
-// Natural `structure_template_feature` copy (TEST BUILD 2026-10-28, docs/GARDEN_FEATURE_TEST.md). 11 x 15 centred box
+// Natural `structure_template_feature` copy (docs/MEMORIAL.md). 11 x 15 centred box
 // (apron x +-5, z -6..7; row z -7 stays void), no shoulder, no anchor, soil 3 deep. Local deck row 0 = encoded y 3 =
 // ground_level, so the deck replaces the terrain top (owner 2026-10-28: raised by 1 the slab edge read as steps; back flush).
 // The feature drops template entities, so the top pillar log is the look-alike `memorial_seed` (scripts/memorial_seed.js).

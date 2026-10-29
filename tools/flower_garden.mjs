@@ -2,14 +2,14 @@
 import { addSoilSkirt } from "./ground_skirt.mjs";
 import { siteFeature } from "./site_feature.mjs";
 
-// Natural `structure_template_feature` (TEST BUILD 2026-10-28). 13 x 13 centred box (beds and aisles +-5, one ragged shoulder ring
+// Natural `structure_template_feature` (docs/FLOWER_GARDEN.md). 13 x 13 centred box (beds and aisles +-5, one ragged shoulder ring
 // to +-6), soil 3 deep (grass + 2 dirt), 4 free cells above the grass, no jigsaw anchor. Local y: grass row -1, planting 0..3.
 // Encoded y 0 is local -3, so the grass row is encoded y 2 = ground_level. The rule puts the top terrain block (q.heightmap - 1)
 // at ground_level, so the grass replaces the terrain top block (owner, 2026-10-24).
 export const GARDEN = Object.freeze({
   id: "lothlorien:flower_garden_01", size: [13, 7, 13], offset: [6, 3, 6], groundLevel: 2, clear: 4,
   loot: "loot_tables/chests/flower_garden.json", barrel: [4, 0, 5],
-  feature: "lothlorien:flower_garden_feature", rule: "lothlorien:flower_garden_feature_rules",
+  feature: "lothlorien:flower_garden_feature",
   adjustmentRadius: 1, soil: { depth: 3, ring2: false, seed: 11 },
 });
 
