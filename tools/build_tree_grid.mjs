@@ -1,7 +1,8 @@
-// Temporary native-worldgen experiment in the main BP. No structure/art edits.
-// node tools/build_tree_grid_test.mjs          enable the dense 10/19/33/18 grid (village 1 in 8)
-// node tools/build_tree_grid_test.mjs --restore restore the original tree-only set
-import { readFileSync, writeFileSync, mkdirSync, existsSync, unlinkSync, realpathSync } from "node:fs";
+// Writes the natural tree grid (release design, docs/WORLDGEN.md): one structure set on the 6/2 grid that picks village / platform
+// Mallorn / plain Mallorn / root shrine 10/19/33/18, plus one structure definition and pool per tree category, split from the
+// legacy mixed pool (worldgen/template_pools/giant_mallorn.json). No structure/art edits.
+//   node tools/build_tree_grid.mjs
+import { readFileSync, writeFileSync, mkdirSync, realpathSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -53,27 +54,16 @@ export function treeGridDefinitions() {
   return definitions;
 }
 
-export function writeTreeGridTest({ restore = false } = {}) {
-  const definitions = treeGridDefinitions();
-  if (restore) {
-    definitions[TREE_GRID_SET]["minecraft:structure_set"].structures = [{ structure: "lothlorien:giant_mallorn", weight: 1 }];
-    for (const path of Object.keys(definitions).filter(path => path !== TREE_GRID_SET)) {
-      const file = join(bp, path);
-      if (existsSync(file)) unlinkSync(file);
-      delete definitions[path];
-    }
-  }
-  for (const [path, definition] of Object.entries(definitions)) {
+export function writeTreeGrid() {
+  for (const [path, definition] of Object.entries(treeGridDefinitions())) {
     const file = join(bp, path);
     mkdirSync(dirname(file), { recursive: true });
     writeFileSync(file, JSON.stringify(definition, null, 2) + "\n");
   }
-  console.log(restore ? "Original tree/shrine selection restored; the memorial keeps its own grid, gardens are a feature."
-    : "Dense tree-grid test enabled: village/platform/plain/shrine 10/19/33/18; the memorial has its own grid, gardens are a feature.");
+  console.log("Tree grid written: village/platform/plain/shrine 10/19/33/18; gardens and memorials are features on their own lattice.");
 }
 
 if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))) {
-  const args = process.argv.slice(2);
-  if (args.some(a => a !== "--restore")) throw new Error("usage: node tools/build_tree_grid_test.mjs [--restore]");
-  writeTreeGridTest({ restore: args.includes("--restore") });
+  if (process.argv.length > 2) throw new Error("usage: node tools/build_tree_grid.mjs");
+  writeTreeGrid();
 }

@@ -6,7 +6,7 @@
 //      enter worldgen. Run the plain command again before committing, so the pack keeps only CHOSEN.
 // -> lothlorien_bp/structures/lothlorien/mallorn_<variant>_NN.mcstructure (id lothlorien:mallorn_<variant>_NN)
 //    and worldgen/template_pools/giant_mallorn.json (legacy pool: 75% trees, 25% shrine) for the jigsaw structure
-//    lothlorien:giant_mallorn. The dense natural test set is managed by build_tree_grid_test.mjs. A plain structure
+//    lothlorien:giant_mallorn. The natural set (village/platform/plain/shrine) is written by build_tree_grid.mjs from this pool. A plain structure
 //    feature was cut at chunk borders; jigsaw structures may span chunks.
 // Tree NN of every variant uses the same seed, so round_07 and roundplain_07 share their trunk and height.
 // Each file is SIZE x SIZE_Y x SIZE with the trunk centred horizontally (cells TRUNK_AT..TRUNK_AT+3) and the

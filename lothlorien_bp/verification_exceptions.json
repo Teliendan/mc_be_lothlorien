@@ -53,7 +53,7 @@
       "rule": "creative.category_missing",
       "path": "bp/blocks/phial_light.json",
       "subject": "",
-      "reason": "Hidden temporary script-owned airlike light, not a player inventory block. Deliberate category omission: docs/M5_PHIAL_NOTES.md, reviewed 2026-10-13.",
+      "reason": "Hidden temporary script-owned airlike light, not a player inventory block. Deliberate category omission: docs/GIFTS.md, reviewed 2026-10-13.",
       "evidence": "docs/VERIFIER_WARNINGS.md"
     },
     {

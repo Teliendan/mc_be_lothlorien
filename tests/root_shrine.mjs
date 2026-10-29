@@ -153,4 +153,4 @@ if (set.structures.some(e => e.structure === "lothlorien:elven_village")) {
     "dense prototype selects the complete shrine as its own weighted structure");
 } else assert.deepEqual(set.structures, [{ structure: "lothlorien:giant_mallorn", weight: 1 }], "restored legacy selection");
 assert.deepEqual(toMcstructure(buildRootShrine().blocks, SHRINE.size, SHRINE.offset, placeEntities(shrine.entities, SHRINE.offset)).buffer, encoded.buffer, "deterministic prototype");
-console.log("ok   root shrine: walkable ground-level room, supported decor/rewards, deterministic full tree; legacy mixed-pool weight retained, dense selection covered by tree-grid test");
+console.log("ok   root shrine: walkable ground-level room, supported decor/rewards, deterministic full tree; legacy mixed-pool weight retained, dense selection covered by the tree-grid test");

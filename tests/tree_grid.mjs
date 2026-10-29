@@ -1,7 +1,7 @@
 // Distribution contracts, not a claim of native collision safety.
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
-import { TREE_GRID_KINDS, TREE_GRID_SET, TREE_GRID_PLACEMENT, treeGridDefinitions } from "../tools/build_tree_grid_test.mjs";
+import { TREE_GRID_KINDS, TREE_GRID_SET, TREE_GRID_PLACEMENT, treeGridDefinitions } from "../tools/build_tree_grid.mjs";
 import { readNbt } from "../tools/village_sim.mjs";
 
 const bp = new URL("../lothlorien_bp/", import.meta.url);
@@ -11,13 +11,6 @@ const definitions = treeGridDefinitions();
 const set = json(TREE_GRID_SET)["minecraft:structure_set"];
 assert.deepEqual(set.placement, { type: "minecraft:random_spread", salt: 518204731, separation: 2, spacing: 6, spread_type: "linear" });
 assert.deepEqual(set.placement, TREE_GRID_PLACEMENT);
-if (set.structures.length === 1 && set.structures[0].structure === "lothlorien:giant_mallorn") {
-  assert.deepEqual(set.structures, [{ structure: "lothlorien:giant_mallorn", weight: 1 }]);
-  const files = new Set(readdirSync(new URL("worldgen/structures/", bp)));
-  assert.ok(![...files].some(f => /^tree_grid_/.test(f)), "restored profile must remove test structure definitions");
-  console.log("ok   dense tree-grid test is disabled; original tree grid and separate small-place sets restored");
-  return;
-}
 for (const [path, definition] of Object.entries(definitions)) assert.deepEqual(json(path), definition, path);
 assert.deepEqual(set.structures, [
   { structure: "lothlorien:elven_village", weight: 10 },
@@ -74,7 +67,7 @@ for (const kind of TREE_GRID_KINDS)
   assert.equal(allSets.flatMap(s => s.structures).filter(e => e.structure === kind.structure).length, 1,
     `no extra set duplicates ${kind.structure}`);
 assert.equal(allSets.flatMap(s => s.structures).filter(e => e.structure === "lothlorien:giant_mallorn").length, 0,
-  "legacy mixed structure remains command-only during this test");
-console.log("ok   dense native tree-grid test: 10/19/33/18 weights (village 1 in 8), original spacing/salt, single grid, exact variant partition and per-type anchors/heights");
+  "legacy mixed structure remains command-only");
+console.log("ok   natural tree grid: 10/19/33/18 weights (village 1 in 8), original spacing/salt, single grid, exact variant partition and per-type anchors/heights");
 }
 check();

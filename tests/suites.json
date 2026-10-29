@@ -210,8 +210,8 @@
     "worldgen-spacing": [
       "worldgen_spacing.mjs"
     ],
-    "tree-grid-test": [
-      "tree_grid_test.mjs"
+    "tree-grid": [
+      "tree_grid.mjs"
     ],
     "controls": [
       "controls.mjs"

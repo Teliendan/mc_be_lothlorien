@@ -10,7 +10,7 @@
           "counterpart": "minecraft:light_block",
           "expected": { "redstone_conductor": false },
           "reason": "Temporary light deliberately cannot conduct redstone.",
-          "source": "M5 utility-block design, docs/M5_PHIAL_NOTES.md; source/mock reviewed 2026-10-11, target1.26.52, game acceptance pending."
+          "source": "M5 utility-block design, docs/GIFTS.md; source/mock reviewed 2026-10-11, target1.26.52, game acceptance pending."
         },
         "minecraft:connection_rule": {
           "counterpart": "minecraft:light_block",
