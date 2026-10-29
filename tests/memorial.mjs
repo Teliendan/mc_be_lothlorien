@@ -13,7 +13,7 @@ const get2 = (build, x, y, z) => build.blocks.get(`${x},${y},${z}`);
 // All four approaches, the central aisle and the inner side of each bench.
 // Stairs are treated conservatively as full cubes; the must points are access
 // cells beside the seats, not an assertion that the bench itself is a path.
-const must = [[0, 0, -6], [-5, 0, 0], [5, 0, 0], [0, 0, 7],
+const must = [[0, 1, -6], [-5, 1, 0], [5, 1, 0], [0, 1, 7],
   [0, 1, -3], [0, 1, 0], [-1, 1, -1], [1, 1, -1], [-1, 1, 2], [1, 1, 2]];
 const walk = checkWalk(get, { x0: -5, x1: 5, y0: -2, y1: 5, z0: -6, z1: 7 }, {
   walkable: (name) => /grass_block|planks|slab/.test(name),
@@ -27,6 +27,11 @@ for (const [x, y, z] of memorial.seats) assert.equal(get(x, y - 1, z)?.name, "lo
 for (const k of memorial.leaf) {
   const [x, z] = k.split(",").map(Number);
   assert.equal(get(x, -1, z)?.name, "minecraft:grass_block", "every deck cell stands on ground");
+  assert.ok(!/slab/.test(get(x, 0, z)?.name), "no slab rim (owner 2026-10-28)");
+}
+for (const k of memorial.ground) if (!memorial.leaf.has(k)) {
+  const [x, z] = k.split(",").map(Number);
+  assert.equal(get(x, 0, z)?.name, "minecraft:grass_block", "apron at deck level, no trench");
 }
 assert.deepEqual(memorial.entities.map((e) => e.id), ["lothlorien:memorial_sound"], "uninhabited: only the invisible sound source");
 const voice = memorial.entities[0];

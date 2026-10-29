@@ -38,6 +38,9 @@ so it shares a chunk with the garden in about 1 cell in 9; there the second one 
 Owner decisions 2026-10-28: memorials as dense as gardens (~24 per km2); several jigsaw memorials stood in water.
 Raising the deck 1 block (`ground_level 2`) was tried and rejected the same day: the slab rim of the leaf (part of the
 design since `b537453`) then read as steps. The deck is flush again (`ground_level 3`, the deck row replaces the terrain top).
+The real trench was the one-cell apron, grass one row below the deck. Now the slab rim is gone (full planks to the edge)
+and the apron is grass at deck level, so the leaf lies level in the surrounding ground (owner, 2026-10-28; jigsaw and
+feature templates both).
 
 The jigsaw (`structures/memorial.json`, pool `memorial`, template `memorial_leaf_01`) is kept for
 `/place structure` only; its set `memorial_sites` (spacing 13 / separation 4) was removed.

@@ -76,18 +76,19 @@ export function buildMemorial({ feature = false } = {}) {
   }
   // Only a one-cell apron and the actual deck are cleared. The corners and
   // canopy remain structure void.
+  // The apron ring is grass at deck level (owner 2026-10-28: a ring one lower read as a trench, the old slab rim as steps).
   for (const k of ground) {
     const [x, z] = k.split(",").map(Number);
+    const apron = !leaf.has(k);
     put(x, -2, z, M + "dirt");
-    put(x, -1, z, M + "grass_block");
-    for (let y = 0; y <= clear; y++) put(x, y, z, M + "air");
+    put(x, -1, z, M + (apron ? "dirt" : "grass_block"));
+    if (apron) put(x, 0, z, M + "grass_block");
+    for (let y = apron ? 1 : 0; y <= clear; y++) put(x, y, z, M + "air");
   }
+  // Full planks to the rim, no slab edge (owner 2026-10-28: the slab rim read as steps).
   for (const k of leaf) {
     const [x, z] = k.split(",").map(Number);
-    const edge = adjacent.some(([dx, dz]) => !leaf.has(`${x + dx},${z + dz}`));
-    const wood = x === 0 ? "mallorn_heartwood" : "mallorn";
-    put(x, 0, z, L + wood + (edge ? "_slab" : "_planks"),
-      edge ? { "minecraft:vertical_half": "bottom" } : {});
+    put(x, 0, z, L + (x === 0 ? "mallorn_heartwood" : "mallorn") + "_planks");
   }
   // Three recessed soil pockets. Flowers have full soil support at deck level,
   // and their white clusters repeat around the heel without fencing it in.
