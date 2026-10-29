@@ -24,12 +24,11 @@ import { inVillageArea } from "./village_area.js";
 import { startVillageMusic } from "./village_music.js";
 import "./warden_replace.js";
 import { leafUndersideY } from "./leaf_fall.js";
-import { handleHarmonyEvent, harmonyOf, recordElfFight, startHarmony } from "./harmony_game.js";
+import { handleHarmonyEvent, harmonyOf, startHarmony } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { startDeer } from "./deer.js";
 import { startWhiteDeer } from "./white_deer.js";
 import { startElvenWardens } from "./elven_warden.js";
-import { startElves } from "./elf.js";
 import { startHealers } from "./healer.js";
 import { startArchery } from "./archery.js";
 import { startWornGifts } from "./worn_gifts.js";
@@ -213,7 +212,6 @@ world.afterEvents.worldLoad.subscribe(() => {
     at: (dimension, x, z) => surfaceSampler(dimension, { x, z })(0, 0),
   });
   startElvenWardens(depthAt, (player) => bandOf(harmonyOf(player).harmony));
-  startElves({ recordFight: recordElfFight });
   startHealers({ bandOf: (player) => bandOf(harmonyOf(player).harmony) });
   startArchery();
   startWornGifts();

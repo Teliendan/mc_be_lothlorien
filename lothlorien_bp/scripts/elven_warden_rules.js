@@ -37,7 +37,7 @@ export const keepNaturalSpawn = (level, onDeck, roll) => roll < spawnKeepChance(
 // (world.beforeEvents.entityHurt) when this returns true. Wardens never hurt other wardens, Lothlorien's own creatures,
 // vanilla animals, or a player who has not hurt a warden within PROVOKE_MS. A Hated player (harmony band, tag
 // lothlorien_hated) is never shielded: the wardens shoot such a player on sight. So is a player who hurt a civilian elf within the
-// last FOE_MS (tag lothlorien_elf_foe, set by elf.js): the wardens defend the elves.
+// last FOE_MS (tag lothlorien_elf_foe, set by elven_warden.js): the wardens defend the elves.
 // Villagers and golems in the line are accepted.
 export const PROVOKE_MS = 60000;
 export const SHIELDED_FAMILIES = ["animal", WARDEN_FAMILY];

@@ -8,15 +8,23 @@
 //  - afterEvents.entityHurt: remembers which player hurt a warden, so that player's retaliation target is not shielded;
 //    the first hit after PROVOKE_MS without one is a new fight and costs the player harmony (harmony_game.js).
 //  - afterEvents.entityDie: a player who kills a monster the wardens hunt is thanked by the nearest warden within THANKS_RADIUS.
+// Civilian elves (rules in elf_rules.js, entity entities/elf.json, design docs/mobs/elves.md) live here too, because the wardens defend them:
+//  - the player-hurts-elf case: the elf runs off by itself (panic goal), harmony hears about every new fight (recordElfFight), and the hitter
+//    carries the tag lothlorien_elf_foe for FOE_MS, which the village wardens read (entities/elven_warden.json target entry, and the
+//    beforeEvents.entityHurt below stops shielding that player from warden arrows). Kills are charged by harmony_game.js (entityDie).
+//  - a lead released the elf: entities/elf.json set the engine home to where it stands; script only records it.
 import { EntityInitializationCause, EquipmentSlot, ItemStack, system, world } from "@minecraft/server";
 import { ANGRY_EVENT, BOW_ID, DECK_BLOCKS, WARDEN_ID, isFriendlyFire, isNewFight, keepNaturalSpawn, PLAYER_ID, THANKS_RADIUS, isWardenQuarry } from "./elven_warden_rules.js";
-import { HATED_TAG, recordWardenFight } from "./harmony_game.js";
-import { FOE_TAG } from "./elf_rules.js";
+import { HATED_TAG, recordElfFight, recordWardenFight } from "./harmony_game.js";
+import { ELF_ID, FOE_MS, FOE_TAG, HOME_OF_ELF, MOVED_PROPERTY, REHOME_EVENT, homeCell } from "./elf_rules.js";
 import { nativeElfUse } from "./elf_native_use.js";
 import { greet, speak } from "./voice.js";
 import { thanksPool } from "./voice_rules.js";
 
 const provoked = new Map(); // player id -> Date.now() of the last hit on a warden (Date: readable in restricted mode)
+const TICKS_PER_MS = 20 / 1000;
+const elfHit = new Map(); // player id -> Date.now() of the last hit on an elf
+const foeSerial = new Map(); // player id -> counter: only the latest elf hit's timer removes the foe tag
 
 function families(entity) {
   try {
@@ -64,8 +72,59 @@ function fighting(player) {
   return (at !== undefined && !isNewFight(Date.now() - at)) || player.hasTag(FOE_TAG);
 }
 
+function dropFoeTag(id) {
+  try {
+    world.getPlayers().find((p) => p.id === id)?.removeTag(FOE_TAG);
+  } catch {
+    // player gone
+  }
+}
+
+function watchElves() {
+  world.afterEvents.dataDrivenEntityTrigger.subscribe(({ entity, eventId }) => {
+    try {
+      if (eventId !== REHOME_EVENT || entity?.typeId !== ELF_ID) return;
+      entity.setDynamicProperty(HOME_OF_ELF, homeCell(entity.location));
+      entity.setDynamicProperty(MOVED_PROPERTY, true);
+    } catch {
+      // entity gone
+    }
+  }, { entityTypes: [ELF_ID], eventTypes: [REHOME_EVENT] });
+  world.afterEvents.entityHurt.subscribe(({ hurtEntity, damageSource }) => {
+    try {
+      const hitter = damageSource.damagingEntity;
+      if (hurtEntity.typeId !== ELF_ID || hitter?.typeId !== PLAYER_ID) return;
+      const now = Date.now(), at = elfHit.get(hitter.id);
+      elfHit.set(hitter.id, now);
+      if (isNewFight(at === undefined ? undefined : now - at)) recordElfFight(hitter, hurtEntity);
+      hitter.addTag(FOE_TAG);
+      const serial = (foeSerial.get(hitter.id) ?? 0) + 1, id = hitter.id;
+      foeSerial.set(id, serial);
+      system.runTimeout(() => {
+        if (foeSerial.get(id) !== serial) return;
+        foeSerial.delete(id);
+        dropFoeTag(id);
+      }, Math.ceil(FOE_MS * TICKS_PER_MS));
+    } catch {
+      // entity gone
+    }
+  }, { entityTypes: [ELF_ID] });
+  world.afterEvents.playerSpawn.subscribe(({ player, initialSpawn }) => {
+    try {
+      if (initialSpawn && player.hasTag(FOE_TAG)) player.removeTag(FOE_TAG); // a tag left over from before a reload or relog
+    } catch {
+      // player gone
+    }
+  });
+  world.afterEvents.playerLeave.subscribe(({ playerId }) => {
+    elfHit.delete(playerId);
+    foeSerial.delete(playerId);
+  });
+}
+
 // depth(dimension, location) -> { level } from scripts/depth.js (main.js supplies it); bandOf(player) -> Harmony band.
 export function startElvenWardens(depthAt, bandOf) {
+  watchElves();
   world.afterEvents.entitySpawn.subscribe(({ entity, cause }) => {
     try {
       if (entity.typeId !== WARDEN_ID) return;

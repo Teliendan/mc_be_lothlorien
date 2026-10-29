@@ -1,5 +1,5 @@
 // Civilian elf rules (design: docs/mobs/elves.md, docs/design/elven_inhabitants.md). Pure (no @minecraft/server) so tools/build_village.mjs,
-// tools/village_sim.mjs and tests/run.mjs import the very same numbers and functions; elf_village.js and elf.js wire them to the game.
+// tools/village_sim.mjs and tests/run.mjs import the very same numbers and functions; elf_village.js and elven_warden.js wire them to the game.
 //
 // An elf is a persistent village inhabitant (entities/elf.json). Every village gets all five professions: the Loremaster on the central
 // tree, each other profession on a tree of its own. A jigsaw piece cannot know which profession it gets, so the tree pieces carry neutral

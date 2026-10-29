@@ -306,7 +306,7 @@ it spawns a fresh warden (same place, rotation, nameTag, spawn event `lothlorien
 
 ## Defending civilian elves (M1, 2026-10-10, built; not seen in game)
 
-Wardens defend the civilian elves (`docs/mobs/elves.md`) against players. A script cannot set a mob's target in 2.8.0, so `scripts/elf.js` tags a player who hurts an elf with `lothlorien_elf_foe`
+Wardens defend the civilian elves (`docs/mobs/elves.md`) against players. A script cannot set a mob's target in 2.8.0, so `scripts/elven_warden.js` (elf section) tags a player who hurts an elf with `lothlorien_elf_foe`
 for 60 s after the last hit (`FOE_MS`, per-player token timer; the tag is dropped on a first join). `entities/elven_warden.json` `nearest_attackable_target` has a third entry (player + `has_tag lothlorien_elf_foe`,
 24 blocks, a copy of the Hated entry), and `isFriendlyFire` takes `foe` (a foe is not shielded from warden arrows, like a Hated or provoked player). Warden arrows never hurt elves (`lothlorien:*` victims are shielded).
 Monsters near elves were already shot. Harmony for the player: 1 per elf fight + 6 per kill (like a warden).

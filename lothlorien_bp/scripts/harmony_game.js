@@ -76,7 +76,7 @@ export function recordWardenFight(player, warden) {
   }
 }
 
-// A new fight with a civilian elf (elf.js decides what a fight is): the same small cost as a warden fight.
+// A new fight with a civilian elf (elven_warden.js decides what a fight is): the same small cost as a warden fight.
 export function recordElfFight(player, elf) {
   try {
     deed(player, elf, "elf_fight");

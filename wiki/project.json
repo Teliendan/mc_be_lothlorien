@@ -82,7 +82,7 @@
     },
     {
       "featureId": "lothlorien:elf",
-      "pattern": "lothlorien_bp/scripts/elf.js"
+      "pattern": "lothlorien_bp/scripts/elven_warden.js"
     },
     {
       "featureId": "lothlorien:elf",

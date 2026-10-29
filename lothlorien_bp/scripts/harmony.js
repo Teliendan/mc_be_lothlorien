@@ -31,7 +31,7 @@ export const DEED_COSTS = {
   unicorn: 10, // the forest's most sacred creature
   warden_fight: 1, // per fight (first hit after PROVOKE_MS without one), see elven_warden.js
   warden_kill: 6, // on top of the fight cost
-  elf_fight: 1, // per fight (first hit on a civilian elf after PROVOKE_MS without one), see elf.js
+  elf_fight: 1, // per fight (first hit on a civilian elf after PROVOKE_MS without one), see elven_warden.js
   elf_kill: 6, // on top of the fight cost, like a warden
   player: 3,
 };

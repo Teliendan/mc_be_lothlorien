@@ -236,7 +236,7 @@ await scenario("warden_replace: a template warden with engine movement is replac
   assert.equal(mock.spawned.length, 1, "exactly one replacement (idempotent for the second event, and the fresh one is not replaced again)");
   assert.equal(mock.spawned[0].entity.nameTag, "Haldir"); assert.equal(mock.spawned[0].opts.spawnEvent, "lothlorien:village_warden");
 });
-// ---- civilian elves (M1): elf_village.js inside the planner run, elf.js hurt handling ----
+// ---- civilian elves (M1): elf_village.js inside the planner run, the elf hurt handling in elven_warden.js ----
 const EL = await import(`${SRC}elf_rules.js`);
 const POST = EL.POST_ID, ELF = EL.ELF_ID;
 const postsLeft = () => mock.dimension().getEntities({ type: POST }).length;
@@ -275,10 +275,10 @@ await scenario("elves: the planner run turns the posts into the five professions
   assert.equal(grep(/elves: village at/).length, 1, "one elves line"); assert.match(grep(/elves: village at/)[0], /loremaster \+ 4 on own trees \(0 on reserves\)/);
 });
 
-await scenario("elf.js: a release (rehome event) records the new home and the moved flag; other events, other mobs and a missing entity change nothing", async () => {
-  const mod = await loadScript("elf.js");
-  mod.startElves({ recordFight: () => {} });
-  assert.equal(mock.subscribers("after", "dataDrivenEntityTrigger"), 1);
+await scenario("elven_warden.js (elves): a release (rehome event) records the new home and the moved flag; other events, other mobs and a missing entity change nothing", async () => {
+  const mod = await loadScript("elven_warden.js");
+  mod.startElvenWardens(() => ({ level: 0 }), () => "neutral");
+  assert.equal(mock.subscribers("after", "dataDrivenEntityTrigger"), 2, "the rehome handler and the warden shout");
   const elf = mock.addEntity(ELF, { x: 10.5, y: 70, z: 10.5 }), deer = mock.addEntity("lothlorien:deer", { x: 11, y: 70, z: 11 });
   elf.setDynamicProperty(EL.HOME_OF_ELF, "0,70,0");
   mock.fire("dataDrivenEntityTrigger", { entity: elf, eventId: "lothlorien:leashed" });
