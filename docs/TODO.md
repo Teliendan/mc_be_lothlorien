@@ -28,17 +28,9 @@ Target: tester build on the weekend of 2026-10-24/25.
   checks: workspace `docs/game-checks.md`. L8 is untested and L9 inconclusive.
 - [x] **Snow on blocks.** Native snowlogging enabled for Elanor, Niphredil, Athelas and Golden Fern
   (2026-10-25); counterpart scope and remaining game checks: `SNOW.md`.
-- [ ] **Elf and Elven Warden sounds.** They have no `entity_sounds` entry, so they use the player
-  hurt and death sounds (`mobs/elves.md:60`). Sindarin voice lines cover talking only.
-- [ ] **Check the borrowed mob sounds** (`lothlorien_rp/sounds.json`). The ambient calls for deer,
-  white deer, swan and songbird are our own and accepted. For each of the following, keep it
-  or replace it:
-  - deer and white deer: hurt and death are horse sounds
-  - fawn: baby horse sounds
-  - swan: chicken hurt (also used for death) and step; cygnets share the adult calls
-  - songbird: parrot hurt, death, step and fly
-  - unicorn: horse sounds only
-  - squirrel: rabbit sounds with a chicken step
+- [x] **Mob hurt and death sounds.** Owner checked them in game on 2026-10-28 and kept all of them:
+  elves and Elven Wardens use the player sounds; the deer, fawn, swan, songbird, unicorn and squirrel
+  borrow vanilla sounds (`lothlorien_rp/sounds.json`).
 - [ ] **Package and smoke-test.** Run `.\mods package lothlorien`, install the `.mcaddon` on a clean
   device, create a new world and check that it loads.
 - [ ] **Tester brief.** Cover install steps, "new world, or back up before adding to an existing
@@ -57,9 +49,8 @@ Target: tester build on the weekend of 2026-10-24/25.
 
 - [x] **Sindarin voice.** Generated and owner accepted overall on 2026-10-25
   ("Sindarin - Good"). Bindings: `SINDARIN_VOICE_EVENTS.md`.
-- [ ] **Background music.** There is no `music_definitions.json` yet; the biome still uses vanilla
-  `forest` music (`lothlorien_rp/biomes/lothlorien.client_biome.json`).
-- [ ] **Soundscape** (`SOUNDSCAPE_PLAN.md`): forest-wide ambience, root shrine and leaf memorial sounds.
+- [x] **Music and soundscape** (`SOUNDSCAPE_PLAN.md`): village harp music, root shrine and leaf
+  memorial sounds, forest leaf rustles. Outside villages the biome keeps vanilla `forest` music.
 - [x] **Pack icon.** Night scene with the white hart and the lit village, accepted 2026-10-28 (`GRAPHICS_TASKS.md`).
 - [x] **Promo banner** and site logo, accepted 2026-10-28 (`docs/media/`, `GRAPHICS_TASKS.md`).
 - [ ] **LICENSE.** Base it on `C:\Users\karel\Documents\Teliendan\docs\licence_template.md`. Review notes:
