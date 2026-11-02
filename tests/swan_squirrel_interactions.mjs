@@ -50,6 +50,31 @@ await test("swans need an actually readable nearby Lothlorien sample, once only"
     m.judgeNaturalSpawn(swan, biome); assert.equal(probes, 25);
   }
 });
+await test("natural swan surface rule: deep open water moves up, bank removes, surface and land keep", async () => {
+  const column = (water, over = {}) => y => over[y] ?? (water.includes(y) ? "minecraft:water" : y > Math.max(...water) ? "minecraft:air" : "minecraft:dirt");
+  assert.deepEqual(S.surfaceAction(62.3, column([60, 61, 62, 63, 64])), { action: "move", y: 64 });
+  assert.deepEqual(S.surfaceAction(60.5, column([60, 61, 62, 63, 64], { 62: "minecraft:flowing_water" })), { action: "move", y: 64 });
+  assert.deepEqual(S.surfaceAction(62.5, column([60, 61, 62], { 64: "minecraft:stone" })), { action: "remove" });
+  assert.deepEqual(S.surfaceAction(61.5, column([60, 61, 62], { 63: "minecraft:oak_leaves" })), { action: "remove" });
+  assert.deepEqual(S.surfaceAction(61.5, column([60, 61, 62], { 64: "minecraft:stone" })), { action: "remove" });
+  assert.deepEqual(S.surfaceAction(62.5, column([60, 61, 62])), { action: "keep" });
+  assert.deepEqual(S.surfaceAction(63.0, column([60, 61, 62])), { action: "keep" });
+  assert.deepEqual(S.surfaceAction(65, column([])), { action: "keep" });
+  const deep = Array.from({ length: 40 }, (_, i) => 10 + i); // scan stops at the cap
+  assert.equal(S.surfaceAction(10.5, column(deep)).action, "remove");
+  const h = await setup(), m = await load("swan", { ...h.base, ...S }, "\nexport { judgeNaturalSpawn };\n");
+  const biome = { id: "lothlorien", at: () => "lothlorien" };
+  const water = (...ys) => { for (const y of ys) h.dimension.blocked.set(`0,${y},0`, "minecraft:water"); };
+  const deepSwan = h.entity(S.SWAN_ID, { x: 0.5, y: 62.2, z: 0.5 }); deepSwan.setProperty("lothlorien:natural", true);
+  h.dimension.blocked.clear(); water(62, 63, 64); // air above, grass block y=64 replaced by water
+  m.judgeNaturalSpawn(deepSwan, biome); assert.equal(deepSwan.isValid, true); assert.equal(deepSwan.location.y, 64);
+  assert.equal(deepSwan.location.x, 0.5); assert.equal(deepSwan.location.z, 0.5);
+  const bank = h.entity(S.SWAN_ID, { x: 0.5, y: 62.2, z: 0.5 }); bank.setProperty("lothlorien:natural", true);
+  h.dimension.blocked.set("0,65,0", "minecraft:stone");
+  m.judgeNaturalSpawn(bank, biome); assert.equal(bank.isValid, false);
+  const land = h.entity(S.SWAN_ID, { x: 20.5, y: 65, z: 20.5 }); land.setProperty("lothlorien:natural", true);
+  m.judgeNaturalSpawn(land, biome); assert.equal(land.isValid, true); assert.equal(land.location.y, 65);
+});
 await test("swan eggs/summons and born cygnets are not filtered without the natural flag", async () => {
   const h = await setup(), m = await load("swan", { ...h.base, ...S }); let probes = 0;
   m.startSwans({ id: "lothlorien", at: () => { probes++; return undefined; } });

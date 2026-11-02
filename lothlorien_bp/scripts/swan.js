@@ -1,8 +1,9 @@
 // Swans in the running game (Phase 15; rules in swan_rules.js). Their wariness follows the nearest player's Harmony band in
 // deer.js (they are in WARY_TYPES), exactly like the deer. This file only judges natural spawns: the spawn rule lets
-// swans spawn in any river (see swan_rules.js), and one that spawned where no Lothlorien biome is near is removed.
+// swans spawn in any river (see swan_rules.js), and one that spawned where no Lothlorien biome is near is removed. A submerged one floats up to the open surface,
+// or is removed when a bank is overhead.
 import { EntityInitializationCause, system, world } from "@minecraft/server";
-import { SWAN_ID, nearBiome } from "./swan_rules.js";
+import { SWAN_ID, nearBiome, surfaceAction } from "./swan_rules.js";
 
 // The spawn rule's herd event sets lothlorien:natural (/summon and eggs do not, so they always stay). The flag is cleared
 // after the roll, so a swan is judged once and not again on every chunk load.
@@ -10,8 +11,12 @@ function judgeNaturalSpawn(swan, biome) {
   try {
     if (!swan.isValid || !swan.getProperty("lothlorien:natural")) return;
     swan.setProperty("lothlorien:natural", false);
-    const { x, z } = swan.location;
-    if (!nearBiome((dx, dz) => biome.at(swan.dimension, x + dx, z + dz), biome.id)) swan.remove();
+    const { x, y, z } = swan.location;
+    if (!nearBiome((dx, dz) => biome.at(swan.dimension, x + dx, z + dz), biome.id)) { swan.remove(); return; }
+    // fish-style spawn rule: a swan can start submerged. Open water above -> float at the surface; bank overhead -> remove.
+    const fix = surfaceAction(y, by => swan.dimension.getBlock({ x, y: by, z })?.typeId);
+    if (fix.action === "remove") swan.remove();
+    else if (fix.action === "move") swan.teleport({ x, y: fix.y, z });
   } catch {
     // unloaded meanwhile
   }
