@@ -12,8 +12,9 @@ face) for the crafted golden block, and mallorn_leaf_carpet (the litter: loose g
 Colours are never biome-tinted. Deterministic; the leaf layout is data (LEAVES).
 
   python -B tools/make_mallorn_leaves.py [OUT_DIR]     (default lothlorien_rp/textures/blocks)
-  python -B tools/make_mallorn_leaves.py --loot-only  (ordinary leaf harvest table only)
-  python -B tools/make_mallorn_leaves.py --print-loot (print table without writing files)
+  python -B tools/make_mallorn_leaves.py --loot-only  (ordinary + golden leaf harvest tables only)
+  python -B tools/make_mallorn_leaves.py --print-loot (print the ordinary table without writing files)
+  python -B tools/make_mallorn_leaves.py --print-golden-loot (print the golden table without writing files)
 
 Harvest rules and unresolved Fortune/acorn choices: docs/LEAF_HARVEST.md.
 Art generation never rewrites loot; the explicit loot mode preserves the reviewed rules.
@@ -27,12 +28,15 @@ import sys
 
 # Loot-only commands need just the standard library; normal imports and art
 # commands retain the existing Pillow API used by the rendering helpers.
-if not (__name__ == "__main__" and sys.argv[1:2] and sys.argv[1] in ("--loot-only", "--print-loot")):
+LOOT_FLAGS = ("--loot-only", "--print-loot", "--print-golden-loot")
+if not (__name__ == "__main__" and sys.argv[1:2] and sys.argv[1] in LOOT_FLAGS):
     from PIL import Image
 
 
-def leaf_loot():
-    """Bedrock 26.50 tool predicates; golden decorative leaves keep their own table.
+def leaf_loot(golden=False):
+    """Bedrock 26.50 tool predicates; golden=True builds the golden leaves table.
+
+    Golden leaves: unconditional self-drop (owner) plus the same stick pools, no acorns.
 
     Negate positive enchantment tests: a missing enchantment need not match level zero.
     Acorns retain the owner's 2% base with oak-sapling relative Fortune boosts.
@@ -66,11 +70,18 @@ def leaf_loot():
                 {"condition": "random_chance", "chance": chance}], functions))
         return result
 
+    sticks = auxiliary("minecraft:stick", (1/50, 1/45, 1/40, 1/30, 1/10),
+        [{"function": "set_count", "count": {"min": 1, "max": 2}}])
+    if golden:
+        return {"pools": [
+            {"rolls": 1, "entries": [{"type": "item", "name": "lothlorien:mallorn_golden_leaves"}]},
+            *sticks,
+        ]}
+
     return {"pools": [
         pool("lothlorien:mallorn_leaves", [shears]),
         pool("lothlorien:mallorn_leaves", [silk, not_shears]),
-        *auxiliary("minecraft:stick", (1/50, 1/45, 1/40, 1/30, 1/10),
-            [{"function": "set_count", "count": {"min": 1, "max": 2}}]),
+        *sticks,
         *auxiliary("lothlorien:mallorn_acorn", (1/50, 1/40, 1/30, 1/25)),
     ]}
 
@@ -275,14 +286,17 @@ def shade_hidden(img):
 
 def main():
     here = os.path.dirname(os.path.abspath(__file__))
-    if len(sys.argv) > 1 and sys.argv[1] in ("--loot-only", "--print-loot"):
-        content = json.dumps(leaf_loot(), indent=2) + "\n"
+    if len(sys.argv) > 1 and sys.argv[1] in LOOT_FLAGS:
+        tables = {"mallorn_leaves": leaf_loot(), "mallorn_golden_leaves": leaf_loot(golden=True)}
         if sys.argv[1] == "--print-loot":
-            print(content, end="")
+            print(json.dumps(tables["mallorn_leaves"], indent=2) + "\n", end="")
+        elif sys.argv[1] == "--print-golden-loot":
+            print(json.dumps(tables["mallorn_golden_leaves"], indent=2) + "\n", end="")
         else:
-            target = os.path.join(here, "..", "lothlorien_bp", "loot_tables", "blocks", "mallorn_leaves.json")
-            with open(target, "w", encoding="utf-8", newline="\n") as f:
-                f.write(content)
+            for name, table in tables.items():
+                target = os.path.join(here, "..", "lothlorien_bp", "loot_tables", "blocks", name + ".json")
+                with open(target, "w", encoding="utf-8", newline="\n") as f:
+                    f.write(json.dumps(table, indent=2) + "\n")
         return
     out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(here, "..", "lothlorien_rp", "textures", "blocks")
     os.makedirs(out, exist_ok=True)

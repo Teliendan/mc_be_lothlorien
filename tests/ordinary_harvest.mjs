@@ -6,7 +6,7 @@ import { execFileSync } from "node:child_process";
 
 const bp = new URL("../lothlorien_bp/", import.meta.url);
 const read = (path) => JSON.parse(readFileSync(new URL(path, bp)));
-const exceptions = new Set(["lothlorien:mallorn_leaves", "lothlorien:western_corn", "lothlorien:nectar_bloom"]);
+const exceptions = new Set(["lothlorien:mallorn_leaves", "lothlorien:mallorn_golden_leaves", "lothlorien:western_corn", "lothlorien:nectar_bloom"]);
 function assertUngated(value) {
   if (Array.isArray(value)) return value.forEach(assertUngated);
   if (!value || typeof value !== "object") return;

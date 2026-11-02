@@ -16,7 +16,7 @@ any-tool change is superseded by the owner's explicit shears-or-Silk instruction
 
 Audit updated 2026-10-11: checked all 40 ordinary Lothlorien blocks' base/permutation loot
 route and block-break script hooks. After these repairs, `match_tool` remains
-only in the deliberately separate nectar bloom, ordinary leaf, golden fern and mature corn
+only in the deliberately separate nectar bloom, ordinary leaf, golden leaf (sticks), golden fern and mature corn
 tables. No other ordinary-block collection gate was found. Native default
 self-drops and existing scripted support/rope/linked-shape lifecycle ownership
 are preserved. This does not establish unobserved engine behavior.

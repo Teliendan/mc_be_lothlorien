@@ -527,7 +527,7 @@
   {
     "featureId": "lothlorien:mallorn_golden_leaves",
     "id": "lothlorien:mallorn_golden_leaves/use",
-    "text": "Place golden foliage as decoration. It drops itself when broken with any tool or by hand and does not decay.",
+    "text": "Place golden foliage as decoration. It drops itself when broken with any tool or by hand and does not decay. Broken without shears or Silk Touch, it can also drop a few sticks, as other leaves do.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",

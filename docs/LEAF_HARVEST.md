@@ -20,7 +20,11 @@ explosion processing to native `explosion_decay`; for sticks it follows
 `set_count`. Its numerical runtime behavior is not simulated by our tests.
 
 Golden decorative leaves retain the owner's unconditional self-drop and no
-decay. Owner clarification 2026-10-11: nectar bloom needs shears or Silk Touch,
+decay. Owner 2026-11-02: broken golden leaves also drop sticks at the ordinary
+rate (the same five stick pools, same gates: not shears, not Silk Touch; no
+acorns), built by the same generator code; **not yet checked in game**.
+
+Owner clarification 2026-10-11: nectar bloom needs shears or Silk Touch,
 with native blast decay. Exclusive pools prevent duplicate drops on enchanted shears. Player
 persistence, the custom 10-step leaf reach,
 tree generation and decay scheduling are unchanged.
@@ -30,10 +34,11 @@ tree generation and decay scheduling are unchanged.
 ```powershell
 python -B tools/make_mallorn_leaves.py --loot-only
 python -B tools/make_mallorn_leaves.py --print-loot
+python -B tools/make_mallorn_leaves.py --print-golden-loot
 ```
 
-The first command regenerates only the ordinary leaf loot table; the second
-prints it without writes. Normal texture generation does not rewrite loot.
+The first command regenerates only the ordinary and golden leaf loot tables; the
+others print one without writes. Normal texture generation does not rewrite loot.
 `tests/leaf_harvest.mjs`, imported by the mod suite, compares generated and
 committed JSON, tests tool/decay contexts and independent auxiliary expectations,
 checks decay function placement, and deliberately breaks important rules to

@@ -46,6 +46,8 @@ function dropExpectations(table, tool) {
   return Object.fromEntries([...result].filter(([, expected]) => expected !== 0));
 }
 
+const stickChances = [1/50, 1/45, 1/40, 1/30, 1/10];
+
 function assertHarvest(table) {
   for (const tool of [shears, silkHoe, { item: "minecraft:stick", enchantments: { silk_touch: 1 } },
     { ...shears, enchantments: { silk_touch: 1, fortune: 3 } },
@@ -53,7 +55,6 @@ function assertHarvest(table) {
     { ...silkHoe, enchantments: { silk_touch: 1, fortune: 3 } }]) {
     assert.deepEqual(dropExpectations(table, tool), { [leaf]: 1 }, "shears/Silk Touch collect exactly one leaf, with no auxiliaries");
   }
-  const stickChances = [1/50, 1/45, 1/40, 1/30, 1/10];
   const acornChances = [1/50, 1/40, 1/30, 1/25];
   for (const tool of [undefined, {}, { item: "minecraft:iron_sword" }, { item: "minecraft:diamond_hoe" },
     ...[0, 1, 2, 3, 4, 7].map((fortune) => ({ item: "minecraft:diamond_hoe", enchantments: { fortune } })),
@@ -135,8 +136,32 @@ assert.deepEqual(dropExpectations(nectar, { item: "minecraft:shears", enchantmen
   { "lothlorien:nectar_bloom": 1 }, "Silk-enchanted shears must not stack the two pools");
 for (const tool of [undefined, {}, { item: "minecraft:iron_hoe", enchantments: { fortune: 3 } }])
   assert.deepEqual(dropExpectations(nectar, tool), {});
+const goldenLeaf = "lothlorien:mallorn_golden_leaves";
 for (const tool of [undefined, {}, shears, silkHoe])
-  assert.deepEqual(dropExpectations(golden, tool), { "lothlorien:mallorn_golden_leaves": 1 });
+  assert.equal(dropExpectations(golden, tool)[goldenLeaf], 1, "golden leaves always drop themselves");
+// Owner 2026-11-02: golden leaves also drop sticks at the ordinary rate (same gates), no acorns.
+assert.deepEqual(golden.pools[0], { rolls: 1, entries: [{ type: "item", name: goldenLeaf }] },
+  "self-drop pool stays unconditional with no decay");
+assert.deepEqual(golden.pools.slice(1), table.pools.filter((pool) => pool.entries[0].name === stick),
+  "golden stick pools are identical to the ordinary ones");
+assert.equal(golden.pools.length, 6);
+for (const tool of [shears, silkHoe, { ...shears, enchantments: { silk_touch: 1, fortune: 3 } }])
+  assert.deepEqual(dropExpectations(golden, tool), { [goldenLeaf]: 1 }, "shears/Silk Touch: self-drop only, no sticks");
+for (const tool of [undefined, {}, { item: "minecraft:diamond_hoe" },
+  ...[0, 1, 2, 3, 4, 7].map((fortune) => ({ item: "minecraft:diamond_hoe", enchantments: { fortune } }))]) {
+  const drops = dropExpectations(golden, tool);
+  const level = tool?.enchantments?.fortune ?? 0;
+  assert.equal(drops[goldenLeaf], 1);
+  assert.equal(drops[acorn], undefined, "golden leaves drop no acorns");
+  assert.ok(Math.abs(drops[stick] - 1.5 * stickChances[Math.min(level, 4)]) < 1e-12);
+}
+const generatedGolden = JSON.parse(execFileSync("python", ["-B", "tools/make_mallorn_leaves.py", "--print-golden-loot"], {
+  cwd: new URL("../", import.meta.url), encoding: "utf8",
+}));
+assert.deepEqual(generatedGolden, golden, "explicit generator mode preserves the golden leaf table");
+broken = structuredClone(golden);
+broken.pools[1].conditions = broken.pools[1].conditions.filter((condition) => condition.item !== "minecraft:shears");
+assert.notDeepEqual(broken, generatedGolden);
 // Owner 2026-10-10: reusable jar and mounted antler collect with any tool.
 // Native custom-block default self-drop has no loot-table tool predicate.
 for (const name of ["firefly_jar", "deer_antler"]) {
