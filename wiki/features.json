@@ -25,7 +25,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/athelas.json",
-          "sha256": "c35d85df7c03a78a565e221624f8093eea4465347053f5067d2482e246a484a6"
+          "sha256": "e66b3844cb33e11b8e4ad31065d4ce69eca666290c494461691f670d561044d0"
         },
         {
           "path": "lothlorien_bp/items/athelas.json",
@@ -150,7 +150,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/deer_antler.json",
-          "sha256": "c6b7df37575c009b394f3ac7fe8a450b93b8f38fa4b9149f79207ce05ecffe2e"
+          "sha256": "67c2f04eba1ec2ccd5d6c8466b12f6cf86c14b881ee618794c09243f6a22fa6d"
         },
         {
           "path": "lothlorien_bp/items/deer_antler.json",
@@ -220,7 +220,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/elanor.json",
-          "sha256": "76106a1d516e933ff9d99beb7edc056156f34cd730a8d2c800447639d35defdf"
+          "sha256": "76f3e85f816585ff3b06664d4e7d8187cbd7d066f82243cf21a2e6c7f46f3a08"
         },
         {
           "path": "lothlorien_bp/items/elanor.json",
@@ -253,7 +253,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/elven_chandelier.json",
-          "sha256": "63783d9cc5b8db512fa4490a20bb87bd985019ded3ea2e56fa2862a1e254a76b"
+          "sha256": "fc87ef5c0bb69fbcd906d8ff788cbc92da7765b942a47e07a63b3e698960c3fc"
         },
         {
           "path": "lothlorien_bp/items/elven_chandelier.json",
@@ -315,7 +315,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/elven_lantern.json",
-          "sha256": "6b6cfb49938985860d745802a2102b1b0b8be165ded8c5ddfd0a455ae8db1819"
+          "sha256": "279ab28148f4bbede6fad40de3d077fa33c6c34b1f442d54032bb3a4fdf6704b"
         },
         {
           "path": "lothlorien_bp/items/elven_lantern.json",
@@ -348,7 +348,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/elven_lantern_heartwood.json",
-          "sha256": "04d4a6104bc9a6a22c113fe92f59653bc84f2497770abdd1d22690bfb228da7c"
+          "sha256": "ad903825b03fd05e296bbf8a5db7ea5a0e181576ea8b1721a8fcd1d76126647e"
         },
         {
           "path": "lothlorien_bp/items/elven_lantern_heartwood.json",
@@ -428,7 +428,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/firefly_jar.json",
-          "sha256": "b5608ee67fd5ad023d4e1175638227375cc393c1c5f9f7d18d18c93b945eed93"
+          "sha256": "919a1f42164a0d9214d8407d9d5f76384e7359f3f2fd18c3d4cbca9c9590a570"
         },
         {
           "path": "lothlorien_bp/items/firefly_jar.json",
@@ -494,7 +494,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/golden_fern.json",
-          "sha256": "ce591b0c92d21f984187f73978fd9a036adbe1534a0da08078e676899b4109f7"
+          "sha256": "c1523d1a682df2d4cb75c0a5689c41ee67876723473c97a390005481a7b80490"
         },
         {
           "path": "lothlorien_bp/items/golden_fern.json",
@@ -534,7 +534,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/great_mallorn_sprout.json",
-          "sha256": "c6e4e79cd69c6380d33bfd8812b808b3f142e2094682a4338299b7b9f26178df"
+          "sha256": "eb36f064b629e1265793f4095ca9d9a38af9b2d8c0dde742cebbfd92fba1edf2"
         },
         {
           "path": "lothlorien_bp/items/great_mallorn_nut.json",
@@ -656,7 +656,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_sapling.json",
-          "sha256": "d1272e89dad858ecc5d90316412f9cbcab7c86305d19effb7e6f0c45b9438e20"
+          "sha256": "fc284007d2e483875fd5686e7c6ad37e7d98f9d8cb85152f3608805a8a3d8ea2"
         },
         {
           "path": "lothlorien_bp/items/mallorn_acorn.json",
@@ -689,7 +689,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_blossom.json",
-          "sha256": "004d84de1eacadf72a9fc1fff95dda4a88abc9ad1d998bf735827627ae2e6a41"
+          "sha256": "3941ebf52638e22b38b3cf8f4663a6ad98aaae7941e51ba922d36f3a468e58e4"
         },
         {
           "path": "lothlorien_bp/items/mallorn_blossom.json",
@@ -755,7 +755,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_button.json",
-          "sha256": "a375727c631d7d2b328cbd8836023cebe7c4262f1c91fed577d7a132ebcfb724"
+          "sha256": "3ee2c905812bc70d8fb963af503c88ca7d35ff6073f7989ea71b90793c38ab69"
         },
         {
           "path": "lothlorien_bp/items/mallorn_button.json",
@@ -821,7 +821,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_door.json",
-          "sha256": "4198af83fb00912cf3ea7381b3aacbf213a5c6155cb9e78ec7215a3c66206247"
+          "sha256": "ef5631869a5a83f36ae2ad9244d655391f8023be783bee857d71734f5a753b5c"
         },
         {
           "path": "lothlorien_bp/items/mallorn_door.json",
@@ -887,7 +887,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_fence_gate.json",
-          "sha256": "fc4c2c24ebc8c1872f6317b96d3223aa64741586369754f7867c873ce1951ed2"
+          "sha256": "481052500e87060aca22eb59e9f127ccc0ee12ca5967332962388ccf6e797ad2"
         },
         {
           "path": "lothlorien_bp/items/mallorn_fence_gate.json",
@@ -986,7 +986,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_heartwood_button.json",
-          "sha256": "afea299d8043b14052af05153f759c304e81fd18d419a665c53f44155f4fa6fa"
+          "sha256": "3168ed3709ba796ff72089464b01325ba8034c410fff519c12b3c0f5daf0e1aa"
         },
         {
           "path": "lothlorien_bp/items/mallorn_heartwood_button.json",
@@ -1052,7 +1052,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_heartwood_door.json",
-          "sha256": "a8bd88f10e305f04d5a57e5f968cb67b082969b14c991356efcd8ce9f0b62ae6"
+          "sha256": "324c554ab1a7f03944f1bef8ed6475124989f511052125929bb4d4a54dc2de1e"
         },
         {
           "path": "lothlorien_bp/items/mallorn_heartwood_door.json",
@@ -1118,7 +1118,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_heartwood_fence_gate.json",
-          "sha256": "032abecbe9ddaa27bbed69b01445ad142608c49825a39b073be58a466c7ca11d"
+          "sha256": "1368e7dfc2044fc7b9133afd1fe241d4a566a2988be2f72d80a58b780bd64dca"
         },
         {
           "path": "lothlorien_bp/items/mallorn_heartwood_fence_gate.json",
@@ -1184,7 +1184,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_heartwood_pressure_plate.json",
-          "sha256": "5a3007ceb5958e4047f89317eb5995237cf86ecba81885ea550c0543ea6050fc"
+          "sha256": "358c0af1df29de0d8ff7f76826050333a18dac7d5035ddcef38a79370e904543"
         },
         {
           "path": "lothlorien_bp/items/mallorn_heartwood_pressure_plate.json",
@@ -1322,7 +1322,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_leaf_carpet.json",
-          "sha256": "b5f778b5522a2072bd954350f7c3d67501cbdab3af03e0a7f2763a8559dd15e9"
+          "sha256": "5f3010700200239700e54ae090765039110c3187d36dc8d255e24ca09f7b9791"
         },
         {
           "path": "lothlorien_bp/items/mallorn_leaf_carpet.json",
@@ -1483,7 +1483,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_pressure_plate.json",
-          "sha256": "2b549bac264beb10b68f67d6fe5e0f5e3d02772d917cdc5e37f502b2457d7cfa"
+          "sha256": "311c5a85ce58ac73d41e66cb12226d3f4dcccbdd5213972e062fa90884ee80e3"
         },
         {
           "path": "lothlorien_bp/items/mallorn_pressure_plate.json",
@@ -1811,7 +1811,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/niphredil.json",
-          "sha256": "0e3216ef4f082588284340b557f96abee6b1b3b79f4a56915221cae160ed6bae"
+          "sha256": "8e18d3fb81e2d7fff2a083cdfd0535adaed807102aadd1de5d9863010acad3be"
         },
         {
           "path": "lothlorien_bp/items/niphredil.json",
@@ -2082,7 +2082,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/western_corn.json",
-          "sha256": "746d4b4ec6d23b552edf416ff4e1565aaa8a716c055053abdf90d8a9892fa8f3"
+          "sha256": "d645438d4d85f812eba58f3ab83d879c3dcc3fb8f21f29a2d2f906505736882e"
         },
         {
           "path": "lothlorien_bp/items/western_corn_seeds.json",

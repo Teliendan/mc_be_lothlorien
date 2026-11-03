@@ -582,7 +582,7 @@
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_blossom.json",
-        "sha256": "004d84de1eacadf72a9fc1fff95dda4a88abc9ad1d998bf735827627ae2e6a41"
+        "sha256": "3941ebf52638e22b38b3cf8f4663a6ad98aaae7941e51ba922d36f3a468e58e4"
       },
       {
         "path": "lothlorien_bp/items/mallorn_blossom.json",
@@ -618,7 +618,7 @@
       },
       {
         "path": "lothlorien_bp/blocks/western_corn.json",
-        "sha256": "746d4b4ec6d23b552edf416ff4e1565aaa8a716c055053abdf90d8a9892fa8f3"
+        "sha256": "d645438d4d85f812eba58f3ab83d879c3dcc3fb8f21f29a2d2f906505736882e"
       },
       {
         "path": "lothlorien_bp/items/western_corn_seeds.json",
@@ -679,7 +679,7 @@
       },
       {
         "path": "lothlorien_bp/blocks/great_mallorn_sprout.json",
-        "sha256": "c6e4e79cd69c6380d33bfd8812b808b3f142e2094682a4338299b7b9f26178df"
+        "sha256": "eb36f064b629e1265793f4095ca9d9a38af9b2d8c0dde742cebbfd92fba1edf2"
       },
       {
         "path": "lothlorien_bp/items/great_mallorn_nut.json",
@@ -715,7 +715,7 @@
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_sapling.json",
-        "sha256": "d1272e89dad858ecc5d90316412f9cbcab7c86305d19effb7e6f0c45b9438e20"
+        "sha256": "fc284007d2e483875fd5686e7c6ad37e7d98f9d8cb85152f3608805a8a3d8ea2"
       },
       {
         "path": "lothlorien_bp/items/mallorn_acorn.json",

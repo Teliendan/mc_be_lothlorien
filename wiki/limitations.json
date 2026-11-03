@@ -60,7 +60,7 @@
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_blossom.json",
-        "sha256": "004d84de1eacadf72a9fc1fff95dda4a88abc9ad1d998bf735827627ae2e6a41"
+        "sha256": "3941ebf52638e22b38b3cf8f4663a6ad98aaae7941e51ba922d36f3a468e58e4"
       },
       {
         "path": "lothlorien_bp/items/mallorn_blossom.json",
@@ -79,7 +79,7 @@
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_leaf_carpet.json",
-        "sha256": "b5f778b5522a2072bd954350f7c3d67501cbdab3af03e0a7f2763a8559dd15e9"
+        "sha256": "5f3010700200239700e54ae090765039110c3187d36dc8d255e24ca09f7b9791"
       },
       {
         "path": "lothlorien_bp/items/mallorn_leaf_carpet.json",
@@ -128,7 +128,7 @@
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_fence_gate.json",
-        "sha256": "fc4c2c24ebc8c1872f6317b96d3223aa64741586369754f7867c873ce1951ed2"
+        "sha256": "481052500e87060aca22eb59e9f127ccc0ee12ca5967332962388ccf6e797ad2"
       }
     ]
   },
@@ -143,7 +143,7 @@
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_heartwood_fence_gate.json",
-        "sha256": "032abecbe9ddaa27bbed69b01445ad142608c49825a39b073be58a466c7ca11d"
+        "sha256": "1368e7dfc2044fc7b9133afd1fe241d4a566a2988be2f72d80a58b780bd64dca"
       }
     ]
   },
