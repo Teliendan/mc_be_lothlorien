@@ -17,7 +17,9 @@
       }
     },
     "components": {
-      "minecraft:tags": ["minecraft:is_pickaxe_item_destructible"],
+      "minecraft:tags": [
+        "minecraft:is_pickaxe_item_destructible"
+      ],
       "minecraft:flammable": false,
       "minecraft:collision_box": false,
       "minecraft:light_dampening": 0,
@@ -65,6 +67,9 @@
             "stops_liquid_flowing_from_direction": []
           }
         ]
+      },
+      "minecraft:support": {
+        "shape": "stair"
       }
     },
     "permutations": [

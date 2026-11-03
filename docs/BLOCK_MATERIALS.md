@@ -26,6 +26,30 @@ The support post-pass retains these defaults after regeneration and preserves
 reviewed explicit values. Double slabs retain their separate solid-cube policy.
 No support-survival script, geometry or door behavior was rewritten.
 
+## Block support shape (owner decision 2026-11-04)
+
+Vanilla thin and decorative blocks (flowers, ferns, leaf litter, petals, buttons, plates, lanterns, doors,
+gates) give no support, so nothing should stand on or hang from them. Custom blocks cannot say "none" natively;
+the owner chose the "stair trick": `"minecraft:support": {"shape": "stair"}` on a block that declares no
+stair states. It is applied by `tools/configure_support.py` (set `NO_SUPPORT`, so a regenerated block cannot
+drift; `tests/stair_support.mjs` asserts the set and that no permutation overrides it):
+
+athelas, elanor, niphredil, golden_fern, mallorn_sapling, great_mallorn_sprout, western_corn, deer_antler,
+both elven lanterns, elven_chandelier, firefly_jar, phial_light, both buttons, both pressure plates, both
+doors, both fence gates, mallorn_leaf_carpet (all four amounts) and mallorn_blossom (the two covers were `fence`
+before). Unchanged: elven_rope and elven_rope_hanging (vanilla chain gives centre support; lanterns hang from
+the rope), trapdoors, slabs, stairs, fences (`fence`) and full blocks. Not in the set: memorial_seed (a log
+look-alike full cube), star_canopy (full cube) and nectar_bloom (a hanging bloom with a placement filter only);
+all three keep default support.
+
+Evidence: the trick was verified in game on the `supportprobe` pack (Bedrock 1.26.60.5, 2026-11-03/04):
+nothing can be placed on the top or bottom face, side clicks redirect the item to the floor or the face behind,
+worlds with torches, redstone, buttons and lanterns around the probes reloaded 2-3 times after full restarts
+without a crash. **The Lothlorien blocks themselves are not yet checked in game.** Open: the doors, gates,
+deer_antler, carpets and blossom declare a direction trait (no `vertical_half`); the shared verifier warns
+for that partial state set because the probe tested blocks with no stair states at all.
+Shared record: `.claude/skills/bedrock-blocks/references/support-collision-properties.md`.
+
 Shared schema checks now cover support, placement, boxes, friction, replacement,
 connections, light/redstone/movement, sounds/particles/weather/transforms/ticks,
 flower-pot markers and fence leash anchors. Current declarations pass; schema

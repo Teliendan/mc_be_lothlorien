@@ -47,6 +47,7 @@
     "wood": [
       "wood_blocks.mjs",
       "stair_water.mjs",
+      "stair_support.mjs",
       "wood_interactions.mjs"
     ],
     "wood-interactions": [

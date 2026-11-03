@@ -29,7 +29,7 @@
     },
     "components": {
       "minecraft:support": {
-        "shape": "fence"
+        "shape": "stair"
       },
       "minecraft:collision_box": false,
       "minecraft:light_dampening": 0,

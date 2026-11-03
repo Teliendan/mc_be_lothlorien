@@ -18,12 +18,20 @@ MOUNTED = {"deer_antler", "elven_lantern", "elven_lantern_heartwood", "firefly_j
            "mallorn_button", "mallorn_heartwood_button"}
 EXTRA = {"mallorn_door", "mallorn_heartwood_door", "elven_rope", "elven_rope_hanging"}
 COVERS = {"mallorn_leaf_carpet", "mallorn_blossom"}
+# Owner decision 2026-11-04: "stair trick" (`support.shape` stair on a block without stair
+# states gives no support; verified in game 1.26.60.5 on the supportprobe pack). Ropes keep
+# the vanilla chain centre support; trapdoors, slabs, stairs, fences and full blocks are untouched.
+NO_SUPPORT = {"athelas", "elanor", "niphredil", "golden_fern", "mallorn_sapling", "great_mallorn_sprout",
+              "western_corn", "deer_antler", "elven_lantern", "elven_lantern_heartwood", "elven_chandelier",
+              "firefly_jar", "phial_light", "mallorn_button", "mallorn_heartwood_button",
+              "mallorn_pressure_plate", "mallorn_heartwood_pressure_plate", "mallorn_door",
+              "mallorn_heartwood_door", "mallorn_fence_gate", "mallorn_heartwood_fence_gate"} | COVERS
 SNOWLOGGABLE = {"athelas", "elanor", "golden_fern", "niphredil"}
 WATER_POP = {"athelas", "elanor", "golden_fern", "nectar_bloom", "niphredil",
              "western_corn", "mallorn_sapling", "great_mallorn_sprout"} | COVERS
 WATER_SOLID = {"mallorn_log", "mallorn_wood", "mallorn_stripped_log", "mallorn_stripped_wood",
                "mallorn_planks", "mallorn_heartwood_planks", "mallorn_double_slab",
-               "mallorn_heartwood_double_slab", "star_canopy"}
+               "mallorn_heartwood_double_slab", "star_canopy", "memorial_seed"}
 WATER_LOGGABLE = {"deer_antler", "elven_chandelier", "elven_lantern", "elven_lantern_heartwood",
                  "firefly_jar", "elven_rope", "elven_rope_hanging", "mallorn_leaves", "mallorn_golden_leaves"}
 WATER_LOGGABLE |= {prefix + part for prefix in ("mallorn_", "mallorn_heartwood_")
@@ -83,6 +91,10 @@ def configure(block):
         c["minecraft:loot"] = "loot_tables/blocks/golden_fern.json"
     if name == "star_canopy":
         c["minecraft:loot"] = "loot_tables/blocks/star_canopy.json"
+    if name in NO_SUPPORT:
+        c["minecraft:support"] = {"shape": "stair"}
+        for permutation in b.get("permutations", []):
+            permutation.get("components", {}).pop("minecraft:support", None)  # an override would replace the base
     configure_water(block)
     # Counterpart parity, also for blocks without a support-survival dependency.
     # These four shapes are single slabs/stairs; double slabs remain solid cubes.

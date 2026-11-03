@@ -48,6 +48,9 @@
             "on_liquid_touches": "broken"
           }
         ]
+      },
+      "minecraft:support": {
+        "shape": "stair"
       }
     }
   }

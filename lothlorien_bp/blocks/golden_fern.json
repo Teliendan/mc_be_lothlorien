@@ -98,6 +98,9 @@
       },
       "minecraft:precipitation_interactions": {
         "precipitation_behavior": "snowlogging"
+      },
+      "minecraft:support": {
+        "shape": "stair"
       }
     },
     "permutations": [

@@ -96,6 +96,9 @@
             "stops_liquid_flowing_from_direction": []
           }
         ]
+      },
+      "minecraft:support": {
+        "shape": "stair"
       }
     },
     "permutations": [

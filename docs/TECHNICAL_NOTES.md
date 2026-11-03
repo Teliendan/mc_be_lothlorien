@@ -11,6 +11,7 @@ and [parity/CREATURES.md](parity/CREATURES.md). Water and snow policies: [WATER.
 policies stable across art regeneration run from `tools/configure_support.py` (flora, decor/rope, food and remedy, leaf and tree interactions,
 controls); they preserve rope fuel 15, chandelier stack 64, lantern item tags and the one-antler/four-lantern recipe. Bone meal on leaf litter
 and blossoms was removed by the owner (2026-10-19): they are fallen material.
+Thin and decor blocks give no support via the stair-support trick (owner 2026-11-04, set in `configure_support.py`): [BLOCK_MATERIALS.md](BLOCK_MATERIALS.md#block-support-shape-owner-decision-2026-11-04).
 
 ## Biome (was Phase 1)
 

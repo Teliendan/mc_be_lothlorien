@@ -84,6 +84,9 @@
             "on_liquid_touches": "popped"
           }
         ]
+      },
+      "minecraft:support": {
+        "shape": "stair"
       }
     }
   }

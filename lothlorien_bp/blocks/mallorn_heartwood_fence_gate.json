@@ -121,7 +121,10 @@
           }
         ]
       },
-      "lothlorien:gate_wall": {}
+      "lothlorien:gate_wall": {},
+      "minecraft:support": {
+        "shape": "stair"
+      }
     },
     "permutations": [
       {
