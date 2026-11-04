@@ -15,7 +15,9 @@
       }
     },
     "components": {
-      "minecraft:tags": ["minecraft:is_axe_item_destructible"],
+      "minecraft:tags": [
+        "minecraft:is_axe_item_destructible"
+      ],
       "minecraft:collision_box": false,
       "minecraft:light_dampening": 0,
       "minecraft:selection_box": {
@@ -68,6 +70,9 @@
             "stops_liquid_flowing_from_direction": []
           }
         ]
+      },
+      "minecraft:support": {
+        "shape": "fence"
       }
     },
     "permutations": [

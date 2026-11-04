@@ -20,12 +20,13 @@ EXTRA = {"mallorn_door", "mallorn_heartwood_door", "elven_rope", "elven_rope_han
 COVERS = {"mallorn_leaf_carpet", "mallorn_blossom"}
 # Owner decision 2026-11-04: "stair trick" (`support.shape` stair on a block without stair
 # states gives no support; verified in game 1.26.60.5 on the supportprobe pack). Ropes keep
-# the vanilla chain centre support; trapdoors, slabs, stairs, fences and full blocks are untouched.
+# fence (owner 2026-11-04: chain-like centre support); trapdoors, slabs, stairs, fences and full blocks are untouched.
 NO_SUPPORT = {"athelas", "elanor", "niphredil", "golden_fern", "mallorn_sapling", "great_mallorn_sprout",
               "western_corn", "deer_antler", "elven_lantern", "elven_lantern_heartwood", "elven_chandelier",
               "firefly_jar", "phial_light", "mallorn_button", "mallorn_heartwood_button",
               "mallorn_pressure_plate", "mallorn_heartwood_pressure_plate", "mallorn_door",
-              "mallorn_heartwood_door", "mallorn_fence_gate", "mallorn_heartwood_fence_gate"} | COVERS
+              "mallorn_heartwood_door", "mallorn_fence_gate", "mallorn_heartwood_fence_gate", "nectar_bloom"} | COVERS
+ROPES = {"elven_rope", "elven_rope_hanging"}
 SNOWLOGGABLE = {"athelas", "elanor", "golden_fern", "niphredil"}
 WATER_POP = {"athelas", "elanor", "golden_fern", "nectar_bloom", "niphredil",
              "western_corn", "mallorn_sapling", "great_mallorn_sprout"} | COVERS
@@ -91,8 +92,8 @@ def configure(block):
         c["minecraft:loot"] = "loot_tables/blocks/golden_fern.json"
     if name == "star_canopy":
         c["minecraft:loot"] = "loot_tables/blocks/star_canopy.json"
-    if name in NO_SUPPORT:
-        c["minecraft:support"] = {"shape": "stair"}
+    if name in NO_SUPPORT or name in ROPES:
+        c["minecraft:support"] = {"shape": "fence" if name in ROPES else "stair"}
         for permutation in b.get("permutations", []):
             permutation.get("components", {}).pop("minecraft:support", None)  # an override would replace the base
     configure_water(block)

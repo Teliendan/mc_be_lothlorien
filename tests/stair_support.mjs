@@ -9,7 +9,7 @@ const STAIR_TRICK = ['athelas', 'elanor', 'niphredil', 'golden_fern', 'mallorn_s
   'western_corn', 'deer_antler', 'elven_lantern', 'elven_lantern_heartwood', 'elven_chandelier', 'firefly_jar',
   'phial_light', 'mallorn_button', 'mallorn_heartwood_button', 'mallorn_pressure_plate',
   'mallorn_heartwood_pressure_plate', 'mallorn_door', 'mallorn_heartwood_door', 'mallorn_fence_gate',
-  'mallorn_heartwood_fence_gate', 'mallorn_leaf_carpet', 'mallorn_blossom'];
+  'mallorn_heartwood_fence_gate', 'mallorn_leaf_carpet', 'mallorn_blossom', 'nectar_bloom'];
 const STAIR_STATES = new Set(['minecraft:vertical_half']);
 const names = readdirSync(dir).filter(f => f.endsWith('.json')).map(f => f.slice(0, -5));
 let checks = 0;
@@ -25,11 +25,11 @@ for (const name of STAIR_TRICK) {
   checks++;
 }
 
-// Everything else keeps its own support: only real stairs may declare stair support, ropes stay vanilla (none),
-// and fences stay fence.
+// Everything else keeps its own support: only real stairs may declare stair support, fences and ropes
+// (owner 2026-11-04: chain-like centre support) are fence.
 for (const name of names.filter(n => !STAIR_TRICK.includes(n))) {
   const support = read(name).components['minecraft:support'];
-  if (/fence$/.test(name)) assert.deepEqual(support, { shape: 'fence' }, name);
+  if (/fence$|^elven_rope/.test(name)) assert.deepEqual(support, { shape: 'fence' }, name);
   else if (/stairs$/.test(name)) assert.deepEqual(support, { shape: 'stair' }, name);
   else assert.equal(support, undefined, `${name}: not part of the stair-trick set`);
   checks++;

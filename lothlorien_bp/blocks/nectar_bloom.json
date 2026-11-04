@@ -91,7 +91,10 @@
       },
       "minecraft:tags": [
         "lothlorien:flower"
-      ]
+      ],
+      "minecraft:support": {
+        "shape": "stair"
+      }
     },
     "permutations": [
       {

@@ -383,11 +383,11 @@
         },
         {
           "path": "lothlorien_bp/blocks/elven_rope.json",
-          "sha256": "4aa03f374df712c8c621b7a22a2b755db0a5984dabc52f8959474a31b8aa8df7"
+          "sha256": "881fc48f00117e108d9cac83dd3a18f63020fefe7e4de02d005a9003bade04a5"
         },
         {
           "path": "lothlorien_bp/blocks/elven_rope_hanging.json",
-          "sha256": "928ad1f6c763a0a920e5629958211fd2e3eff9540d8264be03cfdb64820bfbb4"
+          "sha256": "263954e646d3c20e43fef6a1c3101c5cb16eccd16536c60cd8952f5092155415"
         },
         {
           "path": "lothlorien_bp/items/elven_rope.json",
@@ -1778,7 +1778,7 @@
         },
         {
           "path": "lothlorien_bp/blocks/nectar_bloom.json",
-          "sha256": "2852a63a40161e2200cc080e30e1e759476c4f206ccf6f0386ddc142ba8711e4"
+          "sha256": "bc84defea091af4d4c3b6b863d0077b446096af091a7f1646c9bed6ffd35dbd2"
         },
         {
           "path": "lothlorien_bp/items/nectar_bloom.json",
