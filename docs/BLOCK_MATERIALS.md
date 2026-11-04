@@ -42,7 +42,7 @@ before) and nectar_bloom (hanging bloom, added by the owner 2026-11-04). elven_r
 stairs, fences (`fence`) and full blocks; memorial_seed (log look-alike) and star_canopy (full cubes) keep default
 support. Owner checked the stair-trick blocks in game 2026-11-04 (works); rope `fence` not yet checked.
 
-Evidence: the trick was verified in game on the `supportprobe` pack (Bedrock 1.26.60.5, 2026-11-03/04):
+Evidence: the trick was verified in game on a throwaway probe pack (since deleted) (Bedrock 1.26.60.5, 2026-11-03/04):
 nothing can be placed on the top or bottom face, side clicks redirect the item to the floor or the face behind,
 worlds with torches, redstone, buttons and lanterns around the probes reloaded 2-3 times after full restarts
 without a crash. **The Lothlorien blocks themselves are not yet checked in game.** Open: the doors, gates,
