@@ -1,6 +1,6 @@
 # Player skins
 
-Pack `lothlorien_skins/` (skin pack, ships in the `.mcaddon`), generator `tools/make_skins.py`, names in
+Pack `lothlorien_skins/` (skin pack, ships in the `.mcaddon`; added in 6d3600d), generator `tools/make_skins.py`, names in
 `localization/catalog.json` (pack kind `skin`). Format and lessons: skill `bedrock-art`, `references/player-skins.md`.
 
 ## Owner decisions (2026-11-08)
