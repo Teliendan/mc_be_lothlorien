@@ -38,7 +38,7 @@ entities; lang and item_texture entries). Do not hand-edit the generated files.
   `pre_animation` restarts `variable.wobble_t` when the count changes, and the `wobble` animation rolls the `hull` bone
   about the long axis for 0.5 s with the Java-documented vanilla curve sin(h)·h²/10 degrees (h = 10 → 0 hurt ticks,
   about ±6°), alternating direction per hit. The chest geometry shares the bone, so the chest rocks too. Projectile
-  hits do not rock it. Offline-tested only; owner check pending.
+  hits do not rock it. Verified in game (owner, 2026-11-08).
 - **Drop.** Owner report (2026-11-08): breaking a Mallorn boat with an axe dropped an oak boat. The boat class picks
   the drop in code from the boat's variant (vanilla's own boat loot table is empty), and a spawned Mallorn boat is
   variant 0 = oak. The ordinary break reported on 2026-10-18 dropped the Mallorn boat through its loot table.
@@ -46,8 +46,8 @@ entities; lang and item_texture entries). Do not hand-edit the generated files.
   `beforeEvents.entityRemove` (unfiltered: only that event still has the location) and next tick swaps one oak
   (chest) boat item within 2.5 blocks for the matching Mallorn item, keeping its motion. Oak boats spilled from a
   chest boat's inventory stay as they are. Limit: an oak boat item already lying within 2.5 blocks when a Mallorn
-  boat disappears without its own oak drop (chunk unload, loot-table break) is converted too. Offline-tested only;
-  owner retest pending (axe, hand, all four boats).
+  boat disappears without its own oak drop (chunk unload, loot-table break) is converted too. Verified in game
+  (owner, 2026-11-08).
 
 ## Models (owner's brief and decisions)
 Elven boat: long and slender, pointed at both ends, ends higher than the middle, clear front (swan neck at the bow,

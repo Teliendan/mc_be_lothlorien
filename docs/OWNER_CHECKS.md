@@ -13,6 +13,7 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
 | Sindarin voice | "Good", accepted overall |
 | Firefly capture: metadata, full inventory (delivery before removal), all-five-pack compatibility, native orb XP | works; capture plays vanilla `bottle.dragonbreath` (accepted 2026-10-26) |
 | Empty Miruvor skin | own flat 16 px icon, "Looks good" (2026-10-26) |
+| Mallorn boat drop and hit wobble | axe and hand breaks drop the boat's own item; a hit rocks the boat (`mobs/mallorn_boat.md`); "These work too" (2026-11-08) |
 | Mallorn boat waterline | 4 px model lift, seats with it: floor dry through the whole wave bob, "It works now" (2026-11-08) |
 | Star canopy and elven rope recipe unlock | stays on Bottle of Morning Dew; the eighth drop also runs `recipe give` (`dew.js`); works (2026-10-26) |
 | Unicorn lure | accepted 2026-10-26: vanilla `tempt` on Elanor in a `lothlorien:lure` group that only the wild Friend state adds; `unicorn.js` fires `lure_off`/`lure_on` around the ten-second offer wait; a Friend is never fled from; wariness counts Creative players. By owner request the Friend state keeps 3 blocks from a Friend without Elanor (accepted 2026-10-27). Details: `mobs/unicorn.md` |
@@ -43,10 +44,6 @@ Source fixes made, owner retest pending:
 - Rope while a foreign Slow Falling potion is active (the potion is preserved while climb, hold and slide work).
 - Firefly release now plays `bottle.dragonbreath` at pitch 1.3.
 - Water-only boat dispensing.
-- Mallorn boat drop (2026-11-08): each of the four boats broken with an axe and by hand drops its own item, never oak
-  (`mobs/mallorn_boat.md`, "Drop"). A chest boat holding an oak boat spills that oak boat unchanged.
-- Mallorn boat hit wobble (2026-11-08): punching a boat rocks it side to side for half a second, like a vanilla boat
-  (`mobs/mallorn_boat.md`, "Hit wobble"); the chest rocks with the hull, the roll is about the boat's long axis.
 - Leaf decay is event-driven (2026-11-08, `TECHNICAL_NOTES.md`): fell a natural small and a giant Mallorn; its leaves
   break with drops over a few seconds, leaves of a neighbouring tree with its own trunk stay. Breaking one leaf of a
   floating crown (left by a decay-off test build) clears that crown step by step. TNT on a trunk. **Fire burning a
