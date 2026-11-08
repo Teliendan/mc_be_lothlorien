@@ -47,7 +47,7 @@ async function scenario(name, body) {
   const system = { beforeEvents: signal('system'), run: fn => queue.push(fn), currentTick: 0 };
   globalThis.__wood = { EquipmentSlot: { Mainhand: 'main' } };
   const deferred = await import(`data:text/javascript;base64,${Buffer.from(deferredSource).toString('base64')}#${++serial}`);
-  globalThis.__wood = { ...controlRules, ...deferred, system, world: { beforeEvents: signal('before'), afterEvents: signal('after') },
+  globalThis.__wood = { ...controlRules, ...deferred, swingArm: p => { p.swings = (p.swings ?? 0) + 1; }, system, world: { beforeEvents: signal('before'), afterEvents: signal('after') },
     BlockPermutation: { resolve: perm }, EquipmentSlot: { Mainhand: 'main' },
     GameMode: { Creative: 'creative', Adventure: 'adventure', Spectator: 'spectator' } };
   await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}#${++serial}`);
@@ -136,7 +136,7 @@ await scenario('native and tagged axes strip logs/wood, preserve axis, debounce 
     assert.equal(e.click(b, p).cancel, true); e.click(b, p, 'Up', .75, false); e.flush();
     assert.equal(b.typeId, `lothlorien:mallorn_stripped_${family}`); assert.equal(b.writes, 1);
     assert.equal(b.permutation.getState('minecraft:block_face'), face);
-    assert.equal(p.held.durability.damage, 1);
+    assert.equal(p.held.durability.damage, 1); assert.equal(p.swings, 1);
   }
   const b = e.block('lothlorien:mallorn_log'), p = e.player(axe('custom:fake_axe'));
   assert.equal(e.click(b, p).cancel, undefined); assert.equal(e.queue.length, 0);
@@ -164,7 +164,7 @@ await scenario('strip wear respects native Unbreaking chance, Creative, unbreaka
 await scenario('a swapped axe or changed target aborts the queued strip', e => {
   for (const mutate of [p => { p.held = item('minecraft:diamond'); }, p => { p.held = undefined; }]) {
     const b = e.block('lothlorien:mallorn_log'), p = e.player(axe()); e.click(b, p); mutate(p); e.flush();
-    assert.equal(b.writes, undefined);
+    assert.equal(b.writes, undefined); assert.equal(p.swings, undefined);
   }
   const p = e.player(axe()), b = e.block('lothlorien:mallorn_log');
   e.click(b, p); b.typeId = 'minecraft:diamond_block'; e.flush(); assert.equal(b.writes, undefined);

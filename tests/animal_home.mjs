@@ -113,7 +113,7 @@ function engine() {
   const bindings = { system, world, EquipmentSlot: { Mainhand: "mainhand" }, GameMode: { Survival: "survival", Adventure: "adventure", Creative: "creative", Spectator: "spectator" },
     EntityInitializationCause: { Loaded: "Loaded" }, ItemStack: TestItem,
     harmonyOf: p => ({ harmony: p.band }), bandOf: b => b, message: key => key,
-    noteDeed: (...args) => deeds.push(args), repeatedUse(p, action) {
+    noteDeed: (...args) => deeds.push(args), swingArm: p => { p.swings = (p.swings ?? 0) + 1; }, repeatedUse(p, action) {
       const key = p.id + action, previous = last.get(key);
       if (previous !== undefined && tick - previous < 10) return true;
       last.set(key, tick); return false;

@@ -22,6 +22,7 @@ await scenario('capture one entity once, with cosmetic failures after completion
   const f = e.fly(), p = e.player(GLASS, 3), other = e.player(GLASS);
   e.catch(p, f); e.catch(other, f); e.badSound(); e.badDeed(); e.flush();
   assert.equal(f.isValid, false); assert.equal(p.held.amount, 2); assert.equal(p.inventory[0].typeId, BOTTLE); assert.equal(other.held.typeId, GLASS);
+  assert.equal(p.swings, 1); assert.equal(other.swings, undefined);
 });
 await scenario('capture rejects a changed hand item and a disconnected player', e => {
   const mutations = [(p,f) => p.held = stack('minecraft:diamond'), p => p.isValid = false];

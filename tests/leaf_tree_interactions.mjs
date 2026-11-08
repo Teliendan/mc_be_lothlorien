@@ -44,7 +44,7 @@ async function scenario(name, body, file = 'trees.js') {
     leaves: Array.from({ length: 230 }, (_, x) => ({ x: x + 1, y: 6, z: 0 })) };
   globalThis.__tree = { EquipmentSlot: { Mainhand: 'main' } };
   const deferred = await import(`data:text/javascript;base64,${Buffer.from(DEFERRED).toString('base64')}#d${count}`);
-  globalThis.__tree = { ...rules, ...greatRules, ...decayRules, ...deferred, message: () => 'localized', system, world: {
+  globalThis.__tree = { ...rules, ...greatRules, ...decayRules, ...deferred, swingArm: p => { p.swings = (p.swings ?? 0) + 1; }, message: () => 'localized', system, world: {
     beforeEvents: { playerInteractWithBlock: { subscribe: fn => handlers.push(fn) } },
     afterEvents: { playerPlaceBlock: { subscribe(fn, options) { events.playerPlace = { fn, options }; } },
       playerBreakBlock: { subscribe(fn, options) { events.playerBreak = { fn, options }; } },

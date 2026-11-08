@@ -4,6 +4,7 @@ import { DEW_APPEAR, NEW_DEW_BOTTLE_DAMAGE, addDrop, dewAfterTick, leavesAbove }
 import { GLASS_BOTTLE, swapHeldBottle, newItem } from "./bottles.js";
 import { noteDeed } from "./deeds.js";
 import { captureUse, liveUse, readBlock } from "./deferred_use.js";
+import { swingArm } from "./swing.js";
 
 // Phase 14b: morning dew on the Mallorn ground covers (leaf litter, blossoms). The bool state `lothlorien:dew` is set
 // by random tick in the morning window under Mallorn leaves (appear chance falls, dry chance rises across the window) and
@@ -68,6 +69,8 @@ world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
   const use = captureUse(block, itemStack);
   system.run(() => {
     const live = liveUse(use, player);
-    if (live) collect(player, live.block, live.slot);
+    if (!live) return;
+    collect(player, live.block, live.slot);
+    swingArm(player);
   });
 });

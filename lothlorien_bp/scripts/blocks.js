@@ -1,6 +1,7 @@
 import { world, system, BlockPermutation, GameMode } from "@minecraft/server";
 import { gateFacingAway, overlapsPlate, pairedDoorHinge, PLATE_RELEASE_TICKS } from "./control_rules.js";
 import { captureUse, liveUse, readBlock } from "./deferred_use.js";
+import { swingArm } from "./swing.js";
 
 // Phase 3 custom block components for the Mallorn wood set.
 // Stripping logs and merging slabs are world events (see bottom), not block components: a block
@@ -323,6 +324,7 @@ function mergeSlab(target, double, player, itemStack) {
     if (!live) return;
     live.block.setPermutation(BlockPermutation.resolve(double));
     consumeHeldItem(player, live.slot);
+    swingArm(player);
     live.block.dimension.playSound("dig.wood", live.block.center(), { pitch: 0.8 });
   });
 }
@@ -345,6 +347,7 @@ world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
         BlockPermutation.resolve(stripped, face === undefined ? {} : { "minecraft:block_face": face })
       );
       if (wear) live.slot.setItem(wear.item);
+      swingArm(player);
       live.block.dimension.playSound("use.wood", live.block.center(), { pitch: 0.8 });
       if (wear?.broken) player.playSound("random.break");
     });

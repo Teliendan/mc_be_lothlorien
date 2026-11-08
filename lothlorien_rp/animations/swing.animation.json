@@ -1,0 +1,49 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.lothlorien.swing": {
+      "loop": false,
+      "animation_length": 0.3,
+      "bones": {
+        "rightarm": {
+          "position": [
+            "(math.clamp(-15.5 * math.sin(math.sin((1.0 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 180.0) * math.clamp(query.anim_time / 0.3, 0.0, 1.0) * 112.0), -7.0, 999.0) * math.sin(math.sin((1.0 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 180.0) * math.clamp(query.anim_time / 0.3, 0.0, 1.0) * 112.0)) * (variable.is_first_person && !variable.is_paperdoll) * (variable.is_holding_right <= 0.0)",
+            "(math.sin(math.sin((1.0 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 180.0) * (1.0 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * (1.0 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 200.0) * 7.5 - math.sin((1.0 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 180.0) * math.clamp(query.anim_time / 0.3, 0.0, 1.0) * 15.0 + variable.short_arm_offset_right) * (variable.is_first_person && !variable.is_paperdoll) * (variable.is_holding_right <= 0.0)",
+            "(math.sin(math.sin((1.0 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 180.0) * math.clamp(query.anim_time / 0.3, 0.0, 1.0) * 120.0) * 1.75) * (variable.is_first_person && !variable.is_paperdoll) * (variable.is_holding_right <= 0.0)"
+          ],
+          "rotation": [
+            "(math.sin(math.sin((1.0 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 180.0) * (1.0 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * (1.0 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 280.0) * -60.0) * (variable.is_first_person && !variable.is_paperdoll) * (variable.is_holding_right <= 0.0) + (-(math.sin((1 - math.pow((1 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)), 4)) * 180) * 1.2 + math.sin(math.clamp(query.anim_time / 0.3, 0.0, 1.0) * 180)) * 30.0) * (!variable.is_first_person && !variable.is_paperdoll && variable.item_use_normalized <= 0.0)",
+            "(math.sin(math.sin((1.0 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 180.0) * (1.0 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * (1.0 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 280.0) * 40.0) * (variable.is_first_person && !variable.is_paperdoll) * (variable.is_holding_right <= 0.0) + (-(math.sin((1 - math.pow((1 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)), 4)) * 180) ? (-90.0 * math.sin((1 - math.pow((1 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)), 4)) * 180)) + 30.0 : 0.0)) * (!variable.is_first_person && !variable.is_paperdoll && variable.item_use_normalized <= 0.0)",
+            "(math.sin(math.sin((1.0 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 180.0) * (1.0 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * (1.0 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 280.0) * 20.0) * (variable.is_first_person && !variable.is_paperdoll) * (variable.is_holding_right <= 0.0) + 0.0"
+          ]
+        },
+        "rightitem": {
+          "position": [
+            "(math.sin(math.sqrt(math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 75.0) * 10.0) * (variable.is_first_person && !variable.is_paperdoll) * (variable.is_holding_right > 0.0)",
+            "(math.sin(math.sqrt(math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 65.0) * 5.0) * (variable.is_first_person && !variable.is_paperdoll) * (variable.is_holding_right > 0.0)",
+            "(-math.sin(math.sqrt(math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 115.0) * 5.0) * (variable.is_first_person && !variable.is_paperdoll) * (variable.is_holding_right > 0.0)"
+          ],
+          "rotation": [
+            "(-math.sin(math.sqrt(math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 25.0) * 70.0) * (variable.is_first_person && !variable.is_paperdoll) * (variable.is_holding_right > 0.0)",
+            "(-math.sin(math.sqrt(math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 75.0) * 15.0) * (variable.is_first_person && !variable.is_paperdoll) * (variable.is_holding_right > 0.0)",
+            "(-math.sin(math.sqrt(math.clamp(query.anim_time / 0.3, 0.0, 1.0)) * 80.0) * 35.0) * (variable.is_first_person && !variable.is_paperdoll) * (variable.is_holding_right > 0.0)"
+          ]
+        },
+        "body": {
+          "rotation": [
+            0.0,
+            "((math.sin(360.0 * math.sqrt(math.clamp(query.anim_time / 0.3, 0.0, 1.0))) * 5.0)) * (!variable.is_first_person && !variable.is_paperdoll && variable.item_use_normalized <= 0.0)",
+            0.0
+          ]
+        },
+        "leftarm": {
+          "rotation": [
+            "(-(math.sin((1 - math.pow((1 - math.clamp(query.anim_time / 0.3, 0.0, 1.0)), 4)) * 180) * 1.2 + math.sin(math.clamp(query.anim_time / 0.3, 0.0, 1.0) * 180)) * 10.0) * (!variable.is_first_person && !variable.is_paperdoll && variable.item_use_normalized <= 0.0)",
+            0.0,
+            0.0
+          ]
+        }
+      }
+    }
+  }
+}

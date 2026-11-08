@@ -22,8 +22,6 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
 
 ## Engine limits (deferred, owner-accepted)
 
-- **Stripping swing.** Scripted stripping works and wears the axe, but the vanilla axe swing does not play; no documented stable
-  2.8 API forces the native use animation. Revisit when a supported route exists. (Wiki limitation `stripping-animation`.)
 - **Wall arm beside a gate.** The Mallorn fence gate lowers beside a cobblestone wall, but the wall draws no arm toward it.
   Native connection modes cannot narrowly advertise a custom gate as a vanilla gate to walls; broad connection changes would
   alter unrelated blocks. (Wiki limitation `wall-connection`.)
@@ -37,6 +35,11 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
 
 Source fixes made, owner retest pending:
 
+- Scripted arm swing (2026-11-08): actions whose native click is cancelled now play `animation.lothlorien.swing` (a copy of the
+  vanilla swing on its own 0.3 s clock, `swing.js`): stripping, slab merge, litter/blossom side-merge, bone meal (flora,
+  saplings), nectar and dew bottling, firefly catch and release. Check first person (main unknown), third person, held-item
+  end of the swing (the vanilla item formula does not return to rest at the end) and quick repeats. If it fails, restore the
+  wiki limitation `stripping-animation` (removed in the same commit) and drop the calls.
 - Miruvor: empty skin, refill, last sip.
 - Star Canopy discovery in Survival (the unlock is the Bottle of Morning Dew, see above).
 - Friend unicorn lure, native AI (explicit move/look goal ownership).
@@ -59,5 +62,4 @@ Source fixes made, owner retest pending:
 Untested, no result inferred: **L8** deer with a blocked kept gift spot, **L9** squirrel with an unreachable destination
 (explicit setups in the workspace checklist).
 
-Deferred work: the stripping swing,
-the wall arm, the boat hull lift.
+Deferred work: the wall arm, the boat hull lift.

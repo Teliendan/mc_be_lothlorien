@@ -3,6 +3,7 @@ import { GLASS_BOTTLE, swapHeldBottle, newItem } from "./bottles.js";
 import { repeatedUse } from "./use_guard.js";
 import { noteDeed } from "./deeds.js";
 import { captureUse, heldSlot, liveUse } from "./deferred_use.js";
+import { swingArm } from "./swing.js";
 import { bottleFirefly, fireflyInBottle, restoreFirefly } from "./firefly_bottle.js";
 
 // Catching a firefly (M2 redesign, owner 2026-10-11): the script owns the catch, like the nectar bloom (nectar.js). The firefly's
@@ -27,6 +28,7 @@ world.beforeEvents.playerInteractWithEntity.subscribe((event) => {
       // leave it catchable instead of silently deleting a named firefly.
       if (!swapHeldBottle(player, result, GLASS_BOTTLE)) return;
       target.remove();
+      swingArm(player);
       try { noteDeed(player, "fireflies"); } catch { /* optional feedback */ }
       try { dimension.playSound("bottle.dragonbreath", location, { volume: 0.35, pitch: 1.5 }); } catch { /* optional sound */ }
     } catch { /* player/target unloaded or disconnected */ }
@@ -60,6 +62,7 @@ world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
         { spawnEvent: "lothlorien:released" });
       restoreFirefly(firefly, state);
       swapHeldBottle(player, newItem(GLASS_BOTTLE), FIREFLY_BOTTLE);
+      swingArm(player);
       try { dimension.playSound("bottle.dragonbreath", firefly.location, { volume: 0.35, pitch: 1.3 }); } catch { /* optional sound */ }
     } catch { /* placement became unloaded or out of bounds */ }
   });

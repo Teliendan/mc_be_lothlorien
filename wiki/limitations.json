@@ -107,36 +107,6 @@
     ]
   },
   {
-    "featureId": "lothlorien:mallorn_log",
-    "id": "lothlorien:mallorn_log/stripping-animation",
-    "text": "Stripping works and wears the axe, but the usual axe swing animation does not play.",
-    "evidence": [
-      {
-        "path": "docs/OWNER_CHECKS.md",
-        "sha256": "8e82367034293cea2775ee440252995be5f464ddaf0792d50b9f818ef708b805"
-      },
-      {
-        "path": "lothlorien_bp/scripts/blocks.js",
-        "sha256": "a23a13974860265cce431835d448407871c91c92e02e98c4bdfe3921cc5663ae"
-      }
-    ]
-  },
-  {
-    "featureId": "lothlorien:mallorn_wood",
-    "id": "lothlorien:mallorn_wood/stripping-animation",
-    "text": "Stripping works and wears the axe, but the usual axe swing animation does not play.",
-    "evidence": [
-      {
-        "path": "docs/OWNER_CHECKS.md",
-        "sha256": "8e82367034293cea2775ee440252995be5f464ddaf0792d50b9f818ef708b805"
-      },
-      {
-        "path": "lothlorien_bp/scripts/blocks.js",
-        "sha256": "a23a13974860265cce431835d448407871c91c92e02e98c4bdfe3921cc5663ae"
-      }
-    ]
-  },
-  {
     "featureId": "lothlorien:mallorn_fence_gate",
     "id": "lothlorien:mallorn_fence_gate/wall-connection",
     "text": "The gate lowers beside a cobblestone wall, but the wall does not draw its arm toward the gate.",

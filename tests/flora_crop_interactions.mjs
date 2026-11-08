@@ -46,7 +46,7 @@ async function scenario(name, test) {
     dropWholeRope() {}, world: { beforeEvents: { playerInteractWithBlock: { subscribe: fn => handlers.push(fn) } },
       afterEvents: new Proxy({}, { get: () => ({ subscribe() {} }) }) }, system,
     EquipmentSlot: { Mainhand: 'main' }, GameMode: { Creative: 'creative' }, ItemStack: function(id, amount) { return stack(id, amount); },
-    repeatedUse: () => false, markOnGrass() {}, noteDeed: (p, id) => deeds.push(id) };
+    repeatedUse: () => false, markOnGrass() {}, swingArm: p => { p.swings = (p.swings ?? 0) + 1; }, noteDeed: (p, id) => deeds.push(id) };
   Object.assign(context, await load('deferred_use.js', context));
   Object.assign(context, await load('bottles.js', context));
   Object.assign(context, await load('crop.js', context));

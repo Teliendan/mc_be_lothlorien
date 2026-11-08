@@ -94,6 +94,7 @@ async function createWorld() {
     BlockPermutation: { resolve: permutation },
     // a held use button repeats within a tick: the second call of the same player and action is refused until the next flush
     repeatedUse(p, action) { const k = `${p.id}:${action}`; if (repeats.has(k)) return true; repeats.add(k); return false; },
+    swingArm: p => { p.swings = (p.swings ?? 0) + 1; },
     noteDeed(p, id) { if (deedFails) throw Error('deed'); deeds.push(id); },
     system: { currentTick: 0, run: fn => queue.push(fn), runInterval(fn, ticks) { const id = serial++; intervals.set(id, { fn, ticks }); return id; },
       clearRun: id => intervals.delete(id), beforeEvents: { startup: { subscribe(fn) { fn({

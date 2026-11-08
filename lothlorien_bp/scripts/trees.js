@@ -1,6 +1,7 @@
 import { world, system, BlockPermutation, GameMode } from "@minecraft/server";
 import { makeRandom, buildSmallMallorn, buildBigMallorn } from "./mallorn_tree.js";
 import { captureUse, liveUse } from "./deferred_use.js";
+import { swingArm } from "./swing.js";
 import { hangBloom } from "./nectar.js";
 import { treeBloomCount } from "./nectar_rules.js";
 import { TREE_WOOD, TREE_LEAVES, readTreeBlock, validSaplingSoil, saplingSoil, saplingLight } from "./tree_interaction_rules.js";
@@ -267,6 +268,7 @@ world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
       if (live.slot.amount > 1) live.slot.amount -= 1;
       else live.slot.setItem(undefined);
     }
+    swingArm(player);
     if (Math.random() < BONE_MEAL_CHANCE) advance(live.block);
     const { x, y, z } = live.block.location;
     live.block.dimension.spawnParticle("minecraft:crop_growth_emitter", { x: x + 0.5, y: y + 0.5, z: z + 0.5 });

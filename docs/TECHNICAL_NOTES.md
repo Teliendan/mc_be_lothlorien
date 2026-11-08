@@ -84,8 +84,8 @@ keys no longer work). Blocks (`lothlorien:mallorn_` + `log`, `stripped_log`, `wo
   cube (inverted V); post faces use the `*` material `mallorn_fence_post`; selection and collision boxes unchanged. Geometry format 1.26.50: a `shelf` display
   transform is only accepted from 1.26.40, otherwise the whole file is dropped (icons vanished once).
 - Tools: every wood block carries `minecraft:is_axe_item_destructible`; leaves use the hoe tag. Logs and bark-covered wood: `block_face` trait plus three-axis
-  rotation permutations. Stripping is a guarded world interaction in `blocks.js` (native or tagged axes, native durability chance); the axe swing does not play
-  (`OWNER_CHECKS.md`).
+  rotation permutations. Stripping is a guarded world interaction in `blocks.js` (native or tagged axes, native durability chance); the arm swing is scripted (`swing.js`, RP `animations/swing.animation.json`;
+  in-game check pending, `OWNER_CHECKS.md`).
 - **Stairs:** native corners from `placement_direction` with `minecraft:corner_and_cardinal_direction` (5 shapes x 2 halves x 4 directions = 40 permutations,
   multi-box collision); the engine updates `corner` itself. Left/right follow Java. **Axis trap:** block geometry draws x mirrored while `collision_box` uses world
   x, so the geometry cubes are the collision boxes with x negated (owner-verified 2026-09-29). Regenerate with `.claude/skills/bedrock-blocks/scripts/gen_stairs.py`.

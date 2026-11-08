@@ -52,7 +52,7 @@ async function scenario(name, test) {
     system: { run: fn => queue.push(fn), beforeEvents: { startup: { subscribe: fn => fn({ blockComponentRegistry: {
       registerCustomComponent: (id, c) => components.set(id, c) } }) } } },
     EquipmentSlot: { Mainhand: 'main' }, GameMode: { Creative: 'creative' }, ItemStack: function(id, amount) { return stack(id, amount); },
-    repeatedUse: () => false, noteDeed(p, id) { if (badDeed) throw Error('deed'); deeds.push(id); } };
+    repeatedUse: () => false, swingArm: p => { p.swings = (p.swings ?? 0) + 1; }, noteDeed(p, id) { if (badDeed) throw Error('deed'); deeds.push(id); } };
   Object.assign(context, await load('deferred_use.js', context));
   Object.assign(context, await load('bottles.js', context));
   await load('ground_cover.js', context); await load('dew.js', context);

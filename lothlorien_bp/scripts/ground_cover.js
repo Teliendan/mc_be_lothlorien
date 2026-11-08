@@ -1,5 +1,6 @@
 import { world, system, GameMode } from "@minecraft/server";
 import { captureUse, liveUse, readBlock } from "./deferred_use.js";
+import { swingArm } from "./swing.js";
 
 // Leaf litter and blossoms stack up to AMOUNT 4 in one cell.
 //  - Click the top of a cover: native placement (keeps the owner-tested arm swing) puts a second cover above; the
@@ -39,6 +40,7 @@ world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
       if (live.slot.amount > 1) live.slot.amount -= 1;
       else live.slot.setItem(undefined);
     }
+    swingArm(player);
     sound(live.block);
   });
 });

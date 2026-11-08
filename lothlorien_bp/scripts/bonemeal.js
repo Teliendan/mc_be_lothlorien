@@ -2,6 +2,7 @@ import { world, system, GameMode } from "@minecraft/server";
 import { BONEMEAL_TABLE, SPREAD_TRIES, pickWeighted } from "./flora_table.js";
 import { CROP, growCrop, isMature, validCropSoil } from "./crop.js";
 import { captureUse, liveUse, readBlock } from "./deferred_use.js";
+import { swingArm } from "./swing.js";
 import { SUPPORT_POLICIES } from "./support_policies.js";
 import { markOnGrass } from "./grass_overlay.js";
 
@@ -77,6 +78,7 @@ world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
       if (live.slot.amount > 1) live.slot.amount -= 1;
       else live.slot.setItem(undefined);
     }
+    swingArm(player);
     effects(live.block);
   });
 });
