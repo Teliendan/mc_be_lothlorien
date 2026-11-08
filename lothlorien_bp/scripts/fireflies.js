@@ -2,37 +2,31 @@ import { world, system } from "@minecraft/server";
 import { GLASS_BOTTLE, swapHeldBottle, newItem } from "./bottles.js";
 import { repeatedUse } from "./use_guard.js";
 import { noteDeed } from "./deeds.js";
-import { captureUse, heldSlot, liveUse } from "./deferred_use.js";
+import { captureUse, liveUse } from "./deferred_use.js";
 import { swingArm } from "./swing.js";
 import { bottleFirefly, fireflyInBottle, restoreFirefly } from "./firefly_bottle.js";
 
-// Catching a firefly (M2 redesign, owner 2026-10-11): the script owns the catch, like the nectar bloom (nectar.js). The firefly's
-// `minecraft:interact` entry in entities/firefly.json only supplies the prompt (use_item false, no event, no transform); here the
-// before event cancels the vanilla outcome and, next tick, removes the firefly and hands over a Bottle of fireflies.
-// The deed hook "fireflies" makes the lesson ready. One tick later only the target (firefly still there, clicked block
-// unchanged) and the held item type are checked (deferred_use.js).
+// Catching a firefly (M2 redesign, owner 2026-10-11; native swing 2026-11-08): the firefly's `minecraft:interact` entry in
+// entities/firefly.json (glass bottle, use_item false, no event, swing true) makes the click a native interaction, so the
+// engine swings the arm, also in first person. The script owns the outcome in the after event: it removes the firefly and
+// hands over a Bottle of fireflies. The deed hook "fireflies" makes the lesson ready.
 const FIREFLY = "lothlorien:firefly";
 const FIREFLY_BOTTLE = "lothlorien:bottle_of_fireflies";
 
-world.beforeEvents.playerInteractWithEntity.subscribe((event) => {
-  const { player, target, itemStack } = event;
-  if (target.typeId !== FIREFLY || itemStack?.typeId !== GLASS_BOTTLE) return;
-  event.cancel = true;
-  if (repeatedUse(player, "firefly")) return;
-  system.run(() => {
-    try {
-      if (!target.isValid || !heldSlot(player, GLASS_BOTTLE)) return;
-      const { dimension, location } = target;
-      const result = bottleFirefly(newItem(FIREFLY_BOTTLE), target);
-      // Deliver before removing the animal: a native inventory/drop error must
-      // leave it catchable instead of silently deleting a named firefly.
-      if (!swapHeldBottle(player, result, GLASS_BOTTLE)) return;
-      target.remove();
-      swingArm(player);
-      try { noteDeed(player, "fireflies"); } catch { /* optional feedback */ }
-      try { dimension.playSound("bottle.dragonbreath", location, { volume: 0.35, pitch: 1.5 }); } catch { /* optional sound */ }
-    } catch { /* player/target unloaded or disconnected */ }
-  });
+world.afterEvents.playerInteractWithEntity.subscribe(({ player, target, beforeItemStack }) => {
+  try {
+    if (target.typeId !== FIREFLY || beforeItemStack?.typeId !== GLASS_BOTTLE) return;
+    if (repeatedUse(player, "firefly")) return;
+    if (!target.isValid) return; // another player caught it in the same tick
+    const { dimension, location } = target;
+    const result = bottleFirefly(newItem(FIREFLY_BOTTLE), target);
+    // Deliver before removing the animal: a native inventory/drop error must
+    // leave it catchable instead of silently deleting a named firefly.
+    if (!swapHeldBottle(player, result, GLASS_BOTTLE)) return;
+    target.remove();
+    try { noteDeed(player, "fireflies"); } catch { /* optional feedback */ }
+    try { dimension.playSound("bottle.dragonbreath", location, { volume: 0.35, pitch: 1.5 }); } catch { /* optional sound */ }
+  } catch { /* player/target unloaded or disconnected */ }
 });
 
 const FACE_OFFSET = {

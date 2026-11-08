@@ -34,9 +34,10 @@ await test('captured names and exact injured health survive real callback and it
     assert.equal(out.player.held.typeId,GLASS);assert.deepEqual(out.player.held.getRawLore(),[]);assert.equal(out.player.held.nameTag,undefined);
   }
 });
-await test('capture reads actual entity name/health at the real deferred completion',e=>{
-  const p=e.player(GLASS),f=e.fly();f.nameTag='Before';e.catch(p,f);f.nameTag='After';f.health.currentValue=1.25;e.flush();
-  const out=release(e,p.held);assert.equal(out.animal.nameTag,'After');assert.equal(out.animal.health.currentValue,1.25);
+await test('capture reads the entity name/health at the native interaction (after event, same tick)',e=>{
+  const p=e.player(GLASS),f=e.fly();f.nameTag='Named';f.health.currentValue=1.25;e.catch(p,f);
+  assert.equal(f.isValid,false);f.nameTag='Late';e.flush();
+  const out=release(e,p.held);assert.equal(out.animal.nameTag,'Named');assert.equal(out.animal.health.currentValue,1.25);
 });
 await test('long Unicode names use bounded localized parts and restore without anvil renaming',e=>{
   const name='\u2728'.repeat(205)+'\ud83c\udf1f'.repeat(25);assert.equal(name.length,255);

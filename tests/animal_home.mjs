@@ -186,12 +186,13 @@ for (const blocked of [false,true]) {
 {
   const h=engine(), bottles=await load("bottles",h.bindings); await load("fireflies",{...h.bindings,...bottles});
   const bug=h.entity("lothlorien:firefly"), p=h.player(EMPTY), q=h.player(EMPTY);
-  for(const player of [p,q]) h.fire("before","playerInteractWithEntity",{player,target:bug,itemStack:{typeId:EMPTY}});
-  h.advance(1); assert.equal(bug.isValid,false); assert.equal(p.slot.typeId,BOTTLE); assert.equal(q.slot.typeId,EMPTY);
+  for(const player of [p,q]) h.fire("after","playerInteractWithEntity",{player,target:bug,beforeItemStack:{typeId:EMPTY},itemStack:{typeId:EMPTY}});
+  assert.equal(bug.isValid,false); assert.equal(p.slot.typeId,BOTTLE); assert.equal(q.slot.typeId,EMPTY);
   assert.equal(h.deeds.length,1);
   const other=h.entity("lothlorien:firefly");h.advance(10);
-  h.fire("before","playerInteractWithEntity",{player:q,target:other,itemStack:{typeId:EMPTY}});
-  q.slot.setItem({typeId:"minecraft:diamond",amount:1});h.advance(1);assert.ok(other.isValid);
+  q.slot.setItem({typeId:"minecraft:diamond",amount:1});
+  h.fire("after","playerInteractWithEntity",{player:q,target:other,beforeItemStack:{typeId:"minecraft:diamond"},itemStack:{typeId:"minecraft:diamond"}});
+  assert.ok(other.isValid);
 }
 
 // Outside acorns heal and keep wildlife even for an unfriendly player, but they

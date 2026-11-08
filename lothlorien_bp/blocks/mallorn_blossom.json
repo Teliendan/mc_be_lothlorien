@@ -454,8 +454,7 @@
               "lothlorien:mallorn_planks",
               "lothlorien:mallorn_heartwood_planks",
               "lothlorien:mallorn_double_slab",
-              "lothlorien:mallorn_heartwood_double_slab",
-              "lothlorien:mallorn_blossom"
+              "lothlorien:mallorn_heartwood_double_slab"
             ]
           }
         ]
@@ -478,7 +477,9 @@
       },
       "minecraft:tags": [
         "lothlorien:flower"
-      ]
+      ],
+      "minecraft:replaceable": {},
+      "lothlorien:cover_stack": {}
     },
     "permutations": [
       {

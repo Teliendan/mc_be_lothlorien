@@ -22,6 +22,11 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
 
 ## Engine limits (deferred, owner-accepted)
 
+- **First-person swing.** The scripted swing (`swing.js`, copy of the vanilla swing) plays for stripping, slab merge, bone meal
+  (flora, saplings), nectar and dew bottling and firefly release, and shows in third person (other players, F5), but not in your
+  own first-person view: a held normal item's first-person swing is engine code (owner check 2026-11-08; reasons in the
+  workspace `bedrock-scripting` reference `arm-swing.md`). Wiki limitation `first-person-swing`.
+
 - **Wall arm beside a gate.** The Mallorn fence gate lowers beside a cobblestone wall, but the wall draws no arm toward it.
   Native connection modes cannot narrowly advertise a custom gate as a vanilla gate to walls; broad connection changes would
   alter unrelated blocks. (Wiki limitation `wall-connection`.)
@@ -35,11 +40,11 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
 
 Source fixes made, owner retest pending:
 
-- Scripted arm swing (2026-11-08): actions whose native click is cancelled now play `animation.lothlorien.swing` (a copy of the
-  vanilla swing on its own 0.3 s clock, `swing.js`): stripping, slab merge, litter/blossom side-merge, bone meal (flora,
-  saplings), nectar and dew bottling, firefly catch and release. Check first person (main unknown), third person, held-item
-  end of the swing (the vanilla item formula does not return to rest at the end) and quick repeats. If it fails, restore the
-  wiki limitation `stripping-animation` (removed in the same commit) and drop the calls.
+- Native arm swing (2026-11-08): **litter/blossoms** are now replaceable like vanilla leaf litter and stack through native
+  placement (`ground_cover.js` `cover_stack`); **firefly catch** lets the native interaction succeed and catches in the after
+  event. Check, also in first person: a segment added from the top, a side and a neighbour face (2 -> 3 -> 4, direction and
+  dew kept, no segment lost), a full cover refuses its item, a torch or block placed onto a grass-top cover leaves grass
+  (not dirt), the other cover replaces it; catching swings once and still delivers the bottle (also with a full inventory).
 - Miruvor: empty skin, refill, last sip.
 - Star Canopy discovery in Survival (the unlock is the Bottle of Morning Dew, see above).
 - Friend unicorn lure, native AI (explicit move/look goal ownership).

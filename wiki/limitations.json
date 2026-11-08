@@ -56,11 +56,11 @@
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
-        "sha256": "2fd8fc785a6f5cd773c3c81e434f82250a69d03963d87689fdb8b76d0fe68ac1"
+        "sha256": "0973171e0053245cc98531dc0ef3d10f457dc5585f3b13f3dc0f148fa57e07fb"
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_blossom.json",
-        "sha256": "3941ebf52638e22b38b3cf8f4663a6ad98aaae7941e51ba922d36f3a468e58e4"
+        "sha256": "34b49368a22a8c7248f665bff16ecfa8171ef422250211db78b1b121a35234e5"
       },
       {
         "path": "lothlorien_bp/items/mallorn_blossom.json",
@@ -75,11 +75,11 @@
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
-        "sha256": "2fd8fc785a6f5cd773c3c81e434f82250a69d03963d87689fdb8b76d0fe68ac1"
+        "sha256": "0973171e0053245cc98531dc0ef3d10f457dc5585f3b13f3dc0f148fa57e07fb"
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_leaf_carpet.json",
-        "sha256": "5f3010700200239700e54ae090765039110c3187d36dc8d255e24ca09f7b9791"
+        "sha256": "ea63ea55d5016b6009d05a46700072b0760c8f2066c1947832f8cf53907a5684"
       },
       {
         "path": "lothlorien_bp/items/mallorn_leaf_carpet.json",
@@ -94,7 +94,7 @@
     "evidence": [
       {
         "path": "docs/TECHNICAL_NOTES.md",
-        "sha256": "94fe5d758dd7006221816f930d026f0cc73d64beed7c86822856389b798f3d2f"
+        "sha256": "fc6ecbd37b18679e86bfe1ebec406467b07a73be057d3e00607cf72eca97f82b"
       },
       {
         "path": "lothlorien_bp/scripts/leaf_decay.js",
@@ -113,7 +113,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "1b02ea5fedb87aab4e88853e46c00e70040e269c8e156912a17cc6d03d6fb4c3"
+        "sha256": "91ce8ed0b75ee5880b7e20cf372f5137f1e3622a9439a3a5356bbbaf55deccdc"
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_fence_gate.json",
@@ -128,7 +128,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "1b02ea5fedb87aab4e88853e46c00e70040e269c8e156912a17cc6d03d6fb4c3"
+        "sha256": "91ce8ed0b75ee5880b7e20cf372f5137f1e3622a9439a3a5356bbbaf55deccdc"
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_heartwood_fence_gate.json",
@@ -143,7 +143,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "1b02ea5fedb87aab4e88853e46c00e70040e269c8e156912a17cc6d03d6fb4c3"
+        "sha256": "91ce8ed0b75ee5880b7e20cf372f5137f1e3622a9439a3a5356bbbaf55deccdc"
       },
       {
         "path": "lothlorien_bp/items/mallorn_boat.json",
@@ -158,7 +158,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "1b02ea5fedb87aab4e88853e46c00e70040e269c8e156912a17cc6d03d6fb4c3"
+        "sha256": "91ce8ed0b75ee5880b7e20cf372f5137f1e3622a9439a3a5356bbbaf55deccdc"
       },
       {
         "path": "lothlorien_bp/items/mallorn_chest_boat.json",
@@ -173,7 +173,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "1b02ea5fedb87aab4e88853e46c00e70040e269c8e156912a17cc6d03d6fb4c3"
+        "sha256": "91ce8ed0b75ee5880b7e20cf372f5137f1e3622a9439a3a5356bbbaf55deccdc"
       },
       {
         "path": "lothlorien_bp/items/mallorn_heartwood_boat.json",
@@ -188,7 +188,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "1b02ea5fedb87aab4e88853e46c00e70040e269c8e156912a17cc6d03d6fb4c3"
+        "sha256": "91ce8ed0b75ee5880b7e20cf372f5137f1e3622a9439a3a5356bbbaf55deccdc"
       },
       {
         "path": "lothlorien_bp/items/mallorn_heartwood_chest_boat.json",
@@ -261,6 +261,162 @@
       {
         "path": "lothlorien_bp/entities/elf.json",
         "sha256": "c999984bebf387d1faa7db69fc7dbb08a7f59ad27bdf5f322110ef250525e2b0"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_log",
+    "id": "lothlorien:mallorn_log/first-person-swing",
+    "text": "Stripping with an axe works and wears the axe. In your own first-person view the arm does not swing; other players and the third-person view show the swing.",
+    "evidence": [
+      {
+        "path": "docs/OWNER_CHECKS.md",
+        "sha256": "91ce8ed0b75ee5880b7e20cf372f5137f1e3622a9439a3a5356bbbaf55deccdc"
+      },
+      {
+        "path": "lothlorien_bp/scripts/blocks.js",
+        "sha256": "d53ae11e19e319cf3904d38055ef3f6bab6f1e1f9ab95129bb1d4083b79e516e"
+      },
+      {
+        "path": "lothlorien_bp/scripts/swing.js",
+        "sha256": "ba01f31a65b57297fb15dccfa993fa50aab007da5de18bdefde8f41afed0ae08"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_wood",
+    "id": "lothlorien:mallorn_wood/first-person-swing",
+    "text": "Stripping with an axe works and wears the axe. In your own first-person view the arm does not swing; other players and the third-person view show the swing.",
+    "evidence": [
+      {
+        "path": "docs/OWNER_CHECKS.md",
+        "sha256": "91ce8ed0b75ee5880b7e20cf372f5137f1e3622a9439a3a5356bbbaf55deccdc"
+      },
+      {
+        "path": "lothlorien_bp/scripts/blocks.js",
+        "sha256": "d53ae11e19e319cf3904d38055ef3f6bab6f1e1f9ab95129bb1d4083b79e516e"
+      },
+      {
+        "path": "lothlorien_bp/scripts/swing.js",
+        "sha256": "ba01f31a65b57297fb15dccfa993fa50aab007da5de18bdefde8f41afed0ae08"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_slab",
+    "id": "lothlorien:mallorn_slab/first-person-swing",
+    "text": "Two slabs merge into a double slab. In your own first-person view the arm does not swing; other players and the third-person view show the swing.",
+    "evidence": [
+      {
+        "path": "docs/OWNER_CHECKS.md",
+        "sha256": "91ce8ed0b75ee5880b7e20cf372f5137f1e3622a9439a3a5356bbbaf55deccdc"
+      },
+      {
+        "path": "lothlorien_bp/scripts/blocks.js",
+        "sha256": "d53ae11e19e319cf3904d38055ef3f6bab6f1e1f9ab95129bb1d4083b79e516e"
+      },
+      {
+        "path": "lothlorien_bp/scripts/swing.js",
+        "sha256": "ba01f31a65b57297fb15dccfa993fa50aab007da5de18bdefde8f41afed0ae08"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:mallorn_heartwood_slab",
+    "id": "lothlorien:mallorn_heartwood_slab/first-person-swing",
+    "text": "Two slabs merge into a double slab. In your own first-person view the arm does not swing; other players and the third-person view show the swing.",
+    "evidence": [
+      {
+        "path": "docs/OWNER_CHECKS.md",
+        "sha256": "91ce8ed0b75ee5880b7e20cf372f5137f1e3622a9439a3a5356bbbaf55deccdc"
+      },
+      {
+        "path": "lothlorien_bp/scripts/blocks.js",
+        "sha256": "d53ae11e19e319cf3904d38055ef3f6bab6f1e1f9ab95129bb1d4083b79e516e"
+      },
+      {
+        "path": "lothlorien_bp/scripts/swing.js",
+        "sha256": "ba01f31a65b57297fb15dccfa993fa50aab007da5de18bdefde8f41afed0ae08"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:nectar_bloom",
+    "id": "lothlorien:nectar_bloom/first-person-swing",
+    "text": "Filling a glass bottle from a full bloom works. In your own first-person view the arm does not swing; other players and the third-person view show the swing.",
+    "evidence": [
+      {
+        "path": "docs/OWNER_CHECKS.md",
+        "sha256": "91ce8ed0b75ee5880b7e20cf372f5137f1e3622a9439a3a5356bbbaf55deccdc"
+      },
+      {
+        "path": "lothlorien_bp/scripts/nectar.js",
+        "sha256": "65fbc8f3ea18e94fe98347e7c94cab34a7ac3e6c420604c9e927dd4f2ca8c2de"
+      },
+      {
+        "path": "lothlorien_bp/scripts/swing.js",
+        "sha256": "ba01f31a65b57297fb15dccfa993fa50aab007da5de18bdefde8f41afed0ae08"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:dew_bottle",
+    "id": "lothlorien:dew_bottle/first-person-swing",
+    "text": "Collecting dew with a bottle works. In your own first-person view the arm does not swing; other players and the third-person view show the swing.",
+    "evidence": [
+      {
+        "path": "docs/OWNER_CHECKS.md",
+        "sha256": "91ce8ed0b75ee5880b7e20cf372f5137f1e3622a9439a3a5356bbbaf55deccdc"
+      },
+      {
+        "path": "lothlorien_bp/scripts/dew.js",
+        "sha256": "7efe06aeff349bd1f3e5089f44d16c1e44af78646d95380df827c51bdbaa0014"
+      },
+      {
+        "path": "lothlorien_bp/scripts/swing.js",
+        "sha256": "ba01f31a65b57297fb15dccfa993fa50aab007da5de18bdefde8f41afed0ae08"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:bottle_of_fireflies",
+    "id": "lothlorien:bottle_of_fireflies/first-person-swing",
+    "text": "Releasing the firefly against a block works. In your own first-person view the arm does not swing; other players and the third-person view show the swing.",
+    "evidence": [
+      {
+        "path": "docs/OWNER_CHECKS.md",
+        "sha256": "91ce8ed0b75ee5880b7e20cf372f5137f1e3622a9439a3a5356bbbaf55deccdc"
+      },
+      {
+        "path": "lothlorien_bp/scripts/fireflies.js",
+        "sha256": "d5b08ae296bce03e15864761f9e3f99254cb582ebd60312a6551b74861c9ea0a"
+      },
+      {
+        "path": "lothlorien_bp/scripts/swing.js",
+        "sha256": "ba01f31a65b57297fb15dccfa993fa50aab007da5de18bdefde8f41afed0ae08"
+      }
+    ]
+  },
+  {
+    "featureId": "lothlorien:growing",
+    "id": "lothlorien:growing/first-person-swing",
+    "text": "Bone meal on Lothlorien plants, Western Corn and Mallorn saplings works. In your own first-person view the arm does not swing; other players and the third-person view show the swing.",
+    "evidence": [
+      {
+        "path": "docs/OWNER_CHECKS.md",
+        "sha256": "91ce8ed0b75ee5880b7e20cf372f5137f1e3622a9439a3a5356bbbaf55deccdc"
+      },
+      {
+        "path": "lothlorien_bp/scripts/bonemeal.js",
+        "sha256": "537dd004d4fe2ca432d5cd12c8d1bf2ba202941f019bdd6130c4511520e224d8"
+      },
+      {
+        "path": "lothlorien_bp/scripts/trees.js",
+        "sha256": "ecf535423efc7fbbf4d03105b3d220a68d499adb6fff5abdbf235d2c8e2a782b"
+      },
+      {
+        "path": "lothlorien_bp/scripts/swing.js",
+        "sha256": "ba01f31a65b57297fb15dccfa993fa50aab007da5de18bdefde8f41afed0ae08"
       }
     ]
   }

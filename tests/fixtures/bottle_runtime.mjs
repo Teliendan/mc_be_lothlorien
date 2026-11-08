@@ -37,7 +37,7 @@ async function load(name, context) {
 }
 async function createWorld() {
   const repeats = new Set(), cells = new Map(), queue = [], components = new Map(), intervals = new Map(), spawned = [], drops = [], deeds = [];
-  const subscribers = { entity: [], block: [], breaks: [], explosions: [], leaves: [] };
+  const subscribers = { entity: [], afterEntity: [], block: [], breaks: [], explosions: [], leaves: [] };
   let unreadable = () => false, failWrite = () => false, afterWrite = () => {}, writeCount = 0, soundFails = false, deedFails = false;
   const key = p => `${p.x},${p.y},${p.z}`;
   const dimension = { id: 'overworld', heightRange: { min: -64, max: 320 },
@@ -102,7 +102,8 @@ async function createWorld() {
         blockComponentRegistry: { registerCustomComponent: (id, value) => components.set(id, value) } }); } } } },
     world: { getPlayers: () => players, getTimeOfDay: () => 12000, gameRules: { doTileDrops: true },
       beforeEvents: { playerInteractWithEntity: { subscribe: fn => subscribers.entity.push(fn) }, playerInteractWithBlock: { subscribe: fn => subscribers.block.push(fn) } },
-      afterEvents: { playerBreakBlock: { subscribe: fn => subscribers.breaks.push(fn) }, blockExplode: { subscribe: fn => subscribers.explosions.push(fn) },
+      afterEvents: { playerInteractWithEntity: { subscribe: fn => subscribers.afterEntity.push(fn) },
+        playerBreakBlock: { subscribe: fn => subscribers.breaks.push(fn) }, blockExplode: { subscribe: fn => subscribers.explosions.push(fn) },
         playerLeave: { subscribe: fn => subscribers.leaves.push(fn) } } } };
   for (const file of ['deferred_use.js', 'bottles.js', 'firefly_bottle.js']) Object.assign(context, await load(file, context));
   const rope = await load('elven_rope.js', context);
@@ -110,7 +111,9 @@ async function createWorld() {
   const e = { block, fly, player, dimension, context, components, rope, spawned, drops, deeds, subscribers, intervals,
     click(p, target, face = 'Up') { const event = { player: p, itemStack: p.held.clone(), block: target, blockFace: face, isFirstEvent: true };
       subscribers.block.forEach(fn => fn(event)); return event; },
-    catch(p, target) { const event = { player: p, itemStack: p.held.clone(), target }; subscribers.entity.forEach(fn => fn(event)); return event; },
+    // The native interaction succeeded (glass bottle, use_item false): the after event sees the unchanged hand.
+    catch(p, target) { const event = { player: p, beforeItemStack: p.held.clone(), itemStack: p.held.clone(), target };
+      subscribers.entity.forEach(fn => fn(event)); subscribers.afterEntity.forEach(fn => fn(event)); return event; },
     useRope(p, target, face = 'North', item = p.held.clone()) { components.get('lothlorien:rope').onUseOn({ source: p, block: target, blockFace: face, itemStack: item }); },
     flush() { repeats.clear(); while (queue.length) queue.shift()(); },
     unreadable(fn) { unreadable = fn; }, failWrite(fn) { failWrite = fn; }, badSound() { soundFails = true; }, badDeed() { deedFails = true; },

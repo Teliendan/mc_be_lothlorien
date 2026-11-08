@@ -46,6 +46,8 @@ Creature groups: [CREATURES.md](CREATURES.md).
 - Logs/bark wood: `block_face` trait with three axes; axe stripping and slab merging are `playerInteractWithBlock`
   handlers (a block component would swallow normal placement). One-tick defer: block unchanged + main-hand item type.
   Held-button repeats are ignored with `isFirstEvent`. Adventure players are left to the engine (CanPlaceOn/CanDestroy).
+  Cancelling also cancels the engine swing: `swing.js` plays a copy of the vanilla swing, seen in third person only
+  (first-person held-item swing is engine code; owner 2026-11-08).
 - Axes: `minecraft:is_axe` tag plus vanilla ids; Unbreaking-aware wear (clamped 0-3); Creative/unbreakable skipped.
 - Slab merge sound is vanilla wood placement (`dig.wood`, pitch 0.8). Fuel 15 s for logs/planks/stairs/slabs.
 - Known limit: planks as anvil repair for vanilla wooden tools (needs overriding vanilla items).
@@ -69,8 +71,11 @@ Creature groups: [CREATURES.md](CREATURES.md).
 - Bees, villager farmers: not supported (hardcoded vanilla lists).
 
 ## Ground cover and dew
-- Litter/blossom stack to 4 per cell. Top click: native placement, folded into the lower cover in `playerPlaceBlock`
-  (a full lower cover refuses). Side or neighbour click: cancelled, merged next tick.
+- Litter/blossom stack to 4 per cell through native placement (engine swing, owner 2026-11-08): both are `minecraft:replaceable`
+  like vanilla leaf litter, so a click on any face or a neighbour face pointing into the cell places there, and `cover_stack`
+  (`beforeOnPlayerPlace`) adds one segment to the same cover (direction, dew, grass top kept) or refuses a full one. Another
+  block replaces the cover without a drop, as in vanilla; `grass_overlay.js` restores the grass the engine took under it. A
+  cover never rests on a cover (own id left out of the support list). Game check pending.
 - Dew forms by random tick under Mallorn leaves in the morning window (40-block leaf scan, roofs ignored by owner decision),
   stays collectible; glass bottle -> Dew bottle (8 drops) -> Bottle of morning dew. Supports: owner-chosen full-top
   surfaces (the 340-id list lives in the block JSON and `support_policies.js`).
@@ -102,6 +107,8 @@ Creature groups: [CREATURES.md](CREATURES.md).
 - 2026-10-23: litter replacement (replacing vanilla leaf litter) is not being done.
 - 2026-10-23: Great Mallorn sprout is pottable (done).
 - Adventure players: no scripted strip/merge (2026-10-23).
+- 2026-11-08: covers become replaceable for native stacking; the scripted (third-person) swing stays where no native route
+  exists (stripping, slab merge, bone meal, nectar/dew bottling, firefly release).
 
 ## Real limits (accepted)
 - No dispenser hooks for bone meal, rope or fireflies (no Script API event).

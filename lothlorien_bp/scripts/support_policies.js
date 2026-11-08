@@ -431,8 +431,7 @@ export const SUPPORT_POLICIES = {
       "lothlorien:mallorn_planks",
       "lothlorien:mallorn_heartwood_planks",
       "lothlorien:mallorn_double_slab",
-      "lothlorien:mallorn_heartwood_double_slab",
-      "lothlorien:mallorn_blossom"
+      "lothlorien:mallorn_heartwood_double_slab"
     ]
   },
   "lothlorien:mallorn_button": {
@@ -796,8 +795,7 @@ export const SUPPORT_POLICIES = {
       "lothlorien:mallorn_planks",
       "lothlorien:mallorn_heartwood_planks",
       "lothlorien:mallorn_double_slab",
-      "lothlorien:mallorn_heartwood_double_slab",
-      "lothlorien:mallorn_leaf_carpet"
+      "lothlorien:mallorn_heartwood_double_slab"
     ]
   },
   "lothlorien:mallorn_pressure_plate": {

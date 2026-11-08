@@ -116,6 +116,14 @@ def configure(block):
     if name not in {"mallorn_pressure_plate", "mallorn_heartwood_pressure_plate"}:
         c.pop("minecraft:tick", None)
     if name in COVERS:
+        # Native segment merging (owner 2026-11-08): replaceable like vanilla leaf litter, so a same-item click on
+        # any face lands in the cover's own cell and lothlorien:cover_stack raises the amount there (engine swing).
+        # A cover never rests on a cover: its own id leaves the support list (the old place-above-and-fold route).
+        c["minecraft:replaceable"] = {}
+        c["lothlorien:cover_stack"] = {}
+        own = b["description"]["identifier"]
+        for part in placement["conditions"]:
+            part["block_filter"] = [support for support in part["block_filter"] if support != own]
         c["minecraft:loot"] = f"loot_tables/blocks/{name}.json"
         permutations = b.setdefault("permutations", [])
         permutations[:] = [p for p in permutations if not p.get("components", {}).get("minecraft:loot", "").startswith(f"loot_tables/blocks/{name}_")]
@@ -153,7 +161,7 @@ def main():
         write_json(path, block)
     (BP / "scripts/support_policies.js").write_text(
         "// Generated from the native block placement filters by tools/configure_support.py.\n"
-        "export const SUPPORT_POLICIES = " + json.dumps(policies, indent=2) + ";\n", encoding="utf8")
+        "export const SUPPORT_POLICIES = " + json.dumps(policies, indent=2) + ";\n", encoding="utf8", newline="\n")
     for name in COVERS:
         for count in range(1, 5):
             loot = {"pools": [{"rolls": 1, "entries": [{"type": "item", "name": f"lothlorien:{name}",

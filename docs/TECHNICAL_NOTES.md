@@ -158,8 +158,9 @@ Shipped: two lookout trees (`mallorn_round_05`, `round_07`: flet, rope, loot che
 
 - **Plants** `elanor`, `niphredil`, `athelas`, `golden_fern`: `minecraft:geometry.cross` (their own `plant_cross` copy), `alpha_test`, no collision, break instantly, soil-only `placement_filter`; each
   has an item of the same identifier (2D icon, creative group flower) and a block with no menu category. **Ground covers** `mallorn_leaf_carpet` (opaque) and `mallorn_blossom` (cutout), made by
-  `tools/generate_ground_cover.py`: state `lothlorien:amount` 1-4 quarter-tiles (`geometry.lothlorien.ground_cover_1..4`), rotated by `placement_direction`; using the item adds a segment, breaking
-  drops one item per segment (`scripts/ground_cover.js`). Worldgen places weighted amounts (carpet 4:3:2:1, blossoms 6:3:1:1). All plants and thin blocks have `light_dampening` 0. Art: `GRAPHICS_TASKS.md`.
+  `tools/generate_ground_cover.py`: state `lothlorien:amount` 1-4 quarter-tiles (`geometry.lothlorien.ground_cover_1..4`), rotated by `placement_direction`; both are `minecraft:replaceable`, so using
+  the item on any face places into the cover's cell and `lothlorien:cover_stack` adds a segment (native swing; another block replaces the cover,
+  `grass_overlay.js` gives the grass back), breaking drops one item per segment (native loot; `scripts/ground_cover.js`, `tools/configure_support.py`). Worldgen places weighted amounts (carpet 4:3:2:1, blossoms 6:3:1:1). All plants and thin blocks have `light_dampening` 0. Art: `GRAPHICS_TASKS.md`.
 - **Worldgen (native JSON).** `single_block_feature` uses `enforce_placement_rules: true`, so the plants' `placement_filter` decides where they stand. Zone rules use `query.noise(origin/120)`;
   the lesson of the tuning: **noise thresholds are very steep** (0.3 gave "many", 0.5 gave none), so every flower has a sparse baseline everywhere plus noise zones; do not go above about 0.4 on a
   zone rule without a baseline. Elanor and Niphredil zones are independent noise fields. Current values live in `feature_rules/*_patch_*` and `*_sparse_*` (e.g. Elanor zone threshold 0.4, 2 iterations;
@@ -438,7 +439,7 @@ Design: `design/elven_inhabitants.md` sections 2-3. Commits 88dbbe2 (Renown + di
   conditional "Hand over" prompt per trader group filtered by `has_tag` `lothlorien_deliver_<profession>` (`syncDeliverTag` keeps exactly that player tag). Forms: `ActionFormData` loop, icons from this pack and `textures/ui/*`; the
   set-aside confirm is a two-button `ActionFormData` (not `MessageFormData`, whose button order is a trap); `UserBusy` retried 10 times every 10 ticks; answers apply only within 12 blocks.
 - **Delivery:** `tradersAround` uses `getEntities({ type, location, maxDistance: 96 })` (loaded chunks); none found -> the Loremaster takes the request himself. Direction: 8 compass words, north = -Z, "close by" under 8 blocks.
-- **Firefly catch:** the prompt stays in `firefly.json`; `fireflies.js` owns the before-event, deferred capture and release; `firefly_bottle.js` stores name and current health as visible localized raw lore (stackable items cannot hold
+- **Firefly catch:** the prompt stays in `firefly.json`; `fireflies.js` catches in `afterEvents.playerInteractWithEntity` (the native interaction swings) and owns the deferred release; `firefly_bottle.js` stores name and current health as visible localized raw lore (stackable items cannot hold
   dynamic properties). Offhand bottles do not catch; healthy unnamed bottles stay plain. Details `mobs/firefly.md`.
 - **Sapling request:** `afterEvents.playerPlaceBlock` with `mallorn_sapling`; inside the biome it is remembered as a distinct cell (checked at turn-in); outside it prints `lore.saplings.outside`.
 - Verified in game 2026-10-11 (owner): dialog redesign, trader hand-over, directions, the missing-trader fallback, firefly catch, Harmony nudge, the acorn request, time-shaped morning dew, Niphredil round 5. Status unverified: the outside-sapling
