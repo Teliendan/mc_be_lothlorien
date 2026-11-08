@@ -25,10 +25,17 @@ entities; lang and item_texture entries). Do not hand-edit the generated files.
   the chest is the vanilla chest drawn by a second render controller from `textures/entity/boat/chest_boat_oak`
   (nothing of Mojang's copied).
 - Lead: right-click enters the boat, as with vanilla boats; shears cut it.
+- **Hit wobble** (owner asked 2026-11-08: vanilla boats shake when hit, ours did not; the roll is part of the hard-coded
+  renderer). `scripts/boat_wobble.js` bumps the synced int property `lothlorien:hits` (0..7) on every player melee hit
+  (`entityHitEntity`, filtered to players; damage events do not fire for boats, MCPE-174388). The client
+  `pre_animation` restarts `variable.wobble_t` when the count changes, and the `wobble` animation rolls the `hull` bone
+  about the long axis for 0.5 s with the Java-documented vanilla curve sin(h)·h²/10 degrees (h = 10 → 0 hurt ticks,
+  about ±6°), alternating direction per hit. The chest geometry shares the bone, so the chest rocks too. Projectile
+  hits do not rock it. Offline-tested only; owner check pending.
 - **Drop.** Owner report (2026-11-08): breaking a Mallorn boat with an axe dropped an oak boat. The boat class picks
   the drop in code from the boat's variant (vanilla's own boat loot table is empty), and a spawned Mallorn boat is
   variant 0 = oak. The ordinary break reported on 2026-10-18 dropped the Mallorn boat through its loot table.
-  `scripts/boat_drop.js` (rules `boat_drop_rules.js`, test `tests/boat_drop.mjs`) records the boat's place in
+  `scripts/boat_drop.js` (rules `boat_drop_rules.js`, test `tests/boat_scripts.mjs`) records the boat's place in
   `beforeEvents.entityRemove` (unfiltered: only that event still has the location) and next tick swaps one oak
   (chest) boat item within 2.5 blocks for the matching Mallorn item, keeping its motion. Oak boats spilled from a
   chest boat's inventory stay as they are. Limit: an oak boat item already lying within 2.5 blocks when a Mallorn

@@ -28,7 +28,8 @@ test('boat entities retain the installed native physics, bubble state machine, p
     const actual = bp(`entities/${file}.json`)['minecraft:entity'];
     // The complete comparison catches an omitted native interaction even when it
     // is not one of the specifically named mechanics in the current review.
-    expected.description = { identifier: id, runtime_identifier: `minecraft:${kind}`, is_summonable: true, is_spawnable: false };
+    expected.description = { identifier: id, runtime_identifier: `minecraft:${kind}`, is_summonable: true, is_spawnable: false,
+      properties: { 'lothlorien:hits': { type: 'int', range: [0, 7], default: 0, client_sync: true } } }; // hit wobble counter (boat_wobble.js)
     expected.components['minecraft:loot'] = { table: `loot_tables/entities/${file}.json` };
     delete expected.component_groups['minecraft:can_ride_bamboo']; // Mallorn is not a raft.
     expected.events['minecraft:add_can_ride'] = { add: { component_groups: ['minecraft:can_ride_default'] } };

@@ -94,7 +94,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "d44bf47529fa75c0a926c8d90676026b48dcbf385673d2a0bbe23d6bdb42f0cc"
+        "sha256": "888fe91e72fe36772ed5ac43ad002f62e1f022ae4eee7fc0dfb204e4b3c688cd"
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
@@ -109,7 +109,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "d44bf47529fa75c0a926c8d90676026b48dcbf385673d2a0bbe23d6bdb42f0cc"
+        "sha256": "888fe91e72fe36772ed5ac43ad002f62e1f022ae4eee7fc0dfb204e4b3c688cd"
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
@@ -124,7 +124,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "d44bf47529fa75c0a926c8d90676026b48dcbf385673d2a0bbe23d6bdb42f0cc"
+        "sha256": "888fe91e72fe36772ed5ac43ad002f62e1f022ae4eee7fc0dfb204e4b3c688cd"
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_fence_gate.json",
@@ -139,7 +139,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "d44bf47529fa75c0a926c8d90676026b48dcbf385673d2a0bbe23d6bdb42f0cc"
+        "sha256": "888fe91e72fe36772ed5ac43ad002f62e1f022ae4eee7fc0dfb204e4b3c688cd"
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_heartwood_fence_gate.json",
@@ -154,7 +154,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "d44bf47529fa75c0a926c8d90676026b48dcbf385673d2a0bbe23d6bdb42f0cc"
+        "sha256": "888fe91e72fe36772ed5ac43ad002f62e1f022ae4eee7fc0dfb204e4b3c688cd"
       },
       {
         "path": "lothlorien_bp/items/mallorn_boat.json",
@@ -169,7 +169,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "d44bf47529fa75c0a926c8d90676026b48dcbf385673d2a0bbe23d6bdb42f0cc"
+        "sha256": "888fe91e72fe36772ed5ac43ad002f62e1f022ae4eee7fc0dfb204e4b3c688cd"
       },
       {
         "path": "lothlorien_bp/items/mallorn_chest_boat.json",
@@ -184,7 +184,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "d44bf47529fa75c0a926c8d90676026b48dcbf385673d2a0bbe23d6bdb42f0cc"
+        "sha256": "888fe91e72fe36772ed5ac43ad002f62e1f022ae4eee7fc0dfb204e4b3c688cd"
       },
       {
         "path": "lothlorien_bp/items/mallorn_heartwood_boat.json",
@@ -199,7 +199,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "d44bf47529fa75c0a926c8d90676026b48dcbf385673d2a0bbe23d6bdb42f0cc"
+        "sha256": "888fe91e72fe36772ed5ac43ad002f62e1f022ae4eee7fc0dfb204e4b3c688cd"
       },
       {
         "path": "lothlorien_bp/items/mallorn_heartwood_chest_boat.json",

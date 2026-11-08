@@ -5,7 +5,18 @@
       "identifier": "lothlorien:mallorn_heartwood_boat",
       "runtime_identifier": "minecraft:boat",
       "is_summonable": true,
-      "is_spawnable": false
+      "is_spawnable": false,
+      "properties": {
+        "lothlorien:hits": {
+          "type": "int",
+          "range": [
+            0,
+            7
+          ],
+          "default": 0,
+          "client_sync": true
+        }
+      }
     },
     "components": {
       "minecraft:balloonable": {},

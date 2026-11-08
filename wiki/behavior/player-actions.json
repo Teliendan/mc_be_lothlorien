@@ -409,7 +409,7 @@
       },
       {
         "path": "lothlorien_bp/entities/mallorn_boat.json",
-        "sha256": "0c893668982e8e78358bdbd7b993fe89dcc1f4ff2a133150382b42d0f4493031"
+        "sha256": "e129778f5c7ac1e357dfff92959b8812efd36a683e2fbe60985380261d17f6db"
       },
       {
         "path": "lothlorien_bp/items/mallorn_boat.json",
@@ -459,7 +459,7 @@
       },
       {
         "path": "lothlorien_bp/entities/mallorn_chest_boat.json",
-        "sha256": "2246006117a7bc0c8daa433f961b1f3e93816668c9d3fde8601ba9e79996a1f8"
+        "sha256": "34129fede74ad1f6bfeddace2130d43d502ddd24fc5a40e5fa74236f37a76b4d"
       },
       {
         "path": "lothlorien_bp/items/mallorn_chest_boat.json",
@@ -570,7 +570,7 @@
       },
       {
         "path": "lothlorien_bp/entities/mallorn_heartwood_boat.json",
-        "sha256": "5f5f47e81bb2e2c6c46b58fc817b034c162919edf955d1c1c8ec7ae28fd6356a"
+        "sha256": "b9352de82ecf3a2b1095326f4868b39a21cd3fd6107aa865f7b94b0b207822e3"
       },
       {
         "path": "lothlorien_bp/items/mallorn_heartwood_boat.json",
@@ -620,7 +620,7 @@
       },
       {
         "path": "lothlorien_bp/entities/mallorn_heartwood_chest_boat.json",
-        "sha256": "0c3451c9734881db97834004eb72ed61192de575bab111f6c70167328bd1485a"
+        "sha256": "24555ae24fc75d6214b0205420d789c82970d477625987cb8e651c62e30d4775"
       },
       {
         "path": "lothlorien_bp/items/mallorn_heartwood_chest_boat.json",
@@ -1726,7 +1726,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/main.js",
-        "sha256": "43b3711e8f8af03a8359782d7eb0f2e385e45bd19343fb792e8a1dac96a9fb0a"
+        "sha256": "eb7af9228b1f884f58b83181ae332297deb718bea4640270420117d230d1e2ae"
       },
       {
         "path": "lothlorien_bp/scripts/mallorn_tree.js",
@@ -2212,7 +2212,7 @@
     "evidence": [
       {
         "path": "lothlorien_bp/scripts/main.js",
-        "sha256": "43b3711e8f8af03a8359782d7eb0f2e385e45bd19343fb792e8a1dac96a9fb0a"
+        "sha256": "eb7af9228b1f884f58b83181ae332297deb718bea4640270420117d230d1e2ae"
       },
       {
         "path": "lothlorien_bp/scripts/loop_marker.js",
@@ -2235,7 +2235,7 @@
     "evidence": [
       {
         "path": "lothlorien_bp/scripts/main.js",
-        "sha256": "43b3711e8f8af03a8359782d7eb0f2e385e45bd19343fb792e8a1dac96a9fb0a"
+        "sha256": "eb7af9228b1f884f58b83181ae332297deb718bea4640270420117d230d1e2ae"
       },
       {
         "path": "lothlorien_bp/scripts/loop_marker.js",

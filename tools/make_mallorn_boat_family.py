@@ -42,6 +42,10 @@ CHEST_X = (-10, 2)         # chest footprint along the boat (behind the rider; o
 CHEST_STERN_MID = 10       # simple chest-boat hull: straight midship to x -10 (plain boats: -8), so the chest fits
 CHEST_SEAT_X = 0.35        # the chest boat's single seat, forward of the chest (vanilla 0.2 would sit in it)
 FLOOR_Y = {"default": 2, "pretty": 3}
+# Hit wobble (vanilla boats rock when hit; their renderer is hard-coded): scripts/boat_wobble.js counts player hits
+# in this synced property and the client `wobble` animation rocks the hull when the count changes.
+HIT_PROPERTY = "lothlorien:hits"
+HIT_RANGE = [0, 7]
 
 # vanilla chest colours for the icon (sampled from the chest-boat texture's chest)
 CH_DARK, CH_LIGHT, CH_MID, CH_SHADE = (51, 46, 37), (171, 121, 45), (143, 105, 29), (127, 95, 34)
@@ -131,7 +135,8 @@ def entity(kind, ident):
     src = json.load(open(os.path.join(VANILLA, f"{kind}.json"), encoding="utf-8"))
     e = copy.deepcopy(src["minecraft:entity"])
     e["description"] = {"identifier": ident, "runtime_identifier": f"minecraft:{kind}",
-                        "is_summonable": True, "is_spawnable": False}
+                        "is_summonable": True, "is_spawnable": False,
+                        "properties": {HIT_PROPERTY: {"type": "int", "range": HIT_RANGE, "default": 0, "client_sync": True}}}
     e["components"]["minecraft:loot"] = {"table": f"loot_tables/entities/{ident.split(':')[1]}.json"}
     groups = e["component_groups"]
     groups.pop("minecraft:can_ride_bamboo", None)
@@ -184,10 +189,16 @@ def client_entity(ident, prefix, chest):
                 "variable.row = math.lerp(variable.row ?? 0, (query.has_rider && query.ground_speed > 0.3) ? 1 : 0, "
                 "math.min(1, query.delta_time * 4));",
                 "variable.paddle = (variable.paddle ?? 0) + query.delta_time * variable.row * 330;",
+                # a changed hit count restarts the wobble; the first frame only records it (no wobble on load)
+                f"variable.hits = query.property('{HIT_PROPERTY}');",
+                "variable.wobble_t = (variable.hits != (variable.hits_seen ?? variable.hits)) ? 0 : "
+                "(variable.wobble_t ?? 1) + query.delta_time;",
+                "variable.hits_seen = variable.hits;",
             ],
-            "animate": ["turn", "row"],
+            "animate": ["turn", "row", "wobble"],
         },
-        "animations": {"turn": "animation.lothlorien.mallorn_boat.turn", "row": "animation.lothlorien.mallorn_boat.row"},
+        "animations": {"turn": "animation.lothlorien.mallorn_boat.turn", "row": "animation.lothlorien.mallorn_boat.row",
+                       "wobble": "animation.lothlorien.mallorn_boat.wobble"},
         "render_controllers": ["controller.render.lothlorien.mallorn_boat"],
     }
     if chest:  # simple model: the chest-boat hull; the prettier hull has room as it is

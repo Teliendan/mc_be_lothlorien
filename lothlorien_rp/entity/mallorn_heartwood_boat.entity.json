@@ -17,16 +17,21 @@
       "scripts": {
         "pre_animation": [
           "variable.row = math.lerp(variable.row ?? 0, (query.has_rider && query.ground_speed > 0.3) ? 1 : 0, math.min(1, query.delta_time * 4));",
-          "variable.paddle = (variable.paddle ?? 0) + query.delta_time * variable.row * 330;"
+          "variable.paddle = (variable.paddle ?? 0) + query.delta_time * variable.row * 330;",
+          "variable.hits = query.property('lothlorien:hits');",
+          "variable.wobble_t = (variable.hits != (variable.hits_seen ?? variable.hits)) ? 0 : (variable.wobble_t ?? 1) + query.delta_time;",
+          "variable.hits_seen = variable.hits;"
         ],
         "animate": [
           "turn",
-          "row"
+          "row",
+          "wobble"
         ]
       },
       "animations": {
         "turn": "animation.lothlorien.mallorn_boat.turn",
-        "row": "animation.lothlorien.mallorn_boat.row"
+        "row": "animation.lothlorien.mallorn_boat.row",
+        "wobble": "animation.lothlorien.mallorn_boat.wobble"
       },
       "render_controllers": [
         "controller.render.lothlorien.mallorn_boat"

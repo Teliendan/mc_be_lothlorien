@@ -105,7 +105,7 @@ Completed source fixes and accepted checks, and where each open retest below is 
   survival unlock; Friend unicorn lure; wind-charge controls; rope with an
   existing Slow Falling potion; full-inventory named/injured firefly capture;
   water-only boat dispensing; rising-bridge exit closure; Mallorn boat drop
-  (axe and hand, all four boats, 2026-11-08).
+  (axe and hand, all four boats, 2026-11-08); Mallorn boat hit wobble (2026-11-08).
 - [x] **Spawn egg graphics:** the current eggs are final; owner confirmed 2026-10-29 (`GRAPHICS_TASKS.md`). Old note: replace generic eggs with the current
   creature-recognizable vanilla visual language, using the shared Bedrock art
   guide and reproducible asset generators. No artwork overhaul in this pass.

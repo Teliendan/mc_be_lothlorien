@@ -19,6 +19,14 @@
           "rotation": ["-12 * math.cos(variable.paddle) * variable.row", "-30 * math.sin(variable.paddle) * variable.row", 0]
         }
       }
+    },
+    "animation.lothlorien.mallorn_boat.wobble": {
+      "loop": true,
+      "bones": {
+        "hull": {
+          "rotation": ["variable.wobble_t < 0.5 ? math.sin((10 - variable.wobble_t * 20) * 57.3) * (10 - variable.wobble_t * 20) * (10 - variable.wobble_t * 20) / 10 * (math.mod(variable.hits, 2) == 0 ? 1 : -1) : 0", 0, 0]
+        }
+      }
     }
   }
 }

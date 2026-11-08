@@ -28,7 +28,7 @@
     ],
     "boats": [
       "boats.mjs",
-      "boat_drop.mjs"
+      "boat_scripts.mjs"
     ],
     "biome": [
       "biome_depth.mjs"

@@ -65,6 +65,22 @@
       "pattern": "lothlorien_bp/scripts/boat_drop_rules.js"
     },
     {
+      "featureId": "lothlorien:mallorn_boat",
+      "pattern": "lothlorien_bp/scripts/boat_wobble.js"
+    },
+    {
+      "featureId": "lothlorien:mallorn_chest_boat",
+      "pattern": "lothlorien_bp/scripts/boat_wobble.js"
+    },
+    {
+      "featureId": "lothlorien:mallorn_heartwood_boat",
+      "pattern": "lothlorien_bp/scripts/boat_wobble.js"
+    },
+    {
+      "featureId": "lothlorien:mallorn_heartwood_chest_boat",
+      "pattern": "lothlorien_bp/scripts/boat_wobble.js"
+    },
+    {
       "featureId": "lothlorien:growing",
       "pattern": "lothlorien_bp/scripts/bonemeal.js"
     },
