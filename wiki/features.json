@@ -21,7 +21,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/athelas.json",
@@ -54,7 +54,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/athelas_salve.json",
@@ -88,7 +88,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/bottle_of_fireflies.json",
@@ -117,7 +117,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/bow.json",
@@ -146,7 +146,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/deer_antler.json",
@@ -187,7 +187,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/dew_bottle.json",
@@ -216,7 +216,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/elanor.json",
@@ -249,7 +249,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/elven_chandelier.json",
@@ -282,7 +282,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/elven_cloak.json",
@@ -311,7 +311,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/elven_lantern.json",
@@ -344,7 +344,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/elven_lantern_heartwood.json",
@@ -379,7 +379,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/elven_rope.json",
@@ -424,7 +424,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/firefly_jar.json",
@@ -457,7 +457,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/entities/galadhrim_arrow.json",
@@ -490,7 +490,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/golden_fern.json",
@@ -530,7 +530,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/great_mallorn_sprout.json",
@@ -563,7 +563,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/lembas_cake.json",
@@ -592,7 +592,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/lembas_dough.json",
@@ -621,7 +621,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/lembas_wrapped.json",
@@ -652,7 +652,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_sapling.json",
@@ -685,7 +685,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_blossom.json",
@@ -718,7 +718,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/entities/mallorn_boat.json",
@@ -751,7 +751,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_button.json",
@@ -784,7 +784,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/entities/mallorn_chest_boat.json",
@@ -817,11 +817,11 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_door.json",
-          "sha256": "ef5631869a5a83f36ae2ad9244d655391f8023be783bee857d71734f5a753b5c"
+          "sha256": "f224fb7373d8be9a8bd28b4864c63dce8f43b38570ac6719782c24942e71cd60"
         },
         {
           "path": "lothlorien_bp/items/mallorn_door.json",
@@ -850,7 +850,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_fence.json",
@@ -883,7 +883,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_fence_gate.json",
@@ -916,7 +916,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_golden_leaves.json",
@@ -949,7 +949,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/entities/mallorn_heartwood_boat.json",
@@ -982,7 +982,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_heartwood_button.json",
@@ -1015,7 +1015,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/entities/mallorn_heartwood_chest_boat.json",
@@ -1048,11 +1048,11 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_heartwood_door.json",
-          "sha256": "324c554ab1a7f03944f1bef8ed6475124989f511052125929bb4d4a54dc2de1e"
+          "sha256": "0679d5dab7de626bff831c4af22262324199a7b6e1d94c5188d7e270b852b3dc"
         },
         {
           "path": "lothlorien_bp/items/mallorn_heartwood_door.json",
@@ -1081,7 +1081,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_heartwood_fence.json",
@@ -1114,7 +1114,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_heartwood_fence_gate.json",
@@ -1147,7 +1147,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_heartwood_planks.json",
@@ -1180,7 +1180,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_heartwood_pressure_plate.json",
@@ -1215,7 +1215,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_heartwood_double_slab.json",
@@ -1252,7 +1252,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_heartwood_stairs.json",
@@ -1285,7 +1285,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_heartwood_trapdoor.json",
@@ -1318,7 +1318,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_leaf_carpet.json",
@@ -1351,7 +1351,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_leaves.json",
@@ -1384,7 +1384,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_log.json",
@@ -1417,7 +1417,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/mallorn_nectar.json",
@@ -1446,7 +1446,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_planks.json",
@@ -1479,7 +1479,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_pressure_plate.json",
@@ -1514,7 +1514,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_double_slab.json",
@@ -1551,7 +1551,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_stairs.json",
@@ -1584,7 +1584,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_stripped_log.json",
@@ -1617,7 +1617,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_stripped_wood.json",
@@ -1650,7 +1650,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_trapdoor.json",
@@ -1683,7 +1683,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/mallorn_wood.json",
@@ -1716,7 +1716,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/miruvor.json",
@@ -1745,7 +1745,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/morning_dew.json",
@@ -1774,7 +1774,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/nectar_bloom.json",
@@ -1807,7 +1807,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/niphredil.json",
@@ -1840,7 +1840,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/phial_of_galadriel.json",
@@ -1869,7 +1869,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/silver_belt.json",
@@ -1898,7 +1898,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/star_canopy.json",
@@ -1931,7 +1931,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/swan_meat_cooked.json",
@@ -1960,7 +1960,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/swan_meat_raw.json",
@@ -1989,7 +1989,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/venison_cooked.json",
@@ -2018,7 +2018,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/venison_raw.json",
@@ -2047,7 +2047,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/items/western_corn_grain.json",
@@ -2078,7 +2078,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "lothlorien_bp/blocks/western_corn.json",
@@ -2181,7 +2181,7 @@
         },
         {
           "path": "lothlorien_bp/entities/elf.json",
-          "sha256": "c387a116526c4444b18323b0cc472ffb90fa904e649ef677c385b491eb09476b"
+          "sha256": "c999984bebf387d1faa7db69fc7dbb08a7f59ad27bdf5f322110ef250525e2b0"
         },
         {
           "path": "lothlorien_bp/scripts/elven_warden.js",
@@ -2226,7 +2226,7 @@
         },
         {
           "path": "lothlorien_bp/entities/elven_warden.json",
-          "sha256": "1907021ab09f58f41fa891a9764af83da82132fe424388fbbb073e188ec540a0"
+          "sha256": "b3fe54d3450f2254958e3f4cbda63815d6ab4a5d57b166b1dad128f0c3a0dbd1"
         },
         {
           "path": "lothlorien_bp/scripts/elven_warden.js",
@@ -2477,7 +2477,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "docs/parity/CREATURES.md",
@@ -2512,7 +2512,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "docs/parity/CREATURES.md",
@@ -2547,7 +2547,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "docs/parity/CREATURES.md",
@@ -2574,7 +2574,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "docs/parity/CREATURES.md",
@@ -2609,7 +2609,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "docs/parity/CREATURES.md",
@@ -2846,7 +2846,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "docs/parity/CREATURES.md",
@@ -2877,7 +2877,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "docs/parity/CREATURES.md",
@@ -2910,7 +2910,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "docs/parity/CREATURES.md",
@@ -2941,7 +2941,7 @@
       "evidence": [
         {
           "path": "docs/parity/BLOCKS_ITEMS.md",
-          "sha256": "d2652bb7e2483e328fd2685444097ae5aeeaf96b1ce820dad88687455d138554"
+          "sha256": "46eb2bfee8bee51aa09457471d1409de35e6311467d4a538fc2dd25cb94d98ff"
         },
         {
           "path": "docs/parity/CREATURES.md",

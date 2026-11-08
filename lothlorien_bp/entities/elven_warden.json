@@ -69,7 +69,10 @@
       "minecraft:navigation.walk": {
         "can_path_over_water": false,
         "avoid_water": true,
-        "avoid_damage_blocks": true
+        "avoid_damage_blocks": true,
+        "can_pass_doors": true,
+        "can_open_doors": true,
+        "using_door_annotation": true
       },
       "minecraft:movement.basic": {},
       "minecraft:jump.static": {},
@@ -119,6 +122,11 @@
       },
       "minecraft:behavior.float": {
         "priority": 0
+      },
+      "minecraft:annotation.open_door": {},
+      "minecraft:behavior.open_door": {
+        "priority": 3,
+        "close_door_after": true
       },
       "minecraft:behavior.hurt_by_target": {
         "priority": 1,

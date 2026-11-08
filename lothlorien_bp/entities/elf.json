@@ -744,7 +744,8 @@
         "avoid_water": true,
         "avoid_damage_blocks": true,
         "can_pass_doors": true,
-        "can_open_doors": false,
+        "can_open_doors": true,
+        "using_door_annotation": true,
         "blocks_to_avoid": [
           {
             "name": "lothlorien:elven_rope"
@@ -813,6 +814,11 @@
       "minecraft:behavior.panic": {
         "priority": 1,
         "speed_multiplier": 1.25
+      },
+      "minecraft:annotation.open_door": {},
+      "minecraft:behavior.open_door": {
+        "priority": 4,
+        "close_door_after": true
       },
       "minecraft:behavior.avoid_mob_type": {
         "priority": 2,

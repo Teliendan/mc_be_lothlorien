@@ -194,8 +194,17 @@ for (const wood of ["mallorn", "mallorn_heartwood"]) {
       }
     }
   }
+  // Open doors are collisionless so walking mobs path through them (custom doors are walls to the pathfinder, 2026-11-08).
+  const door = read(`../lothlorien_bp/blocks/${wood}_door.json`)["minecraft:block"];
+  for (const facing of ["north", "south", "east", "west"]) for (const part of [0, 1]) for (const hinge of [false, true])
+    for (const open of [false, true]) {
+      const c = effective(door, { "minecraft:cardinal_direction": facing, "minecraft:multi_block_part": part,
+        "lothlorien:hinge_right": hinge, "lothlorien:open": open });
+      if (open) assert.equal(c["minecraft:collision_box"], false, `open ${wood} door ${facing} part ${part}`);
+      else assert.deepEqual(c["minecraft:collision_box"].size, [16, 16, 3], `closed ${wood} door stays a barrier`);
+    }
   const plate = read(`../lothlorien_bp/blocks/${wood}_pressure_plate.json`)["minecraft:block"];
   for (const pressed of [false, true]) assert.deepEqual(effective(plate, { "lothlorien:powered": pressed })["minecraft:tick"].interval_range,
     pressed ? [20, 20] : [4, 4]);
 }
-console.log("ok   controls: all gate poses preserve effective collision and both plate poll policies");
+console.log("ok   controls: all gate and door poses preserve effective collision and both plate poll policies");

@@ -202,7 +202,7 @@ Collision 0.6 x 1.95. Other components: `type_family ["lothlorien_warden","irong
 `movement.basic`, `jump.static`, `behavior.float` 0, `breathable`, lava `hurt_on_condition`, `nameable`, `conditional_bandwidth_optimization`, `physics`, `pushable_by_*`, `despawn`, `equipment`, `shooter`.
 Goals: 0 float, 1 hurt_by_target, 2 nearest_attackable_target, 2 ranged_attack, 5 random_stroll 0.8, 7 look_at_player (watchful, never hostile), 8 random_look_around. Optionally
 `minecraft:home` (`restriction_radius 24`, `random_movement`) + `behavior.move_towards_home_restriction` so an edge warden does not wander into the field; `home` is set at spawn, vanilla uses it for bee/golem-type mobs **[V]**; unverified for a plain mob **[U]**.
-Doors, ladders: not wanted v1 (custom mallorn doors are not vanilla door blocks **[U]**, ropes are script-climbed). Drops from decks: normal fall rules.
+Doors (owner 2026-11-08): wardens open and close vanilla wooden doors with the vanilla villager set (`annotation.open_door`, `can_open_doors`, `using_door_annotation`, `behavior.open_door` priority 3, `close_door_after`); seen working in game 2026-11-08. They walk through open Mallorn doors (collisionless when open; seen in game 2026-11-08) but never open closed ones, an accepted limit in `docs/NOT_IMPLEMENTED.md`. Ladders: not wanted v1 (ropes are script-climbed). Drops from decks: normal fall rules.
 
 ## 8. Implementation plan
 

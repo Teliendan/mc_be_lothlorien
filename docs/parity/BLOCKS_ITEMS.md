@@ -29,6 +29,8 @@ Creature groups: [CREATURES.md](CREATURES.md).
 
 ## Controls (doors, trapdoors, gates, buttons, plates)
 - Doors/trapdoors/gates toggle by script (`blocks.js`); synchronized double doors are an owner convenience (2026-10-18).
+- Open doors have no collision, like open gates, so walking mobs path through them (owner 2026-11-08). No mob opens a closed
+  Mallorn door: accepted limit, see `NOT_IMPLEMENTED.md`. Seen in game 2026-11-08: Elven Wardens walk through open Mallorn doors.
 - Wind charge (vanilla: explosion power 1.2, toggles only): `projectileHitBlock`/`projectileHitEntity` toggle Mallorn
   doors/trapdoors/gates and press buttons within 1.2 blocks of the impact. Projectile events take no filter; the
   handlers return on other projectile ids.

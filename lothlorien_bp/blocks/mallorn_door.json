@@ -257,6 +257,12 @@
             ]
           }
         }
+      },
+      {
+        "condition": "q.block_state('lothlorien:open')",
+        "components": {
+          "minecraft:collision_box": false
+        }
       }
     ]
   }
