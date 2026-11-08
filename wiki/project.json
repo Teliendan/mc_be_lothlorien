@@ -122,6 +122,10 @@
     },
     {
       "featureId": "lothlorien:growing",
+      "pattern": "lothlorien_bp/scripts/swing.js"
+    },
+    {
+      "featureId": "lothlorien:growing",
       "pattern": "lothlorien_bp/scripts/dew.js"
     },
     {

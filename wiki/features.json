@@ -2633,11 +2633,11 @@
         },
         {
           "path": "lothlorien_bp/scripts/blocks.js",
-          "sha256": "a23a13974860265cce431835d448407871c91c92e02e98c4bdfe3921cc5663ae"
+          "sha256": "d53ae11e19e319cf3904d38055ef3f6bab6f1e1f9ab95129bb1d4083b79e516e"
         },
         {
           "path": "lothlorien_bp/scripts/bonemeal.js",
-          "sha256": "a515048ce49ebe4da94a76851e67e3d0c5a80032b55acedef745e5cf7001f314"
+          "sha256": "537dd004d4fe2ca432d5cd12c8d1bf2ba202941f019bdd6130c4511520e224d8"
         },
         {
           "path": "lothlorien_bp/scripts/bottles.js",
@@ -2669,7 +2669,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/dew.js",
-          "sha256": "5abd32eb1513a24a165b63e0587ddbbf832e8a1adb646b7ee09c377fff33b011"
+          "sha256": "7efe06aeff349bd1f3e5089f44d16c1e44af78646d95380df827c51bdbaa0014"
         },
         {
           "path": "lothlorien_bp/scripts/dew_rules.js",
@@ -2677,7 +2677,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/fireflies.js",
-          "sha256": "27151feeb54553df02373e52f680d54028dccd9f1aad24e02e50a054d9dba693"
+          "sha256": "bf77b0a8eb2cdfe644872e878514afa3ca3c519d9ae45bd7a2157e461b7a2933"
         },
         {
           "path": "lothlorien_bp/scripts/flora_table.js",
@@ -2701,7 +2701,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/ground_cover.js",
-          "sha256": "e21b5b54044dee86659668df6d06343b9a675a40829337fdffaeb2265eb3087f"
+          "sha256": "8666f318bd06556617b3ba3c59aba8a120618b1d74510c7edbe26b6b640f2fb1"
         },
         {
           "path": "lothlorien_bp/scripts/healer.js",
@@ -2745,7 +2745,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/nectar.js",
-          "sha256": "ce39223dc22250ad68fcc40652b29d38c249ce3b45a19e7dea68a12304375ef3"
+          "sha256": "65fbc8f3ea18e94fe98347e7c94cab34a7ac3e6c420604c9e927dd4f2ca8c2de"
         },
         {
           "path": "lothlorien_bp/scripts/nectar_rules.js",
@@ -2789,7 +2789,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/trees.js",
-          "sha256": "446179d74431f22d5a95bd0ea0fa23005e615f0ff9000fcfc3b4288d2eba5ce3"
+          "sha256": "ecf535423efc7fbbf4d03105b3d220a68d499adb6fff5abdbf235d2c8e2a782b"
         },
         {
           "path": "lothlorien_bp/scripts/use_guard.js",
