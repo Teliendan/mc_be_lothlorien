@@ -9,6 +9,12 @@ const nativePath = (kind) => `../../../reference/vanilla/current/behavior_packs/
 // The vanilla reference is git-ignored: without it the byte-for-byte comparison is skipped.
 const haveReference = existsSync(new URL(nativePath('boat'), import.meta.url));
 const native = (kind) => readJson(nativePath(kind))['minecraft:entity'];
+// The client lifts the model above the waterline (turn animation); the seats rise by the same amount.
+const liftPx = readJson('../lothlorien_rp/animations/mallorn_boat.animation.json').animations['animation.lothlorien.mallorn_boat.turn'].bones.hull.position[1];
+
+test('the model lift keeps the floor above the waterline seen in game (owner screenshot 2026-11-08)', () => {
+  assert.equal(liftPx, 3, 'water reached ~3 px up the hull; floor tops are 2 (plain) and 3 (prettier) px');
+});
 
 test('all four boat items preserve water placement and provide six furnace smelts of fuel', () => {
   for (const { id, file } of variants) {
@@ -34,6 +40,8 @@ test('boat entities retain the installed native physics, bubble state machine, p
     delete expected.component_groups['minecraft:can_ride_bamboo']; // Mallorn is not a raft.
     expected.events['minecraft:add_can_ride'] = { add: { component_groups: ['minecraft:can_ride_default'] } };
     expected.events['minecraft:sink'].remove.component_groups = expected.events['minecraft:sink'].remove.component_groups.filter((g) => g !== 'minecraft:can_ride_bamboo');
+    for (const rideable of [expected.components['minecraft:rideable'], expected.component_groups['minecraft:can_ride_default']['minecraft:rideable']])
+      for (const seat of rideable.seats) seat.position[1] = Math.round((seat.position[1] + liftPx / 16) * 1e4) / 1e4;
     if (kind === 'chest_boat') {
       // Owner-approved seat clearance: preserve the native single-passenger
       // contract both at spawn and when floating/boarding is restored.

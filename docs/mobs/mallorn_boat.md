@@ -25,6 +25,11 @@ entities; lang and item_texture entries). Do not hand-edit the generated files.
   the chest is the vanilla chest drawn by a second render controller from `textures/entity/boat/chest_boat_oak`
   (nothing of Mojang's copied).
 - Lead: right-click enters the boat, as with vanilla boats; shears cut it.
+- **Waterline** (owner screenshot next to a vanilla oak boat, 2026-11-08: "full of water, half way sunk"): both float
+  about equally deep, water ~2-3 px up the 9 px hull, but vanilla's 3 px floor stays dry and ours (2 px plain, 3 px
+  prettier) was covered, so the hull looked flooded. The `turn` animation lifts the `hull` bone 3 px (chest included)
+  and every seat rises 3/16 block (`MODEL_LIFT_PX` in the generator; `tests/boats.mjs` checks both), keeping the
+  owner-checked rider-to-floor height. Owner check pending.
 - **Hit wobble** (owner asked 2026-11-08: vanilla boats shake when hit, ours did not; the roll is part of the hard-coded
   renderer). `scripts/boat_wobble.js` bumps the synced int property `lothlorien:hits` (0..7) on every player melee hit
   (`entityHitEntity`, filtered to players; damage events do not fire for boats, MCPE-174388). The client

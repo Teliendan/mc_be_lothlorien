@@ -44,6 +44,8 @@ Source fixes made, owner retest pending:
 - Water-only boat dispensing.
 - Mallorn boat drop (2026-11-08): each of the four boats broken with an axe and by hand drops its own item, never oak
   (`mobs/mallorn_boat.md`, "Drop"). A chest boat holding an oak boat spills that oak boat unchanged.
+- Mallorn boat waterline (2026-11-08): next to a vanilla boat, the Mallorn floor is dry and a thin band of hull sits
+  under water; a rider still sits on the floor (plain and "Prettier boats", with and without chest).
 - Mallorn boat hit wobble (2026-11-08): punching a boat rocks it side to side for half a second, like a vanilla boat
   (`mobs/mallorn_boat.md`, "Hit wobble"); the chest rocks with the hull, the roll is about the boat's long axis.
 - Village railings: the upward half-step bridge join (a connected y+1 surface was misclassified as an unused exit; recognition

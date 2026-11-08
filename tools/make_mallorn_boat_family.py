@@ -45,6 +45,11 @@ FLOOR_Y = {"default": 2, "pretty": 3}
 # Hit wobble (vanilla boats rock when hit; their renderer is hard-coded): scripts/boat_wobble.js counts player hits
 # in this synced property and the client `wobble` animation rocks the hull when the count changes.
 HIT_PROPERTY = "lothlorien:hits"
+# Waterline (owner screenshot 2026-11-08): our boat floats as deep as vanilla (water ~3 px up the hull), but vanilla's
+# 3 px floor stays dry and ours (2 px) was under water, so the boat looked full of water. The `turn` animation lifts
+# the hull bone by this many px (animations/mallorn_boat.animation.json; tests check they agree) and the seats rise
+# with it, keeping the owner-checked rider-to-floor height.
+MODEL_LIFT_PX = 3
 HIT_RANGE = [0, 7]
 
 # vanilla chest colours for the icon (sampled from the chest-boat texture's chest)
@@ -144,9 +149,11 @@ def entity(kind, ident):
     sink = e["events"]["minecraft:sink"]["remove"]["component_groups"]
     if "minecraft:can_ride_bamboo" in sink:
         sink.remove("minecraft:can_ride_bamboo")
-    if kind == "chest_boat":  # one seat, moved forward clear of the chest
-        for rideable in (e["components"]["minecraft:rideable"], groups["minecraft:can_ride_default"]["minecraft:rideable"]):
+    for rideable in (e["components"]["minecraft:rideable"], groups["minecraft:can_ride_default"]["minecraft:rideable"]):
+        if kind == "chest_boat":  # one seat, moved forward clear of the chest
             rideable["seats"][0]["position"][0] = CHEST_SEAT_X
+        for seat in rideable["seats"]:  # riders rise with the lifted model
+            seat["position"][1] = round(seat["position"][1] + MODEL_LIFT_PX / 16, 4)
     return {"format_version": "1.26.50", "minecraft:entity": e}
 
 
