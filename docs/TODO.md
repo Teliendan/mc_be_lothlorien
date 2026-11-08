@@ -109,7 +109,6 @@ Completed source fixes and accepted checks, and where each open retest below is 
 - [x] **Spawn egg graphics:** the current eggs are final; owner confirmed 2026-10-29 (`GRAPHICS_TASKS.md`). Old note: replace generic eggs with the current
   creature-recognizable vanilla visual language, using the shared Bedrock art
   guide and reproducible asset generators. No artwork overhaul in this pass.
-- [ ] **Native cover stacking and firefly catch swing (owner check):** `OWNER_CHECKS.md` open retests (2026-11-08).
 - [ ] **Wall/gate visual connection (deferred engine limit):** gate lowers,
   cobblestone wall arm stays absent. Avoid changing unrelated connections just
   to make this cosmetic junction connect.

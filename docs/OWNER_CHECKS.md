@@ -15,6 +15,7 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
 | Empty Miruvor skin | own flat 16 px icon, "Looks good" (2026-10-26) |
 | Mallorn boat drop and hit wobble | axe and hand breaks drop the boat's own item; a hit rocks the boat (`mobs/mallorn_boat.md`); "These work too" (2026-11-08) |
 | Mallorn boat waterline | 4 px model lift, seats with it: floor dry through the whole wave bob, "It works now" (2026-11-08) |
+| Native arm swing | litter/blossoms replaceable, stacking through native placement (`ground_cover.js` `cover_stack`, grass kept under a replacing block); firefly catch in the after event of the native interaction; both swing in first person, "It works" (2026-11-08) |
 | Star canopy and elven rope recipe unlock | stays on Bottle of Morning Dew; the eighth drop also runs `recipe give` (`dew.js`); works (2026-10-26) |
 | Unicorn lure | accepted 2026-10-26: vanilla `tempt` on Elanor in a `lothlorien:lure` group that only the wild Friend state adds; `unicorn.js` fires `lure_off`/`lure_on` around the ten-second offer wait; a Friend is never fled from; wariness counts Creative players. By owner request the Friend state keeps 3 blocks from a Friend without Elanor (accepted 2026-10-27). Details: `mobs/unicorn.md` |
 | Harmony action-bar icons, elven bow, unicorn art | checked OK (2026-10-24) |
@@ -40,11 +41,6 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
 
 Source fixes made, owner retest pending:
 
-- Native arm swing (2026-11-08): **litter/blossoms** are now replaceable like vanilla leaf litter and stack through native
-  placement (`ground_cover.js` `cover_stack`); **firefly catch** lets the native interaction succeed and catches in the after
-  event. Check, also in first person: a segment added from the top, a side and a neighbour face (2 -> 3 -> 4, direction and
-  dew kept, no segment lost), a full cover refuses its item, a torch or block placed onto a grass-top cover leaves grass
-  (not dirt), the other cover replaces it; catching swings once and still delivers the bottle (also with a full inventory).
 - Miruvor: empty skin, refill, last sip.
 - Star Canopy discovery in Survival (the unlock is the Bottle of Morning Dew, see above).
 - Friend unicorn lure, native AI (explicit move/look goal ownership).

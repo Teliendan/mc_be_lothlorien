@@ -75,7 +75,7 @@ Creature groups: [CREATURES.md](CREATURES.md).
   like vanilla leaf litter, so a click on any face or a neighbour face pointing into the cell places there, and `cover_stack`
   (`beforeOnPlayerPlace`) adds one segment to the same cover (direction, dew, grass top kept) or refuses a full one. Another
   block replaces the cover without a drop, as in vanilla; `grass_overlay.js` restores the grass the engine took under it. A
-  cover never rests on a cover (own id left out of the support list). Game check pending.
+  cover never rests on a cover (own id left out of the support list). Accepted in game (owner, 2026-11-08, commit 7422e5c).
 - Dew forms by random tick under Mallorn leaves in the morning window (40-block leaf scan, roofs ignored by owner decision),
   stays collectible; glass bottle -> Dew bottle (8 drops) -> Bottle of morning dew. Supports: owner-chosen full-top
   surfaces (the 340-id list lives in the block JSON and `support_policies.js`).
