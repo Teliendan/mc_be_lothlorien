@@ -11,6 +11,11 @@
         "lothlorien:persistent": [
           false,
           true
+        ],
+        "lothlorien:decay": [
+          0,
+          1,
+          2
         ]
       }
     },
@@ -79,6 +84,14 @@
       "minecraft:chest_obstruction": {
         "obstruction_rule": "never"
       }
-    }
+    },
+    "permutations": [
+      {
+        "condition": "q.block_state('lothlorien:decay') > 0",
+        "components": {
+          "lothlorien:leaf_decaying": {}
+        }
+      }
+    ]
   }
 }

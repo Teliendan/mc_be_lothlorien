@@ -22,7 +22,7 @@ export async function benchmark() {
   // Load the production trees.js (same source-loading approach as tests/script_performance.mjs). Leaves have no random
   // tick since 2026-11-08 (event-driven decay); the sample breaks one crown leaf and runs the resulting decay search.
   const components=new Map(), jobs=[], timers=new Map(), subscribe=()=>{};
-  const world={beforeEvents:{playerInteractWithBlock:{subscribe}},afterEvents:{playerBreakBlock:{subscribe},blockExplode:{subscribe}}};
+  const world={beforeEvents:{playerInteractWithBlock:{subscribe}},afterEvents:{playerBreakBlock:{subscribe},blockExplode:{subscribe},playerPlaceBlock:{subscribe}}};
   const system={currentTick:1,runJob:g=>jobs.push(g),runInterval:fn=>{timers.set(timers.size+1,fn);return timers.size;},clearRun:id=>timers.delete(id),
     beforeEvents:{startup:{subscribe(fn){fn({blockComponentRegistry:{registerCustomComponent(id,c){components.set(id,c);}}});}}}};
   const source=readFileSync(new URL("../lothlorien_bp/scripts/trees.js",import.meta.url),"utf8");

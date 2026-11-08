@@ -4,14 +4,15 @@ import { captureUse, liveUse } from "./deferred_use.js";
 import { hangBloom } from "./nectar.js";
 import { treeBloomCount } from "./nectar_rules.js";
 import { TREE_WOOD, TREE_LEAVES, readTreeBlock, validSaplingSoil, saplingSoil, saplingLight } from "./tree_interaction_rules.js";
-import { findDecay, BATCH_SPAN, OTHER, LEAF, DECAYABLE, WOOD, UNKNOWN } from "./leaf_decay.js";
+import { findDecay, findRescue, BATCH_SPAN, OTHER, LEAF, DECAYABLE, WOOD, UNKNOWN, DECAYING } from "./leaf_decay.js";
 
 // Phase 4: Mallorn sapling growth, bone meal, leaf decay, and the tree balance instruments.
 //   lothlorien:sapling  random tick: stage 0 -> 1 -> grows a small Mallorn (needs light and room);
 //                       four saplings in a 2x2 square grow one big Mallorn with a 2x2 trunk
 //   lothlorien:leaves   places as persistent (player-placed never decays); natural leaves with no tree log/wood
-//                       within LEAF_REACH steps through leaves break, with drops, after a neighbouring log, wood
-//                       or leaf is destroyed (leaf_decay.js; no random tick)
+//                       within LEAF_REACH steps through leaves get marked (state lothlorien:decay) after a
+//                       neighbouring log, wood or leaf is destroyed, and a placed one clears the mark (leaf_decay.js)
+//   lothlorien:leaf_decaying  only on marked leaves: native random tick breaks them with drops (vanilla pace)
 //   lothlorien:tree_part  onBreak on Mallorn logs, wood and golden leaves: starts that check
 // Tree shape: mallorn_tree.js. Balance: `node tests/tree_stats.mjs`. In-game helpers (grow, treecount,
 // treestats) live in tools/dev_scripts/, not in the pack.
@@ -130,44 +131,42 @@ function advance(block) {
 // --- leaf decay -----------------------------------------------------------------------------
 
 // Event-driven (owner 2026-11-08, rules in leaf_decay.js): natural leaves re-check only when a log, wood or leaf next to
-// them is destroyed. Mallorn wood and leaves report it through onBreak (any cause the engine calls a destruction:
-// players, explosions, popping); vanilla wood and leaves through the player-break and explosion events. Leaves have no
-// random tick any more, so a standing forest runs no script. Not covered: wood moved by a piston, /setblock or /fill
-// without `destroy` (nothing is destroyed), until a neighbouring log or leaf breaks.
-// One search job runs at a time and takes the reported cells of a dimension near the first one; decaying leaves break
-// (with drops) a few at a time over the next seconds, like vanilla.
-const DECAY_DELAY_TICKS = 10, DECAY_SPREAD_TICKS = 150, DECAY_PER_TICK = 8, DECAY_FORGET_TICKS = 100;
+// them is destroyed or placed. Mallorn wood and leaves report destruction through onBreak (any cause the engine calls a
+// destruction: players, explosions, fire, popping); vanilla wood and leaves through the player-break and explosion
+// events; placement of any tree wood or leaves through the player-place event. Ordinary leaves have no random tick, so a
+// standing forest runs no script. A leaf found cut off only gets DECAY 1 (2 = frontier, see findDecay); that permutation
+// alone carries lothlorien:leaf_decaying, whose native random tick breaks it with drops: vanilla pace, the world's
+// randomTickSpeed applies (0 = no decay), and the mark survives a reload. A placed log, wood or leaf that reconnects
+// marked leaves clears their mark over the whole reach (findRescue). Not covered: wood moved by a piston, /setblock or
+// /fill without `destroy`, until a neighbouring log or leaf breaks or is placed.
+const DECAY = `${NS}:decay`;
+const MARKS_PER_STEP = 32; // permutation writes between job yields
 const VANILLA_TREE_PARTS = [...TREE_WOOD, ...TREE_LEAVES].filter((id) => id.startsWith("minecraft:"));
 const VANILLA_TREE_SET = new Set(VANILLA_TREE_PARTS);
 const cellKey = (dimId, x, y, z) => `${dimId}|${x},${y},${z}`;
-const reported = new Map(); // dimension id -> { dimension, cells: Map(cell key -> {x, y, z}) }
-// cell key -> { dimension, x, y, z, at, frontier, brokenAt }: queued by a search, until its own onBreak (or forgotten)
-const decaying = new Map();
-let searching = false, buckets = new Map(), backlog = [], decayTimer;
+// dimension id -> { dimension, cells: Map(cell key -> {x, y, z, placed}) }: changed cells waiting for a search
+const reported = new Map();
+let searching = false;
 
-function classifyCell(dimension, dimId, x, y, z) {
+function classifyCell(dimension, x, y, z) {
   const b = readTreeBlock(dimension, { x, y, z });
   if (!b) return UNKNOWN;
   const id = b.typeId;
   if (TREE_WOOD.has(id)) return WOOD;
   if (!TREE_LEAVES.has(id)) return OTHER;
-  if (decaying.size && decaying.has(cellKey(dimId, x, y, z))) return OTHER; // already going: counts as gone
   if (id !== LEAVES) return LEAF;
-  return b.permutation.getState(PERSISTENT) ? LEAF : DECAYABLE;
+  const p = b.permutation;
+  if (p.getState(PERSISTENT)) return LEAF;
+  return p.getState(DECAY) ? DECAYING : DECAYABLE;
 }
 
-// A log, wood or leaf at `location` was destroyed: its neighbouring leaves re-check. A leaf our own decay broke is
-// already decided, unless the search marked it as a frontier (leaves beyond it were cut off before).
-export function treePartDestroyed(dimension, location) {
-  const dimId = dimension.id, { x, y, z } = location, key = cellKey(dimId, x, y, z);
-  const own = decaying.get(key);
-  if (own) {
-    decaying.delete(key);
-    if (!own.frontier) return;
-  }
+// A log, wood or leaf at `location` was destroyed (placed = false) or placed (placed = true): the leaves around it
+// re-check. One search job runs at a time and takes the reported cells of one kind near the first one.
+export function treePartChanged(dimension, location, placed = false) {
+  const dimId = dimension.id, { x, y, z } = location;
   let entry = reported.get(dimId);
   if (!entry) reported.set(dimId, entry = { dimension, cells: new Map() });
-  entry.cells.set(key, { x, y, z });
+  entry.cells.set(cellKey(dimId, x, y, z), { x, y, z, placed });
   if (searching) return;
   searching = true;
   try { system.runJob(searchJob()); }
@@ -182,66 +181,43 @@ function* searchJob() {
       let first;
       for (const [key, p] of entry.cells) {
         first ??= p;
-        if (Math.abs(p.x - first.x) > BATCH_SPAN || Math.abs(p.y - first.y) > BATCH_SPAN || Math.abs(p.z - first.z) > BATCH_SPAN) continue;
+        if (p.placed !== first.placed || Math.abs(p.x - first.x) > BATCH_SPAN || Math.abs(p.y - first.y) > BATCH_SPAN ||
+          Math.abs(p.z - first.z) > BATCH_SPAN) continue;
         origins.push(p);
         entry.cells.delete(key);
       }
       if (!entry.cells.size) reported.delete(dimId);
-      const dimension = entry.dimension;
+      const dimension = entry.dimension, classify = (x, y, z) => classifyCell(dimension, x, y, z);
       let found = [];
-      try { found = yield* findDecay((x, y, z) => classifyCell(dimension, dimId, x, y, z), origins); }
-      catch { found = []; } // the dimension went away mid-search: keep everything
-      for (const leaf of found) queueDecay(dimension, dimId, leaf);
+      try { found = yield* (first.placed ? findRescue(classify, origins) : findDecay(classify, origins)); }
+      catch { found = []; } // the dimension went away mid-search: change nothing
+      let writes = 0;
+      for (const leaf of found) {
+        if (mark(dimension, leaf, first.placed ? 0 : leaf.frontier ? 2 : 1) && ++writes % MARKS_PER_STEP === 0) yield;
+      }
     }
   } finally {
     searching = false;
   }
 }
 
-function queueDecay(dimension, dimId, { x, y, z, frontier }) {
-  const key = cellKey(dimId, x, y, z);
-  if (decaying.has(key)) return;
-  const at = system.currentTick + DECAY_DELAY_TICKS + Math.floor(Math.random() * DECAY_SPREAD_TICKS);
-  const entry = { dimension, x, y, z, key, at, frontier, brokenAt: undefined };
-  decaying.set(key, entry);
-  let bucket = buckets.get(at);
-  if (!bucket) buckets.set(at, bucket = []);
-  bucket.push(entry);
-  decayTimer ??= system.runInterval(decayTick, 1);
+// Sets DECAY on a natural Mallorn leaf that is still there (re-read: the search spanned several ticks).
+function mark(dimension, location, value) {
+  const b = readTreeBlock(dimension, location);
+  if (b?.typeId !== LEAVES) return false;
+  const p = b.permutation;
+  if (p.getState(PERSISTENT) || !!p.getState(DECAY) === (value !== 0)) return false;
+  try { b.setPermutation(p.withState(DECAY, value)); return true; }
+  catch { return false; } // unloaded meanwhile
 }
 
-function decayTick() {
-  const now = system.currentTick;
-  for (const [at, bucket] of buckets) {
-    if (at > now) continue;
-    buckets.delete(at);
-    for (const entry of bucket) backlog.push(entry);
-  }
-  for (const entry of backlog.splice(0, DECAY_PER_TICK)) breakDecayed(entry, now);
-  // A broken leaf whose onBreak never came (or a queued one already gone) is forgotten, so its cell counts again.
-  for (const [key, entry] of decaying) {
-    if (entry.brokenAt !== undefined && now - entry.brokenAt > DECAY_FORGET_TICKS) decaying.delete(key);
-  }
-  if (!buckets.size && !backlog.length && !decaying.size) {
-    system.clearRun(decayTimer);
-    decayTimer = undefined;
-  }
-}
-
-function breakDecayed(entry, now) {
-  if (decaying.get(entry.key) !== entry) return; // broken meanwhile by something else
-  const b = readTreeBlock(entry.dimension, entry);
-  if (b?.typeId !== LEAVES || b.permutation.getState(PERSISTENT)) { decaying.delete(entry.key); return; }
-  entry.brokenAt = now;
-  try { entry.dimension.runCommand(`setblock ${entry.x} ${entry.y} ${entry.z} air destroy`); }
-  catch { decaying.delete(entry.key); }
-}
-
-world.afterEvents.playerBreakBlock.subscribe(({ block, dimension }) => treePartDestroyed(dimension, block.location),
+world.afterEvents.playerBreakBlock.subscribe(({ block, dimension }) => treePartChanged(dimension, block.location),
   { blockTypes: VANILLA_TREE_PARTS });
 world.afterEvents.blockExplode.subscribe(({ block, dimension, explodedBlockPermutation }) => {
-  if (VANILLA_TREE_SET.has(explodedBlockPermutation.type.id)) treePartDestroyed(dimension, block.location);
+  if (VANILLA_TREE_SET.has(explodedBlockPermutation.type.id)) treePartChanged(dimension, block.location);
 });
+world.afterEvents.playerPlaceBlock.subscribe(({ block, dimension }) => treePartChanged(dimension, block.location, true),
+  { blockTypes: [...TREE_WOOD, ...TREE_LEAVES] });
 
 // --- components -----------------------------------------------------------------------------
 
@@ -256,11 +232,22 @@ system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
     beforeOnPlayerPlace(event) {
       event.permutationToPlace = event.permutationToPlace.withState(PERSISTENT, true);
     },
-    onBreak({ block, dimension }) { treePartDestroyed(dimension, block.location); },
+    // A leaf that decayed with DECAY 1 was decided with its neighbours: no new search. DECAY 2 (frontier) searches on.
+    onBreak({ block, dimension, brokenBlockPermutation }) {
+      if (brokenBlockPermutation?.getState(DECAY) === 1) return;
+      treePartChanged(dimension, block.location);
+    },
+  });
+  // Only in the DECAY 1 and 2 permutations of Mallorn leaves: the native random tick breaks the leaf, with drops.
+  blockComponentRegistry.registerCustomComponent("lothlorien:leaf_decaying", {
+    onRandomTick({ block, dimension }) {
+      const { x, y, z } = block.location;
+      dimension.runCommand(`setblock ${x} ${y} ${z} air destroy`);
+    },
   });
   // Mallorn logs, wood (also stripped) and golden leaves: they carry or support leaves but never decay themselves.
   blockComponentRegistry.registerCustomComponent("lothlorien:tree_part", {
-    onBreak({ block, dimension }) { treePartDestroyed(dimension, block.location); },
+    onBreak({ block, dimension }) { treePartChanged(dimension, block.location); },
   });
 });
 

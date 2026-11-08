@@ -44,10 +44,11 @@ Source fixes made, owner retest pending:
 - Rope while a foreign Slow Falling potion is active (the potion is preserved while climb, hold and slide work).
 - Firefly release now plays `bottle.dragonbreath` at pitch 1.3.
 - Water-only boat dispensing.
-- Leaf decay is event-driven (2026-11-08, `TECHNICAL_NOTES.md`): fell a natural small and a giant Mallorn; its leaves
-  break with drops over a few seconds, leaves of a neighbouring tree with its own trunk stay. Breaking one leaf of a
-  floating crown (left by a decay-off test build) clears that crown step by step. TNT on a trunk. **Fire burning a
-  Mallorn log:** if the game does not count that as destroying it, its leaves stay until a nearby log or leaf breaks.
+- Leaf decay is event-driven (2026-11-08, `TECHNICAL_NOTES.md`). Owner 2026-11-08: fire and TNT work; decay was far
+  too fast, so cut-off leaves are now only marked and break on their native random tick. Retest: a felled small and
+  giant Mallorn loses its leaves at the pace of a felled oak next to it; leaves of a neighbouring tree with its own trunk
+  stay; placing a log back into a decaying crown saves every leaf within 10 steps of it; leave and re-enter mid-decay
+  (it continues); breaking one leaf of a floating crown (left by a decay-off test build) clears that crown step by step.
   Player-placed leaves never decay. Freezes while standing in the forest should be rarer (no script call per leaf tick).
 - Support random ticks keep no records (2026-11-08, also Starstone and Torchlight; `PISTON_SUPPORT.md`): flowers,
   carpets and lanterns still pop when their support is mined, blown up or pushed by a piston.

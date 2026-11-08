@@ -1,7 +1,7 @@
 // Event-driven leaf decay rules (leaf_decay.js) on small grid worlds: reach, carriers, unreadable cells, the search cap,
 // frontier continuation and one read per cell. trees.js wiring is covered in leaf_tree_interactions.mjs.
 import assert from 'node:assert/strict';
-import { findDecay, LEAF_REACH, MAX_SEARCH_LEAVES, OTHER, LEAF, DECAYABLE, WOOD, UNKNOWN } from '../lothlorien_bp/scripts/leaf_decay.js';
+import { findDecay, findRescue, LEAF_REACH, MAX_SEARCH_LEAVES, OTHER, LEAF, DECAYABLE, WOOD, UNKNOWN, DECAYING } from '../lothlorien_bp/scripts/leaf_decay.js';
 
 function world(cells = {}) {
   const map = new Map(Object.entries(cells)), reads = new Map();
@@ -12,8 +12,8 @@ function world(cells = {}) {
   };
   return { map, reads, classify, set: (x, y, z, kind) => map.set(`${x},${y},${z}`, kind) };
 }
-const run = (w, origins) => {
-  const gen = findDecay(w.classify, origins, 4);
+const run = (w, origins, find = findDecay) => {
+  const gen = find(w.classify, origins, 4);
   for (;;) { const r = gen.next(); if (r.done) return r.value; }
 };
 const keys = (out) => out.map(({ x, y, z }) => `${x},${y},${z}`).sort();
@@ -87,7 +87,30 @@ test('no origins, or leaves that are not next to an origin, start nothing', () =
   row(w, 2, 4, DECAYABLE);
   assert.deepEqual(run(w, []), []);
   assert.deepEqual(run(w, [{ x: 0, y: 0, z: 0 }]), []);
-  assert.ok(w.reads.size <= 6, 'only the six neighbours of the origin were read');
+  assert.ok(w.reads.size <= 7, 'only the origin and its six neighbours were read');
+});
+
+test(`a placed log rescues marked leaves over the whole reach (${LEAF_REACH}), through marked leaves`, () => {
+  const w = world();
+  row(w, 1, LEAF_REACH + 3, DECAYING); w.set(0, 0, 0, WOOD); // the placed log at the origin
+  assert.deepEqual(run(w, [{ x: 0, y: 0, z: 0 }], findRescue).map((l) => l.x).sort((a, b) => a - b),
+    Array.from({ length: LEAF_REACH }, (_, i) => i + 1));
+});
+
+test('a placed leaf that bridges to wood rescues the marked leaves behind it, minus its own steps', () => {
+  const w = world();
+  w.set(-2, 0, 0, WOOD); w.set(-1, 0, 0, LEAF); // the placed (persistent) leaf at -1 is 1 step from wood
+  row(w, 0, 14, DECAYING);
+  assert.deepEqual(run(w, [{ x: -1, y: 0, z: 0 }], findRescue).map((l) => l.x).sort((a, b) => a - b),
+    Array.from({ length: LEAF_REACH - 1 }, (_, i) => i));
+  const v = world(); row(v, 0, 5, DECAYING); v.set(-1, 0, 0, LEAF);
+  assert.deepEqual(run(v, [{ x: -1, y: 0, z: 0 }], findRescue), [], 'a bridge to nothing rescues nothing');
+});
+
+test('marked leaves count as gone for a later decay search', () => {
+  const w = world();
+  w.set(1, 0, 0, DECAYABLE); w.set(2, 0, 0, DECAYING); w.set(3, 0, 0, WOOD);
+  assert.deepEqual(keys(run(w, [{ x: 0, y: 0, z: 0 }])), ['1,0,0']);
 });
 
 console.log(`ok   leaf decay: ${groups} groups`);
