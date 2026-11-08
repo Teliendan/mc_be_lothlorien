@@ -100,6 +100,15 @@ export function createSupportMotionService({ now, schedule, describe, read, remo
     while (records.size > maxRecords) forget(records.values().next().value);
     if (!motion && validity(block) === false) destroy(record, block, "invalid-support");
   }
+  // Native random tick (eventual recovery for commands, reloads and timed-out jobs). It never creates history: a block
+  // that an event or piston job is tracking reconciles through observe(); any other block gets a stateless check
+  // (invalid support -> remove; unknown or moving support -> nothing). Recording every random-ticked generated block
+  // held ~1.7 KB per block, up to 16,384 records (QuickJS measurement 2026-11-08); piston jobs discover cold
+  // attachments themselves, so that history was never needed.
+  function tick(block) {
+    if (records.has(address(block.dimension, block.location))) { observe(block); return; }
+    if (validity(block) === false) remove(block, undefined, "invalid-support");
+  }
   function invalidate(dimension, position) {
     const record = records.get(address(dimension, position));
     if (record) forget(record);
@@ -215,5 +224,5 @@ export function createSupportMotionService({ now, schedule, describe, read, remo
     const record = records.get(address(dimension, position));
     return !!record && (record.pending > 0 || (record.departed && matches(read(dimension, position), record)));
   }
-  return { observe, invalidate, resetAround, onPiston, isPending, size: () => records.size };
+  return { observe, tick, invalidate, resetAround, onPiston, isPending, size: () => records.size };
 }

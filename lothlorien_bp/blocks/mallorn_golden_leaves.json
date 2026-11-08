@@ -9,6 +9,7 @@
       }
     },
     "components": {
+      "lothlorien:tree_part": {},
       "minecraft:tags": [
         "minecraft:is_hoe_item_destructible",
         "leaves",

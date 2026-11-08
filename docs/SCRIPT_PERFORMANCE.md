@@ -1,9 +1,23 @@
 # Script performance
 
-Tester freeze, 2026-11-07 (tablet, diagnostic build 0.8.1 DIAG: every pack callback timed per file, leaf
-decay off; build scripts in `temp/lothlorien-diag/`, not in git): a **3.5 s freeze still happened with leaf
-decay off, and Lothlorien scripts ran 0 ms in it**. Leaf decay and our scripts are ruled out; the freeze is
-in the engine (suspects: generating new chunks with tree-grid giants, or rendering on the device). The same
+Tester freezes (tablet), 2026-11-07/08. Diagnostic builds (every pack callback timed per file, leaf decay off;
+build scripts in `temp/lothlorien-diag/`, not in git). 0.8.1 DIAG: one **3.5 s freeze with 0 ms of Lothlorien
+scripts**. 0.8.2 DIAG (photos 2026-11-08): four reported freezes, two in the engine (1.5 s at night over the ocean
+outside the forest, 1 ms of scripts; 0.9 s, 30 ms) and **two in our scripts** (0.8 s with 793 ms and 1.1 s with
+1384 ms, both standing in Lothlorien). So "our scripts are ruled out" (written after 0.8.1) was wrong; which callback
+it was is still unknown, because the chat line showed only the total (the next DIAG names the slowest call). The
+village planner is ruled out (it runs once per newly found village). The tester says most short freezes leave no
+chat line: the monitor sees only server ticks of 700 ms or more, and a client frame stall does not stop server ticks,
+so those are probably rendering or UI hitches (a new item in the inventory, an item breaking, running and jumping;
+she sees them with other add-ons too). With leaf decay off the freezes got shorter and the game "playable".
+
+Changes for the next release (2026-11-08): leaf decay is event-driven, with no random tick and no memo on leaves
+(`TECHNICAL_NOTES.md`); support random ticks keep no records (`PISTON_SUPPORT.md`). Measured in QuickJS (wasm on
+a PC; relative numbers): a support record cost ~1.7 KB (about 27 MB at the 16,384 cap), a random tick 25 us against
+10 us stateless, and the old leaf memo 11 MB per 100k leaves; the longest call including garbage collection was
+12 ms, so neither cache explains a second-long freeze by itself. Retest with the next DIAG build.
+
+The 0.8.1 DIAG
 run showed Mallorn trees without green leaves in a new world. Cause (owner's log, 2026-11-08): the DIAG wrapper
 was a Proxy over the native `world`; in the game `world.afterEvents` is read-only and non-configurable, so
 returning a wrapped signal broke the Proxy invariant and threw at the first `world.afterEvents` read

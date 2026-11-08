@@ -45,6 +45,15 @@ edits discover cold immediate neighbours without walking the forest. Native
 `onRandomTick` supplies sparse eventual recovery for commands, reloads and timed-out
 jobs. It has no fixed deadline and stops when random ticks are disabled.
 
+**Random ticks keep no history (2026-11-08; shared service, also Starstone and Torchlight).** `onRandomTick` calls
+`tick()`: a block already tracked (placement, a player edit or a piston job) reconciles through `observe()` as before;
+any other block gets a stateless check (invalid support pops it, unknown or moving support does nothing) and is not
+recorded. Before, every random-ticked generated plant got a record (~1.7 KB each, up to 16,384, about 27 MB at the cap;
+QuickJS measurement in `.claude/skills/bedrock-scripting/references/performance.md`); piston jobs discover cold
+attachments themselves, so that history was never used. Named support lists are sets now (blossom and leaf carpet allow
+~400 ids). Offline tests: untracked valid, moving, unloaded and invalid support; a tracked timeout witness; a random
+tick before `pistonActivate`; the production adapter on generated Elanor. Game check open (`OWNER_CHECKS.md`).
+
 Owner follow-up, 2026-10-11: the piston-support performance correction alone
 removed the reported lag in game. Qualitative confirmation for the owner's
 world, without numeric FPS/TPS or a profiler trace; it does not establish every

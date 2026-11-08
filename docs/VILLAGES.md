@@ -27,8 +27,8 @@ generate: `WORLDGEN.md`. Changes are one-shot: existing structures do not regene
 
 ## Performance
 
-Village foliage is persistent (no decay searches; natural trees keep normal decay): a production sample of 100 leaves went from
-6,034 mocked world reads to zero. Counting actual lamps, jars, berries and lit candles cut hidden lights across 34 templates
+Village foliage is persistent (it never decays; natural trees keep normal decay). Leaves have no random tick since 2026-11-08
+(event-driven decay); before that, persistence cut a production sample of 100 leaf ticks from 6,034 mocked world reads to zero. Counting actual lamps, jars, berries and lit candles cut hidden lights across 34 templates
 from 251 to 150. Non-debug players skip the periodic depth cache. Initial generation uses 2 ms cooperative slices, 32-write
 batches and yielding walking-distance searches (one native call may still exceed a slice). Slow initial building is acceptable;
 lag in an already loaded village is what matters.

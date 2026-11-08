@@ -8,6 +8,8 @@ import { cornSoilAllowed, CORN_ORIGIN } from "./crop_rules.js";
 const AXES = [{ x: 0, y: -1, z: 0 }, { x: 0, y: 1, z: 0 },
   { x: 0, y: 0, z: 1 }, { x: 0, y: 0, z: -1 }, { x: 1, y: 0, z: 0 }, { x: -1, y: 0, z: 0 }];
 const read = (dimension, position) => { try { return dimension.getBlock(position); } catch { return undefined; } };
+// Named support lists as sets: blossom and leaf carpet allow ~400 block ids, checked on every random tick.
+const ALLOWED = new Map(Object.entries(SUPPORT_POLICIES).filter(([, p]) => p.allowed).map(([id, p]) => [id, new Set(p.allowed)]));
 export function describeSupport(block) {
   const policy = SUPPORT_POLICIES[block.typeId];
   if (!policy) return undefined;
@@ -22,7 +24,7 @@ export function describeSupport(block) {
   return { identity: `${block.typeId}|${face || policy.mount}|${part}${cropOrigin === undefined ? "" : `|wild=${cropOrigin}`}`,
     supports: [{ position: { x: x + offset.x, y: y + offset.y, z: z + offset.z },
       valid: support => cropOrigin !== undefined ? cornSoilAllowed(cropOrigin, support.typeId) :
-        policy.allowed ? policy.allowed.includes(support.typeId) : !support.isAir && !support.isLiquid }] };
+        policy.allowed ? ALLOWED.get(block.typeId).has(support.typeId) : !support.isAir && !support.isLiquid }] };
 }
 function remove(block) {
   if (block.typeId.startsWith("lothlorien:elven_rope")) {
@@ -58,7 +60,7 @@ system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
       if (!support || support.isAir || support.isLiquid) event.cancel = true;
     },
     onRandomTick({ block }) {
-      supportMotion.observe(block);
+      supportMotion.tick(block);
     },
     onPlace({ block }) { supportMotion.observe(block, { reset: true }); },
   });

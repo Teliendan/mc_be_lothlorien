@@ -48,6 +48,13 @@ Source fixes made, owner retest pending:
   under water; a rider still sits on the floor (plain and "Prettier boats", with and without chest).
 - Mallorn boat hit wobble (2026-11-08): punching a boat rocks it side to side for half a second, like a vanilla boat
   (`mobs/mallorn_boat.md`, "Hit wobble"); the chest rocks with the hull, the roll is about the boat's long axis.
+- Leaf decay is event-driven (2026-11-08, `TECHNICAL_NOTES.md`): fell a natural small and a giant Mallorn; its leaves
+  break with drops over a few seconds, leaves of a neighbouring tree with its own trunk stay. Breaking one leaf of a
+  floating crown (left by a decay-off test build) clears that crown step by step. TNT on a trunk. **Fire burning a
+  Mallorn log:** if the game does not count that as destroying it, its leaves stay until a nearby log or leaf breaks.
+  Player-placed leaves never decay. Freezes while standing in the forest should be rarer (no script call per leaf tick).
+- Support random ticks keep no records (2026-11-08, also Starstone and Torchlight; `PISTON_SUPPORT.md`): flowers,
+  carpets and lanterns still pop when their support is mined, blown up or pushed by a piston.
 - Village railings: the upward half-step bridge join (a connected y+1 surface was misclassified as an unused exit; recognition
   corrected with rotation tests). Existing closures are saved blocks and are not removed automatically; the photographed
   location was (1040, 141, -1338).

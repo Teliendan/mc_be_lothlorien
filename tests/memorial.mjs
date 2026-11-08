@@ -114,7 +114,10 @@ assert.match(seedJs, /offset: \{ x: 0\.5, y: 1\.6, z: 0\.5 \}/, "script offset m
 assert.deepEqual([jigSound.x, jigSound.y, jigSound.z], [MEMORIAL_FEATURE.seedAt[0] + 0.5, MEMORIAL_FEATURE.seedAt[1] + 1.6, MEMORIAL_FEATURE.seedAt[2] + 0.5],
   "seed spawns the sound where the jigsaw template has it");
 const seedBlock = asset("blocks/memorial_seed.json")["minecraft:block"], logBlock = asset("blocks/mallorn_log.json")["minecraft:block"];
-for (const [k, v] of Object.entries(logBlock.components)) assert.deepEqual(seedBlock.components[k], v, `seed looks and behaves like the log: ${k}`);
+for (const [k, v] of Object.entries(logBlock.components)) {
+  if (k === "lothlorien:tree_part") continue; // the log's leaf-decay hook: the seed does not carry leaves
+  assert.deepEqual(seedBlock.components[k], v, `seed looks and behaves like the log: ${k}`);
+}
 assert.deepEqual(seedBlock.components["minecraft:tick"], { interval_range: [10, 20], looping: false });
 assert.deepEqual([MEMORIAL_FEATURE.size[0], MEMORIAL_FEATURE.size[2]], [11, 15]);
 assert.deepEqual([MEMORIAL_FEATURE.offset[0], MEMORIAL_FEATURE.offset[2]], [5, 7], "odd centred box");

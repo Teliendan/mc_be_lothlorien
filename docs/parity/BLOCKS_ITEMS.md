@@ -54,7 +54,8 @@ Creature groups: [CREATURES.md](CREATURES.md).
   particle) delegates to `advance()`/`growTree()`, which check soil and reservation. 2x2 groups grow the Great Mallorn;
   the job rechecks saplings/soil/trunk at start and places the trunk before the canopy.
 - Great Mallorn sprout may be potted like a sapling (owner 2026-10-23). Great nut stays non-fuel, non-compost.
-- Leaf decay: reach 10, 4000 nodes, 1200-tick path cache; accepts vanilla and mixed-species logs/leaves.
+- Leaf decay: reach 10, event-driven since 2026-11-08 (`onBreak` on Mallorn wood/leaves, player-break and explosion events for
+  vanilla ones; no random tick); accepts vanilla and mixed-species logs/leaves.
 - Game check: vanilla oak leaves touching only a Mallorn log (reverse recognition).
 
 ## Flora and Western Corn

@@ -103,6 +103,31 @@ for (const off of [{x:1,y:0,z:0},{x:-1,y:0,z:0},{x:0,y:1,z:0},
   assert.equal(r.settled.length, 0); assert.equal(r.drops.length, 0);
 }
 
+// Random ticks never create history (generated flora is abundant): an untracked block gets a stateless check.
+{
+  const r = rig({ warm: false });
+  r.service.tick(r.attachment); r.advance(20);
+  assert.equal(r.service.size(), 0, "a valid untracked block is not recorded");
+  assert.equal(r.drops.length, 0);
+  r.put(S, "minecraft:moving_block"); r.service.tick(r.attachment);
+  assert.equal(r.drops.length, 0, "moving support is unknown: nothing happens");
+  r.cells.delete(key(S)); r.service.tick(r.attachment);
+  assert.equal(r.drops.length, 0, "unloaded support is unknown: nothing happens");
+  r.put(S, "minecraft:air"); r.service.tick(r.attachment);
+  assert.deepEqual(r.drops, ["invalid-support"]); assert.equal(r.service.size(), 0);
+}
+// ...while a tracked block reconciles through its history, e.g. a witnessed departure after a timed-out job.
+{
+  const r = rig(); r.put(S, "minecraft:moving_block"); r.activate(); r.advance(45);
+  r.put(S, "minecraft:stone"); r.service.tick(r.attachment);
+  assert.deepEqual(r.drops, ["deferred-support-departed"]);
+}
+// A random tick between a support edit and pistonActivate cannot invent a baseline for the cold piston job.
+{
+  const r = rig({ warm: false }); r.put(S, "minecraft:piston_arm_collision"); r.service.tick(r.attachment);
+  assert.equal(r.service.size(), 0); r.activate(); r.finish(); assert.deepEqual(r.drops, ["support-departed"]);
+}
+
 // Preserve the old support when a scheduled callback precedes pistonActivate.
 {
   const r = rig(); r.put(S, "minecraft:piston_arm_collision"); r.service.observe(r.attachment);
@@ -204,12 +229,20 @@ for (const [id, policy] of Object.entries(SUPPORT_POLICIES)) {
   };
   const source = readFileSync(new URL("../lothlorien_bp/scripts/support_motion.js", import.meta.url), "utf8")
     .replace(/^import \{([^}]+)\} from "[^"]+";/gm, "const {$1} = globalThis.__supportAdapter;");
-  await import(`data:text/javascript;base64,${Buffer.from(source).toString("base64")}`);
+  const adapter = await import(`data:text/javascript;base64,${Buffer.from(source).toString("base64")}`);
   delete globalThis.__supportAdapter;
   const component = components.get("lothlorien:motion_support");
   assert.equal(component.onTick, undefined);
   assert.equal(typeof component.onRandomTick, "function");
   assert.equal(tasks.length, 0, "adapter startup schedules no support polling");
+  // generated flora on a random tick: named list as a set, no record kept
+  put({ x: 5, y: 0, z: 5 }, "minecraft:podzol"); put({ x: 5, y: 1, z: 5 }, "lothlorien:elanor");
+  component.onRandomTick({ block: dimension.getBlock({ x: 5, y: 1, z: 5 }) });
+  assert.equal(adapter.supportMotion.size(), 0); assert.deepEqual(drops, []);
+  put({ x: 5, y: 0, z: 5 }, "minecraft:stone");
+  component.onRandomTick({ block: dimension.getBlock({ x: 5, y: 1, z: 5 }) });
+  assert.deepEqual(drops, ["setblock 5 1 5 air destroy"], "elanor on stone pops on its random tick");
+  drops.length = 0;
   put(A, "lothlorien:deer_antler"); put(S, "minecraft:air");
   events.get("playerBreakBlock")({dimension, block:dimension.getBlock(S)});
   assert.deepEqual(drops, ["setblock 1 1 0 air destroy"]);

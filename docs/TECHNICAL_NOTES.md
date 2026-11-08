@@ -118,10 +118,16 @@ Files: `scripts/mallorn_tree.js` (pure generator), `scripts/trees.js` (growth, b
   blocks, then a leaf-carpet scatter (90 tries, gaussian +-5), a blossom scatter and nectar blooms (see Nectar). Worldgen leaves have `persistent` false and decay.
   Test: `/place feature lothlorien:select_mallorn_tree_feature ~ ~ ~`. Feature rules cannot call script, so generator archetypes and platform branches exist only for
   saplings; large builds are structures (next section).
-- **Leaf decay:** state `lothlorien:persistent`; player-placed leaves are persistent; grown and worldgen leaves break with drops on a random tick if no supported vanilla or
+- **Leaf decay:** state `lothlorien:persistent`; player-placed leaves are persistent; grown and worldgen leaves break with drops if no supported vanilla or
   Mallorn log/wood is within **10** steps through leaves (an unloaded neighbour counts as connected; Bedrock's own reach is 4). Reach 6 stripped live big trees (crown
-  leaves sit 8+ steps from a log; game-tested 2026-09-29). Search bound 4000 nodes, verdicts cached 60 s per leaf (a felled tree decays up to a minute later). Details
-  `LEAF_HARVEST.md`. The 20-tree cut-down balance test was never run (status unverified).
+  leaves sit 8+ steps from a log; game-tested 2026-09-29). **Event-driven since 2026-11-08** (`leaf_decay.js`, wiring in `trees.js`; tablet freezes, see
+  `SCRIPT_PERFORMANCE.md`): leaves have no random tick. A destroyed Mallorn log, wood or leaf (`onBreak` of `lothlorien:leaves` and `lothlorien:tree_part`, the
+  latter on all four wood forms and golden leaves) or a vanilla one (player-break and explosion events) starts one search over the leaves within 19 steps,
+  which decides exactly the leaves within 10 steps of it; those break 0.5-8 s later, at most 8 per tick. A decaying leaf at the edge of that range with an
+  undecided neighbour searches again when it breaks, so a crown that was already cut off still clears. Nearby reports (6 blocks) share one search; a search
+  over 30,000 leaves keeps everything. Offline: equal to a full recomputation after every log of two shipped giants felled in scrambled order (both ways:
+  nothing left, nothing early); at most ~2,300 block reads per search (2026-11-08). Not covered: wood moved by a piston, `/setblock` or `/fill` without
+  `destroy`. Details `LEAF_HARVEST.md`. The 20-tree cut-down balance test was never run (status unverified).
 
 ## Giant Mallorns (was Phase 5; owner-accepted in game 2026-09-30)
 

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as rules from '../lothlorien_bp/scripts/tree_interaction_rules.js';
 import * as greatRules from '../lothlorien_bp/scripts/great_mallorn_rules.js';
+import * as decayRules from '../lothlorien_bp/scripts/leaf_decay.js';
 import { SUPPORT_POLICIES } from '../lothlorien_bp/scripts/support_policies.js';
 const read = p => JSON.parse(readFileSync(new URL('../lothlorien_bp/' + p, import.meta.url), 'utf8'));
 const SOURCE = readFileSync(new URL('../lothlorien_bp/scripts/trees.js', import.meta.url), 'utf8')
@@ -19,6 +20,8 @@ const meal = (amount = 3, name = '') => ({ typeId: 'minecraft:bone_meal', amount
   isStackableWith(o) { return o.typeId === this.typeId && o.name === this.name; } });
 async function scenario(name, body, file = 'trees.js') {
   const blocks = new Map(), components = new Map(), handlers = [], queue = [], jobs = [], commands = [], particles = [];
+  const intervals = new Map(), events = {};
+  let nextRun = 1;
   let reads = 0, unloaded, thrown, rejectJob = false;
   const placements = [];
   const key = p => `${p.x},${p.y},${p.z}`;
@@ -34,14 +37,17 @@ async function scenario(name, body, file = 'trees.js') {
   }
   const system = { currentTick: 0, beforeEvents: { startup: { subscribe(fn) { fn({ blockComponentRegistry: {
     registerCustomComponent(id, c) { components.set(id, c); } } }); } } }, run: fn => queue.push(fn),
-    runJob(gen) { if (rejectJob) throw Error('job rejected'); jobs.push(gen); } };
+    runJob(gen) { if (rejectJob) throw Error('job rejected'); jobs.push(gen); },
+    runInterval(fn) { intervals.set(nextRun, fn); return nextRun++; }, clearRun(id) { intervals.delete(id); } };
   const tree = { logs: Array.from({ length: 7 }, (_, y) => ({ x: 0, y, z: 0, face: 'up' })),
     leaves: Array.from({ length: 230 }, (_, x) => ({ x: x + 1, y: 6, z: 0 })) };
   globalThis.__tree = { EquipmentSlot: { Mainhand: 'main' } };
   const deferred = await import(`data:text/javascript;base64,${Buffer.from(DEFERRED).toString('base64')}#d${count}`);
-  globalThis.__tree = { ...rules, ...greatRules, ...deferred, message: () => 'localized', system, world: {
+  globalThis.__tree = { ...rules, ...greatRules, ...decayRules, ...deferred, message: () => 'localized', system, world: {
     beforeEvents: { playerInteractWithBlock: { subscribe: fn => handlers.push(fn) } },
-    afterEvents: { playerPlaceBlock: { subscribe() {} } }, structureManager: {
+    afterEvents: { playerPlaceBlock: { subscribe() {} },
+      playerBreakBlock: { subscribe(fn, options) { events.playerBreak = { fn, options }; } },
+      blockExplode: { subscribe(fn) { events.explode = fn; } } }, structureManager: {
       get: () => ({ getBlockPermutation: p => perm(p.x < 11 && p.y === 0 ? 'lothlorien:mallorn_log' : 'minecraft:structure_void') }),
       place: (...args) => placements.push(args),
     } },
@@ -64,8 +70,14 @@ async function scenario(name, body, file = 'trees.js') {
   try { await body({ block, plant, player, click, dim, system, runtime, commands, particles, jobs, tree, placements,
     tick: b => components.get('lothlorien:sapling').onRandomTick({ block: b }),
     greatTick: b => components.get('lothlorien:great_sprout').onRandomTick({ block: b }),
-    decay: b => components.get('lothlorien:leaves').onRandomTick({ block: b, dimension: dim }),
     place: p => components.get('lothlorien:leaves').beforeOnPlayerPlace(p),
+    // the engine destroyed a block: Mallorn leaves / Mallorn wood report through onBreak, vanilla parts through events
+    leafBroken: location => components.get('lothlorien:leaves').onBreak({ block: { location }, dimension: dim }),
+    woodBroken: location => components.get('lothlorien:tree_part').onBreak({ block: { location }, dimension: dim }),
+    vanillaBroken: location => events.playerBreak.fn({ block: { location }, dimension: dim }),
+    exploded: (location, id) => events.explode({ block: { location }, dimension: dim, explodedBlockPermutation: perm(id) }),
+    events, intervals, components,
+    advance: n => { for (let i = 0; i < n; i++) { system.currentTick++; for (const fn of [...intervals.values()]) fn(); } },
     flush: () => { while (queue.length) queue.shift()(); }, finish: () => { for (const job of jobs) while (!job.next().done) {} },
     unload: fn => { unloaded = fn; }, throwRead: fn => { thrown = fn; }, rejectJob: value => { rejectJob = value; }, reads: () => reads,
   }); } finally { Math.random = random; }
@@ -126,20 +138,51 @@ await scenario('growth accepts other species leaves, converts grass, protects la
   assert.equal(b.typeId, 'lothlorien:mallorn_log'); assert.equal(e.dim.getBlock({ x: 0, y: 63, z: 0 }).typeId, 'minecraft:dirt');
   const house = e.block('minecraft:glass', {}, { x: 220, y: 70, z: 0 }); e.finish(); assert.equal(house.writes, undefined);
 });
-await scenario('mixed species bridge and stripped vanilla wood support ordinary leaves', e => {
-  const b = e.block(LEAF, { [PERSISTENT]: false });
-  e.block('minecraft:oak_leaves', {}, { x: 1, y: 64, z: 0 });
-  e.block('lothlorien:mallorn_golden_leaves', {}, { x: 2, y: 64, z: 0 });
-  e.block('minecraft:stripped_birch_wood', {}, { x: 3, y: 64, z: 0 });
-  e.decay(b); assert.deepEqual(e.commands, []);
-  const before = e.reads(); e.decay(b); assert.equal(e.reads(), before, 'positive path cache avoids another search');
+const at = x => ({ x, y: 64, z: 0 });
+await scenario('mixed species bridge and stripped vanilla wood keep a leaf; breaking that wood lets it decay', e => {
+  e.block(LEAF, { [PERSISTENT]: false });
+  e.block('minecraft:oak_leaves', {}, at(1)); e.block('lothlorien:mallorn_golden_leaves', {}, at(2));
+  e.block('minecraft:stripped_birch_wood', {}, at(3));
+  e.leafBroken(at(-1)); e.finish(); e.advance(200); assert.deepEqual(e.commands, []);
+  assert.ok(e.events.playerBreak.options.blockTypes.includes('minecraft:stripped_birch_wood'), 'vanilla wood is filtered in');
+  assert.ok(!e.events.playerBreak.options.blockTypes.some(id => id.startsWith('lothlorien:')), 'Mallorn parts use onBreak');
+  e.block('minecraft:air', {}, at(3)); e.vanillaBroken(at(3)); e.finish();
+  assert.deepEqual(e.commands, [], 'decay waits a moment, like vanilla');
+  e.advance(200); assert.deepEqual(e.commands, ['setblock 0 64 0 air destroy']);
+  assert.equal(e.intervals.size, 0, 'the removal timer stops when nothing is left');
 });
-await scenario('persistent leaves skip decay, no-support decays, unreadable neighbors preserve', e => {
+await scenario('persistent leaves never decay, a lone natural one does, an unreadable neighbour keeps it', e => {
   const b = e.block(LEAF, { [PERSISTENT]: false }); const placement = { permutationToPlace: b.permutation };
   e.place(placement); assert.equal(placement.permutationToPlace.getState(PERSISTENT), true);
-  b.permutation = placement.permutationToPlace; e.decay(b); assert.equal(e.reads(), 0);
-  b.permutation = perm(LEAF, { [PERSISTENT]: false }); e.decay(b); assert.equal(e.commands.length, 1);
-  e.commands.length = 0; e.throwRead(p => p.x === 1); e.decay(b); assert.equal(e.commands.length, 0);
+  b.permutation = placement.permutationToPlace; e.woodBroken(at(1)); e.finish(); e.advance(200);
+  assert.deepEqual(e.commands, []);
+  b.permutation = perm(LEAF, { [PERSISTENT]: false }); e.woodBroken(at(1)); e.finish(); e.advance(200);
+  assert.equal(e.commands.length, 1);
+  e.commands.length = 0; e.throwRead(p => p.x === -1); e.woodBroken(at(1)); e.finish(); e.advance(200);
+  assert.equal(e.commands.length, 0);
+});
+await scenario('a leaf made persistent or broken before its turn is skipped; explosions of vanilla wood count', e => {
+  const b = e.block(LEAF, { [PERSISTENT]: false });
+  e.exploded(at(1), 'minecraft:stone'); e.finish(); assert.equal(e.jobs.length, 0, 'other blocks start no search');
+  e.exploded(at(1), 'minecraft:oak_log'); e.finish(); assert.equal(e.jobs.length, 1);
+  b.permutation = perm(LEAF, { [PERSISTENT]: true }); e.advance(200); assert.deepEqual(e.commands, []);
+  b.permutation = perm(LEAF, { [PERSISTENT]: false }); e.exploded(at(1), 'minecraft:oak_log'); e.finish();
+  e.block('minecraft:air', {}, at(0)); e.leafBroken(at(0)); e.advance(200);
+  assert.deepEqual(e.commands, [], 'broken by a player first: no second break, no new search');
+  assert.equal(e.jobs.length, 2);
+});
+await scenario('our own decay starts no new search, except at the frontier of a long cut-off branch', e => {
+  for (let x = 1; x <= 25; x++) e.block(LEAF, { [PERSISTENT]: false }, at(x));
+  e.woodBroken(at(0)); e.finish(); e.advance(20);
+  const first = e.commands.splice(0).map(c => +c.split(' ')[1]).sort((a, b) => a - b);
+  assert.deepEqual(first, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  // the engine breaks them and reports each through onBreak (within the forget window)
+  const jobs = e.jobs.length;
+  for (const x of first.slice(0, -1)) { e.block('minecraft:air', {}, at(x)); e.leafBroken(at(x)); }
+  assert.equal(e.jobs.length, jobs, 'decided leaves do not search again');
+  e.block('minecraft:air', {}, at(10)); e.leafBroken(at(10)); e.finish(); e.advance(200);
+  assert.equal(e.jobs.length, jobs + 1, 'the frontier leaf continues');
+  assert.deepEqual(e.commands.map(c => +c.split(' ')[1]).sort((a, b) => a - b), [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
 });
 await scenario('Great sprout checks above-light and soil and preserves its no-bone-meal rule', e => {
   e.plant(); const b = e.block(greatRules.SPROUT_ID, { [STAGE]: 0 });
@@ -181,4 +224,10 @@ for (const name of ['mallorn_sapling', 'great_mallorn_sprout']) {
 }
 assert.ok(read('blocks/mallorn_sapling.json')['minecraft:block'].components['minecraft:flower_pottable']);
 assert.equal(read('blocks/mallorn_golden_leaves.json')['minecraft:block'].components['lothlorien:leaves'], undefined);
+// Event-driven decay: leaves have no random tick; every Mallorn wood form and golden leaves report destruction.
+for (const name of ['mallorn_log', 'mallorn_wood', 'mallorn_stripped_log', 'mallorn_stripped_wood', 'mallorn_golden_leaves']) {
+  assert.deepEqual(read('blocks/' + name + '.json')['minecraft:block'].components['lothlorien:tree_part'], {}, name);
+}
+assert.deepEqual(read('blocks/mallorn_leaves.json')['minecraft:block'].components['lothlorien:leaves'], {});
+assert.equal(read('blocks/mallorn_leaves.json')['minecraft:block'].components['lothlorien:tree_part'], undefined);
 console.log(`ok   leaf/tree interactions: native item/data/render/localization contracts (${++count} groups)`);

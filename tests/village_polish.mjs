@@ -76,7 +76,8 @@ console.log("ok   village polish: walking search yields");
 
 const {benchmark}=await import("../tools/village_performance.mjs");
 const workload=await benchmark();
-assert.ok(workload.leafSample.beforeNonPersistent.blockReads>100);
-assert.equal(workload.leafSample.afterPersistent.blockReads,0);
+assert.equal(workload.leafRandomTick,"none","leaves cost nothing while nobody breaks them");
+assert.equal(workload.breakSample.searches,1); assert.ok(workload.breakSample.blockReads>0);
+assert.equal(workload.breakSample.decayed,0,"decorative crown foliage never decays");
 assert.equal(workload.inventory.decayLeaves,0);
-console.log("ok   village polish: production leaf callback workload drops to zero world reads for decorative foliage");
+console.log("ok   village polish: leaves have no random tick; a break in decorative foliage searches once and decays nothing");

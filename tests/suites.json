@@ -220,6 +220,7 @@
     ],
     "leaf-tree": [
       "leaf_tree_interactions.mjs",
+      "leaf_decay.mjs",
       "leaf_harvest.mjs",
       "flora.mjs"
     ],
