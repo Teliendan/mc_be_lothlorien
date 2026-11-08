@@ -414,6 +414,14 @@
       {
         "path": "lothlorien_bp/items/mallorn_boat.json",
         "sha256": "c165ff29788c3a7d16f7dbe268491d63d0788f22287ac0e008654e1f285b7192"
+      },
+      {
+        "path": "lothlorien_bp/scripts/boat_drop.js",
+        "sha256": "5ce653f4e3b3639bc6a3e7f8e90cf9104f26c6c70847d15b51be15cab37d4766"
+      },
+      {
+        "path": "lothlorien_bp/scripts/boat_drop_rules.js",
+        "sha256": "15bada4dcd883da8e1966fd09a59851a82daa101d831d0f392b60745bdc894c5"
       }
     ]
   },
@@ -456,6 +464,14 @@
       {
         "path": "lothlorien_bp/items/mallorn_chest_boat.json",
         "sha256": "88c47b7e9d9219055a5e0d534e89f619f68a5be32b1d24aa0cac5586fbcee3d5"
+      },
+      {
+        "path": "lothlorien_bp/scripts/boat_drop.js",
+        "sha256": "5ce653f4e3b3639bc6a3e7f8e90cf9104f26c6c70847d15b51be15cab37d4766"
+      },
+      {
+        "path": "lothlorien_bp/scripts/boat_drop_rules.js",
+        "sha256": "15bada4dcd883da8e1966fd09a59851a82daa101d831d0f392b60745bdc894c5"
       }
     ]
   },
@@ -559,6 +575,14 @@
       {
         "path": "lothlorien_bp/items/mallorn_heartwood_boat.json",
         "sha256": "a2b958edd00ce9ff926e0b02a80587269b1c49a5884e4e846055eeb8ea9903c7"
+      },
+      {
+        "path": "lothlorien_bp/scripts/boat_drop.js",
+        "sha256": "5ce653f4e3b3639bc6a3e7f8e90cf9104f26c6c70847d15b51be15cab37d4766"
+      },
+      {
+        "path": "lothlorien_bp/scripts/boat_drop_rules.js",
+        "sha256": "15bada4dcd883da8e1966fd09a59851a82daa101d831d0f392b60745bdc894c5"
       }
     ]
   },
@@ -601,6 +625,14 @@
       {
         "path": "lothlorien_bp/items/mallorn_heartwood_chest_boat.json",
         "sha256": "5a6fe67e36b29f549205a80f863cbef1fe1941969158b722db8e37ec80373d48"
+      },
+      {
+        "path": "lothlorien_bp/scripts/boat_drop.js",
+        "sha256": "5ce653f4e3b3639bc6a3e7f8e90cf9104f26c6c70847d15b51be15cab37d4766"
+      },
+      {
+        "path": "lothlorien_bp/scripts/boat_drop_rules.js",
+        "sha256": "15bada4dcd883da8e1966fd09a59851a82daa101d831d0f392b60745bdc894c5"
       }
     ]
   },

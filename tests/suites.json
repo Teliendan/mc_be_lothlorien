@@ -27,7 +27,8 @@
       "flora_crop_interactions.mjs"
     ],
     "boats": [
-      "boats.mjs"
+      "boats.mjs",
+      "boat_drop.mjs"
     ],
     "biome": [
       "biome_depth.mjs"

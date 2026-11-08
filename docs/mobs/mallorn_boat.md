@@ -25,6 +25,15 @@ entities; lang and item_texture entries). Do not hand-edit the generated files.
   the chest is the vanilla chest drawn by a second render controller from `textures/entity/boat/chest_boat_oak`
   (nothing of Mojang's copied).
 - Lead: right-click enters the boat, as with vanilla boats; shears cut it.
+- **Drop.** Owner report (2026-11-08): breaking a Mallorn boat with an axe dropped an oak boat. The boat class picks
+  the drop in code from the boat's variant (vanilla's own boat loot table is empty), and a spawned Mallorn boat is
+  variant 0 = oak. The ordinary break reported on 2026-10-18 dropped the Mallorn boat through its loot table.
+  `scripts/boat_drop.js` (rules `boat_drop_rules.js`, test `tests/boat_drop.mjs`) records the boat's place in
+  `beforeEvents.entityRemove` (unfiltered: only that event still has the location) and next tick swaps one oak
+  (chest) boat item within 2.5 blocks for the matching Mallorn item, keeping its motion. Oak boats spilled from a
+  chest boat's inventory stay as they are. Limit: an oak boat item already lying within 2.5 blocks when a Mallorn
+  boat disappears without its own oak drop (chunk unload, loot-table break) is converted too. Offline-tested only;
+  owner retest pending (axe, hand, all four boats).
 
 ## Models (owner's brief and decisions)
 Elven boat: long and slender, pointed at both ends, ends higher than the middle, clear front (swan neck at the bow,

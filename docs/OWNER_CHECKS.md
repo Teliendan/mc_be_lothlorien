@@ -42,6 +42,8 @@ Source fixes made, owner retest pending:
 - Rope while a foreign Slow Falling potion is active (the potion is preserved while climb, hold and slide work).
 - Firefly release now plays `bottle.dragonbreath` at pitch 1.3.
 - Water-only boat dispensing.
+- Mallorn boat drop (2026-11-08): each of the four boats broken with an axe and by hand drops its own item, never oak
+  (`mobs/mallorn_boat.md`, "Drop"). A chest boat holding an oak boat spills that oak boat unchanged.
 - Village railings: the upward half-step bridge join (a connected y+1 surface was misclassified as an unused exit; recognition
   corrected with rotation tests). Existing closures are saved blocks and are not removed automatically; the photographed
   location was (1040, 141, -1338).

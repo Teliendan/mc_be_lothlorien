@@ -23,6 +23,7 @@ import { setVillageDebug } from "./village_debug.js";
 import { inVillageArea } from "./village_area.js";
 import { startVillageMusic } from "./village_music.js";
 import "./warden_replace.js";
+import "./boat_drop.js";
 import { leafUndersideY } from "./leaf_fall.js";
 import { handleHarmonyEvent, harmonyOf, startHarmony } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
