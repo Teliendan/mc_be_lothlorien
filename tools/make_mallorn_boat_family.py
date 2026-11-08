@@ -49,7 +49,7 @@ HIT_PROPERTY = "lothlorien:hits"
 # 3 px floor stays dry and ours (2 px) was under water, so the boat looked full of water. The `turn` animation lifts
 # the hull bone by this many px (animations/mallorn_boat.animation.json; tests check they agree) and the seats rise
 # with it, keeping the owner-checked rider-to-floor height.
-MODEL_LIFT_PX = 3
+MODEL_LIFT_PX = 4  # 3 left water on the floor at the bottom of the wave bob (owner, 2026-11-08)
 HIT_RANGE = [0, 7]
 
 # vanilla chest colours for the icon (sampled from the chest-boat texture's chest)

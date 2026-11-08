@@ -13,7 +13,7 @@ const native = (kind) => readJson(nativePath(kind))['minecraft:entity'];
 const liftPx = readJson('../lothlorien_rp/animations/mallorn_boat.animation.json').animations['animation.lothlorien.mallorn_boat.turn'].bones.hull.position[1];
 
 test('the model lift keeps the floor above the waterline seen in game (owner screenshot 2026-11-08)', () => {
-  assert.equal(liftPx, 3, 'water reached ~3 px up the hull; floor tops are 2 (plain) and 3 (prettier) px');
+  assert.equal(liftPx, 4, 'water reached ~3 px up the hull and the wave bob dips ~1 px more; floor tops are 2 (plain) and 3 (prettier) px');
 });
 
 test('all four boat items preserve water placement and provide six furnace smelts of fuel', () => {

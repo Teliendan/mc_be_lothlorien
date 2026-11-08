@@ -722,7 +722,7 @@
         },
         {
           "path": "lothlorien_bp/entities/mallorn_boat.json",
-          "sha256": "91ad43366f49170480876697c951ee2388ec4acebd9a6510fac1943d9dbfeb9d"
+          "sha256": "fc2ff6fb3fe7d544c089d2d5a1483727d53ff432d9bcf8c78ab2f51c9a36709d"
         },
         {
           "path": "lothlorien_bp/items/mallorn_boat.json",
@@ -788,7 +788,7 @@
         },
         {
           "path": "lothlorien_bp/entities/mallorn_chest_boat.json",
-          "sha256": "77b63412010adf0f940136fa61c9459bc9918d8fa05d4befb22ab0195d43bc2e"
+          "sha256": "1855b5092fb862ac391b7a3325d9dd838123210ed05dc0214fbd124280db484a"
         },
         {
           "path": "lothlorien_bp/items/mallorn_chest_boat.json",
@@ -953,7 +953,7 @@
         },
         {
           "path": "lothlorien_bp/entities/mallorn_heartwood_boat.json",
-          "sha256": "f763eccdedac1a5862cb2332bdc15153b6ae580615fa526dfc05687a4161e97c"
+          "sha256": "7280bfed799e1de7a21f308df226febafeeaa7883d2c01f36b29367513cc6ed8"
         },
         {
           "path": "lothlorien_bp/items/mallorn_heartwood_boat.json",
@@ -1019,7 +1019,7 @@
         },
         {
           "path": "lothlorien_bp/entities/mallorn_heartwood_chest_boat.json",
-          "sha256": "bd8ae0492927599942ee275ba992469f31ec43b5d902ec47dfc7d2359b351ace"
+          "sha256": "c7643d26c69bb7bb5e2b4058b29802eb3894ee80fd07821ddc77502d0ac1fb8b"
         },
         {
           "path": "lothlorien_bp/items/mallorn_heartwood_chest_boat.json",

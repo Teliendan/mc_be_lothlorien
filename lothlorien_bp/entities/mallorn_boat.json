@@ -174,7 +174,7 @@
             "max_rider_count": 1,
             "position": [
               0.0,
-              -0.0125,
+              0.05,
               0.0
             ],
             "rotate_rider_by": -90
@@ -185,7 +185,7 @@
             "max_rider_count": 2,
             "position": [
               0.2,
-              -0.0125,
+              0.05,
               0.0
             ],
             "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman', 'happy_ghast') ? -90 : 0"
@@ -196,7 +196,7 @@
             "max_rider_count": 2,
             "position": [
               -0.6,
-              -0.0125,
+              0.05,
               0.0
             ],
             "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman', 'happy_ghast') ? -90 : 0"
@@ -256,7 +256,7 @@
               "lock_rider_rotation": 90,
               "position": [
                 0.0,
-                -0.0125,
+                0.05,
                 0.0
               ],
               "max_rider_count": 1,
@@ -267,7 +267,7 @@
               "lock_rider_rotation": 90,
               "position": [
                 0.2,
-                -0.0125,
+                0.05,
                 0.0
               ],
               "max_rider_count": 2,
@@ -278,7 +278,7 @@
               "lock_rider_rotation": 90,
               "position": [
                 -0.6,
-                -0.0125,
+                0.05,
                 0.0
               ],
               "max_rider_count": 2,
