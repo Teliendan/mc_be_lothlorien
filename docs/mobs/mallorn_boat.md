@@ -30,7 +30,8 @@ entities; lang and item_texture entries). Do not hand-edit the generated files.
   prettier) was covered, so the hull looked flooded. The `turn` animation lifts the `hull` bone 4 px (chest included)
   and every seat rises 4/16 block (`MODEL_LIFT_PX` in the generator; `tests/boats.mjs` checks both), keeping the
   owner-checked rider-to-floor height. A 3 px lift was verified in game except at the bottom of the wave bob, where
-  about 1 px of water still showed (owner, 2026-11-08); now 4 px, owner check pending.
+  about 1 px of water still showed (owner, 2026-11-08); 4 px works through the whole bob (owner, "It works now",
+  2026-11-08).
 - **Hit wobble** (owner asked 2026-11-08: vanilla boats shake when hit, ours did not; the roll is part of the hard-coded
   renderer). `scripts/boat_wobble.js` bumps the synced int property `lothlorien:hits` (0..7) on every player melee hit
   (`entityHitEntity`, filtered to players; damage events do not fire for boats, MCPE-174388). The client
