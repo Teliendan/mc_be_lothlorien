@@ -1,0 +1,42 @@
+{
+  "skins": [
+    {
+      "localization_name": "warden_woman",
+      "geometry": "geometry.humanoid.customSlim",
+      "texture": "warden_woman.png",
+      "type": "free"
+    },
+    {
+      "localization_name": "warden_man",
+      "geometry": "geometry.humanoid.customSlim",
+      "texture": "warden_man.png",
+      "type": "free"
+    },
+    {
+      "localization_name": "woodland_woman",
+      "geometry": "geometry.humanoid.customSlim",
+      "texture": "woodland_woman.png",
+      "type": "free"
+    },
+    {
+      "localization_name": "woodland_man",
+      "geometry": "geometry.humanoid.customSlim",
+      "texture": "woodland_man.png",
+      "type": "free"
+    },
+    {
+      "localization_name": "lady",
+      "geometry": "geometry.humanoid.customSlim",
+      "texture": "lady.png",
+      "type": "free"
+    },
+    {
+      "localization_name": "lord",
+      "geometry": "geometry.humanoid.customSlim",
+      "texture": "lord.png",
+      "type": "free"
+    }
+  ],
+  "serialize_name": "Lothlorien",
+  "localization_name": "Lothlorien"
+}

@@ -19951,6 +19951,497 @@
           }
         }
       }
+    },
+    "lothlorien_skins": {
+      "kind": "skin",
+      "entries": {
+        "pack.name": {
+          "source": "Lothlorien — Skin Pack",
+          "context": {
+            "meaning": "Pack title for lothlorien_skins, the mod's player skin pack (skins the player can wear). Keep the mod brand unchanged.",
+            "location": "lothlorien_skins: pack lists and storage screens",
+            "trigger": "Shown when the player views this pack.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Pack title: brand, dash, pack type.",
+            "constraints": "Preserve Lothlórien and the Lothlorien brand spelling; no Tolkien character names."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Lothlorien — Balíček skinů",
+              "based_on": "bd006f5fb5b351300ac2de5705329a9ff4041350b7c488b95b006b82d93eeae2",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Lothlorien — Paquete de aspectos",
+              "based_on": "bd006f5fb5b351300ac2de5705329a9ff4041350b7c488b95b006b82d93eeae2",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Lothlorien — Paquete de aspectos",
+              "based_on": "bd006f5fb5b351300ac2de5705329a9ff4041350b7c488b95b006b82d93eeae2",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Lothlorien — Pacote de skins",
+              "based_on": "bd006f5fb5b351300ac2de5705329a9ff4041350b7c488b95b006b82d93eeae2",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Lothlorien — Pacote de skins",
+              "based_on": "bd006f5fb5b351300ac2de5705329a9ff4041350b7c488b95b006b82d93eeae2",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Lothlorien — Skinpaket",
+              "based_on": "bd006f5fb5b351300ac2de5705329a9ff4041350b7c488b95b006b82d93eeae2",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Lothlorien — Pack de skins",
+              "based_on": "bd006f5fb5b351300ac2de5705329a9ff4041350b7c488b95b006b82d93eeae2",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Lothlorien — Pakiet skórek",
+              "based_on": "bd006f5fb5b351300ac2de5705329a9ff4041350b7c488b95b006b82d93eeae2",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "pack.description": {
+          "source": "Lothlorien skin pack: elven player skins from the Golden Wood.",
+          "context": {
+            "meaning": "Pack description for lothlorien_skins: player skins showing elves of Lothlórien.",
+            "location": "lothlorien_skins: pack details",
+            "trigger": "Shown when the player views this pack.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "One complete descriptive sentence.",
+            "constraints": "Preserve Lothlórien and the Lothlorien brand spelling; no Tolkien character names."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Balíček skinů Lothlorien: elfské skiny hráče ze Zlatého lesa.",
+              "based_on": "f9c787fa9d6400a53efabbf20f0db92955cb4a494a9e97b4a22c22519430b29a",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Paquete de aspectos de Lothlorien: aspectos élficos del Bosque Dorado.",
+              "based_on": "f9c787fa9d6400a53efabbf20f0db92955cb4a494a9e97b4a22c22519430b29a",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Paquete de aspectos de Lothlorien: aspectos élficos del Bosque Dorado.",
+              "based_on": "f9c787fa9d6400a53efabbf20f0db92955cb4a494a9e97b4a22c22519430b29a",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Pacote de skins de Lothlorien: skins élficas do Bosque Dourado.",
+              "based_on": "f9c787fa9d6400a53efabbf20f0db92955cb4a494a9e97b4a22c22519430b29a",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Pacote de skins de Lothlorien: skins élficas do Bosque Dourado.",
+              "based_on": "f9c787fa9d6400a53efabbf20f0db92955cb4a494a9e97b4a22c22519430b29a",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Lothlorien-Skinpaket: Elben-Skins aus dem Goldenen Wald.",
+              "based_on": "f9c787fa9d6400a53efabbf20f0db92955cb4a494a9e97b4a22c22519430b29a",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Pack de skins Lothlorien : skins elfiques du Bois Doré.",
+              "based_on": "f9c787fa9d6400a53efabbf20f0db92955cb4a494a9e97b4a22c22519430b29a",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Pakiet skórek Lothlorien: elfie skórki ze Złotego Lasu.",
+              "based_on": "f9c787fa9d6400a53efabbf20f0db92955cb4a494a9e97b4a22c22519430b29a",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "skinpack.Lothlorien": {
+          "source": "Elves of Lothlórien",
+          "context": {
+            "meaning": "Title of the skin pack in the Dressing Room (character creator), above the row of skins.",
+            "location": "Dressing Room: skin pack title",
+            "trigger": "Shown when the player browses owned skin packs.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short title, noun phrase.",
+            "constraints": "Preserve Lothlórien and the Lothlorien brand spelling; no Tolkien character names."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Elfové z Lothlórienu",
+              "based_on": "686f599098ace1631722703de58d8e3bdc8a22386c36ebfa3a062a4c12bae945",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Elfos de Lothlórien",
+              "based_on": "686f599098ace1631722703de58d8e3bdc8a22386c36ebfa3a062a4c12bae945",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Elfos de Lothlórien",
+              "based_on": "686f599098ace1631722703de58d8e3bdc8a22386c36ebfa3a062a4c12bae945",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Elfos de Lothlórien",
+              "based_on": "686f599098ace1631722703de58d8e3bdc8a22386c36ebfa3a062a4c12bae945",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Elfos de Lothlórien",
+              "based_on": "686f599098ace1631722703de58d8e3bdc8a22386c36ebfa3a062a4c12bae945",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Elben von Lothlórien",
+              "based_on": "686f599098ace1631722703de58d8e3bdc8a22386c36ebfa3a062a4c12bae945",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Elfes de Lothlórien",
+              "based_on": "686f599098ace1631722703de58d8e3bdc8a22386c36ebfa3a062a4c12bae945",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Elfy z Lothlórien",
+              "based_on": "686f599098ace1631722703de58d8e3bdc8a22386c36ebfa3a062a4c12bae945",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "skin.Lothlorien.warden_woman": {
+          "source": "Warden",
+          "context": {
+            "meaning": "Name of one player skin: a woman elf warrior who guards the forest (armour, cloak, braid). Feminine form where the language marks gender. Distinct from the NPC 'Elven Warden' and from the Warden mob of the Deep Dark.",
+            "location": "Dressing Room: skin name under the preview",
+            "trigger": "Shown when the player selects this skin.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short title, noun phrase; feminine noun in gendered languages.",
+            "constraints": "Keep it short: the Dressing Room cuts names wider than about 15 average letters, so do not add the place name (the pack title 'Elves of Lothlórien' gives it). No Tolkien character names."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Strážkyně",
+              "based_on": "e9848b6bb3d5e1be7e663303c5d92ad6c189b2b74a73bbdf08307b867705a643",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Guardiana",
+              "based_on": "e9848b6bb3d5e1be7e663303c5d92ad6c189b2b74a73bbdf08307b867705a643",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Guardiana",
+              "based_on": "e9848b6bb3d5e1be7e663303c5d92ad6c189b2b74a73bbdf08307b867705a643",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Guardiã",
+              "based_on": "e9848b6bb3d5e1be7e663303c5d92ad6c189b2b74a73bbdf08307b867705a643",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Guardiã",
+              "based_on": "e9848b6bb3d5e1be7e663303c5d92ad6c189b2b74a73bbdf08307b867705a643",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Wächterin",
+              "based_on": "e9848b6bb3d5e1be7e663303c5d92ad6c189b2b74a73bbdf08307b867705a643",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Gardienne",
+              "based_on": "e9848b6bb3d5e1be7e663303c5d92ad6c189b2b74a73bbdf08307b867705a643",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Strażniczka",
+              "based_on": "e9848b6bb3d5e1be7e663303c5d92ad6c189b2b74a73bbdf08307b867705a643",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "skin.Lothlorien.warden_man": {
+          "source": "Sentinel",
+          "context": {
+            "meaning": "Name of one player skin: a man elf warrior who keeps watch over the forest (armour, baldric, cloak). Masculine form where the language marks gender. Distinct from the NPC 'Elven Warden' and from the 'Warden' skin.",
+            "location": "Dressing Room: skin name under the preview",
+            "trigger": "Shown when the player selects this skin.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short title, noun phrase; masculine noun in gendered languages.",
+            "constraints": "Keep it short: the Dressing Room cuts names wider than about 15 average letters, so do not add the place name (the pack title 'Elves of Lothlórien' gives it). No Tolkien character names."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Strážný",
+              "based_on": "181425771b0e5cda2deb83323200f9785aec7141fef903b57cbc0c81ab625914",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Centinela",
+              "based_on": "181425771b0e5cda2deb83323200f9785aec7141fef903b57cbc0c81ab625914",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Centinela",
+              "based_on": "181425771b0e5cda2deb83323200f9785aec7141fef903b57cbc0c81ab625914",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Sentinela",
+              "based_on": "181425771b0e5cda2deb83323200f9785aec7141fef903b57cbc0c81ab625914",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Sentinela",
+              "based_on": "181425771b0e5cda2deb83323200f9785aec7141fef903b57cbc0c81ab625914",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Grenzwächter",
+              "based_on": "181425771b0e5cda2deb83323200f9785aec7141fef903b57cbc0c81ab625914",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Sentinelle",
+              "based_on": "181425771b0e5cda2deb83323200f9785aec7141fef903b57cbc0c81ab625914",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Wartownik",
+              "based_on": "181425771b0e5cda2deb83323200f9785aec7141fef903b57cbc0c81ab625914",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "skin.Lothlorien.woodland_woman": {
+          "source": "Forester",
+          "context": {
+            "meaning": "Name of one player skin: a woman elf of the forest in everyday clothes: green dress, flower crown. Feminine form where the language marks gender. Not a forestry job title; it means a woman who lives in and tends the woods.",
+            "location": "Dressing Room: skin name under the preview",
+            "trigger": "Shown when the player selects this skin.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short title, noun phrase; feminine noun in gendered languages.",
+            "constraints": "Keep it short: the Dressing Room cuts names wider than about 15 average letters, so do not add the place name (the pack title 'Elves of Lothlórien' gives it). No Tolkien character names."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Lesní elfka",
+              "based_on": "7757180b704df537436d42c6ac6e0b0b948b3ed401c08826c08b3202936a0eb9",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Elfa del bosque",
+              "based_on": "7757180b704df537436d42c6ac6e0b0b948b3ed401c08826c08b3202936a0eb9",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Elfa del bosque",
+              "based_on": "7757180b704df537436d42c6ac6e0b0b948b3ed401c08826c08b3202936a0eb9",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Elfa da floresta",
+              "based_on": "7757180b704df537436d42c6ac6e0b0b948b3ed401c08826c08b3202936a0eb9",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Elfa da floresta",
+              "based_on": "7757180b704df537436d42c6ac6e0b0b948b3ed401c08826c08b3202936a0eb9",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Waldelbin",
+              "based_on": "7757180b704df537436d42c6ac6e0b0b948b3ed401c08826c08b3202936a0eb9",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Elfe sylvestre",
+              "based_on": "7757180b704df537436d42c6ac6e0b0b948b3ed401c08826c08b3202936a0eb9",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Leśna elfka",
+              "based_on": "7757180b704df537436d42c6ac6e0b0b948b3ed401c08826c08b3202936a0eb9",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "skin.Lothlorien.woodland_man": {
+          "source": "Pathfinder",
+          "context": {
+            "meaning": "Name of one player skin: a man elf scout who knows the forest paths: light jerkin, satchel strap. Masculine form where the language marks gender. Avoid words that mean 'boy scout' (German Pfadfinder).",
+            "location": "Dressing Room: skin name under the preview",
+            "trigger": "Shown when the player selects this skin.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short title, noun phrase; masculine noun in gendered languages.",
+            "constraints": "Keep it short: the Dressing Room cuts names wider than about 15 average letters, so do not add the place name (the pack title 'Elves of Lothlórien' gives it). No Tolkien character names."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Stopař",
+              "based_on": "71bf6de55b991ba426579bd3a3674c037cf2aa0c5e87f756b1f64820cfe56c13",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Explorador",
+              "based_on": "71bf6de55b991ba426579bd3a3674c037cf2aa0c5e87f756b1f64820cfe56c13",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Explorador",
+              "based_on": "71bf6de55b991ba426579bd3a3674c037cf2aa0c5e87f756b1f64820cfe56c13",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Batedor",
+              "based_on": "71bf6de55b991ba426579bd3a3674c037cf2aa0c5e87f756b1f64820cfe56c13",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Batedor",
+              "based_on": "71bf6de55b991ba426579bd3a3674c037cf2aa0c5e87f756b1f64820cfe56c13",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Spurenleser",
+              "based_on": "71bf6de55b991ba426579bd3a3674c037cf2aa0c5e87f756b1f64820cfe56c13",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Éclaireur",
+              "based_on": "71bf6de55b991ba426579bd3a3674c037cf2aa0c5e87f756b1f64820cfe56c13",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Tropiciel",
+              "based_on": "71bf6de55b991ba426579bd3a3674c037cf2aa0c5e87f756b1f64820cfe56c13",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "skin.Lothlorien.lady": {
+          "source": "Highborn Lady",
+          "context": {
+            "meaning": "Name of one player skin: a noble elf woman of the Golden Wood: white gown, silver circlet. Generic noble title, not a named character (never 'Lady of Lórien' or 'Lady of the Galadhrim').",
+            "location": "Dressing Room: skin name under the preview",
+            "trigger": "Shown when the player selects this skin.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short title, noun phrase; feminine noun phrase in gendered languages.",
+            "constraints": "Keep it short: the Dressing Room cuts names wider than about 15 average letters, so do not add the place name (the pack title 'Elves of Lothlórien' gives it). No Tolkien character names."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Urozená paní",
+              "based_on": "ba10172c4ba1c59fe1fe1b9e787be1963f2572eee652b459908d992445e86b8a",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Dama noble",
+              "based_on": "ba10172c4ba1c59fe1fe1b9e787be1963f2572eee652b459908d992445e86b8a",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Dama noble",
+              "based_on": "ba10172c4ba1c59fe1fe1b9e787be1963f2572eee652b459908d992445e86b8a",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Dama nobre",
+              "based_on": "ba10172c4ba1c59fe1fe1b9e787be1963f2572eee652b459908d992445e86b8a",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Dama nobre",
+              "based_on": "ba10172c4ba1c59fe1fe1b9e787be1963f2572eee652b459908d992445e86b8a",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Edle Dame",
+              "based_on": "ba10172c4ba1c59fe1fe1b9e787be1963f2572eee652b459908d992445e86b8a",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Noble dame",
+              "based_on": "ba10172c4ba1c59fe1fe1b9e787be1963f2572eee652b459908d992445e86b8a",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Szlachetna pani",
+              "based_on": "ba10172c4ba1c59fe1fe1b9e787be1963f2572eee652b459908d992445e86b8a",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "skin.Lothlorien.lord": {
+          "source": "Highborn Lord",
+          "context": {
+            "meaning": "Name of one player skin: a noble elf man of the Golden Wood: green robe, gold circlet. Generic noble title, not a named character (never 'Lord of the Galadhrim').",
+            "location": "Dressing Room: skin name under the preview",
+            "trigger": "Shown when the player selects this skin.",
+            "tone": "Concise Minecraft UI",
+            "grammar": "Short title, noun phrase; masculine noun phrase in gendered languages.",
+            "constraints": "Keep it short: the Dressing Room cuts names wider than about 15 average letters, so do not add the place name (the pack title 'Elves of Lothlórien' gives it). No Tolkien character names."
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "Urozený pán",
+              "based_on": "398960fd37b3167b6d9bb6a025a2010e967e9d6890c972aa1187fe6671b9b317",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "Señor noble",
+              "based_on": "398960fd37b3167b6d9bb6a025a2010e967e9d6890c972aa1187fe6671b9b317",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "Señor noble",
+              "based_on": "398960fd37b3167b6d9bb6a025a2010e967e9d6890c972aa1187fe6671b9b317",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "Senhor nobre",
+              "based_on": "398960fd37b3167b6d9bb6a025a2010e967e9d6890c972aa1187fe6671b9b317",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "Senhor nobre",
+              "based_on": "398960fd37b3167b6d9bb6a025a2010e967e9d6890c972aa1187fe6671b9b317",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "Edler Herr",
+              "based_on": "398960fd37b3167b6d9bb6a025a2010e967e9d6890c972aa1187fe6671b9b317",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "Noble seigneur",
+              "based_on": "398960fd37b3167b6d9bb6a025a2010e967e9d6890c972aa1187fe6671b9b317",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "Szlachetny pan",
+              "based_on": "398960fd37b3167b6d9bb6a025a2010e967e9d6890c972aa1187fe6671b9b317",
+              "status": "ai-draft"
+            }
+          }
+        }
+      }
     }
   },
   "glossary": {
