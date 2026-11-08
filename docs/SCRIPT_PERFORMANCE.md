@@ -1,5 +1,19 @@
 # Script performance
 
+Tester freeze, 2026-11-07 (tablet, diagnostic build 0.8.1 DIAG: every pack callback timed per file, leaf
+decay off; build scripts in `temp/lothlorien-diag/`, not in git): a **3.5 s freeze still happened with leaf
+decay off, and Lothlorien scripts ran 0 ms in it**. Leaf decay and our scripts are ruled out; the freeze is
+in the engine (suspects: generating new chunks with tree-grid giants, or rendering on the device). The same
+run showed Mallorn trees without green leaves in a new world. Cause (owner's log, 2026-11-08): the DIAG wrapper
+was a Proxy over the native `world`; in the game `world.afterEvents` is read-only and non-configurable, so
+returning a wrapped signal broke the Proxy invariant and threw at the first `world.afterEvents` read
+(`blocks.js:213`). Loading stopped, later custom components were never registered, and those blocks
+(leaves, flowers, litter, doors, items with components) became unknown. The release build is not affected.
+Fixed in 0.8.2 DIAG (wrappers proxy their own empty object; the load test models read-only properties with
+`STRICT_NATIVE=1`; the start message reports registered/expected components). This also means the owner's
+freezes in that build (36 s at spawn 0.8 min after load, 2 s while flying) happened with almost no
+Lothlorien script running.
+
 Village finishing follow-up, 2026-10-16: [measured offline workload and engine
 profiling steps](VILLAGES.md). Decorative village foliage now
 skips decay BFS, debug-only depth caching skips non-debug players, hidden lighting
