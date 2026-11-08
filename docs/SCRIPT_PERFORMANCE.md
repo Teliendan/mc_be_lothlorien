@@ -16,6 +16,9 @@ Changes for the next release (2026-11-08): leaf decay is event-driven, with no r
 a PC; relative numbers): a support record cost ~1.7 KB (about 27 MB at the 16,384 cap), a random tick 25 us against
 10 us stateless, and the old leaf memo 11 MB per 100k leaves; the longest call including garbage collection was
 12 ms, so neither cache explains a second-long freeze by itself. Retest with the next DIAG build.
+0.8.3 DIAG (2026-11-08) is built from commit `d8797c8` with leaf decay on and the slowest single call in the
+chat line: `node temp/lothlorien-diag/make_diag.mjs 0.8.3 <commit>`, then `python -B temp/lothlorien-diag/package.py 0.8.3`
+(workspace root; Czech tester steps in `temp/lothlorien-diag/NAVOD.txt`).
 
 The 0.8.1 DIAG
 run showed Mallorn trees without green leaves in a new world. Cause (owner's log, 2026-11-08): the DIAG wrapper

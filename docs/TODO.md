@@ -78,7 +78,8 @@ Target: tester build on the weekend of 2026-10-24/25.
   (now `tools/build_tree_grid.mjs`, `tests/tree_grid.mjs`, suite `tree-grid`) are gone.
   - [ ] Clear workspace `temp/localization/` once the translations are final.
 - [ ] **Tester feedback** worked in.
-- [ ] **Release package:** version bump, `.\mods package lothlorien --release`, a Defender scan of
+- [ ] **Release package:** version bump (to 0.8.4 or higher: testers have 0.8.1-0.8.3 DIAG builds with the same
+  UUIDs installed, and a lower version does not upgrade them), `.\mods package lothlorien --release`, a Defender scan of
   `dist/lothlorien` (two scans minutes apart; skill `bedrock-modding` reference 05), and a first
   release note written by hand.
 - The website (wiki, documents, download) is a separate project.
