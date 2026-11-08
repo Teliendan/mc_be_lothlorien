@@ -214,6 +214,10 @@
     },
     {
       "featureId": "lothlorien:growing",
+      "pattern": "lothlorien_bp/scripts/leaf_decay.js"
+    },
+    {
+      "featureId": "lothlorien:growing",
       "pattern": "lothlorien_bp/scripts/leaf_fall.js"
     },
     {
