@@ -109,6 +109,9 @@ Creature groups: [CREATURES.md](CREATURES.md).
 - Adventure players: no scripted strip/merge (2026-10-23).
 - 2026-11-08: covers become replaceable for native stacking; the scripted (third-person) swing stays where no native route
   exists (stripping, slab merge, bone meal, nectar/dew bottling, firefly release).
+- 2026-11-09: native-swing alternatives rejected, the scripted swing stays: slab fold (merge would behave differently
+  by circumstance), letting vanilla bone meal grow then swapping the plants (flower flicker), `entity_placer` firefly
+  bottle (spawner interaction), interactable blocks (`onPlayerInteract`). Research: workspace `arm-swing.md`.
 
 ## Real limits (accepted)
 - No dispenser hooks for bone meal, rope or fireflies (no Script API event).
