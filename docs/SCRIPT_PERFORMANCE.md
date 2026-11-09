@@ -35,7 +35,7 @@ pattern revealed near players); try the leaf render method (`TECHNICAL_NOTES.md`
 owner's look pending). Action bar left as it is: vanilla `hud_screen.json` fades it with a 3 s `in_expo` alpha
 animation and no separate hold time, so a 2 s resend could show a dip; only an in-game measurement would justify it.
 
-0.8.4 DIAG (2026-11-10, commit `46ba960`, without the leaf render change): tick gaps counted from 150 / 300 / 700 ms,
+0.8.4 DIAG (2026-11-10, rebuilt from commit `c38aa3e`: leaf flicker fix included; the skin pack is added by `git archive <commit> lothlorien_skins` into `out/` before `package.py`): tick gaps counted from 150 / 300 / 700 ms,
 an immediate chat line per gap (at most 5 a minute) and **a chat summary every minute** (longest gap, gap counts,
 script ms, dew flips, spawned / removed, entities within 64 blocks, time of day). A freeze the tester sees in a minute
 whose summary shows no long gap was client-side. Build as before with `0.8.4`; tester steps `NAVOD.txt`. Control
