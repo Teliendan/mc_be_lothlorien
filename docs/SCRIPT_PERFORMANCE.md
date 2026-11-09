@@ -1,5 +1,48 @@
 # Script performance
 
+## Engine-load audit, 2026-11-10 (static analysis of commit `46ba960`; nothing changed, nothing measured in game)
+
+Tester: 0.8.3 DIAG loads and reports no freeze, but freezes continue (short and longer, every few minutes, also
+standing still, a bit more inside the forest, with other add-ons too, not in vanilla). So what is left is below the
+monitor's 700 ms server-tick threshold or on the client (rendering), which no script timer can see. Script CPU is not
+the problem: about 20 light timer callbacks per second per player, every one bounded. Candidates are what the pack
+makes the **engine** do. Ranked by expected effect; all open until tried on the tablet:
+
+1. **Morning dew = mass block updates.** `lothlorien:dew_cover` random ticks flip the `dew` state on leaf litter and
+   blossoms in every ticking forest chunk (90 litter tries per tree, 5 trees per chunk). Each flip is a block update:
+   the client rebuilds that sub-chunk mesh and the chunk is saved again. Estimate: a few updates per second around the
+   player for the 200 s dawn window, then a long drying tail; every forest chunk in simulation range becomes dirty
+   once a day. Vanilla forests have almost no idle block updates. Fix without visible loss: form dew only on covers
+   near a player (it cannot be seen or collected from far away).
+2. **Leaves draw every inner face, double-sided.** `alpha_test_to_opaque` has no backface culling and custom blocks
+   do not cull leaf-to-leaf faces: in the six big tree structures 75,272 leaf faces are meshed for 20,630 exposed
+   ones (3.6x), each visible from both sides. This is also the cause of the known flicker (coplanar faces of touching
+   leaves). Untried: `alpha_test_single_sided_to_opaque` (backface culling: the two coplanar faces can no longer
+   fight, and the GPU fills half as much). Owner must judge the look.
+3. **Ambient creature budget.** Density limits allow 10 butterflies + 10 songbirds + 6 fireflies + 8 deer +
+   6 squirrels + 4 wardens + 3 swans near one player, on top of vanilla animals; 26 of them are flying pathfinders
+   (per entity the same settings as vanilla bee/parrot, but vanilla rarely has that many). All despawn by distance,
+   so herds are replaced continually. Trade-off route: lower the three flier limits.
+4. Small: the Harmony action bar is re-sent every second although it rarely changes; pressure plates poll at 4 ticks.
+
+Checked and fine: music is streamed; all block and item textures are 16 px (atlas not enlarged); block models have
+1-5 cubes for flora; worldgen rules are biome-gated; leaves have no tick; entities have
+`conditional_bandwidth_optimization`; no dynamic-property write on a timer.
+
+Owner decisions (2026-11-10): no thinning of the ambient creatures; dew waits for numbers (a plain radius would leave
+ground ahead of a walking player without dew, because dew builds up over minutes; the candidate fix is a fixed daily
+pattern revealed near players); try the leaf render method (`TECHNICAL_NOTES.md` "Mallorn leaf flicker", deployed,
+owner's look pending). Action bar left as it is: vanilla `hud_screen.json` fades it with a 3 s `in_expo` alpha
+animation and no separate hold time, so a 2 s resend could show a dip; only an in-game measurement would justify it.
+
+0.8.4 DIAG (2026-11-10, commit `46ba960`, without the leaf render change): tick gaps counted from 150 / 300 / 700 ms,
+an immediate chat line per gap (at most 5 a minute) and **a chat summary every minute** (longest gap, gap counts,
+script ms, dew flips, spawned / removed, entities within 64 blocks, time of day). A freeze the tester sees in a minute
+whose summary shows no long gap was client-side. Build as before with `0.8.4`; tester steps `NAVOD.txt`. Control
+add-on for a new vanilla world (`temp/lothlorien-diag/control/`, `control-addon-DIAG.mcpack`, steps
+`NAVOD-control.txt`): the same monitor and nothing else, to show the tablet's cost of any script add-on. Offline load
+tests pass; neither is game-tested. The release version must now exceed 0.8.4.
+
 Tester freezes (tablet), 2026-11-07/08. Diagnostic builds (every pack callback timed per file, leaf decay off;
 build scripts in `temp/lothlorien-diag/`, not in git). 0.8.1 DIAG: one **3.5 s freeze with 0 ms of Lothlorien
 scripts**. 0.8.2 DIAG (photos 2026-11-08): four reported freezes, two in the engine (1.5 s at night over the ocean

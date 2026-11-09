@@ -175,6 +175,8 @@ and remove runtime diagnostics`.
 
 ## Known issue: cutout flicker (Mallorn leaves)
 
+**Solved 2026-11-10** by three-direction culling (owner accepted in game): `TECHNICAL_NOTES.md` "Mallorn leaf flicker". The text below is history.
+
 Seen in game (2026-09-29): custom cutout blocks shimmered at high frequency while the camera moved, in both Fancy and Vibrant
 Visuals. The saplings and Great Mallorn sprout are **solved** (their model had degenerate faces, see `bedrock-block-families`);
 flowers and corn were not reported after the redraw (the crop's geometry change is unconfirmed). **The Mallorn leaves and golden

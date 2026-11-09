@@ -78,7 +78,7 @@ Target: tester build on the weekend of 2026-10-24/25.
   (now `tools/build_tree_grid.mjs`, `tests/tree_grid.mjs`, suite `tree-grid`) are gone.
   - [ ] Clear workspace `temp/localization/` once the translations are final.
 - [ ] **Tester feedback** worked in.
-- [ ] **Release package:** version bump (to 0.8.4 or higher: testers have 0.8.1-0.8.3 DIAG builds with the same
+- [ ] **Release package:** version bump (to 0.8.5 or higher: testers have 0.8.1-0.8.4 DIAG builds with the same
   UUIDs installed, and a lower version does not upgrade them), `.\mods package lothlorien --release`, a Defender scan of
   `dist/lothlorien` (two scans minutes apart; skill `bedrock-modding` reference 05), and a first
   release note written by hand.
@@ -86,8 +86,7 @@ Target: tester build on the weekend of 2026-10-24/25.
 
 ## 4. Known issues (go into the tester brief and README)
 
-- Mallorn and golden leaves flicker. This is z-fighting between leaf faces; the known fixes look
-  worse (`GRAPHICS_TASKS.md`, "Known issue: cutout flicker").
+- Mallorn leaf flicker: solved 2026-11-10 (three-direction culling, `TECHNICAL_NOTES.md` "Mallorn leaf flicker").
 - Where independent worldgen starts overlap, a build can be cut. The engine allows no better.
 - Accepted engine limits: `parity/BLOCKS_ITEMS.md:97-106`, `NOT_IMPLEMENTED.md`.
 

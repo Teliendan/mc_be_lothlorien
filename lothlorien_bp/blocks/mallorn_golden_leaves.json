@@ -36,7 +36,11 @@
       "minecraft:sound": {
         "sound": "grass"
       },
-      "minecraft:geometry": "minecraft:geometry.full_block",
+      "minecraft:geometry": {
+        "identifier": "geometry.lothlorien.mallorn_leaf_cube",
+        "culling": "lothlorien:culling.mallorn_leaves",
+        "culling_layer": "lothlorien:culling_layer.leaves"
+      },
       "minecraft:material_instances": {
         "*": {
           "texture": "lothlorien:mallorn_golden_leaves",
