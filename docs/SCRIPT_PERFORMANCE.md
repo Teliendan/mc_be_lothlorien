@@ -38,13 +38,12 @@ animation and no separate hold time, so a 2 s resend could show a dip; only an i
 0.8.4 DIAG (2026-11-10, rebuilt from commit `c38aa3e`: leaf flicker fix included; the skin pack is added by `git archive <commit> lothlorien_skins` into `out/` before `package.py`): tick gaps counted from 150 / 300 / 700 ms,
 an immediate chat line per gap (at most 5 a minute) and **a chat summary every minute** (longest gap, gap counts,
 script ms, dew flips, spawned / removed, entities within 64 blocks, time of day). A freeze the tester sees in a minute
-whose summary shows no long gap was client-side. Build as before with `0.8.4`; tester steps `NAVOD.txt`. Control
-add-on for a new vanilla world (`temp/lothlorien-diag/control/`, `control-addon-DIAG.mcpack`, steps
-`NAVOD-control.txt`): the same monitor and nothing else, to show the tablet's cost of any script add-on. Offline load
+whose summary shows no long gap was client-side. Build as before with `0.8.4`; Czech tester steps (scratch). Control
+add-on for a new vanilla world (a separate scratch pack, not in git; Czech tester steps): the same monitor and nothing else, to show the tablet's cost of any script add-on. Offline load
 tests pass; neither is game-tested. The release version must now exceed 0.8.4.
 
 Tester freezes (tablet), 2026-11-07/08. Diagnostic builds (every pack callback timed per file, leaf decay off;
-build scripts in `temp/lothlorien-diag/`, not in git). 0.8.1 DIAG: one **3.5 s freeze with 0 ms of Lothlorien
+build scripts are scratch, not in git). 0.8.1 DIAG: one **3.5 s freeze with 0 ms of Lothlorien
 scripts**. 0.8.2 DIAG (photos 2026-11-08): four reported freezes, two in the engine (1.5 s at night over the ocean
 outside the forest, 1 ms of scripts; 0.9 s, 30 ms) and **two in our scripts** (0.8 s with 793 ms and 1.1 s with
 1384 ms, both standing in Lothlorien). So "our scripts are ruled out" (written after 0.8.1) was wrong; which callback
@@ -60,8 +59,8 @@ a PC; relative numbers): a support record cost ~1.7 KB (about 27 MB at the 16,38
 10 us stateless, and the old leaf memo 11 MB per 100k leaves; the longest call including garbage collection was
 12 ms, so neither cache explains a second-long freeze by itself. Retest with the next DIAG build.
 0.8.3 DIAG (2026-11-08) is built from commit `d8797c8` with leaf decay on and the slowest single call in the
-chat line: `node temp/lothlorien-diag/make_diag.mjs 0.8.3 <commit>`, then `python -B temp/lothlorien-diag/package.py 0.8.3`
-(workspace root; Czech tester steps in `temp/lothlorien-diag/NAVOD.txt`).
+chat line: built by a scratch script that copies the pack at that commit, adds the timing wrapper and packages it
+(not kept; Czech tester steps were separate).
 
 The 0.8.1 DIAG
 run showed Mallorn trees without green leaves in a new world. Cause (owner's log, 2026-11-08): the DIAG wrapper

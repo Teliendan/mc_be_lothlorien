@@ -45,8 +45,8 @@ Evidence, read 2026-10-10:
 - [Wheat, revision 3800757](https://minecraft.wiki/w/Wheat?oldid=3800757),
   harvesting: mature wheat gives one wheat, Fortune affects seeds only, young
   crop returns one seed. The generic 1–4 seed sentence is superseded here by
-  the explicit Bedrock table in Fortune. Saved page text is under workspace
-  `temp/acorn-fortune/`.
+  the explicit Bedrock table in Fortune. The page text was not kept; re-fetch
+  the cited Minecraft Wiki page to re-check.
 - [Official 26.50 changelog](https://feedback.minecraft.net/hc/en-us/articles/48826825649933-Minecraft-Bedrock-Edition-26-50-Changelog-Wilderness-Bound)
   documents the modern loot condition changes; no wheat/Fortune harvest change
   found. This is not proof of native crop implementation internals.

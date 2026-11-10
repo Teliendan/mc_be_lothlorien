@@ -91,7 +91,7 @@ Fortune IV+ sticks follow the Wiki's command-only 10% column; acorns plateau at
 No-tool and missing/zero Fortune use the base through a negated positive test.
 Shears/Silk Touch still suppress all auxiliaries, including enchanted shears.
 
-Raw retrieved HTML stays in `temp/acorn-fortune/`; SHA256:
+The retrieved pages were not kept; to re-check, fetch the two Minecraft Wiki pages and compare the SHA256 of the raw HTML:
 Fortune `2612e8183ab4468035f6101104d69b6ef933399b6d79c4920f519d620d4d38af`,
 Leaves `3778567483d958f3b56b7c53b54e46d290d08a67ae42b5f28f51a4e055e14d3f`.
 
