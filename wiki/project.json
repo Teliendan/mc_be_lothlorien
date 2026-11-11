@@ -342,6 +342,10 @@
     },
     {
       "featureId": "lothlorien:growing",
+      "pattern": "lothlorien_bp/scripts/village_geom.js"
+    },
+    {
+      "featureId": "lothlorien:growing",
       "pattern": "lothlorien_bp/scripts/village_loop.js"
     },
     {

@@ -16,7 +16,7 @@
 // leaf carpets, ferns, golden ferns, elanor, niphredil, wildflowers, a few firefly bushes and small moss patches. Blobs (a jittered grid, nearest point wins)
 // pick a theme each, so the floor reads as patches and drifts, not confetti; flowers lie near the trunk feet, litter and ferns farther out; the central tree
 // (the one nearest the rope) gets the widest and densest disc. Pure and deterministic (hash of cell and village seed). Not verified in game.
-import { hullOf, growRect, drive } from "./village_planner.js";
+import { hullOf, growRect, drive, layerCells } from "./village_geom.js";
 import { FENCE_IDS, LINKS, POST_IDS } from "./rail_mender_rules.js";
 
 export const ROPE_ID = "lothlorien:elven_rope_hanging";
@@ -41,13 +41,8 @@ export const isGround = (n) => n !== undefined && n !== null && !isAir(n) && !WE
 
 // Rope pieces of the layer y (the deck cell row) inside the rect. A generator, so the runtime job can yield: yields every REPAIR.scanChunk reads.
 export function* findRopesGen(at, rect, y) {
-  const out = [];
-  let n = 0;
-  for (let x = rect.x0; x <= rect.x1; x++) for (let z = rect.z0; z <= rect.z1; z++) {
-    if (at(x, y, z) === ROPE_ID) out.push({ x, y, z });
-    if (++n % REPAIR.scanChunk === 0) yield;
-  }
-  return out;
+  const cells = yield* layerCells(at, y, [ROPE_ID], rect);
+  return cells.map(([x, z]) => ({ x, y, z }));
 }
 
 // The fit of the rope column that has `top` as its upper piece (in the deck layer). -> { blocks: [{ x, y, z, id, states }], buried, hung, face } | { error }
@@ -327,12 +322,8 @@ function vnoise(x, z, scale, k) { // smooth value noise in [0, 1)
 // Trunks of the village trees: connected mallorn log cells of the layer y (just under the lowest deck) with at least FLOOR.minTrunk cells (a balcony pillar
 // is a plus of 5). -> [{ x, z, r, size }] (x, z = centre of the cells, r = radius of equal area)
 export function* findTrunksGen(at, rect, y) {
-  const logs = new Map();
-  let n = 0;
-  for (let x = rect.x0; x <= rect.x1; x++) for (let z = rect.z0; z <= rect.z1; z++) {
-    if (isLog(at(x, y, z))) logs.set(`${x},${z}`, [x, z]);
-    if (++n % REPAIR.scanChunk === 0) yield;
-  }
+  const logs = new Map(), cells = yield* layerCells(at, y, [...LOGS], rect);
+  for (const [x, z] of cells) logs.set(`${x},${z}`, [x, z]);
   const seen = new Set(), out = [];
   for (const [k0, s] of logs) {
     if (seen.has(k0)) continue;
@@ -498,26 +489,48 @@ export const planForestFloor = (at, rect, trunks, ropeFoot, seed, o) => drive(pl
 export function* closeUnusedExitsGen(at, rect, levels) {
   const out = [], plank = n => /^lothlorien:mallorn_(heartwood_)?planks$/.test(n ?? "");
   const surface = n => plank(n) || /^lothlorien:mallorn_(heartwood_)?(slab|stairs)$/.test(n ?? "");
-  const air = n => AIRS.has(n) || /^minecraft:light_block_\d+$/.test(n ?? "");
   const shoulder = n => FENCE_IDS.includes(n) || POST_IDS.includes(n);
-  for (const y of new Set(levels)) for (let x = rect.x0 + 2; x <= rect.x1 - 2; x++) {
+  for (const y of new Set(levels)) {
+    // A mouth centre has a shoulder two cells to each side along one axis, so only such cells are visited, in the order of a plain x-then-z loop.
+    // A cap adds shoulders while the scan runs: note() files the new centres, and those still ahead get their turn just as in a full scan.
+    const shoulders = new Set(), centres = new Map(), K = (x, z) => `${x},${z}`;
+    const note = (x, z) => {
+      shoulders.add(K(x, z));
+      for (const [a, b] of [[1, 0], [0, 1]]) for (const s of [-1, 1]) {
+        if (!shoulders.has(K(x + 4 * s * a, z + 4 * s * b))) continue;
+        const cx = x + 2 * s * a, cz = z + 2 * s * b;
+        if (cx < rect.x0 + 2 || cx > rect.x1 - 2 || cz < rect.z0 + 2 || cz > rect.z1 - 2) continue;
+        if (!centres.has(cx)) centres.set(cx, new Set());
+        centres.get(cx).add(cz);
+      }
+    };
+    const found = yield* layerCells(at, y + 1, [...FENCE_IDS, ...POST_IDS], rect);
+    for (const [x, z] of found) note(x, z);
+    for (let x = rect.x0 + 2; x <= rect.x1 - 2; x++) {
     yield;
-    for (let z = rect.z0 + 2; z <= rect.z1 - 2; z++) {
-      if (!plank(at(x,y,z)) || !air(at(x,y+1,z))) continue;
+    const column = centres.get(x);
+    if (!column) continue;
+    for (let last = -Infinity;;) {
+      let z = Infinity;
+      for (const v of column) if (v > last && v < z) z = v;
+      if (z === Infinity) break;
+      last = z;
+      if (!plank(at(x,y,z)) || !isAir(at(x,y+1,z))) continue;
       for (const [dx,dz] of OFFSETS) {
         const px = -dz, pz = dx;
         if (![-2,2].every(s => shoulder(at(x+px*s,y+1,z+pz*s)))) continue;
         if (![-1,0,1].every(s => {
           const a=x+px*s,b=z+pz*s;
-          return plank(at(a,y,b)) && air(at(a,y+1,b)) && air(at(a,y+2,b))
-            && plank(at(a-dx,y,b-dz)) && air(at(a-dx,y+1,b-dz))
+          return plank(at(a,y,b)) && isAir(at(a,y+1,b)) && isAir(at(a,y+2,b))
+            && plank(at(a-dx,y,b-dz)) && isAir(at(a-dx,y+1,b-dz))
             && at(a+dx,y,b+dz) !== undefined && ![-1,0,1].some(h => surface(at(a+dx,y+h,b+dz)));
         })) continue;
         const rails = [-1,0,1].map(s => ({x:x+px*s,y:y+1,z:z+pz*s}));
         const states = Object.fromEntries(LINKS.map(l => [l.state, l.dx * px + l.dz * pz !== 0]));
         const plan = {kind:"railcap",x,y,z,cells:[],rails,lanterns:[],blocks:rails.map(p => ({...p,id:FENCE_IDS[0],states}))};
-        out.push(plan); at.apply(plan); break;
+        out.push(plan); at.apply(plan); for (const p of rails) note(p.x, p.z); break;
       }
+    }
     }
   }
   return out;

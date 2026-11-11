@@ -602,6 +602,17 @@ export function discoveryCoverage(res, opts = {}) {
   }
   return out;
 }
+// The game's native filtered layer query, on the simulated world: cells of height y whose block is one of ids. Terrain holds none of the ids the planner asks for.
+export function worldLayer(world) {
+  let byY = null;
+  return function* (y, ids, r) {
+    if (!byY) { byY = new Map(); for (const [k, n] of world) { const [x, yy, z] = wdecode(k); if (!byY.has(yy)) byY.set(yy, []); byY.get(yy).push([x, z, n]); } }
+    const want = new Set(ids), out = [];
+    for (const [x, z, n] of byY.get(y) ?? []) if (want.has(n) && inRect(r, x, z)) out.push([x, z]);
+    yield;
+    return out.sort((p, q) => p[0] - q[0] || p[1] - q[1]);
+  };
+}
 export function planLoops(res, world, states, opts = {}) {
   // Terrain (Bedrock rule, verified in the flat world "ET" 2026-10-10): the structure's start jigsaw is placed `start_height` from the TOP SOLID block, and
   // it sits at world y 0 here (the start piece is placed with its anchor at the origin), so the top block is at ROOTS - 1 (start_height -(ROOTS - 1)): tree y 0 = first air cell.
@@ -628,7 +639,7 @@ export function planLoops(res, world, states, opts = {}) {
   out.rect = rect;
   Object.assign(out, { found: known.length, complete: known.length === all.length, rounds: found.rounds, sizes: found.sizes, chunks: Math.max(...found.sizes), stable: found.stable });
   const walkAt=planterWalkName((x,y,z)=>({name:rawAt(x,y,z),states:states.get(wkey(x,y,z))}));
-  const at = boundedReader(walkAt, rect), r = planVillage(at, known, { budget: opts.budget ?? PLAN.budget, rect: opts.noRect ? undefined : rect, ...(opts.plan ?? {}) });
+  const at = boundedReader(walkAt, rect, opts.noLayer ? undefined : worldLayer(world)), r = planVillage(at, known, { budget: opts.budget ?? PLAN.budget, rect: opts.noRect ? undefined : rect, ...(opts.plan ?? {}) });
   out.nRaw = r.nRaw; out.log = r.log;
   out.merges = 0; out.mergeCells = [];
   for (const p of r.merges) { // merges first (the planner scored the links on the merged network), checked like a link

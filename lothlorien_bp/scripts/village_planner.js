@@ -8,8 +8,11 @@
 //   2 candidates  every exit-exit / exit-side / side-side / plaza / L target in reach (geometry only)
 //   3 score       value = shortcut gained (walking distance through the existing deck network) - cost of the new link
 //   4 greedy      take the best, build its real plan, apply it to an overlay world, enumerate and score again; stop at the budget
+import { hullOf, chunkAlign, growRect, inRect, chunksIn, drive } from "./village_geom.js";
 import { repairGen } from "./village_repair.js";
 import { PLANKS, SLAB, FENCE, isPlank, LOOP, exitAt, sideTarget, sideStarts, scanAhead, findPlazaPartners, findLs, planSpan, planPlaza, planL, blockedCells, clutter, planPier, finalBlocks, isNewKind, MERGE, findMerges, planMerge } from "./village_loop.js";
+
+export { hullOf, chunkAlign, growRect, inRect, chunksIn, drive }; // their home is village_geom.js; existing importers keep working
 
 // budget: extra links per village (owner 2026-10-09: up to 3). minNet/minRatio: a link must save at least 30 cells of walking and be 2.5 times shorter
 // than the way round. value = min(dnet, maxNet) - 2 len - kindCost - landingCost - 0.5 |offset|; spread: a candidate within 12 blocks of a chosen end loses 15.
@@ -126,9 +129,6 @@ export function realize(at, c) {
   } catch (e) { return { error: String(e.message ?? e) }; }
 }
 
-// Generators (`function*`) yield now and then so the runtime can run a planner inside system.runJob without one long tick; `drive` runs one to the end.
-export function drive(gen) { let r = gen.next(); while (!r.done) r = gen.next(); return r.value; }
-
 export function* scoreGen(at, cands, opts) {
   const o = { ...PLAN, ...opts }, maps = new Map();
   const dm = function* (A) { const k = key(A.x, A.y, A.z); if (!maps.has(k)) maps.set(k, yield* walkDistGen(at, A, 500)); return maps.get(k); };
@@ -148,7 +148,7 @@ export function* scoreGen(at, cands, opts) {
 // overlay world: writes of chosen plans on top of the snapshot
 // Over a boundedReader (at.nkey / at.rect) the lookups use numeric keys (no string building per read); `over` keeps the string keys for tools.
 export function overlay(at) {
-  const over = new Map(), fast = new Map(), nkey = at.nkey, rect = at.rect;
+  const over = new Map(), fast = new Map(), byY = new Map(), nkey = at.nkey, rect = at.rect;
   const f = (x, y, z) => {
     const v = nkey && inRect(rect, x, z) ? fast.get(nkey(x, y, z)) : over.get(key(x, y, z));
     return v !== undefined ? v : at(x, y, z);
@@ -156,8 +156,19 @@ export function overlay(at) {
   f.apply = (plan) => {
     for (const [k, b] of finalBlocks(plan)) {
       over.set(k, b.id);
-      if (nkey) { const [x, y, z] = k.split(",").map(Number); if (inRect(rect, x, z)) fast.set(nkey(x, y, z), b.id); }
+      const [x, y, z] = k.split(",").map(Number);
+      if (nkey && inRect(rect, x, z)) fast.set(nkey(x, y, z), b.id);
+      let level = byY.get(y);
+      if (!level) byY.set(y, level = new Map());
+      level.set(`${x},${z}`, [x, z, b.id]);
     }
+  };
+  // the base layer with this overlay's writes at height y taken out or added, x then z like a plain loop over the rect
+  if (at.layer) f.layer = function* (y, ids, r) {
+    const want = new Set(ids), level = byY.get(y), base = yield* at.layer(y, ids, r);
+    const out = level ? base.filter(([x, z]) => !level.has(`${x},${z}`)) : base.slice();
+    if (level) for (const [x, z, id] of level.values()) if (want.has(id) && inRect(r, x, z)) out.push([x, z]);
+    return out.sort((p, q) => p[0] - q[0] || p[1] - q[1]);
   };
   f.over = over;
   f.rect = rect; f.nkey = nkey; f.size = at.size;
@@ -215,12 +226,6 @@ export function* planGen(at0, markers, opts = {}) {
 }
 
 // ---- ticking area discovery ---------------------------------------------------------------------------------------------------------
-// A rectangle is { x0, x1, z0, z1 } in blocks (inclusive). Areas load whole chunks, so boxes are chunk aligned.
-export const hullOf = (cells) => ({ x0: Math.min(...cells.map((c) => c[0])), x1: Math.max(...cells.map((c) => c[0])), z0: Math.min(...cells.map((c) => c[2])), z1: Math.max(...cells.map((c) => c[2])) });
-export const chunkAlign = (r) => ({ x0: (r.x0 >> 4) << 4, x1: ((r.x1 >> 4) << 4) + 15, z0: (r.z0 >> 4) << 4, z1: ((r.z1 >> 4) << 4) + 15 });
-export const growRect = (r, m) => ({ x0: r.x0 - m, x1: r.x1 + m, z0: r.z0 - m, z1: r.z1 + m });
-export const inRect = (r, x, z) => x >= r.x0 && x <= r.x1 && z >= r.z0 && z <= r.z1;
-export const chunksIn = (r) => ((r.x1 - r.x0 + 1) >> 4) * ((r.z1 - r.z0 + 1) >> 4);
 
 // Done-list (world dynamic property, JSON): rectangles of villages that were planned. A marker inside one is removed without planning.
 export const parseDone = (s) => { try { const v = JSON.parse(s); return Array.isArray(v) ? v : []; } catch { return []; } };
@@ -280,7 +285,7 @@ export const discoverSync = (env, first, baseId) => drive(discoverGen(env, first
 // Memo: a palette of the names read (a few dozen per village) and one Uint16Array per 16 x 16 column slice and height (0 = not read yet,
 // 1 = unloaded). A Map entry per cell was ~150-180 B in QuickJS, 30-65 MB per village (watchdog warning, owner 2026-10-27); this is ~1 MB.
 // `.size()` = distinct reads so far (the planner's timing log), `.rect` / `.nkey` are used by overlay().
-export function boundedReader(get, rect) {
+export function boundedReader(get, rect, layer) {
   const nkey = (x, y, z) => ((x - rect.x0) * 4096 + (z - rect.z0)) * 1024 + (y + 256);
   const pages = new Map(), names = [undefined, undefined], codes = new Map();
   let reads = 0;
@@ -299,6 +304,11 @@ export function boundedReader(get, rect) {
     return v;
   };
   reader.size = () => reads; reader.rect = rect; reader.nkey = nkey;
+  // layer (optional): generator (y, ids, r) -> [[x, z]] of the world's cells in r; clipped to this reader's rect, which is all the reader can see
+  if (layer) reader.layer = function* (y, ids, r) {
+    const clip = { x0: Math.max(r.x0, rect.x0), x1: Math.min(r.x1, rect.x1), z0: Math.max(r.z0, rect.z0), z1: Math.min(r.z1, rect.z1) };
+    return clip.x0 > clip.x1 || clip.z0 > clip.z1 ? [] : yield* layer(y, ids, clip);
+  };
   return reader;
 }
 

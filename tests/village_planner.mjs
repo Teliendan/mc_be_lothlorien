@@ -2,6 +2,7 @@
 import { test, finish } from './test_helpers.mjs';
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { layerCells } from "../lothlorien_bp/scripts/village_geom.js";
 import { estimateDepth } from "../lothlorien_bp/scripts/depth.js";
 import { B } from "../tools/flet_mallorn.mjs";
 import { PLANKS, FENCE } from "../tools/village_sim.mjs";
@@ -598,6 +599,21 @@ test("applyPlan models the runtime mend: links switch on towards deck and posts,
   assert.equal(f.states.get(wkey(0, 41, 0))["minecraft:connection_east"], true, "a plank neighbour links");
   assert.equal(f.states.get(wkey(0, 41, 5))["minecraft:connection_east"], false, "a stale link into air goes");
   assert.equal(off["minecraft:connection_east"], true, "the plan's own state object is untouched");
+});
+
+test("planner layer: an overlay adds and removes its own writes, keeps x-then-z order, and clips to the reader's rect", () => {
+  const w = new Map([["3,41,3", FENCE], ["1,41,5", FENCE], ["9,41,9", FENCE], ["2,40,2", PLANKS]]), rect = { x0: 0, x1: 8, z0: 0, z1: 8 };
+  const get = (x, y, z) => w.get(`${x},${y},${z}`) ?? "minecraft:air";
+  const layer = function* (y, ids, r) { const out = []; for (const [k, n] of w) { const [x, h, z] = k.split(",").map(Number); if (h === y && ids.includes(n) && PL.inRect(r, x, z)) out.push([x, z]); } yield; return out; };
+  const scan = (reader) => { const at = PL.overlay(reader); at.apply({ cells: [{ x: 3, y: 41, z: 3, kind: "air" }], rails: [{ x: 2, y: 41, z: 7, states: {} }] }); return PL.drive(layerCells(at, 41, [FENCE], rect)); };
+  assert.deepEqual(scan(PL.boundedReader(get, rect, layer)), [[1, 5], [2, 7]]);
+  assert.deepEqual(scan(PL.boundedReader(get, rect, layer)), scan(PL.boundedReader(get, rect)), "the same cells as the plain loop");
+});
+
+test("village modules: no import cycle between the planner and its repairs", () => {
+  const src = (n) => readFileSync(new URL(`../lothlorien_bp/scripts/${n}.js`, import.meta.url), "utf8");
+  assert.doesNotMatch(src("village_repair"), /from "\.\/village_planner\.js"/);
+  assert.doesNotMatch(src("village_geom"), /^import /m);
 });
 
 finish();

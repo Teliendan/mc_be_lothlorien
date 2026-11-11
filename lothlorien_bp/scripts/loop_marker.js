@@ -12,7 +12,7 @@
 //   5 populate   civilian elves: the tree pieces' `lothlorien:elf_post` entities are read, assigned and replaced by elves (elf_village.js).
 // The planner is one-shot: no polling, no retry loop. A failed run (quota, timeout, error) keeps the markers; they retry after world re-entry, at
 // most AREA.maxTries times per marker.
-import { BlockPermutation, system, world } from "@minecraft/server";
+import { BlockPermutation, BlockVolume, system, world } from "@minecraft/server";
 import { MARKER_ID, finalBlocks } from "./village_loop.js";
 import { villageDebug } from "./village_debug.js";
 import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, growRect, hullOf, chunksIn, describePick, describeMerge, VILLAGE_PLANS } from "./village_planner.js";
@@ -25,7 +25,7 @@ import { populateVillage } from "./elf_village.js";
 
 // START_DELAY_TICKS 5 (was 20, owner 2026-10-10: the village looked empty for a long time). JOB_SLICE_MS: one engine job step runs the planner's inner steps
 // until this many ms are used, then yields once; without it the job may advance only ONE inner step per tick (about 200 steps = 10 s).
-const START_DELAY_TICKS = 5, SETTLE_TICKS = 40, AREA_TIMEOUT_TICKS = 600, WRITES_PER_TICK = 32, JOB_SLICE_MS = 2;
+const START_DELAY_TICKS = 5, SETTLE_TICKS = 40, AREA_TIMEOUT_TICKS = 600, WRITES_PER_TICK = 32, JOB_SLICE_MS = 2, LAYER_TILE = 64;
 const TRIES = "lothlorien:loop_tries", DONE = VILLAGE_PLANS;
 const seen = new Set(), queue = [], failed = [];
 let claim = null, running = false, loggedQuota = false, areaAttempt = 0;
@@ -73,7 +73,17 @@ function* planAndBuild(dimension, found, budget, stats) {
     } catch {return undefined;}
   };
   const get = planterWalkName(raw);
-  let at = boundedReader(get, found.rect);
+  // Native filtered layer query for the planner's full-area scans, in tiles so that no single call is large; a yield between tiles.
+  const layer = function* (y, ids, r) {
+    const out = [];
+    for (let x = r.x0; x <= r.x1; x += LAYER_TILE) for (let z = r.z0; z <= r.z1; z += LAYER_TILE) {
+      const volume = new BlockVolume({ x, y, z }, { x: Math.min(x + LAYER_TILE - 1, r.x1), y, z: Math.min(z + LAYER_TILE - 1, r.z1) });
+      for (const p of dimension.getBlocks(volume, { includeTypes: ids }, true).getBlockLocationIterator()) out.push([p.x, p.z]);
+      yield;
+    }
+    return out.sort((p, q) => p[0] - q[0] || p[1] - q[1]);
+  };
+  let at = boundedReader(get, found.rect, layer);
   if (stats) stats.reads = at.size;
   const res = yield* planGen(at, found.known, { budget, rect: found.rect });
   const writes = new Map();

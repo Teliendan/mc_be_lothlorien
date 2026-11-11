@@ -174,6 +174,14 @@ again for every light, with "x,y,z" string keys. The reach is now found once per
 candidate and both use numeric grid indexes; `findMerges` yields every column.
 Measured (seeds 1-20, same harness): identical writes (hash) 20/20, longest step
 average 667 -> 126 ms, worst 1135 -> 273 ms, whole plan 5.2 -> 3.7 s (QuickJS in
-wasm; absolute times in game differ). Not done: native filtered scans for
-full-area layers, smaller discovery areas, fence repair limited to changed cells
+wasm; absolute times in game differ). The four full-layer scans of the planner
+(`findMerges`, rope, trunk and unused-exit scans) now ask `Dimension.getBlocks`
+with an `includeTypes` filter on a one-block-high volume, in tiles of at most
+64 x 64 with a job yield between tiles (`layerCells` in `village_geom.js`;
+`boundedReader` takes the query as an optional third argument, and a plain
+reader keeps the per-cell loop). Offline, 100 simulated villages: identical
+writes (hash) with and without the query, distinct reads 218 k -> 61 k per
+village (179 k with the per-cell loop); not measured in game, and
+there is no fallback if the query throws (the run ends in the "gave up" path).
+Not done: smaller discovery areas, fence repair limited to changed cells
 (owner: the mender must also repair jigsaw seams).

@@ -44,6 +44,9 @@ const markersLeft = () => mock.dimension().getEntities({ type: MARKER }).length;
 await scenario("an automatic entityLoad plans the village once, removes the markers, writes the done-list", async () => {
   const markers = setupV2();
   await loadScript("loop_marker.js");
+  let layerCalls = 0;
+  const dim = mock.dimension(), getBlocks = dim.getBlocks.bind(dim);
+  dim.getBlocks = (volume, filter, allowUnloaded) => { if (volume.from.y === volume.to.y) layerCalls++; return getBlocks(volume, filter, allowUnloaded); };
   assert.equal(mock.subscribers("after", "entityLoad"), 1); assert.equal(mock.subscribers("after", "entitySpawn"), 1);
   for (const i of [0, 7, 30]) mock.fire("entityLoad", { entity: markers[i] }); // several trees of one village load in the same moment
   mock.fire("entitySpawn", { entity: markers[1] });
@@ -69,6 +72,7 @@ await scenario("an automatic entityLoad plans the village once, removes the mark
   for (const b of direct.repairs.flatMap((p) => p.blocks)) assert.equal(mock.dimension().overrides.get(`${b.x},${b.y},${b.z}`)?.id, b.id, "the repairs (buried rope piece back to terrain, root logs) were written into the world");
   assert.match(grep(/planner: village at/)[0], / in \d+\.\d s$/, "the summary ends with the elapsed time");
   assert.equal(grep(/write\(s\) failed/).length, 0, "no false write failures");
+  assert.ok(layerCalls > 0, "the full-area scans use the native filtered layer query");
   assert.equal(direct.picks.length, 2, "V2 with the L cap: plaza + side-side (the old third pick was an L join longer than 16)");
   assert.ok(mock.dimension().overrides.size > 50, "the links were written into the world");
   const kinds = grep(/planner:   (plaza|sideside|exit|side|L) /).map((l) => l.match(/planner:   (\w+) /)[1]);

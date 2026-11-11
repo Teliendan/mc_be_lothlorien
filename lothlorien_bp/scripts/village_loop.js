@@ -12,6 +12,7 @@
 // World reader: at(x, y, z) -> block type id; undefined = not loaded. An "exit" is { x, y, z, dir: [dx, dz] }: x, z, y = the centre
 // deck cell of the railing row, dir = the way out (away from the platform the railing closes).
 import { bridgeShape } from "./village_bridge.js";
+import { layerCells } from "./village_geom.js";
 
 export const MARKER_ID = "lothlorien:loop_marker";
 export const PLANKS = "lothlorien:mallorn_planks", SLAB = "lothlorien:mallorn_slab", FENCE = "lothlorien:mallorn_fence", LANTERN = "lothlorien:elven_lantern", HEART = "lothlorien:mallorn_heartwood_planks";
@@ -673,12 +674,13 @@ function mergeSpan(at, y, d, g, run) {
 }
 // Every shared stretch within rect on level y: [{ y, d, g, a, run: [[x, z] ...], span: [lo, hi] }] (run = the P cells of the core in order along the rims), widest opening first.
 export function* findMerges(at, y, rect) {
-  const out = [];
+  const out = [], fences = yield* layerCells(at, y + 1, [FENCE], rect); // nothing is applied during this scan, so one list serves all four passes
   for (const d of [[1, 0], [0, 1]]) for (let g = 0; g <= MERGE.maxGap; g++) {
     const ok = new Set(), a = [d[1], d[0]];
-    for (let x = rect.x0; x <= rect.x1; x++) {
-      for (let z = rect.z0; z <= rect.z1; z++) if (at(x, y + 1, z) === FENCE && mergePair(at, y, d, g, x, z)) ok.add(`${x},${z}`);
-      yield; // every column (was every 8: up to ~1,600 reads in one step; owner 2026-10-27)
+    let n = 0;
+    for (const [x, z] of fences) {
+      if (mergePair(at, y, d, g, x, z)) ok.add(`${x},${z}`);
+      if (++n % 32 === 0) yield;
     }
     for (const k of ok) {
       const [x, z] = k.split(",").map(Number);

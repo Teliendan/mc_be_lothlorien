@@ -194,6 +194,13 @@ test("loop planner: 30 simulated villages - every join passes the shared walk ch
   console.log(`loop planner (30 villages): ${JSON.stringify(kinds)}, markers/village ${(markers / n).toFixed(1)}`);
 });
 
+test("loop planner: the layer path plans the same village as the plain scan", () => {
+  for (const r of villages().slice(0, 3)) {
+    const run = (noLayer) => { const states = new Map(), world = buildWorld(r.res, states), lp = planLoops(r.res, world, states, { noLayer }); return JSON.stringify({ picks: lp.picks.map((p) => [p.kind, p.planRef.cells.length, p.planRef.rails.length]), repairs: lp.repairs, merges: lp.mergeCells, log: lp.log }); };
+    assert.equal(run(false), run(true), `seed ${r.seed}`);
+  }
+});
+
 test("loop planner: simulated villages - every marker as the first one finds the whole village; a too small quota gives up cleanly without building", () => {
   let starts = 0, complete = 0;
   for (const r of villages().slice(0, 12)) { const c = discoveryCoverage(r.res, { shift: [(r.seed * 7) % 16, (r.seed * 3) % 16] }); starts += c.starts; complete += c.complete; assert.equal(c.errors, 0); }

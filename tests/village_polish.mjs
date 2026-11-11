@@ -6,7 +6,7 @@ import { framePlanters, clearSeatViews } from "../tools/village_polish.mjs";
 import { relinkFences } from "../tools/village_dress.mjs";
 import { connectionChanges, isLinkTarget, LINKS } from "../lothlorien_bp/scripts/rail_mender_rules.js";
 import { closeUnusedExitsGen } from "../lothlorien_bp/scripts/village_repair.js";
-import { drive, overlay, walkDist, walkDistGen } from "../lothlorien_bp/scripts/village_planner.js";
+import { boundedReader, drive, overlay, walkDist, walkDistGen } from "../lothlorien_bp/scripts/village_planner.js";
 
 const key = (x,y,z) => `${x},${y},${z}`;
 const PL = "lothlorien:mallorn_planks", F = "lothlorien:mallorn_fence";
@@ -67,6 +67,20 @@ for(const turn of [0,1,2,3]) {
   for(const step of [false,true,'up']) assert.equal(drive(closeUnusedExitsGen(mouth(true,step,turn),rect,[24])).length,0,"connected bridge/descending or rising half step remains open");
 }
 console.log("ok   village polish: upper unused mouth closes above a bridge, rotations, idempotence, real joins remain open");
+
+// Two mouths at a deck corner: capping the north one puts up the rail post that the east one still lacks, so a scan from a fixed shoulder list would miss it.
+{
+  const cells = new Map(), rect2 = {x0:0,x1:20,z0:0,z1:20};
+  for(let x=2;x<=11;x++) for(let z=2;z<=10;z++) cells.set(key(x,24,z),PL);
+  for(const [x,z] of [[8,10],[12,10],[11,6],[11,14]]) cells.set(key(x,25,z),F);
+  const get = (x,y,z)=>cells.get(key(x,y,z)) ?? "minecraft:air";
+  const layer = function* (y,ids,r) { const out=[]; for(const k of cells.keys()) { const [x,h,z]=k.split(",").map(Number); if(h===y && ids.includes(cells.get(k)) && x>=r.x0 && x<=r.x1 && z>=r.z0 && z<=r.z1) out.push([x,z]); } yield; return out; };
+  const plain = drive(closeUnusedExitsGen(overlay(boundedReader(get,rect2)),rect2,[24]));
+  const fast = drive(closeUnusedExitsGen(overlay(boundedReader(get,rect2,layer)),rect2,[24]));
+  assert.equal(plain.length,2,"the first cap makes the second mouth");
+  assert.deepEqual(fast,plain,"the layer path finds the same caps in the same order");
+  console.log("ok   village polish: a layer scan equals the plain scan, also when a cap creates the next mouth");
+}
 
 const walk = (x,y,z) => y===0 && x>=0 && x<100 && z===0 ? PL : "minecraft:air";
 const gen = walkDistGen(walk,{x:0,y:0,z:0}); let yields=0,r;
