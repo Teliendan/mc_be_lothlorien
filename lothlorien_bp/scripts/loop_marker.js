@@ -16,7 +16,7 @@ import { BlockPermutation, system, world } from "@minecraft/server";
 import { MARKER_ID, finalBlocks } from "./village_loop.js";
 import { villageDebug } from "./village_debug.js";
 import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, growRect, hullOf, chunksIn, describePick, describeMerge, VILLAGE_PLANS } from "./village_planner.js";
-import { rememberVillageArea } from "./village_area.js";
+import { isKnownVillageCell, rememberVillageArea } from "./village_area.js";
 import { describeRepair } from "./village_repair.js";
 import { LINKS, missingLinks } from "./rail_mender_rules.js";
 import { mendFence } from "./rail_connections.js";
@@ -206,7 +206,10 @@ function onMarker(entity, trigger) {
   if (seen.has(entity.id)) { dlog(`marker ${entity.id} already seen this session (${trigger})`); return; }
   // Recognize the first loaded village piece immediately, even while queued or if
   // loading/planning fails. The normal discovery margin covers the marker's platform.
-  if (entity.dimension.id === "minecraft:overworld") rememberVillageArea(growRect(hullOf([cellOf(entity)]), AREA.margins[0]));
+  if (entity.dimension.id === "minecraft:overworld") {
+    const cell = cellOf(entity), [x, , z] = cell;
+    if (!(claim && inRect(claim, x, z)) && !isKnownVillageCell(x, z)) rememberVillageArea(growRect(hullOf([cell]), AREA.margins[0]));
+  }
   seen.add(entity.id);
   dlog(`marker ${entity.id} noticed (${trigger}), queued in ${START_DELAY_TICKS} ticks`);
   system.runTimeout(() => { try { if (entity.isValid) { queue.push({ entity, trigger }); drain(); } else dlog(`marker ${entity.id} gone before its turn`); } catch { /* unloaded */ } }, START_DELAY_TICKS);

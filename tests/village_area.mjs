@@ -74,18 +74,34 @@ try {
     assert.equal(area(0, 0), true, `${id} counts above the ground-level player`);
   }
   let queries = 0;
-  const dimension = mock.dimension(), getBlocks = dimension.getBlocks.bind(dimension);
-  dimension.getBlocks = (volume, filter, allowUnloadedChunks) => {
+  const dimension = mock.dimension(), containsBlock = dimension.containsBlock.bind(dimension);
+  dimension.containsBlock = (volume, filter, allowUnloadedChunks) => {
     queries++;
     assert.equal(volume.to.x - volume.from.x, 4);
     assert.equal(volume.to.z - volume.from.z, 4);
     assert.equal(allowUnloadedChunks, true, "first approach tolerates unloaded neighbouring chunks");
-    return getBlocks(volume, filter, allowUnloadedChunks);
+    return containsBlock(volume, filter, allowUnloadedChunks);
   };
   assert.equal(area(0, 0), true);
   assert.equal(queries, 1, "one bounded native filtered query inside a village search box");
   assert.equal(area(500, 500), false);
   assert.equal(queries, 1, "outside search boxes requires no block query");
+  // LV-01: one village's markers must not flood the list; a marker inside the rectangle being planned writes nothing
+  reset(); mock.tickingAreaDelay = 700; mock.setBlocks(() => "minecraft:air");
+  await import(new URL("loop_marker.js?flood", src));
+  const fire = (x, z) => mock.fire("entityLoad", { entity: mock.addEntity("lothlorien:loop_marker", { x, y: 80, z }) });
+  fire(0.5, 0.5);
+  assert.equal(mock.propWrites.filter((k) => k === VILLAGE_AREAS).length, 1, "the first marker records its territory at once");
+  await mock.advance(10); // the planner has claimed its discovery rectangle and waits for the ticking area
+  fire(60.5, 0.5);
+  assert.equal(mock.propWrites.filter((k) => k === VILLAGE_AREAS).length, 1, "a marker inside the claim leaves the record to discovery");
+  await mock.advance(610); // the planner times out and releases its claim
+  mock.propWrites.length = 0;
+  for (let i = 0; i < 40; i++) fire(0.5 + (i % 8) * 4, 0.5 + Math.floor(i / 8) * 4);
+  assert.equal(mock.propWrites.filter((k) => k === VILLAGE_AREAS).length, 0, "markers inside a recorded area write nothing");
+  fire(200.5, 0.5);
+  assert.equal(parseDone(world.getDynamicProperty(VILLAGE_AREAS)).length, 2, "a marker outside every record adds one");
+  reset(); world.setDynamicProperty(VILLAGE_PLANS, JSON.stringify([full]));
   mock.propWrites.length = 0;
   rememberVillageArea({ x0: 0, x1: 10, z0: 0, z1: 10 });
   assert.equal(mock.propWrites.length, 0, "legacy completed records need no duplicate writes");

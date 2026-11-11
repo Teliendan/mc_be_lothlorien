@@ -32,6 +32,7 @@ Village foliage is persistent (it never decays; natural trees keep normal decay)
 from 251 to 150. Non-debug players skip the periodic depth cache. Initial generation uses 2 ms cooperative slices, 32-write
 batches and yielding walking-distance searches (one native call may still exceed a slice). Slow initial building is acceptable;
 lag in an already loaded village is what matters.
+A village's first marker records its territory and later markers inside it write nothing; both village lists (territory and planned) keep 256 villages (was 64).
 
 Owner-run 30-second samples in loaded villages (2026-10-16) held 20.0 TPS (average gap 50 ms, p99 65 ms, longest 80 ms, no gap
 above 100 ms, 6-7 support callbacks per second). The owner accepted them; they show healthy cadence, not FPS, callback CPU or

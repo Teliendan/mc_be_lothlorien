@@ -554,6 +554,9 @@ test("loop planner: a planned village is remembered (done-list), markers inside 
   assert.deepEqual(PL.parseDone("not json"), []); assert.deepEqual(PL.parseDone('{"a":1}'), []);
   for (let i = 0; i < PL.AREA.maxDone + 5; i++) list = PL.addDone(list, { x0: 1000 * i, x1: 1000 * i + 10, z0: 0, z1: 10 });
   assert.equal(list.length, PL.AREA.maxDone);
+  // a string dynamic property is commonly cited as limited to 32,767 characters (not in the d.ts); 256 worst-case records measured 15,873
+  const worst = JSON.stringify(Array.from({ length: PL.AREA.maxDone }, () => ({ x0: -29999999, x1: -29999999, z0: -29999999, z1: -29999999 })));
+  assert.ok(worst.length < 32767, `${PL.AREA.maxDone} records with extreme coordinates take ${worst.length} characters; the commonly cited string property limit is 32,767 (not in the d.ts)`);
   const js = readFileSync(new URL("../lothlorien_bp/scripts/loop_marker.js", import.meta.url), "utf8");
   assert.ok(js.includes("isDone(") && js.includes("addDone(") && js.includes("setDynamicProperty(DONE") && js.includes("removeMarkers(dimension, found.rect)"), "runtime: done-list checked, written, markers removed after planning");
   // Runtime area cleanup (including timeout/late completion) is exercised by script_glue.mjs.

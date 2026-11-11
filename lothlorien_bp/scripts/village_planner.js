@@ -22,7 +22,7 @@ export const PLAN = { mergeCap: 6, lMaxLen: 16, lMaxLeg: 10, budget: 3, minNet: 
 // and the smaller margins tried when the pack's chunk quota (TickingAreaManager.maxChunkCount) does not fit the first one.
 // seed = blocks added round the FIRST marker only, in round 1 (owner 2026-10-09: the 4-round run took ~13 s; villages are ~100 x 100 blocks, at most ~155), so a typical village is
 // found in 1-2 rounds instead of 4; later rounds grow from the known markers as before. Dropped when the quota does not fit it.
-export const AREA = { seed: 48, margins: [32, 28, 24], maxRounds: 8, minPad: 12, maxDone: 64, maxTries: 3 };
+export const AREA = { seed: 48, margins: [32, 28, 24], maxRounds: 8, minPad: 12, maxDone: 256, maxTries: 3 };
 
 const isWalk = (n) => isPlank(n) || n === SLAB || (typeof n === "string" && /_stairs?$/.test(n));
 const key = (x, y, z) => `${x},${y},${z}`;
