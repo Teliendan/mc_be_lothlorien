@@ -14,6 +14,7 @@
 //    beforeEvents.entityHurt below stops shielding that player from warden arrows). Kills are charged by harmony_game.js (entityDie).
 //  - a lead released the elf: entities/elf.json set the engine home to where it stands; script only records it.
 import { EntityInitializationCause, EquipmentSlot, ItemStack, system, world } from "@minecraft/server";
+import { onEntity } from "./entity_events.js";
 import { ANGRY_EVENT, BOW_ID, DECK_BLOCKS, WARDEN_ID, isFriendlyFire, isNewFight, keepNaturalSpawn, PLAYER_ID, THANKS_RADIUS, isWardenQuarry } from "./elven_warden_rules.js";
 import { HATED_TAG, recordElfFight, recordWardenFight } from "./harmony_game.js";
 import { ELF_ID, FOE_MS, FOE_TAG, HOME_OF_ELF, MOVED_PROPERTY, REHOME_EVENT, homeCell } from "./elf_rules.js";
@@ -125,17 +126,14 @@ function watchElves() {
 // depth(dimension, location) -> { level } from scripts/depth.js (main.js supplies it); bandOf(player) -> Harmony band.
 export function startElvenWardens(depthAt, bandOf) {
   watchElves();
-  world.afterEvents.entitySpawn.subscribe(({ entity, cause }) => {
-    try {
-      if (entity.typeId !== WARDEN_ID) return;
+  onEntity(WARDEN_ID, {
+    spawn: ({ entity, cause }) => {
       // one tick later: the spawn event's property and the equipment table are surely applied by then
       system.runTimeout(() => {
         ensureBow(entity);
         if (cause !== EntityInitializationCause.Loaded) judgeNaturalSpawn(entity, depthAt);
       }, 1);
-    } catch {
-      // entity gone
-    }
+    },
   });
   world.afterEvents.entityHurt.subscribe(({ hurtEntity, damageSource }) => {
     try {

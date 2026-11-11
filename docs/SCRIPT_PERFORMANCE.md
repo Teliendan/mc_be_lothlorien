@@ -25,6 +25,12 @@ makes the **engine** do. Ranked by expected effect; all open until tried on the 
    so herds are replaced continually. Trade-off route: lower the three flier limits.
 4. Small: the Harmony action bar is re-sent every second although it rarely changes; pressure plates poll at 4 ticks.
 
+Entity events (2026-11-11, finding LV-09; structure, not measured). `entityLoad` and `entitySpawn` take no native filter,
+so each subscriber used to run on every entity and test its type. All 15 subscriptions now go through one router
+(`entity_events.js`, rules in `entity_events_rules.js`): one subscription per event, one `typeId` read per event, then a
+lookup by type. The CPU saving is unmeasured and probably small; the owner chose it for structure (a new type-specific
+handler is one more route, not one more subscription). Handlers are isolated, so one that throws does not stop the next.
+
 Random-tick component callbacks (added 2026-11-11, finding LW-06; counts are estimates from the formula, not measured).
 The script is also called on every random tick of: a cover (`lothlorien:dew_cover`, `dew.js`), corn (`lothlorien:crop`,
 `crop.js`), a sapling (`trees.js`), a Great Mallorn sprout (`great_mallorn.js`), a nectar bloom (`nectar.js`), a fence

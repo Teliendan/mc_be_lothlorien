@@ -57,7 +57,7 @@ test("rail mender: also links a fence toward a full-block post of ours (log, str
 
 test("rail mender: script is imported by main.js and removes the marker only after the scan", () => {
   assert.ok(readFileSync(new URL("../lothlorien_bp/scripts/main.js", import.meta.url), "utf8").includes('import "./rail_mender.js"'));
-  assert.ok(railJs.includes("entityLoad") && railJs.includes("entitySpawn") && railJs.includes("entity.remove()"));
+  assert.ok(railJs.includes("onEntity(") && railJs.includes("entity.remove()"));
 });
 
 finish();

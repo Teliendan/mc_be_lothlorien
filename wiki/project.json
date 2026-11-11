@@ -377,6 +377,14 @@
       "pattern": "lothlorien_bp/scripts/worn_gifts.js"
     },
     {
+      "pattern": "lothlorien_bp/scripts/entity_events.js",
+      "reason": "Internal router for the pack's entity load and spawn events; no player feature of its own."
+    },
+    {
+      "pattern": "lothlorien_bp/scripts/entity_events_rules.js",
+      "reason": "Internal router for the pack's entity load and spawn events; no player feature of its own."
+    },
+    {
       "pattern": "lothlorien_bp/scripts/world_util.js",
       "reason": "Internal helpers shared by block scripts; no player feature of its own."
     },

@@ -3,6 +3,7 @@
 // one is replaced by a fresh spawn at the same spot with the spawn event that adds the persistent + home group, then removed.
 // The fresh warden has movement 0.25, so it never matches again.
 import { system, world } from "@minecraft/server";
+import { onEntity } from "./entity_events.js";
 import { WARDEN_ID, VILLAGE_GROUP } from "./elven_warden_rules.js";
 import { needsReplacement } from "./warden_replace_rules.js";
 import { villageDebug } from "./village_debug.js";
@@ -26,9 +27,8 @@ function check(entity) {
 }
 
 // One tick later: attributes are surely applied, and the writes run outside any read-only context.
-const later = (entity) => { if (entity.typeId === WARDEN_ID) system.runTimeout(() => check(entity), 1); };
+const later = ({ entity }) => system.runTimeout(() => check(entity), 1);
 
 world.afterEvents.worldLoad.subscribe(() => {
-  world.afterEvents.entitySpawn.subscribe(({ entity }) => later(entity));
-  world.afterEvents.entityLoad.subscribe(({ entity }) => later(entity));
+  onEntity(WARDEN_ID, { spawn: later, load: later });
 });

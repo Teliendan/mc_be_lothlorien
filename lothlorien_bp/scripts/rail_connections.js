@@ -13,8 +13,10 @@ export function mendFence(dimension, loc) {
   return true;
 }
 
+export const cellsAround = p => [p, ...LINKS.map(l => ({ x: p.x + l.dx, y: p.y, z: p.z + l.dz }))];
+
 export function mendAround(dimension, p) {
-  for (const loc of [p, ...LINKS.map(l => ({x:p.x+l.dx,y:p.y,z:p.z+l.dz}))]) {
+  for (const loc of cellsAround(p)) {
     try { mendFence(dimension, loc); } catch { /* unloaded */ }
   }
 }

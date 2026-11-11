@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import * as foods from "../lothlorien_bp/scripts/animal_food_rules.js";
+import { createEntityRouter } from "../lothlorien_bp/scripts/entity_events_rules.js";
 import * as worldUtil from "../lothlorien_bp/scripts/world_util.js";
 import * as guideRules from "../lothlorien_bp/scripts/white_deer_rules.js";
 import * as giftRules from "../lothlorien_bp/scripts/great_mallorn_rules.js";
@@ -112,7 +113,7 @@ function engine() {
     }
   } };
   const last = new Map();
-  const bindings = { system, world, EquipmentSlot: { Mainhand: "mainhand" }, GameMode: { Survival: "survival", Adventure: "adventure", Creative: "creative", Spectator: "spectator" },
+  const bindings = { system, world, onEntity: createEntityRouter(world).on, EquipmentSlot: { Mainhand: "mainhand" }, GameMode: { Survival: "survival", Adventure: "adventure", Creative: "creative", Spectator: "spectator" },
     EntityInitializationCause: { Loaded: "Loaded" }, ItemStack: TestItem,
     harmonyOf: p => ({ harmony: p.band }), bandOf: b => b, message: key => key,
     noteDeed: (...args) => deeds.push(args), swingArm: p => { p.swings = (p.swings ?? 0) + 1; }, repeatedUse(p, action) {

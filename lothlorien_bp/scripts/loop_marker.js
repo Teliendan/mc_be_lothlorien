@@ -13,6 +13,7 @@
 // The planner is one-shot: no polling, no retry loop. A failed run (quota, timeout, error) keeps the markers; they retry after world re-entry, at
 // most AREA.maxTries times per marker.
 import { BlockPermutation, BlockVolume, system, world } from "@minecraft/server";
+import { onEntity } from "./entity_events.js";
 import { MARKER_ID, finalBlocks } from "./village_loop.js";
 import { villageDebug } from "./village_debug.js";
 import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, growRect, hullOf, chunksIn, describePick, describeMerge, VILLAGE_PLANS } from "./village_planner.js";
@@ -205,7 +206,6 @@ async function drain() {
 }
 
 function onMarker(entity, trigger) {
-  if (!entity || entity.typeId !== MARKER_ID) return;
   if (seen.has(entity.id)) { dlog(`marker ${entity.id} already seen this session (${trigger})`); return; }
   // Recognize the first loaded village piece immediately, even while queued or if
   // loading/planning fails. The normal discovery margin covers the marker's platform.
@@ -218,5 +218,9 @@ function onMarker(entity, trigger) {
   system.runTimeout(() => { try { if (entity.isValid) { queue.push({ entity, trigger }); drain(); } else dlog(`marker ${entity.id} gone before its turn`); } catch { /* unloaded */ } }, START_DELAY_TICKS);
 }
 
-world.afterEvents.entityLoad.subscribe(({ entity }) => onMarker(entity, "entityLoad"));
-world.afterEvents.entitySpawn.subscribe(({ entity }) => onMarker(entity, "entitySpawn"));
+// Both events stay routed: a marker may announce itself through either. The router isolates handlers, so a throwing
+// handler elsewhere cannot skip onMarker (that would leave a whole village unplanned).
+onEntity(MARKER_ID, {
+  load: ({ entity }) => onMarker(entity, "entityLoad"),
+  spawn: ({ entity }) => onMarker(entity, "entitySpawn"),
+});

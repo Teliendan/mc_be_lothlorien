@@ -180,6 +180,9 @@
     "memorial": [
       "memorial.mjs"
     ],
+    "entity-events": [
+      "entity_events.mjs"
+    ],
     "suite-layout": [
       "suite_layout.mjs"
     ],

@@ -1,5 +1,6 @@
 // Shared wildlife API fixture: no test bodies or worlds run on import.
 import { readFileSync } from "node:fs";
+import { createEntityRouter } from "../../lothlorien_bp/scripts/entity_events_rules.js";
 import * as deerRules from "../../lothlorien_bp/scripts/deer_rules.js";
 import * as rules from "../../lothlorien_bp/scripts/white_deer_rules.js";
 import * as giftRules from "../../lothlorien_bp/scripts/great_mallorn_rules.js";
@@ -61,7 +62,7 @@ function engine() {
     if (task.period) task.at += task.period; else timers.delete(key); task.fn();
   } } }
   const flush = () => { for (const job of jobs.splice(0)) while (!job.next().done) {} };
-  return { world, system, dimension, entity, fire, advance, flush, timers, jobs };
+  return { world, system, dimension, entity, fire, advance, flush, timers, jobs, onEntity: createEntityRouter(world).on };
 }
 async function setup() {
   const h = engine(), base = { ...h, ...deerRules, ...rules, ...giftRules,

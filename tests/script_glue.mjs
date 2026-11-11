@@ -9,6 +9,7 @@ import { gunzipSync } from "node:zlib";
 
 register(new URL("../../../.claude/skills/bedrock-scripting/scripts/mock_loader.mjs", import.meta.url));
 const { __mock: mock, world } = await import("@minecraft/server");
+const { resetEntityEvents } = await import("../lothlorien_bp/scripts/entity_events.js"); // one shared instance (mock.reset() drops its subscriptions)
 const PL = await import("../lothlorien_bp/scripts/village_planner.js");
 const DBG = await import("../lothlorien_bp/scripts/village_debug.js"); // shared switch: not re-imported per scenario, so reset below
 const SRC = new URL("../lothlorien_bp/scripts/", import.meta.url).href;
@@ -25,7 +26,7 @@ const lines = [];
 const realWarn = console.warn;
 console.warn = (...a) => { lines.push(a.join(" ")); }; // captured; printed only on failure
 async function scenario(name, body) {
-  lines.length = 0; mock.reset(); runNo++;
+  lines.length = 0; mock.reset(); resetEntityEvents(); runNo++;
   DBG.setVillageDebug(true); // diagnostics log only in debug mode; the scenarios read them (the quiet-mode scenario switches it off)
   try { await body(); } catch (e) { console.warn = realWarn; console.log(`log of the failed scenario "${name}":\n  ${lines.join("\n  ")}`); throw e; }
   assert.deepEqual(mock.errors, [], `${name}: no uncaught error in a timer or job`);
@@ -219,7 +220,7 @@ await scenario("rail_mender: waits for loaded corners, switches on the dropped f
   assert.equal(st(0)["minecraft:connection_east"], true); assert.equal(st(1)["minecraft:connection_west"], true); assert.equal(st(1)["minecraft:connection_east"], true); assert.equal(st(2)["minecraft:connection_west"], true);
   assert.match(grep(/rail mender: 3 fence link/)[0] ?? "", /rail mender/);
   // box never loaded: marker stays valid, no job, no crash
-  mock.reset(); runNo++; mock.strictLoading = true; mock.setBlocks(() => FENCE);
+  mock.reset(); resetEntityEvents(); runNo++; mock.strictLoading = true; mock.setBlocks(() => FENCE);
   const e2 = mock.addEntity(MENDER, { x: 1.5, y: 70.5, z: 0.5 });
   await loadScript("rail_mender.js");
   mock.fire("entitySpawn", { entity: e2 });
@@ -404,6 +405,20 @@ await scenario("rail mender: loaded corners do not hide an unloaded interior chu
   await loadScript("rail_mender.js");mock.fire("entityLoad",{entity:e});
   await mock.advance(40);assert.equal(scans,0);assert.equal(e.isValid,true);
   dim.alwaysLoaded.add("0,0");await mock.settle();assert.equal(scans,1);assert.equal(e.isValid,false);
+});
+
+await scenario("rail mender: edits in one tick share one repair timer and still mend the neighbours", async () => {
+  mock.setBlocks((x, y, z) => y === 70 && z === 0 && x >= 0 && x < 6 ? "lothlorien:mallorn_fence" : "minecraft:air");
+  const dim = mock.dimension();
+  await loadScript("rail_mender.js");
+  const edit = x => mock.fire("playerPlaceBlock", { block: { location: { x, y: 70, z: 0 } }, dimension: dim });
+  edit(1); edit(4);
+  assert.equal(mock.pending, 1, "two edits in one tick: one timer");
+  await mock.settle();
+  const st = (x) => dim.overrides.get(`${x},70,0`)?.states ?? {};
+  assert.equal(st(1)["minecraft:connection_east"], true); assert.equal(st(4)["minecraft:connection_west"], true);
+  await mock.advance(1); edit(2); assert.equal(mock.pending, 1, "a later tick starts its own timer");
+  await mock.settle();
 });
 
 console.warn = realWarn;

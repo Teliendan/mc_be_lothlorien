@@ -3,6 +3,7 @@
 // swans spawn in any river (see swan_rules.js), and one that spawned where no Lothlorien biome is near is removed. A submerged one floats up to the open surface,
 // or is removed when a bank is overhead.
 import { EntityInitializationCause, system, world } from "@minecraft/server";
+import { onEntity } from "./entity_events.js";
 import { SWAN_ID, nearBiome, surfaceAction } from "./swan_rules.js";
 
 // The spawn rule's herd event sets lothlorien:natural (/summon and eggs do not, so they always stay). The flag is cleared
@@ -28,24 +29,21 @@ export function startSwans(biome) {
   // its native feather timer; babies keep their age and have no shedding timer.
   const migrateAdult = entity => {
     try {
-      if (entity.typeId === SWAN_ID && !entity.getComponent("minecraft:is_baby") &&
-          !entity.getProperty("lothlorien:adult_initialized"))
+      if (!entity.getComponent("minecraft:is_baby") && !entity.getProperty("lothlorien:adult_initialized"))
         entity.triggerEvent("minecraft:ageable_grow_up");
     } catch { /* swan unloaded */ }
   };
-  world.afterEvents.entityLoad.subscribe(({ entity }) => migrateAdult(entity));
   for (const id of ["overworld", "nether", "the_end"]) {
     try {
       for (const swan of world.getDimension(id).getEntities({ type: SWAN_ID })) migrateAdult(swan);
     } catch { /* dimension unavailable */ }
   }
-  world.afterEvents.entitySpawn.subscribe(({ entity, cause }) => {
-    try {
-      if (cause === EntityInitializationCause.Loaded || entity.typeId !== SWAN_ID) return;
+  onEntity(SWAN_ID, {
+    load: ({ entity }) => migrateAdult(entity),
+    spawn: ({ entity, cause }) => {
+      if (cause === EntityInitializationCause.Loaded) return;
       // one tick later: the spawn event's property is surely applied by then
       system.runTimeout(() => judgeNaturalSpawn(entity, biome), 1);
-    } catch {
-      // entity gone
-    }
+    },
   });
 }

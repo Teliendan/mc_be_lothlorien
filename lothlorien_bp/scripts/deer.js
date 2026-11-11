@@ -1,6 +1,7 @@
 // Deer in the running game: wariness follows the nearest player's Harmony band, and a player
 // hurting a deer alarms the herd. The flight behaviour itself is JSON (entities/deer.json, entities/white_deer.json).
 import { GameMode, world, system } from "@minecraft/server";
+import { onEntity } from "./entity_events.js";
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { isGuiding } from "./white_deer.js";
@@ -28,7 +29,7 @@ function stopIfEmpty() {
 }
 function trackCreature(entity) {
   try {
-    if (!WARY_TYPES.includes(entity.typeId) || !entity.isValid) return;
+    if (!entity.isValid) return;
     loaded.set(entity.id, entity);
     if (warinessTimer === undefined) warinessTimer = system.runInterval(updateWariness, INTERVAL_TICKS);
     if (entity.typeId === UNICORN_ID) unicornReadiness?.onLoad(entity);
@@ -115,8 +116,7 @@ function alarmAround(dimension, location) {
 }
 
 export function startDeer() {
-  world.afterEvents.entitySpawn.subscribe(({ entity }) => trackCreature(entity));
-  world.afterEvents.entityLoad.subscribe(({ entity }) => trackCreature(entity));
+  onEntity(WARY_TYPES, { spawn: ({ entity }) => trackCreature(entity), load: ({ entity }) => trackCreature(entity) });
   // Only wary types are tracked (the unicorn readiness timers too), so the native filters skip every other entity.
   world.afterEvents.entityRemove.subscribe(({ removedEntityId }) => {
     loaded.delete(removedEntityId); stopIfEmpty();

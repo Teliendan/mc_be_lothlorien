@@ -5,9 +5,10 @@ import { readFileSync } from "node:fs";
 register(new URL("../../../.claude/skills/bedrock-scripting/scripts/mock_loader.mjs", import.meta.url));
 const { __mock: mock, world } = await import("@minecraft/server");
 const { inVillageArea, rememberVillageArea, VILLAGE_AREAS } = await import("../lothlorien_bp/scripts/village_area.js");
+const { resetEntityEvents } = await import("../lothlorien_bp/scripts/entity_events.js"); // one shared instance (mock.reset() drops its subscriptions)
 const { VILLAGE_PLANS, parseDone } = await import("../lothlorien_bp/scripts/village_planner.js");
 const src = new URL("../lothlorien_bp/scripts/", import.meta.url);
-const reset = () => { mock.reset(); mock.dimension().heightRange = { min: -64, max: 320 }; };
+const reset = () => { mock.reset(); resetEntityEvents(); mock.dimension().heightRange = { min: -64, max: 320 }; };
 const area = (x, z) => inVillageArea(mock.dimension(), { x, y: 65, z });
 const warn = console.warn;
 const logs = [];

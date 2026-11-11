@@ -6,6 +6,7 @@ register(new URL("../../../.claude/skills/bedrock-scripting/scripts/mock_loader.
 const { __mock: mock } = await import("@minecraft/server");
 const { ELF_ID } = await import("../lothlorien_bp/scripts/elf_rules.js");
 const { WARDEN_ID } = await import("../lothlorien_bp/scripts/elven_warden_rules.js");
+const { resetEntityEvents } = await import("../lothlorien_bp/scripts/entity_events.js"); // one shared instance (mock.reset() drops its subscriptions)
 const R = await import("../lothlorien_bp/scripts/healer_rules.js");
 let run = 0, calls, queries, rays, bands, sounds;
 
@@ -54,7 +55,7 @@ async function start() {
   startHealers({ bandOf: (p) => { bands++; return p.band; } });
 }
 async function scenario(name, body) {
-  mock.reset(); calls = []; queries = []; rays = []; bands = 0; sounds = [];
+  mock.reset(); resetEntityEvents(); calls = []; queries = []; rays = []; bands = 0; sounds = [];
   for (const id of ["overworld", "nether", "the_end"]) dimension(id);
   await body();
   assert.deepEqual(mock.errors, []);

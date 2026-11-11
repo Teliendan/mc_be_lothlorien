@@ -11,6 +11,7 @@ import { message } from "./messages.js";
 // invisible helper entity (entities/guide_beacon.json), one per session, that this script spawns and moves ahead in
 // hops of 8-14 blocks. Several guiding deer close together may follow each other's beacon (accepted by the owner).
 import { EntityInitializationCause, EquipmentSlot, GameMode, ItemStack, system, world } from "@minecraft/server";
+import { onEntity } from "./entity_events.js";
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { eatHeldFood, healAnimal, isInjured } from "./animal_food.js";
@@ -389,7 +390,6 @@ function sweepBeacons() {
 }
 
 function cleanLoadedBeacon(entity) {
-  try { if (entity.typeId !== BEACON_ID) return; } catch { return; }
   // Spawn callbacks can arrive before the creator assigns its session beaconId.
   system.run(() => {
     try {
@@ -429,15 +429,13 @@ export function startWhiteDeer(depth, biomeInfo) {
   depthAt = depth;
   biome = biomeInfo;
   sweepBeacons(); // world load: no session survives a reload, so every beacon found is a stray
-  world.afterEvents.entityLoad.subscribe(({ entity }) => cleanLoadedBeacon(entity));
-  world.afterEvents.entitySpawn.subscribe(({ entity, cause }) => {
-    try {
-      if (cause === EntityInitializationCause.Loaded || entity.typeId !== WHITE_DEER_ID) return;
+  onEntity(BEACON_ID, { load: ({ entity }) => cleanLoadedBeacon(entity) });
+  onEntity(WHITE_DEER_ID, {
+    spawn: ({ entity, cause }) => {
+      if (cause === EntityInitializationCause.Loaded) return;
       // one tick later: the spawn event's property is surely applied by then
       system.runTimeout(() => judgeNaturalSpawn(entity, depthAt), 1);
-    } catch {
-      // entity gone
-    }
+    },
   });
   world.afterEvents.playerInteractWithEntity.subscribe(({ player, target, beforeItemStack, itemStack }) => {
     try {

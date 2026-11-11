@@ -1,6 +1,7 @@
 // M4: loaded healers bless injured elves (including themselves), wardens and Harmony Friends.
 // Two local patient queries per healer per second; no per-tick work or recurring world-wide discovery.
 import { system, world } from "@minecraft/server";
+import { onEntity } from "./entity_events.js";
 import { ELF_ID, PROFESSIONS, spawnEventOf } from "./elf_rules.js";
 import { speak } from "./voice.js";
 import {
@@ -35,7 +36,6 @@ function track(entity) {
 }
 
 function discover(entity) {
-  if (entity.typeId !== ELF_ID) return;
   // Spawn/profession events can precede the native variant update. Re-read after it settles.
   system.run(() => track(entity));
 }
@@ -108,8 +108,7 @@ function blessNearby() {
 
 export function startHealers(deps) {
   bandOf = deps.bandOf;
-  world.afterEvents.entitySpawn.subscribe(({ entity }) => discover(entity));
-  world.afterEvents.entityLoad.subscribe(({ entity }) => discover(entity));
+  onEntity(ELF_ID, { spawn: ({ entity }) => discover(entity), load: ({ entity }) => discover(entity) });
   world.afterEvents.dataDrivenEntityTrigger.subscribe(({ entity }) => discover(entity), {
     entityTypes: [ELF_ID], eventTypes: PROFESSIONS.map(spawnEventOf),
   });

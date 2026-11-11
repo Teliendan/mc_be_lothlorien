@@ -1,6 +1,7 @@
 // Exercise the production event/timer lifecycles, including unload/reload races.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { createEntityRouter } from "../lothlorien_bp/scripts/entity_events_rules.js";
 import * as deerRules from "../lothlorien_bp/scripts/deer_rules.js";
 import * as guideRules from "../lothlorien_bp/scripts/white_deer_rules.js";
 import * as giftRules from "../lothlorien_bp/scripts/great_mallorn_rules.js";
@@ -91,7 +92,7 @@ async function load(name, bindings) {
   delete globalThis.__scriptPerformance;
   return mod;
 }
-const common = h => ({ system: h.system, world: h.world, harmonyOf: p => ({ harmony: p.band || "friend" }),
+const common = h => ({ system: h.system, world: h.world, onEntity: (h.onEntity ??= createEntityRouter(h.world).on), harmonyOf: p => ({ harmony: p.band || "friend" }),
   GameMode: { Survival: "survival", Adventure: "adventure", Creative: "creative", Spectator: "spectator" }, EquipmentSlot: { Mainhand: "mainhand" },
   bandOf: b => b, repeatedUse: () => false, message: () => "", noteDeed() {},
   readBlock: (dimension, location) => dimension.getBlock(location),

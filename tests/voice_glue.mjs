@@ -7,11 +7,12 @@ const { __mock: mock } = await import("@minecraft/server");
 const { WARDEN_ID, ANGRY_EVENT } = await import("../lothlorien_bp/scripts/elven_warden_rules.js");
 const { FOE_TAG } = await import("../lothlorien_bp/scripts/elf_rules.js");
 const { startElvenWardens } = await import("../lothlorien_bp/scripts/elven_warden.js");
+const { resetEntityEvents } = await import("../lothlorien_bp/scripts/entity_events.js"); // one shared instance (mock.reset() drops its subscriptions)
 const { ELF_GAP_TICKS, soundIdOf, VOICE_HEIGHT, VOLUME } = await import("../lothlorien_bp/scripts/voice_rules.js");
 
 let sounds;
 async function scenario(name, body) {
-  mock.reset(); sounds = [];
+  mock.reset(); resetEntityEvents(); sounds = [];
   mock.dimension().playSound = (id, location, options) => sounds.push({ id, location, options });
   startElvenWardens(() => ({ level: 2 }), (p) => p.band);
   await body();

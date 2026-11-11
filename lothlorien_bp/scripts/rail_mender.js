@@ -2,9 +2,10 @@
 // chunk loads next to a player) it waits until the whole box is loaded and repairs known fence connections
 // (rail_mender_rules.js) and removes itself, so each piece is mended once. If the box never loads in 30 s the marker stays
 // and tries again the next time it loads. Known gaps into air/thin decor are cleared too; unloaded targets are preserved.
+import { onEntity } from "./entity_events.js";
 import { BlockVolume, system, world } from "@minecraft/server";
 import { FENCE_IDS, MAX_WAIT_TICKS, MENDER_ID, RETRY_TICKS, START_DELAY_TICKS, scanBox } from "./rail_mender_rules.js";
-import { mendFence, mendAround } from "./rail_connections.js";
+import { mendFence, cellsAround } from "./rail_connections.js";
 import { villageDebug } from "./village_debug.js";
 
 const busy = new Set();
@@ -66,19 +67,24 @@ function attempt(entity, waited) {
 }
 
 function onMarker(entity) {
-  if (!entity || entity.typeId !== MENDER_ID || busy.has(entity.id)) return;
+  if (busy.has(entity.id)) return;
   busy.add(entity.id);
   system.runTimeout(() => attempt(entity, 0), START_DELAY_TICKS);
 }
 
-world.afterEvents.entityLoad.subscribe(({ entity }) => onMarker(entity));
-world.afterEvents.entitySpawn.subscribe(({ entity }) => onMarker(entity));
+onEntity(MENDER_ID, { load: ({ entity }) => onMarker(entity), spawn: ({ entity }) => onMarker(entity) });
 
 // Repairs remain local after player edits; no per-fence polling. Defer until native
 // neighbor updates settle, then restore all known connections around the edited cell.
-const edited = ({block, dimension}) => {
-  const p = {...block.location};
-  system.runTimeout(() => mendAround(dimension, p), 2);
+// One timer per tick, not per event: a piston or explosion edits many cells in one tick. Same 2-tick delay.
+let batch, batchTick;
+const edited = ({ block, dimension }) => {
+  if (batchTick !== system.currentTick) {
+    batchTick = system.currentTick;
+    const cells = batch = new Map();
+    system.runTimeout(() => { for (const { dimension, loc } of cells.values()) { try { mendFence(dimension, loc); } catch { /* unloaded */ } } }, 2);
+  }
+  for (const loc of cellsAround(block.location)) batch.set(`${dimension.id}|${loc.x},${loc.y},${loc.z}`, { dimension, loc });
 };
 world.afterEvents.playerPlaceBlock.subscribe(edited);
 world.afterEvents.playerBreakBlock.subscribe(edited);
