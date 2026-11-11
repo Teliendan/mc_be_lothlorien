@@ -305,7 +305,7 @@ function kindOf(n) {
   else if (/glass_pane$|^iron_bars$/.test(name)) kind = "pane";
   else if (/trapdoor$/.test(name)) kind = "trapdoor";
   else if (/_door$/.test(name)) kind = "door";
-  else if (/_carpet$|^leaf_litter$|pressure_plate$|^pink_petals$|^lily_pad$|^snow_layer$|rail$|^mallorn_blossom|^blossom_/.test(name) || /leaf_litter|blossom_\d/.test(geo)) kind = "plate";
+  else if (/_carpet$|^leaf_litter$|pressure_plate$|^pink_petals$|^lily_pad$|^snow_layer$|rail$|^mallorn_blossom|^blossom_/.test(name) || /leaf_litter|blossom_\d|ground_cover_\d/.test(geo)) kind = "plate";
   else if (/(^|_)lantern$|chandelier/.test(name)) kind = "lantern";
   else if (/^(flower_pot|decorated_pot|firefly_jar|cauldron|deer_antler|phial_light)$|(^|_)candle$|candle_cake/.test(name)) kind = "small";
   else if (/torch$|^end_rod$|^chain$|_chain$|^elven_rope|^lightning_rod$/.test(name)) kind = "post";

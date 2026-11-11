@@ -60,7 +60,7 @@
         "sound": "leaf_litter"
       },
       "minecraft:map_color": "#d9a72e",
-      "minecraft:geometry": "geometry.lothlorien.leaf_litter_1",
+      "minecraft:geometry": "geometry.lothlorien.ground_cover_1",
       "minecraft:material_instances": {
         "*": {
           "texture": "lothlorien:mallorn_leaf_carpet",
@@ -482,13 +482,13 @@
       {
         "condition": "q.block_state('lothlorien:amount') == 1 && q.block_state('minecraft:cardinal_direction') == 'north'",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_1"
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_1"
         }
       },
       {
         "condition": "q.block_state('lothlorien:amount') == 1 && q.block_state('minecraft:cardinal_direction') == 'west'",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_1",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_1",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -501,7 +501,7 @@
       {
         "condition": "q.block_state('lothlorien:amount') == 1 && q.block_state('minecraft:cardinal_direction') == 'south'",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_1",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_1",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -514,7 +514,7 @@
       {
         "condition": "q.block_state('lothlorien:amount') == 1 && q.block_state('minecraft:cardinal_direction') == 'east'",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_1",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_1",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -527,13 +527,13 @@
       {
         "condition": "q.block_state('lothlorien:amount') == 2 && q.block_state('minecraft:cardinal_direction') == 'north'",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_2"
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_2"
         }
       },
       {
         "condition": "q.block_state('lothlorien:amount') == 2 && q.block_state('minecraft:cardinal_direction') == 'west'",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_2",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_2",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -546,7 +546,7 @@
       {
         "condition": "q.block_state('lothlorien:amount') == 2 && q.block_state('minecraft:cardinal_direction') == 'south'",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_2",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_2",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -559,7 +559,7 @@
       {
         "condition": "q.block_state('lothlorien:amount') == 2 && q.block_state('minecraft:cardinal_direction') == 'east'",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_2",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_2",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -572,13 +572,13 @@
       {
         "condition": "q.block_state('lothlorien:amount') == 3 && q.block_state('minecraft:cardinal_direction') == 'north'",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_3"
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_3"
         }
       },
       {
         "condition": "q.block_state('lothlorien:amount') == 3 && q.block_state('minecraft:cardinal_direction') == 'west'",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_3",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_3",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -591,7 +591,7 @@
       {
         "condition": "q.block_state('lothlorien:amount') == 3 && q.block_state('minecraft:cardinal_direction') == 'south'",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_3",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_3",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -604,7 +604,7 @@
       {
         "condition": "q.block_state('lothlorien:amount') == 3 && q.block_state('minecraft:cardinal_direction') == 'east'",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_3",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_3",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -617,13 +617,13 @@
       {
         "condition": "q.block_state('lothlorien:amount') == 4 && q.block_state('minecraft:cardinal_direction') == 'north'",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_4"
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_4"
         }
       },
       {
         "condition": "q.block_state('lothlorien:amount') == 4 && q.block_state('minecraft:cardinal_direction') == 'west'",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_4",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_4",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -636,7 +636,7 @@
       {
         "condition": "q.block_state('lothlorien:amount') == 4 && q.block_state('minecraft:cardinal_direction') == 'south'",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_4",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_4",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -649,7 +649,7 @@
       {
         "condition": "q.block_state('lothlorien:amount') == 4 && q.block_state('minecraft:cardinal_direction') == 'east'",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_4",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_4",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -662,19 +662,19 @@
       {
         "condition": "q.block_state('lothlorien:on_grass')",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_1_grass"
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_1_grass"
         }
       },
       {
         "condition": "(q.block_state('lothlorien:amount') == 1 && q.block_state('minecraft:cardinal_direction') == 'north') && q.block_state('lothlorien:on_grass')",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_1_grass"
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_1_grass"
         }
       },
       {
         "condition": "(q.block_state('lothlorien:amount') == 1 && q.block_state('minecraft:cardinal_direction') == 'west') && q.block_state('lothlorien:on_grass')",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_1_grass",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_1_grass",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -687,7 +687,7 @@
       {
         "condition": "(q.block_state('lothlorien:amount') == 1 && q.block_state('minecraft:cardinal_direction') == 'south') && q.block_state('lothlorien:on_grass')",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_1_grass",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_1_grass",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -700,7 +700,7 @@
       {
         "condition": "(q.block_state('lothlorien:amount') == 1 && q.block_state('minecraft:cardinal_direction') == 'east') && q.block_state('lothlorien:on_grass')",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_1_grass",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_1_grass",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -713,13 +713,13 @@
       {
         "condition": "(q.block_state('lothlorien:amount') == 2 && q.block_state('minecraft:cardinal_direction') == 'north') && q.block_state('lothlorien:on_grass')",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_2_grass"
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_2_grass"
         }
       },
       {
         "condition": "(q.block_state('lothlorien:amount') == 2 && q.block_state('minecraft:cardinal_direction') == 'west') && q.block_state('lothlorien:on_grass')",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_2_grass",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_2_grass",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -732,7 +732,7 @@
       {
         "condition": "(q.block_state('lothlorien:amount') == 2 && q.block_state('minecraft:cardinal_direction') == 'south') && q.block_state('lothlorien:on_grass')",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_2_grass",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_2_grass",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -745,7 +745,7 @@
       {
         "condition": "(q.block_state('lothlorien:amount') == 2 && q.block_state('minecraft:cardinal_direction') == 'east') && q.block_state('lothlorien:on_grass')",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_2_grass",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_2_grass",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -758,13 +758,13 @@
       {
         "condition": "(q.block_state('lothlorien:amount') == 3 && q.block_state('minecraft:cardinal_direction') == 'north') && q.block_state('lothlorien:on_grass')",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_3_grass"
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_3_grass"
         }
       },
       {
         "condition": "(q.block_state('lothlorien:amount') == 3 && q.block_state('minecraft:cardinal_direction') == 'west') && q.block_state('lothlorien:on_grass')",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_3_grass",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_3_grass",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -777,7 +777,7 @@
       {
         "condition": "(q.block_state('lothlorien:amount') == 3 && q.block_state('minecraft:cardinal_direction') == 'south') && q.block_state('lothlorien:on_grass')",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_3_grass",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_3_grass",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -790,7 +790,7 @@
       {
         "condition": "(q.block_state('lothlorien:amount') == 3 && q.block_state('minecraft:cardinal_direction') == 'east') && q.block_state('lothlorien:on_grass')",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_3_grass",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_3_grass",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -803,13 +803,13 @@
       {
         "condition": "(q.block_state('lothlorien:amount') == 4 && q.block_state('minecraft:cardinal_direction') == 'north') && q.block_state('lothlorien:on_grass')",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_4_grass"
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_4_grass"
         }
       },
       {
         "condition": "(q.block_state('lothlorien:amount') == 4 && q.block_state('minecraft:cardinal_direction') == 'west') && q.block_state('lothlorien:on_grass')",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_4_grass",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_4_grass",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -822,7 +822,7 @@
       {
         "condition": "(q.block_state('lothlorien:amount') == 4 && q.block_state('minecraft:cardinal_direction') == 'south') && q.block_state('lothlorien:on_grass')",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_4_grass",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_4_grass",
           "minecraft:transformation": {
             "rotation": [
               0,
@@ -835,7 +835,7 @@
       {
         "condition": "(q.block_state('lothlorien:amount') == 4 && q.block_state('minecraft:cardinal_direction') == 'east') && q.block_state('lothlorien:on_grass')",
         "components": {
-          "minecraft:geometry": "geometry.lothlorien.leaf_litter_4_grass",
+          "minecraft:geometry": "geometry.lothlorien.ground_cover_4_grass",
           "minecraft:transformation": {
             "rotation": [
               0,

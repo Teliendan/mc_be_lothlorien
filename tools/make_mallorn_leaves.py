@@ -210,7 +210,7 @@ def render_gold(shade):
 # Litter (owner, 2026-10-01): FLAT leaves (the block is a zero-thickness plane, no sides), the same bright gold as the
 # leaf block, bigger than vanilla's and free to overlap, ground showing between them. Every segment of the block
 # shows ITS OWN quarter of the 16x16 texture (1 top-left, 2 top-right, 3 bottom-right, 4 bottom-left;
-# geometry.lothlorien.leaf_litter_N). Hand-drawn leaves (digits = GOLD ramp index: 1 outline, 2 shade,
+# geometry.lothlorien.ground_cover_N). Hand-drawn leaves (digits = GOLD ramp index: 1 outline, 2 shade,
 # 3 light, 4 vein), two per quarter so no quarter reads as a square.
 # litter ramp: the vanilla gold ingot's own colours (owner, 2026-10-01: take the palette from the gold block / ingot);
 # digits 1 outline, 2 shade, 3 light, 4 vein; 0 is the ingot's dark brown, unused

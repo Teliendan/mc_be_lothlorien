@@ -390,7 +390,7 @@
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_blossom.json",
-        "sha256": "56d91155f0d4574adcbde086935907d58213f3e37132705e229347597b39fa41"
+        "sha256": "a74008f790d25db0017b486a89a1aa889f405af78873a55df142217957ebdf3b"
       },
       {
         "path": "lothlorien_bp/items/mallorn_blossom.json",
@@ -815,7 +815,7 @@
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_leaf_carpet.json",
-        "sha256": "a6424b58bf179e09bb21afebff5bceca9c0c169d4fe209ebc9cee9557e1ddc71"
+        "sha256": "8470c7da94f02e84609da31a62ccdf064cab51554b3f983f2e70249f70d5626b"
       },
       {
         "path": "lothlorien_bp/items/mallorn_leaf_carpet.json",
