@@ -78,7 +78,8 @@ seen through cutouts): skill `bedrock-block-families`, `references/families.md` 
 - Planks are the texture of six other blocks (stairs, slabs, fence, gate, button, plate): no large feature centred on the tile.
 - Door halves: column 0 is the hinge side; the edge faces stretch the frame line (column 1), the top face row 1, the bottom face
   row 14 of the bottom texture: keep those opaque. Trapdoor renders `alpha_test_single_sided`; keep row 1 and column 1 opaque.
-- PBR: the pack declares `pbr`; per-tile `.texture_set.json` plus `_mers.tga` are flat placeholders (keep the set files when
+- PBR: the pack declares `pbr`; per-tile `.texture_set.json` files carry the MERS layer; flat ones are an inline colour (`[0, 0, 170, 105]`,
+  `[0, 0, 255, 0]`, form from vanilla `flame_atlas`), only six tiles ship a real `_mers.tga` (keep the set files when
   replacing a texture). Higher resolution is possible if every texture of a step uses the same size.
 
 ## Seeds and saplings

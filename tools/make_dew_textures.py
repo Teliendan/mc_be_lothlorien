@@ -3,11 +3,10 @@
     python -B mods/lothlorien/tools/make_dew_textures.py
 
 Needs textures/blocks/mallorn_leaf_carpet.png and mallorn_blossom.png (tools/make_mallorn_leaves.py,
-tools/make_mallorn_blossoms.py). Output (overwritten every run): <name>_dew.png, <name>_dew_mers.tga (a copy of the
-dry MERS map) and <name>_dew.texture_set.json next to them. Glints sit on a fixed spaced pattern of the opaque pixels.
+tools/make_mallorn_blossoms.py). Output (overwritten every run): <name>_dew.png, and <name>_dew.texture_set.json (inline MERS colour copied from the dry
+sheet) next to them. Glints sit on a fixed spaced pattern of the opaque pixels.
 """
 import json
-import shutil
 from pathlib import Path
 from PIL import Image
 from json_io import write_text
@@ -34,10 +33,13 @@ def main():
             if y + 1 < 16 and img.getpixel((x, y + 1))[3]:
                 img.putpixel((x, y + 1), GLINT_EDGE)
         img.save(BLOCKS / f"{name}_dew.png")
-        shutil.copyfile(BLOCKS / f"{name}_mers.tga", BLOCKS / f"{name}_dew_mers.tga")
+        # the dew sheet has the dry sheet's MERS layer (an inline colour, so there is no TGA to copy)
+        dry = json.loads((BLOCKS / f"{name}.texture_set.json").read_text(encoding="utf8"))["minecraft:texture_set"]
+        mers = dry["metalness_emissive_roughness_subsurface"]
+        assert isinstance(mers, list), f"{name}: dry MERS must be an inline colour"
         write_text(BLOCKS / f"{name}_dew.texture_set.json", json.dumps(
             {"format_version": "1.21.30", "minecraft:texture_set": {
-                "color": f"{name}_dew", "metalness_emissive_roughness_subsurface": f"{name}_dew_mers"}}) + "\n")
+                "color": f"{name}_dew", "metalness_emissive_roughness_subsurface": mers}}) + "\n")
         print(name, "glints", placed)
 
 

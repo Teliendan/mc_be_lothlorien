@@ -665,13 +665,21 @@ def box(origin, size):
 
 def save_set(tex, name, img, mers):
     img.save(tex / f"{name}.png")
-    mers.save(tex / f"{name}_mers.tga")
-    write_texture_set(name)
+    write_texture_set(name, mers)
 
 
-def write_texture_set(name):
+def write_texture_set(name, mers):
+    """A one-colour MERS map is written inline as [m, e, r, s] (vanilla flame_atlas does the same) and needs no TGA."""
+    colours = mers.getcolors(mers.width * mers.height)
+    path = RP / f"textures/blocks/{name}_mers.tga"
+    if len(colours) == 1:
+        layer = list(colours[0][1])
+        path.unlink(missing_ok=True)
+    else:
+        layer = f"{name}_mers"
+        mers.save(path)
     dump(RP / f"textures/blocks/{name}.texture_set.json", {"format_version": "1.21.30", "minecraft:texture_set": {
-        "color": name, "metalness_emissive_roughness_subsurface": f"{name}_mers"}})
+        "color": name, "metalness_emissive_roughness_subsurface": layer}})
 
 
 def lamp_block(ident, light, geometry, placement_faces, boxes, extra_perms=None, map_color="#e8c050",
@@ -764,8 +772,7 @@ def main():
     # ---- textures
     lamp_img, lamp_mers = lamp_tile()
     lamp_img.save(tex / "elven_lamp.png")
-    lamp_mers.save(tex / "elven_lamp_mers.tga")
-    write_texture_set("elven_lamp")
+    write_texture_set("elven_lamp", lamp_mers)
     save_set(tex, "elven_lamp_heartwood", recolour(lamp_img), lamp_mers)
     flips = []
     img, mers = glow_tile([(ox, oy, w, h, flies, False, False) for ox, oy, w, h, flies in LANTERN_FACES.values()])

@@ -2,6 +2,11 @@
   "format_version": "1.21.30",
   "minecraft:texture_set": {
     "color": "elven_jar_glass",
-    "metalness_emissive_roughness_subsurface": "elven_jar_glass_mers"
+    "metalness_emissive_roughness_subsurface": [
+      0,
+      0,
+      255,
+      0
+    ]
   }
 }
