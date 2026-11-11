@@ -16,7 +16,7 @@ async function squirrel() {
     generateLootFromTable(table) { assert.equal(table, h.table); h.rolls++; return h.loot; } };
   h.table = {}; h.world.getLootTableManager = () => h.manager;
   h.q = await load("squirrel", { ...h.base, ...Q,
-    addBeaconSource: h.mod.addBeaconSource, consumeAcorn: h.mod.consumeAcorn, stand: h.mod.stand,
+    addBeaconSource: h.mod.addBeaconSource, stand: h.mod.stand,
     pickAway: (...args) => h.pickAway(...args), noteDeed: () => { h.deeds++; if (h.deedError) throw Error("deed"); } },
     "\nexport { giveGift, sessions, tickSessions };\n");
   h.pickAway = () => ({ x: 12, y: 65, z: 0 });

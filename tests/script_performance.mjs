@@ -161,7 +161,7 @@ const common = h => ({ system: h.system, world: h.world, onEntity: (h.onEntity ?
 {
   const h = engine(), sources = [];
   const mod = await load("squirrel", { ...common(h), ...guideRules, ...squirrelRules,
-    addBeaconSource: fn => sources.push(fn), consumeAcorn() {}, stand() {},
+    addBeaconSource: fn => sources.push(fn), consumeHeld() {}, stand() {},
     pickAway: () => ({ x: 12, y: 0, z: 0 }) });
   mod.startSquirrels(); assert.equal(h.intervals(10), 0);
   const player = h.entity("minecraft:player"); h.world.players = [player];

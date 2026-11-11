@@ -26,6 +26,14 @@ export function consumeFromSlot(player, slot) {
   if (slot.amount > 1) slot.amount -= 1;
   else slot.setItem(undefined);
 }
+// Consume one of the held item `typeId` (not in Creative) and say whether the main hand held it: the live hand is re-read, so a
+// substituted item is never consumed.
+export function consumeHeld(player, typeId) {
+  const slot = player.getComponent("equippable")?.getEquipmentSlot(EquipmentSlot.Mainhand);
+  if (!slot?.hasItem() || slot.typeId !== typeId) return false;
+  consumeFromSlot(player, slot);
+  return true;
+}
 // Capture before the deferral, check after it: { block, slot } or undefined.
 export function captureUse(block, itemStack) {
   return { target: blockSnapshot(block), typeId: itemStack.typeId };

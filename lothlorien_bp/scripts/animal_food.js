@@ -1,4 +1,5 @@
-import { EquipmentSlot, GameMode, world } from "@minecraft/server";
+import { world } from "@minecraft/server";
+import { consumeHeld } from "./deferred_use.js";
 import { FOOD_HEALTH, FLOWER_ITEMS, GRAIN_ITEMS } from "./animal_food_rules.js";
 
 // Gifts and bonding own their food consumption. They call this only after acceptance.
@@ -14,12 +15,7 @@ export function isInjured(animal) {
 
 // Recheck the live hand, including deferred interactions. Never consume a substituted item.
 export function eatHeldFood(player, animal, foodId) {
-  const slot = player.getComponent("equippable")?.getEquipmentSlot(EquipmentSlot.Mainhand);
-  if (!slot?.hasItem() || slot.typeId !== foodId) return false;
-  if (player.getGameMode() !== GameMode.Creative) {
-    if (slot.amount > 1) slot.amount -= 1;
-    else slot.setItem(undefined);
-  }
+  if (!consumeHeld(player, foodId)) return false;
   healAnimal(animal);
   return true;
 }

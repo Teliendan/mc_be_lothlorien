@@ -15,7 +15,7 @@
 //  - a lead released the elf: entities/elf.json set the engine home to where it stands; script only records it.
 import { EntityInitializationCause, EquipmentSlot, ItemStack, system, world } from "@minecraft/server";
 import { onEntity } from "./entity_events.js";
-import { playerById } from "./entity_util.js";
+import { familiesOf, judgeNatural, playerById } from "./entity_util.js";
 import { ANGRY_EVENT, BOW_ID, DECK_BLOCKS, WARDEN_ID, isFriendlyFire, isNewFight, keepNaturalSpawn, PLAYER_ID, THANKS_RADIUS, isWardenQuarry, WARDEN_DAMAGE_CAUSES } from "./elven_warden_rules.js";
 import { HATED_TAG, recordElfFight, recordWardenFight } from "./harmony_game.js";
 import { ELF_ID, FOE_MS, FOE_TAG, HOME_OF_ELF, MOVED_PROPERTY, REHOME_EVENT, homeCell } from "./elf_rules.js";
@@ -28,13 +28,6 @@ const TICKS_PER_MS = 20 / 1000;
 const elfHit = new Map(); // player id -> Date.now() of the last hit on an elf
 const foeSerial = new Map(); // player id -> counter: only the latest elf hit's timer removes the foe tag
 
-function families(entity) {
-  try {
-    return entity.getComponent("minecraft:type_family")?.getTypeFamilies?.() ?? [];
-  } catch {
-    return [];
-  }
-}
 
 function standsOnDeck(dimension, location) {
   try {
@@ -48,14 +41,10 @@ function standsOnDeck(dimension, location) {
 // Natural spawns only (the spawn rule's herd event sets lothlorien:natural; /summon, eggs and structures do not).
 // The flag is cleared after the roll, so a warden is judged once, not again on every chunk load.
 function judgeNaturalSpawn(warden, depthAt) {
-  try {
-    if (!warden.isValid || !warden.getProperty("lothlorien:natural")) return;
-    warden.setProperty("lothlorien:natural", false);
+  judgeNatural(warden, () => {
     const level = depthAt(warden.dimension, warden.location).level;
     if (!keepNaturalSpawn(level, standsOnDeck(warden.dimension, warden.location), Math.random())) warden.remove();
-  } catch {
-    // unloaded meanwhile
-  }
+  });
 }
 
 function ensureBow(warden) {
@@ -164,7 +153,7 @@ export function startElvenWardens(depthAt, bandOf) {
       const victim = event.hurtEntity;
       const at = provoked.get(victim.id);
       const hated = victim.typeId === PLAYER_ID && victim.hasTag(HATED_TAG), foe = victim.typeId === PLAYER_ID && victim.hasTag(FOE_TAG);
-      if (isFriendlyFire({ shooterId: shooter.typeId, victim: { typeId: victim.typeId, families: families(victim) }, hated, foe, sinceProvokedMs: at === undefined ? undefined : Date.now() - at })) {
+      if (isFriendlyFire({ shooterId: shooter.typeId, victim: { typeId: victim.typeId, families: familiesOf(victim) }, hated, foe, sinceProvokedMs: at === undefined ? undefined : Date.now() - at })) {
         event.cancel = true;
       }
     } catch {
@@ -175,7 +164,7 @@ export function startElvenWardens(depthAt, bandOf) {
   world.afterEvents.entityDie.subscribe(({ deadEntity, damageSource }) => {
     try {
       const killer = damageSource.damagingEntity;
-      if (killer?.typeId !== PLAYER_ID || !isWardenQuarry(families(deadEntity)) || fighting(killer)) return;
+      if (killer?.typeId !== PLAYER_ID || !isWardenQuarry(familiesOf(deadEntity)) || fighting(killer)) return;
       const pool = thanksPool(bandOf(killer));
       const [warden] = pool ? killer.dimension.getEntities({ type: WARDEN_ID, location: killer.location, maxDistance: THANKS_RADIUS, closest: 1 }) : [];
       if (warden) speak(warden, pool, killer);

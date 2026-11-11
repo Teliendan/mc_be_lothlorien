@@ -14,7 +14,8 @@ import { EntityInitializationCause, EquipmentSlot, GameMode, ItemStack, system, 
 import { onEntity } from "./entity_events.js";
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
-import { playerById, say } from "./entity_util.js";
+import { consumeHeld } from "./deferred_use.js";
+import { judgeNatural, moveBeacon, playerById, removeBeacon, say } from "./entity_util.js";
 import { eatHeldFood, healAnimal, isInjured } from "./animal_food.js";
 import {
   ACORN_ID, BEACON_ID, GUIDE_TICKS, WHITE_DEER_ID, canBeGuided, hopStatus, horizontal, keepNaturalSpawn,
@@ -158,23 +159,6 @@ export function stand(dimension, x, z, y) {
 
 const standIn = (dimension) => (x, z, y) => stand(dimension, x, z, y);
 
-export function consumeAcorn(player) {
-  if (player.getGameMode() === GameMode.Creative) return;
-  const slot = player.getComponent("equippable")?.getEquipmentSlot(EquipmentSlot.Mainhand);
-  if (!slot?.hasItem() || slot.typeId !== ACORN_ID) return;
-  if (slot.amount > 1) slot.amount -= 1;
-  else slot.setItem(undefined);
-}
-
-function removeBeacon(beaconId) {
-  try {
-    const beacon = beaconId && world.getEntity(beaconId);
-    if (beacon?.isValid) beacon.remove();
-  } catch {
-    // already gone
-  }
-}
-
 function activePlayer(player) {
   return player?.isValid && player.getGameMode() !== GameMode.Spectator &&
     player.getComponent("minecraft:health")?.currentValue > 0;
@@ -250,7 +234,7 @@ function lead(player, deer, spot) {
     beaconId = beacon.id;
     deer.triggerEvent("lothlorien:become_tame"); // fed: persistent, and after guiding it comes back as state_tame
     deer.triggerEvent("lothlorien:guide_start");
-    consumeAcorn(player); // only now: guidance really starts
+    consumeHeld(player, ACORN_ID); // only now: guidance really starts
     healAnimal(deer);
     sessions.set(deer.id, {
       playerId: player.id,
@@ -294,7 +278,6 @@ function arrive(deerId, deer, player, s) {
   end(deerId, deer, player, message(delivered ? "deer.gift" : "deer.no_spot"));
 }
 
-const moveBeacon = (beacon, to) => beacon.teleport({ x: to.x, y: to.y, z: to.z });
 
 // The session's beacon, respawned at `at` if it was lost (chunk unloaded, killed by /kill). undefined = cannot.
 function beaconOf(s, dimension, at) {
@@ -408,13 +391,9 @@ function tickSessions() {
 // with the depth chance of its spot (white_deer_rules.js), otherwise remove it before anyone sees it (distance_filter
 // 24-44 from the player). The flag is cleared after the roll, so a deer is judged once, not again on every chunk load.
 function judgeNaturalSpawn(deer, depthAt) {
-  try {
-    if (!deer.isValid || !deer.getProperty("lothlorien:natural")) return;
-    deer.setProperty("lothlorien:natural", false);
+  judgeNatural(deer, () => {
     if (!keepNaturalSpawn(depthAt(deer.dimension, deer.location).level, Math.random())) deer.remove();
-  } catch {
-    // unloaded meanwhile
-  }
+  });
 }
 
 // depth(dimension, location) -> { level } from scripts/depth.js; inside(dimension, location) -> boolean (depth.js isInside); biomeInfo = { id, transparent, at } (main.js supplies both).

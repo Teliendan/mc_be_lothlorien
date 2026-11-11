@@ -18,3 +18,36 @@ export function playerById(id) {
   const entity = id ? world.getEntity(id) : undefined;
   return entity?.typeId === PLAYER_ID ? entity : undefined;
 }
+
+// The type families of an entity ([] when unreadable).
+export function familiesOf(entity) {
+  try {
+    return entity.getComponent("minecraft:type_family")?.getTypeFamilies?.() ?? [];
+  } catch {
+    return [];
+  }
+}
+
+// A natural spawn is judged once: the spawn rule's herd event sets lothlorien:natural (/summon, eggs and structures do not), the flag is
+// cleared before `judge(entity)` runs (so a chunk reload does not roll again) and `judge` removes the entity or leaves it.
+export function judgeNatural(entity, judge) {
+  try {
+    if (!entity.isValid || !entity.getProperty("lothlorien:natural")) return;
+    entity.setProperty("lothlorien:natural", false);
+    judge(entity);
+  } catch {
+    // unloaded meanwhile
+  }
+}
+
+// The guide beacon (white deer and squirrel sessions): removed by id, and moved by teleport.
+export function removeBeacon(beaconId) {
+  try {
+    const beacon = beaconId && world.getEntity(beaconId);
+    if (beacon?.isValid) beacon.remove();
+  } catch {
+    // already gone
+  }
+}
+
+export const moveBeacon = (beacon, to) => beacon.teleport({ x: to.x, y: to.y, z: to.z });

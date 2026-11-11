@@ -3,24 +3,17 @@ import { message } from "./messages.js";
 // in deer.js (they are in WARY_TYPES): strangers and restless players are fled from, a Friend of Lothlorien may come close
 // and lure one with Elanor. This file is the taming: three offers of Elanor from a Friend bond the unicorn to that player
 // (the `lothlorien:bonded` group in entities/unicorn.json makes it rideable without a saddle), and only the owner may ride it.
-import { EquipmentSlot, GameMode, system, world } from "@minecraft/server";
+import { system, world } from "@minecraft/server";
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { healAnimal } from "./animal_food.js";
+import { consumeHeld } from "./deferred_use.js";
 import { playerById, say } from "./entity_util.js";
 import { setEventFor } from "./deer_rules.js";
 import { ELANOR_ID, UNICORN_ID, mayRide, nextTrust, offerRefusal } from "./unicorn_rules.js";
 
 const OWNER = "lothlorien:owner"; // dynamic property on the unicorn: id of the player it is bonded to
 const OFFER_READY = "lothlorien:offer_ready"; // entity property: false during the pause the native group lothlorien:offer_wait runs
-
-function consumeElanor(player) {
-  if (player.getGameMode() === GameMode.Creative) return;
-  const slot = player.getComponent("equippable")?.getEquipmentSlot(EquipmentSlot.Mainhand);
-  if (!slot?.hasItem() || slot.typeId !== ELANOR_ID) return;
-  if (slot.amount > 1) slot.amount -= 1;
-  else slot.setItem(undefined);
-}
 
 const REFUSALS = {
   restless: message("unicorn.restless"),
@@ -63,7 +56,7 @@ function offer(player, unicorn) {
   if (refusal === "tame") return;
   if (refusal) return say(player, REFUSALS[refusal]);
   const { trust, bonded } = nextTrust(unicorn.getProperty("lothlorien:trust"));
-  consumeElanor(player);
+  consumeHeld(player, ELANOR_ID);
   healAnimal(unicorn);
   unicorn.setProperty("lothlorien:trust", trust);
   say(player, MESSAGES[trust - 1]);

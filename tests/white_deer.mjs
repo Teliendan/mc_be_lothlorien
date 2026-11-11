@@ -62,7 +62,7 @@ test("white deer: the gift is given once per deer, the spot is kept until then, 
   assert.ok(src.includes("setDynamicProperty(GIFTED, true)") && src.includes("setDynamicProperty(GIFT_SPOT, undefined)"));
   assert.ok(/function arrive[\s\S]*giveGift/.test(src), "arrival lays the nut");
   const lead = src.slice(src.indexOf("function lead("), src.indexOf("function end("));
-  assert.ok(lead.indexOf("consumeAcorn") > lead.indexOf("guide_start"), "acorn used only when guidance starts");
+  assert.ok(lead.indexOf("consumeHeld") > lead.indexOf("guide_start"), "acorn used only when guidance starts");
 });
 
 test("waypoints: open ground gives a HOP-block waypoint straight at the target", () => {
@@ -333,7 +333,7 @@ test("white deer: depth table - none outside, few at the edge, more inside, all 
   for (let i = 0; i < 1000; i++) if (W.keepNaturalSpawn(2, i / 1000)) kept++;
   assert.equal(kept, Math.round(W.spawnKeepChance(2) * 1000));
   const src = readFileSync(new URL("../lothlorien_bp/scripts/white_deer.js", import.meta.url), "utf8");
-  assert.ok(src.includes("EntityInitializationCause.Loaded") && src.includes('setProperty("lothlorien:natural", false)'), "judged once, not on reload");
+  assert.ok(src.includes("EntityInitializationCause.Loaded") && src.includes("judgeNatural(deer"), "judged once through entity_util judgeNatural (tests/entity_util.mjs), not on reload");
 });
 
 test("white deer: always an antlered hart; sure antler plus the usual deer drops, on any death", () => {

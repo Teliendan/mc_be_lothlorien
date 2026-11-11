@@ -204,7 +204,7 @@ for (const name of ["white_deer","squirrel"]) {
   let inside=false;
   const depth=()=>({level:inside?3:0,complete:true});
   const bindings={...h.bindings,...food,...guideRules,...giftRules,...squirrelRules,
-    consumeAcorn:p=>food.eatHeldFood(p,h.target,ACORN),addBeaconSource(){},stand(){},
+    addBeaconSource(){},stand(){},
     pickAway:()=>({x:12,y:64,z:0}), pickWaypoint:()=>({x:10,y:64,z:0}),hopStatus:()=>"go"};
   const mod=await load(name,bindings);
   if(name==="white_deer")mod.startWhiteDeer(depth,()=>inside,{});else mod.startSquirrels(depth,()=>inside);
@@ -224,7 +224,7 @@ for (const name of ["white_deer","squirrel"]) {
 {
   const h=engine(), food=await load("animal_food",{...h.bindings,...foods});
   const mod=await load("squirrel",{...h.bindings,...food,...guideRules,...squirrelRules,
-    consumeAcorn(){},addBeaconSource(){},stand(){},pickAway:()=>({x:12,y:64,z:0})});
+    addBeaconSource(){},stand(){},pickAway:()=>({x:12,y:64,z:0})});
   mod.startSquirrels(()=>({level:3}));const p=h.player(ACORN),s=h.entity(squirrelRules.SQUIRREL_ID,8,8);
   h.fire("after","playerInteractWithEntity",{player:p,target:s,itemStack:{typeId:ACORN}});
   assert.ok(mod.isErrand(s.id));const beacon=h.dimension.spawned[0];s.leashed=true;h.advance(10);

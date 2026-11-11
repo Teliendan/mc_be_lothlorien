@@ -12,8 +12,9 @@ import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { eatHeldFood, healAnimal, isInjured } from "./animal_food.js";
 import { noteDeed } from "./deeds.js";
-import { playerById, say } from "./entity_util.js";
-import { addBeaconSource, consumeAcorn, stand } from "./white_deer.js";
+import { moveBeacon, playerById, removeBeacon, say } from "./entity_util.js";
+import { consumeHeld } from "./deferred_use.js";
+import { addBeaconSource, stand } from "./white_deer.js";
 import { ACORN_ID, BEACON_ID } from "./white_deer_rules.js";
 import {
   GIFT_TABLE, SQUIRREL_ID, SQUIRREL_TICKS, cooldownLeft, digTicks, horizontal, nextPhase, offerRefusal, pickAway, COOLDOWN_TICKS, GIFT_HEIGHT, MAX_TICKS,
@@ -29,17 +30,6 @@ function syncSessionTimer() {
 }
 
 export const isErrand = (squirrelId) => sessions.has(squirrelId);
-
-function removeBeacon(beaconId) {
-  try {
-    const beacon = beaconId && world.getEntity(beaconId);
-    if (beacon?.isValid) beacon.remove();
-  } catch {
-    // already gone
-  }
-}
-
-const moveBeacon = (beacon, to) => beacon.teleport({ x: to.x, y: to.y, z: to.z });
 
 const living = entity => entity?.isValid && entity.getComponent("minecraft:health")?.currentValue > 0;
 const eligiblePlayer = player => living(player) && [GameMode.Survival, GameMode.Adventure, GameMode.Creative].includes(player.getGameMode());
@@ -69,7 +59,7 @@ function offer(player, squirrel) {
   let beaconId;
   try {
     beaconId = dimension.spawnEntity(BEACON_ID, { x: away.x, y: away.y, z: away.z }).id;
-    consumeAcorn(player);
+    consumeHeld(player, ACORN_ID);
     squirrel.triggerEvent("lothlorien:guide_start");
     healAnimal(squirrel);
     sessions.set(squirrel.id, { playerId: player.id, dimensionId: dimension.id, actor: squirrel, beaconId, away, born: system.currentTick, phase: "away", phaseStart: system.currentTick, digFor: 0 });

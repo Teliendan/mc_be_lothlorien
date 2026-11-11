@@ -102,7 +102,7 @@ test("elven warden: natural spawns - always at the edge and on decks, 30 % elsew
   assert.equal(kept, 300);
   assert.ok(EW.keepNaturalSpawn(1, false, 0.999) && !EW.keepNaturalSpawn(3, false, 0.3));
   const src = readFileSync(new URL("../lothlorien_bp/scripts/elven_warden.js", import.meta.url), "utf8");
-  assert.ok(src.includes("EntityInitializationCause.Loaded") && src.includes('setProperty("lothlorien:natural", false)'), "judged once, not on reload");
+  assert.ok(src.includes("EntityInitializationCause.Loaded") && src.includes("judgeNatural(warden"), "judged once through entity_util judgeNatural (tests/entity_util.mjs), not on reload");
   assert.ok(!src.includes("runInterval"), "event-driven, no polling");
   assert.ok(readFileSync(new URL("../lothlorien_bp/scripts/main.js", import.meta.url), "utf8").includes("startElvenWardens(depthAt, "));
 });
@@ -200,5 +200,5 @@ test("elven warden: thanks - quarry = the warden's target filter; nearest warden
   assert.ok(EW.isWardenQuarry(["zombie", "undead", "monster", "mob"]) && EW.isWardenQuarry(["creeper", "monster", "mob"]));
   assert.ok(!EW.isWardenQuarry(["enderman", "monster", "mob"]) && !EW.isWardenQuarry(["horse", "mob"]) && !EW.isWardenQuarry([]));
   const src = readFileSync(new URL("../lothlorien_bp/scripts/elven_warden.js", import.meta.url), "utf8");
-  assert.ok(/isWardenQuarry\(families\(deadEntity\)\) \|\| fighting\(killer\)[\s\S]*thanksPool\(bandOf\(killer\)\)[\s\S]*closest: 1/.test(src));
+  assert.ok(/isWardenQuarry\(familiesOf\(deadEntity\)\) \|\| fighting\(killer\)[\s\S]*thanksPool\(bandOf\(killer\)\)[\s\S]*closest: 1/.test(src));
 });

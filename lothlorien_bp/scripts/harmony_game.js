@@ -3,6 +3,7 @@ import { message } from "./messages.js";
 // property (survives relogging, independent between players) and written only when harmony changes.
 import { world, system } from "@minecraft/server";
 import { FOE_TAG } from "./elf_rules.js";
+import { familiesOf } from "./entity_util.js";
 import { EVERYWHERE_DEEDS, MAX_HARMONY, MIN_HARMONY, bandOf, markMount, wasMount, changeMessages, deedCounts, deedKindOf, hintDue, isFriend, isHated, parse, recordDeath, recordDeed, serialize, statusText, tick } from "./harmony.js";
 
 const PROPERTY = "lothlorien:harmony";
@@ -85,14 +86,6 @@ export function recordElfFight(player, elf) {
     deed(player, elf, "elf_fight");
   } catch {
     // entity gone
-  }
-}
-
-function familiesOf(entity) {
-  try {
-    return entity.getComponent("minecraft:type_family")?.getTypeFamilies?.() ?? [];
-  } catch {
-    return [];
   }
 }
 

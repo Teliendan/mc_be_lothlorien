@@ -4,23 +4,20 @@
 // or is removed when a bank is overhead.
 import { EntityInitializationCause, system, world } from "@minecraft/server";
 import { onEntity } from "./entity_events.js";
+import { judgeNatural } from "./entity_util.js";
 import { SWAN_ID, nearBiome, surfaceAction } from "./swan_rules.js";
 
 // The spawn rule's herd event sets lothlorien:natural (/summon and eggs do not, so they always stay). The flag is cleared
 // after the roll, so a swan is judged once and not again on every chunk load.
 function judgeNaturalSpawn(swan, biome) {
-  try {
-    if (!swan.isValid || !swan.getProperty("lothlorien:natural")) return;
-    swan.setProperty("lothlorien:natural", false);
+  judgeNatural(swan, () => {
     const { x, y, z } = swan.location;
     if (!nearBiome((dx, dz) => biome.at(swan.dimension, x + dx, z + dz), biome.id)) { swan.remove(); return; }
     // fish-style spawn rule: a swan can start submerged. Open water above -> float at the surface; bank overhead -> remove.
     const fix = surfaceAction(y, by => swan.dimension.getBlock({ x, y: by, z })?.typeId);
     if (fix.action === "remove") swan.remove();
     else if (fix.action === "move") swan.teleport({ x, y: fix.y, z });
-  } catch {
-    // unloaded meanwhile
-  }
+  });
 }
 
 // biome = { id, at(dimension, x, z) -> surface biome id or undefined } (main.js supplies it).
