@@ -6,10 +6,10 @@ Output (overwritten every run): lothlorien_rp/models/entity/songbird.geo.json,
 lothlorien_rp/textures/entity/songbird/{songbird_silver,songbird_gold}.png. Same method as make_deer.py (shelf-packed
 box UV, every face painted by rule, colour ramps dark -> light, light from top and front). Not seen in game yet.
 """
-import json
 import sys
 from pathlib import Path
 from PIL import Image
+from json_io import write_json
 
 RP = Path(__file__).resolve().parents[1] / "lothlorien_rp"
 TEX = 32
@@ -225,7 +225,7 @@ def main():
         geo, img = build(name)
         img.save(RP / f"textures/entity/songbird/songbird_{name}.png")
         imgs[name] = img
-    (RP / "models/entity/songbird.geo.json").write_text(json.dumps(geo, indent=2) + "\n")
+    write_json(RP / "models/entity/songbird.geo.json", geo)
     if "--preview" in sys.argv:
         out = Path(sys.argv[sys.argv.index("--preview") + 1])
         out.mkdir(parents=True, exist_ok=True)

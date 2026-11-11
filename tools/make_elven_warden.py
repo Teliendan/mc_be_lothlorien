@@ -18,6 +18,7 @@ import json
 import sys
 from pathlib import Path
 from PIL import Image
+from json_io import write_json
 
 MOD = Path(__file__).resolve().parents[1]
 RP = MOD / "lothlorien_rp"
@@ -464,7 +465,7 @@ def paint_texture(uvs):
 # ---------------------------------------------------------------- animations, controllers, render controller, client entity
 def write(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    write_json(path, data)
 
 
 def animations():

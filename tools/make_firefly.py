@@ -10,9 +10,9 @@ Glow under Vibrant Visuals: a PBR texture set whose emissive channel (green of t
 green abdomen, the way vanilla glow squid and allay do (verified in game 2026-10-02). ignore_lighting and alpha-mask
 emissive materials did not glow.
 """
-import json
 from pathlib import Path
 from PIL import Image
+from json_io import write_json
 
 RP = Path(__file__).resolve().parents[1] / "lothlorien_rp"
 W, H = 32, 16
@@ -133,11 +133,10 @@ def main():
     (RP / "models/entity").mkdir(parents=True, exist_ok=True)
     (RP / "textures/entity").mkdir(parents=True, exist_ok=True)
     (RP / "textures/items").mkdir(parents=True, exist_ok=True)
-    (RP / "models/entity/firefly.geo.json").write_text(json.dumps(geometry(), indent=2) + "\n")
+    write_json(RP / "models/entity/firefly.geo.json", geometry())
     paint().save(RP / "textures/entity/firefly.png")
     mers().save(RP / "textures/entity/firefly_mers.tga")
-    (RP / "textures/entity/firefly.texture_set.json").write_text(
-        json.dumps(texture_set("firefly", "firefly_mers"), indent=2) + "\n")
+    write_json(RP / "textures/entity/firefly.texture_set.json", texture_set("firefly", "firefly_mers"))
     icon().save(RP / "textures/items/bottle_of_fireflies.png")
     print("firefly art written")
 

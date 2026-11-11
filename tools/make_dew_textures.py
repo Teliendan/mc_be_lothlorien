@@ -10,6 +10,7 @@ import json
 import shutil
 from pathlib import Path
 from PIL import Image
+from json_io import write_text
 
 BLOCKS = Path(__file__).resolve().parents[1] / "lothlorien_rp/textures/blocks"
 GLINT = (226, 246, 255, 255)
@@ -34,7 +35,7 @@ def main():
                 img.putpixel((x, y + 1), GLINT_EDGE)
         img.save(BLOCKS / f"{name}_dew.png")
         shutil.copyfile(BLOCKS / f"{name}_mers.tga", BLOCKS / f"{name}_dew_mers.tga")
-        (BLOCKS / f"{name}_dew.texture_set.json").write_text(json.dumps(
+        write_text(BLOCKS / f"{name}_dew.texture_set.json", json.dumps(
             {"format_version": "1.21.30", "minecraft:texture_set": {
                 "color": f"{name}_dew", "metalness_emissive_roughness_subsurface": f"{name}_dew_mers"}}) + "\n")
         print(name, "glints", placed)

@@ -27,6 +27,7 @@ sys.path.insert(0, HERE)
 import make_mallorn_boat as stepped  # noqa: E402
 import make_mallorn_boat_planks as planks  # noqa: E402
 from make_mallorn_wood import recolour  # noqa: E402
+from json_io import write_text  # noqa: E402
 
 MOD = os.path.dirname(HERE)
 BP, RP = os.path.join(MOD, "lothlorien_bp"), os.path.join(MOD, "lothlorien_rp")
@@ -58,10 +59,10 @@ LOCK, LOCK_DARK = (196, 196, 196), (120, 120, 120)
 
 
 def write_json(path, data):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w", encoding="utf-8", newline="\n") as f:
-        json.dump(data, f, indent=2)
-        f.write("\n")
+    text = json.dumps(data, indent=2)
+    # committed item files keep the short dispense_on list on one line
+    text = re.sub(r'("dispense_on": )\[([^\]]*)\]', lambda m: m.group(1) + "[" + ", ".join(x.strip() for x in m.group(2).split(",")) + "]", text)
+    write_text(path, text + "\n")
 
 
 # ---------------------------------------------------------------- art

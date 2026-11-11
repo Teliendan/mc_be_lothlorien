@@ -7,9 +7,9 @@ lothlorien_rp/textures/entity/butterfly/butterfly_<colour>.png for every colour 
 The colour index (position in COLOURS) is the `lothlorien:wing` property in the BP entity and the
 texture array in the render controller; keep the three in step (tests/run.mjs does not cover it, verify does).
 """
-import json
 from pathlib import Path
 from PIL import Image
+from json_io import write_json
 
 RP = Path(__file__).resolve().parents[1] / "lothlorien_rp"
 W, H = 32, 32
@@ -113,7 +113,7 @@ def main():
     (RP / "models/entity").mkdir(parents=True, exist_ok=True)
     out = RP / "textures/entity/butterfly"
     out.mkdir(parents=True, exist_ok=True)
-    (RP / "models/entity/butterfly.geo.json").write_text(json.dumps(geometry(), indent=2) + "\n")
+    write_json(RP / "models/entity/butterfly.geo.json", geometry())
     for name, colour in COLOURS.items():
         paint(colour).save(out / f"butterfly_{name}.png")
     print(f"butterfly art written: {len(COLOURS)} colours: {', '.join(COLOURS)}")

@@ -15,7 +15,6 @@ by direction, so the texture carries no baked face shading. The glass parts use 
 """
 import json
 import random
-import re
 from pathlib import Path
 from PIL import Image
 from make_mallorn_wood import BARK as MALLORN_BARK, recolour, to_gold
@@ -639,10 +638,11 @@ def dump(path, obj):
     if "minecraft:block" in obj:
         from configure_support import configure
         configure(obj)
+        comps = obj["minecraft:block"]["components"]
+        if "minecraft:support" in comps:  # committed layout: the support component comes last
+            comps["minecraft:support"] = comps.pop("minecraft:support")
     path.parent.mkdir(parents=True, exist_ok=True)
     text = json.dumps(obj, indent=2) + "\n"
-    if "minecraft:block" in obj:  # committed block files keep the tag list on one line
-        text = re.sub(r'("minecraft:tags": \[)\s+("[^"\n]*")\s+\]', r"\1\2]", text)
     # keep the line endings of the committed file (terrain_texture.json is CRLF)
     crlf = path.exists() and b"\r\n" in path.read_bytes()
     path.write_bytes((text.replace("\n", "\r\n") if crlf else text).encode("utf8"))

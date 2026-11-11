@@ -9,11 +9,11 @@ painted by hand-placed rules (colour ramps with hue shift, no noise), following
 `.claude/skills/bedrock-art/references/style.md`. Seen only in this script's preview
 (`--preview`), not yet in game: treat the look as a placeholder until the graphics pass.
 """
-import json
 import os
 import sys
 from pathlib import Path
 from PIL import Image
+from json_io import write_json
 
 RP = Path(__file__).resolve().parents[1] / "lothlorien_rp"
 TEX = 64  # texture size (square); all boxes at 1 px = 1 unit, no mixels
@@ -498,7 +498,7 @@ def main():
     baby_geo, baby_tex = build("geometry.lothlorien.deer_baby", True, None, None)
     # one geo file may hold several geometries
     merged = {"format_version": "1.12.0", "minecraft:geometry": adult_geo + baby_geo}
-    (RP / "models/entity/deer.geo.json").write_text(json.dumps(merged, indent=2) + "\n")
+    write_json(RP / "models/entity/deer.geo.json", merged)
     adult_tex.save(RP / "textures/entity/deer/deer.png")
     baby_tex.save(RP / "textures/entity/deer/deer_baby.png")
     tawny = {k: globals()[k] for k in WHITE_PALETTE}

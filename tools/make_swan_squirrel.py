@@ -8,10 +8,10 @@ Same method as make_songbird.py (shelf-packed box UV, every face painted by rule
 from the top and front). Rotation-free models (the swan's curved neck is stepped boxes), so no bone sign to get wrong.
 Owner brief 2026-10-02: no gold or silver on the animals; the swan is plain white, the squirrel brown. Not seen in game yet.
 """
-import json
 import sys
 from pathlib import Path
 from PIL import Image
+from json_io import write_json
 
 RP = Path(__file__).resolve().parents[1] / "lothlorien_rp"
 CLEAR = (0, 0, 0, 0)
@@ -314,13 +314,13 @@ def main():
     imgs = {}
     geo, img = build_swan()
     img.save(RP / "textures/entity/swan/swan.png")
-    (RP / "models/entity/swan.geo.json").write_text(json.dumps(geo, indent=2) + "\n")
+    write_json(RP / "models/entity/swan.geo.json", geo)
     imgs["swan"] = img
     for coat in COATS:
         geo, img = build_squirrel(coat)
         img.save(RP / f"textures/entity/squirrel/squirrel_{coat}.png")
         imgs[f"squirrel_{coat}"] = img
-    (RP / "models/entity/squirrel.geo.json").write_text(json.dumps(geo, indent=2) + "\n")
+    write_json(RP / "models/entity/squirrel.geo.json", geo)
     if "--preview" in sys.argv:
         out = Path(sys.argv[sys.argv.index("--preview") + 1])
         out.mkdir(parents=True, exist_ok=True)

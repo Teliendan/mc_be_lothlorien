@@ -11,9 +11,9 @@ and a slightly warm highlight; the twist shows as alternating light/dark strands
 Texture regions (16x16): strand front 0-1 x 0-15, strand side 2-3 x 0-15, knot front 4-7 x 0-3, knot side 8-11 x 0-3,
 knot top 4-7 x 4-7, strand end 12-13 x 0-1, knot bottom 8-11 x 4-7.
 """
-import json
 from pathlib import Path
 from PIL import Image
+from json_io import write_json
 
 RP = Path(__file__).resolve().parents[1] / "lothlorien_rp"
 
@@ -160,7 +160,7 @@ def paint_icon():
 
 def main():
     (RP / "models/blocks").mkdir(parents=True, exist_ok=True)
-    (RP / "models/blocks/elven_rope.geo.json").write_text(json.dumps(geometry(), indent=2) + "\n")
+    write_json(RP / "models/blocks/elven_rope.geo.json", geometry())
     paint_block().save(RP / "textures/blocks/elven_rope.png")
     paint_icon().save(RP / "textures/items/elven_rope.png")
     print("elven rope: geometry, block texture, item icon written")

@@ -8,6 +8,7 @@ import json
 import subprocess
 from pathlib import Path
 from PIL import Image, ImageDraw
+from json_io import write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 BP, RP = ROOT / 'lothlorien_bp', ROOT / 'lothlorien_rp'
@@ -19,7 +20,7 @@ RULES = json.loads(subprocess.check_output([
 
 def write(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, indent=2) + '\n', encoding='utf-8')
+    write_json(path, value)
 
 
 def item(name, components):

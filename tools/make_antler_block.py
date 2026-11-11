@@ -16,9 +16,9 @@ cubes on purpose. Texture: four column groups (antler, skull, muzzle, burr), eac
 skull. Each cube samples the rows that match its height on the WALL model (tips up), so the floor and ceiling models,
 made from the same cubes, keep the colour where it belongs.
 """
-import json
 from pathlib import Path
 from PIL import Image
+from json_io import write_json
 
 RP = Path(__file__).resolve().parents[1] / "lothlorien_rp"
 
@@ -244,8 +244,7 @@ def main():
     floor = clamp(to_floor(wall_layout()))
     ceiling = clamp(to_ceiling(to_floor(wall_layout())))
     for name, cubes in (("wall", wall), ("floor", floor), ("ceiling", ceiling)):
-        (RP / f"models/blocks/deer_antler_{name}.geo.json").write_text(
-            json.dumps(geo(f"geometry.lothlorien.deer_antler_{name}", cubes, name), indent=2) + "\n")
+        write_json(RP / f"models/blocks/deer_antler_{name}.geo.json", geo(f"geometry.lothlorien.deer_antler_{name}", cubes, name))
         lo, hi = bounds(cubes)
         print(name, "bounds", [round(v, 2) for v in lo], [round(v, 2) for v in hi])
     texture().save(RP / "textures/blocks/deer_antler.png")

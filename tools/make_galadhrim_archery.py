@@ -9,6 +9,7 @@ import json
 import subprocess
 from pathlib import Path
 from PIL import Image, ImageDraw
+from json_io import write_json
 
 MOD = Path(__file__).resolve().parents[1]
 ROOT = MOD.parents[1]
@@ -23,7 +24,7 @@ BOW, BOW_ID, ARROW_ID = RULES["BOW"], RULES["BOW_ID"], RULES["ARROW_ID"]
 def write(pack, name, value):
     path = pack / name
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+    write_json(path, value)
 
 
 def item(identifier, components, group=None):

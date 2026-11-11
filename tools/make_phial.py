@@ -6,6 +6,7 @@ from pathlib import Path
 import json
 import subprocess
 from PIL import Image, ImageDraw
+from json_io import write_json
 
 RP = Path(__file__).resolve().parents[1] / "lothlorien_rp"
 ROOT = RP.parent
@@ -49,7 +50,7 @@ def main():
     block_path = ROOT / "lothlorien_bp/blocks/phial_light.json"
     block = json.loads(block_path.read_text(encoding="utf-8"))
     configure_helper(block, rules["level"])
-    block_path.write_text(json.dumps(block, indent=2) + "\n", encoding="utf-8")
+    write_json(block_path, block)
     phial_icon().save(RP / "textures/items/phial_of_galadriel.png")
     Image.new("RGBA", (16, 16)).save(RP / "textures/blocks/phial_light.png")
 
