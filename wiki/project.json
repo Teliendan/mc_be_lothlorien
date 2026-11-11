@@ -246,6 +246,10 @@
     },
     {
       "featureId": "lothlorien:growing",
+      "pattern": "lothlorien_bp/scripts/message_helper.js"
+    },
+    {
+      "featureId": "lothlorien:growing",
       "pattern": "lothlorien_bp/scripts/nectar.js"
     },
     {
