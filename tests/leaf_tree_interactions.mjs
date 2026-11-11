@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import * as rules from '../lothlorien_bp/scripts/tree_interaction_rules.js';
 import * as greatRules from '../lothlorien_bp/scripts/great_mallorn_rules.js';
 import * as decayRules from '../lothlorien_bp/scripts/leaf_decay.js';
+import * as worldUtil from '../lothlorien_bp/scripts/world_util.js';
 import { SUPPORT_POLICIES } from '../lothlorien_bp/scripts/support_policies.js';
 const read = p => JSON.parse(readFileSync(new URL('../lothlorien_bp/' + p, import.meta.url), 'utf8'));
 const SOURCE = readFileSync(new URL('../lothlorien_bp/scripts/trees.js', import.meta.url), 'utf8')
@@ -42,9 +43,9 @@ async function scenario(name, body, file = 'trees.js') {
     runInterval(fn) { intervals.set(nextRun, fn); return nextRun++; }, clearRun(id) { intervals.delete(id); } };
   const tree = { logs: Array.from({ length: 7 }, (_, y) => ({ x: 0, y, z: 0, face: 'up' })),
     leaves: Array.from({ length: 230 }, (_, x) => ({ x: x + 1, y: 6, z: 0 })) };
-  globalThis.__tree = { EquipmentSlot: { Mainhand: 'main' } };
+  globalThis.__tree = { ...worldUtil, EquipmentSlot: { Mainhand: 'main' }, GameMode: { Creative: 'creative' } };
   const deferred = await import(`data:text/javascript;base64,${Buffer.from(DEFERRED).toString('base64')}#d${count}`);
-  globalThis.__tree = { ...rules, ...greatRules, ...decayRules, ...deferred, swingArm: p => { p.swings = (p.swings ?? 0) + 1; }, message: () => 'localized', system, world: {
+  globalThis.__tree = { ...rules, ...greatRules, ...decayRules, ...worldUtil, ...deferred, swingArm: p => { p.swings = (p.swings ?? 0) + 1; }, message: () => 'localized', system, world: {
     beforeEvents: { playerInteractWithBlock: { subscribe: fn => handlers.push(fn) } },
     afterEvents: { playerPlaceBlock: { subscribe(fn, options) { events.playerPlace = { fn, options }; } },
       playerBreakBlock: { subscribe(fn, options) { events.playerBreak = { fn, options }; } },

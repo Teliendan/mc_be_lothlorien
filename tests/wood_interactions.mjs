@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as controlRules from '../lothlorien_bp/scripts/control_rules.js';
+import * as worldUtil from '../lothlorien_bp/scripts/world_util.js';
 const source = readFileSync(new URL('../lothlorien_bp/scripts/blocks.js', import.meta.url), 'utf8')
   .replace(/^import \{([^}]+)\} from "[^"]+";/gm, 'const {$1} = globalThis.__wood;');
 const deferredSource = readFileSync(new URL('../lothlorien_bp/scripts/deferred_use.js', import.meta.url), 'utf8')
@@ -45,9 +46,9 @@ async function scenario(name, body) {
     const k = `${phase}:${name}`; if (!handlers.has(k)) handlers.set(k, []); handlers.get(k).push(fn);
   } }) });
   const system = { beforeEvents: signal('system'), run: fn => queue.push(fn), currentTick: 0 };
-  globalThis.__wood = { EquipmentSlot: { Mainhand: 'main' } };
+  globalThis.__wood = { ...worldUtil, EquipmentSlot: { Mainhand: 'main' }, GameMode: { Creative: 'creative' } };
   const deferred = await import(`data:text/javascript;base64,${Buffer.from(deferredSource).toString('base64')}#${++serial}`);
-  globalThis.__wood = { ...controlRules, ...deferred, swingArm: p => { p.swings = (p.swings ?? 0) + 1; }, system, world: { beforeEvents: signal('before'), afterEvents: signal('after') },
+  globalThis.__wood = { ...controlRules, ...worldUtil, ...deferred, swingArm: p => { p.swings = (p.swings ?? 0) + 1; }, system, world: { beforeEvents: signal('before'), afterEvents: signal('after') },
     BlockPermutation: { resolve: perm }, EquipmentSlot: { Mainhand: 'main' },
     GameMode: { Creative: 'creative', Adventure: 'adventure', Spectator: 'spectator' } };
   await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}#${++serial}`);

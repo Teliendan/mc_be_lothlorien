@@ -1,6 +1,7 @@
 import { world, system, BlockPermutation, GameMode } from "@minecraft/server";
 import { gateFacingAway, overlapsPlate, pairedDoorHinge, PLATE_RELEASE_TICKS } from "./control_rules.js";
-import { captureUse, liveUse, readBlock } from "./deferred_use.js";
+import { captureUse, liveUse, consumeFromSlot } from "./deferred_use.js";
+import { FACE_OFFSET, cellKey, readBlock } from "./world_util.js";
 import { swingArm } from "./swing.js";
 
 // Phase 3 custom block components for the Mallorn wood set.
@@ -14,12 +15,6 @@ import { swingArm } from "./swing.js";
 
 const NS = "lothlorien";
 
-function consumeHeldItem(player, slot) {
-  if (player.getGameMode() === GameMode.Creative) return;
-  if (slot.amount > 1) slot.amount -= 1;
-  else slot.setItem(undefined);
-}
-
 function setState(block, name, value) {
   block.setPermutation(block.permutation.withState(name, value));
 }
@@ -31,7 +26,6 @@ const LEFT_OF_FACING = { north: [-1, 0], south: [1, 0], east: [0, -1], west: [0,
 const WOODS = ["mallorn", "mallorn_heartwood"];
 const GATES = new Set(WOODS.map(w => `${NS}:${w}_fence_gate`));
 const plateHoldUntil = new Map();
-const positionKey = (dimension, location) => `${dimension.id}:${location.x},${location.y},${location.z}`;
 
 function updateGateWall(block) {
   if (!block || !GATES.has(block.typeId)) return;
@@ -168,7 +162,7 @@ const components = {
         .some((e) => overlapsPlate(block.location, e.getAABB()));
       const powered = block.permutation.getState(`${NS}:powered`);
       if (pressed === powered) return; // the idle case: no key string needed
-      const key = positionKey(dimension, block.location);
+      const key = cellKey(dimension, block.location);
       if (!pressed && system.currentTick < (plateHoldUntil.get(key) ?? 0)) return;
       if (pressed) plateHoldUntil.set(key, system.currentTick + PLATE_RELEASE_TICKS);
       else plateHoldUntil.delete(key);
@@ -199,9 +193,6 @@ world.afterEvents.playerBreakBlock.subscribe(({ block, dimension }) => updateGat
 // close Mallorn doors, trapdoors and gates and press buttons within that radius of the impact.
 // Arrow/trident: a collisionless button lets the arrow hit the backing block; press the button on the face that was hit.
 // The projectile events take no filter, so each handler returns at once for other projectiles.
-const FACE_OFFSET = {
-  Up: [0, 1, 0], Down: [0, -1, 0], North: [0, 0, -1], South: [0, 0, 1], East: [1, 0, 0], West: [-1, 0, 0],
-};
 const WIND_CHARGES = new Set(["minecraft:wind_charge_projectile", "minecraft:breeze_wind_charge_projectile"]);
 const WIND_RADIUS = { "minecraft:wind_charge_projectile": 1.2, "minecraft:breeze_wind_charge_projectile": 3 };
 const toggleParams = (open, close) => ({ block_state: `${NS}:open`, enable_sound: open, disable_sound: close });
@@ -296,7 +287,7 @@ function mergeSlab(target, double, player, itemStack) {
     const live = liveUse(use, player);
     if (!live) return;
     live.block.setPermutation(BlockPermutation.resolve(double));
-    consumeHeldItem(player, live.slot);
+    consumeFromSlot(player, live.slot);
     swingArm(player);
     live.block.dimension.playSound("dig.wood", live.block.center(), { pitch: 0.8 });
   });

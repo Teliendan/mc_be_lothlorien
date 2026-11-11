@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import * as rules from '../lothlorien_bp/scripts/crop_rules.js';
 import * as flora from '../lothlorien_bp/scripts/flora_table.js';
 import * as nectar from '../lothlorien_bp/scripts/nectar_rules.js';
+import * as worldUtil from '../lothlorien_bp/scripts/world_util.js';
 import { SUPPORT_POLICIES } from '../lothlorien_bp/scripts/support_policies.js';
 import { createSupportMotionService } from '../lothlorien_bp/scripts/support_motion_service.js';
 import { supportOffset } from '../lothlorien_bp/scripts/antler_rules.js';
@@ -42,7 +43,7 @@ async function scenario(name, test) {
   }
   const system = { currentTick: 0, run: fn => queue.push(fn), runTimeout: fn => queue.push(fn), beforeEvents: { startup: {
     subscribe: fn => fn({ blockComponentRegistry: { registerCustomComponent: (id, c) => components.set(id, c) } }) } } };
-  const context = { ...rules, ...flora, ...nectar, SUPPORT_POLICIES, supportOffset, createSupportMotionService,
+  const context = { ...rules, ...flora, ...nectar, ...worldUtil, SUPPORT_POLICIES, supportOffset, createSupportMotionService,
     dropWholeRope() {}, world: { beforeEvents: { playerInteractWithBlock: { subscribe: fn => handlers.push(fn) } },
       afterEvents: new Proxy({}, { get: () => ({ subscribe() {} }) }) }, system,
     EquipmentSlot: { Mainhand: 'main' }, GameMode: { Creative: 'creative' }, ItemStack: function(id, amount) { return stack(id, amount); },

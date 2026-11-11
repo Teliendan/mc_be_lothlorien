@@ -1,10 +1,11 @@
-import { world, system, BlockPermutation, GameMode } from "@minecraft/server";
+import { world, system, BlockPermutation } from "@minecraft/server";
 import { makeRandom, buildSmallMallorn, buildBigMallorn } from "./mallorn_tree.js";
-import { captureUse, liveUse } from "./deferred_use.js";
+import { captureUse, liveUse, consumeFromSlot } from "./deferred_use.js";
+import { cellKey, readBlock } from "./world_util.js";
 import { swingArm } from "./swing.js";
 import { hangBloom } from "./nectar.js";
 import { treeBloomCount } from "./nectar_rules.js";
-import { TREE_WOOD, TREE_LEAVES, readTreeBlock, validSaplingSoil, saplingSoil, saplingLight } from "./tree_interaction_rules.js";
+import { TREE_WOOD, TREE_LEAVES, validSaplingSoil, saplingSoil, saplingLight } from "./tree_interaction_rules.js";
 import { findDecay, findRescue, BATCH_SPAN, OTHER, LEAF, DECAYABLE, WOOD, UNKNOWN, DECAYING } from "./leaf_decay.js";
 
 // Phase 4: Mallorn sapling growth, bone meal, leaf decay, and the tree balance instruments.
@@ -30,7 +31,6 @@ const MIN_LIGHT = 9;
 const BONE_MEAL_CHANCE = 0.45;
 const SOFT_PLANTS = new Set(["minecraft:short_grass", "minecraft:tall_grass", "minecraft:fern", "minecraft:snow_layer", SAPLING]);
 const growing = new Set();
-const positionKey = (dimension, p) => `${dimension.id}|${p.x},${p.y},${p.z}`;
 
 // --- growth ---------------------------------------------------------------------------------
 
@@ -49,22 +49,22 @@ export function growTree(base, seed, big = false) {
   const tree = build(makeRandom(seed ?? Math.floor(Math.random() * 4294967296)));
   const dim = base.dimension;
   const { x, y, z } = base.location;
-  const at = (c) => readTreeBlock(dim, { x: x + c.x, y: y + c.y, z: z + c.z });
+  const at = (c) => readBlock(dim, { x: x + c.x, y: y + c.y, z: z + c.z });
   const saplings = (big ? [[0, 0], [1, 0], [0, 1], [1, 1]] : [[0, 0]])
     .map(([dx, dz]) => at({ x: dx, y: 0, z: dz }));
-  if (saplings.some(b => b?.typeId !== SAPLING || !validSaplingSoil(b) || growing.has(positionKey(dim, b.location)))) return false;
+  if (saplings.some(b => b?.typeId !== SAPLING || !validSaplingSoil(b) || growing.has(cellKey(dim, b.location)))) return false;
 
   for (const c of tree.logs) {
     const trunk = c.face === "up" && c.x >= 0 && c.x <= 1 && c.z >= 0 && c.z <= 1;
     if (trunk && !replaceable(at(c), true)) return false;
   }
   const leaf = BlockPermutation.resolve(LEAVES, { [PERSISTENT]: false });
-  for (const b of saplings) growing.add(positionKey(dim, b.location));
+  for (const b of saplings) growing.add(cellKey(dim, b.location));
   const job = (function* () {
     try {
       // A job starts later: do not grow from a removed sapling or changed soil.
       if (saplings.some(b => {
-        const now = readTreeBlock(dim, b.location);
+        const now = readBlock(dim, b.location);
         return now?.typeId !== SAPLING || !validSaplingSoil(now);
       })) return;
       for (const c of tree.logs) {
@@ -92,12 +92,12 @@ export function growTree(base, seed, big = false) {
         if (hangBloom(at({ x: c.x, y: c.y - 1, z: c.z }))) left--;
       }
     } finally {
-      for (const b of saplings) growing.delete(positionKey(dim, b.location));
+      for (const b of saplings) growing.delete(cellKey(dim, b.location));
     }
   })();
   try { system.runJob(job); }
   catch {
-    for (const b of saplings) growing.delete(positionKey(dim, b.location));
+    for (const b of saplings) growing.delete(cellKey(dim, b.location));
     return false;
   }
   return true;
@@ -110,16 +110,16 @@ function bigGroupOrigin(block) {
     for (const oz of [0, -1]) {
       let all = true;
       for (const [dx, dz] of [[0, 0], [1, 0], [0, 1], [1, 1]]) {
-        if (readTreeBlock(block.dimension, { x: x + ox + dx, y, z: z + oz + dz })?.typeId !== SAPLING) all = false;
+        if (readBlock(block.dimension, { x: x + ox + dx, y, z: z + oz + dz })?.typeId !== SAPLING) all = false;
       }
-      if (all) return readTreeBlock(block.dimension, { x: x + ox, y, z: z + oz });
+      if (all) return readBlock(block.dimension, { x: x + ox, y, z: z + oz });
     }
   }
   return undefined;
 }
 
 function advance(block) {
-  if (!validSaplingSoil(block) || growing.has(positionKey(block.dimension, block.location))) return;
+  if (!validSaplingSoil(block) || growing.has(cellKey(block.dimension, block.location))) return;
   if (block.permutation.getState(STAGE) === 0) {
     block.setPermutation(block.permutation.withState(STAGE, 1));
     return;
@@ -144,13 +144,12 @@ const DECAY = `${NS}:decay`;
 const MARKS_PER_STEP = 32; // permutation writes between job yields
 const VANILLA_TREE_PARTS = [...TREE_WOOD, ...TREE_LEAVES].filter((id) => id.startsWith("minecraft:"));
 const VANILLA_TREE_SET = new Set(VANILLA_TREE_PARTS);
-const cellKey = (dimId, x, y, z) => `${dimId}|${x},${y},${z}`;
 // dimension id -> { dimension, cells: Map(cell key -> {x, y, z, placed}) }: changed cells waiting for a search
 const reported = new Map();
 let searching = false;
 
 function classifyCell(dimension, x, y, z) {
-  const b = readTreeBlock(dimension, { x, y, z });
+  const b = readBlock(dimension, { x, y, z });
   if (!b) return UNKNOWN;
   const id = b.typeId;
   if (TREE_WOOD.has(id)) return WOOD;
@@ -167,7 +166,7 @@ export function treePartChanged(dimension, location, placed = false) {
   const dimId = dimension.id, { x, y, z } = location;
   let entry = reported.get(dimId);
   if (!entry) reported.set(dimId, entry = { dimension, cells: new Map() });
-  entry.cells.set(cellKey(dimId, x, y, z), { x, y, z, placed });
+  entry.cells.set(cellKey(dimension, location), { x, y, z, placed });
   if (searching) return;
   searching = true;
   try { system.runJob(searchJob()); }
@@ -204,7 +203,7 @@ function* searchJob() {
 
 // Sets DECAY on a natural Mallorn leaf that is still there (re-read: the search spanned several ticks).
 function mark(dimension, location, value) {
-  const b = readTreeBlock(dimension, location);
+  const b = readBlock(dimension, location);
   if (b?.typeId !== LEAVES) return false;
   const p = b.permutation;
   if (p.getState(PERSISTENT) || !!p.getState(DECAY) === (value !== 0)) return false;
@@ -264,10 +263,7 @@ world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
   system.run(() => {
     const live = liveUse(use, player);
     if (!live) return;
-    if (player.getGameMode() !== GameMode.Creative) {
-      if (live.slot.amount > 1) live.slot.amount -= 1;
-      else live.slot.setItem(undefined);
-    }
+    consumeFromSlot(player, live.slot);
     swingArm(player);
     if (Math.random() < BONE_MEAL_CHANCE) advance(live.block);
     const { x, y, z } = live.block.location;

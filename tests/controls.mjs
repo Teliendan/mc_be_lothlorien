@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import * as rules from "../lothlorien_bp/scripts/control_rules.js";
+import * as worldUtil from "../lothlorien_bp/scripts/world_util.js";
 const read = file => JSON.parse(readFileSync(new URL(file, import.meta.url), "utf8"));
 const source = readFileSync(new URL("../lothlorien_bp/scripts/blocks.js", import.meta.url), "utf8")
   .replace(/^import \{([^}]+)\} from "[^"]+";/gm, "const {$1} = globalThis.__controls;");
@@ -27,9 +28,9 @@ async function scenario(name, body) {
   } }) });
   const system = { get currentTick() { return tick; }, beforeEvents: signal("system"),
     runTimeout: (fn, ticks) => timers.push({ fn, at: tick + ticks }), run: fn => timers.push({ fn, at: tick + 1 }) };
-  globalThis.__controls = { EquipmentSlot: { Mainhand: "Mainhand" } };
+  globalThis.__controls = { ...worldUtil, EquipmentSlot: { Mainhand: "Mainhand" }, GameMode: { Creative: "Creative" } };
   const deferred = await import(`data:text/javascript;base64,${Buffer.from(deferredSource).toString("base64")}#${++serial}`);
-  globalThis.__controls = { ...rules, ...deferred, system, world: { afterEvents: signal("after"), beforeEvents: signal("before") },
+  globalThis.__controls = { ...rules, ...worldUtil, ...deferred, system, world: { afterEvents: signal("after"), beforeEvents: signal("before") },
     BlockPermutation: { resolve: P }, EquipmentSlot: { Mainhand: "Mainhand" }, GameMode: { Creative: "Creative", Spectator: "Spectator" } };
   await import(`data:text/javascript;base64,${Buffer.from(source).toString("base64")}#${++serial}`);
   delete globalThis.__controls;

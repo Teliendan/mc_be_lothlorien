@@ -373,6 +373,10 @@
       "pattern": "lothlorien_bp/scripts/worn_gifts.js"
     },
     {
+      "pattern": "lothlorien_bp/scripts/world_util.js",
+      "reason": "Internal helpers shared by block scripts; no player feature of its own."
+    },
+    {
       "featureId": "lothlorien:flower_garden",
       "pattern": "lothlorien_bp/structures/lothlorien/flower_garden_01.mcstructure"
     },

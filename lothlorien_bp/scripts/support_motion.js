@@ -3,11 +3,11 @@ import { SUPPORT_POLICIES } from "./support_policies.js";
 import { createSupportMotionService } from "./support_motion_service.js";
 import { supportOffset } from "./antler_rules.js";
 import { dropWholeRope } from "./elven_rope.js";
+import { readBlock } from "./world_util.js";
 import { cornSoilAllowed, CORN_ORIGIN } from "./crop_rules.js";
 
 const AXES = [{ x: 0, y: -1, z: 0 }, { x: 0, y: 1, z: 0 },
   { x: 0, y: 0, z: 1 }, { x: 0, y: 0, z: -1 }, { x: 1, y: 0, z: 0 }, { x: -1, y: 0, z: 0 }];
-const read = (dimension, position) => { try { return dimension.getBlock(position); } catch { return undefined; } };
 // Named support lists as sets: blossom and leaf carpet allow ~400 block ids, checked on each support read.
 const ALLOWED = new Map(Object.entries(SUPPORT_POLICIES).filter(([, p]) => p.allowed).map(([id, p]) => [id, new Set(p.allowed)]));
 export function describeSupport(block) {
@@ -37,7 +37,7 @@ function remove(block) {
   block.dimension.runCommand(`setblock ${x} ${y} ${z} air destroy`);
 }
 export const supportMotion = createSupportMotionService({ now: () => system.currentTick,
-  schedule: (fn, ticks) => system.runTimeout(fn, ticks), read, describe: describeSupport, remove,
+  schedule: (fn, ticks) => system.runTimeout(fn, ticks), read: readBlock, describe: describeSupport, remove,
   onGone(dimension, record) {
     if (!record.identity.startsWith("lothlorien:elven_rope")) return;
     const [, face] = record.identity.split("|");
@@ -57,7 +57,7 @@ system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
       // Bind the actual clicked face without resetting powered or other states.
       event.permutationToPlace = event.permutationToPlace.withState("minecraft:block_face", face);
       const { x, y, z } = event.block.location;
-      const support = read(event.dimension, { x: x + offset.x, y: y + offset.y, z: z + offset.z });
+      const support = readBlock(event.dimension, { x: x + offset.x, y: y + offset.y, z: z + offset.z });
       if (!support || support.isAir || support.isLiquid) event.cancel = true;
     },
     onRandomTick({ block }) {

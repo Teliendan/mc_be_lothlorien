@@ -1,5 +1,6 @@
 import { world, system } from "@minecraft/server";
 import { readBlock } from "./deferred_use.js";
+import { FACE_OFFSET, cellKey } from "./world_util.js";
 
 // WORKAROUND for MCPE-184249 (https://bugs-legacy.mojang.com/browse/MCPE-184249): in low light the
 // engine turns grass under our plants and covers into dirt, whatever their light_dampening (vanilla
@@ -37,11 +38,7 @@ world.afterEvents.playerBreakBlock.subscribe(({ block, brokenBlockPermutation })
 // The covers are replaceable: another block placed into a grass-top cover's cell removes the cover without a break
 // event (onBreak skips replaced blocks). Remember the cell a click may replace; after that placement give the grass back.
 const REPLACEABLE = new Set(["lothlorien:mallorn_leaf_carpet", "lothlorien:mallorn_blossom"]);
-const FACE_OFFSET = {
-  Up: [0, 1, 0], Down: [0, -1, 0], North: [0, 0, -1], South: [0, 0, 1], East: [1, 0, 0], West: [-1, 0, 0],
-};
 const pending = new Map(); // player id -> cell key
-const cellKey = (dimension, { x, y, z }) => `${dimension.id} ${x} ${y} ${z}`;
 world.beforeEvents.playerInteractWithBlock.subscribe(({ block, blockFace, player }) => {
   pending.delete(player.id);
   let target = block;

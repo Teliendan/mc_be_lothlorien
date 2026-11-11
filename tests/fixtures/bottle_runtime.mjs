@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import * as ropeRules from '../../lothlorien_bp/scripts/elven_rope_rules.js';
 import * as dewRules from '../../lothlorien_bp/scripts/dew_rules.js';
 import * as nectarRules from '../../lothlorien_bp/scripts/nectar_rules.js';
+import * as worldUtil from '../../lothlorien_bp/scripts/world_util.js';
 import { SUPPORT_POLICIES } from '../../lothlorien_bp/scripts/support_policies.js';
 import { message } from '../../lothlorien_bp/scripts/messages.js';
 const GLASS = 'minecraft:glass_bottle', BOTTLE = 'lothlorien:bottle_of_fireflies', FLY = 'lothlorien:firefly';
@@ -89,7 +90,7 @@ async function createWorld() {
       } };
     players.push(p); return p;
   }
-  const context = { ...ropeRules, ...dewRules, ...nectarRules, SUPPORT_POLICIES, message,
+  const context = { ...worldUtil, ...ropeRules, ...dewRules, ...nectarRules, SUPPORT_POLICIES, message,
     EquipmentSlot: { Mainhand: 'main' }, GameMode: { Creative: 'creative', Spectator: 'spectator' }, ItemStack: function(id, n) { return stack(id, n); },
     BlockPermutation: { resolve: permutation },
     // a held use button repeats within a tick: the second call of the same player and action is refused until the next flush

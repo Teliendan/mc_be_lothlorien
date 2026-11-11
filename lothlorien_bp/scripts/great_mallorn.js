@@ -5,7 +5,8 @@ import { message } from "./messages.js";
 // Planting it warns the player about the space it needs; bone meal does nothing on it (and says so).
 import { world, system } from "@minecraft/server";
 import { repeatedUse } from "./use_guard.js";
-import { saplingLight, validSaplingSoil, readTreeBlock } from "./tree_interaction_rules.js";
+import { cellKey, readBlock } from "./world_util.js";
+import { saplingLight, validSaplingSoil } from "./tree_interaction_rules.js";
 import {
   ANCHOR, BLOCKED_TELL_RADIUS, BLOCKED_TELL_TICKS, PLAIN_TREES, GROW_CHANCE, MIN_LIGHT, SIZE, SIZE_Y, SPROUT_ID, isNatural, treeOrigin,
 } from "./great_mallorn_rules.js";
@@ -15,7 +16,6 @@ const cellsOf = new Map(); // structure id -> [{x, y, z}] cells the tree fills (
 const growing = new Set(); // "dim|x,y,z" of sprouts with a growth check running
 const toldAt = new Map(); // same key -> tick of the last "blocked" message
 
-const keyOf = (block) => `${block.dimension.id}|${block.x},${block.y},${block.z}`;
 
 // The filled cells of a structure, collected in job steps (the box is 40 x 54 x 40).
 function* readCells(id) {
@@ -37,7 +37,7 @@ function* readCells(id) {
 }
 
 function tellBlocked(block, obstacle) {
-  const key = keyOf(block);
+  const key = cellKey(block.dimension, block);
   const now = system.currentTick;
   if (now - (toldAt.get(key) ?? -BLOCKED_TELL_TICKS) < BLOCKED_TELL_TICKS) return;
   toldAt.set(key, now);
@@ -49,7 +49,7 @@ function tellBlocked(block, obstacle) {
 
 // Check the tree's space and place it. Runs as a job; the sprout may be gone or changed by the time it finishes.
 function* grow(dimension, at) {
-  const original = readTreeBlock(dimension, at);
+  const original = readBlock(dimension, at);
   if (original?.typeId !== SPROUT_ID || !validSaplingSoil(original) || saplingLight(original) < MIN_LIGHT) return;
   const permutation = original.permutation;
   const id = PLAIN_TREES[Math.floor(Math.random() * PLAIN_TREES.length)];
@@ -78,7 +78,7 @@ function* grow(dimension, at) {
 }
 
 function tryGrow(block) {
-  const key = keyOf(block);
+  const key = cellKey(block.dimension, block);
   if (growing.has(key)) return;
   growing.add(key);
   const dimension = block.dimension;

@@ -42,22 +42,13 @@ import { rankIndexOf, requestProfession } from "./renown_rules.js";
 import { openTraderForm, startLoremaster } from "./loremaster.js";
 import { startTrade } from "./trade.js";
 import { DEPTH_NAMES, estimateDepth, probeCount } from "./depth.js";
-
-const BIOME_ID = "lothlorien:lothlorien";
+import { BIOME_ID, biomeAt } from "./world_util.js";
 
 // `/scriptevent lothlorien:debug` toggles, per player, an actionbar readout of the biome underfoot,
 // the depth level (see below) and hostile mobs standing inside the biome nearby.
 const DEBUG_TAG = "lothlorien_debug";
 const DEBUG_INTERVAL_TICKS = 20;
 const HOSTILE_SCAN_RADIUS = 64;
-
-function biomeAt(dimension, location) {
-  try {
-    return dimension.getBiome(location).id;
-  } catch {
-    return undefined; // unloaded chunk or outside world bounds
-  }
-}
 
 function hostilesInBiome(player) {
   const dimension = player.dimension;

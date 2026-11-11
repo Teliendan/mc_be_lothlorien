@@ -3,6 +3,7 @@ import { GLASS_BOTTLE, swapHeldBottle, newItem } from "./bottles.js";
 import { repeatedUse } from "./use_guard.js";
 import { noteDeed } from "./deeds.js";
 import { captureUse, liveUse } from "./deferred_use.js";
+import { FACE_OFFSET } from "./world_util.js";
 import { swingArm } from "./swing.js";
 import { bottleFirefly, fireflyInBottle, restoreFirefly } from "./firefly_bottle.js";
 
@@ -29,12 +30,6 @@ world.afterEvents.playerInteractWithEntity.subscribe(({ player, target, beforeIt
   } catch { /* player/target unloaded or disconnected */ }
 });
 
-const FACE_OFFSET = {
-  Up: { x: 0, y: 1, z: 0 }, Down: { x: 0, y: -1, z: 0 },
-  North: { x: 0, y: 0, z: -1 }, South: { x: 0, y: 0, z: 1 },
-  West: { x: -1, y: 0, z: 0 }, East: { x: 1, y: 0, z: 0 },
-};
-
 // Use a full bottle against a block face. No crafting recipe or feeding is needed.
 // Cancellation prevents opening a chest/door on the same use. Mutations run next tick.
 world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
@@ -46,7 +41,7 @@ world.beforeEvents.playerInteractWithBlock.subscribe((event) => {
   if (!offset) return;
   const { dimension, location } = block;
   const use = captureUse(block, itemStack);
-  const at = { x: location.x + offset.x, y: location.y + offset.y, z: location.z + offset.z };
+  const at = { x: location.x + offset[0], y: location.y + offset[1], z: location.z + offset[2] };
   system.run(() => {
     try {
       const live = liveUse(use, player);

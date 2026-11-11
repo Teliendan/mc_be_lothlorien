@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as dewRules from '../lothlorien_bp/scripts/dew_rules.js';
+import * as worldUtil from '../lothlorien_bp/scripts/world_util.js';
 import { MALLORN_LEAVES } from '../lothlorien_bp/scripts/nectar_rules.js';
 import { SUPPORT_POLICIES } from '../lothlorien_bp/scripts/support_policies.js';
 const LITTER = 'lothlorien:mallorn_leaf_carpet', BLOSSOM = 'lothlorien:mallorn_blossom';
@@ -46,7 +47,7 @@ async function scenario(name, test) {
       setType(id) { this.setPermutation(perm(id)); }, center() { return this.location; }, below() { return dim.getBlock({ ...location, y: location.y - 1 }); } };
     cells.set(key(location), b); return b;
   }
-  const context = { ...dewRules, MALLORN_LEAVES, SUPPORT_POLICIES,
+  const context = { ...dewRules, ...worldUtil, MALLORN_LEAVES, SUPPORT_POLICIES,
     world: { getTimeOfDay: () => 23000, beforeEvents: { playerInteractWithBlock: { subscribe: fn => before.push(fn) } },
       afterEvents: { playerPlaceBlock: { subscribe: fn => after.push(fn) }, playerBreakBlock: { subscribe() {} } } },
     system: { currentTick: 0, run: fn => queue.push(fn), beforeEvents: { startup: { subscribe: fn => fn({ blockComponentRegistry: {

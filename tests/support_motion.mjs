@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createSupportMotionService } from "../lothlorien_bp/scripts/support_motion_service.js";
+import * as worldUtil from "../lothlorien_bp/scripts/world_util.js";
 import { SUPPORT_POLICIES } from "../lothlorien_bp/scripts/support_policies.js";
 import { supportOffset } from "../lothlorien_bp/scripts/antler_rules.js";
 import { wallOffset } from "../lothlorien_bp/scripts/elven_rope_rules.js";
@@ -244,7 +245,7 @@ for (const [id, policy] of Object.entries(SUPPORT_POLICIES)) {
     isAir:typeId === "minecraft:air", isLiquid:false,
     permutation:{ getState: name => name in states ? states[name] : name === "minecraft:block_face" ? "up" : undefined } });
   globalThis.__supportAdapter = {
-    SUPPORT_POLICIES, createSupportMotionService, supportOffset, cornSoilAllowed, CORN_ORIGIN, dropWholeRope(...call) { ropeDrops.push(call); },
+    ...worldUtil, SUPPORT_POLICIES, createSupportMotionService, supportOffset, cornSoilAllowed, CORN_ORIGIN, dropWholeRope(...call) { ropeDrops.push(call); },
     system: { currentTick:0, runTimeout(fn) { tasks.push(fn); }, beforeEvents:{ startup:{
       subscribe(fn) { fn({blockComponentRegistry:{registerCustomComponent:(id, c) => components.set(id,c)}}); }
     } } },

@@ -27,9 +27,9 @@ export async function benchmark() {
     beforeEvents:{startup:{subscribe(fn){fn({blockComponentRegistry:{registerCustomComponent(id,c){components.set(id,c);}}});}}}};
   const source=readFileSync(new URL("../lothlorien_bp/scripts/trees.js",import.meta.url),"utf8");
   globalThis.__villagePerf={system,world,BlockPermutation:{},GameMode:{},EquipmentSlot:{}};
-  // tree_interaction_rules.js and leaf_decay.js have no imports of their own: inline them.
-  const inline=f=>readFileSync(new URL(`../lothlorien_bp/scripts/${f}`,import.meta.url),"utf8").replace(/^export /gm,"");
-  const transformed=inline("tree_interaction_rules.js")+"\n"+inline("leaf_decay.js")+"\n"+source.replace(/^import .*;\r?$/gm,"");
+  // world_util.js, tree_interaction_rules.js and leaf_decay.js import only each other: inline them without imports.
+  const inline=f=>readFileSync(new URL(`../lothlorien_bp/scripts/${f}`,import.meta.url),"utf8").replace(/^import .*;\r?$/gm,"").replace(/^export /gm,"");
+  const transformed=inline("world_util.js")+"\n"+inline("tree_interaction_rules.js")+"\n"+inline("leaf_decay.js")+"\n"+source.replace(/^import .*;\r?$/gm,"");
   try { await import(`data:text/javascript;base64,${Buffer.from('const {system,world,BlockPermutation,GameMode,EquipmentSlot}=globalThis.__villagePerf;\n'+transformed).toString('base64')}#${benchmarkRun++}`); }
   finally { delete globalThis.__villagePerf; }
   const leafComponent=components.get("lothlorien:leaves");
