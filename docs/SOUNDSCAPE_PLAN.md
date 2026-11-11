@@ -12,7 +12,7 @@ the village music replaces it, never two scores at once, and it does not duck ne
 Owner picks from audition 2 (phone listening page, 2026-10-26). Masters in
 `tools/audio/soundscape/` (music masters git-ignored for size; generator
 commands with prompts and seeds in `provenance/`), edits and encoding in
-`tools/prepare_soundscape.py` (`--check` compares shipped files and piece lengths).
+`tools/prepare_soundscape.py` (`--check` compares shipped files and piece lengths; masters missing from a clone are skipped with one line and their lengths come from the shipped Ogg; suite `audio` runs it).
 
 | Layer | Wiring | Shipped takes |
 | --- | --- | --- |

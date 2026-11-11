@@ -140,10 +140,16 @@ def encode(data):
     return stream.getvalue()
 
 
-def build():
+def build(skipped=None):
+    """Encode every take. With `skipped` (a list), a missing git-ignored master is recorded there instead of raising."""
     out = {}
     for dest, master, kind, opts in TAKES:
-        x, rate = sf.read(SRC / f"{master}.flac", always_2d=True)
+        source = SRC / f"{master}.flac"
+        if skipped is not None and not source.exists():
+            skipped.append(master)
+            out[dest] = None
+            continue
+        x, rate = sf.read(source, always_2d=True)
         if rate != RATE:
             raise ValueError(f"{master}: {rate} Hz")
         out[dest] = (sfx if kind == "sfx" else music)(x, **opts)
@@ -155,16 +161,19 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="compare shipped files and piece lengths with a fresh encoding")
     args = parser.parse_args()
-    pieces = {}
-    for dest, data in build().items():
-        payload = encode(data)
-        decoded, _ = sf.read(io.BytesIO(payload), always_2d=True)
+    pieces, skipped = {}, []
+    for dest, data in build(skipped if args.check else None).items():
         path = RP / f"{dest}.ogg"
-        if args.check:
+        if data is None:  # --check on a clone without the git-ignored music masters: the shipped file stands in for the length check
+            decoded, _ = sf.read(path, always_2d=True)
+        else:
+            payload = encode(data)
+            decoded, _ = sf.read(io.BytesIO(payload), always_2d=True)
+        if args.check and data is not None:
             current, _ = sf.read(path, always_2d=True)
             if current.shape != decoded.shape or not np.array_equal(current, decoded):
                 raise ValueError(f"{dest}: shipped audio differs from the master encoding")
-        else:
+        elif not args.check:
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(payload)
         seconds = len(decoded) / RATE
@@ -173,6 +182,8 @@ def main():
         name = Path(dest).name
         if name.startswith("village_") and name != "village_rest":
             pieces[f"music.lothlorien.{name.replace('_', '.')}"] = math.ceil(seconds * 20)
+    if skipped:
+        print(f"skipped (master not in this clone, tick lengths taken from the shipped files): {', '.join(skipped)}")
     shipped = dict(re.findall(r'id: "([^"]+)", ticks: (\d+)', RULES.read_text(encoding="utf-8")))
     if {k: int(v) for k, v in shipped.items()} != pieces:
         print("PIECES in village_music_rules.js should be:")

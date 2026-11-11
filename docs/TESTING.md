@@ -52,6 +52,7 @@ there is no need to run both verify and deploy without an intervening reason.
 | Village engine-glue models / furnishings / polish | `script-glue`, `village-checks`, `village-furnishing`, `village-polish` |
 | Assembled-village integration / all village work | `village-simulation` / aggregate `village` |
 | Woodland structures and placement probes | `watch-camp`, `root-shrine`, `flower-garden`, `memorial`, `landscape-probe`, `constrained-feature-probe`, `worldgen-spacing`, `tree-grid-test` |
+| Audio tools (`--check` of ambient, voice and soundscape encodings; skips without numpy/soundfile, skips absent git-ignored music masters) | `audio`; `soundscape` for the music rules |
 | Test organization | `suite-layout` |
 
 `village-simulation` alone creates the batch of 30 assembled villages; ordinary
