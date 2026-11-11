@@ -41,7 +41,9 @@ await scenario("offhand creates one light, movement migrates it, unequip removes
     const writes = mock.propWrites.length;
     await mock.advance(R.PHIAL_POLL_TICKS);
     assert.equal(mock.propWrites.length, writes, "stationary holders cause no persistence churn");
+    const before = mock.propWrites.length;
     p.location.x = 3; await mock.advance(R.PHIAL_POLL_TICKS);
+    assert.equal(mock.propWrites.length - before, 1, "a move that adds and removes a light writes the ledger once");
     assert.equal(typeAt(0), "minecraft:air"); assert.equal(typeAt(3), R.PHIAL_LIGHT_BLOCK);
     p.offhand = "minecraft:torch"; await mock.advance(R.PHIAL_POLL_TICKS);
     assert.equal(typeAt(3), "minecraft:air"); assert.deepEqual(ledger(), []);

@@ -84,18 +84,19 @@ export function startPhial() {
             lights.delete(key); dirty = true;
         }
         cursor = old.length ? (cursor + checks) % old.length : 0;
-        if (dirty) persist();
 
+        const toLight = [];
         for (const [key, loc] of desired) {
             const block = blockAt(loc);
             if (!block || (!block.isAir && block.typeId !== PHIAL_LIGHT_BLOCK)) continue;
             if (!lights.has(key)) {
                 if (lights.size >= PHIAL_MAX_PENDING_LIGHTS) continue;
-                lights.set(key, loc);
-                persist(); // the ledger survives a process/world stop between these operations
+                lights.set(key, loc); dirty = true;
             }
-            if (block.isAir) block.setType(PHIAL_LIGHT_BLOCK);
+            if (block.isAir) toLight.push(block);
         }
+        if (dirty) persist(); // one write per pass, always before any light below exists
+        for (const block of toLight) block.setType(PHIAL_LIGHT_BLOCK);
         for (const { spider, dx, dz } of spiders.values()) {
             const length = Math.hypot(dx, dz);
             spider.applyKnockback({

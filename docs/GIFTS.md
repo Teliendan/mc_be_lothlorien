@@ -43,7 +43,7 @@ equipping needs a game check. Component evidence: skill `bedrock-items`, `refere
 horizontal impulse, the 24-spider query cap, 64 cleanup reads per pass and the 256-light persisted limit; `make_phial.py`
 syncs the helper's emission from it.
 
-- A world dynamic property holds a compact coordinate ledger, written before the light is placed so a world stop cannot leave an
+- A world dynamic property holds a compact coordinate ledger, written before the light is placed (at most one write per five-tick pass, covering that pass's additions and removals) so a world stop cannot leave an
   untracked helper. Movement, unequip, death, departure, Spectator and dimension changes remove unused loaded lights on the next
   pass. Unloaded lights stay recorded and cleanup rotates through at most 64 entries per pass without loading chunks; at the cap
   new lights pause. Failed ledger writes keep a dirty flag and retry. Several holders share a desired-cell set, and cleanup
