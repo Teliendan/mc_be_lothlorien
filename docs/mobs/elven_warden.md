@@ -286,7 +286,8 @@ and only if the home point is the placement point (the engine sets it at spawn/l
 **Friendly fire.** `world.beforeEvents.entityHurt` exists in stable 2.8.0 (`reference/server-2.8.0.d.ts` line 22240, no beta tag): it
 cancels damage from a warden's arrow to wardens, `lothlorien:*` creatures, vanilla `animal` family and any player who has not hit a warden
 in the last 60 s (`afterEvents.entityHurt` fills the map; `Date.now()` is used because it is readable in restricted mode). Villagers and
-golems in the line are accepted. [U] whether a cancelled projectile hit still gives knockback or sticks the arrow, and that
+golems in the line are accepted. The subscription passes `allowedDamageCauses: [projectile]` (`WARDEN_DAMAGE_CAUSES`), so the engine skips every other hurt
+in the world; a future warden melee attack needs `entityAttack` added there. [U] whether a cancelled projectile hit still gives knockback or sticks the arrow, and that
 `damagingEntity` is the shooter for projectile damage.
 
 **Unverified for the in-game test (in addition to section 8C.4):** template entities placed by jigsaw; `definitions` group applied;

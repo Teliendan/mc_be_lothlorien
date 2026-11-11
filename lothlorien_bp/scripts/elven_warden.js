@@ -15,7 +15,7 @@
 //  - a lead released the elf: entities/elf.json set the engine home to where it stands; script only records it.
 import { EntityInitializationCause, EquipmentSlot, ItemStack, system, world } from "@minecraft/server";
 import { onEntity } from "./entity_events.js";
-import { ANGRY_EVENT, BOW_ID, DECK_BLOCKS, WARDEN_ID, isFriendlyFire, isNewFight, keepNaturalSpawn, PLAYER_ID, THANKS_RADIUS, isWardenQuarry } from "./elven_warden_rules.js";
+import { ANGRY_EVENT, BOW_ID, DECK_BLOCKS, WARDEN_ID, isFriendlyFire, isNewFight, keepNaturalSpawn, PLAYER_ID, THANKS_RADIUS, isWardenQuarry, WARDEN_DAMAGE_CAUSES } from "./elven_warden_rules.js";
 import { HATED_TAG, recordElfFight, recordWardenFight } from "./harmony_game.js";
 import { ELF_ID, FOE_MS, FOE_TAG, HOME_OF_ELF, MOVED_PROPERTY, REHOME_EVENT, homeCell } from "./elf_rules.js";
 import { nativeElfUse } from "./elf_native_use.js";
@@ -169,7 +169,7 @@ export function startElvenWardens(depthAt, bandOf) {
     } catch {
       // entity gone
     }
-  });
+  }, { allowedDamageCauses: WARDEN_DAMAGE_CAUSES });
   // Thanks: a player who kills a monster the wardens hunt hears the nearest warden; not while fighting the wardens.
   world.afterEvents.entityDie.subscribe(({ deadEntity, damageSource }) => {
     try {

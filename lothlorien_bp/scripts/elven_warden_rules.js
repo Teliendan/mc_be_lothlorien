@@ -42,6 +42,9 @@ export const keepNaturalSpawn = (level, onDeck, roll) => roll < spawnKeepChance(
 export const PROVOKE_MS = 60000;
 export const SHIELDED_FAMILIES = ["animal", WARDEN_FAMILY];
 export const PLAYER_ID = "minecraft:player";
+// The warden has only a ranged attack (shooter component, no melee), so its damage reaches the before-hurt handler as a projectile.
+// Passed as allowedDamageCauses so the engine skips every other hurt in the world. A future melee attack needs "entityAttack" here.
+export const WARDEN_DAMAGE_CAUSES = ["projectile"];
 
 // A hit on a warden after more than PROVOKE_MS without one starts a new fight (one harmony cost per fight).
 export const isNewFight = (sinceProvokedMs) => sinceProvokedMs === undefined || sinceProvokedMs > PROVOKE_MS;

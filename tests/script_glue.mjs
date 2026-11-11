@@ -421,4 +421,16 @@ await scenario("rail mender: edits in one tick share one repair timer and still 
   await mock.settle();
 });
 
+await scenario("entityHurt before-subscriptions pass allowedDamageCauses (the engine skips every other hurt in the world)", async () => {
+  const seen = [], hurt = world.beforeEvents.entityHurt, subscribe = hurt.subscribe.bind(hurt);
+  hurt.subscribe = (fn, options) => { seen.push(options); return subscribe(fn); };
+  (await loadScript("elven_warden.js")).startElvenWardens(() => ({ level: 2 }), () => 0);
+  (await loadScript("harmony_game.js")).startHarmony(() => true, "dbg");
+  assert.equal(seen.length, 2, "the warden and the Harmony handlers are the only before-hurt subscribers");
+  assert.deepEqual(seen[0], { allowedDamageCauses: ["projectile"] }, "warden friendly fire: arrows only");
+  assert.deepEqual(seen[1], { allowedDamageCauses: ["entityAttack", "projectile", "magic", "maceSmash", "thorns"] }, "Harmony mounts: the causes a player can inflict");
+  const dts = readFileSync(new URL("../../../reference/server-2.8.0.d.ts", import.meta.url), "utf8"); // the manifest's @minecraft/server version
+  for (const cause of seen.flatMap((o) => o.allowedDamageCauses)) assert.ok(new RegExp(`^    ${cause} = '${cause}',$`, "m").test(dts), `${cause} is an EntityDamageCause in 2.8.0`);
+});
+
 console.warn = realWarn;

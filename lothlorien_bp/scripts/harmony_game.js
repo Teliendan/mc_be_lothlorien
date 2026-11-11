@@ -10,6 +10,9 @@ export const HATED_TAG = "lothlorien_hated"; // read by entities/elven_warden.js
 export const FRIEND_TAG = "lothlorien_friend"; // native unicorn leader/avoidance filters; Harmony band only
 const TICK_SECONDS = 1;
 const PLAYER_ID = "minecraft:player";
+// Causes that carry a player as damagingEntity (melee, arrows and other projectiles, magic, mace, thorns); fire, fall, drowning and the
+// like have none. EntityDamageCause values; strings keep this file importable by the test mock.
+const PLAYER_DAMAGE_CAUSES = ["entityAttack", "projectile", "magic", "maceSmash", "thorns"];
 
 const states = new Map();
 const lastHint = new Map(); // player id -> Date.now() of the last deed hint
@@ -136,7 +139,7 @@ export function startHarmony(inside, debugTag) {
     } catch {
       // entity gone
     }
-  });
+  }, { allowedDamageCauses: PLAYER_DAMAGE_CAUSES });
 
   world.afterEvents.playerLeave.subscribe(({ playerId }) => {
     states.delete(playerId);
