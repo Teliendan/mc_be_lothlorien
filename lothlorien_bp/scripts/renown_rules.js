@@ -7,6 +7,8 @@
 // Owner decisions 2026-10-11 (dialog redesign): ONE current-task slot shared by deed lessons (Harmony included) and requests;
 // a deed only makes the task ready, Renown is paid at turn-in; deeds done while their lesson is not the task are lost.
 
+import { TRADERS } from "./elf_rules.js";
+
 // ---- Ranks ----
 export const RANKS = ["stranger", "welcome", "trusted", "elf_friend"];
 export const THRESHOLDS = [0, 3, 8, 15]; // points from which each rank holds
@@ -48,7 +50,7 @@ export const lessonPoints = (lesson) => (lesson.kind === "lore" ? POINTS.lore_le
 export const lessonsOfChapter = (n) => LESSONS.filter((l) => l.chapter === n);
 
 // ---- Requests ----
-export const PROFESSIONS = ["gardener", "healer", "woodwright", "lamplighter"];
+export const PROFESSIONS = TRADERS; // the trading professions (elf_rules.js), in variant order
 export const SAPLING_BLOCK = "lothlorien:mallorn_sapling";
 export const SAPLING_GROWN = ["lothlorien:mallorn_log"]; // a spot where the sapling grew into a tree still counts
 export const REQUESTS = [

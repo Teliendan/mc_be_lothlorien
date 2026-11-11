@@ -44,7 +44,7 @@ assert.deepEqual(canopyRecipe.unlock, [{item: 'lothlorien:morning_dew'}]);
 console.log('ok   food/remedy native data, stations, balance and intentional policies');
 
 let handler, deeds = 0;
-globalThis.__food = { noteDeed() { deeds++; },
+globalThis.__food = { PLAYER_ID: 'minecraft:player', noteDeed() { deeds++; },
   system: { beforeEvents: { startup: { subscribe(fn) { fn({ itemComponentRegistry: {
     registerCustomComponent(id, handlers) { assert.equal(id, 'lothlorien:lembas'); handler = handlers; },
   } }); } } } } };

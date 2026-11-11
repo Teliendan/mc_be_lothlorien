@@ -385,6 +385,14 @@
       "reason": "Internal router for the pack's entity load and spawn events; no player feature of its own."
     },
     {
+      "pattern": "lothlorien_bp/scripts/entity_util.js",
+      "reason": "Internal helpers shared by the creature, trade and Renown scripts; no player feature of its own."
+    },
+    {
+      "pattern": "lothlorien_bp/scripts/ids.js",
+      "reason": "Internal entity ids shared by the rule modules; no player feature of its own."
+    },
+    {
       "pattern": "lothlorien_bp/scripts/world_util.js",
       "reason": "Internal helpers shared by block scripts; no player feature of its own."
     },
@@ -1675,7 +1683,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/squirrel_rules.js",
-          "sha256": "56300ce0bc4119062f4c47e41bce3d9f654f142b353c15b83a2ea7b9cf92880f"
+          "sha256": "56df56b647c9eebf58eded1bc9cb6d1de3b9acb6f8eb8423edbee6ca636e82c1"
         }
       ],
       "featureId": "lothlorien:squirrel",

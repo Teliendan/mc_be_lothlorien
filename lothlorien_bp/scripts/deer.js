@@ -2,6 +2,7 @@
 // hurting a deer alarms the herd. The flight behaviour itself is JSON (entities/deer.json, entities/white_deer.json).
 import { GameMode, world, system } from "@minecraft/server";
 import { onEntity } from "./entity_events.js";
+import { PLAYER_ID } from "./ids.js";
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { isGuiding } from "./white_deer.js";
@@ -9,7 +10,6 @@ import { isErrand } from "./squirrel.js";
 import { ALARM_RADIUS, CORN_ID, DEER_ID, DEER_TYPES, WARY_TYPES, WATCH_RADIUS, pickWariness, setEventFor, warinessFor } from "./deer_rules.js";
 
 const INTERVAL_TICKS = 40;
-const PLAYER_ID = "minecraft:player";
 const loaded = new Map();
 let warinessTimer;
 

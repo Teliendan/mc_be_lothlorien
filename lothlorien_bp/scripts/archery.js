@@ -3,6 +3,7 @@
 // plus a hint when a vanilla bow refuses to draw while the player carries Galadhrim arrows.
 import { EasingType, ItemStack, system, world } from "@minecraft/server";
 import { BOW_ID, ARROW_ID, BOW, ARROW } from "./gift_rules.js";
+import { PLAYER_ID } from "./ids.js";
 import { message } from "./messages.js";
 
 const ZOOM_PROPERTY = "lothlorien:bow_zoom";
@@ -124,8 +125,8 @@ export function startArchery() {
   world.afterEvents.itemReleaseUse.subscribe(({ source }) => clearZoom(source));
   world.afterEvents.itemStopUse.subscribe(({ source }) => clearZoom(source));
   world.afterEvents.entityDie.subscribe(({ deadEntity }) => {
-    if (deadEntity.typeId === "minecraft:player") clearZoom(deadEntity);
-  }, { entityTypes: ["minecraft:player"] });
+    if (deadEntity.typeId === PLAYER_ID) clearZoom(deadEntity);
+  }, { entityTypes: [PLAYER_ID] });
   world.afterEvents.playerDimensionChange.subscribe(({ player }) => clearZoom(player));
   world.afterEvents.playerLeave.subscribe(({ playerId }) => { drawing.delete(playerId); lastHint.delete(playerId); stopIfEmpty(); });
   world.afterEvents.playerSpawn.subscribe(({ player }) => clearZoom(player));

@@ -5,11 +5,15 @@
 // tree, each other profession on a tree of its own. A jigsaw piece cannot know which profession it gets, so the tree pieces carry neutral
 // `lothlorien:elf_post` marker entities and the village planner run assigns the professions once per village (assignHomes).
 
-export const ELF_ID = "lothlorien:elf";
+import { ELF_ID } from "./ids.js";
+export { ELF_ID };
 export const POST_ID = "lothlorien:elf_post";
 export const ELF_FAMILY = "lothlorien_elf";
 // The index is `minecraft:variant` and must equal tools/make_elves.py PROFESSIONS (a test checks it).
 export const PROFESSIONS = ["gardener", "healer", "woodwright", "lamplighter", "loremaster"];
+// The four professions that trade and accept requests: variants 0..3 (the Loremaster is the last). trade_rules.js, renown_rules.js and
+// entity_util.js traderProfession all read this one list.
+export const TRADERS = PROFESSIONS.filter((p) => p !== "loremaster");
 // Professions that stand on trees of their own, in the order they get the trees nearest to the Loremaster.
 export const HOME_ORDER = ["healer", "gardener", "woodwright", "lamplighter"];
 export const spawnEventOf = (profession) => `lothlorien:as_${profession}`;

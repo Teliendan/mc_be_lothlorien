@@ -1,6 +1,7 @@
 // Shops (M3/M5): generator and runtime share the stock; gift balance lives in gift_rules.js.
 import { ARROW_ID, ARROW, FINAL_GIFTS } from "./gift_rules.js";
-export const TRADERS = ["gardener", "healer", "woodwright", "lamplighter"]; // minecraft:variant order
+import { TRADERS } from "./elf_rules.js";
+export { TRADERS }; // minecraft:variant order
 export const CURRENCY = "minecraft:emerald";
 export const TABLE_KEYS = ["uneasy", "guest_0", "guest_1", "guest_2", "guest_3", "friend_0", "friend_1", "friend_2", "friend_3"];
 export const NO_TABLE = "none";

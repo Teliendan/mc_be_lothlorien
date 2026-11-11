@@ -5,6 +5,7 @@ register(new URL("./fixtures/voice_loader.mjs", import.meta.url));
 const { __mock: mock, world } = await import("@minecraft/server");
 const U = await import("../lothlorien_bp/scripts/entity_util.js");
 const { PLAYER_ID } = await import("../lothlorien_bp/scripts/ids.js");
+const EL = await import("../lothlorien_bp/scripts/elf_rules.js"), R = await import("../lothlorien_bp/scripts/renown_rules.js"), T = await import("../lothlorien_bp/scripts/trade_rules.js");
 let cases = 0;
 async function test(name, body) { mock.reset(); await body(); assert.deepEqual(mock.errors, []); cases++; console.log(`ok   entity util: ${name}`); }
 
@@ -60,6 +61,35 @@ await test("consumeHeld takes one held item (none in Creative) and reports wheth
   assert.equal(consumeHeld(p, "lothlorien:mallorn_acorn"), false, "empty hand");
   const other = player("minecraft:stick", 3); assert.equal(consumeHeld(other, "lothlorien:elanor"), false); assert.equal(other.slot.amount, 3, "another item is never consumed");
   const creative = player("lothlorien:elanor", 3, "Creative"); assert.equal(consumeHeld(creative, "lothlorien:elanor"), true); assert.equal(creative.slot.amount, 3);
+});
+
+await test("traderProfession names the four trading professions by variant and nothing else", () => {
+  const { PROFESSIONS, TRADERS } = EL;
+  assert.deepEqual(TRADERS, PROFESSIONS.slice(0, 4), "variants 0..3 trade; the Loremaster is the last variant");
+  const elf = (variant, typeId = "lothlorien:elf") => ({ typeId, getComponent: () => ({ value: variant }) });
+  TRADERS.forEach((p, v) => assert.equal(U.traderProfession(elf(v)), p));
+  assert.equal(U.traderProfession(elf(PROFESSIONS.indexOf("loremaster"))), undefined, "the Loremaster is not a trader");
+  assert.equal(U.traderProfession(elf(0, "lothlorien:deer")), undefined);
+  assert.equal(U.traderProfession({ typeId: "lothlorien:elf", getComponent() { throw new Error("gone"); } }), undefined);
+  const rules = [R.PROFESSIONS, T.TRADERS];
+  for (const list of rules) assert.deepEqual(list, TRADERS, "trade_rules.js and renown_rules.js read the one list in elf_rules.js");
+});
+
+await test("ids.js ids are the entity identifiers, and the rule modules re-export the same strings", async () => {
+  const { readFileSync, existsSync } = await import("node:fs");
+  const ids = await import("../lothlorien_bp/scripts/ids.js");
+  for (const [name, id] of Object.entries(ids)) {
+    if (id.startsWith("minecraft:")) continue;
+    const file = new URL(`../lothlorien_bp/entities/${id.split(":")[1]}.json`, import.meta.url);
+    assert.ok(existsSync(file), `${name}: entities/${id.split(":")[1]}.json`);
+    assert.equal(JSON.parse(readFileSync(file, "utf8"))["minecraft:entity"].description.identifier, id, name);
+  }
+  const rules = { deer_rules: ["WHITE_DEER_ID", "UNICORN_ID", "SWAN_ID", "SQUIRREL_ID"], unicorn_rules: ["UNICORN_ID"], white_deer_rules: ["WHITE_DEER_ID"], swan_rules: ["SWAN_ID"],
+    squirrel_rules: ["SQUIRREL_ID"], elf_rules: ["ELF_ID"], elven_warden_rules: ["WARDEN_ID", "PLAYER_ID"] };
+  for (const [file, names] of Object.entries(rules)) {
+    const mod = await import(`../lothlorien_bp/scripts/${file}.js`);
+    for (const n of names) assert.equal(mod[n], ids[n], `${file}.${n}`);
+  }
 });
 
 console.log(`Passed ${cases} entity util scenarios.`);

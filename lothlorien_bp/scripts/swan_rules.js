@@ -4,7 +4,8 @@
 // on Lothlorien alone would never see the Nimrodel). Rivers all over the world pass that filter, so each natural spawn is
 // judged once: it stays only if Lothlorien lies within NEAR_RADII of it (swan.js removes the rest before anyone sees it).
 
-export const SWAN_ID = "lothlorien:swan";
+import { SWAN_ID } from "./ids.js";
+export { SWAN_ID };
 
 export const NEAR_RADII = [16, 32, 48];
 export const NEAR_HEADINGS = 8;

@@ -1,5 +1,6 @@
 // Stand-ins for scripts/entity_util.js and scripts/ids.js in the data-URL harnesses (their `load` rewrites a script's imports into
 // bindings). The real module is tested in tests/entity_util.mjs. `bindings.world` is read at call time.
+import { TRADERS } from "../../lothlorien_bp/scripts/elf_rules.js";
 import * as ids from "../../lothlorien_bp/scripts/ids.js";
 export function entityUtilFake(bindings) {
   return {
@@ -13,6 +14,7 @@ export function entityUtilFake(bindings) {
         entity.setProperty("lothlorien:natural", false); judge(entity);
       } catch { /* unloaded meanwhile */ }
     },
+    traderProfession: (elf) => { try { return elf.typeId === ids.ELF_ID ? TRADERS[elf.getComponent("minecraft:variant")?.value] : undefined; } catch { return undefined; } },
     removeBeacon: (id) => { try { const b = id && bindings.world.getEntity(id); if (b?.isValid) b.remove(); } catch { /* gone */ } },
     moveBeacon: (beacon, to) => beacon.teleport({ x: to.x, y: to.y, z: to.z }),
     // deferred_use.js consumeHeld, with the harness's own enums

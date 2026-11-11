@@ -91,11 +91,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/deer.js",
-        "sha256": "0e9a006ecb8f98812f9b51aa6db39cd841ae936747fcd8b12aff452e7268dcef"
+        "sha256": "7133de7cb428fcedee279224bc09fc9dc7140dace3bd67fa603790727ce5853f"
       },
       {
         "path": "lothlorien_bp/scripts/deer_rules.js",
-        "sha256": "ac744c72b451fd5b91f0802e28ace03e2dee92b49a03c15d624fc08874ec6bba"
+        "sha256": "c6ee3dfd95ee94003437ebcda393a3ba3feb454fde0ae4e6545ffffaf3f0f068"
       }
     ]
   },
@@ -159,7 +159,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/elf_rules.js",
-        "sha256": "bc2d6b5c327ddd0977870168931cba7f89c0f591bad6795504a019b4cf414d0e"
+        "sha256": "05ad7c6ea7a32a15579a55bc7f0f543b0787e82f9ef2dd6b9cd64f2b28d26f70"
       },
       {
         "path": "lothlorien_bp/scripts/elf_village.js",
@@ -211,7 +211,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/elven_warden_rules.js",
-        "sha256": "9e9eef24e597d54035f1a12c238092eead35fef8443a75aaa4cea08c8e858a24"
+        "sha256": "ee1a875deb2f97c181fb86be4d460e2daef1deebdb0e0cee5808878b2e0b8f31"
       }
     ]
   },
@@ -359,7 +359,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/squirrel_rules.js",
-        "sha256": "56300ce0bc4119062f4c47e41bce3d9f654f142b353c15b83a2ea7b9cf92880f"
+        "sha256": "56df56b647c9eebf58eded1bc9cb6d1de3b9acb6f8eb8423edbee6ca636e82c1"
       }
     ]
   },
@@ -415,7 +415,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/swan_rules.js",
-        "sha256": "756c2636afef5c3db2e6b45527787aa9e6781bebad00b68fecdaa63efdf3cf90"
+        "sha256": "8f04a1da017de4a7135a9b6ca9225d0012ffd828e8230e30ebe0e9d382e9dba6"
       }
     ]
   },
@@ -480,7 +480,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/unicorn_rules.js",
-        "sha256": "777c896aa2f4b5f72c07db48c59fe98e081f375886ce24054974f25c549c99c1"
+        "sha256": "cc698ad427b0d2696c32569bf4fa55d013701d706df91bba114662422ef638b4"
       }
     ]
   },
@@ -534,7 +534,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/white_deer_rules.js",
-        "sha256": "49c58eb000687cf57396ffcf7e55273d9cb3af72c893425949ba54ed7d0f2ced"
+        "sha256": "e33b34da1f85144c4479b7f788e6c1941be6e101b6330b5b1fe479c59c594854"
       }
     ]
   },

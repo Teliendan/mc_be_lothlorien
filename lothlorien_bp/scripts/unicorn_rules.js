@@ -4,7 +4,8 @@
 // Taming is a bond earned in three offers: a Friend of Lothlorien offers Elanor (the flower) to a unicorn three times,
 // at least OFFER_GAP_TICKS apart. The third offer bonds it to that player: it can then be ridden by them, without a saddle.
 
-export const UNICORN_ID = "lothlorien:unicorn";
+import { UNICORN_ID } from "./ids.js";
+export { UNICORN_ID };
 export const ELANOR_ID = "lothlorien:elanor";
 export const TRUST_OFFERS = 3; // offers until the bond
 export const OFFER_GAP_TICKS = 200; // 10 s between two offers: the unicorn takes its time. The pause itself is the native timer in

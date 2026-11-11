@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import * as rules from "../lothlorien_bp/scripts/gift_rules.js";
+import * as ids from "../lothlorien_bp/scripts/ids.js";
 
 const source = readFileSync(new URL("../lothlorien_bp/scripts/archery.js", import.meta.url), "utf8")
   .replace(/^import \{([^}]+)\} from "[^"]+";/gm, "const {$1} = globalThis.__archery;");
@@ -17,7 +18,7 @@ async function scenario(name, body) {
     subscribe(fn) { if (!handlers.has(name)) handlers.set(name, []); handlers.get(name).push(fn); }
   }) }) };
   const dimension = { id: "overworld", spawnItem: (item, location) => drops.push({ item, location }) };
-  globalThis.__archery = { ...rules, system, world, EasingType: { Linear: "Linear" },
+  globalThis.__archery = { ...rules, ...ids, system, world, EasingType: { Linear: "Linear" },
     message: key => ({ translate: "lothlorien.message." + key }),
     ItemStack: class { constructor(typeId, amount) { Object.assign(this, { typeId, amount }); } } };
   const { startArchery } = await import(`data:text/javascript;base64,${Buffer.from(source).toString("base64")}#${++serial}`);

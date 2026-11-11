@@ -8,6 +8,7 @@ import { message } from "./messages.js";
 import { system, world } from "@minecraft/server";
 import { onDeed, noteDeed } from "./deeds.js";
 import { say } from "./entity_util.js";
+import { PLAYER_ID } from "./ids.js";
 import {
   HARMONY_NEEDED, LESSONS, POINTS, REQUESTS, SAPLING_BLOCK, SAPLING_GROWN,
   addSaplingSpot, deliver, deliveryPlan, lessonTask, nextRank, noteDeed as rulesNoteDeed, openChapter, parse, rankOf, requestById, requestTask, saplingOutsideNotice, saplingProgress,
@@ -17,7 +18,6 @@ import { harmonyOf } from "./harmony_game.js";
 import { speak } from "./voice.js";
 
 const PROPERTY = "lothlorien:renown";
-const PLAYER_ID = "minecraft:player";
 const NUDGE_INTERVAL_TICKS = 40;
 
 const states = new Map();

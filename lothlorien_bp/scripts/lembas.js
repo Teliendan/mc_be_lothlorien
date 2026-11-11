@@ -1,5 +1,6 @@
 import { system } from "@minecraft/server";
 import { noteDeed } from "./deeds.js";
+import { PLAYER_ID } from "./ids.js";
 
 // Phase 7: wrapped Lembas. The numbers (nutrition 8, supernatural saturation, 1.0 s to eat) are in
 // items/lembas_wrapped.json; this component adds what a bigger golden carrot lacks: eating it lifts
@@ -8,7 +9,7 @@ system.beforeEvents.startup.subscribe(({ itemComponentRegistry }) => {
   itemComponentRegistry.registerCustomComponent("lothlorien:lembas", {
     onConsume({ source }) {
       source.removeEffect("minecraft:hunger");
-      if (source.typeId === "minecraft:player") noteDeed(source, "lembas");
+      if (source.typeId === PLAYER_ID) noteDeed(source, "lembas");
     },
   });
 });

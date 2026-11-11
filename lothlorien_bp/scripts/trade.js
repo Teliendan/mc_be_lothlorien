@@ -3,11 +3,11 @@
 import { system, world } from "@minecraft/server";
 import { ELF_ID } from "./elf_rules.js";
 import { nativeElfUse } from "./elf_native_use.js";
-import { say } from "./entity_util.js";
+import { say, traderProfession } from "./entity_util.js";
 import { greet } from "./voice.js";
 import { message } from "./messages.js";
 import {
-  TRADERS, NO_TABLE, TABLE_PROPERTY, SWAP_RADIUS, SWAP_INTERVAL_TICKS, TRADE_PASS_TICKS,
+  NO_TABLE, TABLE_PROPERTY, SWAP_RADIUS, SWAP_INTERVAL_TICKS, TRADE_PASS_TICKS,
   PASS_REPEAT_TICKS, PIN_TICKS, PASS_TAG, tableKey, swapEventOf, clickDecision, chooseKey,
 } from "./trade_rules.js";
 
@@ -17,14 +17,6 @@ const lastCancel = new Map();
 const forms = new Map(); // player id -> token, invalidated when the player leaves or respawns
 const sessions = new Map(); // guards callbacks queued before leave/rejoin
 let deps;
-
-function traderProfession(elf) {
-  try {
-    return elf.typeId === ELF_ID ? TRADERS[elf.getComponent("minecraft:variant")?.value] : undefined;
-  } catch {
-    return undefined;
-  }
-}
 
 function nearby(player, elf) {
   try {

@@ -5,7 +5,8 @@
 // the invisible guide beacon, as the white deer does), digs for a moment, comes back to the player and drops a small gift
 // (loot_tables/gifts/squirrel.json, rolled by the native loot-table API). One errand per squirrel every COOLDOWN_TICKS.
 
-export const SQUIRREL_ID = "lothlorien:squirrel";
+import { SQUIRREL_ID } from "./ids.js";
+export { SQUIRREL_ID };
 export const GIFT_TABLE = "gifts/squirrel";
 
 export const SQUIRREL_TICKS = 10; // a session is checked this often

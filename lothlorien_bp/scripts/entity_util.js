@@ -2,7 +2,8 @@
 // consumption, natural-spawn judging and the guide beacon's two moves. Block and biome helpers live in world_util.js, which stays
 // free of @minecraft/server so rule modules may import it; these need the API.
 import { world } from "@minecraft/server";
-import { PLAYER_ID } from "./ids.js";
+import { TRADERS } from "./elf_rules.js";
+import { ELF_ID, PLAYER_ID } from "./ids.js";
 
 // A chat line to a player. Chat, not the action bar: the action bar belongs to the Harmony status (harmony_game.js).
 export function say(player, text) {
@@ -37,6 +38,15 @@ export function judgeNatural(entity, judge) {
     judge(entity);
   } catch {
     // unloaded meanwhile
+  }
+}
+
+// The profession of a trader elf (gardener, healer, woodwright, lamplighter), or undefined (the Loremaster, any other entity).
+export function traderProfession(entity) {
+  try {
+    return entity.typeId === ELF_ID ? TRADERS[entity.getComponent("minecraft:variant")?.value] : undefined;
+  } catch {
+    return undefined;
   }
 }
 

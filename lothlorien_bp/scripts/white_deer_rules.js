@@ -7,7 +7,8 @@
 // helper entity (lothlorien:guide_beacon, goal in the `state_guiding` group of entities/white_deer.json) that the script
 // moves ahead in hops of HOP..MIN_HOP blocks (pickWaypoint), checking each hop with hopStatus.
 
-export const WHITE_DEER_ID = "lothlorien:white_deer";
+import { WHITE_DEER_ID } from "./ids.js";
+export { WHITE_DEER_ID };
 export const BEACON_ID = "lothlorien:guide_beacon";
 export const ACORN_ID = "lothlorien:mallorn_acorn";
 

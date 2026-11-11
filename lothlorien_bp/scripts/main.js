@@ -43,6 +43,7 @@ import { openTraderForm, startLoremaster } from "./loremaster.js";
 import { startTrade } from "./trade.js";
 import { DEPTH_NAMES, estimateDepth, isInside, probeCount } from "./depth.js";
 import { BIOME_ID, biomeAt } from "./world_util.js";
+import { PLAYER_ID } from "./ids.js";
 
 // `/scriptevent lothlorien:debug` toggles, per player, an actionbar readout of the biome underfoot,
 // the depth level (see below) and hostile mobs standing inside the biome nearby.
@@ -151,7 +152,7 @@ function reportDepth(player) {
 
 function onScriptEvent(event) {
   const player = event.sourceEntity;
-  if (!player || player.typeId !== "minecraft:player") return;
+  if (!player || player.typeId !== PLAYER_ID) return;
   if (handleHarmonyEvent(event, player)) return;
   if (handleRenownEvent(event, player)) return; // debug: /scriptevent lothlorien:renown [points N | reset | deed <id> | chapter N | offer <request id>]
   if (event.id === "lothlorien:depth") {

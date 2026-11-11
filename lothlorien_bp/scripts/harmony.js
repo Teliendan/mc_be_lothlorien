@@ -1,4 +1,5 @@
 import { message } from "./messages.js";
+import { ELF_ID, PLAYER_ID, UNICORN_ID, WARDEN_ID, WHITE_DEER_ID } from "./ids.js";
 // Harmony rules (plan docs/design/harmony_rework_plan.md). Pure (no @minecraft/server) so tests/run.mjs can check
 // them offline; harmony_game.js wires them to players, deaths and persistence.
 //
@@ -40,22 +41,17 @@ export const deedCost = (kind) => DEED_COSTS[kind] ?? 0;
 export const EVERYWHERE_DEEDS = new Set(["warden_fight", "warden_kill", "elf_fight", "elf_kill"]);
 export const deedCounts = (kind, inside) => !!kind && (inside || EVERYWHERE_DEEDS.has(kind));
 
-const WHITE_DEER = "lothlorien:white_deer";
-const UNICORN = "lothlorien:unicorn";
-const WARDEN = "lothlorien:elven_warden";
-const ELF = "lothlorien:elf";
-const PLAYER = "minecraft:player";
 
 // Deed kind of a victim, or undefined when it counts nothing (armor stands and the like: family `inanimate`; free kills).
 // `families` = the victim's type families; `free` = defending the forest: a player tagged Hated or elf foe (warden targets),
 // or a mount that carried a monster (a baby zombie rides horses, cows, wolves..., see markMount).
 export function deedKindOf(typeId, families = [], free = false) {
   if (families.includes("inanimate") || free) return undefined;
-  if (typeId === WHITE_DEER) return "white_deer";
-  if (typeId === UNICORN) return "unicorn";
-  if (typeId === WARDEN) return "warden_kill";
-  if (typeId === ELF) return "elf_kill";
-  if (typeId === PLAYER) return "player";
+  if (typeId === WHITE_DEER_ID) return "white_deer";
+  if (typeId === UNICORN_ID) return "unicorn";
+  if (typeId === WARDEN_ID) return "warden_kill";
+  if (typeId === ELF_ID) return "elf_kill";
+  if (typeId === PLAYER_ID) return "player";
   return families.includes("monster") ? "monster" : "animal";
 }
 

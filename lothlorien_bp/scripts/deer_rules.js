@@ -5,16 +5,16 @@
 // nearest player. The states are component groups in entities/deer.json (`lothlorien:state_<name>`)
 // switched by the events `lothlorien:set_<name>`.
 
+import { SQUIRREL_ID, SWAN_ID, UNICORN_ID, WHITE_DEER_ID } from "./ids.js";
+export { SQUIRREL_ID, SWAN_ID, UNICORN_ID, WHITE_DEER_ID }; // ids.js owns the ids; re-exported for callers and tests
+
 export const DEER_ID = "lothlorien:deer";
 // Both deer share the wariness states and the alarm (entities/deer.json and entities/white_deer.json have the same
 // state groups and events). The white deer is a loner, but it still bolts when a deer near it is hurt.
-export const WHITE_DEER_ID = "lothlorien:white_deer";
 export const DEER_TYPES = [DEER_ID, WHITE_DEER_ID];
 // The swan and the ground squirrel share the wariness states, flight distances and alarm too (entities/swan.json and
 // entities/squirrel.json carry the same groups and events), so the whole forest's fauna reads the player's Harmony band.
-export const SWAN_ID = "lothlorien:swan";
-export const SQUIRREL_ID = "lothlorien:squirrel";
-export const UNICORN_ID = "lothlorien:unicorn"; // also carries the groups and events; its calm state is as timid as l1 (entities/unicorn.json)
+// The unicorn carries the same groups and events too; its calm state is as timid as l1 (entities/unicorn.json).
 export const WARY_TYPES = [...DEER_TYPES, SWAN_ID, SQUIRREL_ID, UNICORN_ID];
 export const WARINESS = ["calm", "l1", "l2", "l3", "friend"];
 // Deer farther than this from every player keep their last state; it must exceed the largest

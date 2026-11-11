@@ -13,7 +13,7 @@ import { message } from "./messages.js";
 import { system, world } from "@minecraft/server";
 import { ActionFormData } from "@minecraft/server-ui";
 import { ELF_ID, PROFESSIONS } from "./elf_rules.js";
-import { say } from "./entity_util.js";
+import { say, traderProfession } from "./entity_util.js";
 import { nativeElfUse } from "./elf_native_use.js";
 import { greet, speak } from "./voice.js";
 import { bandOf } from "./harmony.js";
@@ -26,7 +26,6 @@ import {
 import { celebrate, handOver, inventoryCounts, rankProgress, renownOf, saveRenown, saplingsPlanted, turnInLesson } from "./renown_game.js";
 
 const LOREMASTER_VARIANT = PROFESSIONS.indexOf("loremaster");
-const TRADERS = PROFESSIONS.filter((p) => p !== "loremaster"); // the four professions that accept requests (variants 0..3)
 const MAX_DISTANCE = 12; // the Loremaster must still be this close when an answer is applied (he strolls up to 6 blocks from home)
 const BUSY_RETRIES = 10;
 const BUSY_WAIT_TICKS = 10;
@@ -57,17 +56,6 @@ function isLoremaster(entity) {
     return entity.typeId === ELF_ID && entity.getComponent("minecraft:variant")?.value === LOREMASTER_VARIANT;
   } catch {
     return false;
-  }
-}
-
-// The profession of a trader elf (gardener, healer, woodwright, lamplighter), or undefined.
-function traderProfession(entity) {
-  try {
-    if (entity.typeId !== ELF_ID) return undefined;
-    const profession = PROFESSIONS[entity.getComponent("minecraft:variant")?.value];
-    return TRADERS.includes(profession) ? profession : undefined;
-  } catch {
-    return undefined;
   }
 }
 

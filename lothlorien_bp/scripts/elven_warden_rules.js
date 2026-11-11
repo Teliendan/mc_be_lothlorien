@@ -5,7 +5,8 @@
 // below) and village wardens (placed by the village structure pieces, persistent through the group
 // `lothlorien:village_warden`, tools/build_village.mjs). Neither kind drops anything or gives XP.
 
-export const WARDEN_ID = "lothlorien:elven_warden";
+import { PLAYER_ID, WARDEN_ID } from "./ids.js";
+export { PLAYER_ID, WARDEN_ID };
 export const WARDEN_FAMILY = "lothlorien_warden";
 export const VILLAGE_GROUP = "lothlorien:village_warden";
 export const BOW_ID = "minecraft:bow";
@@ -41,7 +42,6 @@ export const keepNaturalSpawn = (level, onDeck, roll) => roll < spawnKeepChance(
 // Villagers and golems in the line are accepted.
 export const PROVOKE_MS = 60000;
 export const SHIELDED_FAMILIES = ["animal", WARDEN_FAMILY];
-export const PLAYER_ID = "minecraft:player";
 // The warden has only a ranged attack (shooter component, no melee), so its damage reaches the before-hurt handler as a projectile.
 // Passed as allowedDamageCauses so the engine skips every other hurt in the world. A future melee attack needs "entityAttack" here.
 export const WARDEN_DAMAGE_CAUSES = ["projectile"];
