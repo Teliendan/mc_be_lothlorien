@@ -464,7 +464,7 @@
       "minecraft:movable": {
         "movement_type": "popped"
       },
-      "lothlorien:motion_support": {},
+      "lothlorien:motion_support_native": {},
       "minecraft:loot": "loot_tables/blocks/mallorn_leaf_carpet.json",
       "minecraft:liquid_detection": {
         "detection_rules": [

@@ -8,7 +8,7 @@ import { cornSoilAllowed, CORN_ORIGIN } from "./crop_rules.js";
 const AXES = [{ x: 0, y: -1, z: 0 }, { x: 0, y: 1, z: 0 },
   { x: 0, y: 0, z: 1 }, { x: 0, y: 0, z: -1 }, { x: 1, y: 0, z: 0 }, { x: -1, y: 0, z: 0 }];
 const read = (dimension, position) => { try { return dimension.getBlock(position); } catch { return undefined; } };
-// Named support lists as sets: blossom and leaf carpet allow ~400 block ids, checked on every random tick.
+// Named support lists as sets: blossom and leaf carpet allow ~400 block ids, checked on each support read.
 const ALLOWED = new Map(Object.entries(SUPPORT_POLICIES).filter(([, p]) => p.allowed).map(([id, p]) => [id, new Set(p.allowed)]));
 export function describeSupport(block) {
   const policy = SUPPORT_POLICIES[block.typeId];
@@ -46,6 +46,7 @@ export const supportMotion = createSupportMotionService({ now: () => system.curr
   },
 });
 system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
+  const onPlace = ({ block }) => supportMotion.observe(block, { reset: true });
   blockComponentRegistry.registerCustomComponent("lothlorien:motion_support", {
     beforeOnPlayerPlace(event) {
       const policy = SUPPORT_POLICIES[event.permutationToPlace.type.id];
@@ -62,8 +63,10 @@ system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
     onRandomTick({ block }) {
       supportMotion.tick(block);
     },
-    onPlace({ block }) { supportMotion.observe(block, { reset: true }); },
+    onPlace,
   });
+  // Plants whose native placement_filter already covers soil loss: no random tick at all.
+  blockComponentRegistry.registerCustomComponent("lothlorien:motion_support_native", { onPlace });
 });
 world.afterEvents.pistonActivate.subscribe(event => {
   try {

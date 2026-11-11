@@ -43,6 +43,18 @@ SINGLE_WOOD_SHAPES = {prefix + part for prefix in ("mallorn_", "mallorn_heartwoo
                      for part in ("slab", "stairs")}
 
 
+TICKED, NATIVE = "lothlorien:motion_support", "lothlorien:motion_support_native"
+
+
+def set_support_component(components, native):
+    want, other = (NATIVE, TICKED) if native else (TICKED, NATIVE)
+    if other in components:
+        renamed = [(want if key == other else key, value) for key, value in components.items()]
+        components.clear()
+        components.update(renamed)
+    components[want] = {}
+
+
 def write_json(path, data):
     """Keep unrelated formatting when a post-pass changes no JSON values."""
     previous = path.read_bytes() if path.exists() else b""
@@ -110,9 +122,10 @@ def configure(block):
     if not (placement or name in MOUNTED or name in EXTRA):
         return None
     c["minecraft:movable"] = {"movement_type": "popped"}
-    c["lothlorien:motion_support"] = {}
-    # Support uses events plus sparse native random ticks. Pressure plates retain
-    # their separate occupancy timer; no other support block needs scheduled ticks.
+    # Definitions with a native placement block_filter (plants) take no script random tick: the engine pops them
+    # on soil loss and events plus the service's bounded follow-up cover piston jobs. The others (mounted, doors,
+    # ropes, unfiltered) keep the sparse random tick. Pressure plates retain their separate occupancy timer.
+    set_support_component(c, native=bool(placement and placement["conditions"][0].get("block_filter")))
     if name not in {"mallorn_pressure_plate", "mallorn_heartwood_pressure_plate"}:
         c.pop("minecraft:tick", None)
     if name in COVERS:

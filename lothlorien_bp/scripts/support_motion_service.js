@@ -100,7 +100,8 @@ export function createSupportMotionService({ now, schedule, describe, read, remo
     while (records.size > maxRecords) forget(records.values().next().value);
     if (!motion && validity(block) === false) destroy(record, block, "invalid-support");
   }
-  // Native random tick (eventual recovery for commands, reloads and timed-out jobs). It never creates history: a block
+  // Native random tick, kept by adapters that still register one (eventual recovery for commands, reloads and
+  // timed-out jobs; adapters without it rely on recoverLater below). It never creates history: a block
   // that an event or piston job is tracking reconciles through observe(); any other block gets a stateless check
   // (invalid support -> remove; unknown or moving support -> nothing). Recording every random-ticked generated block
   // held ~1.7 KB per block, up to 16,384 records (QuickJS measurement 2026-11-08); piston jobs discover cold
@@ -130,6 +131,22 @@ export function createSupportMotionService({ now, schedule, describe, read, remo
       if (!matches(block, record)) forget(record);
       else observe(block, { reset: true });
     }
+  }
+  // A timed-out piston job can leave a witnessed departure unresolved. Adapters without a random tick have no later
+  // visit, so look again a few times. Each try does what a random tick would; the bound keeps this from polling.
+  function recoverLater(list, tries) {
+    schedule(() => {
+      const again = [];
+      for (const record of list) {
+        if (records.get(record.key) !== record || record.pending) continue;
+        const block = read(record.dimension, record.position);
+        if (!block) { again.push(record); continue; }
+        if (!matches(block, record)) continue;
+        observe(block);
+        if (records.get(record.key) === record && validity(block) === undefined) again.push(record);
+      }
+      if (again.length && tries > 1) recoverLater(again, tries - 1);
+    }, 40);
   }
   function onPiston({ dimension, position, axis, isExpanding, piston }) {
     if (!axis) return;
@@ -205,6 +222,7 @@ export function createSupportMotionService({ now, schedule, describe, read, remo
       if (samples >= 40) {
         // Do not interpret unresolved moving cells as destroyed/settled blocks.
         for (const record of frozen) record.pending--;
+        if (frozen.size) recoverLater([...frozen], 3);
         return;
       }
       // Nothing captured at sample zero: the attached list is already complete then

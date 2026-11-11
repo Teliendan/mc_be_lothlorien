@@ -74,7 +74,7 @@
       "minecraft:movable": {
         "movement_type": "popped"
       },
-      "lothlorien:motion_support": {},
+      "lothlorien:motion_support_native": {},
       "minecraft:liquid_detection": {
         "detection_rules": [
           {

@@ -132,11 +132,11 @@ await scenario('crop random ticks use plant light and reject dirt for farmed pla
   e.block('minecraft:dirt', {}, { x: 0, y: 63, z: 0 }); tick(); assert.equal(b.writes, 1);
 });
 await scenario('support service removes farmed corn after farmland reverts and preserves wild corn on dirt', e => {
-  const component = e.components.get('lothlorien:motion_support');
+  const component = e.components.get('lothlorien:motion_support_native');
   for (const wild of [false, true]) {
     const b = e.plant('lothlorien:western_corn', { 'lothlorien:growth': 7, 'lothlorien:wild': wild });
     e.block('minecraft:farmland', {}, { x: 0, y: 63, z: 0 }); component.onPlace({ block: b });
-    e.block('minecraft:dirt', {}, { x: 0, y: 63, z: 0 }); component.onRandomTick({ block: b }); e.flush();
+    e.block('minecraft:dirt', {}, { x: 0, y: 63, z: 0 }); e.support.supportMotion.observe(b, { reset: true }); e.flush();
     assert.equal(e.drops.length, 1, wild ? 'wild support remains valid' : 'farmed crop removed once');
   }
 });
@@ -158,6 +158,7 @@ for (const flower of ['elanor', 'niphredil', 'athelas', 'golden_fern']) {
   }
 }
 const cornBlock = read('blocks/western_corn.json')['minecraft:block'];
+assert.ok(cornBlock.components['lothlorien:motion_support_native'] && !cornBlock.components['lothlorien:motion_support']);
 assert.deepEqual(cornBlock.description.states['lothlorien:wild'], [false, true]);
 assert.equal(read('features/western_corn_feature.json')['minecraft:single_block_feature'].places_block.states['lothlorien:wild'], true);
 assert.deepEqual(cornBlock.permutations.find(p => p.condition.includes('lothlorien:wild')).components['minecraft:placement_filter'].conditions[0].block_filter, ['minecraft:farmland']);

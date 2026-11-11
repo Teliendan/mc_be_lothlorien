@@ -204,12 +204,33 @@ for (const off of [{x:1,y:0,z:0},{x:-1,y:0,z:0},{x:0,y:1,z:0},
 for (const [id, policy] of Object.entries(SUPPORT_POLICIES)) {
   const block = JSON.parse(readFileSync(new URL(`../lothlorien_bp/blocks/${id.split(":")[1]}.json`, import.meta.url)))["minecraft:block"];
   assert.equal(block.components["minecraft:movable"].movement_type, "popped", id);
-  assert.ok(block.components["lothlorien:motion_support"], id);
+  const [own, other] = policy.allowed ? ["lothlorien:motion_support_native", "lothlorien:motion_support"] :
+    ["lothlorien:motion_support", "lothlorien:motion_support_native"];
+  assert.ok(block.components[own], id);
+  assert.equal(block.components[other], undefined, `${id}: only one support component`);
   if (id.endsWith("_pressure_plate")) {
     assert.deepEqual(block.components["minecraft:tick"].interval_range, [4, 4], id);
   } else assert.equal(block.components["minecraft:tick"], undefined, `${id}: no support timer`);
   if (policy.allowed) assert.deepEqual(policy.allowed,
     [...new Set(block.components["minecraft:placement_filter"].conditions.flatMap(c => c.block_filter))]);
+}
+
+// Timeout recovery without a random tick: a bounded follow-up in the service (40 ticks, up to 3 tries).
+{
+  const r = rig(); r.put(S, "minecraft:moving_block"); r.activate(); r.advance(45);
+  assert.deepEqual(r.drops, []);
+  r.put(S, "minecraft:stone"); r.advance(40);
+  assert.deepEqual(r.drops, ["deferred-support-departed"], "timeout witness reconciles with no random tick");
+}
+{
+  const r = rig(); r.put(S, "minecraft:moving_block"); r.activate(); r.advance(400);
+  assert.deepEqual(r.drops, []); assert.equal(r.scheduled.length, 0, "the follow-up is bounded");
+}
+{
+  // a record pending in a newer job is skipped by the follow-up and settled by that job
+  const r = rig(); r.put(S, "minecraft:moving_block"); r.activate(); r.advance(45);
+  r.activate(); r.put(S, "minecraft:stone"); r.finish(); r.advance(200);
+  assert.equal(r.drops.length, 1, "exactly one drop"); assert.equal(r.scheduled.length, 0);
 }
 
 // Exercise the production adapter rather than only its pure service: reloaded
@@ -233,17 +254,20 @@ for (const [id, policy] of Object.entries(SUPPORT_POLICIES)) {
     .replace(/^import \{([^}]+)\} from "[^"]+";/gm, "const {$1} = globalThis.__supportAdapter;");
   const adapter = await import(`data:text/javascript;base64,${Buffer.from(source).toString("base64")}`);
   delete globalThis.__supportAdapter;
-  const component = components.get("lothlorien:motion_support");
+  const component = components.get("lothlorien:motion_support"), native = components.get("lothlorien:motion_support_native");
   assert.equal(component.onTick, undefined);
   assert.equal(typeof component.onRandomTick, "function");
+  assert.equal(native.onRandomTick, undefined, "native-filtered plants take no script random tick");
+  assert.equal(native.beforeOnPlayerPlace, undefined);
+  assert.equal(typeof native.onPlace, "function");
   assert.equal(tasks.length, 0, "adapter startup schedules no support polling");
-  // generated flora on a random tick: named list as a set, no record kept
-  put({ x: 5, y: 0, z: 5 }, "minecraft:podzol"); put({ x: 5, y: 1, z: 5 }, "lothlorien:elanor");
-  component.onRandomTick({ block: dimension.getBlock({ x: 5, y: 1, z: 5 }) });
+  // ticked block (antler): a valid support leaves no record and no drop; air support drops on its random tick
+  put(A, "lothlorien:deer_antler"); put(S, "minecraft:stone");
+  component.onRandomTick({ block: dimension.getBlock(A) });
   assert.equal(adapter.supportMotion.size(), 0); assert.deepEqual(drops, []);
-  put({ x: 5, y: 0, z: 5 }, "minecraft:stone");
-  component.onRandomTick({ block: dimension.getBlock({ x: 5, y: 1, z: 5 }) });
-  assert.deepEqual(drops, ["setblock 5 1 5 air destroy"], "elanor on stone pops on its random tick");
+  put(S, "minecraft:air");
+  component.onRandomTick({ block: dimension.getBlock(A) });
+  assert.deepEqual(drops, ["setblock 1 1 0 air destroy"], "antler on air pops on its random tick");
   drops.length = 0;
   put(A, "lothlorien:deer_antler"); put(S, "minecraft:air");
   events.get("playerBreakBlock")({dimension, block:dimension.getBlock(S)});

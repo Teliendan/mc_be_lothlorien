@@ -94,10 +94,10 @@ def block():
             "minecraft:loot": "loot_tables/blocks/nectar_bloom.json",
             "minecraft:placement_filter": {"conditions": [{"allowed_faces": ["down"], "block_filter": HANG_ON}]},
             f"{NS}:nectar_bloom": {},
-            # key order of the committed file; configure_support fills the values (movable, motion_support,
+            # key order of the committed file; configure_support fills the values (movable, motion_support_native,
             # liquid_detection) and appends nothing because the tag is already present
             "minecraft:movable": {"movement_type": "popped"},
-            f"{NS}:motion_support": {},
+            f"{NS}:motion_support_native": {},
             "minecraft:liquid_detection": {},
             "minecraft:tags": [f"{NS}:flower"]},
         "permutations": [{"condition": f"query.block_state('{NS}:nectar') == {s}",
