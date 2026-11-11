@@ -74,7 +74,7 @@ async function setup() {
   h.base = { ...base, ...food }; h.depth = { level: 3, complete: true };
   h.biome = { id: "lothlorien", transparent: new Set(), at: () => "lothlorien" };
   h.mod = await load("white_deer", h.base, "\nexport { groundFeet, giveGift, sessions, tickSessions, judgeNaturalSpawn };\n");
-  h.mod.startWhiteDeer(() => h.depth, h.biome);
+  h.mod.startWhiteDeer(() => h.depth, () => h.depth.level > 0, h.biome);
   h.player = h.entity("minecraft:player"); h.world.players.push(h.player);
   h.deer = h.entity(rules.WHITE_DEER_ID);
   h.offer = () => h.fire("playerInteractWithEntity", { player: h.player, target: h.deer, itemStack: h.player.slot.item.clone() });

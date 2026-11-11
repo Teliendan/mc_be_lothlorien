@@ -41,7 +41,7 @@ import { handleRenownEvent, renownOf, startRenown } from "./renown_game.js";
 import { rankIndexOf, requestProfession } from "./renown_rules.js";
 import { openTraderForm, startLoremaster } from "./loremaster.js";
 import { startTrade } from "./trade.js";
-import { DEPTH_NAMES, estimateDepth, probeCount } from "./depth.js";
+import { DEPTH_NAMES, estimateDepth, isInside, probeCount } from "./depth.js";
 import { BIOME_ID, biomeAt } from "./world_util.js";
 
 // `/scriptevent lothlorien:debug` toggles, per player, an actionbar readout of the biome underfoot,
@@ -106,6 +106,9 @@ function surfaceSampler(dim, location) {
 
 // Depth at any spot (the white deer's and the elven warden's natural spawns are thinned by it, see white_deer_rules.js, elven_warden_rules.js).
 const depthAt = (dimension, location) => estimateDepth(surfaceSampler(dimension, location), BIOME_ID, DEPTH_TRANSPARENT);
+
+// The yes/no "inside the forest?" (squirrel errand checks, feeding): one probe instead of the full estimate.
+const insideAt = (dimension, location) => isInside(surfaceSampler(dimension, location), BIOME_ID, DEPTH_TRANSPARENT);
 
 function playerDepth(player) {
   return depthAt(player.dimension, player.location);
@@ -198,7 +201,7 @@ world.afterEvents.worldLoad.subscribe(() => {
   system.runInterval(fallLeaves, LEAF_INTERVAL_TICKS);
   startHarmony(inBiome, DEBUG_TAG);
   startDeer();
-  startWhiteDeer(depthAt, {
+  startWhiteDeer(depthAt, insideAt, {
     id: BIOME_ID,
     transparent: DEPTH_TRANSPARENT,
     at: (dimension, x, z) => surfaceSampler(dimension, { x, z })(0, 0),
@@ -209,7 +212,7 @@ world.afterEvents.worldLoad.subscribe(() => {
   startWornGifts();
   startPhial();
   startSwans({ id: BIOME_ID, at: (dimension, x, z) => surfaceSampler(dimension, { x, z })(0, 0) });
-  startSquirrels(depthAt);
+  startSquirrels(depthAt, insideAt);
   startUnicorns();
   startRenown(inBiome);
   startLoremaster();

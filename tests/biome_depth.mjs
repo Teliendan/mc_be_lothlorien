@@ -1,7 +1,7 @@
 // biome depth regression tests; run independently or via tests/run.mjs.
 import { test, finish } from './test_helpers.mjs';
 import assert from "node:assert/strict";
-import { estimateDepth, probeCount, ringOffsets, DEPTH_RADII } from "../lothlorien_bp/scripts/depth.js";
+import { estimateDepth, isInside, probeCount, ringOffsets, DEPTH_RADII } from "../lothlorien_bp/scripts/depth.js";
 
 const L = "lothlorien:lothlorien", RIVER = "minecraft:river", FOREST = "minecraft:forest";
 const T = new Set([RIVER]);
@@ -107,6 +107,29 @@ test("outer rings are dense enough for a 12-block tongue", () => {
   }
   assert.ok(ringOffsets(outer).length >= 24);
   assert.ok(probeCount() < 120, `probe count ${probeCount()}`);
+});
+
+test("isInside agrees with estimateDepth(...).level > 0 on every fixture above and costs one probe in the forest", () => {
+  const ring = (r, i = 0) => ringOffsets(r)[i].join(",");
+  const missing8 = new Set(ringOffsets(8).map((p) => p.join(",")));
+  const fixtures = {
+    outside: () => FOREST, unreadable: () => undefined, halfPlane10: halfPlane(10), halfPlane30: halfPlane(30), heart: () => L,
+    farBorders: (dx) => (dx < 60 ? L : FOREST), unavailableOuter: (dx) => (dx >= 12 ? undefined : L),
+    unreadableCentre: (x, z) => (x === 0 && z === 0 ? undefined : L), centreOnly: (x, z) => (x === 0 && z === 0 ? L : undefined),
+    riverHalfUnread: (x) => (x > 0 ? undefined : RIVER),
+    riverForeignUnread: (x, z) => (`${x},${z}` === ring(24) ? FOREST : x < 0 ? undefined : RIVER), riverOnly: () => RIVER,
+    riverFindsForest: (x, z) => (missing8.has(`${x},${z}`) ? undefined : `${x},${z}` === ring(16) ? L : `${x},${z}` === ring(32) ? FOREST : RIVER),
+    riverStripe: (dx) => (Math.abs(dx) <= 6 ? RIVER : L), riverOutside: (dx) => (Math.abs(dx) <= 6 ? RIVER : FOREST),
+    centreRiverInside: (dx, dz) => (dx === 0 && dz === 0 ? RIVER : L), centreRiverOutside: (dx, dz) => (dx === 0 && dz === 0 ? RIVER : FOREST),
+    foreignPointRing16: (x, z) => (`${x},${z}` === ring(16) ? FOREST : L),
+  };
+  for (const [name, fn] of Object.entries(fixtures)) assert.equal(isInside(fn, L, T), depth(fn).level > 0, name);
+  let probes = 0;
+  assert.equal(isInside(() => { probes++; return L; }, L, T), true);
+  assert.equal(probes, 1, "inside the biome: one probe, not probeCount()");
+  probes = 0;
+  assert.equal(isInside(() => { probes++; return FOREST; }, L, T), false);
+  assert.equal(probes, 1, "a foreign non-transparent centre: one probe");
 });
 
 finish();

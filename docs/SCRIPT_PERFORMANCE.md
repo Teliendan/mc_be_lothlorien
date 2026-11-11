@@ -225,3 +225,8 @@ share one `lightGreedy` in `village_loop.js` (numeric reach once per candidate);
 for 100 villages, 1,972 bridge spans, 204 plazas and 312 merge layouts.
 Not done: smaller discovery areas, fence repair limited to changed cells
 (owner: the mender must also repair jigsaw seams).
+
+Inside-the-forest yes/no checks (the squirrel errand every 10 ticks, the acorn feeding of squirrel and white deer) use `isInside` in `depth.js`
+(`insideAt` in `main.js`): one biome read at the centre instead of the 83-probe estimate; only a river centre falls back to the full
+estimate. Natural-spawn rolls still use `depthAt` (they need the level). Offline: `isInside` agrees with `estimateDepth(...).level > 0` on every
+fixture of `tests/biome_depth.mjs`. Not timed in game.

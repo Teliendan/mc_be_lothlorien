@@ -26,7 +26,8 @@ const sessions = new Map(); // deer id -> session
 const searching = new Set(); // deer ids with a gift spot search in progress
 const GIFT_SPOT = "lothlorien:gift_spot"; // dynamic property on the deer: JSON {x, y, z, dim} until the gift is given
 const GIFTED = "lothlorien:gifted"; // dynamic property on the deer: true once the nut was laid
-let depthAt; // (dimension, location) -> { level }, from main.js
+let depthAt; // (dimension, location) -> { level }, from main.js (natural-spawn rolls need the level)
+let insideAt; // (dimension, location) -> boolean, from main.js
 let biome; // { id, transparent: Set, at(dimension, x, z) -> surface biome id or undefined (unloaded) }, from main.js
 const DIMENSIONS = ["overworld", "nether", "the_end"];
 const DOWN = { x: 0, y: -1, z: 0 };
@@ -424,9 +425,10 @@ function judgeNaturalSpawn(deer, depthAt) {
   }
 }
 
-// depth(dimension, location) -> { level } from scripts/depth.js; biomeInfo = { id, transparent, at } (main.js supplies both).
-export function startWhiteDeer(depth, biomeInfo) {
+// depth(dimension, location) -> { level } from scripts/depth.js; inside(dimension, location) -> boolean (depth.js isInside); biomeInfo = { id, transparent, at } (main.js supplies both).
+export function startWhiteDeer(depth, inside, biomeInfo) {
   depthAt = depth;
+  insideAt = inside;
   biome = biomeInfo;
   sweepBeacons(); // world load: no session survives a reload, so every beacon found is a stray
   onEntity(BEACON_ID, { load: ({ entity }) => cleanLoadedBeacon(entity) });
@@ -440,7 +442,7 @@ export function startWhiteDeer(depth, biomeInfo) {
   world.afterEvents.playerInteractWithEntity.subscribe(({ player, target, beforeItemStack, itemStack }) => {
     try {
       if (target.typeId !== WHITE_DEER_ID || (beforeItemStack ?? itemStack)?.typeId !== ACORN_ID) return;
-      if (depthAt(target.dimension, target.location).level === 0) { // outside Lothlorien: an ordinary tame-by-feeding
+      if (!insideAt(target.dimension, target.location)) { // outside Lothlorien: an ordinary tame-by-feeding
         end(target.id, target);
         if (eatHeldFood(player, target, ACORN_ID)) {
           target.triggerEvent("lothlorien:become_tame");

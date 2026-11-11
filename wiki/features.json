@@ -2334,7 +2334,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/squirrel.js",
-          "sha256": "739f00c776f8fb0bd38c7f0265d5cafcb43f8f031c06707e245c1fefc2f49e38"
+          "sha256": "3f25b19949439be4aaaf87890561a416a697d52ed2e3b1d929c374ea62499b79"
         },
         {
           "path": "lothlorien_bp/scripts/squirrel_rules.js",
@@ -2450,7 +2450,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/white_deer.js",
-          "sha256": "4175a6503c4938d5fd3fd2ec394dd4c37c25600277536e6f6b2fdbce99d31b76"
+          "sha256": "198fc29747d8fdc437d0e2fa544fcc80294ef3faef5ac3b169acd898f71ea4ce"
         },
         {
           "path": "lothlorien_bp/scripts/white_deer_rules.js",
@@ -2665,7 +2665,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/depth.js",
-          "sha256": "4685c072ddc1ac3e83d20a8368ff3311c67d19779513a2d0828835136542561a"
+          "sha256": "c240a9140a5f7342def30cce5efeff3a064645a24155598ac1eca7cb8710eba4"
         },
         {
           "path": "lothlorien_bp/scripts/dew.js",
@@ -2737,7 +2737,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/main.js",
-          "sha256": "c5c1c2ebe93a0417d1b9e1289a3d6814d9e2ca17a5839d5b8cf9d362d83b9f03"
+          "sha256": "01777fa5a9af693e3ea6c9a99311361549c199b5f00625cc09decfbe0d1e8cba"
         },
         {
           "path": "lothlorien_bp/scripts/mallorn_tree.js",

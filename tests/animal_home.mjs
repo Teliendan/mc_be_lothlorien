@@ -208,7 +208,7 @@ for (const name of ["white_deer","squirrel"]) {
     consumeAcorn:p=>food.eatHeldFood(p,h.target,ACORN),addBeaconSource(){},stand(){},
     pickAway:()=>({x:12,y:64,z:0}), pickWaypoint:()=>({x:10,y:64,z:0}),hopStatus:()=>"go"};
   const mod=await load(name,bindings);
-  if(name==="white_deer")mod.startWhiteDeer(depth,{});else mod.startSquirrels(depth);
+  if(name==="white_deer")mod.startWhiteDeer(depth,()=>inside,{});else mod.startSquirrels(depth,()=>inside);
   const target=h.entity(`lothlorien:${name}`), p=h.player(ACORN,5);h.target=target;p.band="hated";
   target.setDynamicProperty("lothlorien:gifted",true);target.setDynamicProperty("lothlorien:gift_ready_at",12000);
   const offer=()=>h.fire("after","playerInteractWithEntity",{player:p,target,itemStack:{typeId:ACORN}});

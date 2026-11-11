@@ -134,7 +134,7 @@ const common = h => ({ system: h.system, world: h.world, onEntity: (h.onEntity ?
   const mod = await load("white_deer", { ...common(h), ...guideRules, ...giftRules,
     EntityInitializationCause: { Loaded: "Loaded" }, ItemStack: TestItem,
     pickWaypoint: () => ({ x: 10, y: 0, z: 0 }), hopStatus: () => "go" });
-  mod.startWhiteDeer(() => ({ level: 3, complete: true }), { id: "lothlorien", at: () => "lothlorien" });
+  mod.startWhiteDeer(() => ({ level: 3, complete: true }), () => true, { id: "lothlorien", at: () => "lothlorien" });
   assert.equal(stray.isValid, false); assert.equal(dev.isValid, true);
   assert.equal(h.intervals(5), 0);
   const bootstrap = h.queries;

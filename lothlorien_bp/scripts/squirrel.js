@@ -20,7 +20,7 @@ import {
 
 const READY_AT = "lothlorien:gift_ready_at"; // dynamic property on the squirrel: world time (ticks) of its next errand
 const sessions = new Map(); // squirrel id -> { playerId, beaconId, away, born, phase, phaseStart, digFor }
-let depthAt;
+let insideAt; // (dimension, location) -> boolean, from main.js
 let sessionTimer;
 function syncSessionTimer() {
   if (sessions.size && sessionTimer === undefined) sessionTimer = system.runInterval(tickSessions, SQUIRREL_TICKS);
@@ -109,7 +109,7 @@ function sessionEligible(squirrel, player, s) {
   return living(squirrel) && eligiblePlayer(player) && squirrel.dimension.id === s.dimensionId &&
     player.dimension.id === s.dimensionId && bandOf(harmonyOf(player).harmony) === "friend" &&
     squirrel.getProperty("lothlorien:guiding") && !squirrel.getProperty("lothlorien:alarmed") &&
-    !squirrel.getComponent("minecraft:leashable")?.isLeashed && depthAt(squirrel.dimension, squirrel.location).level > 0;
+    !squirrel.getComponent("minecraft:leashable")?.isLeashed && insideAt(squirrel.dimension, squirrel.location);
 }
 function giveGift(squirrelId, squirrel, player) {
   const { x, y, z } = squirrel.location, at = { x, y: y + .3, z };
@@ -170,13 +170,14 @@ function tickSessions() {
   }
 }
 
-export function startSquirrels(depth = () => ({ level: 1 })) {
-  depthAt = depth;
+// inside(dimension, location) -> boolean (main.js insideAt); the default derives it from `depth`, which only tests supply.
+export function startSquirrels(depth = () => ({ level: 1 }), inside = (dimension, location) => depth(dimension, location).level > 0) {
+  insideAt = inside;
   addBeaconSource(() => [...sessions.values()].map((s) => s.beaconId));
   world.afterEvents.playerInteractWithEntity.subscribe(({ player, target, beforeItemStack, itemStack }) => {
     try {
       if (target.typeId !== SQUIRREL_ID || (beforeItemStack ?? itemStack)?.typeId !== ACORN_ID) return;
-      if (depthAt(target.dimension, target.location).level === 0) { // outside Lothlorien: an ordinary tame-by-feeding
+      if (!insideAt(target.dimension, target.location)) { // outside Lothlorien: an ordinary tame-by-feeding
         end(target.id, target);
         if (eatHeldFood(player, target, ACORN_ID)) target.triggerEvent("lothlorien:fed");
         return;

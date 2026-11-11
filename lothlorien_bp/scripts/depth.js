@@ -61,3 +61,12 @@ export function estimateDepth(sample, biomeId, transparent) {
   }
   return sawBiome ? { level: 3, distance: Infinity, beyond: DEPTH_RADII[DEPTH_RADII.length - 1], complete } : { ...outside, complete };
 }
+
+// "Is this spot inside the biome?" = estimateDepth(...).level > 0 without the 83-probe estimate: the centre alone decides, except
+// in a transparent biome (river), where the answer depends on whether Lothlorien is seen around it.
+export function isInside(sample, biomeId, transparent) {
+  const here = sample(0, 0);
+  if (here === biomeId) return true;
+  if (here === undefined || !transparent.has(here)) return false;
+  return estimateDepth(sample, biomeId, transparent).level > 0;
+}
