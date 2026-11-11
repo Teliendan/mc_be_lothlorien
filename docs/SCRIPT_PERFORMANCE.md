@@ -183,5 +183,9 @@ reader keeps the per-cell loop). Offline, 100 simulated villages: identical
 writes (hash) with and without the query, distinct reads 218 k -> 61 k per
 village (179 k with the per-cell loop); not measured in game, and
 there is no fallback if the query throws (the run ends in the "gave up" path).
+The three runtime light greedies (`planLights`, `plazaLanterns`, `mergeLanterns`) now
+share one `lightGreedy` in `village_loop.js` (numeric reach once per candidate);
+`mergeLanterns` was the last copy with string keys. Offline: identical writes (hash)
+for 100 villages, 1,972 bridge spans, 204 plazas and 312 merge layouts.
 Not done: smaller discovery areas, fence repair limited to changed cells
 (owner: the mender must also repair jigsaw seams).

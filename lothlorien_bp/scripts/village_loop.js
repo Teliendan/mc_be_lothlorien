@@ -403,80 +403,90 @@ export function planPlaza(at, A, B) {
   }
   return { A, B, length: dist + 1, offset: lat, shape: null, cells, rails, lights: lamps.map(([x, yy, z]) => ({ x, y: yy, z, row: 1 })), side: false, plaza: true, pier };
 }
-function plazaLanterns(ov, walkXZ, posts, y) {
-  const k3 = (x, yy, z) => `${x},${yy},${z}`, R = LOOP.lanternLight;
-  const xs = [...walkXZ, ...posts].map((c) => c[0]), zs = [...walkXZ, ...posts].map((c) => c[1]);
-  const x0 = Math.min(...xs) - R, x1 = Math.max(...xs) + R, z0 = Math.min(...zs) - R, z1 = Math.max(...zs) + R;
-  const lamps = [], base = [];
-  for (let x = x0; x <= x1; x++) for (let z = z0; z <= z1; z++) for (let yy = y - 1; yy <= y + 5; yy++) if (lightLevel(ov(x, yy, z)) > 0) base.push([x, yy, z, lightLevel(ov(x, yy, z))]);
-  const passes = (x, yy, z) => {
-    if (x < x0 || x > x1 || z < z0 || z > z1 || yy < y - 1 || yy > y + 5) return false;
-    const n = ov(x, yy, z);
-    return isAir(n) || n === FENCE || n === LANTERN;
-  };
-  const N6 = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
-  const lit = () => { // light levels by box index (the box and the `passes` memo are below)
-    const Lv = new Int8Array(X * Y * Z), lampAt = new Uint8Array(X * Y * Z), q = [];
-    for (const l of lamps) lampAt[bi(l[0], l[1], l[2])] = 1;
-    for (const l of [...base, ...lamps]) { Lv[bi(l[0], l[1], l[2])] = l[3] ?? R; q.push([l[0], l[1], l[2]]); }
+// ---- the light greedy: one model for bridges, plazas and merges --------------------------------------------------------------------------------
+// A light passes through open cells and loses 1 per step (6-neighbours). b = { x0, x1, y0, y1, z0, z1 }; opens(x, y, z) must not change during the greedy
+// (a placed light stands in an open cell, so it does not). Levels and reach are numeric box indexes: string keys per cell took up to ~1 s per long bridge in
+// QuickJS, one unbroken planner step (owner 2026-10-27).
+const N6 = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
+function lightBox(b, opens) {
+  const Y = b.y1 - b.y0 + 1, Z = b.z1 - b.z0 + 1, size = (b.x1 - b.x0 + 1) * Y * Z;
+  const inBox = (x, y, z) => x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1 && z >= b.z0 && z <= b.z1;
+  const bi = (x, y, z) => ((x - b.x0) * Y + (y - b.y0)) * Z + (z - b.z0);
+  const open = new Int8Array(size).fill(-1), isOpen = (j, x, y, z) => (open[j] < 0 ? (open[j] = opens(x, y, z) ? 1 : 0) : open[j]);
+  const flood = (sources) => { // sources: [[x, y, z, level]], later entries win a shared cell -> levels by box index
+    const Lv = new Int8Array(size), q = [];
+    for (const l of sources) { Lv[bi(l[0], l[1], l[2])] = l[3]; q.push(l); }
     for (let i = 0; i < q.length; i++) {
-      const [x, yy, z] = q[i], v = Lv[bi(x, yy, z)];
+      const [x, y, z] = q[i], v = Lv[bi(x, y, z)];
       if (v <= 1) continue;
-      for (const [a, b, c] of N6) {
-        const nx = x + a, ny = yy + b, nz = z + c;
+      for (const [a, c, e] of N6) {
+        const nx = x + a, ny = y + c, nz = z + e;
         if (!inBox(nx, ny, nz)) continue;
         const j = bi(nx, ny, nz);
-        if (Lv[j] >= v - 1 || !(opens(j, nx, ny, nz) || lampAt[j])) continue;
+        if (Lv[j] >= v - 1 || !isOpen(j, nx, ny, nz)) continue;
         Lv[j] = v - 1; q.push([nx, ny, nz]);
       }
     }
     return Lv;
   };
-  const walk = walkXZ.filter(([x, z]) => isAir(ov(x, y + 1, z)) || ov(x, y + 1, z) === LANTERN).map(([x, z]) => [x, y + 1, z]);
-  // cells a lantern at p reaches well enough (box indexes): `passes` reads only the world, so this is fixed for the whole greedy and found once
-  // per post, with numeric indexes and a memo of `passes` (as planLights; owner 2026-10-27: long unbroken planner steps)
-  const X = x1 - x0 + 1, Y = 7, Z = z1 - z0 + 1, inBox = (x, yy, z) => x >= x0 && x <= x1 && z >= z0 && z <= z1 && yy >= y - 1 && yy <= y + 5;
-  const bi = (x, yy, z) => ((x - x0) * Y + (yy - y + 1)) * Z + (z - z0);
-  const open = new Int8Array(X * Y * Z).fill(-1), opens = (j, x, yy, z) => (open[j] < 0 ? (open[j] = passes(x, yy, z) ? 1 : 0) : open[j]);
-  const reach = new Map(), far = R - LOOP.lightTarget;
-  const reachOf = (p) => {
-    const pk = k3(...p);
+  const reach = new Map(), far = LOOP.lanternLight - LOOP.lightTarget;
+  const reachOf = (p) => { // box indexes a light at p reaches well enough: found once per candidate
+    const pk = `${p[0]},${p[1]},${p[2]}`;
     let out = reach.get(pk);
     if (out) return out;
-    const seen = new Uint8Array(X * Y * Z), q = [[p[0], p[1], p[2], 0]];
-    if (inBox(...p)) seen[bi(...p)] = 1;
+    const seen = new Uint8Array(size), q = [[p[0], p[1], p[2], 0]];
+    if (inBox(p[0], p[1], p[2])) seen[bi(p[0], p[1], p[2])] = 1;
     out = [];
     for (let i = 0; i < q.length; i++) {
-      const [x, yy, z, dd] = q[i];
-      if (inBox(x, yy, z)) out.push(bi(x, yy, z));
-      if (dd >= far) continue;
-      for (const [a, b, c] of N6) {
-        const nx = x + a, ny = yy + b, nz = z + c;
+      const [x, y, z, d] = q[i];
+      if (inBox(x, y, z)) out.push(bi(x, y, z));
+      if (d >= far) continue;
+      for (const [a, c, e] of N6) {
+        const nx = x + a, ny = y + c, nz = z + e;
         if (!inBox(nx, ny, nz)) continue;
         const j = bi(nx, ny, nz);
-        if (!seen[j] && opens(j, nx, ny, nz)) { seen[j] = 1; q.push([nx, ny, nz, dd + 1]); }
+        if (!seen[j] && isOpen(j, nx, ny, nz)) { seen[j] = 1; q.push([nx, ny, nz, d + 1]); }
       }
     }
     reach.set(pk, out);
     return out;
   };
-  for (let guard = 0; guard < 40; guard++) {
-    const Lv = lit(), darkAt = new Uint8Array(X * Y * Z);
+  return { size, inBox, bi, flood, reachOf };
+}
+// Place lights until every walk cell has lightTarget: each round the first candidate that lights strictly more dark cells than any before it wins.
+// -> { lights } | { dark: n } (no candidate helps) | { diverged: true } (`rounds` used up)
+function lightGreedy(box, { base = [], walk, candidates, canPlace, rounds }) {
+  const lights = [], placed = new Set();
+  for (let guard = 0; guard < rounds; guard++) {
+    const Lv = box.flood([...base, ...lights.map((l) => [l[0], l[1], l[2], LOOP.lanternLight])]), darkAt = new Uint8Array(box.size);
     let dark = 0;
-    for (const c of walk) if (Lv[bi(...c)] < LOOP.lightTarget) { darkAt[bi(...c)] = 1; dark++; }
-    if (!dark) return lamps;
+    for (const c of walk) if (Lv[box.bi(c[0], c[1], c[2])] < LOOP.lightTarget) { darkAt[box.bi(c[0], c[1], c[2])] = 1; dark++; }
+    if (!dark) return { lights };
     let best = null, bg = 0;
-    for (const [px, pz] of posts) {
-      const p = [px, y + 2, pz];
-      if (!isAir(ov(...p)) || lamps.some((l) => k3(...l) === k3(...p))) continue;
+    for (const p of candidates) {
+      if (placed.has(`${p[0]},${p[1]},${p[2]}`) || !canPlace(p)) continue;
       let n = 0;
-      for (const j of reachOf(p)) n += darkAt[j];
+      for (const j of box.reachOf(p)) n += darkAt[j];
       if (n > bg) { bg = n; best = p; }
     }
-    if (!best) return { error: `plaza: cannot light ${dark} walk cells` };
-    lamps.push(best);
+    if (!best) return { dark };
+    lights.push(best); placed.add(`${best[0]},${best[1]},${best[2]}`);
   }
-  return { error: "plaza: lighting did not converge" };
+  return { diverged: true };
+}
+// existing emitters in the deck band of a box: [[x, y, z, level]]
+function emittersIn(ov, b) {
+  const out = [];
+  for (let x = b.x0; x <= b.x1; x++) for (let z = b.z0; z <= b.z1; z++) for (let y = b.y0; y <= b.y1; y++) { const l = lightLevel(ov(x, y, z)); if (l > 0) out.push([x, y, z, l]); }
+  return out;
+}
+const lightPasses = (n) => isAir(n) || n === FENCE || n === LANTERN;
+function plazaLanterns(ov, walkXZ, posts, y) {
+  const R = LOOP.lanternLight, xs = [...walkXZ, ...posts].map((c) => c[0]), zs = [...walkXZ, ...posts].map((c) => c[1]);
+  const b = { x0: Math.min(...xs) - R, x1: Math.max(...xs) + R, y0: y - 1, y1: y + 5, z0: Math.min(...zs) - R, z1: Math.max(...zs) + R };
+  const walk = walkXZ.filter(([x, z]) => isAir(ov(x, y + 1, z)) || ov(x, y + 1, z) === LANTERN).map(([x, z]) => [x, y + 1, z]);
+  const r = lightGreedy(lightBox(b, (x, yy, z) => lightPasses(ov(x, yy, z))), { base: emittersIn(ov, b), walk, candidates: posts.map(([x, z]) => [x, y + 2, z]), canPlace: (p) => isAir(ov(...p)), rounds: 40 });
+  return r.lights ?? { error: r.dark ? `plaza: cannot light ${r.dark} walk cells` : "plaza: lighting did not converge" };
 }
 
 // ---- F5 L-join (owner 2026-10-09): two exits at right angles whose heading lines cross -----------------------------------------------------
@@ -577,70 +587,14 @@ export function planLights(shape, offset = 0) {
   if (endFar[0]) potBeside(endFar[0]);
   const gateLamp = lamps.find((l) => l.id !== undefined);
   if (gateLamp) potBeside(gateLamp);
-  const passes = (x, y, z) => x >= 0 && y >= 0 && z >= 0 && x < W && y < H && z < L && ["a", "f", "l", "h", undefined].includes(g.get(k(x, y, z)));
-  const N6 = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
-  const lit = (lights) => {
-    const Lv = new Map(), q = [];
-    for (const l of lights) { Lv.set(k(...l), LOOP.lanternLight); q.push(l); }
-    for (let i = 0; i < q.length; i++) {
-      const [x, y, z] = q[i], v = Lv.get(k(x, y, z));
-      if (v <= 1) continue;
-      for (const [dx, dy, dz] of N6) {
-        const n = [x + dx, y + dy, z + dz];
-        if ((Lv.get(k(...n)) ?? 0) >= v - 1 || !passes(...n)) continue;
-        Lv.set(k(...n), v - 1); q.push(n);
-      }
-    }
-    return Lv;
-  };
+  const passes = (x, y, z) => ["a", "f", "l", undefined].includes(g.get(k(x, y, z)));
   const cand = []; // candidate cells: above the middle of the walk strip at deck + 3 (the walk cell is the feet cell: + 2), then above the rail posts; never in the two end rows
   for (const c of shape.walk) if (c[2] > 0 && c[2] < L - 1) cand.push([c[0], c[1] + 2, c[2]]);
   for (const r of shape.rails) cand.push([r.x, r.y + 1, r.z]);
-  // cells a light at p reaches well enough (grid indexes): fixed for the whole greedy (a placed light "h" passes like air), so found once per
-  // candidate, with numeric indexes instead of "x,y,z" keys (owner 2026-10-27: re-searching every candidate for every light with string keys took
-  // up to ~1 s per long bridge in QuickJS, one unbroken planner step)
-  const inB = (x, y, z) => x >= 0 && y >= 0 && z >= 0 && x < W && y < H && z < L, idx = (x, y, z) => (x * H + y) * L + z;
-  const open = new Uint8Array(W * H * L);
-  for (let x = 0; x < W; x++) for (let y = 0; y < H; y++) for (let z = 0; z < L; z++) open[idx(x, y, z)] = passes(x, y, z) ? 1 : 0;
-  const reach = new Map(), far = LOOP.lanternLight - LOOP.lightTarget;
-  const reachOf = (p) => {
-    const pk = k(...p);
-    let out = reach.get(pk);
-    if (out) return out;
-    const seen = new Uint8Array(W * H * L), q = [[p[0], p[1], p[2], 0]];
-    if (inB(...p)) seen[idx(...p)] = 1;
-    out = [];
-    for (let i = 0; i < q.length; i++) {
-      const [x, y, z, dd] = q[i];
-      if (inB(x, y, z)) out.push(idx(x, y, z));
-      if (dd >= far) continue;
-      for (const [dx, dy, dz] of N6) {
-        const nx = x + dx, ny = y + dy, nz = z + dz;
-        if (!inB(nx, ny, nz)) continue;
-        const j = idx(nx, ny, nz);
-        if (!seen[j] && open[j]) { seen[j] = 1; q.push([nx, ny, nz, dd + 1]); }
-      }
-    }
-    reach.set(pk, out);
-    return out;
-  };
-  const lights = [];
-  for (let guard = 0; guard < 60; guard++) {
-    const Lv = lit(lights), dark = new Set(shape.walk.filter((c) => (Lv.get(k(...c)) ?? 0) < LOOP.lightTarget).map((c) => k(...c)));
-    if (!dark.size) return { lights, lamps, gate, pots };
-    const darkAt = new Uint8Array(W * H * L);
-    for (const c of shape.walk) if (inB(...c) && dark.has(k(...c))) darkAt[idx(...c)] = 1;
-    let best = null, bg = 0;
-    for (const p of cand) {
-      if (p[2] === 0 || p[2] === L - 1 || g.get(k(...p)) !== "a") continue;
-      let n = 0;
-      for (const j of reachOf(p)) n += darkAt[j];
-      if (n > bg) { bg = n; best = p; }
-    }
-    if (!best) throw new Error(`planLights: cannot light ${dark.size} walk cells`);
-    g.set(k(...best), "h"); lights.push(best);
-  }
-  throw new Error("planLights: no convergence");
+  const r = lightGreedy(lightBox({ x0: 0, x1: W - 1, y0: 0, y1: H - 1, z0: 0, z1: L - 1 }, passes), { walk: shape.walk, candidates: cand, canPlace: (p) => p[2] !== 0 && p[2] !== L - 1 && g.get(k(...p)) === "a", rounds: 60 });
+  if (r.dark) throw new Error(`planLights: cannot light ${r.dark} walk cells`);
+  if (!r.lights) throw new Error("planLights: no convergence");
+  return { lights: r.lights, lamps, gate, pots };
 }
 
 // ---- F6 merge (owner 2026-10-09, screenshots gap8 / gap9): two decks that touch (0 cells apart: a double railing) or nearly touch (1 cell apart) ----
@@ -756,50 +710,12 @@ export function planMerge(at, m) {
   return { plan: { A, B, length: n, offset: 0, shape: null, cells, rails, lights: lamps.map(([x, yy, z]) => ({ x, y: yy, z, row: 1 })), side: false, merge: true, gap: g, pier: [] } };
 }
 // Lanterns on post tops until every watched walk cell (the stretch + all deck cells that were lit before) is lit again; ovB / ovA = the world before / after.
-function mergeLanterns(ovB, ovA, walkXZ, posts, y, b) {
-  const k3 = (x, yy, z) => `${x},${yy},${z}`, R = LOOP.lanternLight, N6 = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
-  const inBox = (x, yy, z) => x >= b.x0 && x <= b.x1 && z >= b.z0 && z <= b.z1 && yy >= y - 1 && yy <= y + 5;
-  const passes = (ov, x, yy, z) => { if (!inBox(x, yy, z)) return false; const t = ov(x, yy, z); return isAir(t) || t === FENCE || t === LANTERN; };
-  const field = (ov, lamps) => {
-    const Lv = new Map(), q = [];
-    for (let x = b.x0; x <= b.x1; x++) for (let z = b.z0; z <= b.z1; z++) for (let yy = y - 1; yy <= y + 5; yy++) if (lightLevel(ov(x, yy, z)) > 0) { Lv.set(k3(x, yy, z), lightLevel(ov(x, yy, z))); q.push([x, yy, z]); }
-    for (const l of lamps) { Lv.set(k3(...l), R); q.push(l); }
-    for (let i = 0; i < q.length; i++) {
-      const [x, yy, z] = q[i], v = Lv.get(k3(x, yy, z));
-      if (v <= 1) continue;
-      for (const [a, c, e] of N6) {
-        const nx = x + a, ny = yy + c, nz = z + e;
-        if ((Lv.get(k3(nx, ny, nz)) ?? 0) >= v - 1 || !passes(ov, nx, ny, nz)) continue;
-        Lv.set(k3(nx, ny, nz), v - 1); q.push([nx, ny, nz]);
-      }
-    }
-    return Lv;
-  };
-  const before = field(ovB, []), watch = new Map();
-  const standing = (x, z) => isPlank(ovA(x, y, z)) && isAir(ovA(x, y + 1, z));
-  for (const [x, z] of walkXZ) if (standing(x, z)) watch.set(k3(x, y + 1, z), [x, y + 1, z]);
-  for (let x = b.x0; x <= b.x1; x++) for (let z = b.z0; z <= b.z1; z++) if (standing(x, z) && (before.get(k3(x, y + 1, z)) ?? 0) >= LOOP.lightTarget) watch.set(k3(x, y + 1, z), [x, y + 1, z]);
-  const lamps = [];
-  for (let guard = 0; guard < 30; guard++) {
-    const Lv = field(ovA, lamps), dark = [...watch.values()].filter((c) => (Lv.get(k3(...c)) ?? 0) < LOOP.lightTarget);
-    if (!dark.length) return lamps;
-    const darkSet = new Set(dark.map((c) => k3(...c)));
-    let best = null, bg = 0;
-    for (const [px, pz] of posts) {
-      const p = [px, y + 2, pz];
-      if (!isAir(ovA(...p)) || lamps.some((l) => k3(...l) === k3(...p))) continue;
-      const seen = new Map([[k3(...p), 0]]), q = [p];
-      let cnt = 0;
-      for (let i = 0; i < q.length; i++) {
-        const [x, yy, z] = q[i], dd = seen.get(k3(x, yy, z));
-        if (darkSet.has(k3(x, yy, z))) cnt++;
-        if (dd >= R - LOOP.lightTarget) continue;
-        for (const [a, c, e] of N6) { const m = [x + a, yy + c, z + e]; if (!seen.has(k3(...m)) && passes(ovA, ...m)) { seen.set(k3(...m), dd + 1); q.push(m); } }
-      }
-      if (cnt > bg) { bg = cnt; best = p; }
-    }
-    if (!best) return { error: `merge: cannot light ${dark.length} walk cells` };
-    lamps.push(best);
-  }
-  return { error: "merge: lighting did not converge" };
+function mergeLanterns(ovB, ovA, walkXZ, posts, y, area) {
+  const b = { ...area, y0: y - 1, y1: y + 5 }, boxOf = (ov) => lightBox(b, (x, yy, z) => lightPasses(ov(x, yy, z)));
+  const before = boxOf(ovB), litBefore = before.flood(emittersIn(ovB, b)), after = boxOf(ovA), watch = new Map();
+  const standing = (x, z) => isPlank(ovA(x, y, z)) && isAir(ovA(x, y + 1, z)), cell = (x, z) => watch.set(`${x},${z}`, [x, y + 1, z]);
+  for (const [x, z] of walkXZ) if (standing(x, z)) cell(x, z);
+  for (let x = b.x0; x <= b.x1; x++) for (let z = b.z0; z <= b.z1; z++) if (standing(x, z) && litBefore[before.bi(x, y + 1, z)] >= LOOP.lightTarget) cell(x, z);
+  const r = lightGreedy(after, { base: emittersIn(ovA, b), walk: [...watch.values()], candidates: posts.map(([x, z]) => [x, y + 2, z]), canPlace: (p) => isAir(ovA(...p)), rounds: 30 });
+  return r.lights ?? { error: r.dark ? `merge: cannot light ${r.dark} walk cells` : "merge: lighting did not converge" };
 }
