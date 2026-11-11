@@ -16,7 +16,7 @@ import { findDecay, findRescue, BATCH_SPAN, OTHER, LEAF, DECAYABLE, WOOD, UNKNOW
 //                       neighbouring log, wood or leaf is destroyed, and a placed one clears the mark (leaf_decay.js)
 //   lothlorien:leaf_decaying  only on marked leaves: native random tick breaks them with drops (vanilla pace)
 //   lothlorien:tree_part  onBreak on Mallorn logs, wood and golden leaves: starts that check
-// Tree shape: mallorn_tree.js. Balance: `node tests/tree_stats.mjs`. In-game helpers (grow, treecount,
+// Tree shape: mallorn_tree.js. Balance: `node tools/tree_stats.mjs`. In-game helpers (grow, treecount,
 // treestats) live in tools/dev_scripts/, not in the pack.
 
 const NS = "lothlorien";
