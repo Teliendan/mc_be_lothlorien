@@ -109,15 +109,6 @@ await scenario('all column teardown adapters respect doTileDrops, canonical IDs,
     assert.equal(e.drops.length,n,'gamerule suppresses scripted event remainder');
   }
 });
-await scenario('readable rope with unreadable supporting wall survives neighboring break/explosion', e => {
-  for(const list of [e.subscribers.breaks,e.subscribers.explosions]) {
-    const wall=e.block('minecraft:air',{}, {x:0,y:64,z:1});
-    const piece=e.block(ROPE,{'lothlorien:face':'north'});
-    e.unreadable(p=>p.x===0&&p.y===64&&p.z===1);
-    for(const fn of list) fn({block:wall,dimension:e.dimension,brokenBlockPermutation:wall.permutation,explodedBlockPermutation:wall.permutation,player:e.player()});
-    assert.equal(piece.typeId,ROPE); assert.equal(e.drops.length,0); e.unreadable(()=>false);
-  }
-});
 await scenario('both rope IDs/all facings stop climbing when waterlogged and reject gliding/flying/vehicle/spectator', e => {
   const p=e.player(); for(const id of [ROPE,HANGING]) for(const face of ropeRules.FACES) {
     const b=e.block(id,{[id===ROPE?'lothlorien:face':'minecraft:cardinal_direction']:face});

@@ -14,10 +14,6 @@
     },
     {
       "featureId": "lothlorien:deer_antler",
-      "pattern": "lothlorien_bp/scripts/antler.js"
-    },
-    {
-      "featureId": "lothlorien:deer_antler",
       "pattern": "lothlorien_bp/scripts/antler_rules.js"
     },
     {

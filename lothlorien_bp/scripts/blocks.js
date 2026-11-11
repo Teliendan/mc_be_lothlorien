@@ -189,37 +189,10 @@ system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
   blockComponentRegistry.registerCustomComponent("lothlorien:gate_wall", components["lothlorien:gate_wall"]);
 });
 
-// Buttons and plates have no support-loss handling of their own: when a block is broken, drop any
-// of ours that were attached to it. A placed or broken block also re-checks the Mallorn gates beside it
-// (explosions and pistons are left to the gate's sparse random tick).
-const PLATE_SUPPORT = () => [0, -1, 0];
-const BUTTON_SUPPORT = (perm) =>
-  ({ up: [0, -1, 0], down: [0, 1, 0], north: [0, 0, 1], south: [0, 0, -1], west: [1, 0, 0], east: [-1, 0, 0] })[
-    perm.getState("minecraft:block_face")
-  ];
-const ATTACHED_TO = Object.fromEntries(
-  WOODS.flatMap((w) => [
-    [`${NS}:${w}_pressure_plate`, PLATE_SUPPORT],
-    [`${NS}:${w}_button`, BUTTON_SUPPORT],
-  ])
-);
-const NEIGHBOURS = [
-  [0, 1, 0], [0, -1, 0], [1, 0, 0], [-1, 0, 0], [0, 0, 1], [0, 0, -1],
-];
-
+// A placed or broken block re-checks the Mallorn gates beside it (explosions and pistons are left to the gate's sparse
+// random tick). Button and plate support loss is handled by the shared support service (support_motion.js).
 world.afterEvents.playerPlaceBlock.subscribe(({ block, dimension }) => updateGatesAround(dimension, block.location));
-world.afterEvents.playerBreakBlock.subscribe(({ block, dimension }) => {
-  updateGatesAround(dimension, block.location);
-  const { x, y, z } = block.location;
-  for (const [dx, dy, dz] of NEIGHBOURS) {
-    const n = dimension.getBlock({ x: x + dx, y: y + dy, z: z + dz });
-    const attached = n && ATTACHED_TO[n.typeId]?.(n.permutation);
-    if (!attached) continue;
-    if (n.location.x + attached[0] === x && n.location.y + attached[1] === y && n.location.z + attached[2] === z) {
-      dimension.runCommand(`setblock ${n.location.x} ${n.location.y} ${n.location.z} air destroy`);
-    }
-  }
-});
+world.afterEvents.playerBreakBlock.subscribe(({ block, dimension }) => updateGatesAround(dimension, block.location));
 
 // --- Projectiles: the engine cannot tell our blocks from vanilla ones, so wind charges and arrows are handled here.
 // Wind charge = a small explosion that only toggles (vanilla minecraft:explode power 1.2, toggles_blocks): open or

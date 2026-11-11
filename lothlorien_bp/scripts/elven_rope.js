@@ -5,7 +5,7 @@
 //   - Using the rope on the side of a block hangs pieces in the clicked cell, downwards first, then upwards, one per
 //     item up to the stack. Using it on a piece extends that rope the same way (down from its bottom, then up).
 //   - Breaking any piece breaks the whole rope: every piece drops where it was broken. Losing the wall behind any
-//     piece does the same (checked around a broken block or an explosion, like the antler block).
+//     piece does the same (the shared support service, support_motion.js, handles that).
 //   - Climbing: see startRopeClimbing() and CLIMB in elven_rope_rules.js.
 import { BlockPermutation, EquipmentSlot, GameMode, ItemStack, system, world } from "@minecraft/server";
 import { brakes, CLIMB, columnBounds, dropStacks, isUnsupported, levitationStep, pieceOffset, planRope, wallOffset } from "./elven_rope_rules.js";
@@ -18,7 +18,6 @@ const FACE_STATE = "lothlorien:face";
 const HANGING_ID = "lothlorien:elven_rope_hanging";
 const HANGING_STATE = "minecraft:cardinal_direction";
 const ROPE_IDS = new Set([ROPE_ID, HANGING_ID]);
-const HORIZONTAL = [[1, 0], [-1, 0], [0, 1], [0, -1]];
 
 // the face a rope permutation hangs on, or undefined for any other block
 const permFace = (perm) => (perm?.type.id === ROPE_ID ? perm.getState(FACE_STATE) : perm?.type.id === HANGING_ID ? perm.getState(HANGING_STATE) : undefined);
@@ -86,19 +85,6 @@ export function dropWholeRope(dimension, { x, y, z }, face, { creative = false, 
   for (const amount of dropStacks(total)) dimension.spawnItem(new ItemStack(ROPE_ID, amount), { x: x + 0.5, y: y + 0.5, z: z + 0.5 });
 }
 
-// The block at `location` was broken or blown up: pieces beside it that hung on it lose their wall and drop
-function checkWalls(dimension, { x, y, z }) {
-  for (const [dx, dz] of HORIZONTAL) {
-    const cell = readBlock(dimension, { x: x + dx, y, z: z + dz });
-    const face = faceOf(cell);
-    if (!face) continue;
-    const w = wallOffset(face);
-    if (cell.location.x + w.x !== x || cell.location.z + w.z !== z) continue;
-    if (hasWall(dimension, cell.location, face) !== false) continue;
-    dropWholeRope(dimension, cell.location, face);
-  }
-}
-
 system.beforeEvents.startup.subscribe(({ itemComponentRegistry }) => {
   itemComponentRegistry.registerCustomComponent("lothlorien:rope", {
     onUseOn({ source, block, blockFace, itemStack }) {
@@ -114,13 +100,11 @@ world.afterEvents.playerBreakBlock.subscribe(({ block, brokenBlockPermutation, p
     const creative = player.getGameMode() === GameMode.Creative;
     dropWholeRope(block.dimension, block.location, permFace(brokenBlockPermutation), { creative });
   }
-  checkWalls(block.dimension, block.location);
 });
 world.afterEvents.blockExplode.subscribe(({ block, dimension, explodedBlockPermutation }) => {
   if (ROPE_IDS.has(explodedBlockPermutation.type.id)) {
     dropWholeRope(dimension, block.location, permFace(explodedBlockPermutation));
   }
-  checkWalls(dimension, block.location);
 });
 
 // WORKAROUND (docs/workarounds.md in the workspace; re-check after every game update): no component makes a custom block

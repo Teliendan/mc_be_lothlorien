@@ -50,7 +50,7 @@ test("gift spot: away from the known border (towards the heart), not just the fa
 });
 
 test("the actionbar is only the Harmony band status (and the debug readout); other messages use chat", () => {
-  for (const f of ["white_deer.js", "great_mallorn.js", "deer.js", "trees.js", "athelas.js", "lembas.js", "crop.js", "antler.js"]) {
+  for (const f of ["white_deer.js", "great_mallorn.js", "deer.js", "trees.js", "athelas.js", "lembas.js", "crop.js"]) {
     const src = readFileSync(new URL(`../lothlorien_bp/scripts/${f}`, import.meta.url), "utf8");
     assert.ok(!src.includes("setActionBar"), f);
   }

@@ -49,7 +49,6 @@
           }
         ]
       },
-      "lothlorien:lamp_support": {},
       "minecraft:collision_box": false,
       "minecraft:selection_box": {
         "origin": [

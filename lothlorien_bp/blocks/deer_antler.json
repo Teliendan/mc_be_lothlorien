@@ -52,7 +52,6 @@
           "render_method": "opaque"
         }
       },
-      "lothlorien:antler_support": {},
       "minecraft:movable": {
         "movement_type": "popped"
       },

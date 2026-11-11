@@ -2,20 +2,20 @@
 import { test, finish, readJson } from './test_helpers.mjs';
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { SUPPORT_POLICIES } from "../lothlorien_bp/scripts/support_policies.js";
 import { existsSync, readdirSync } from "node:fs";
 
 const LAMPS = { elven_lantern: ["up", "down"], elven_lantern_heartwood: ["up", "down"],
   firefly_jar: ["up"], elven_chandelier: ["down"] };
 
 test("elven lamps: faces they may be placed on, light, and script support for each", () => {
-  const antlerJs = readFileSync(new URL("../lothlorien_bp/scripts/antler.js", import.meta.url), "utf8");
   for (const [id, faces] of Object.entries(LAMPS)) {
     const b = readJson(`../lothlorien_bp/blocks/${id}.json`)["minecraft:block"];
     assert.deepEqual(b.components["minecraft:placement_filter"].conditions[0].allowed_faces, faces, id);
     assert.ok(b.components["minecraft:light_emission"] >= 11, `${id} gives light`);
     assert.equal(b.components["minecraft:light_dampening"], 0, `${id} lets light through`);
-    assert.ok("lothlorien:lamp_support" in b.components, `${id} pops off when its support goes`);
-    assert.ok(antlerJs.includes(`"lothlorien:${id}"`), `${id} is in the support script's id list`);
+    assert.ok("lothlorien:motion_support" in b.components, `${id} pops off when its support goes`);
+    assert.equal(SUPPORT_POLICIES["lothlorien:" + id].mount, "face", `${id} is on the shared support service's face policy`);
   }
 });
 

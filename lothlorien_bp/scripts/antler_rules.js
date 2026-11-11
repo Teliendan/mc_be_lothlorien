@@ -1,4 +1,4 @@
-// Deer antler block support rule. Pure, so tests/run.mjs can check it offline; antler.js wires it up.
+// Deer antler block support rule. Pure, so tests/run.mjs can check it offline; the support service adapter imports it.
 //
 // `minecraft:block_face` holds the face of the support block that was clicked, so the support lies on the
 // opposite side of the antler: clicked top ("up") -> support below; clicked underside ("down") -> support above;
@@ -14,11 +14,4 @@ const SUPPORT_OFFSET = {
 
 export function supportOffset(face) {
   return SUPPORT_OFFSET[face];
-}
-
-// Like an item frame, the antler needs a block to hang on: air or liquid there means it falls off.
-// `support` is { isAir, isLiquid } of the block, or undefined when it is not loaded (then keep the antler).
-export function isUnsupported(support) {
-  if (!support) return false;
-  return support.isAir || support.isLiquid;
 }

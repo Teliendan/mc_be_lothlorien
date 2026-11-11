@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { createSupportMotionService } from "../lothlorien_bp/scripts/support_motion_service.js";
 import { SUPPORT_POLICIES } from "../lothlorien_bp/scripts/support_policies.js";
 import { supportOffset } from "../lothlorien_bp/scripts/antler_rules.js";
+import { wallOffset } from "../lothlorien_bp/scripts/elven_rope_rules.js";
 import { cornSoilAllowed, CORN_ORIGIN } from "../lothlorien_bp/scripts/crop_rules.js";
 
 const key = p => `${p.x},${p.y},${p.z}`;
@@ -215,13 +216,14 @@ for (const [id, policy] of Object.entries(SUPPORT_POLICIES)) {
 // antlers lose support through a player-break event with no preceding callback.
 {
   const components = new Map(), events = new Map(), tasks = [], cells = new Map(), drops = [];
+  const ropeDrops = [];
   const dimension = { id: "cold-adapter", getBlock: p => cells.get(key(p)),
-    runCommand(command) { drops.push(command); cells.delete("1,1,0"); } };
-  const put = (p, typeId) => cells.set(key(p), { location:p, dimension, typeId,
+    runCommand(command) { drops.push(command); const [, x, y, z] = command.split(" "); cells.delete(`${x},${y},${z}`); } };
+  const put = (p, typeId, states = {}) => cells.set(key(p), { location:p, dimension, typeId,
     isAir:typeId === "minecraft:air", isLiquid:false,
-    permutation:{ getState: name => name === "minecraft:block_face" ? "up" : undefined } });
+    permutation:{ getState: name => name in states ? states[name] : name === "minecraft:block_face" ? "up" : undefined } });
   globalThis.__supportAdapter = {
-    SUPPORT_POLICIES, createSupportMotionService, supportOffset, cornSoilAllowed, CORN_ORIGIN, dropWholeRope() {},
+    SUPPORT_POLICIES, createSupportMotionService, supportOffset, cornSoilAllowed, CORN_ORIGIN, dropWholeRope(...call) { ropeDrops.push(call); },
     system: { currentTick:0, runTimeout(fn) { tasks.push(fn); }, beforeEvents:{ startup:{
       subscribe(fn) { fn({blockComponentRegistry:{registerCustomComponent:(id, c) => components.set(id,c)}}); }
     } } },
@@ -247,6 +249,34 @@ for (const [id, policy] of Object.entries(SUPPORT_POLICIES)) {
   events.get("playerBreakBlock")({dimension, block:dimension.getBlock(S)});
   assert.deepEqual(drops, ["setblock 1 1 0 air destroy"]);
   assert.equal(tasks.length, 0);
+  // Old per-block handlers are gone: this service alone handles support loss from a player break and from an explosion.
+  const attached = [
+    ["deer_antler", { "minecraft:block_face": "up" }],
+    ["elven_lantern", { "minecraft:block_face": "up" }],
+    ["mallorn_button", { "minecraft:block_face": "up" }],
+    ["mallorn_pressure_plate", {}],
+  ];
+  for (const eventName of ["playerBreakBlock", "blockExplode"]) {
+    for (const [name, states] of attached) {
+      cells.clear(); drops.length = 0; ropeDrops.length = 0;
+      put(A, `lothlorien:${name}`, states); put(S, "minecraft:air");
+      events.get(eventName)({ dimension, block: dimension.getBlock(S) });
+      assert.deepEqual(drops, ["setblock 1 1 0 air destroy"], `${name}: one drop on ${eventName}`);
+    }
+    // rope on the north face: the wall lies to its south
+    const rope = { x: 4, y: 0, z: 4 }, w = wallOffset("north"), wall = { x: 4 + w.x, y: 0, z: 4 + w.z };
+    cells.clear(); drops.length = 0; ropeDrops.length = 0;
+    put(rope, "lothlorien:elven_rope", { "lothlorien:face": "north" }); put(wall, "minecraft:air");
+    events.get(eventName)({ dimension, block: dimension.getBlock(wall) });
+    assert.equal(ropeDrops.length, 1, `rope: one whole-rope drop on ${eventName}`);
+    assert.equal(ropeDrops[0][2], "north");
+    // an unreadable wall cell is left alone
+    cells.clear(); ropeDrops.length = 0;
+    put(rope, "lothlorien:elven_rope", { "lothlorien:face": "north" }); put(wall, "minecraft:air");
+    const broken = dimension.getBlock(wall); cells.delete(key(wall));
+    events.get(eventName)({ dimension, block: broken });
+    assert.equal(ropeDrops.length, 0, `rope with an unreadable wall survives ${eventName}`);
+  }
 }
 for (const name of ["mallorn_leaf_carpet", "mallorn_blossom"]) for (let amount = 1; amount <= 4; amount++) {
   const suffix = amount === 1 ? "" : `_${amount}`;

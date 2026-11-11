@@ -18,20 +18,15 @@ test("antler block: a permutation for every floor, ceiling and wall placement; n
   assert.ok(b.permutations.filter((p) => !p.condition.includes("'up'") && !p.condition.includes("'down'"))
     .every((p) => p.components["minecraft:geometry"] === "geometry.lothlorien.deer_antler_wall"));
   assert.ok(!b.components["minecraft:placement_filter"], "placeable on any block, like an item frame");
-  assert.ok(b.components["lothlorien:antler_support"], "support handled by script events");
   assert.equal(b.components["minecraft:tick"], undefined, "support uses events without scheduled polling");
   assert.ok(b.components["lothlorien:motion_support"], "production motion tracking is installed");
 });
 
-test("antler support: opposite side of the clicked face; air and liquid drop it, unloaded keeps it", () => {
+test("antler support: opposite side of the clicked face", () => {
   assert.deepEqual(AR.supportOffset("up"), { x: 0, y: -1, z: 0 });
   assert.deepEqual(AR.supportOffset("down"), { x: 0, y: 1, z: 0 });
   assert.deepEqual(AR.supportOffset("north"), { x: 0, y: 0, z: 1 });
   assert.deepEqual(AR.supportOffset("east"), { x: -1, y: 0, z: 0 });
-  assert.equal(AR.isUnsupported({ isAir: true, isLiquid: false }), true);
-  assert.equal(AR.isUnsupported({ isAir: false, isLiquid: true }), true);
-  assert.equal(AR.isUnsupported({ isAir: false, isLiquid: false }), false);
-  assert.equal(AR.isUnsupported(undefined), false);
 });
 
 test("antler drop: only on ground blocks, never on litter", () => {

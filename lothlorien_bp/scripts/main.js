@@ -11,7 +11,6 @@ import "./fireflies.js";
 import "./animal_food.js";
 import "./dew.js";
 import "./lembas.js";
-import { startAntlerSupport } from "./antler.js";
 import { startRopeClimbing } from "./elven_rope.js";
 import "./athelas.js";
 import "./trees.js";
@@ -229,7 +228,6 @@ world.afterEvents.worldLoad.subscribe(() => {
     requestProfession: (player) => requestProfession(renownOf(player)),
     openRequestForm: openTraderForm,
   });
-  startAntlerSupport();
   startRopeClimbing();
   // music also while a village is still being planned and built (owner 2026-10-27): village_area.js remembers a village as its first marker loads
   startVillageMusic(inVillageArea);

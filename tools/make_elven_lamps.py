@@ -694,7 +694,6 @@ def lamp_block(ident, light, geometry, placement_faces, boxes, extra_perms=None,
         "minecraft:geometry": geometry,
         "minecraft:material_instances": mats,
         "minecraft:placement_filter": {"conditions": [{"allowed_faces": placement_faces}]},
-        "lothlorien:lamp_support": {},
     }
     comps.update(boxes)
     # key order of the committed files; configure_support fills the values, liquid_detection follows

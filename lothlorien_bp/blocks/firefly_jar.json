@@ -50,7 +50,6 @@
           }
         ]
       },
-      "lothlorien:lamp_support": {},
       "minecraft:collision_box": {
         "origin": [
           -3,

@@ -97,7 +97,7 @@ keys no longer work). Blocks (`lothlorien:mallorn_` + `log`, `stripped_log`, `wo
 - **Redstone:** trapdoor, gate and door open by interaction and by redstone through `lothlorien:redstone_toggle`, edge-detected against a stored `powered`
   state because the engine also fires updates on placement and chunk load. Button and plate are `minecraft:redstone_producer`; buttons release after 30 ticks
   through a powered-only native tick; the plate polls every 4 ticks idle / 20 ticks powered with a minimum-hold guard and `placement_filter` `allowed_faces: ["up"]`.
-  East/west wall buttons use `mallorn_button_ew(_pressed)` (a 4x6 box with `uv_rotation` 90). Support loss for buttons and plates is handled in `blocks.js`.
+  East/west wall buttons use `mallorn_button_ew(_pressed)` (a 4x6 box with `uv_rotation` 90). Support loss for buttons and plates is handled by the shared support service (`support_motion.js`).
 - **Icons:** every non-cube plank-family block names an icon geometry in `minecraft:item_visual` whose `item_display_transforms.gui` sets rotation, scale 0.625 and
   `fit_to_frame: false` (poses from Kaioga's 1.26.50 templates; rule in `bedrock-block-families/references/families.md` "Item icons"). Owner-verified 2026-10-01.
 - Items left out (signs, shelf, ...): `NOT_IMPLEMENTED.md`.
@@ -264,8 +264,8 @@ this. Knowledge: `.claude/skills/bedrock-mobs/references/spawning.md`. The spike
 
 - `lothlorien:deer_antler` is a block; the same-named item (bucks drop it) is its `block_placer`. Traits `placement_position` (`minecraft:block_face`) and `placement_direction`. **Top face = a shed antler on the floor**,
   **side face = mounted antlers on a plaque** against the wall, **ceiling** too; one model (a big mounted pair filling the 16x16 face), rotated by coordinates in `tools/make_antler_block.py`. Selection boxes: floor/ceiling
-  16x4.5x16, wall 16x16x4.5. There is **no `placement_filter`** (it can only name blocks or tags); the item-frame-like survival check is event-driven script (`scripts/antler.js`, `lothlorien:antler_support`,
-  rules `antler_rules.js`): `beforeOnPlayerPlace` refuses unreadable or air/liquid support, and after `playerBreakBlock` and `blockExplode` neighbours are checked and an unsupported antler is destroyed. No polling.
+  16x4.5x16, wall 16x16x4.5. There is **no `placement_filter`** (it can only name blocks or tags); the item-frame-like survival check is the shared support service (`lothlorien:motion_support`, `scripts/support_motion.js`,
+  offsets in `antler_rules.js`): `beforeOnPlayerPlace` refuses unreadable or air/liquid support, and after `playerBreakBlock` and `blockExplode` neighbours are checked and an unsupported antler is destroyed. No polling.
   Not covered: pistons, water flow, other mods.
 - **Natural drop:** `deer_antler_drop_feature_rules` (after surface pass, tag `lothlorien`, `scatter_chance` 1/16 per chunk, raised from 1/64 on 2026-10-02 because the owner found none), one placement attempt
   within about 3 blocks with a weighted pick of four facings, all `up`. **Owner decision 2026-10-24: solo antlers, no batches** (three attempts looked like a clump). The feature has its own support rule
