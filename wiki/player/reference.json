@@ -91,7 +91,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/deer.js",
-        "sha256": "0f6fd5c88d5acb8804c252b3f71723abbc74195c33a1740653de6d44cb61aef2"
+        "sha256": "aa7b14efca808888b5ce67159eb046ba62e5b2f79bdc362d41dc86132aac0816"
       },
       {
         "path": "lothlorien_bp/scripts/deer_rules.js",
@@ -151,7 +151,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/elven_warden.js",
-        "sha256": "aabaac256d1d5fd6ac49cea5797ef174df5ec0d370bee1f59987692fe25b60c1"
+        "sha256": "4e480fe7da6c99a1f7cf9004a0b3fada135aae8983780705d56d364676c9f39e"
       },
       {
         "path": "lothlorien_bp/scripts/elf_native_use.js",
@@ -159,11 +159,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/elf_rules.js",
-        "sha256": "baf95aeff61c7bd8aab2b467f7370b086fc164f0b2901b5026d5911ec8e43b71"
+        "sha256": "bc2d6b5c327ddd0977870168931cba7f89c0f591bad6795504a019b4cf414d0e"
       },
       {
         "path": "lothlorien_bp/scripts/elf_village.js",
-        "sha256": "edbb602bbfad7a3cfa0afb84f6777285f12f7c454a408e354d709bb610ba35f5"
+        "sha256": "0b98104ccc8bba8e42f3e4e4f753a757bef16e31fadc4ce913d052d712ce06d7"
       }
     ]
   },
@@ -207,7 +207,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/elven_warden.js",
-        "sha256": "aabaac256d1d5fd6ac49cea5797ef174df5ec0d370bee1f59987692fe25b60c1"
+        "sha256": "4e480fe7da6c99a1f7cf9004a0b3fada135aae8983780705d56d364676c9f39e"
       },
       {
         "path": "lothlorien_bp/scripts/elven_warden_rules.js",
@@ -411,7 +411,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/swan.js",
-        "sha256": "29ba9149d06d3c9fb9d0fd6995a5e986c3e7bdcfe06e3794428e3769f9af615e"
+        "sha256": "fb20b1120c2bdea9679fccc5a47f7218a6b0ae3833c38bdf869d459d8fd0fdb9"
       },
       {
         "path": "lothlorien_bp/scripts/swan_rules.js",
@@ -530,7 +530,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/white_deer.js",
-        "sha256": "ae0a756a4957022af8e50ee384410224e78f5f546b84ccb571f1a61e77aaddc4"
+        "sha256": "5473d0f137e2c236095fa0a3c37eb967a1756fd4cb72a064b7118900f70f0ae2"
       },
       {
         "path": "lothlorien_bp/scripts/white_deer_rules.js",
@@ -582,7 +582,7 @@
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_blossom.json",
-        "sha256": "34b49368a22a8c7248f665bff16ecfa8171ef422250211db78b1b121a35234e5"
+        "sha256": "56d91155f0d4574adcbde086935907d58213f3e37132705e229347597b39fa41"
       },
       {
         "path": "lothlorien_bp/items/mallorn_blossom.json",
@@ -618,7 +618,7 @@
       },
       {
         "path": "lothlorien_bp/blocks/western_corn.json",
-        "sha256": "d645438d4d85f812eba58f3ab83d879c3dcc3fb8f21f29a2d2f906505736882e"
+        "sha256": "3c539d7d04e43d0712e3fabcecb42291f4e8a66a940f0326371e4c77247d88e0"
       },
       {
         "path": "lothlorien_bp/items/western_corn_seeds.json",
@@ -679,7 +679,7 @@
       },
       {
         "path": "lothlorien_bp/blocks/great_mallorn_sprout.json",
-        "sha256": "eb36f064b629e1265793f4095ca9d9a38af9b2d8c0dde742cebbfd92fba1edf2"
+        "sha256": "c42d4c891bf213ef90b2374e6323ff255c450c37bb34413effbc2b6d37975f3f"
       },
       {
         "path": "lothlorien_bp/items/great_mallorn_nut.json",
@@ -715,7 +715,7 @@
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_sapling.json",
-        "sha256": "fc284007d2e483875fd5686e7c6ad37e7d98f9d8cb85152f3608805a8a3d8ea2"
+        "sha256": "1d31fb5cb169dda4f3fe066ae1ef46bf0e4cc9a4be7cf4edf23064a9d4e7a419"
       },
       {
         "path": "lothlorien_bp/items/mallorn_acorn.json",
@@ -898,7 +898,7 @@
       },
       {
         "path": "lothlorien_bp/blocks/nectar_bloom.json",
-        "sha256": "bc84defea091af4d4c3b6b863d0077b446096af091a7f1646c9bed6ffd35dbd2"
+        "sha256": "79503ec2ed90d2f685e45e0d5b0a64038d67974ddc1f547d797a6ee942a1ceb6"
       },
       {
         "path": "lothlorien_bp/items/nectar_bloom.json",

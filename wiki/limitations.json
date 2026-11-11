@@ -18,7 +18,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/elven_rope.js",
-        "sha256": "bb3102904e878368a1155a901c9c1c35480435868941d80172c2d570ed439a72"
+        "sha256": "922590a52896cf776e2967d352e644e6567268fb40b9e6b10c6558877387bfb7"
       },
       {
         "path": "lothlorien_bp/scripts/elven_rope_rules.js",
@@ -60,7 +60,7 @@
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_blossom.json",
-        "sha256": "34b49368a22a8c7248f665bff16ecfa8171ef422250211db78b1b121a35234e5"
+        "sha256": "56d91155f0d4574adcbde086935907d58213f3e37132705e229347597b39fa41"
       },
       {
         "path": "lothlorien_bp/items/mallorn_blossom.json",
@@ -79,7 +79,7 @@
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_leaf_carpet.json",
-        "sha256": "ea63ea55d5016b6009d05a46700072b0760c8f2066c1947832f8cf53907a5684"
+        "sha256": "a6424b58bf179e09bb21afebff5bceca9c0c169d4fe209ebc9cee9557e1ddc71"
       },
       {
         "path": "lothlorien_bp/items/mallorn_leaf_carpet.json",
@@ -94,7 +94,7 @@
     "evidence": [
       {
         "path": "docs/TECHNICAL_NOTES.md",
-        "sha256": "fc6ecbd37b18679e86bfe1ebec406467b07a73be057d3e00607cf72eca97f82b"
+        "sha256": "ccb6c50fcdd153cfecae1ab5a6a9144f945420b15ba11271c466b498c6f219b7"
       },
       {
         "path": "lothlorien_bp/scripts/leaf_decay.js",
@@ -102,7 +102,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/trees.js",
-        "sha256": "ecf535423efc7fbbf4d03105b3d220a68d499adb6fff5abdbf235d2c8e2a782b"
+        "sha256": "e9ac11308cb7608dee4f6d8bfc9ee47a1d3b6569af51a5059948887589c3651b"
       }
     ]
   },
@@ -275,7 +275,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
-        "sha256": "d53ae11e19e319cf3904d38055ef3f6bab6f1e1f9ab95129bb1d4083b79e516e"
+        "sha256": "529f520f8899027de5eb042f881e2288acbb41f3ff3daf842c6459d37e3c339b"
       },
       {
         "path": "lothlorien_bp/scripts/swing.js",
@@ -294,7 +294,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
-        "sha256": "d53ae11e19e319cf3904d38055ef3f6bab6f1e1f9ab95129bb1d4083b79e516e"
+        "sha256": "529f520f8899027de5eb042f881e2288acbb41f3ff3daf842c6459d37e3c339b"
       },
       {
         "path": "lothlorien_bp/scripts/swing.js",
@@ -313,7 +313,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
-        "sha256": "d53ae11e19e319cf3904d38055ef3f6bab6f1e1f9ab95129bb1d4083b79e516e"
+        "sha256": "529f520f8899027de5eb042f881e2288acbb41f3ff3daf842c6459d37e3c339b"
       },
       {
         "path": "lothlorien_bp/scripts/swing.js",
@@ -332,7 +332,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
-        "sha256": "d53ae11e19e319cf3904d38055ef3f6bab6f1e1f9ab95129bb1d4083b79e516e"
+        "sha256": "529f520f8899027de5eb042f881e2288acbb41f3ff3daf842c6459d37e3c339b"
       },
       {
         "path": "lothlorien_bp/scripts/swing.js",
@@ -370,7 +370,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/dew.js",
-        "sha256": "7efe06aeff349bd1f3e5089f44d16c1e44af78646d95380df827c51bdbaa0014"
+        "sha256": "a2769a062938d10ef380eed0b2cc362c053ddf0ab251626fb7bcaad3d1ab6c61"
       },
       {
         "path": "lothlorien_bp/scripts/swing.js",
@@ -389,7 +389,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/fireflies.js",
-        "sha256": "d5b08ae296bce03e15864761f9e3f99254cb582ebd60312a6551b74861c9ea0a"
+        "sha256": "77322a408526b1a77c911f99ea963283ad9367ee26e5aef9e668366db43daf4b"
       },
       {
         "path": "lothlorien_bp/scripts/swing.js",
@@ -408,11 +408,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/bonemeal.js",
-        "sha256": "537dd004d4fe2ca432d5cd12c8d1bf2ba202941f019bdd6130c4511520e224d8"
+        "sha256": "2de944896f53234dba50fa82cbf0755b4fb1e4b3a1ab355d6dea3c9613981d2f"
       },
       {
         "path": "lothlorien_bp/scripts/trees.js",
-        "sha256": "ecf535423efc7fbbf4d03105b3d220a68d499adb6fff5abdbf235d2c8e2a782b"
+        "sha256": "e9ac11308cb7608dee4f6d8bfc9ee47a1d3b6569af51a5059948887589c3651b"
       },
       {
         "path": "lothlorien_bp/scripts/swing.js",
