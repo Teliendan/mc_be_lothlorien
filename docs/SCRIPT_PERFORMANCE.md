@@ -5,7 +5,7 @@
 Tester: 0.8.3 DIAG loads and reports no freeze, but freezes continue (short and longer, every few minutes, also
 standing still, a bit more inside the forest, with other add-ons too, not in vanilla). So what is left is below the
 monitor's 700 ms server-tick threshold or on the client (rendering), which no script timer can see. Script CPU is not
-the problem: about 20 light timer callbacks per second per player, every one bounded. Candidates are what the pack
+the problem: about 20 light timer callbacks per second per player (timers only; random-tick callbacks are counted below), every one bounded. Candidates are what the pack
 makes the **engine** do. Ranked by expected effect; all open until tried on the tablet:
 
 1. **Morning dew = mass block updates.** `lothlorien:dew_cover` random ticks flip the `dew` state on leaf litter and
@@ -25,9 +25,21 @@ makes the **engine** do. Ranked by expected effect; all open until tried on the 
    so herds are replaced continually. Trade-off route: lower the three flier limits.
 4. Small: the Harmony action bar is re-sent every second although it rarely changes; pressure plates poll at 4 ticks.
 
+Random-tick component callbacks (added 2026-11-11, finding LW-06; counts are estimates from the formula, not measured).
+The script is also called on every random tick of: a cover (`lothlorien:dew_cover`, `dew.js`), corn (`lothlorien:crop`,
+`crop.js`), a sapling (`trees.js`), a Great Mallorn sprout (`great_mallorn.js`), a nectar bloom (`nectar.js`), a fence
+gate (`lothlorien:gate_wall`, `blocks.js`), a decaying Mallorn leaf (`lothlorien:leaf_decaying`, `trees.js`; only the
+two decay permutations, short-lived) and each of the 13 definitions that still carry `lothlorien:motion_support`.
+Calls per second = blocks of that kind in ticking range / mean random-tick interval of one block. LW-02 estimate: the
+10 list-filtered definitions (flowers, ferns, saplings, corn, leaf carpet, blossoms, nectar bloom) on
+`lothlorien:motion_support` cost about 240 callbacks per second per player before (estimate); they now use
+`lothlorien:motion_support_native` with no random tick, so none after (`PISTON_SUPPORT.md`). The next DIAG build should
+report callbacks per minute per component id, so these estimates can be replaced by numbers.
+
 Checked and fine: music is streamed; all block and item textures are 16 px (atlas not enlarged); block models have
 1-5 cubes for flora; worldgen rules are biome-gated; leaves have no tick; entities have
-`conditional_bandwidth_optimization`; no dynamic-property write on a timer.
+`conditional_bandwidth_optimization`; no dynamic-property write on a timer, except the Phial ledger: at most one write per
+5-tick pass while its holder changes cell.
 
 Owner decisions (2026-11-10): no thinning of the ambient creatures; dew waits for numbers (a plain radius would leave
 ground ahead of a walking player without dew, because dew builds up over minutes; the candidate fix is a fixed daily
