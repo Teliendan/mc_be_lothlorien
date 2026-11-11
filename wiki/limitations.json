@@ -56,7 +56,7 @@
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
-        "sha256": "0e6b15423f718c94edc04a0d4cbc9772b0f20cc6fe5fd79db0373a48ca1c4f1a"
+        "sha256": "786bd2ad5657c8c3002c3d56179103eebc55a90e04c0355413038ef4b1aa640a"
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_blossom.json",
@@ -75,7 +75,7 @@
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
-        "sha256": "0e6b15423f718c94edc04a0d4cbc9772b0f20cc6fe5fd79db0373a48ca1c4f1a"
+        "sha256": "786bd2ad5657c8c3002c3d56179103eebc55a90e04c0355413038ef4b1aa640a"
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_leaf_carpet.json",
