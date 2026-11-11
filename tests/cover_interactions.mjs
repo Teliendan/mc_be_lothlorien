@@ -49,7 +49,7 @@ async function scenario(name, test) {
   const context = { ...dewRules, MALLORN_LEAVES, SUPPORT_POLICIES,
     world: { getTimeOfDay: () => 23000, beforeEvents: { playerInteractWithBlock: { subscribe: fn => before.push(fn) } },
       afterEvents: { playerPlaceBlock: { subscribe: fn => after.push(fn) }, playerBreakBlock: { subscribe() {} } } },
-    system: { run: fn => queue.push(fn), beforeEvents: { startup: { subscribe: fn => fn({ blockComponentRegistry: {
+    system: { currentTick: 0, run: fn => queue.push(fn), beforeEvents: { startup: { subscribe: fn => fn({ blockComponentRegistry: {
       registerCustomComponent: (id, c) => components.set(id, c) } }) } } },
     EquipmentSlot: { Mainhand: 'main' }, GameMode: { Creative: 'creative' }, ItemStack: function(id, amount) { return stack(id, amount); },
     repeatedUse: () => false, swingArm: p => { p.swings = (p.swings ?? 0) + 1; }, noteDeed(p, id) { if (badDeed) throw Error('deed'); deeds.push(id); } };
@@ -146,7 +146,7 @@ await scenario('formation postpones unreadable canopy cells and leaves approved 
   const b = e.cover(); e.unload(p => p.y > 64);
   const tick = e.components.get('lothlorien:dew_cover').onRandomTick;
   assert.doesNotThrow(() => tick({ block: b, dimension: e.dim })); assert.equal(b.permutation.getState(WET), false);
-  b.setPermutation(b.permutation.withState(WET, true)); e.context.world.getTimeOfDay = () => 12000;
+  b.setPermutation(b.permutation.withState(WET, true)); e.context.world.getTimeOfDay = () => 12000; e.context.system.currentTick++;
   tick({ block: b, dimension: e.dim }); assert.equal(b.permutation.getState(WET), false);
 });
 

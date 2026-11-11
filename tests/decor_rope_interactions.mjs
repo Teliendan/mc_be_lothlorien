@@ -126,6 +126,11 @@ await scenario('both rope IDs/all facings stop climbing when waterlogged and rej
     feet.setType('minecraft:air'); assert.equal(e.rope.inRope(p),false); head.isWaterlogged=false; assert.equal(e.rope.inRope(p),true,'prior head-only entry is preserved');
   }
 });
+await scenario('a player away from any rope is rejected before any player query', e => {
+  const p=e.player(); p.location={x:10,y:64,z:10};
+  p.getGameMode=()=>{ throw new Error('getGameMode called'); }; p.getComponent=()=>{ throw new Error('getComponent called'); };
+  assert.equal(e.rope.inRope(p),false);
+});
 await scenario('foreign levitation survives entry, sneak and leaving; our own 4-tick grants are replaced and removed', e => {
   const p=e.player(); e.block(ROPE,{'lothlorien:face':'north'}); e.rope.startRopeClimbing();
   for(const id of ['levitation']) {

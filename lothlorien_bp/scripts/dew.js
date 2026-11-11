@@ -1,6 +1,6 @@
 import { world, system } from "@minecraft/server";
 import { MALLORN_LEAVES } from "./nectar_rules.js";
-import { DEW_APPEAR, NEW_DEW_BOTTLE_DAMAGE, addDrop, dewAfterTick, leavesAbove } from "./dew_rules.js";
+import { DEW_APPEAR, NEW_DEW_BOTTLE_DAMAGE, addDrop, dewAfterTick, inDewWindow, leavesAbove } from "./dew_rules.js";
 import { GLASS_BOTTLE, swapHeldBottle, newItem } from "./bottles.js";
 import { noteDeed } from "./deeds.js";
 import { captureUse, liveUse, readBlock } from "./deferred_use.js";
@@ -17,12 +17,20 @@ const DEW_BOTTLE = "lothlorien:dew_bottle";
 const MORNING_DEW = "lothlorien:morning_dew";
 const DEW_RECIPES = ["lothlorien:star_canopy", "lothlorien:elven_rope"]; // recipes whose `unlock` is morning dew
 
+let dayTick, dayTime;
+function timeOfDayNow() {
+  if (dayTick !== system.currentTick) { dayTick = system.currentTick; dayTime = world.getTimeOfDay(); }
+  return dayTime;
+}
+
 system.beforeEvents.startup.subscribe(({ blockComponentRegistry }) => {
   blockComponentRegistry.registerCustomComponent("lothlorien:dew_cover", {
     onRandomTick({ block, dimension }) {
       const dewy = block.permutation.getState(DEW) === true;
+      const time = timeOfDayNow();
+      if (!dewy && !inDewWindow(time)) return;
       const { x, y, z } = block.location;
-      const next = dewAfterTick(dewy, world.getTimeOfDay(), DEW_APPEAR[block.typeId] ?? 0, Math.random(), () =>
+      const next = dewAfterTick(dewy, time, DEW_APPEAR[block.typeId] ?? 0, Math.random(), () =>
         leavesAbove((dy) => readBlock(dimension, { x, y: y + dy, z })?.typeId, (id) => MALLORN_LEAVES.has(id))
       );
       if (next !== dewy) block.setPermutation(block.permutation.withState(DEW, next));

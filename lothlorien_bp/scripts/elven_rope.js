@@ -119,16 +119,15 @@ export function climbSpeed(player) {
   return inputInfo.getMovementVector().y > CLIMB.forwardThreshold ? CLIMB.forwardSpeed / 20 : 0;
 }
 export function inRope(player) {
-  if (player.isGliding || player.isFlying || player.getComponent("riding")?.entityRidingOn ||
-      player.getGameMode() === GameMode.Spectator) return false;
   const { x, y, z } = player.location;
   const cx = Math.floor(x);
   const cz = Math.floor(z);
   const feet = readBlock(player.dimension, { x: cx, y: Math.floor(y), z: cz });
   if (!feet) return false;
-  if (ROPE_IDS.has(feet.typeId)) return feet.isWaterlogged === false;
-  const head = readBlock(player.dimension, { x: cx, y: Math.floor(y + 1), z: cz });
-  return ROPE_IDS.has(head?.typeId) && head.isWaterlogged === false;
+  const rope = ROPE_IDS.has(feet.typeId) ? feet : readBlock(player.dimension, { x: cx, y: Math.floor(y + 1), z: cz });
+  if (!ROPE_IDS.has(rope?.typeId) || rope.isWaterlogged !== false) return false;
+  return !(player.isGliding || player.isFlying || player.getComponent("riding")?.entityRidingOn ||
+    player.getGameMode() === GameMode.Spectator);
 }
 
 // player id -> { player; v: modelled vertical speed while climbing (see levitationStep), else null;
