@@ -20,6 +20,7 @@ BP, RP = MOD / "lothlorien_bp", MOD / "lothlorien_rp"
 VANILLA_RP = MOD.parents[1] / "reference" / "vanilla" / "current" / "resource_packs" / "vanilla"
 ID = "lothlorien:unicorn"
 ELANOR = "lothlorien:elanor"
+OFFER_WAIT_SECONDS = 10  # = OFFER_GAP_TICKS / 20 in scripts/unicorn_rules.js (tests/unicorn_luring.mjs checks they agree)
 ALL_STATES = [f"lothlorien:state_{n}" for n in ("calm", "l1", "l2", "l3", "friend", "tame", "alarmed")] + ["lothlorien:lure"]
 
 
@@ -31,7 +32,10 @@ def write(path, data):
 # ---------------------------------------------------------------- behaviour entity
 # The Elanor lure is vanilla tempt, the same goal as the deer's working corn lure. It lives in its own group, added
 # only in the Friend state (a Guest within 10 blocks turns the state to calm, so a Guest cannot lure it) and only while
-# no offer wait runs: the script fires lure_off on an accepted offer and lure_on when the wait ends (scripts/unicorn.js).
+# no offer wait runs. The wait is the native group lothlorien:offer_wait (a 10 s non-looping timer): the script triggers
+# offer_taken on an accepted offer (property offer_ready false, lure off, wait on) and the timer's offer_ready event ends it.
+# The alarm group has its own minecraft:timer, so an alarm removes the wait (and sets offer_ready true) rather than let two
+# timers share one entity. The pause counts loaded time (owner 2026-11-11, LM-05).
 # Owner 2026-10-26: works in Survival (earlier "ignores Elanor" retests were in Creative, which deer.js then skipped).
 LURE = {"minecraft:behavior.tempt": {"priority": 3, "speed_multiplier": 1.0, "items": [ELANOR], "within_radius": 10,
                                      "can_get_scared": False}}
@@ -108,8 +112,8 @@ def state_events():
     names = ["calm", "l1", "l2", "l3", "friend"]
     events = {f"lothlorien:set_{n}": set_state(n) for n in names}
     events["lothlorien:alarm"] = {
-        "set_property": {"lothlorien:alarmed": True},
-        "remove": {"component_groups": ALL_STATES},
+        "set_property": {"lothlorien:alarmed": True, "lothlorien:offer_ready": True},
+        "remove": {"component_groups": ALL_STATES + ["lothlorien:offer_wait"]},
         "add": {"component_groups": ["lothlorien:state_alarmed"]},
     }
     events["lothlorien:alarm_over"] = {
@@ -118,7 +122,18 @@ def state_events():
         ]
     }
     events["lothlorien:lure_on"] = {"sequence": [{"filters": LURE_READY, "add": {"component_groups": ["lothlorien:lure"]}}]}
-    events["lothlorien:lure_off"] = {"remove": {"component_groups": ["lothlorien:lure"]}}
+    # An accepted, non-final offer starts the pause; offer_ready (the timer's time_down_event) ends it. An offer to an alarmed
+    # unicorn starts none (the alarm timer owns the entity then; the alarm already set offer_ready true).
+    events["lothlorien:offer_taken"] = {"sequence": [{
+        "filters": {"test": "bool_property", "domain": "lothlorien:alarmed", "value": False},
+        "set_property": {"lothlorien:offer_ready": False},
+        "remove": {"component_groups": ["lothlorien:lure"]},
+        "add": {"component_groups": ["lothlorien:offer_wait"]},
+    }]}
+    events["lothlorien:offer_ready"] = {"sequence": [
+        {"set_property": {"lothlorien:offer_ready": True}, "remove": {"component_groups": ["lothlorien:offer_wait"]}},
+        {"trigger": "lothlorien:lure_on"},  # lure_on's filter does not read offer_ready (a property set above is visible next tick)
+    ]}
     events["minecraft:entity_spawned"] = {"trigger": "lothlorien:set_calm"}
     # The bond: the script sets the owner and the property is visible a tick later, when it re-applies the state.
     events["lothlorien:become_tame"] = {"set_property": {"lothlorien:tame": True}, "add": {"component_groups": ["lothlorien:bonded"]}}
@@ -134,6 +149,8 @@ def behaviour_entity():
         "lothlorien:state_friend": avoid_group(3, 2, 1.1, 1.3, lure=True, extra=OFFER),
         "lothlorien:state_tame": {},
         "lothlorien:lure": LURE,
+        "lothlorien:offer_wait": {"minecraft:timer": {"time": OFFER_WAIT_SECONDS, "looping": False,
+                                                      "time_down_event": {"event": "lothlorien:offer_ready", "target": "self"}}},
         "lothlorien:state_alarmed": avoid_group(36, 18, 1.6, 2.1, extra={
             "minecraft:timer": {"time": 20, "looping": False, "time_down_event": {"event": "lothlorien:alarm_over", "target": "self"}}
         }),

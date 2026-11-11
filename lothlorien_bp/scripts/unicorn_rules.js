@@ -7,15 +7,16 @@
 export const UNICORN_ID = "lothlorien:unicorn";
 export const ELANOR_ID = "lothlorien:elanor";
 export const TRUST_OFFERS = 3; // offers until the bond
-export const OFFER_GAP_TICKS = 200; // 10 s between two offers: the unicorn takes its time
+export const OFFER_GAP_TICKS = 200; // 10 s between two offers: the unicorn takes its time. The pause itself is the native timer in
+// entities/unicorn.json (group lothlorien:offer_wait, written by tools/make_unicorn.py); a test keeps the two equal.
 
 // Why an offer is refused: "tame" | "restless" (harmony below 0) | "untrusted" (Guest, not yet Friend) |
-// "wait" (the last offer was less than OFFER_GAP_TICKS ago) | undefined (go ahead).
-export function offerRefusal({ band, tame, sinceLast }) {
+// "wait" (the pause after the last offer still runs: `ready` is the entity property lothlorien:offer_ready) | undefined (go ahead).
+export function offerRefusal({ band, tame, ready }) {
   if (tame) return "tame";
   if (band !== "friend" && band !== "guest") return "restless"; // Uneasy, Shunned, Hated: harmony below 0
   if (band !== "friend") return "untrusted";
-  if (sinceLast !== undefined && sinceLast < OFFER_GAP_TICKS) return "wait";
+  if (!ready) return "wait";
   return undefined;
 }
 
@@ -23,17 +24,6 @@ export function offerRefusal({ band, tame, sinceLast }) {
 export function nextTrust(trust) {
   const next = Math.min(TRUST_OFFERS, trust + 1);
   return { trust: next, bonded: next >= TRUST_OFFERS };
-}
-
-// Ticks since the last accepted offer (world time), or undefined if there was none or the clock went backwards.
-export function ticksSince(now, last) {
-  return typeof last === "number" && now >= last ? now - last : undefined;
-}
-
-// Same persisted world-time pause used by both offer refusal and native luring.
-export function offerWaitTicks(now, last) {
-  const elapsed = ticksSince(now, last);
-  return elapsed === undefined ? 0 : Math.max(0, OFFER_GAP_TICKS - elapsed);
 }
 
 // Only the owner rides a bonded unicorn. A bonded unicorn without a recorded owner (a /summon with the tame event, say)

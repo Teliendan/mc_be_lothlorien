@@ -451,6 +451,16 @@
           "can_get_scared": false
         }
       },
+      "lothlorien:offer_wait": {
+        "minecraft:timer": {
+          "time": 10,
+          "looping": false,
+          "time_down_event": {
+            "event": "lothlorien:offer_ready",
+            "target": "self"
+          }
+        }
+      },
       "lothlorien:state_alarmed": {
         "minecraft:behavior.avoid_mob_type": {
           "priority": 4,
@@ -907,7 +917,8 @@
       },
       "lothlorien:alarm": {
         "set_property": {
-          "lothlorien:alarmed": true
+          "lothlorien:alarmed": true,
+          "lothlorien:offer_ready": true
         },
         "remove": {
           "component_groups": [
@@ -918,7 +929,8 @@
             "lothlorien:state_friend",
             "lothlorien:state_tame",
             "lothlorien:state_alarmed",
-            "lothlorien:lure"
+            "lothlorien:lure",
+            "lothlorien:offer_wait"
           ]
         },
         "add": {
@@ -1001,12 +1013,46 @@
           }
         ]
       },
-      "lothlorien:lure_off": {
-        "remove": {
-          "component_groups": [
-            "lothlorien:lure"
-          ]
-        }
+      "lothlorien:offer_taken": {
+        "sequence": [
+          {
+            "filters": {
+              "test": "bool_property",
+              "domain": "lothlorien:alarmed",
+              "value": false
+            },
+            "set_property": {
+              "lothlorien:offer_ready": false
+            },
+            "remove": {
+              "component_groups": [
+                "lothlorien:lure"
+              ]
+            },
+            "add": {
+              "component_groups": [
+                "lothlorien:offer_wait"
+              ]
+            }
+          }
+        ]
+      },
+      "lothlorien:offer_ready": {
+        "sequence": [
+          {
+            "set_property": {
+              "lothlorien:offer_ready": true
+            },
+            "remove": {
+              "component_groups": [
+                "lothlorien:offer_wait"
+              ]
+            }
+          },
+          {
+            "trigger": "lothlorien:lure_on"
+          }
+        ]
       },
       "minecraft:entity_spawned": {
         "trigger": "lothlorien:set_calm"

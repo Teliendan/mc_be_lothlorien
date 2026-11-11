@@ -108,7 +108,7 @@ await test("the lure is vanilla tempt in its own group, added only to a wild, re
     { test: "bool_property", domain: "lothlorien:alarmed", value: false },
     { test: "bool_property", domain: "lothlorien:tame", value: false },
   ] });
-  assert.deepEqual(entity.events["lothlorien:lure_off"], { remove: { component_groups: ["lothlorien:lure"] } });
+  assert.equal(entity.events["lothlorien:lure_off"], undefined, "the pause removes the lure through offer_taken");
 });
 await test("a Guest inside the lure radius turns the state calm, so only Friends can lure", async () => {
   const R = await import("../lothlorien_bp/scripts/deer_rules.js");
@@ -125,7 +125,7 @@ await test("Friend state keeps its danger flight and the bond keeps no inventory
 });
 await test("a bonded unicorn's death is reported to its owner only", async () => {
   const h = await setup(), mod = await load("unicorn", { ...h.base, ELANOR_ID, UNICORN_ID, mayRide: () => true, nextTrust: () => ({}),
-    offerRefusal: () => undefined, ticksSince: () => undefined, setEventFor: () => "", healAnimal() {} });
+    offerRefusal: () => undefined, setEventFor: () => "", healAnimal() {} });
   const other = h.entity("minecraft:player"); h.world.players.push(other);
   const sent = []; h.player.sendMessage = m => sent.push(["owner", m]); other.sendMessage = m => sent.push(["other", m]);
   mod.startUnicorns();
@@ -133,43 +133,48 @@ await test("a bonded unicorn's death is reported to its owner only", async () =>
   h.fire("entityDie", { deadEntity: unicorn }); assert.deepEqual(sent, [["owner", "unicorn.died"]]);
   sent.length = 0; h.fire("entityDie", { deadEntity: h.entity(UNICORN_ID) }); assert.deepEqual(sent, []);
 });
-async function cooldownService(lastOffer, offset = 0) {
-  const h=await setup(); h.clockOffset=offset;
-  h.world.getAbsoluteTime=()=>h.clockOffset+h.system.currentTick;
-  h.unicorn=h.entity(UNICORN_ID); h.unicorn.setProperty('lothlorien:trust',0);
-  h.unicorn.setProperty('lothlorien:wariness','friend');
-  if (lastOffer !== undefined) h.unicorn.setDynamicProperty('lothlorien:last_offer',lastOffer);
-  const deer=await load('deer',h.base); deer.startDeer();
-  const unicorn=await load('unicorn',{...h.base,...UR,watchUnicornReadiness:deer.watchUnicornReadiness});
-  unicorn.startUnicorns(); h.player.slot.item=new Item(ELANOR_ID,5);
-  h.feed=()=>h.fire('playerInteractWithEntity',{player:h.player,target:h.unicorn,itemStack:h.player.slot.item.clone()});
+// The ten-second offer pause is native (group lothlorien:offer_wait, written by tools/make_unicorn.py); the script only reads
+// the property lothlorien:offer_ready and triggers offer_taken. The mock has no engine timer, so the entity JSON is checked as data.
+await test("the offer pause is a native non-looping timer group that equals OFFER_GAP_TICKS and ends with offer_ready", async () => {
+  const wait = entity.component_groups["lothlorien:offer_wait"];
+  assert.deepEqual(wait, { "minecraft:timer": { time: UR.OFFER_GAP_TICKS / 20, looping: false, time_down_event: { event: "lothlorien:offer_ready", target: "self" } } });
+  for (const name of Object.keys(entity.component_groups)) if (name !== "lothlorien:offer_wait" && name !== "lothlorien:state_alarmed") {
+    assert.equal(entity.component_groups[name]["minecraft:timer"], undefined, `${name}: only the alarm and the pause own a timer`);
+  }
+  const taken = entity.events["lothlorien:offer_taken"].sequence;
+  assert.equal(taken.length, 1);
+  assert.deepEqual(taken[0], { filters: { test: "bool_property", domain: "lothlorien:alarmed", value: false },
+    set_property: { "lothlorien:offer_ready": false }, remove: { component_groups: ["lothlorien:lure"] }, add: { component_groups: ["lothlorien:offer_wait"] } });
+  const ready = entity.events["lothlorien:offer_ready"].sequence;
+  assert.deepEqual(ready[0], { set_property: { "lothlorien:offer_ready": true }, remove: { component_groups: ["lothlorien:offer_wait"] } });
+  assert.deepEqual(ready[1], { trigger: "lothlorien:lure_on" });
+  // The alarm timer and the pause timer never share an entity: an alarm ends the pause (and frees offer_ready), the state events keep it.
+  const alarm = entity.events["lothlorien:alarm"];
+  assert.ok(alarm.remove.component_groups.includes("lothlorien:offer_wait")); assert.equal(alarm.set_property["lothlorien:offer_ready"], true);
+  for (const n of ["calm", "l1", "l2", "l3", "friend"]) assert.ok(!entity.events[`lothlorien:set_${n}`].sequence[0].remove.component_groups.includes("lothlorien:offer_wait"), `set_${n} must not cancel the pause`);
+  assert.equal(entity.description.properties["lothlorien:offer_ready"].default, true);
+});
+async function offerService() {
+  const h = await setup();
+  h.unicorn = h.entity(UNICORN_ID); h.unicorn.setProperty("lothlorien:trust", 0); h.unicorn.setProperty("lothlorien:wariness", "friend");
+  const unicorn = await load("unicorn", { ...h.base, ...UR });
+  unicorn.startUnicorns(); h.player.slot.item = new Item(ELANOR_ID, 5);
+  h.feed = () => h.fire("playerInteractWithEntity", { player: h.player, target: h.unicorn, itemStack: h.player.slot.item.clone() });
   return h;
 }
-await test('accepted offering stops native lure for exactly the same ten-second refusal window',async()=>{
-  const h=await cooldownService(); assert.equal(h.unicorn.getProperty('lothlorien:offer_ready'),true);
-  h.feed(); assert.equal(h.player.slot.amount,4); assert.equal(h.unicorn.getProperty('lothlorien:offer_ready'),false);
-  assert.equal(h.unicorn.events.at(-1),'lothlorien:lure_off');
-  h.advance(199); h.feed(); assert.equal(h.player.slot.amount,4);
-  assert.equal(h.unicorn.getProperty('lothlorien:offer_ready'),false);
-  h.advance(1); assert.equal(h.unicorn.getProperty('lothlorien:offer_ready'),true);
-  assert.equal(h.unicorn.events.at(-1),'lothlorien:lure_on');
-  h.feed(); assert.equal(h.player.slot.amount,3); assert.equal(h.unicorn.getProperty('lothlorien:offer_ready'),false);
+await test("an accepted offer asks the entity for the native pause; while offer_ready is false an offer is refused and costs nothing", async () => {
+  const h = await offerService(); h.feed();
+  assert.equal(h.player.slot.amount, 4); assert.equal(h.unicorn.getProperty("lothlorien:trust"), 1);
+  assert.deepEqual(h.unicorn.events.filter(e => e.startsWith("lothlorien:offer") || e.startsWith("lothlorien:lure")), ["lothlorien:offer_taken"]);
+  h.unicorn.setProperty("lothlorien:offer_ready", false); // what the entity event does
+  h.advance(150); h.feed(); assert.equal(h.player.slot.amount, 4); assert.equal(h.unicorn.getProperty("lothlorien:trust"), 1);
+  h.unicorn.setProperty("lothlorien:offer_ready", true); // the pause timer ran out
+  h.feed(); assert.equal(h.player.slot.amount, 3); assert.equal(h.unicorn.getProperty("lothlorien:trust"), 2);
 });
-await test('unload cancels the one-shot wait; load restores only its remaining world-time pause',async()=>{
-  const h=await cooldownService(); h.feed(); h.advance(70);
-  h.unicorn.isValid=false; h.fire('entityRemove',{removedEntityId:h.unicorn.id});
-  h.advance(80); h.unicorn.isValid=true; h.fire('entityLoad',{entity:h.unicorn});
-  assert.equal(h.unicorn.getProperty('lothlorien:offer_ready'),false);
-  h.advance(49); assert.equal(h.unicorn.getProperty('lothlorien:offer_ready'),false);
-  h.advance(1); assert.equal(h.unicorn.getProperty('lothlorien:offer_ready'),true);
-});
-await test('existing lifecycle bootstrap restores persisted pause and follows existing clock-reset semantics',async()=>{
-  const pending=await cooldownService(900,1000);
-  assert.equal(pending.unicorn.getProperty('lothlorien:offer_ready'),false);
-  pending.advance(99); assert.equal(pending.unicorn.getProperty('lothlorien:offer_ready'),false);
-  pending.advance(1); assert.equal(pending.unicorn.getProperty('lothlorien:offer_ready'),true);
-  const elapsed=await cooldownService(600,1000); assert.equal(elapsed.unicorn.getProperty('lothlorien:offer_ready'),true);
-  const reset=await cooldownService(1100,1000); assert.equal(reset.unicorn.getProperty('lothlorien:offer_ready'),true);
-  assert.equal(UR.offerRefusal({band:'friend',tame:false,sinceLast:UR.ticksSince(1000,1100)}),undefined);
+await test("the script keeps no pause state of its own: no timer, no last_offer property, no readiness hook", async () => {
+  const h = await offerService(); const before = h.timers.size; h.feed();
+  assert.equal(h.timers.size, before); assert.equal(h.unicorn.getDynamicProperty("lothlorien:last_offer"), undefined);
+  assert.ok(!/watchUnicornReadiness|unicornReadiness/.test(readFileSync(new URL("../lothlorien_bp/scripts/deer.js", import.meta.url), "utf8")));
+  assert.equal(UR.ticksSince, undefined); assert.equal(UR.offerWaitTicks, undefined);
 });
 console.log(`Passed ${cases} unicorn luring/Harmony production and filter scenarios.`);

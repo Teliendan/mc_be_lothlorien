@@ -91,7 +91,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/deer.js",
-        "sha256": "aa7b14efca808888b5ce67159eb046ba62e5b2f79bdc362d41dc86132aac0816"
+        "sha256": "0e9a006ecb8f98812f9b51aa6db39cd841ae936747fcd8b12aff452e7268dcef"
       },
       {
         "path": "lothlorien_bp/scripts/deer_rules.js",
@@ -472,15 +472,15 @@
       },
       {
         "path": "lothlorien_bp/entities/unicorn.json",
-        "sha256": "5e9e62e5f835e3221dc24a95280e588c94fa5944745941234774a46fe17112ae"
+        "sha256": "1beb312e55158ed409f839085b77695ddd1504df87d4cda6317f7c0107b38665"
       },
       {
         "path": "lothlorien_bp/scripts/unicorn.js",
-        "sha256": "1bb7265c1351051542d5a5931884d52b3510495b0440710ffc3d82829ac14714"
+        "sha256": "13c60c21d883ddd50e5fd09f09cb1855cc6c71dc96d9b74d5a8a0973de3cd660"
       },
       {
         "path": "lothlorien_bp/scripts/unicorn_rules.js",
-        "sha256": "8ecabaf5f6d9f72427389889935682928a4445cd72d365087a1d950b7df5abaf"
+        "sha256": "777c896aa2f4b5f72c07db48c59fe98e081f375886ce24054974f25c549c99c1"
       }
     ]
   },

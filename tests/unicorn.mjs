@@ -20,21 +20,17 @@ test("unicorn: native horse float/buoyancy settings retain drowning and lava dam
 });
 
 test("unicorn: offers need a calm Friend, an unfrightened unicorn and a pause between offers", () => {
-  const ok = { band: "friend", tame: false, sinceLast: undefined };
+  const ok = { band: "friend", tame: false, ready: true };
   assert.equal(UR.offerRefusal(ok), undefined);
   assert.equal(UR.offerRefusal({ ...ok, band: "guest" }), "untrusted");
   for (const band of ["uneasy", "shunned", "hated"]) assert.equal(UR.offerRefusal({ ...ok, band }), "restless", band);
   assert.equal(UR.offerRefusal({ ...ok, tame: true }), "tame");
-  assert.equal(UR.offerRefusal({ ...ok, sinceLast: UR.OFFER_GAP_TICKS - 1 }), "wait");
-  assert.equal(UR.offerRefusal({ ...ok, sinceLast: UR.OFFER_GAP_TICKS }), undefined);
+  assert.equal(UR.offerRefusal({ ...ok, ready: false }), "wait");
 });
 
 test("unicorn: the third offer bonds it; only the owner may ride", () => {
   assert.deepEqual([0, 1, 2].map((t) => UR.nextTrust(t).bonded), [false, false, true]);
   assert.equal(UR.nextTrust(3).trust, UR.TRUST_OFFERS);
-  assert.equal(UR.ticksSince(100, 40), 60);
-  assert.equal(UR.ticksSince(10, 40), undefined);
-  assert.equal(UR.ticksSince(10, undefined), undefined);
   assert.ok(UR.mayRide("a", "a") && !UR.mayRide("a", "b") && UR.mayRide(undefined, "b"));
 });
 
