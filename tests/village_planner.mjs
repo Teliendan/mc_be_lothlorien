@@ -591,4 +591,13 @@ test("village area counts as Lothlorien: planned rects from the world property, 
   assert.match(loop, /DONE = VILLAGE_PLANS/);
 });
 
+test("applyPlan models the runtime mend: links switch on towards deck and posts, off towards air, and plans do not share fence states", () => {
+  const off = { "minecraft:connection_north": false, "minecraft:connection_south": false, "minecraft:connection_west": false, "minecraft:connection_east": true };
+  const f = mkWorld((w) => { w.set("1,41,0", PLANKS); });
+  applyPlan(f.world, f.states, { cells: [], rails: [{ x: 0, y: 41, z: 0, states: { ...off, "minecraft:connection_east": false } }, { x: 0, y: 41, z: 5, states: off }] });
+  assert.equal(f.states.get(wkey(0, 41, 0))["minecraft:connection_east"], true, "a plank neighbour links");
+  assert.equal(f.states.get(wkey(0, 41, 5))["minecraft:connection_east"], false, "a stale link into air goes");
+  assert.equal(off["minecraft:connection_east"], true, "the plan's own state object is untouched");
+});
+
 finish();

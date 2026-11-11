@@ -68,6 +68,7 @@ await scenario("an automatic entityLoad plans the village once, removes the mark
   assert.equal(grep(/planner:   pillar at \d+,\d+: \d roots/).length, flares.length, "one line per flare");
   for (const b of direct.repairs.flatMap((p) => p.blocks)) assert.equal(mock.dimension().overrides.get(`${b.x},${b.y},${b.z}`)?.id, b.id, "the repairs (buried rope piece back to terrain, root logs) were written into the world");
   assert.match(grep(/planner: village at/)[0], / in \d+\.\d s$/, "the summary ends with the elapsed time");
+  assert.equal(grep(/write\(s\) failed/).length, 0, "no false write failures");
   assert.equal(direct.picks.length, 2, "V2 with the L cap: plaza + side-side (the old third pick was an L join longer than 16)");
   assert.ok(mock.dimension().overrides.size > 50, "the links were written into the world");
   const kinds = grep(/planner:   (plaza|sideside|exit|side|L) /).map((l) => l.match(/planner:   (\w+) /)[1]);

@@ -18,7 +18,7 @@ import { villageDebug } from "./village_debug.js";
 import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, growRect, hullOf, chunksIn, describePick, describeMerge, VILLAGE_PLANS } from "./village_planner.js";
 import { isKnownVillageCell, rememberVillageArea } from "./village_area.js";
 import { describeRepair } from "./village_repair.js";
-import { LINKS, missingLinks } from "./rail_mender_rules.js";
+import { LINKS } from "./rail_mender_rules.js";
 import { mendFence } from "./rail_connections.js";
 import { PANEL_ID,planterWalkName } from "./planter_panels.js";
 import { populateVillage } from "./elf_village.js";
@@ -68,7 +68,8 @@ function* planAndBuild(dimension, found, budget, stats) {
     try {
       const block=dimension.getBlock({x,y,z});
       if(!block)return undefined;
-      return {name:block.typeId,states:block.typeId===PANEL_ID ? {"lothlorien:open":block.permutation.getState("lothlorien:open"),"minecraft:cardinal_direction":block.permutation.getState("minecraft:cardinal_direction")} : undefined};
+      const id=block.typeId;
+      return id===PANEL_ID ? {name:id,states:{"lothlorien:open":block.permutation.getState("lothlorien:open"),"minecraft:cardinal_direction":block.permutation.getState("minecraft:cardinal_direction")}} : id;
     } catch {return undefined;}
   };
   const get = planterWalkName(raw);
@@ -90,15 +91,7 @@ function* planAndBuild(dimension, found, budget, stats) {
     } catch { failedWrites++; }
     if (++n % WRITES_PER_TICK === 0) yield;
   }
-  at = null; res.at = null; // release the block memo and the overlay before the long rail and fence passes (watchdog memory, 2026-10-27)
-  const typeAt = (x, y, z) => dimension.getBlock({ x, y, z })?.typeId;
-  for (const item of [...res.merges, ...res.picks, ...res.repairs]) for (const r of [...(item.plan ?? item).rails, ...((item.plan ?? item).lamps ?? []).map((l) => ({ x: l.x, y: l.y - 1, z: l.z }))]) { // rails and lamp supports after every write
-    try {
-      const block = dimension.getBlock(r), perm = block.permutation, on = missingLinks(r, typeAt, (s) => perm.getState(s));
-      if (on.length) { let next = perm; for (const s of on) next = next.withState(s, true); block.setPermutation(next); }
-    } catch { failedWrites++; }
-    yield;
-  }
+  at = null; res.at = null; // release the block memo and the overlay before the fence mend pass (watchdog memory, 2026-10-27)
   // every written cell and its four neighbours, each fence mended once (mendAround per cell visited a shared neighbour up to 5 times;
   // a mend reads only neighbour types, which mending never changes, so order and repeats do not matter)
   const mend = new Set();

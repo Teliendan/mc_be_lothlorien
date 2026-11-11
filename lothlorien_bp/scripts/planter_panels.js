@@ -11,17 +11,20 @@ export const PANEL_DIRS = [
 const AIR = new Set(["minecraft:air","minecraft:cave_air","minecraft:void_air","minecraft:light_block_0"]); // light_block_0: the dark headroom shield of the village pieces
 export const panelBlock = d => ({name:PANEL_ID,states:{"minecraft:cardinal_direction":d.name,"minecraft:vertical_half":"bottom","lothlorien:open":true}});
 
+// A reader may return a plain id string for any block but a panel (the runtime does) or a { name, states } object.
+const nameOf = b => typeof b === "string" ? b : b?.name;
+
 export function isPlanterPanel(get, x, y, z, block = get(x,y,z)) {
   if (block?.name !== PANEL_ID || ![true,1].includes(block.states?.["lothlorien:open"])) return false;
   const d = PANEL_DIRS.find(d => d.name === block.states["minecraft:cardinal_direction"]);
-  return !!d && get(x-d.dx,y,z-d.dz)?.name === "minecraft:moss_block";
+  return !!d && nameOf(get(x-d.dx,y,z-d.dz)) === "minecraft:moss_block";
 }
 
 // Planner signatures describe clear center lanes, not whole empty block volumes.
 // Native writes preserve these skirts when a plan requests air in that lane.
 export const planterWalkName = get => (x,y,z) => {
   const b=get(x,y,z);
-  return isPlanterPanel(get,x,y,z,b) ? "minecraft:air" : b?.name;
+  return isPlanterPanel(get,x,y,z,b) ? "minecraft:air" : nameOf(b);
 };
 
 // Names only; undefined is void for a bounded generator, but unloaded in game.

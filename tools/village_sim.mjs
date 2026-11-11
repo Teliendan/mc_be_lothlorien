@@ -20,6 +20,7 @@ import { protectedCells, checkWalk } from "../../../.claude/skills/bedrock-moddi
 import { supportScan, waterScan, isSupportSkipped } from "./village_checks.mjs"; // nothing floats, water stays in its vessel (the generator runs them per piece, the sim on assembled villages)
 import { isPlanterPanel,planterWalkName } from "../lothlorien_bp/scripts/planter_panels.js";
 import { MARKER_ID, finalBlocks } from "../lothlorien_bp/scripts/village_loop.js";
+import { LINKS, isFence, connectionChanges } from "../lothlorien_bp/scripts/rail_mender_rules.js";
 import { PLAN, planVillage, discoverSync, boundedReader, chunksIn, inRect } from "../lothlorien_bp/scripts/village_planner.js";
 import { POST_ID, PROFESSIONS, HOME_MIN, HEALER2_MIN_TREES, RESERVE_POSTS, assignHomes } from "../lothlorien_bp/scripts/elf_rules.js";
 import { siteOf, findHome, planFurnish, hasLayout, frameArea, frameCell } from "../lothlorien_bp/scripts/home_furnish.js"; // the home pavilion and its furnishing (M7 WP4b), the very same pure code as elf_village.js
@@ -528,8 +529,7 @@ export function entityCells(p, id) {
 export const markerCells = (p) => entityCells(p, MARKER_ID).map((c) => c.cell);
 export const markerCell = (p) => markerCells(p)[0] ?? null;
 const LOG_IDS = new Set(["lothlorien:mallorn_log", "lothlorien:mallorn_wood"]);
-const LINK_SIDES = { north: [0, -1], south: [0, 1], west: [-1, 0], east: [1, 0] };
-export function applyPlan(world, states, plan) {
+export function applyPlan(world, states, plan, typeAt = (x, y, z) => world.get(wkey(x, y, z)) ?? AIR) {
   const blocks = finalBlocks(plan);
   const get=(x,y,z)=>{const k=wkey(x,y,z);return {name:world.get(k),states:states.get(k)};};
   for (const [k, b] of blocks) {
@@ -538,10 +538,14 @@ export function applyPlan(world, states, plan) {
     if (b.id === AIR) world.delete(wk); else world.set(wk, b.id);
     if (b.id === AIR) states.delete(wk); else states.set(wk, b.states ?? {});
   }
-  for (const r of [...plan.rails, ...(plan.lamps ?? []).map((l) => ({ x: l.x, y: l.y - 1, z: l.z }))]) { // the runtime adds the fence links a neighbour update may have dropped (rail_mender_rules.missingLinks), also at the lamp posts
-    const st = states.get(wkey(r.x, r.y, r.z));
-    if (!st) continue;
-    for (const [side, v] of Object.entries(LINK_SIDES)) if (!st[`minecraft:connection_${side}`] && [FENCE, "lothlorien:mallorn_stripped_log", "lothlorien:mallorn_log", "lothlorien:mallorn_wood", "lothlorien:mallorn_stripped_wood"].includes(world.get(wkey(r.x + v[0], r.y, r.z + v[1])))) st[`minecraft:connection_${side}`] = true;
+  // the runtime's mend pass (loop_marker.js): every written cell and its four neighbours, one rule. A later plan re-mends what it touches, so per-plan equals the runtime's single pass.
+  const mend = new Set();
+  for (const k of blocks.keys()) { const [x, y, z] = k.split(",").map(Number); mend.add(k); for (const l of LINKS) mend.add(`${x + l.dx},${y},${z + l.dz}`); }
+  for (const k of mend) {
+    const [x, y, z] = k.split(",").map(Number), wk = wkey(x, y, z);
+    if (!isFence(world.get(wk))) continue;
+    const st = states.get(wk) ?? {}, on = connectionChanges({ x, y, z }, typeAt, (s) => st[s]);
+    if (on.length) states.set(wk, { ...st, ...Object.fromEntries(on) }); // a copy: plans share state objects between cells
   }
   return blocks;
 }
@@ -628,13 +632,13 @@ export function planLoops(res, world, states, opts = {}) {
   out.nRaw = r.nRaw; out.log = r.log;
   out.merges = 0; out.mergeCells = [];
   for (const p of r.merges) { // merges first (the planner scored the links on the merged network), checked like a link
-    const doApply = () => applyPlan(world, states, p.plan);
+    const doApply = () => applyPlan(world, states, p.plan, rawAt);
     const c = joinChecks(world, states, p.plan, doApply);
     if (c.walk.length || c.light < 8) out.bad.push({ kind: "merge", A: p.plan.A, B: p.plan.B, walk: c.walk.slice(0, 3), light: c.light, lightAt: c.lightAt });
     out.merges++; out.mergeCells.push(p.len);
   }
   for (const p of r.picks) {
-    const doApply = () => applyPlan(world, states, p.plan);
+    const doApply = () => applyPlan(world, states, p.plan, rawAt);
     if (opts.verify) {
       const c = joinChecks(world, states, p.plan, doApply);
       if (c.walk.length || c.light < 8) out.bad.push({ kind: p.kind, A: p.plan.A, B: p.plan.B, walk: c.walk.slice(0, 3), light: c.light, lightAt: c.lightAt });
@@ -646,7 +650,7 @@ export function planLoops(res, world, states, opts = {}) {
   // repairs (rope fit): written like links
   out.repairs = r.repairs.map((p) => ({ kind: p.kind, x: p.x, y: p.y, z: p.z, rails: p.kind === "railcap" ? p.rails.length : undefined, buried: p.buried, hung: p.hung, roots: p.roots, leaves: p.leaves, twigs: p.twigs, logs: p.kind === "flare" ? p.blocks.length : undefined, counts: p.counts, trunks: p.trunks }));
   out.flareLog = (r.log ?? []).filter((l) => l.startsWith("flare"));
-  for (const p of r.repairs) applyPlan(world, states, p);
+  for (const p of r.repairs) applyPlan(world, states, p, rawAt);
   out.ropeFeet = ropeFeet(world, states, rawAt, rect);
   out.floor = floorCheck(r.repairs.filter((p) => p.kind === "floor").flatMap((p) => p.blocks), rawAt, out.ropeFeet);
   out.at = rawAt;

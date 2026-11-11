@@ -102,3 +102,12 @@ assert.notEqual(dimension.getBlock({x:cx,y:41,z:cz}).typeId,PANEL_ID,"an existin
 for(const [k] of panels){const [x,y,z]=k.split(",").map(Number);const get=(a,b,c)=>{const p=dimension.getBlock({x:a,y:b,z:c});return {name:p.typeId,states:p.permutation.states};};assert.ok(isPlanterPanel(get,x,y,z));}
 assert.equal(mock.pending,0,"framing adds no idle timer");
 console.log("ok   planter borders: production home writer applies panels and preserves existing cushion actors without polling");
+
+{
+  const open = { name: PANEL_ID, states: { "lothlorien:open": true, "minecraft:cardinal_direction": "east" } };
+  const walk = planterWalkName((x) => (x === 1 ? open : x === 0 ? "minecraft:moss_block" : x === 2 ? "minecraft:air" : undefined));
+  assert.equal(walk(1, 0, 0), "minecraft:air", "a moss-mounted skirt read beside a string neighbour");
+  assert.equal(walk(0, 0, 0), "minecraft:moss_block");
+  assert.equal(walk(3, 0, 0), undefined, "unloaded stays undefined");
+  console.log("ok   planter panels: a reader may return plain id strings for everything but a panel");
+}
