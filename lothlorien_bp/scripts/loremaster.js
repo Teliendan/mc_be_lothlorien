@@ -23,7 +23,7 @@ import {
   SEARCH_RADIUS, abandonTask, accept, completeLore, currentOffer, deliveryPlace, deliveryPlan, elfAccepts, isTaskLesson, lessonById, lessonDone,
   menuFor, rankOf, requestById, requestsLeft, takeLesson, taskStatus,
 } from "./renown_rules.js";
-import { celebrate, handOver, inventoryCounts, rankProgress, renownOf, saveRenown, saplingsPlanted, turnInLesson } from "./renown_game.js";
+import { baselineHarmonyNudge, celebrate, handOver, inventoryCounts, rankProgress, renownOf, saveRenown, saplingsPlanted, turnInLesson } from "./renown_game.js";
 
 const LOREMASTER_VARIANT = PROFESSIONS.indexOf("loremaster");
 const MAX_DISTANCE = 12; // the Loremaster must still be this close when an answer is applied (he strolls up to 6 blocks from home)
@@ -268,6 +268,7 @@ async function lessonScreen(ctx, { id, from }) {
   if (next?.[0] === "takeLesson") {
     if (takeLesson(state, id, system.currentTick)) {
       saveRenown(player);
+      baselineHarmonyNudge(player);
       speak(ctx.elf, "task_taken", player);
     }
     return step("main");

@@ -30,7 +30,10 @@ export function harmonyOf(player) {
   return state;
 }
 
-// Band tags share the existing update/one-second refresh (covers join/reload).
+// Band tags follow the band: update() calls this when the band changes, and the one-second tick once for every player it has not
+// seen since they joined or the world loaded (a tag left from an older state is corrected then). The first read of a player's state
+// cannot do it: other modules read it in read-only before events, where tags cannot be written.
+const synced = new Set(); // player ids whose tags were checked since they joined
 function syncBandTags(player, state) {
   for (const [tag, needed] of [[HATED_TAG, isHated(state)], [FRIEND_TAG, isFriend(state)]]) {
     if (needed !== player.hasTag(tag)) {
@@ -40,16 +43,29 @@ function syncBandTags(player, state) {
   }
 }
 
+// Listeners told when a player's Harmony number changed (same shape as deeds.js onDeed); renown_game.js uses it for the Harmony nudge.
+const changeListeners = [];
+export function onHarmonyChange(listener) {
+  changeListeners.push(listener);
+}
+
 // Runs `change` on the player's state; chat lines for band changes; saves only when harmony differs after.
 // Returns true when a chat line was sent.
 function update(player, state, change) {
   const before = state.harmony;
   change();
-  syncBandTags(player, state);
+  if (bandOf(before) !== bandOf(state.harmony)) syncBandTags(player, state);
   if (state.harmony === before) return false;
   const keys = changeMessages(before, state.harmony);
   for (const key of keys) player.sendMessage(message(key));
   player.setDynamicProperty(PROPERTY, serialize(state));
+  for (const listener of changeListeners) {
+    try {
+      listener(player, state);
+    } catch {
+      // a listener must never break the change that called it
+    }
+  }
   return keys.length > 0;
 }
 
@@ -137,11 +153,13 @@ export function startHarmony(inside, debugTag) {
   world.afterEvents.playerLeave.subscribe(({ playerId }) => {
     states.delete(playerId);
     lastHint.delete(playerId);
+    synced.delete(playerId);
   });
 
   system.runInterval(() => {
     for (const player of world.getPlayers()) {
       const state = harmonyOf(player);
+      if (!synced.has(player.id)) { synced.add(player.id); syncBandTags(player, state); }
       const here = inside(player.dimension, player.location);
       update(player, state, () => tick(state, here, TICK_SECONDS));
       const text = statusText(state, here);

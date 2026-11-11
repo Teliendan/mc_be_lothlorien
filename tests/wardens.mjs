@@ -109,7 +109,7 @@ test("elven warden: natural spawns - always at the edge and on decks, 30 % elsew
 
 test("elven warden: friendly fire - never on wardens, own creatures, animals; players only after hitting a warden", () => {
   const v = (typeId, families = []) => ({ typeId, families });
-  const ff = (victim, sinceProvokedMs, hated) => EW.isFriendlyFire({ shooterId: EW.WARDEN_ID, victim, sinceProvokedMs, hated });
+  const ff = (victim, sinceProvokedMs, hated) => EW.isFriendlyFire({ victim, sinceProvokedMs, hated });
   assert.ok(ff(v(EW.WARDEN_ID, ["lothlorien_warden", "irongolem", "mob"])));
   assert.ok(ff(v("lothlorien:deer", ["mob"])) && ff(v("lothlorien:unicorn")) && ff(v("lothlorien:swan")));
   assert.ok(ff(v("minecraft:cow", ["cow", "animal", "mob"])));
@@ -120,7 +120,6 @@ test("elven warden: friendly fire - never on wardens, own creatures, animals; pl
   assert.ok(ff(v("minecraft:player"), undefined, false) && ff(v("lothlorien:deer"), undefined, true), "the hated flag only concerns players");
   assert.ok(!ff(v("minecraft:zombie", ["zombie", "monster", "mob"])), "monsters take arrows");
   assert.ok(!ff(v("minecraft:villager_v2", ["villager"])), "villagers in the line of fire are accepted");
-  assert.ok(!EW.isFriendlyFire({ shooterId: "minecraft:skeleton", victim: v("minecraft:player"), sinceProvokedMs: undefined }), "only warden arrows");
   const src = readFileSync(new URL("../lothlorien_bp/scripts/elven_warden.js", import.meta.url), "utf8");
   assert.ok(src.includes("beforeEvents.entityHurt") && src.includes("event.cancel = true"));
 });

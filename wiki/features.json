@@ -2185,7 +2185,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/elven_warden.js",
-          "sha256": "f30ba8a8dba40170464c8d545603059cea87669779c1dbc74954b74f9549438f"
+          "sha256": "bd1a67324fe3302d273962c3447891c2abd7da5dbba4a04aef417fbeebd29468"
         },
         {
           "path": "lothlorien_bp/scripts/elf_native_use.js",
@@ -2230,11 +2230,11 @@
         },
         {
           "path": "lothlorien_bp/scripts/elven_warden.js",
-          "sha256": "f30ba8a8dba40170464c8d545603059cea87669779c1dbc74954b74f9549438f"
+          "sha256": "bd1a67324fe3302d273962c3447891c2abd7da5dbba4a04aef417fbeebd29468"
         },
         {
           "path": "lothlorien_bp/scripts/elven_warden_rules.js",
-          "sha256": "ee1a875deb2f97c181fb86be4d460e2daef1deebdb0e0cee5808878b2e0b8f31"
+          "sha256": "e916fb741f10f563ba48c613a332bae42ae3479ff39af7473a7cf6bb07a75607"
         }
       ]
     },
@@ -2489,7 +2489,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/harmony_game.js",
-          "sha256": "d44ea1bec6c63db7d8ab72b337acf63b1fddacab6d2a8cabdadcb5bcfc2fa932"
+          "sha256": "a5c5f01ba541dc56e60b5928528fa30d7484fd476c7f82a25f3b638ab5f48a5c"
         }
       ]
     },
@@ -2520,7 +2520,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/renown_game.js",
-          "sha256": "47616a2f8a7bf862868cc481ab49a3d170ce308788eae4afb026560fd82c28e6"
+          "sha256": "1561004ed39376f8e22f477e11b26e5d2f75a1f5b902eb7f4d637613402813a4"
         },
         {
           "path": "lothlorien_bp/scripts/renown_rules.js",
@@ -2582,7 +2582,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/trade.js",
-          "sha256": "ff19197eb2888ba09c1980fc11ee47161c9878a7f4a6250c2328ad078037523e"
+          "sha256": "48004e01c9d8c5af861907f82a2014ff566c500cae9deccd898ea4fe9f02937f"
         },
         {
           "path": "lothlorien_bp/scripts/trade_rules.js",
@@ -2625,7 +2625,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/archery.js",
-          "sha256": "9e1d4c22a72f6588e3e9a0e06bf083ab2533cbb005b4d683d76fe95422b6a73a"
+          "sha256": "3b81d40e5d8393c357e5ba5541aed380d24b91a4d8083d3eccb05bc0f35bee6c"
         },
         {
           "path": "lothlorien_bp/scripts/athelas.js",
@@ -2709,7 +2709,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/healer.js",
-          "sha256": "5d5db96e1ab997781f1fb7267609e45a1fc41185e065b594d78cb000750359eb"
+          "sha256": "abae1a2bfc5e2de07a3b1a5bbc1f03f03a8f9cc10552d4490ca0c63755be6b3d"
         },
         {
           "path": "lothlorien_bp/scripts/healer_rules.js",
@@ -2733,7 +2733,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/loremaster.js",
-          "sha256": "cb43c7ce96b57fa4e3e49aa94dfb596d32eeb04a43a9853caab3643406e41231"
+          "sha256": "8f77d264581bb229eb05caabb8e7a63e4ad610038134f570e64160e7670d5892"
         },
         {
           "path": "lothlorien_bp/scripts/main.js",
@@ -2797,7 +2797,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/use_guard.js",
-          "sha256": "35953fdcbf6e77847bb661d5cbe664fdc753a36e2a239d7be1ad5954241f2a5c"
+          "sha256": "dd0aecb5f67d6133fdce5357593e321ddedf4d5bf8acf8d1394734d0bddc73ec"
         },
         {
           "path": "lothlorien_bp/scripts/village_bridge.js",

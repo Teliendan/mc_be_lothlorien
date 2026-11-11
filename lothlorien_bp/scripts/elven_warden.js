@@ -153,7 +153,7 @@ export function startElvenWardens(depthAt, bandOf) {
       const victim = event.hurtEntity;
       const at = provoked.get(victim.id);
       const hated = victim.typeId === PLAYER_ID && victim.hasTag(HATED_TAG), foe = victim.typeId === PLAYER_ID && victim.hasTag(FOE_TAG);
-      if (isFriendlyFire({ shooterId: shooter.typeId, victim: { typeId: victim.typeId, families: familiesOf(victim) }, hated, foe, sinceProvokedMs: at === undefined ? undefined : Date.now() - at })) {
+      if (isFriendlyFire({ victim: { typeId: victim.typeId, families: familiesOf(victim) }, hated, foe, sinceProvokedMs: at === undefined ? undefined : Date.now() - at })) {
         event.cancel = true;
       }
     } catch {

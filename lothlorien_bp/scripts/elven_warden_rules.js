@@ -51,8 +51,7 @@ export const isNewFight = (sinceProvokedMs) => sinceProvokedMs === undefined || 
 
 // victim: { typeId, families: string[] }; sinceProvokedMs: ms since this player last hurt a warden (undefined = never);
 // hated: the victim is a player with the lothlorien_hated tag; foe: a player with the lothlorien_elf_foe tag
-export function isFriendlyFire({ shooterId, victim, sinceProvokedMs, hated = false, foe = false }) {
-  if (shooterId !== WARDEN_ID) return false;
+export function isFriendlyFire({ victim, sinceProvokedMs, hated = false, foe = false }) { // the caller has already checked that a warden shot
   if (victim.typeId === PLAYER_ID) return !(hated || foe || (sinceProvokedMs !== undefined && sinceProvokedMs <= PROVOKE_MS));
   if (victim.typeId.startsWith("lothlorien:")) return true;
   return victim.families.some((f) => SHIELDED_FAMILIES.includes(f));

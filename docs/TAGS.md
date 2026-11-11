@@ -38,10 +38,11 @@ acceptance remains pending. Generator/post-pass and regression membership agree.
 
 `lothlorien_friend` is a runtime player tag, not a family or item/block tag.
 Authority: persisted `lothlorien:harmony` state and its cached Harmony band.
-Producer: existing harmony_game.js update plus20-tick refresh, shared with the
-unchanged Hated-band tag. It is added for Friend and removed for every other
-band after debug/deed/death/recovery updates; periodic refresh covers join and
-reload/stale tag repair. Existing leave handling drops the cache. Game mode does
+Producer: harmony_game.js `update`, shared with the unchanged Hated-band tag. It is
+added for Friend and removed for every other band when a debug/deed/death/recovery
+update changes the band (LM-10, 2026-11-11: no per-second `hasTag`); the first
+one-second tick after a player joins or the world loads checks both tags once
+(stale tag repair). Existing leave handling drops the cache and that mark. Game mode does
 not redefine Friend, and no new timer/world scan is added.
 
 Only consumers are unicorn Friend-state native follow_target_leader and its

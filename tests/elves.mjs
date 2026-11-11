@@ -205,11 +205,11 @@ test("elf: wardens defend elves - the foe tag is a target and is not shielded fr
   const foeEntry = goal.entity_types.find((t) => JSON.stringify(t.filters).includes(EL.FOE_TAG));
   assert.ok(foeEntry, "the warden targets players carrying the foe tag");
   assert.deepEqual(foeEntry.filters.all_of.map((f) => [f.test, f.subject, f.value]), [["is_family", "other", "player"], ["has_tag", "other", EL.FOE_TAG]]);
-  const player = { typeId: EW.PLAYER_ID, families: ["player"] }, shot = (o) => EW.isFriendlyFire({ shooterId: EW.WARDEN_ID, victim: player, ...o });
+  const player = { typeId: EW.PLAYER_ID, families: ["player"] }, shot = (o) => EW.isFriendlyFire({ victim: player, ...o });
   assert.equal(shot({}), true, "an innocent player is shielded");
   assert.equal(shot({ foe: true }), false, "a foe is not");
   assert.equal(shot({ hated: true }), false); assert.equal(shot({ sinceProvokedMs: 1000 }), false);
-  assert.equal(EW.isFriendlyFire({ shooterId: EW.WARDEN_ID, victim: { typeId: EL.ELF_ID, families: [EL.ELF_FAMILY, "mob"] } }), true, "warden arrows never hurt elves");
+  assert.equal(EW.isFriendlyFire({ victim: { typeId: EL.ELF_ID, families: [EL.ELF_FAMILY, "mob"] } }), true, "warden arrows never hurt elves");
   assert.equal(EL.FOE_MS, EW.PROVOKE_MS, "a foe is shot for as long as a provoked player");
   const src = readFileSync(new URL("../lothlorien_bp/scripts/elven_warden.js", import.meta.url), "utf8");
   assert.ok(src.includes("hasTag(FOE_TAG)") && /isFriendlyFire\(\{.*\bhated, foe,/.test(src), "friendly fire reads the foe tag");

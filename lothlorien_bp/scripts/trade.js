@@ -167,5 +167,8 @@ export function startTrade(dependencies) {
     clearPlayer(player.id);
     try { player.removeTag(PASS_TAG); } catch { /* player left */ }
   });
-  world.afterEvents.playerLeave.subscribe(({ playerId }) => clearPlayer(playerId));
+  world.afterEvents.playerLeave.subscribe(({ playerId }) => {
+    clearPlayer(playerId);
+    sessions.delete(playerId); // a callback queued before the leave still holds the old session object and bails; no entry stays per leaver
+  });
 }

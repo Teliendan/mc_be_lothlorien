@@ -33,12 +33,24 @@ await test("existing20-tick Harmony service refreshes persisted Friend/Hated and
 });
 await test("debug changes update Friend immediately without redefining it by game mode", async () => {
   const h = await service(); h.player.mode = "creative";
+  h.advance(20); // the first one-second tick checks the tags of a player who just joined
   h.game.handleHarmonyEvent({ id: "lothlorien:harmony", message: "10" }, h.player);
   assert.equal(h.player.hasTag(h.game.FRIEND_TAG), true);
   h.game.handleHarmonyEvent({ id: "lothlorien:harmony", message: "9" }, h.player);
   assert.equal(h.player.hasTag(h.game.FRIEND_TAG), false);
   h.game.handleHarmonyEvent({ id: "lothlorien:harmony", message: "-30" }, h.player);
   assert.equal(h.player.hasTag(h.game.HATED_TAG), true);
+});
+await test("band tags are checked once per join and then only when the band changes (no per-second hasTag)", async () => {
+  const h = await service(); let tagReads = 0;
+  for (const p of [h.player, h.guest, h.hated]) { const has = p.hasTag; p.hasTag = (tag) => { tagReads++; return has(tag); }; }
+  h.advance(20); assert.ok(tagReads > 0, "the first tick after joining reads the tags");
+  tagReads = 0; h.advance(20 * 30); assert.equal(tagReads, 0, "a steady state costs no tag read");
+  h.game.handleHarmonyEvent({ id: "lothlorien:harmony", message: "5" }, h.player); // Friend -> Guest: a band change
+  assert.ok(tagReads > 0 && !h.player.hasTag(h.game.FRIEND_TAG));
+  tagReads = 0; h.game.handleHarmonyEvent({ id: "lothlorien:harmony", message: "6" }, h.player); assert.equal(tagReads, 0, "a change inside a band costs none");
+  h.fire("playerLeave", { playerId: h.guest.id }); h.guest.addTag(h.game.FRIEND_TAG); // a stale tag from an older state
+  tagReads = 0; h.advance(20); assert.equal(h.guest.hasTag(h.game.FRIEND_TAG), false, "rejoin: corrected on the first tick");
 });
 await test("ordinary deed removes Friend immediately and recovery reacquires it in existing service", async () => {
   const h = await service(); h.inside = true; h.advance(20);

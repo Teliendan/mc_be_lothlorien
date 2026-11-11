@@ -20,6 +20,7 @@ function stopIfEmpty() {
   }
 }
 
+// Read once, when the entity is tracked (spawn, load, profession or death events); the pulse tests only isValid.
 function isHealer(entity) {
   return entity.isValid && entity.typeId === ELF_ID && entity.getComponent("minecraft:variant")?.value === HEALER_VARIANT
     && entity.getComponent("minecraft:health")?.currentValue > 0;
@@ -77,7 +78,7 @@ function blessNearby() {
   const bands = new Map(), players = world.getPlayers();
   for (const [id, healer] of loaded) {
     try {
-      if (!isHealer(healer)) { loaded.delete(id); continue; }
+      if (!healer.isValid) { loaded.delete(id); continue; } // membership follows spawn, load, profession, die and remove events (isHealer at track())
       let blessed = care(healer, healer, ELF_CARE, renewed), blessedOther = false; // the voice speaks only for others
       for (const type of PATIENT_TYPES) {
         for (const patient of healer.dimension.getEntities({ type, location: healer.location, maxDistance: ELF_CARE.radius })) {

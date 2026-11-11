@@ -230,3 +230,8 @@ Inside-the-forest yes/no checks (the squirrel errand every 10 ticks, the acorn f
 (`insideAt` in `main.js`): one biome read at the centre instead of the 83-probe estimate; only a river centre falls back to the full
 estimate. Natural-spawn rolls still use `depthAt` (they need the level). Offline: `isInside` agrees with `estimateDepth(...).level > 0` on every
 fixture of `tests/biome_depth.mjs`. Not timed in game.
+
+Small trims (2026-11-11, finding LM-10, structure; not timed). The Harmony band tags are written when the band changes and checked once per
+join, not twice per player per second. The Renown Harmony nudge listens to `onHarmonyChange` (`harmony_game.js`) instead of a 40-tick poll over
+all players; taking the lesson and joining record its baseline. The healer pulse tests only `isValid` of a tracked healer (variant and health
+are read when it is tracked). `use_guard.js` and the trade sessions forget a player who left.

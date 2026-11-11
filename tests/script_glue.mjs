@@ -433,4 +433,25 @@ await scenario("entityHurt before-subscriptions pass allowedDamageCauses (the en
   for (const cause of seen.flatMap((o) => o.allowedDamageCauses)) assert.ok(new RegExp(`^    ${cause} = '${cause}',$`, "m").test(dts), `${cause} is an EntityDamageCause in 2.8.0`);
 });
 
+await scenario("renown: the Harmony nudge comes from a Harmony change (no poll), once, and needs a baseline taken with the lesson", async () => {
+  const HG = await import(`${SRC}harmony_game.js`), RG = await loadScript("renown_game.js"); // renown_game.js imports the shared harmony_game.js
+  const player = mock.addEntity("minecraft:player", { x: 0, y: 70, z: 0 }), said = [];
+  player.sendMessage = (m) => said.push(JSON.stringify(m)); player.onScreenDisplay = { setActionBar() {} }; player.playSound = () => {};
+  mock.players.push(player);
+  const { system } = await import("@minecraft/server"), runInterval = system.runInterval; let intervals = 0;
+  system.runInterval = (...args) => { intervals++; return runInterval.apply(system, args); };
+  try { HG.startHarmony(() => true, "dbg"); RG.startRenown(() => true); } finally { system.runInterval = runInterval; }
+  assert.equal(intervals, 1, "one interval (the Harmony second tick); the Renown nudge no longer polls");
+  const setHarmony = (n) => HG.handleHarmonyEvent({ id: "lothlorien:harmony", message: String(n) }, player);
+  const nudges = () => said.filter((m) => m.includes("lore.harmony.ready_chat")).length;
+  RG.renownOf(player).task = { kind: "lesson", id: "harmony", ready: false, since: 0 };
+  setHarmony(1); RG.baselineHarmonyNudge(player); // the lesson was just taken at Harmony 1
+  setHarmony(2); assert.equal(nudges(), 0);
+  setHarmony(3); assert.equal(nudges(), 1, "Harmony reaches the level while the lesson is the task");
+  setHarmony(4); setHarmony(2); setHarmony(3); assert.equal(nudges(), 2, "and again after it dropped below and came back");
+  RG.renownOf(player).task = null; setHarmony(1); setHarmony(5); assert.equal(nudges(), 2, "no nudge without the Harmony lesson as the task");
+  RG.renownOf(player).task = { kind: "lesson", id: "harmony", ready: false, since: 0 };
+  setHarmony(3); assert.equal(nudges(), 2, "no baseline: no nudge (a reload taught the lesson before)");
+});
+
 console.warn = realWarn;

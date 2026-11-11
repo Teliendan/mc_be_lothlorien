@@ -14,11 +14,10 @@ import {
   addSaplingSpot, deliver, deliveryPlan, lessonTask, nextRank, noteDeed as rulesNoteDeed, openChapter, parse, rankOf, requestById, requestTask, saplingOutsideNotice, saplingProgress,
   serialize, newState, tagSync, takeLesson, turnIn,
 } from "./renown_rules.js";
-import { harmonyOf } from "./harmony_game.js";
+import { harmonyOf, onHarmonyChange } from "./harmony_game.js";
 import { speak } from "./voice.js";
 
 const PROPERTY = "lothlorien:renown";
-const NUDGE_INTERVAL_TICKS = 40;
 
 const states = new Map();
 const harmonyReady = new Map(); // player id -> was Harmony at the level at the last check (for the one-time nudge)
@@ -154,22 +153,27 @@ function onPlayerDeed(player, id) {
 }
 
 // ---- Harmony nudge ----
-// The Harmony lesson is ready by a computed condition, not by a deed hook: a light check tells the player once when Harmony crosses the level.
-function checkHarmonyNudges() {
-  for (const player of world.getAllPlayers()) {
-    try {
-      const task = lessonTask(renownOf(player));
-      if (task?.id !== "harmony") {
-        harmonyReady.delete(player.id);
-        continue;
-      }
-      const ready = harmonyOf(player).harmony >= HARMONY_NEEDED;
-      if (ready && harmonyReady.get(player.id) === false) say(player, message("lore.harmony.ready_chat"));
-      harmonyReady.set(player.id, ready);
-    } catch {
-      // player left
+// The Harmony lesson is ready by a computed condition, not by a deed hook: this tells the player once when Harmony crosses the level.
+// It runs when Harmony changes (harmony_game.js onHarmonyChange); when the lesson is taken and on joining (after a reload) it only
+// records the baseline, with no chat line (baselineHarmonyNudge, exported for loremaster.js, which takes the lesson).
+function checkHarmonyNudge(player) {
+  try {
+    const task = lessonTask(renownOf(player));
+    if (task?.id !== "harmony") {
+      harmonyReady.delete(player.id);
+      return;
     }
+    const ready = harmonyOf(player).harmony >= HARMONY_NEEDED;
+    if (ready && harmonyReady.get(player.id) === false) say(player, message("lore.harmony.ready_chat"));
+    harmonyReady.set(player.id, ready);
+  } catch {
+    // player left
   }
+}
+
+export function baselineHarmonyNudge(player) {
+  harmonyReady.delete(player.id);
+  checkHarmonyNudge(player);
 }
 
 // ---- Inventory ----
@@ -283,6 +287,7 @@ export function handleRenownEvent(event, player) {
   } else if (cmd === "take" && arg) {
     state.task = null;
     takeLesson(state, arg, system.currentTick);
+    baselineHarmonyNudge(player);
   } else if (cmd === "offer" && requestById(arg)) {
     state.task = null;
     delete state.done[arg]; // debug: a request already done once can be offered again
@@ -297,9 +302,13 @@ export function startRenown(inside) {
   isInside = inside;
   onDeed(onPlayerDeed);
   watchSaplings();
-  system.runInterval(checkHarmonyNudges, NUDGE_INTERVAL_TICKS);
+  onHarmonyChange(checkHarmonyNudge);
   world.afterEvents.playerSpawn.subscribe(({ player, initialSpawn }) => {
-    if (initialSpawn) system.run(() => syncDeliverTag(player)); // a tag left from an older state (or a v1 save) is put right on joining
+    if (!initialSpawn) return;
+    system.run(() => { // a tag left from an older state (or a v1 save) is put right on joining; the Harmony nudge gets its baseline
+      syncDeliverTag(player);
+      baselineHarmonyNudge(player);
+    });
   });
   world.afterEvents.playerLeave.subscribe(({ playerId }) => {
     states.delete(playerId);

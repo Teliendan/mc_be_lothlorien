@@ -92,4 +92,13 @@ await test("ids.js ids are the entity identifiers, and the rule modules re-expor
   }
 });
 
+await test("use_guard debounces per player and action and forgets a player who left", async () => {
+  const { repeatedUse } = await import(`../lothlorien_bp/scripts/use_guard.js?run=${Math.random()}`); // a fresh copy: mock.reset() drops its leave subscription
+  const a = { id: "a" }, b = { id: "b" };
+  assert.equal(repeatedUse(a, "x"), false); assert.equal(repeatedUse(a, "x"), true, "same player, same action, same tick");
+  assert.equal(repeatedUse(a, "y"), false, "another action"); assert.equal(repeatedUse(b, "x"), false, "another player");
+  mock.fire("playerLeave", { playerId: "a" });
+  assert.equal(repeatedUse(a, "x"), false, "the leaver's entries are gone (a rejoin starts clean)"); assert.equal(repeatedUse(b, "x"), true, "others keep theirs");
+});
+
 console.log(`Passed ${cases} entity util scenarios.`);
