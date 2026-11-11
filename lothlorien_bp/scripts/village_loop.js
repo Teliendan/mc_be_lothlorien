@@ -130,7 +130,7 @@ export function planBridge(A, B, length, offset, side = false, sideA = false) {
 
 // A span of `dist` blocks (A -> B, B laterally `lat` off): one arched bridge when dist <= maxDist, otherwise two bridges with a supported
 // 5 x 5 landing between them (deck, rim rail, two lamp posts and a hidden light over its middle; the openings are the bridges' own end rows). Same plan format as planBridge;
-// `landing` = { x, y, z (centre deck cell), dir, d1, d2 } and the pier (plan.pier, see planPier) is added by decide().
+// `landing` = { x, y, z (centre deck cell), dir, d1, d2 } and the pier (plan.pier, see planPier) is added by realize() in village_planner.js.
 export function planSpan(A, B, dist, lat, side = false, sideA = false) {
   if (dist <= LOOP.maxDist) return planBridge(A, B, dist + 1, lat, side, sideA);
   const d = A.dir, ex = [d[1], -d[0]], N = LOOP.landing, span = N - 1;

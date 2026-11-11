@@ -3,12 +3,12 @@
 // Jigsaw only grows a tree. Every platform piece of an Elven village (central tree, node trees, towers, railing / balcony / lookout ends) carries
 // invisible `lothlorien:loop_marker` entities. The FIRST marker that loads (the first tree that comes into simulation range, or the first one
 // spawned by worldgen) starts ONE planner for its whole village; village_planner.js decides, this file only loads the village and writes:
-//   1 queue      markers wait 2 s, then queue up; one planner runs at a time; a marker inside a rectangle that is being planned, was planned
+//   1 queue      markers wait 5 ticks, then queue up; one planner runs at a time; a marker inside a rectangle that is being planned, was planned
 //                ("lothlorien:village_plans" done-list on the world) or failed this session is dropped / removed.
 //   2 load       script ticking areas (world.tickingAreaManager) around the known markers, grown round by round until no new marker shows up
 //                (discoverVillage), so the planner never depends on where the player stands. The areas are removed again in `finally`.
 //   3 plan       planGen on the blocks of that area (budget 3 extra links), run as a job (yields, no long tick).
-//   4 build      all picks are written in the same job (a few hundred blocks per tick), then every marker in the area is removed.
+//   4 build      all picks are written in the same job (2 ms slices, a time check every WRITES_PER_CHECK writes), then every marker in the area is removed.
 //   5 populate   civilian elves: the tree pieces' `lothlorien:elf_post` entities are read, assigned and replaced by elves (elf_village.js).
 // The planner is one-shot: no polling, no retry loop. A failed run (quota, timeout, error) keeps the markers; they retry after world re-entry, at
 // most AREA.maxTries times per marker.
@@ -25,7 +25,7 @@ import { populateVillage } from "./elf_village.js";
 
 // START_DELAY_TICKS 5 (was 20, owner 2026-10-10: the village looked empty for a long time). JOB_SLICE_MS: one engine job step runs the planner's inner steps
 // until this many ms are used, then yields once; without it the job may advance only ONE inner step per tick (about 200 steps = 10 s).
-const START_DELAY_TICKS = 5, SETTLE_TICKS = 40, AREA_TIMEOUT_TICKS = 600, WRITES_PER_TICK = 32, JOB_SLICE_MS = 2, LAYER_TILE = 64;
+const START_DELAY_TICKS = 5, SETTLE_TICKS = 40, AREA_TIMEOUT_TICKS = 600, WRITES_PER_CHECK = 32, JOB_SLICE_MS = 2, LAYER_TILE = 64;
 const TRIES = "lothlorien:loop_tries", DONE = VILLAGE_PLANS;
 const seen = new Set(), queue = [], failed = [];
 let claim = null, running = false, loggedQuota = false, areaAttempt = 0;
@@ -99,7 +99,7 @@ function* planAndBuild(dimension, found, budget, stats) {
       else block.setPermutation(BlockPermutation.resolve(b.id, b.states ?? {}));
       count++;
     } catch { failedWrites++; }
-    if (++n % WRITES_PER_TICK === 0) yield;
+    if (++n % WRITES_PER_CHECK === 0) yield;
   }
   at = null; res.at = null; // release the block memo and the overlay before the fence mend pass (watchdog memory, 2026-10-27)
   // every written cell and its four neighbours, each fence mended once (mendAround per cell visited a shared neighbour up to 5 times;

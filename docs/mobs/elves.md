@@ -40,7 +40,7 @@ that adds the family `elf_post_<kind>`): `central_mallorn_01` 1 loremaster + 4 r
 2. `assignHomes` (pure, `elf_rules.js`): outer posts sorted by room first (free square >= `HOME_MIN` 5), then distance to the Loremaster, then x, z; professions in `HOME_ORDER` healer, gardener, woodwright, lamplighter; leftover professions go to reserve posts (nearest to the Loremaster first);
 3. spawn one elf per post with `spawnEntity(ELF_ID, ..., { spawnEvent: lothlorien:as_<p> })` (script-spawned: the elves get their JSON attributes, no template-mob default trap), set the entity property `lothlorien:home` = `"x,y,z"`;
 4. write the record to the world property `lothlorien:village_homes` (JSON list, 64 max): `{ rect, loremaster: [x,y,z] | null, homes: [{ p, x, y, z, site }] }` where `site` = `{ x0, z0, k }` or `null` on a reserve;
-5. remove all posts (a post whose elf could not be spawned stays); log `[lothlorien] elves: village at x,z: loremaster + 4 on own trees (0 on reserves)`.
+5. remove all posts (also those whose elf could not be spawned); log `[lothlorien] elves: village at x,z: loremaster + 4 on own trees (0 on reserves)`.
 
 A re-run finds no posts and spawns nothing (idempotent). Village simulator (300 seeds): all five in 300/300, four on own trees in 94 %, reserves used on average 0.11 per village (max 4),
 88 % of the assigned trees have a 5x5 free square. `elven_warden.js` (elf section; the standalone `elf.js` was merged in because Defender flagged the small file as a false positive) handles the hurt-by-player case only (fight cost via `recordElfFight`, foe tag with a per-player token timer, stale tag removed on first join).

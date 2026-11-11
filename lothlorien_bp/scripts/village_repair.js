@@ -194,8 +194,6 @@ export function planPillarClear(at, pillar, ground) {
 }
 
 // ---- forest floor (style guide 7.8) -------------------------------------------------------------------------------------------------------
-// Tunables. rCentral / rTree: disc radius round the trunk axis; pCentral / pTree: density at the trunk edge (falls to pEdge at the disc edge);
-// blob: size of a theme patch; clear: Chebyshev radius round the rope foot that stays bare (the landing); maxBlocks: budget per village.
 // ---- root down ------------------------------------------------------------------------------------------------------------------------
 // Owner, Test G 2026-10-20: a village is one rigid build at one height, so on a cliff or over a lake its trees (and balcony / lookout pillars)
 // end in the air (trunks at -1360,-1234 stopped 7 blocks above a 20-deep lake). planRootDown carries every column of the trunk's lower section
@@ -306,6 +304,8 @@ export function planRootDown(at, cells, y0, o = {}) {
   return { blocks, columns: hang.length, roots, drop, wet, x: cx, z: cz };
 }
 
+// Tunables. rCentral / rTree: disc radius round the trunk axis; pCentral / pTree: density at the trunk edge (falls to pEdge at the disc edge);
+// blob: size of a theme patch; clear: Chebyshev radius round the rope foot that stays bare (the landing); maxBlocks: budget per village.
 export const FLOOR = { rCentral: 14, rTree: 9, pCentral: 0.62, pTree: 0.5, pEdge: 0.08, blob: 5, clear: 1, minTrunk: 9, maxBlocks: 1500, fireflies: [2, 4], mossCentral: 3, mossTree: [1, 2] };
 const FLOOR_GROUND = /^minecraft:(grass_block|dirt|podzol|moss_block|coarse_dirt|rooted_dirt)$/;
 // blocks the downward ground scan looks through: air, plants, leaves, anything of the mod (decks, roots, our own plants), hanging bits
@@ -481,7 +481,6 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
 }
 export const planForestFloor = (at, rect, trunks, ropeFoot, seed, o) => drive(planForestFloorGen(at, rect, trunks, ropeFoot, seed, o));
 
-// All repairs of a village (the planner calls this after the links): -> [{ kind: "rope", x, z, buried, hung, cells: [], rails: [], lanterns: [], blocks }]
 // Jigsaw may leave an exit unfilled when every child box collides, including above a bridge.
 // Close only unused flat three-wide mouths: rail shoulders, a walkable deck behind,
 // and no onward surface. A rising arch starts with a bottom slab one block above
@@ -536,6 +535,7 @@ export function* closeUnusedExitsGen(at, rect, levels) {
   return out;
 }
 
+// All repairs of a village (the planner calls this after the links): -> [{ kind: "rope", x, z, buried, hung, cells: [], rails: [], lanterns: [], blocks }]
 export function* repairGen(at, markers, o = {}) {
   if (o.repairs === false || !markers.length) return [];
   const rect = o.rect ?? growRect(hullOf(markers), 24), y = Math.min(...markers.map((m) => m[1])), out = [];
