@@ -2,7 +2,7 @@
 // deer.js (they are in WARY_TYPES), exactly like the deer. This file only judges natural spawns: the spawn rule lets
 // swans spawn in any river (see swan_rules.js), and one that spawned where no Lothlorien biome is near is removed. A submerged one floats up to the open surface,
 // or is removed when a bank is overhead.
-import { EntityInitializationCause, system, world } from "@minecraft/server";
+import { EntityInitializationCause, system } from "@minecraft/server";
 import { onEntity } from "./entity_events.js";
 import { judgeNatural } from "./entity_util.js";
 import { SWAN_ID, nearBiome, surfaceAction } from "./swan_rules.js";
@@ -22,21 +22,7 @@ function judgeNaturalSpawn(swan, biome) {
 
 // biome = { id, at(dimension, x, z) -> surface biome id or undefined } (main.js supplies it).
 export function startSwans(biome) {
-  // Initialize saved adults once, including retired diagnostic states. Re-adding the adult group on every load could reset
-  // its native feather timer; babies keep their age and have no shedding timer.
-  const migrateAdult = entity => {
-    try {
-      if (!entity.getComponent("minecraft:is_baby") && !entity.getProperty("lothlorien:adult_initialized"))
-        entity.triggerEvent("minecraft:ageable_grow_up");
-    } catch { /* swan unloaded */ }
-  };
-  for (const id of ["overworld", "nether", "the_end"]) {
-    try {
-      for (const swan of world.getDimension(id).getEntities({ type: SWAN_ID })) migrateAdult(swan);
-    } catch { /* dimension unavailable */ }
-  }
   onEntity(SWAN_ID, {
-    load: ({ entity }) => migrateAdult(entity),
     spawn: ({ entity, cause }) => {
       if (cause === EntityInitializationCause.Loaded) return;
       // one tick later: the spawn event's property is surely applied by then

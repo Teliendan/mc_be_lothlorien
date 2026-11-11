@@ -33,11 +33,6 @@
           "type": "bool",
           "default": false,
           "client_sync": true
-        },
-        "lothlorien:adult_initialized": {
-          "type": "bool",
-          "default": false,
-          "client_sync": false
         }
       }
     },
@@ -907,9 +902,6 @@
           "component_groups": [
             "lothlorien:adult"
           ]
-        },
-        "set_property": {
-          "lothlorien:adult_initialized": true
         }
       },
       "lothlorien:spawn_cygnet": {
@@ -922,9 +914,6 @@
           "component_groups": [
             "lothlorien:baby"
           ]
-        },
-        "set_property": {
-          "lothlorien:adult_initialized": false
         }
       },
       "minecraft:entity_born": {

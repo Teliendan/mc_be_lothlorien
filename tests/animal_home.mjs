@@ -232,19 +232,12 @@ for (const name of ["white_deer","squirrel"]) {
   assert.equal(s.getDynamicProperty("lothlorien:gift_ready_at"),undefined);
 }
 
-// Existing adult migration preserves babies, and natural river judging never
+// Natural river judging never
 // removes a player-bred cygnet simply because the home is outside Lothlorien.
 {
   const h=engine(), mod=await load("swan",{...h.bindings,...swanRules});
   mod.startSwans({id:"lothlorien:lothlorien",at:()=>"minecraft:plains"});
-  const adult=h.entity(swanRules.SWAN_ID),cygnet=h.entity(swanRules.SWAN_ID);cygnet.baby=true;
-  adult.setProperty("lothlorien:adult_ready", true); // retired guard from the temporary-test build
-  for(const entity of [adult,cygnet])h.fire("after","entityLoad",{entity});
-  assert.ok(adult.events.includes("minecraft:ageable_grow_up"));assert.equal(cygnet.events.length,0);
-  assert.equal(adult.getProperty("lothlorien:adult_initialized"), true);
-  const migratedEvents = adult.events.length;
-  h.fire("after","entityLoad",{entity:adult});
-  assert.equal(adult.events.length, migratedEvents, "reloading an adult must not restart its feather timer");
+  const cygnet=h.entity(swanRules.SWAN_ID);cygnet.baby=true;
   h.fire("after","entitySpawn",{entity:cygnet,cause:"Born"});h.advance(1);assert.ok(cygnet.isValid);
   const wild=h.entity(swanRules.SWAN_ID);wild.setProperty("lothlorien:natural",true);
   h.fire("after","entitySpawn",{entity:wild,cause:"Spawned"});h.advance(1);assert.equal(wild.isValid,false);

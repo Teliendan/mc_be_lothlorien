@@ -30,10 +30,7 @@ the RP controller plays one shake on either edge, then returns to idle. The
 feather appears as shaking starts. Normal walk/swim animations remain active.
 Controller initialization avoids replaying historical drops.
 
-`lothlorien:adult_initialized` initializes saved adults once, including any saved
-with the retired temporary test group. Growing up sets it; becoming a cygnet
-clears it. The prior `adult_ready` guard was retired so this cleanup restores
-normal adult components once without resetting the timer on every later load.
+The dev-world adult migration (`adult_initialized`) was removed in the LM-06 commit; no pre-2026-10-14 swans matter.
 Babies retain their age. The five-second test group and test events were removed
 from BP; RP contains only the production shake animation/controller.
 
