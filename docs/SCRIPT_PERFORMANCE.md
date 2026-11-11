@@ -60,6 +60,36 @@ whose summary shows no long gap was client-side. Build as before with `0.8.4`; C
 add-on for a new vanilla world (a separate scratch pack, not in git; Czech tester steps): the same monitor and nothing else, to show the tablet's cost of any script add-on. Offline load
 tests pass; neither is game-tested. The release version must now exceed 0.8.4.
 
+0.8.4 DIAG results (tester's tablet, six photos sent 2026-11-10, no notes from her; analysed 2026-11-11). Both
+builds load in game. She ran the Control pack **in the same world as Lothlorien**, so there is still no vanilla
+baseline; the two monitors agree on every gap (540/540, 381/336, 350/350 ms), which confirms the monitor itself.
+Two runs, each in a new world (day 0, time starting near 0), Lothlorien close to spawn (272, 64, 112).
+
+| Minute | Where | Longest gap ms | Gaps >=150/300/700 | Script ms/min | Dew flips | Spawned/removed | Ents <64 |
+|---|---|---|---|---|---|---|---|
+| run 1, min 1 | plains by the forest | 540 (engine: 1 ms of scripts) | 4 / 2 / 0 | 1017 | 4 | 13 / 7 | 7 |
+| run 1, min 2 | entering the forest | 336-381 (**scripts 332 ms**) | 1 / 1 / 0 | 1598 | 26 | 20 / 21 | 11 |
+| run 1, min 3 | village deck, elves | 63-65 | 0 / 0 / 0 | 1559 | 14 | 12 / 14 | 9 |
+| run 2, min 3 | forest floor, harvesting | 350 (cause not photographed) | 1 / 1 / 0 | 1725 | 1 | 41 / 42 | 10 |
+
+- No server tick of 700 ms or more in the four minutes seen. The 540 ms in minute 1 of a new world is chunk
+  generation (engine).
+- The script gap: slowest single call `harmony_game runInterval(20)` 331 ms, in a tick of 5 calls. She stood inside the
+  biome (the Guest status was on the action bar), so that callback did only a biome read, tag reads and an action bar
+  write: nothing that costs 300 ms. Most likely a garbage-collection pause (QuickJS collects when allocation passes a
+  threshold, and the callback that crosses it pays for scanning the whole live heap) or the engine pausing inside a
+  native call. Not proven. GC time grows with the number of live script objects, so long-lived per-cell maps and caches
+  are the lever, not this callback's own work. Next DIAG: an empty 1-tick "canary" callback; if it ever takes 100+ ms,
+  the pause is GC or engine, not the callback it lands in.
+- Script time: 1.0-1.7 s per minute including the DIAG wrapper, about 1.4 ms per 50 ms tick on average. Not a load.
+- Dew (item 1 above): at most 26 flips a minute, but only the second half of the dew window of a new world was seen
+  (time 1051-3587; the window is 23000-3000 and a new world starts at 0). A full dawn after a night is still unmeasured.
+- Spawn churn (review LM-11): 41 / 42 in a minute with ten entities nearby while harvesting, but `entitySpawn` also
+  counts dropped items and the chat line shows no types; the content log line lists the top spawned types.
+- Harmony icons (``, Guest) render in the action bar on the tablet, before the Czech label, on a bright scene.
+- Still missing from the tester: whether she felt freezes in these minutes, render and simulation distance, tablet
+  model, the leaf-fall check, a dawn after a night, content log photos, and the Control pack alone in a vanilla world.
+
 Tester freezes (tablet), 2026-11-07/08. Diagnostic builds (every pack callback timed per file, leaf decay off;
 build scripts are scratch, not in git). 0.8.1 DIAG: one **3.5 s freeze with 0 ms of Lothlorien
 scripts**. 0.8.2 DIAG (photos 2026-11-08): four reported freezes, two in the engine (1.5 s at night over the ocean
