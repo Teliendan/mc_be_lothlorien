@@ -7,9 +7,13 @@ let timer;
 let started = false;
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z);
 
-function cloak(player, equipment, now) {
+// The type id in a slot, read through the slot handle (getEquipment would copy the ItemStack with its enchantments).
+const wornType = (player, slot) => player.getComponent("minecraft:equippable")?.getEquipmentSlot(slot).typeId;
+
+// Cheap, usually-false tests first: a standing, healthy player costs a few property reads per pulse and no allocation.
+function cloak(player, now) {
   const id = player.id;
-  if (equipment?.getEquipment("Chest")?.typeId !== CLOAK.item || !player.isSneaking) {
+  if (!player.isSneaking || wornType(player, "Chest") !== CLOAK.item) {
     still.delete(id);
     return;
   }
@@ -35,9 +39,8 @@ function cloak(player, equipment, now) {
   // expires naturally within half a second; external invisibility is neither shortened nor erased.
 }
 
-function belt(player, equipment, health) {
-  if (equipment?.getEquipment("Offhand")?.typeId !== BELT.item
-    || health.currentValue >= health.effectiveMax * BELT.healthFraction) return;
+function belt(player, health) {
+  if (health.currentValue >= health.effectiveMax * BELT.healthFraction || wornType(player, "Offhand") !== BELT.item) return;
   const effect = player.getEffect(BELT.effect);
   // Let equal/stronger regeneration finish. Refreshing each pulse resets native healing timing.
   if (effect && effect.amplifier >= BELT.amplifier) return;
@@ -51,9 +54,8 @@ function pulse() {
     try {
       const health = player.getComponent("minecraft:health");
       if (!player.isValid || !health || health.currentValue <= 0) { still.delete(player.id); continue; }
-      const equipment = player.getComponent("minecraft:equippable");
-      cloak(player, equipment, system.currentTick);
-      belt(player, equipment, health);
+      cloak(player, system.currentTick);
+      belt(player, health);
     } catch { still.delete(player.id); } // leave/death/equipment races cannot stop the other players
   }
   for (const id of still.keys()) if (!seen.has(id)) still.delete(id);

@@ -8,12 +8,13 @@ const { WORN_CHECK_TICKS: STEP, CLOAK, BELT } = await import("../lothlorien_bp/s
 let run = 0, playerQueries;
 
 function player() {
-  const health = { currentValue: 9, effectiveMax: 20 }, slots = {};
+  const health = { currentValue: 9, effectiveMax: 20 }, slots = {}, reads = [];
   const p = mock.addEntity("minecraft:player", { x: 0, y: 70, z: 0 }, { components: {
     "minecraft:health": health,
-    "minecraft:equippable": { getEquipment: (slot) => slots[slot] && { typeId: slots[slot] } },
+    // getEquipment would copy an ItemStack per call: the poll must read the type through the slot handle only
+    "minecraft:equippable": { getEquipment: () => { throw new Error("worn_gifts must not copy item stacks"); }, getEquipmentSlot: (slot) => { reads.push(slot); return { typeId: slots[slot] }; } },
   } });
-  p.health = health; p.slots = slots; p.isSneaking = false;
+  p.health = health; p.slots = slots; p.reads = reads; p.isSneaking = false;
   p.velocity = { x: 0, y: 0, z: 0 }; p.getVelocity = () => p.velocity;
   p.effects = new Map(); p.grants = []; p.removals = [];
   p.getEffect = (name) => {
@@ -62,6 +63,17 @@ await scenario("cloak needs a full still crouch, and correct equipment slots", a
   assert.equal(held.grants.length, 0); assert.equal(standing.grants.length, 0);
   await mock.advance(CLOAK.effectTicks * 2);
   assert.equal(grants(p, CLOAK.effect).length, 5, "continuous crouch renews before expiry");
+});
+
+await scenario("the poll tests the cheap conditions first: a standing, healthy player with both gifts costs no equipment read", async () => {
+  const p = player(), q = player();
+  p.slots.Chest = CLOAK.item; p.slots.Offhand = BELT.item; p.health.currentValue = 20;
+  q.isSneaking = true; q.health.currentValue = 20; // sneaking without the cloak: one chest read, no belt read
+  await start(); await mock.advance(STEP * 4);
+  assert.deepEqual(p.reads, [], "not sneaking and not hurt: no slot read at all");
+  assert.ok(q.reads.length > 0 && q.reads.every((slot) => slot === "Chest"), "sneaking reads only the chest slot");
+  p.health.currentValue = 5; await mock.advance(STEP);
+  assert.deepEqual(p.reads, ["Offhand"], "hurt but standing: only the belt slot");
 });
 
 await scenario("continuous invisibility has no native expiry boundary for a full minute", async () => {
