@@ -397,6 +397,7 @@ test("guide beacon: invisible, weightless, untouchable helper that removes itsel
   for (const k of ["minecraft:pushable", "minecraft:pushable_by_entity", "minecraft:pushable_by_block"]) assert.equal(c[k], undefined, k);
   assert.deepEqual(c["minecraft:damage_sensor"].triggers, { cause: "all", deals_damage: "no" });
   assert.ok(!c["minecraft:is_collidable"] && !c["minecraft:despawn"]);
+  assert.deepEqual(c["minecraft:transient"], {}, "never saved: a reload or chunk unload drops it (LM-04 step 1; behaviour in game still to be checked)");
   const t = c["minecraft:timer"];
   assert.ok(t.time * 20 > W.MAX_TICKS && !t.looping, "outlives the longest session");
   assert.ok(b.component_groups[b.events[t.time_down_event.event].add.component_groups[0]]["minecraft:instant_despawn"]);

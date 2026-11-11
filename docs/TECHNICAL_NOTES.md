@@ -305,8 +305,7 @@ more than 12 blocks, and ends with a final hop to the spot or a standable column
 never teleported.
 
 **Session end:** beacon removed and `guide_end` restores wariness via `alarm_over` when arrived within 3 blocks, the player is beyond 48 blocks, the player loses Harmony, 30 s pass without getting closer (counts as
-arrived within 14 blocks), 5 minutes, or the deer is hurt. Sessions are not saved: on load and every 100 ticks every `guide_beacon` without a live session is removed (a beacon named or tagged `guide_beacon` is left
-alone); a deer still in `state_guiding` after a reload is released by `deer.js`. Two deer guiding close together may follow each other's beacon (accepted). Not done: sounds on the way and at arrival.
+arrived within 14 blocks), 5 minutes, or the deer is hurt. Sessions are not saved: on load and every 100 ticks every `guide_beacon` without a live session is removed (the beacon also carries `minecraft:transient`, LM-04 step 1 2026-11-11: if the in-game check shows none survives a reload, the sweep goes); a deer still in `state_guiding` after a reload is released by `deer.js`. Two deer guiding close together may follow each other's beacon (accepted). Not done: sounds on the way and at arrival.
 Fallback research and the pathfinding comparison: `.claude/skills/bedrock-mobs/references/pathfinding.md` (dolphin treasure goals cannot target a custom spot; script has no navigation target API).
 
 ## Nectar, morning dew and Star canopy (was Phase 14b; status unverified except where noted)

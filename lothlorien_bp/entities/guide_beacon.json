@@ -36,6 +36,7 @@
         }
       },
       "minecraft:fire_immune": {},
+      "minecraft:transient": {},
       "minecraft:timer": {
         "time": 330,
         "looping": false,

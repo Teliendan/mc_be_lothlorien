@@ -374,15 +374,14 @@ function tickSession(deerId, s) {
 }
 
 // Beacons with no session: left over from a reload (sessions are not saved) or a chunk that unloaded and came back.
-// A beacon named or tagged `guide_beacon` was placed by hand for a goal experiment (a removed dev tool, see docs/TECHNICAL_NOTES.md) and is kept;
-// its own 330 s timer removes it.
+// (The beacon is also `minecraft:transient`, so none should survive a reload; this sweep stays until that is verified in game, LM-04.)
 function sweepBeacons() {
   const live = new Set([...sessions.values()].map((s) => s.beaconId));
   for (const source of beaconSources) for (const id of source()) live.add(id);
   for (const id of DIMENSIONS) {
     try {
       for (const beacon of world.getDimension(id).getEntities({ type: BEACON_ID })) {
-        if (!live.has(beacon.id) && !beacon.hasTag("guide_beacon") && beacon.nameTag !== "guide_beacon") beacon.remove();
+        if (!live.has(beacon.id)) beacon.remove();
       }
     } catch {
       // dimension not available
@@ -394,7 +393,7 @@ function cleanLoadedBeacon(entity) {
   // Spawn callbacks can arrive before the creator assigns its session beaconId.
   system.run(() => {
     try {
-      if (!entity.isValid || entity.hasTag("guide_beacon") || entity.nameTag === "guide_beacon") return;
+      if (!entity.isValid) return;
       if ([...sessions.values()].some(s => s.beaconId === entity.id)) return;
       if (beaconSources.some(source => source().includes(entity.id))) return;
       entity.remove();

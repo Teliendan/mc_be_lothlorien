@@ -130,12 +130,12 @@ const common = h => ({ system: h.system, world: h.world, onEntity: (h.onEntity ?
 
 {
   const h = engine(), dim = h.dimensions.get("overworld");
-  const stray = h.entity(guideRules.BEACON_ID), dev = h.entity(guideRules.BEACON_ID); dev.tag = "guide_beacon";
+  const stray = h.entity(guideRules.BEACON_ID);
   const mod = await load("white_deer", { ...common(h), ...guideRules, ...giftRules,
     EntityInitializationCause: { Loaded: "Loaded" }, ItemStack: TestItem,
     pickWaypoint: () => ({ x: 10, y: 0, z: 0 }), hopStatus: () => "go" });
   mod.startWhiteDeer(() => ({ level: 3, complete: true }), () => true, { id: "lothlorien", at: () => "lothlorien" });
-  assert.equal(stray.isValid, false); assert.equal(dev.isValid, true);
+  assert.equal(stray.isValid, false, "a beacon with no session is removed at world load");
   assert.equal(h.intervals(5), 0);
   const bootstrap = h.queries;
   h.advance(400); assert.equal(h.queries, bootstrap, "beacon sweeps do not recur");
@@ -145,7 +145,7 @@ const common = h => ({ system: h.system, world: h.world, onEntity: (h.onEntity ?
   h.fire("playerInteractWithEntity", { player, target: deer, itemStack: { typeId: guideRules.ACORN_ID } });
   assert.ok(mod.isGuiding(deer.id)); assert.equal(h.intervals(5), 1);
   h.advance(1);
-  const owned = [...h.entities.values()].find(e => e.typeId === guideRules.BEACON_ID && e !== dev);
+  const owned = [...h.entities.values()].find(e => e.typeId === guideRules.BEACON_ID);
   assert.ok(owned?.isValid, "spawn-before-session race preserves owned helper");
   const external = h.entity(guideRules.BEACON_ID);
   mod.addBeaconSource(() => [external.id]); h.fire("entityLoad", { entity: external });
