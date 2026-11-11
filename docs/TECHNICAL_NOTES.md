@@ -109,7 +109,7 @@ Files: `scripts/mallorn_tree.js` (pure generator), `scripts/trees.js` (growth, b
 - **Loop:** leaves drop acorns (2 % per leaf, `loot_tables/blocks/mallorn_leaves.json`), the acorn places `mallorn_sapling` (hidden from the menu, loot one acorn), the
   sapling grows a tree. Saplings need the approved soil list including mycelium (`placement_filter` plus the event-driven support service); random growth reads
   light >= 9 above, ordinary bone meal can work in darkness. Stage 0 -> 1 -> tree, each step 1/7 per random tick; bone meal advances a step with 45 %. The trunk needs
-  room (air, leaves, soft plants). Balance estimate: about 4 acorns if every leaf of a small tree is cleared, so a tree replaces itself; `node tests/tree_stats.mjs [n] [chance]`.
+  room (air, leaves, soft plants). Balance estimate: about 4 acorns if every leaf of a small tree is cleared, so a tree replaces itself; `node tools/tree_stats.mjs [n] [chance]`.
 - **Tree:** each tree draws an archetype (slender, round, spreading, tiered, tall): trunk 6-13, 3-5 level branches just under the crown (a base for a platform), 0-3 low
   branches, 1-5 rising ones, leaf blobs. Average about 32 logs and 200 leaves. **Big Mallorn:** four saplings in a 2x2 square grow one tree with a 2x2 trunk (15-24
   high, about 140 logs, about 1500 leaves), placed over ticks with `system.runJob`.

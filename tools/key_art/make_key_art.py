@@ -34,7 +34,7 @@ BANNER = {"aspect": 1.7778, "size": 1080, "eye": [1260, 10, 330], "dir": [270, 1
           "giants": [["mallorn_roundplain_02.mcstructure", 0.04, 120], ["mallorn_roundplain_06.mcstructure", 0.4, 150],
                      ["mallorn_roundplain_03.mcstructure", 0.97, 110], ["mallorn_round_07.mcstructure", 0.75, 170]],
           "vtrunks": [[11, 11], [7, 42], [5, 63], [10, -15]], "edge": [["fancy", -0.06, 16], ["mega", 1.06, 20]],
-          # elves inside the railings (elfspots.py), each doing something (owner: alive, not a school photo)
+          # elves inside the railings (spots found once with the since-deleted elfspots.py: a deck cell with a fence between it and the camera on 4 village pieces; in git history), each doing something (owner: alive, not a school photo)
           "elves": [["healer", [21, 18, 9], 270, {"waist": [10, 0, 0], "rightArm": [-65, 0, 0], "leftArm": [-65, 0, 0], "head": [25, 35, 0]}],
                     ["gardener", [17, 18, -15], 330, {"rightArm": [-45, 0, 10], "head": [0, -15, 0]}],
                     ["loremaster", [17, 18, -17], 210, {"leftArm": [-15, 0, 0], "head": [-5, 10, 0]}],
@@ -43,7 +43,7 @@ BANNER = {"aspect": 1.7778, "size": 1080, "eye": [1260, 10, 330], "dir": [270, 1
                     ["loremaster", [14, 26, 45], 250, {"head": [-30, 0, 0], "rightArm": [0, 0, 5], "leftArm": [0, 0, -5]}],
                     ["gardener", [13, 18, 39], 180, {"waist": [25, 0, 0], "rightArm": [-50, 0, 0], "leftArm": [-45, 0, 0], "head": [20, 0, 0]}]]}
 BANNER_GRADE = dict(NIGHT, ff_box=[34, 64, 0.5, 8, -15, 45], ff_n=28, ff_seed=8, stars=600, ff_avoid=True,
-                    moon_at=[0.191, 0.086, 0.17])
+                    moon_at=[0.191, 0.086, 0.17])  # moon spot: the highest open-sky box in the upper 45 % that fits the moon (from the since-deleted skyspot.py; in git history)
 
 
 def run(*args, out=None):

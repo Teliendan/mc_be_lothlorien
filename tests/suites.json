@@ -237,7 +237,6 @@
   "support_files": {
     "fixtures/bottle_runtime.mjs": "Shared production bottle/rope API fixture; no tests run on import.",
     "fixtures/wildlife_runtime.mjs": "Shared production wildlife API fixture; no test bodies or worlds run on import.",
-    "test_helpers.mjs": "Shared assertions and JSON readers; never runs tests on import.",
-    "tree_stats.mjs": "Manual tree balance estimator, not a regression suite."
+    "test_helpers.mjs": "Shared assertions and JSON readers; never runs tests on import."
   }
 }
