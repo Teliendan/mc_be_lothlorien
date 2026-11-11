@@ -7,7 +7,7 @@ import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { isGuiding } from "./white_deer.js";
 import { isErrand } from "./squirrel.js";
-import { ALARM_RADIUS, CORN_ID, DEER_ID, DEER_TYPES, WARY_TYPES, WATCH_RADIUS, pickWariness, setEventFor, warinessFor } from "./deer_rules.js";
+import { ALARM_RADIUS, CORN_ID, DEER_ID, DEER_TYPES, SQUIRREL_ID, WARY_TYPES, WATCH_RADIUS, WHITE_DEER_ID, pickWariness, setEventFor, warinessFor } from "./deer_rules.js";
 
 const INTERVAL_TICKS = 40;
 const loaded = new Map();
@@ -26,15 +26,6 @@ function trackCreature(entity) {
     if (warinessTimer === undefined) warinessTimer = system.runInterval(updateWariness, INTERVAL_TICKS);
   } catch { /* entity removed before delivery */ }
 }
-
-const nearDeer = (dimension, location, maxDistance) =>
-  [...loaded.values()].filter(entity => {
-    try {
-      const p = entity.location;
-      return entity.isValid && entity.dimension.id === dimension.id &&
-        Math.hypot(p.x-location.x, p.y-location.y, p.z-location.z) <= maxDistance;
-    } catch { return false; }
-  });
 
 function updateWariness() {
   const players = new Map();
@@ -63,11 +54,7 @@ function updateWariness() {
       }
       if (!candidates.length) continue;
       if (deer.getProperty("lothlorien:alarmed")) continue; // the alarm timer hands back to the state
-      if (deer.getProperty("lothlorien:guiding")) {
-        // a guiding white deer or errand squirrel keeps its guiding state; one with no session (world reloaded mid-way) is released
-        if (!isGuiding(deer.id) && !isErrand(deer.id)) deer.triggerEvent("lothlorien:guide_end");
-        continue;
-      }
+      if (deer.getProperty("lothlorien:guiding")) continue; // a guiding white deer or errand squirrel keeps its guiding state (settleOnLoad releases an orphan)
       const wariness = pickWariness(candidates);
       if (wariness && deer.getProperty("lothlorien:wariness") !== wariness) deer.triggerEvent(setEventFor(wariness));
     } catch {
@@ -96,18 +83,31 @@ function tame(deer) {
   }, 1);
 }
 
+// A white deer or squirrel saved while guiding has no session after a reload (sessions live in script memory): release it once, when it loads.
+function settleOnLoad(entity) {
+  try {
+    if (entity.typeId !== WHITE_DEER_ID && entity.typeId !== SQUIRREL_ID) return;
+    if (entity.getProperty("lothlorien:guiding") && !isGuiding(entity.id) && !isErrand(entity.id)) entity.triggerEvent("lothlorien:guide_end");
+  } catch {
+    // entity removed before delivery
+  }
+}
+
+// One query around the hurt animal; every wary animal in range (the hurt one too) is alarmed.
 function alarmAround(dimension, location) {
-  for (const deer of nearDeer(dimension, location, ALARM_RADIUS)) {
+  let near;
+  try { near = dimension.getEntities({ location, maxDistance: ALARM_RADIUS }); } catch { return; }
+  for (const animal of near) {
     try {
-      deer.triggerEvent("lothlorien:alarm");
+      if (WARY_TYPES.includes(animal.typeId)) animal.triggerEvent("lothlorien:alarm");
     } catch {
-      // deer unloaded meanwhile
+      // animal unloaded meanwhile
     }
   }
 }
 
 export function startDeer() {
-  onEntity(WARY_TYPES, { spawn: ({ entity }) => trackCreature(entity), load: ({ entity }) => trackCreature(entity) });
+  onEntity(WARY_TYPES, { spawn: ({ entity }) => trackCreature(entity), load: ({ entity }) => { trackCreature(entity); settleOnLoad(entity); } });
   // Only wary types are tracked, so the native filters skip every other entity.
   world.afterEvents.entityRemove.subscribe(({ removedEntityId }) => {
     loaded.delete(removedEntityId); stopIfEmpty();
@@ -116,7 +116,7 @@ export function startDeer() {
   for (const id of ["overworld", "nether", "the_end"]) {
     try {
       const dimension = world.getDimension(id);
-      for (const type of WARY_TYPES) for (const entity of dimension.getEntities({ type })) trackCreature(entity);
+      for (const type of WARY_TYPES) for (const entity of dimension.getEntities({ type })) { trackCreature(entity); settleOnLoad(entity); }
     } catch { /* dimension unavailable */ }
   }
   world.afterEvents.entityHurt.subscribe(({ hurtEntity, damageSource }) => {

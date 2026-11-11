@@ -123,7 +123,15 @@ const common = h => ({ system: h.system, world: h.world, onEntity: (h.onEntity ?
   deer.setProperty("lothlorien:alarmed", true); h.advance(40);
   assert.equal(deer.events.length, before, "alarm retains native state");
   deer.setProperty("lothlorien:alarmed", false); deer.setProperty("lothlorien:guiding", true); h.advance(40);
-  assert.ok(deer.events.includes("lothlorien:guide_end"), "orphaned guide is released");
+  assert.ok(!deer.events.includes("lothlorien:guide_end"), "the poll no longer releases a guide (LM-01 step 3: only the load does)");
+  for (const type of [guideRules.WHITE_DEER_ID, deerRules.SQUIRREL_ID]) {
+    const orphan = h.entity(type, dim); orphan.setProperty("lothlorien:guiding", true);
+    h.fire("entityLoad", { entity: orphan });
+    assert.ok(orphan.events.includes("lothlorien:guide_end"), `${type}: an orphaned guide is released when it loads`);
+    const idle = h.entity(type, dim); h.fire("entityLoad", { entity: idle });
+    assert.ok(!idle.events.includes("lothlorien:guide_end"), `${type}: a loaded animal that is not guiding is left alone`);
+    for (const extra of [orphan, idle]) h.fire("entityRemove", { removedEntityId: extra.id });
+  }
   h.fire("entityRemove", { removedEntityId: deer.id });
   assert.equal(h.intervals(40), 0, "last unload stops timer");
   h.fire("entityLoad", { entity: deer }); assert.equal(h.intervals(40), 1, "reload restarts timer");

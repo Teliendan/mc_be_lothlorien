@@ -38,7 +38,8 @@ function engine() {
         isWaterlogged: this.waterlogged === `${Math.floor(p.x)},${y},${Math.floor(p.z)}`,
         isSolid: !["minecraft:air", "minecraft:short_grass", "minecraft:water", "minecraft:lava"].includes(typeId), below: () => this.getBlock({ ...p, y: y - 1 }) }; },
     getTopmostBlock(p) { return this.getBlock({ ...p, y: this.top ?? 64 }); },
-    getEntities({ type }) { return [...entities.values()].filter(e => e.typeId === type && e.isValid); },
+    getEntities({ type, location, maxDistance } = {}) { return [...entities.values()].filter(e => e.isValid && (!type || e.typeId === type) &&
+      (!location || Math.hypot(e.location.x - location.x, e.location.y - location.y, e.location.z - location.z) <= maxDistance)); },
     spawnParticle() { this.particles++; if (this.particleError) throw Error("particle"); },
     spawnItem(item, at) { this.drops.push({ item, at }); return {}; },
     spawnEntity(typeId, at) { return entity(typeId, at); } };

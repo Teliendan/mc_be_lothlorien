@@ -39,6 +39,23 @@ await test("removed actors stop the 40-tick service", async () => {
   h.fire("entityRemove", { removedEntityId: h.deer.id });
   assert.equal([...h.timers.values()].filter(t => t.period === 40).length, 0);
 });
+await test("a hurt animal alarms every wary animal within 20 blocks, once, and nothing else", async () => {
+  const h = await setup(); const mod = await load("deer", h.base); mod.startDeer();
+  const at = x => ({ x, y: 65, z: 0 });
+  const hurt = h.entity(deerRules.DEER_ID, at(0));
+  const near = deerRules.WARY_TYPES.map((type, i) => h.entity(type, at(5 + i * 3)));
+  const far = h.entity(deerRules.SWAN_ID, at(21)), cow = h.entity("minecraft:cow", at(3));
+  const events = e => e.events.filter(name => name === "lothlorien:alarm").length;
+  h.fire("entityHurt", { hurtEntity: hurt, damageSource: { damagingEntity: h.player } });
+  for (const animal of [hurt, ...near]) assert.equal(events(animal), 1, animal.typeId);
+  assert.equal(events(far), 0, "21 blocks is outside"); assert.equal(events(cow), 0, "a cow is not a wary animal");
+  const querying = h.dimension.getEntities; let queries = 0;
+  h.dimension.getEntities = function (...args) { queries++; return querying.apply(this, args); };
+  h.fire("entityHurt", { hurtEntity: hurt, damageSource: { damagingEntity: h.entity("minecraft:cow") } });
+  assert.equal(queries, 0, "only a player's blow alarms");
+  h.fire("entityDie", { deadEntity: hurt, damageSource: { damagingEntity: h.player } });
+  assert.equal(queries, 1, "one query per alarm");
+});
 await test("the gift is laid once, whatever the particles do", async () => {
   const h = await setup(); h.dimension.particleError = true;
   assert.equal(h.mod.giveGift(h.deer, { spot: { x: 40, y: 65, z: 0 } }), true);
