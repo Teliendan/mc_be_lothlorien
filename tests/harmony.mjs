@@ -19,6 +19,15 @@ test("harmony: band table incl. every edge, wariness and boundary constants", ()
   assert.ok(H.isFriend(hs(10)) && !H.isFriend(hs(9)) && H.isHated(hs(-30)) && !H.isHated(hs(-29)));
 });
 
+test("harmony: band tags - one tag per band except Guest, edge values carry the right single tag or none", () => {
+  assert.deepEqual(H.BAND_TAGS, { friend: "lothlorien_friend", uneasy: "lothlorien_uneasy", shunned: "lothlorien_shunned", hated: "lothlorien_hated" });
+  assert.equal(new Set(Object.values(H.BAND_TAGS)).size, 4);
+  assert.deepEqual([10, 9, 0, -1, -14, -15, -29, -30, -60].map(H.bandTag),
+    ["lothlorien_friend", undefined, undefined, "lothlorien_uneasy", "lothlorien_uneasy", "lothlorien_shunned", "lothlorien_shunned", "lothlorien_hated", "lothlorien_hated"]);
+  const game = readFileSync(new URL("../lothlorien_bp/scripts/harmony_game.js", import.meta.url), "utf8");
+  assert.ok(game.includes("HATED_TAG = BAND_TAGS.hated") && game.includes("FRIEND_TAG = BAND_TAGS.friend") && game.includes("Object.entries(BAND_TAGS)"), "the sync loops the table");
+});
+
 test("harmony: recovery is +1 per 60 s inside up to 10, +1 per 120 s outside and never above 0", () => {
   const a = hs(0); H.tick(a, true, 59); assert.equal(a.harmony, 0); H.tick(a, true, 1); assert.equal(a.harmony, 1);
   H.tick(a, true, 100000); assert.equal(a.harmony, 10, "capped at +10");

@@ -34,23 +34,21 @@ recipe slots allow any mixture; no tag is added to blocks, jars, chandeliers or
 vanilla lanterns. Consumer: `recipes/elven_chandelier.json`; native recipe
 acceptance remains pending. Generator/post-pass and regression membership agree.
 
-## Runtime Friend tag (2026-10-20)
+## Runtime band tags (2026-10-20; four tags LM-01, 2026-11-11)
 
-`lothlorien_friend` is a runtime player tag, not a family or item/block tag.
+The player carries exactly one runtime tag for the Harmony band, except Guest, which carries none:
+`lothlorien_friend`, `lothlorien_uneasy`, `lothlorien_shunned`, `lothlorien_hated` (`harmony.js` `BAND_TAGS`; they are
+player tags, not families or item/block tags).
 Authority: persisted `lothlorien:harmony` state and its cached Harmony band.
-Producer: harmony_game.js `update`, shared with the unchanged Hated-band tag. It is
-added for Friend and removed for every other band when a debug/deed/death/recovery
-update changes the band (LM-10, 2026-11-11: no per-second `hasTag`); the first
-one-second tick after a player joins or the world loads checks both tags once
-(stale tag repair). Existing leave handling drops the cache and that mark. Game mode does
-not redefine Friend, and no new timer/world scan is added.
+Producer: harmony_game.js `update`, which loops `BAND_TAGS`. A tag is added for the current band and removed for every
+other band when a debug/deed/death/recovery update changes the band (LM-10, 2026-11-11: no per-second `hasTag`); the first
+one-second tick after a player joins or the world loads checks all four once (stale tag repair). Existing leave handling
+drops the cache and that mark. Game mode does not redefine a band, and no new timer/world scan is added.
 
-Only consumers are unicorn Friend-state native follow_target_leader and its
-two standing/sneaking no-flight filters. Both require actual player + this tag
-+ hand-domain Elanor; the exact predicate is negated for player avoidance.
-No mob family, Hated targeting, other species or Harmony scoring changes.
-Per-player filtering/retargeting native acceptance is tracked in
-[parity/CREATURES.md](parity/CREATURES.md).
+Consumers: the wardens read `lothlorien_hated` (`nearest_attackable_target`); the wildlife flight goals (deer, white deer,
+swan, squirrel, unicorn; LM-01) read all four band tags on `subject: other` (Guest = none of the tags), and the unicorn's
+Elanor lure and no-flight exemption read `lothlorien_friend`. No mob family or Harmony scoring changes.
+Per-player filtering/retargeting native acceptance is tracked in [parity/CREATURES.md](parity/CREATURES.md).
 
 ## Complete block inventory
 

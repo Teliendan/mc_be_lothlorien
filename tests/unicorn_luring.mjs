@@ -52,6 +52,18 @@ await test("band tags are checked once per join and then only when the band chan
   h.fire("playerLeave", { playerId: h.guest.id }); h.guest.addTag(h.game.FRIEND_TAG); // a stale tag from an older state
   tagReads = 0; h.advance(20); assert.equal(h.guest.hasTag(h.game.FRIEND_TAG), false, "rejoin: corrected on the first tick");
 });
+await test("every band edge value carries exactly its own band tag (join path fixes a stale one)", async () => {
+  const tags = Object.values(H.BAND_TAGS);
+  for (const [harmony, want] of [[10, "lothlorien_friend"], [9, undefined], [0, undefined], [-1, "lothlorien_uneasy"], [-14, "lothlorien_uneasy"],
+    [-15, "lothlorien_shunned"], [-29, "lothlorien_shunned"], [-30, "lothlorien_hated"], [-60, "lothlorien_hated"]]) {
+    const h = await service(), p = h.playerFor(harmony);
+    for (const stale of tags) p.addTag(stale); // every stale tag at once; the first tick leaves only the right one
+    h.advance(20);
+    assert.deepEqual(tags.filter(t => p.hasTag(t)), want ? [want] : [], `join at ${harmony}`);
+    h.game.handleHarmonyEvent({ id: "lothlorien:harmony", message: String(harmony === 10 ? -20 : 10) }, p); // a band change swaps the tag
+    assert.deepEqual(tags.filter(t => p.hasTag(t)), harmony === 10 ? ["lothlorien_shunned"] : ["lothlorien_friend"], `change from ${harmony}`);
+  }
+});
 await test("ordinary deed removes Friend immediately and recovery reacquires it in existing service", async () => {
   const h = await service(); h.inside = true; h.advance(20);
   const victim = h.entity("lothlorien:deer");

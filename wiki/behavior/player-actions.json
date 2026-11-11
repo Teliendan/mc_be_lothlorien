@@ -1500,11 +1500,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/harmony.js",
-        "sha256": "1e0ed0949944b7b92fa21fff4a2b6051cd9a5c6459ac58a49ed65dacf44242de"
+        "sha256": "ab2d236ee70e3a3e1cd25d3d6e4e78d1c1d504d16d6f81080487711b396a0f5f"
       },
       {
         "path": "lothlorien_bp/scripts/harmony_game.js",
-        "sha256": "a5c5f01ba541dc56e60b5928528fa30d7484fd476c7f82a25f3b638ab5f48a5c"
+        "sha256": "80a5b94717b2689b8ca6501fb33e8a6b1101cc756f69b18ec869d0da3312e9c2"
       }
     ]
   },
@@ -1515,11 +1515,11 @@
     "evidence": [
       {
         "path": "lothlorien_bp/scripts/harmony.js",
-        "sha256": "1e0ed0949944b7b92fa21fff4a2b6051cd9a5c6459ac58a49ed65dacf44242de"
+        "sha256": "ab2d236ee70e3a3e1cd25d3d6e4e78d1c1d504d16d6f81080487711b396a0f5f"
       },
       {
         "path": "lothlorien_bp/scripts/harmony_game.js",
-        "sha256": "a5c5f01ba541dc56e60b5928528fa30d7484fd476c7f82a25f3b638ab5f48a5c"
+        "sha256": "80a5b94717b2689b8ca6501fb33e8a6b1101cc756f69b18ec869d0da3312e9c2"
       }
     ]
   },

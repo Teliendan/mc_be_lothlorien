@@ -5,11 +5,11 @@ import { world, system } from "@minecraft/server";
 import { FOE_TAG } from "./elf_rules.js";
 import { familiesOf } from "./entity_util.js";
 import { PLAYER_ID } from "./ids.js";
-import { EVERYWHERE_DEEDS, MAX_HARMONY, MIN_HARMONY, bandOf, markMount, wasMount, changeMessages, deedCounts, deedKindOf, hintDue, isFriend, isHated, parse, recordDeath, recordDeed, serialize, statusText, tick } from "./harmony.js";
+import { BAND_TAGS, EVERYWHERE_DEEDS, MAX_HARMONY, MIN_HARMONY, bandOf, markMount, wasMount, changeMessages, deedCounts, deedKindOf, hintDue, parse, recordDeath, recordDeed, serialize, statusText, tick } from "./harmony.js";
 
 const PROPERTY = "lothlorien:harmony";
-export const HATED_TAG = "lothlorien_hated"; // read by entities/elven_warden.json (wardens attack tagged players on sight)
-export const FRIEND_TAG = "lothlorien_friend"; // native unicorn leader/avoidance filters; Harmony band only
+export const HATED_TAG = BAND_TAGS.hated; // read by entities/elven_warden.json (wardens attack tagged players on sight)
+export const FRIEND_TAG = BAND_TAGS.friend; // the wildlife flight distances and the lures in entities/*.json read all four band tags (harmony.js BAND_TAGS)
 const TICK_SECONDS = 1;
 // Causes that carry a player as damagingEntity (melee, arrows and other projectiles, magic, mace, thorns); fire, fall, drowning and the
 // like have none. EntityDamageCause values; strings keep this file importable by the test mock.
@@ -35,7 +35,9 @@ export function harmonyOf(player) {
 // cannot do it: other modules read it in read-only before events, where tags cannot be written.
 const synced = new Set(); // player ids whose tags were checked since they joined
 function syncBandTags(player, state) {
-  for (const [tag, needed] of [[HATED_TAG, isHated(state)], [FRIEND_TAG, isFriend(state)]]) {
+  const band = bandOf(state.harmony);
+  for (const [name, tag] of Object.entries(BAND_TAGS)) {
+    const needed = name === band;
     if (needed !== player.hasTag(tag)) {
       if (needed) player.addTag(tag);
       else player.removeTag(tag);

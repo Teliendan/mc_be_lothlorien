@@ -131,7 +131,7 @@ test("elven warden: Harmony - a fight costs 1 (first hit after 60 s), a kill 6; 
   const src = readFileSync(new URL("../lothlorien_bp/scripts/elven_warden.js", import.meta.url), "utf8");
   assert.ok(/isNewFight[\s\S]*recordWardenFight\(hitter, hurtEntity\)/.test(src), "a new fight is charged");
   assert.ok(src.includes("hasTag(HATED_TAG)"), "friendly fire reads the hated tag");
-  const tag = readFileSync(new URL("../lothlorien_bp/scripts/harmony_game.js", import.meta.url), "utf8").match(/HATED_TAG = "([a-z_]+)"/)[1];
+  const tag = H.BAND_TAGS.hated; // harmony_game.js HATED_TAG is derived from it
   const goal = readJson("../lothlorien_bp/entities/elven_warden.json")["minecraft:entity"].components["minecraft:behavior.nearest_attackable_target"];
   const hatedEntry = goal.entity_types.find((t) => JSON.stringify(t.filters).includes(tag));
   assert.ok(hatedEntry, "the warden targets players carrying the hated tag");

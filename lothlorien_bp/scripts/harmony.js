@@ -18,6 +18,11 @@ export const UNEASY_FROM = -14; // Uneasy -1..-14
 export const SHUNNED_FROM = -29; // Shunned -15..-29; Hated -30..-60
 export const BANDS = ["hated", "shunned", "uneasy", "guest", "friend"]; // worst first: the index is the rank
 
+// Runtime player tag of each band (harmony_game.js keeps exactly the current band's tag on the player; Guest has none).
+// Entity filters read them: wildlife flight distances (entities/*.json), the wardens, the unicorn's lure. A tag string is
+// also written into the generated entity files (tools/wildlife_wariness.py), and tests compare the two.
+export const BAND_TAGS = { friend: "lothlorien_friend", uneasy: "lothlorien_uneasy", shunned: "lothlorien_shunned", hated: "lothlorien_hated" };
+
 // Recovery: +1 per this many seconds without a deed; outside the forest slower and only up to 0.
 export const RECOVER_SECONDS_INSIDE = 60;
 export const RECOVER_SECONDS_OUTSIDE = 120;
@@ -86,6 +91,8 @@ export function bandOf(harmony) {
   return "hated";
 }
 
+// The tag a player of this harmony carries, or undefined (Guest).
+export const bandTag = (harmony) => BAND_TAGS[bandOf(harmony)];
 export const bandRank = (band) => BANDS.indexOf(band);
 export const isFriend = (state) => bandOf(state.harmony) === "friend";
 export const isHated = (state) => bandOf(state.harmony) === "hated";
