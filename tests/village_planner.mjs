@@ -214,14 +214,13 @@ test("loop closer (P7b): an exit joins the side of a platform - straight 5-cell 
   assert.equal(LEG.decide(blockedSide.at, A).reason, "blocked");
 });
 
-test("loop closer: runtime bridges are lit to >= 8 on every walk cell (shared flood fill over the plan's own blocks), all lengths / offsets / headings", () => {
+test("loop closer: runtime bridges are lit to >= 8 on every walk cell (shared flood fill over the plan's own blocks), all lengths / offsets; the four headings by a rotation sample", () => {
   const passes = (n) => n === undefined || /^minecraft:air$|fence$|elven_lantern(_heartwood)?$|light_block_14$/.test(n);
   let worst = 99, count = 0;
-  for (const dir of [[0, 1], [1, 0], [0, -1], [-1, 0]]) {
-    for (let length = LOOP.LOOP.minDist + 1; length <= LOOP.LOOP.maxDist + 1; length++) {
-      const maxOff = Math.min(LOOP.LOOP.maxOffset, length - 3);
-      for (let off = -maxOff; off <= maxOff; off++) {
-        const A = E(0, 0, dir), ex = [dir[1], -dir[0]], B = E(dir[0] * (length - 1) + ex[0] * off, dir[1] * (length - 1) + ex[1] * off, [-dir[0], -dir[1]]);
+  const NORTH = [0, 1], ROTATED = [[1, 0], [0, -1], [-1, 0]], maxOffOf = (length) => Math.min(LOOP.LOOP.maxOffset, length - 3);
+  const lightsOf = new Map(); // `${length},${off}` -> sorted light levels of the heading-[0, 1] plan (the rotation reference)
+  const one = (dir, length, off) => { // every assertion on one plan; returns the sorted light levels of its walk cells
+        const levels = [], A = E(0, 0, dir), ex = [dir[1], -dir[0]], B = E(dir[0] * (length - 1) + ex[0] * off, dir[1] * (length - 1) + ex[1] * off, [-dir[0], -dir[1]]);
         const plan = LOOP.planBridge(A, B, length, off), blocks = LOOP.finalBlocks(plan);
         const xs = [...blocks.keys()].map((k) => k.split(",").map(Number)), lo = [0, 1, 2].map((i) => Math.min(...xs.map((c) => c[i]))), hi = [0, 1, 2].map((i) => Math.max(...xs.map((c) => c[i])));
         const get = (x, y, z) => blocks.get(`${x + lo[0]},${y + lo[1]},${z + lo[2]}`)?.id;
@@ -232,7 +231,7 @@ test("loop closer: runtime bridges are lit to >= 8 on every walk cell (shared fl
           const [x, y, z] = k.split(",").map(Number);
           if (blocks.get(`${x},${y + 1},${z}`)?.id !== "minecraft:air" || blocks.get(`${x},${y + 2},${z}`)?.id !== "minecraft:air") continue;
           const l = L.get(`${x - lo[0]},${y + 1 - lo[1]},${z - lo[2]}`) ?? 0;
-          worst = Math.min(worst, l); count++;
+          worst = Math.min(worst, l); count++; levels.push(l);
           assert.ok(l >= LOOP.LOOP.lightTarget, `heading ${dir} length ${length} offset ${off}: walk cell ${x},${y + 1},${z} has light ${l}`);
         }
         assert.equal(plan.lights.filter((l) => l.row === 0 || l.row === length - 1).length, 0, "no hidden light in the connector rows");
@@ -244,8 +243,12 @@ test("loop closer: runtime bridges are lit to >= 8 on every walk cell (shared fl
         if (length >= 4) assert.ok(ends.length >= 2 && plan.lamps.every((l) => blocks.get(`${l.x},${l.y - 1},${l.z}`)?.id === FENCE && blocks.get(`${l.x},${l.y},${l.z}`)?.id.includes("elven_lantern")), `heading ${dir} length ${length} offset ${off}: lamp posts`);
         if (length >= 11 && off === 0) assert.ok(plan.lamps.filter((l) => l.id === "lothlorien:elven_lantern_heartwood" && l.row === (length - 1) >> 1).length === 2 && plan.blocks.length === 0, `heading ${dir} length ${length}: gate (two gold lamp posts at mid-span, no bar, nothing hanging)`);
         else assert.equal(plan.lamps.filter((l) => l.id !== undefined).length, 0, "no gate on short or offset bridges");
-      }
-    }
+        return levels.sort((a, b) => a - b).join();
+  };
+  const MIN = LOOP.LOOP.minDist + 1, MAX = LOOP.LOOP.maxDist + 1;
+  for (let length = MIN; length <= MAX; length++) for (let off = -maxOffOf(length); off <= maxOffOf(length); off++) lightsOf.set(`${length},${off}`, one(NORTH, length, off));
+  for (const length of [MIN, (MIN + MAX) >> 1, MAX]) for (const off of [-maxOffOf(length), 0, maxOffOf(length)]) for (const dir of ROTATED) {
+    assert.equal(one(dir, length, off), lightsOf.get(`${length},${off}`), `heading ${dir} length ${length} offset ${off}: same light levels as the rotated plan`);
   }
   console.log(`loop closer bridges: ${count} walk cells, darkest ${worst}`);
 });
@@ -292,30 +295,36 @@ test("loop closer (long spans): above 17 blocks two bridges meet on a 5 x 5 land
   }
 });
 
-test("loop closer (long spans): bridges and landing are lit to >= 8 on every walk cell, no lantern in the end rows, all spans / offsets / headings", () => {
+test("loop closer (long spans): bridges and landing are lit to >= 8 on every walk cell, no lantern in the end rows, all spans / offsets; the four headings by a rotation sample", () => {
   const passes = (n) => n === undefined || /^minecraft:air$|fence$|elven_lantern(_heartwood)?$|light_block_14$/.test(n);
   let worst = 99, count = 0;
-  for (const dir of [[0, 1], [1, 0], [0, -1], [-1, 0]]) {
-    for (let dist = LOOP.LOOP.maxDist + 1; dist <= LOOP.LOOP.maxSpan; dist++) {
-      for (let lat = -LOOP.LOOP.maxSpanOffset; lat <= LOOP.LOOP.maxSpanOffset; lat += 2) {
+  const NORTH = [0, 1], ROTATED = [[1, 0], [0, -1], [-1, 0]], MAXOFF = LOOP.LOOP.maxSpanOffset;
+  const lightsOf = new Map(); // `${dist},${lat},${side}` -> sorted light levels of the heading-[0, 1] plan (the rotation reference)
+  const one = (dir, dist, lat) => { // every assertion on one span (both side flags); returns the sorted light levels per flag
         const A = E(0, 0, dir), ex = [dir[1], -dir[0]], B = E(dir[0] * dist + ex[0] * lat, dir[1] * dist + ex[1] * lat, [-dir[0], -dir[1]]);
+        const out = [];
         for (const side of [false, true]) {
           const plan = LOOP.planSpan(A, B, dist, lat, side), blocks = LOOP.finalBlocks(plan);
           const xs = [...blocks.keys()].map((k) => k.split(",").map(Number)), lo = [0, 1, 2].map((i) => Math.min(...xs.map((c) => c[i]))), hi = [0, 1, 2].map((i) => Math.max(...xs.map((c) => c[i])));
           const get = (x, y, z) => blocks.get(`${x + lo[0]},${y + lo[1]},${z + lo[2]}`)?.id;
-          const L = sharedLight(get, [hi[0] - lo[0] + 1, hi[1] - lo[1] + 1, hi[2] - lo[2] + 1], { [LOOP.HIDDEN_LIGHT]: 14 }, passes);
+          const L = sharedLight(get, [hi[0] - lo[0] + 1, hi[1] - lo[1] + 1, hi[2] - lo[2] + 1], { [LOOP.HIDDEN_LIGHT]: 14 }, passes), levels = [];
           for (const [k, b] of blocks) {
             if (b.id !== PLANKS && b.id !== SLAB_NAME) continue;
             const [x, y, z] = k.split(",").map(Number);
             if (blocks.get(`${x},${y + 1},${z}`)?.id !== "minecraft:air" || blocks.get(`${x},${y + 2},${z}`)?.id !== "minecraft:air") continue;
             const l = L.get(`${x - lo[0]},${y + 1 - lo[1]},${z - lo[2]}`) ?? 0;
-            worst = Math.min(worst, l); count++;
+            worst = Math.min(worst, l); count++; levels.push(l);
             assert.ok(l >= LOOP.LOOP.lightTarget, `heading ${dir} dist ${dist} lat ${lat}: walk cell ${x},${y + 1},${z} has light ${l}`);
           }
           assert.equal(plan.lights.concat(plan.lamps).filter((l) => l.row === 0 || l.row === dist).length, 0, "no lamp or light in the two end rows");
+          out.push(levels.sort((a, b) => a - b).join());
         }
-      }
-    }
+        return out.join("|");
+  };
+  const MIN = LOOP.LOOP.maxDist + 1, MAX = LOOP.LOOP.maxSpan;
+  for (let dist = MIN; dist <= MAX; dist++) for (let lat = -MAXOFF; lat <= MAXOFF; lat += 2) lightsOf.set(`${dist},${lat}`, one(NORTH, dist, lat));
+  for (const dist of [MIN, (MIN + MAX) >> 1, MAX]) for (const lat of [-MAXOFF, 0, MAXOFF]) for (const dir of ROTATED) {
+    assert.equal(one(dir, dist, lat), lightsOf.get(`${dist},${lat}`), `heading ${dir} dist ${dist} lat ${lat}: same light levels as the rotated plan`);
   }
   console.log(`loop closer long spans: ${count} walk cells, darkest ${worst}`);
 });
