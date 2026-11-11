@@ -373,7 +373,7 @@ function tickSession(deerId, s) {
 }
 
 // Beacons with no session: left over from a reload (sessions are not saved) or a chunk that unloaded and came back.
-// A beacon named or tagged `guide_beacon` was placed by hand for the goal experiment (tools/dev_scripts/guide_goal) and is kept;
+// A beacon named or tagged `guide_beacon` was placed by hand for a goal experiment (a removed dev tool, see docs/TECHNICAL_NOTES.md) and is kept;
 // its own 330 s timer removes it.
 function sweepBeacons() {
   const live = new Set([...sessions.values()].map((s) => s.beaconId));

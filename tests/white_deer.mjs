@@ -6,7 +6,6 @@ import { DEPTH_NAMES } from "../lothlorien_bp/scripts/depth.js";
 import { existsSync } from "node:fs";
 import * as R from "../lothlorien_bp/scripts/deer_rules.js";
 import * as W from "../lothlorien_bp/scripts/white_deer_rules.js";
-import * as G from "../tools/dev_scripts/guide_goal/variants.mjs";
 import * as N from "../lothlorien_bp/scripts/great_mallorn_rules.js";
 
 const deerEntity = () => readJson("../lothlorien_bp/entities/deer.json")["minecraft:entity"];
@@ -279,25 +278,11 @@ test("white deer: guiding state follows the beacon (one goal, below panic, above
   const guiding = e.component_groups[g];
   assert.ok(!guiding["minecraft:behavior.tempt"]);
   assert.deepEqual(guiding["minecraft:behavior.avoid_mob_type"].entity_types.map((t) => t.filters.value).sort(), ["monster", "wolf"]);
-  // the goal is exactly one of the prepared variants (switch_guide_goal.mjs), the shipped one is follow_target_leader
-  const variant = G.currentVariant(e);
-  assert.ok(variant, "a known guide goal variant");
-  for (const [k, v] of Object.entries(G.VARIANTS[variant](G.BEACON_FILTER))) assert.deepEqual(guiding[k], v, k);
-  assert.equal(variant, "leader", "shipped goal (change this line together with a switch)");
-  const prios = Object.keys(G.VARIANTS[variant](G.BEACON_FILTER)).map((k) => guiding[k].priority);
-  assert.ok(prios.every((p) => p > e.components["minecraft:behavior.panic"].priority && p < guiding["minecraft:behavior.avoid_mob_type"].priority));
+  assert.ok(guiding["minecraft:behavior.follow_target_leader"], "the shipped guide goal is follow_target_leader");
+  assert.ok(guiding["minecraft:behavior.follow_target_leader"].priority > e.components["minecraft:behavior.panic"].priority && guiding["minecraft:behavior.follow_target_leader"].priority < guiding["minecraft:behavior.avoid_mob_type"].priority);
   const within = guiding["minecraft:behavior.follow_target_leader"]?.within_radius ?? 24;
   assert.ok(within > W.HOP + W.REACHED, "the beacon stays inside the goal's radius");
   assert.ok(Number(readJson("../lothlorien_bp/entities/white_deer.json").format_version.split(".")[1]) >= 26, "follow_target_leader needs 1.26.20+");
-});
-
-test("white deer: no experiment groups shipped (switch_guide_goal.mjs --clean)", () => {
-  const e = whiteEntity();
-  assert.ok(![...Object.keys(e.component_groups), ...Object.keys(e.events)].some((k) => k.startsWith("lothlorien:test_")));
-  const copy = structuredClone(e);
-  G.removeExperiment(G.addExperiment(copy));
-  assert.deepEqual(copy, e, "experiment add + clean round-trips");
-  for (const name of Object.keys(G.VARIANTS)) assert.equal(G.currentVariant(G.applyVariant(structuredClone(e), name)), name, name);
 });
 
 test("white deer: holding an acorn gives the interaction the script listens for; the item is not used up by the engine", () => {
@@ -406,7 +391,7 @@ test("guide beacon: invisible, weightless, untouchable helper that removes itsel
   assert.equal(b.description.is_spawnable, false);
   assert.equal(b.description.is_summonable, true, "spawnEntity and /summon need it");
   const c = b.components;
-  assert.ok(c["minecraft:type_family"].family.includes(G.BEACON_FILTER.value));
+  assert.ok(c["minecraft:type_family"].family.includes("lothlorien_guide_beacon"));
   assert.deepEqual(c["minecraft:physics"], { has_gravity: false, has_collision: false });
   // Not pushable = no pushable_by_* component; minecraft:pushable is rejected by entity format 1.26.50.
   for (const k of ["minecraft:pushable", "minecraft:pushable_by_entity", "minecraft:pushable_by_block"]) assert.equal(c[k], undefined, k);

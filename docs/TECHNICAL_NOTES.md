@@ -298,8 +298,8 @@ Wariness uses the deer's state groups; only the **Mallorn acorn** lures it.
 
 **Walking = engine pathfinding towards a moving helper.** Teleport-walking was rejected (jerky). `lothlorien:guide_beacon`: no gravity, collision or pushability (`minecraft:pushable` made the entity fail to load),
 invulnerable, fire immune, 330 s `minecraft:timer` -> `instant_despawn`, a zero-size cube and transparent texture. One beacon per session is spawned at the first waypoint; `state_guiding` adds
-`behavior.follow_target_leader` priority 2 (`leader_filters` family `lothlorien_guide_beacon`, `follow_distance` 1, `within_radius` 24, `search_cooldown` 5) plus the wolf/monster avoid goal. The goal choice lives in
-`state_guiding`; `tools/dev_scripts/guide_goal/` holds the prepared alternatives (`follow_mob`, `target`) and a switch script, and `tests/run.mjs` fails if the group holds anything else. Every 5 ticks the script:
+`behavior.follow_target_leader` priority 2 (`leader_filters` family `lothlorien_guide_beacon`, `follow_distance` 1, `within_radius` 24, `search_cooldown` 5) plus the wolf/monster avoid goal. The goal lives in
+`state_guiding` (`tests/white_deer.mjs` asserts it holds `follow_target_leader`); the unused alternatives `follow_mob` and `target` and their switch script were removed (last in commit c981aed: `git show c981aed:tools/dev_scripts/guide_goal/variants.mjs`). Every 5 ticks the script:
 next waypoint when within 3 blocks (`pickWaypoint`: 14 blocks ahead, down to 8, headings 0, +-30, +-60, +-90), skips a heading after 5 s without progress, moves the beacon to the deer's feet when the player lags
 more than 12 blocks, and ends with a final hop to the spot or a standable column within 5 blocks. `stand()` uses a ray from 6 above to 6 below (leaves looked through, liquid and logs reject, 1.9 headroom). The deer is
 never teleported.
