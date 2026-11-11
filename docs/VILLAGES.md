@@ -42,7 +42,7 @@ every device. The `tps` probe command that produced them was removed 2026-10-29 
 
 ## Offline coverage
 
-Simulation seeds 1..100 give 100 distinct layouts with no failures, unreachable walk cells or link walk/light failures.
+Simulation seeds 1..40 (`node tools/village_sim.mjs 40`) give 40 distinct layouts with no failures, unreachable walk cells, link walk/light failures or furnishing failures; the `village-simulation` suite re-checks furnishing on 12 seeds. Furnishing and skirt checks use the runtime's own free-cell tests (`isFree`, `PANEL_AIR`), so the `light_block_0` headroom shield counts as free; real lights `light_block_1..15` never do.
 Regressions cover seats, wood supports, fence targets and edits, unload safety, planter coverage (261 correctly mounted panels,
 healer and gardener in all four orientations and sizes k 4..7), cushion protection and bridge preservation. Production
 generators and tests remain for maintenance (`tools/build_village.mjs`, `tests/village_*.mjs`). Shared evidence for the

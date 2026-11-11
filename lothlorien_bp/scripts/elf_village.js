@@ -7,6 +7,7 @@
 import { villageDebug } from "./village_debug.js";
 import { BlockPermutation, world } from "@minecraft/server";
 import { ELF_ID, HOMES_PROPERTY, HOME_OF_ELF, POST_ID, addHomes, assignHomes, groupPosts, parseHomes, spawnEventOf } from "./elf_rules.js";
+import { PANEL_AIR } from "./planter_panels.js";
 import { findHome, hasLayout, planFurnish, siteOf } from "./home_furnish.js";
 import { mendAround } from "./rail_connections.js";
 
@@ -48,7 +49,7 @@ export function furnishHome(dimension, post, profession) {
     } catch (e) { console.warn(`[lothlorien] elves: structure ${b.structure} at ${b.x},${b.y},${b.z}: ${e?.message ?? e}`); }
   }
   for(const p of plan.panels) {
-    try { const block=dimension.getBlock(p); if(block?.isAir){block.setPermutation(BlockPermutation.resolve(p.name,p.states));n++;} }
+    try { const block=dimension.getBlock(p); if(block&&PANEL_AIR.has(block.typeId)){block.setPermutation(BlockPermutation.resolve(p.name,p.states));n++;} }
     catch(e){console.warn(`[lothlorien] elves: planter border at ${p.x},${p.y},${p.z}: ${e?.message ?? e}`);}
   }
   for (const p of [...plan.writes, ...plan.structures,...plan.panels]) mendAround(dimension, p);

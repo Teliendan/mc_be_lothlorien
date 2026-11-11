@@ -1324,7 +1324,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/elf_village.js",
-        "sha256": "0b98104ccc8bba8e42f3e4e4f753a757bef16e31fadc4ce913d052d712ce06d7"
+        "sha256": "37688c665cbdfb07f023864fef09905bf21b6d097d9cb276977d2bdaf1ae83ec"
       }
     ]
   },
@@ -1718,7 +1718,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/home_furnish.js",
-        "sha256": "5aaad547a621fb6a2c6718e8e6050429e63ff951b5b6aa3ac0dac3b2abba1eee"
+        "sha256": "76429a0c9c31d02b3cbd77609a0d3c2d4371ebbd8f42cba29313d726a9c23f4c"
       },
       {
         "path": "lothlorien_bp/scripts/leaf_fall.js",
@@ -1762,7 +1762,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/planter_panels.js",
-        "sha256": "80492727f64331a31099af0ab51c20dc7a31333c4d8d1aaf6423fd7b233a9b41"
+        "sha256": "055367929bc5fe1ad69ca9c40f7369bf7f4937580a016ed54d10dbcc87307bf9"
       },
       {
         "path": "lothlorien_bp/scripts/rail_connections.js",

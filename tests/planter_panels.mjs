@@ -103,6 +103,24 @@ for(const [k] of panels){const [x,y,z]=k.split(",").map(Number);const get=(a,b,c
 assert.equal(mock.pending,0,"framing adds no idle timer");
 console.log("ok   planter borders: production home writer applies panels and preserves existing cushion actors without polling");
 
+// The skirt writer tests the block id: light_block_0 (headroom shield) is overwritten, a real light never.
+for(const [id,written] of [["minecraft:light_block_0",true],["minecraft:light_block_8",false]]){
+  mock.reset();
+  const nat=new Map(native);
+  mock.setBlocks((x,y,z)=>nat.get(key(x,y,z))??"minecraft:air");
+  mock.addEntity("minecraft:cushion",{x:cx+0.5,y:41,z:cz+0.5});
+  const probe=mock.dimension();furnishHome(probe,{x:px,y:41,z:pz,kind:"home"},"healer");
+  const target=[...probe.overrides].find(([,b])=>b.id===PANEL_ID);
+  assert.ok(target,"the baseline run writes a skirt");
+  const [tx,ty,tz]=target[0].split(",").map(Number);
+  mock.reset();
+  mock.setBlocks((x,y,z)=>x===tx&&y===ty&&z===tz?id:(nat.get(key(x,y,z))??"minecraft:air"));
+  mock.addEntity("minecraft:cushion",{x:cx+0.5,y:41,z:cz+0.5});
+  const d2=mock.dimension();furnishHome(d2,{x:px,y:41,z:pz,kind:"home"},"healer");
+  assert.equal(d2.overrides.get(target[0])?.id===PANEL_ID,written,`${id} skirt cell`);
+}
+console.log("ok   planter borders: the skirt writer overwrites light_block_0 and never a real light");
+
 {
   const open = { name: PANEL_ID, states: { "lothlorien:open": true, "minecraft:cardinal_direction": "east" } };
   const walk = planterWalkName((x) => (x === 1 ? open : x === 0 ? "minecraft:moss_block" : x === 2 ? "minecraft:air" : undefined));

@@ -18,12 +18,12 @@ const bp = join(root, "lothlorien_bp");
 import { RAIL, SLAB, ROOTS, lightField } from "./village_mallorn.mjs";
 import { protectedCells, checkWalk } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs"; // shared walkability checker (cells a piece owns)
 import { supportScan, waterScan, isSupportSkipped } from "./village_checks.mjs"; // nothing floats, water stays in its vessel (the generator runs them per piece, the sim on assembled villages)
-import { isPlanterPanel,planterWalkName } from "../lothlorien_bp/scripts/planter_panels.js";
+import { isPlanterPanel,planterWalkName,PANEL_AIR } from "../lothlorien_bp/scripts/planter_panels.js";
 import { MARKER_ID, finalBlocks } from "../lothlorien_bp/scripts/village_loop.js";
 import { LINKS, isFence, connectionChanges } from "../lothlorien_bp/scripts/rail_mender_rules.js";
 import { PLAN, planVillage, discoverSync, boundedReader, chunksIn, inRect } from "../lothlorien_bp/scripts/village_planner.js";
 import { POST_ID, PROFESSIONS, HOME_MIN, HEALER2_MIN_TREES, RESERVE_POSTS, assignHomes, groupPosts } from "../lothlorien_bp/scripts/elf_rules.js";
-import { siteOf, findHome, planFurnish, hasLayout, frameArea, frameCell } from "../lothlorien_bp/scripts/home_furnish.js"; // the home pavilion and its furnishing (M7 WP4b), the very same pure code as elf_village.js
+import { siteOf, findHome, isFree, planFurnish, hasLayout, frameArea, frameCell } from "../lothlorien_bp/scripts/home_furnish.js"; // the home pavilion and its furnishing (M7 WP4b), the very same pure code as elf_village.js
 export const PLANKS = "lothlorien:mallorn_planks", HEART_PLANKS = "lothlorien:mallorn_heartwood_planks", FENCE = RAIL, LANTERN_ID = "lothlorien:elven_lantern";
 const EMPTY = "minecraft:empty", AIR = "minecraft:air", JIGSAW = "minecraft:jigsaw";
 const FACING_VEC = { 2: [0, -1], 3: [0, 1], 4: [-1, 0], 5: [1, 0] };
@@ -729,7 +729,7 @@ export function furnishVillage(el, world, states, at, res, before) {
     const area = new Set(frameArea(frame).flatMap(([u, v]) => { const [x, z] = frameCell(frame, u, v); return [1, 2, 3].map((h) => `${x},${frame.y + h},${z}`); }));
     const put = (x, y, z, name, st2) => {
       if (!area.has(`${x},${y},${z}`)) out.fail.push(`furnishing at ${x},${y},${z} is outside the area`);
-      if (at(x, y, z) !== AIR) out.fail.push(`furnishing at ${x},${y},${z} would replace ${at(x, y, z)}`);
+      if (!isFree(at(x, y, z))) out.fail.push(`furnishing at ${x},${y},${z} would replace ${at(x, y, z)}`);
       world.set(wkey(x, y, z), name); states.set(wkey(x, y, z), st2); written.push([x, y, z]); out.objects++;
     };
     for (const w of plan.writes) put(w.x, w.y, w.z, w.name, w.states);
@@ -737,7 +737,7 @@ export function furnishVillage(el, world, states, at, res, before) {
     for(const p of plan.panels) {
       const get=(x,y,z)=>{const k=wkey(x,y,z);return {name:world.get(k),states:states.get(k)};};
       if(!isPlanterPanel(get,p.x,p.y,p.z,p)) out.fail.push(`invalid planter skirt at ${p.x},${p.y},${p.z}`);
-      if(at(p.x,p.y,p.z)!==AIR) out.fail.push(`planter skirt replaces ${at(p.x,p.y,p.z)}`);
+      if(!PANEL_AIR.has(at(p.x,p.y,p.z))){out.fail.push(`planter skirt replaces ${at(p.x,p.y,p.z)}`);continue;} // like the runtime writer (elf_village.js): only a panel-air cell is written
       world.set(wkey(p.x,p.y,p.z),p.name);states.set(wkey(p.x,p.y,p.z),p.states);written.push([p.x,p.y,p.z]);out.objects++;
     }
     st.blocks += plan.writes.length+plan.panels.length; st.structures += plan.structures.length; st.dropped += plan.skipped.length;

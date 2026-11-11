@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import { planterWalkName } from "../lothlorien_bp/scripts/planter_panels.js";
 import { B } from "../tools/flet_mallorn.mjs";
 import { existsSync, readdirSync } from "node:fs";
-import { loadVillageData, parseMcstructure, runSeeds, PLANKS, FENCE, populateElves } from "../tools/village_sim.mjs";
+import { loadVillageData, parseMcstructure, runSeeds, PLANKS, FENCE, populateElves, furnishVillage } from "../tools/village_sim.mjs";
 import * as EL from "../lothlorien_bp/scripts/elf_rules.js";
 import { RING, STAIR_FULL, STAIR_TOP, STAIR_CUT, FLOOR_H as V_FLOOR, LEVEL_H as V_LEVEL, ROOTS as V_ROOTS } from "../tools/village_mallorn.mjs";
 import { rotateCell } from "../tools/village_combo.mjs";
@@ -224,6 +224,19 @@ test("forest floor in the simulator: every plant stands on ground, the landing a
     assert.ok(r.floor.n > 100 && r.floor.n <= RP.FLOOR.maxBlocks, `${r.floor.n} blocks`);
     assert.ok(Object.keys(r.floor.byId).length >= 6 && !r.floor.byId["minecraft:leaf_litter"], JSON.stringify(r.floor.byId));
   }
+});
+
+test("furnishing in the simulator: 12 villages furnish and skirt homes without a failure (light_block_0 headroom shield is free, real lights are not)", () => {
+  let objects = 0;
+  for (const row of villages().slice(0, 12)) {
+    const world = new Map(row.ck.world), states = new Map(row.ck.states);
+    const lp = planLoops(row.res, world, states, { start: 0 });
+    const before = walkability(row.res, world, states), el = populateElves(row.res, lp.at, lp.rect);
+    const fu = furnishVillage(el, world, states, lp.at, row.res, before);
+    assert.deepEqual(fu.fail, [], `seed ${row.seed}`);
+    objects += fu.objects;
+  }
+  assert.ok(objects > 100, `${objects} objects furnished`);
 });
 
 finish();
