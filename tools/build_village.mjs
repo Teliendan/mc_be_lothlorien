@@ -26,7 +26,7 @@ import { keepClearCells, keepClearViolations, supportCheck, waterCheck } from ".
 import { groundWoodPosts } from "./village_polish.mjs";
 import { relinkFences } from "./village_dress.mjs";
 import { isPlanterPanel } from "../lothlorien_bp/scripts/planter_panels.js";
-import { COURT_ROWS, COURT_CONN, HALL_ROWS, HALL_BAY, heartwoodRings, buildHall, buildStream, buildCourt } from "./village_central.mjs"; // the central tree: Court, Hall, stream, reading circle (M7 WP2) // keep-clear cells, nothing floats, water stays in its vessel (style guide rule 8)
+import { COURT_ROWS, COURT_CONN, HALL_ROWS, HALL_BAY, heartwoodRings, buildHall, buildStream, buildCourt, READING_POST } from "./village_central.mjs"; // the central tree: Court, Hall, stream, reading circle (M7 WP2) // keep-clear cells, nothing floats, water stays in its vessel (style guide rule 8)
 
 export const MAX_DEPTH = 2; // hops from the central tree (a combo = one hop; its crown is a sibling, not a deeper level)
 // exits (no combo fits, or the depth is used up): mostly a plain railing, sometimes a braced balcony or a lookout. The combos pool also
@@ -152,7 +152,7 @@ export function wardenCells(name, blocks, count, want, avoid = new Set()) {
 // Civilian elf posts (invisible `lothlorien:elf_post` entities, rules and tunables in scripts/elf_rules.js; the village planner assigns the
 // professions at runtime, see elf_village.js): on the deck layer y = FLOOR_H, tree coordinates. `taken` = the piece's warden cells [{ x, z }].
 // Every post stands on an open deck cell (openDeckCells) at least POST_SPACING (Chebyshev) from the wardens and the earlier posts.
-//   central tree: one `loremaster` post on the open cell nearest the rope hole (at least ROPE_CLEARANCE from the rope cell), then RESERVE_POSTS
+//   central tree: one `loremaster` post at the reading circle (READING_POST, west rim; outside his home radius from the rope hole), then RESERVE_POSTS
 //                 `reserve` posts spread out as far from each other as possible (leftover professions of a village with few trees stand there);
 //   tree node:    one `home` post inside the biggest free square of the lower deck (homeSite), preferably on an open deck cell, nearest the trunk.
 //                 (Small nodes have no cell with the full open-deck margin of a warden, node_e only a 3 x 3 square, so a post there only needs its own
@@ -193,9 +193,10 @@ export function postCells(name, blocks, taken = [], avoid = new Set()) {
   for (const [k, b] of blocks) if (b.name === B.ropeHanging && k.split(",")[1] === String(FLOOR_H)) { const [x, , z] = k.split(",").map(Number); rope = { x, z }; break; }
   if (!rope) throw new Error(`${name}: no rope cell on the deck layer`);
   const cheb = (c, t) => Math.max(Math.abs(c.x - t.x), Math.abs(c.z - t.z));
-  const lore = ok.filter((c) => cheb(c, rope) >= ROPE_CLEARANCE && apart(c, taken))
-    .sort((a, b) => Math.hypot(a.x - rope.x, a.z - rope.z) - Math.hypot(b.x - rope.x, b.z - rope.z) || a.x - b.x || a.z - b.z)[0];
-  if (!lore) throw new Error(`${name}: no room for the Loremaster post`);
+  const lore = ok.find((c) => c.x === READING_POST.x && c.z === READING_POST.z);
+  if (!lore) throw new Error(`${name}: the reading circle's post cell ${READING_POST.x},${READING_POST.z} is not open deck`);
+  if (!apart(lore, taken)) throw new Error(`${name}: a warden stands within ${POST_SPACING} cells of the Loremaster post`);
+  if (cheb(lore, rope) < ROPE_CLEARANCE) throw new Error(`${name}: the Loremaster post is within ${ROPE_CLEARANCE} cells of the rope`);
   const picked = [{ x: lore.x, z: lore.z, kind: "loremaster" }];
   for (let i = 0; i < RESERVE_POSTS; i++) {
     const have = [...taken, ...picked], gap = (c) => Math.min(...have.map((p) => Math.hypot(c.x - p.x, c.z - p.z)));
@@ -360,13 +361,14 @@ const NODES = {
     hooks: {
       structure: (ctx) => {
         heartwoodRings(ctx); buildHall(ctx); buildStream(ctx); buildCourt(ctx);
-        for (let z = -10; z <= -6; z++) for (const h of [1, 2]) ctx.keep.add(key(6, FLOOR_H + h, z)); // the lane east of the reading circle stays open (the strip between the circle and the rim must not become a closed pocket)
         for (let x = -5; x <= -4; x++) for (let z = -2; z <= 0; z++) for (const h of [1, 2]) ctx.keep.add(key(x, FLOOR_H + LEVEL_H + h, z)); // the exit lane from the last tread onto the Hall floor stays open
         // elf cells (wardens, Loremaster, reserve posts) from the finished structure; the dressing keeps off them (3 x 3 x 3 round each)
         // nobody stands ON a bridge path, a stair column or the rope's landing (the ring and the deck beside them are wide enough to pass an elf)
         const apart = new Set(), paths = keepClearCells(ctx.blocks, { connectors: ctx.keepOpts.connectors, trunkR: ctx.rT, stair: ctx.keepOpts.stair, rope: ctx.keepOpts.rope, deckY: FLOOR_H });
         for (const k of paths) { const [x, y, z] = k.split(",").map(Number); if (y === FLOOR_H + 1) apart.add(`${x},${z}`); }
-        const wardens = wardenCells(NAME, ctx.blocks, WARDENS[NAME], 7, apart), posts = postCells(NAME, ctx.blocks, wardens, apart);
+        const wardenApart = new Set(apart); // the wardens keep POST_SPACING from the Loremaster's post at the reading circle
+        for (let dx = -(POST_SPACING - 1); dx <= POST_SPACING - 1; dx++) for (let dz = -(POST_SPACING - 1); dz <= POST_SPACING - 1; dz++) wardenApart.add(`${READING_POST.x + dx},${READING_POST.z + dz}`);
+        const wardens = wardenCells(NAME, ctx.blocks, WARDENS[NAME], 7, wardenApart), posts = postCells(NAME, ctx.blocks, wardens, apart);
         for (const c of [...wardens, ...posts]) for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) for (let h = 1; h <= 3; h++) ctx.keep.add(key(c.x + dx, FLOOR_H + h, c.z + dz));
         elf = { wardens, posts };
       },

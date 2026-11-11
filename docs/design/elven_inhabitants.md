@@ -238,7 +238,7 @@ The flet giants (`lothlorien:giant_mallorn`, lookout variant `round`, loot `loot
 ## 10. Population (M1, accepted in game 2026-10-10)
 
 Rule (owner decisions 2026-10-10, details `docs/mobs/elves.md`, implementation commit 30e1eb1): every new village gets all five professions. The Loremaster stands on the central tree
-(post nearest the rope top, at least 2 cells from it); healer, gardener, woodwright and lamplighter each stand on an outer tree (`combo_*` piece, warden trees included) of their own.
+(post at the reading circle on the west rim, `ROPE_CLEARANCE` = home radius + 1 from the rope cell, so the rope hole lies outside his home radius; villages placed before the reading-circle move keep the old post by the rope); healer, gardener, woodwright and lamplighter each stand on an outer tree (`combo_*` piece, warden trees included) of their own.
 - **Posts.** Tree pieces carry invisible `lothlorien:elf_post` entities: `central_mallorn_01` 1 `loremaster` + 4 `reserve`, each `combo_*` 1 `home` post inside the largest free deck square, 3 cells from wardens and other posts.
   A new tree piece without a `home` post is never a profession tree.
 - **Assignment** (once per village, in the loop planner run, `scripts/elf_village.js` + pure `assignHomes` in `scripts/elf_rules.js`): home posts ordered by room first (free square >= 5x5), then straight-line distance to the Loremaster, then x, z;

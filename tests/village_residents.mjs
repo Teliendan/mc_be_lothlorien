@@ -33,7 +33,7 @@ test("elf posts in pieces: central tree 1 loremaster + RESERVE_POSTS reserves, e
   assert.ok(Object.values(counts).filter((n) => n === 1).length >= 20, "about 23 combo pieces carry a post");
 });
 
-test("elf posts stand on deck: planks underneath, three cells of air, open deck around (central), POST_SPACING from wardens and other posts, Loremaster by the rope", () => {
+test("elf posts stand on deck: planks underneath, three cells of air, open deck around (central), POST_SPACING from wardens and other posts, Loremaster at the reading circle, outside his home radius from the rope hole", () => {
   for (const p of villagePieces()) {
     const posts = postsOf(p), wardens = p.entities.filter((e) => e.id === EW.WARDEN_ID).map((e) => ({ x: Math.floor(e.pos[0]), z: Math.floor(e.pos[2]) }));
     for (const q of posts) {
@@ -49,7 +49,9 @@ test("elf posts stand on deck: planks underneath, three cells of air, open deck 
         const rope = p.blocks.filter((b) => b.name === B.ropeHanging && b.y === q.y - 1);
         assert.ok(rope.length >= 1, "rope on the deck layer");
         for (const r of rope) assert.ok(cheb(q, r) >= EL.ROPE_CLEARANCE, `${p.name}: Loremaster ${cheb(q, r)} from the rope`);
-        assert.ok(Math.hypot(q.x - rope[0].x, q.z - rope[0].z) <= 6, "the Loremaster stands by the rope top");
+        for (const r of rope) assert.ok(Math.hypot(q.x - r.x, q.z - r.z) > EL.HOME_RADIUS.loremaster, "the rope hole lies outside his home radius");
+        const lectern = p.blocks.find((b) => b.name === "minecraft:lectern");
+        assert.ok(lectern && cheb(q, lectern) <= 3, "the Loremaster stands within 3 of the lectern");
       }
       if (q.kind === "home") { // inside the biggest free square of the lower deck
         const at = (x, y, z) => p.at(x, y, z) ?? "minecraft:air", mine = EL.homeSite(at, q.x, q.y - 1, q.z);

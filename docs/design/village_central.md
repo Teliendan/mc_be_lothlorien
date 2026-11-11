@@ -30,9 +30,11 @@ the unchanged crown pools `crowns_central` (crown box starts at Hall + 6).
   the rim post (1, 7)); the fall at (1, 9) from Hall + 4 down to the **basin** on the Court: raised vessel x 0..2, z 8..10 (stripped-wood walls and log
   corners at Court + 1, floor = the deck, water at Court + 1), 3 lily pads, a waterlogged sea pickle, a firefly jar on each corner post. The basin replaces the Court's rim rail on the south side. Water cells: 15 sources + 11 falling cells (`flowing_water`,
   `liquid_depth` 8). `waterCheck` passes without declared extra cells (the fall lands on the basin source).
-- **Reading circle** (Court, north rim, x 1..5, z -10..-7): chiseled and plain bookshelves against the north rim rail (inside it), the lectern in
-  front, 6 mallorn-stair seats in a half ring, a light-blue carpet, a candle group, a decorated pot, a banner on a stripped-log pole; the lane east of
-  it (x 6) is kept open so the strip between circle and rim is not a closed pocket.
+- **Reading circle** (Court, west rim, x -10..-7, z -4..0; `READING` in `village_central.mjs`): chiseled and plain bookshelves against the west rim rail x = -11
+  (inside it, facing east), the lectern at (-9, -1) in front, 4 native cushions in a half ring (the u 5 pair would stand in the west connector lane), a light-blue
+  rug beside the lectern, a candle group, a decorated pot, a banner on a stripped-log pole at the north end (-10, -4). The Loremaster's elf post is
+  `READING_POST` (-7, -1), two cells in front of the lectern between the two front seats: Chebyshev 7 (Euclid 7.28) from the rope hole (0, -3), outside his
+  `home_lore` radius 6 (`ROPE_CLEARANCE` = radius + 1). Moved from the north rim 2026-11-11 (owner: "further away from the hole"); the north rim is open deck with a loop marker.
 - **Court trunk**: 2 banners on the north face either side of the rope (watch + ivory design), one gold arm lamp (west face: the other faces are under the stair's keep-clear columns or beside the rope), heartwood ring, garden islands,
   rim scenes (denser than on a node: `rimStep` 3), lamp posts (6 gold: one per bridgehead, a second on two of them) - all through `dressTree`.
 - **Elves**: 2 wardens, the Loremaster (nearest open cell to the rope that is not on a bridge path), 4 reserve posts; computed in the `structure` hook from the
@@ -62,7 +64,7 @@ to 6 posts so that the total stays <= 12.
 
 1. Does a jigsaw-placed structure keep `flowing_water` (`liquid_depth` 8) cells and the sources as written, or does the engine re-flow them on load
    (the column is fed from the trough end source; the basin sources are stable)?
-2. `minecraft:chiseled_bookshelf` `direction` 0 is assumed to face south (documented states only), `minecraft:lectern` `minecraft:cardinal_direction` the
+2. `minecraft:chiseled_bookshelf` `direction` 0 is assumed to face south and 3 east (the west-rim shelves use 3; documented states only), `minecraft:lectern` `minecraft:cardinal_direction` the
    same; both turn with a rotated piece in the sim.
 3. The waterlogged sea pickle (liquid layer) and the lily pads on the basin.
 4. The headroom under the trough (2 blocks) and under the lamp-post / stair rails near the stair foot.

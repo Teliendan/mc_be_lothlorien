@@ -414,7 +414,7 @@ calls `elf_village.js` `populateVillage` after the links and before removing mar
 
 ## Civilian elves (M1; owner-accepted in game 2026-10-10; sheet `mobs/elves.md`)
 
-Files: `scripts/elf_rules.js` (pure: ids, `PROFESSIONS`, `STATS`, `HOME_RADIUS`, generator tunables `POST_SPACING` 3, `ROPE_CLEARANCE` 2, `RESERVE_POSTS` 4, `HOME_MIN` 5, `HOME_MAX` 7, `FOE_TAG`, `FOE_MS`, `homeSite`, `assignHomes`),
+Files: `scripts/elf_rules.js` (pure: ids, `PROFESSIONS`, `STATS`, `HOME_RADIUS`, generator tunables `POST_SPACING` 3, `ROPE_CLEARANCE` 7 (= Loremaster home radius + 1), `RESERVE_POSTS` 4, `HOME_MIN` 5, `HOME_MAX` 7, `FOE_TAG`, `FOE_MS`, `homeSite`, `assignHomes`),
 `elf_village.js`, `elven_warden.js` (elf section: hurt-by-player fight cost, foe tag), `entities/elf.json`, `entities/elf_post.json`. Persistent, no despawn, no spawn rule; panic 1.25 and flee monsters within 6; fall damage off;
 `blocks_to_avoid` the two rope blocks; base `minecraft:home` and radius groups (Loremaster 6, others 10, healer 64 by day / 10 from dusk); leashable (a released elf takes a new home there). Movement 0.3 stays under
 `WRONG_MOVEMENT_ABOVE` of `warden_replace_rules.js`. Home post cells need warden-like margins on the central tree, on nodes only their own cell open. Tests: "civilian elves (M1)" in `tests/run.mjs`, `tests/script_glue.mjs`.

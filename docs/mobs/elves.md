@@ -34,7 +34,7 @@ All verified in game by the owner on 2026-10-10 unless marked otherwise.
 ## Placement (how a village gets its elves)
 
 A jigsaw piece cannot know its profession, so tree pieces carry invisible **`lothlorien:elf_post`** entities (`entities/elf_post.json`; kind via definitions group `lothlorien:post_<loremaster|reserve|home>`
-that adds the family `elf_post_<kind>`): `central_mallorn_01` 1 loremaster + 4 reserve posts, every `combo_*` piece 1 home post (`build_village.mjs` `postCells`). The village planner run
+that adds the family `elf_post_<kind>`): `central_mallorn_01` 1 loremaster + 4 reserve posts, every `combo_*` piece 1 home post (`build_village.mjs` `postCells`). The Loremaster post is at the reading circle (west rim, `READING_POST`), outside his home radius from the rope hole; villages placed before that change keep the old post by the rope. The village planner run
 (`loop_marker.js` `planVillageAt`, own `try`, after the links and before the markers go) calls `scripts/elf_village.js` `populateVillage`:
 1. read all posts in the discovered rectangle; kind from `getTypeFamilies()` (no kind = home); `site` = `homeSite` on live blocks;
 2. `groupPosts` (pure, `elf_rules.js`) gives every post to its nearest Loremaster post (one run can cover two neighbouring villages; none = one group), then `assignHomes` (pure, `elf_rules.js`) per group: outer posts sorted by room first (free square >= `HOME_MIN` 5), then distance to the Loremaster, then x, z; professions in `HOME_ORDER` healer, gardener, woodwright, lamplighter; leftover professions go to reserve posts (nearest to the Loremaster first);

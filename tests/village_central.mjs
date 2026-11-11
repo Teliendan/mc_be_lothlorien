@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import { parseMcstructure } from "../tools/village_sim.mjs";
 import { waterCheck, supportCheck, keepClearViolations } from "../tools/village_checks.mjs";
 import { FLOOR_H, LEVEL_H, ROOTS, STAIR7, stairLayer, RAIL } from "../tools/village_mallorn.mjs";
-import { BASIN, SPRING } from "../tools/village_central.mjs";
+import { BASIN, SPRING, READING_POST } from "../tools/village_central.mjs";
 
 let failed = 0;
 function test(name, fn) { try { fn(); console.log(`ok   ${name}`); } catch (e) { failed++; console.log(`FAIL ${name}\n     ${e.message}`); } }
@@ -89,10 +89,18 @@ test("central tree stream: a spring vessel in the trunk, a contained trough (hea
   assert.equal(count(/^minecraft:flowing_water$/), H + 4 - (D + 2) + 1, "the fall: one falling cell per layer");
 });
 
-test("central tree: reading circle on the Court (chiseled bookshelves backed against the rim rail, a lectern, seats in a half ring, a banner pole), two banners by the rope", () => {
+test("central tree: reading circle on the west rim of the Court (chiseled bookshelves backed against the rim rail, a lectern facing east, seats in a half ring, a banner pole), the Loremaster's post, two banners by the rope", () => {
   assert.equal(count(/chiseled_bookshelf$/), 4);
-  for (const x of [2, 3]) { assert.equal(nameAt(x, D + 1, -10), "minecraft:chiseled_bookshelf"); assert.equal(nameAt(x, D + 1, -11), RAIL, "rail line behind the shelves"); }
+  for (const z of [-2, -1]) { assert.equal(nameAt(-10, D + 1, z), "minecraft:chiseled_bookshelf"); assert.equal(nameAt(-11, D + 1, z), RAIL, "rail line behind the shelves"); assert.equal(get(-10, D + 1, z).states.direction, 3, "the shelves face east, into the Court (documented, not verified in game)"); }
   assert.equal(count(/lectern$/), 1);
+  assert.equal(nameAt(-9, D + 1, -1), "minecraft:lectern");
+  assert.equal(get(-9, D + 1, -1).states["minecraft:cardinal_direction"], "east");
+  assert.match(nameAt(-10, D + 1, -4), /stripped_log$/, "the banner pole at the north end of the shelves");
+  assert.equal(nameAt(-9, D + 3, -4), "minecraft:wall_banner", "its cloth hangs on the inward face");
+  const lore = piece.entities.find((e) => e.id === "lothlorien:elf_post" && e.defs.includes("+lothlorien:post_loremaster"));
+  assert.ok(lore, "the Loremaster post exists");
+  assert.deepEqual([Math.floor(lore.pos[0]) - OX, Math.floor(lore.pos[2]) - OZ], [READING_POST.x, READING_POST.z], "the post stands in front of the lectern");
+  assert.equal(READING_POST.x, -7); assert.equal(READING_POST.z, -1);
   for (const x of [-1, 1]) assert.equal(get(x, D + 4, -3).name, "minecraft:wall_banner", "banner by the rope");
   assert.equal(get(-1, D + 4, -3).states.facing_direction, 2); // faces north: the visitor's side
   assert.equal(nameAt(0, D, -3), "lothlorien:elven_rope_hanging");

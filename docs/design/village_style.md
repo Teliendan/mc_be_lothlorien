@@ -138,7 +138,7 @@ Each spec says **what, how it works, why (logic), and where it may not go**.
 ### 7.1 The Court: central tree (rebuilt, 2 levels + crown)
 - **Lower deck +16 "the Court"**: the rope arrives here; the widest deck of the village. A ring of heartwood inlay round the trunk
   (the signature of every trunk, see 7.6). A **basin** of water on the deck against the trunk, fed by 7.3. The Loremaster's reading circle on
-  the opposite side. Four bridgeheads with lamp posts. Banners on the trunk facing the rope (the first thing a visitor sees).
+  the west rim (the post stands there, outside his home radius from the rope hole). Four bridgeheads with lamp posts. Banners on the trunk facing the rope (the first thing a visitor sees).
 - **Upper deck +24 "the Hall"**: reached by the spiral stair round the trunk (the tower stair, adapted to the round 5x5 trunk). An open
   pavilion: a ring of slender posts (stripped logs) carrying a low leaf dome on branches that spring from the trunk; a chandelier hangs in the
   middle; cushions; the **spring** comes out of the trunk here (7.3). One balcony/lookout bay with a view over the village.

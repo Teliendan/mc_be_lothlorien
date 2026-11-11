@@ -1,7 +1,7 @@
 // The central tree of the Elven village (M7 showcase WP2; style guide docs/design/village_style.md 7.1, 7.3, 7.6, 0): the Court (lower deck, the rope arrives
 // here), the round 5x5 trunk with a slab spiral stair round it (village_mallorn.mjs buildTree, trunk "round5", two levels) up to the Hall, the Hall (an open
 // pavilion: slender posts, a low leaf dome on ribs, a chandelier, seats, a lookout bay), the stream (a spring vessel in the trunk, a contained trough along
-// one rib, a fall into a raised basin on the Court) and the Loremaster's reading circle. Pure: every function writes into the block map of the tree
+// one rib, a fall into a raised basin on the Court) and the Loremaster's reading circle (west rim of the Court). Pure: every function writes into the block map of the tree
 // ("x,y,z" -> { name, states }) inside the `structure` hook of buildTree (after the tree and its keep-clear cells, before the dressing). Nothing here is
 // verified in game (2026-10-15): the block states are the documented ones (Mojang block metadata), see the notes in docs/design/.
 //
@@ -198,26 +198,39 @@ export function buildStream(ctx) {
 export const waterCells = (blocks) => [...blocks].filter(([, b]) => /water$/.test(b.name) || b.states?.__water).map(([k]) => k);
 
 // ---- the Court ---------------------------------------------------------------------------------------------------------------------------------------------------
-// banners on the trunk's north face either side of the rope (the visitor's first sight), the reading circle at the north rim
+// banners on the trunk's north face either side of the rope (the visitor's first sight), the reading circle at the west rim (x -10..-7, z -4..0)
+// The reading circle's frame: base = u 0 v 0 (on the west rim rail, x = -11), t = the u step (south), n = the v step (into the Court, east).
+// READING_POST = u 3, v 4: the Loremaster's elf post, two cells in front of the lectern between the two front seats.
+export const READING = { base: [-11, -4], t: [0, 1], n: [1, 0] };
+export const READING_POST = { x: -7, z: -1 };
+const SHELF_DIRECTION = 3; // chiseled bookshelf `direction`: 0 south, 1 west, 2 north, 3 east (documented only: the shipped 0 = south; 3 = east is assumed)
 export function buildCourt(ctx) {
   CUSHIONS = ctx.cushions; CUSHION_KEEP = ctx.keep;
   const { blocks, keep, D, seed } = ctx, { put, can, nameAt } = writer(blocks, keep), rnd = makeRandom((seed ^ 0x1007) >>> 0);
   const Y = (h) => D + h, info = { banners: 0, books: 0, seats: 0 };
   for (const [x, spec] of [[-1, BANNERS.watch], [1, BANNERS.watch]]) { put(x, Y(4), -3, wallBanner([0, -1], spec)); info.banners++; }
-  // reading circle: chiseled shelves against the north rim rail (inside it), the lectern in front, six seats in a half ring, a candle group, a banner pole
-  const rail = (x, z) => nameAt(x, Y(1), z) === RAIL;
-  for (let x = 1; x <= 4; x++) if (!rail(x, -10) && rail(x, -11)) { // the shelves stand on the deck cell in front of the rim rail
-    const chiseled = x === 2 || x === 3;
-    for (const h of [1, 2]) put(x, Y(h), -10, chiseled ? { name: `${M}chiseled_bookshelf`, states: { books_stored: [63, 36, 54, 45][(x + h) % 4], direction: 0 } } : { name: `${M}bookshelf`, states: {} });
+  // reading circle on the west rim, in the rail's own frame (READING): u runs along the rim rail, v inward (v 0 = the rail row). Chiseled shelves u 1..4
+  // at v 1, the lectern u 3 v 2, a pot u 0 v 2 and a candle group u 0 v 3, seats u 1 at v 2-3 and u 2 / u 4 at v 4 (the u 5 pair would stand in the
+  // west connector lane: not built), a rug on u 2 and u 4 at v 2 beside the lectern, so the Loremaster's post (u 3, v 4 = READING_POST) keeps its 3 x 3 air.
+  // The banner pole stands at u 5 v 1 or, if that cell is refused, at u 0 v 1.
+  const { base, t, n } = READING, W = (u, v) => [base[0] + u * t[0] + v * n[0], base[1] + u * t[1] + v * n[1]];
+  const rail = (u, v) => { const [x, z] = W(u, v); return nameAt(x, Y(1), z) === RAIL; };
+  for (let u = 1; u <= 4; u++) if (!rail(u, 1) && rail(u, 0)) { // the shelves stand on the deck cell in front of the rim rail
+    const [x, z] = W(u, 1), chiseled = u === 2 || u === 3;
+    for (const h of [1, 2]) put(x, Y(h), z, chiseled ? { name: `${M}chiseled_bookshelf`, states: { books_stored: [63, 36, 54, 45][(u + h) % 4], direction: SHELF_DIRECTION } } : { name: `${M}bookshelf`, states: {} });
     info.books++;
   }
-  put(3, Y(1), -9, { name: `${M}lectern`, states: { "minecraft:cardinal_direction": "south", powered_bit: false } });
-  const seat = (x, z) => { if (can(x, Y(1), z)) cushion(x, D, z, info); }; // the half ring of the reading circle: native cushions
-  seat(1, -9); seat(1, -8); seat(5, -9); seat(5, -8); seat(2, -7); seat(4, -7);
-  for (const x of [2, 3, 4]) put(x, Y(1), -8, { name: `${M}light_blue_carpet`, states: {} }); // a rug in front of the lectern
-  put(0, Y(1), -8, candle(3)); // a candle group by the shelves
-  put(0, Y(1), -9, decoratedPot());
-  // a banner on a stripped-log pole beside the shelves, the cloth hangs on its south face over the seats
-  if (can(5, Y(1), -10)) { for (const h of [1, 2, 3]) put(5, Y(h), -10, stripped()); put(5, Y(3), -9, wallBanner([0, 1], minorBanner(rnd))); info.banners++; } // (the pole stands on the deck: no walled-in deck cell behind it)
+  { const [x, z] = W(3, 2); put(x, Y(1), z, { name: `${M}lectern`, states: { "minecraft:cardinal_direction": cardinal(n), powered_bit: false } }); }
+  const seat = (u, v) => { const [x, z] = W(u, v); if (can(x, Y(1), z)) cushion(x, D, z, info); }; // the half ring of the reading circle: native cushions
+  seat(1, 2); seat(1, 3); seat(2, 4); seat(4, 4);
+  for (const u of [2, 4]) { const [x, z] = W(u, 2); put(x, Y(1), z, { name: `${M}light_blue_carpet`, states: {} }); } // a rug beside the lectern
+  { const [x, z] = W(0, 3); put(x, Y(1), z, candle(3)); } // a candle group by the shelves
+  { const [x, z] = W(0, 2); put(x, Y(1), z, decoratedPot()); }
+  for (const u of [5, 0]) { // a banner on a stripped-log pole beside the shelves, the cloth hangs on its inward face (the pole stands on the deck: no walled-in deck cell behind it)
+    const [x, z] = W(u, 1), [bx, bz] = W(u, 2);
+    if (!can(x, Y(1), z) || !can(x, Y(2), z) || !can(x, Y(3), z) || !can(bx, Y(3), bz)) continue;
+    for (const h of [1, 2, 3]) put(x, Y(h), z, stripped());
+    put(bx, Y(3), bz, wallBanner(n, minorBanner(rnd))); info.banners++; break;
+  }
   return info;
 }

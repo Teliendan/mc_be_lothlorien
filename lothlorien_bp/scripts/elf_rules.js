@@ -56,7 +56,7 @@ export const homeCell = (location) => `${Math.floor(location.x)},${Math.floor(lo
 
 // ---- Generator tunables (tools/build_village.mjs) ----
 export const POST_SPACING = 3; // Chebyshev cells between a post and every warden / other post of its piece
-export const ROPE_CLEARANCE = 2; // the Loremaster's post is at least this far (Chebyshev) from the rope cell
+export const ROPE_CLEARANCE = HOME_RADIUS.loremaster + 1; // the rope cell lies outside the Loremaster's home radius
 export const RESERVE_POSTS = 4; // reserve posts on the central tree: leftover professions stand there when a village has too few outer trees
 export const HOME_MIN = 5; // a tree "has room" for a later home when a free square of this size exists
 export const HOME_MAX = 7;
