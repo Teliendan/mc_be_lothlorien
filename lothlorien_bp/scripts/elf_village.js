@@ -6,7 +6,7 @@
 // Idempotent by construction: the posts are gone after one run, so a second run finds none and spawns nothing.
 import { villageDebug } from "./village_debug.js";
 import { BlockPermutation, world } from "@minecraft/server";
-import { ELF_ID, HOMES_PROPERTY, HOME_OF_ELF, POST_ID, addHomes, assignHomes, parseHomes, spawnEventOf } from "./elf_rules.js";
+import { ELF_ID, HOMES_PROPERTY, HOME_OF_ELF, POST_ID, addHomes, assignHomes, groupPosts, parseHomes, spawnEventOf } from "./elf_rules.js";
 import { findHome, hasLayout, planFurnish, siteOf } from "./home_furnish.js";
 import { mendAround } from "./rail_connections.js";
 
@@ -63,10 +63,7 @@ export function populateVillage(dimension, rect, at) {
     return { entity, kind: kindOf(entity), x, y, z, site: siteOf(get, { x, y, z }) }; // the pavilion's square when the home has one (home_furnish.js findHome), else the free square under the feet
   });
   if (!posts.length) return { spawned: 0, own: 0, reserve: 0, failed: 0 }; // a village that was populated before (or an old one): nothing to do
-  const byPlace = (a, b) => a.x - b.x || a.z - b.z || a.y - b.y;
-  const lore = posts.filter((q) => q.kind === "loremaster").sort(byPlace)[0] ?? null;
-  const assigned = assignHomes(posts.filter((q) => q.kind !== "loremaster"), lore ? [lore.x, lore.y, lore.z] : null);
-  const failedPosts = new Set(), result = { spawned: 0, own: 0, reserve: 0, failed: 0 }, homes = [];
+  const failedPosts = new Set(), result = { spawned: 0, own: 0, reserve: 0, failed: 0 }, records = [];
   const spawn = (post, p) => {
     try {
       const elf = dimension.spawnEntity(ELF_ID, post.entity.location, { spawnEvent: spawnEventOf(p) });
@@ -80,16 +77,23 @@ export function populateVillage(dimension, rect, at) {
       return false;
     }
   };
-  if (lore) spawn(lore, "loremaster");
-  for (const { post, p } of assigned) {
-    if (!spawn(post, p)) continue;
-    if (post.kind === "reserve") result.reserve++; else result.own++;
-    try { furnishHome(dimension, post, p); } catch (e) { console.warn(`[lothlorien] elves: could not furnish the ${p}'s home at ${post.x},${post.y},${post.z}: ${e?.message ?? e}`); }
-    homes.push({ p, x: post.x, y: post.y, z: post.z, site: post.kind === "reserve" ? null : post.site });
+  const lines = [];
+  for (const { lore, others } of groupPosts(posts)) {
+    const assigned = assignHomes(others, lore ? [lore.x, lore.y, lore.z] : null), homes = [], own0 = result.own, reserve0 = result.reserve, failed0 = result.failed;
+    if (lore) spawn(lore, "loremaster");
+    for (const { post, p } of assigned) {
+      if (!spawn(post, p)) continue;
+      if (post.kind === "reserve") result.reserve++; else result.own++;
+      try { furnishHome(dimension, post, p); } catch (e) { console.warn(`[lothlorien] elves: could not furnish the ${p}'s home at ${post.x},${post.y},${post.z}: ${e?.message ?? e}`); }
+      homes.push({ p, x: post.x, y: post.y, z: post.z, site: post.kind === "reserve" ? null : post.site });
+    }
+    records.push({ rect: { x0: rect.x0, x1: rect.x1, z0: rect.z0, z1: rect.z1 }, loremaster: lore && !failedPosts.has(lore) ? [lore.x, lore.y, lore.z] : null, homes });
+    const failed = result.failed - failed0;
+    lines.push(`${lore ? (failedPosts.has(lore) ? "loremaster FAILED" : "loremaster") : "no loremaster post"} + ${result.own - own0} on own trees (${result.reserve - reserve0} on reserves)${assigned.length < 4 ? `, only ${assigned.length} of 4 other professions found a post` : ""}${failed ? `, ${failed} failed` : ""}`);
   }
   if (result.spawned > 0) {
     try {
-      world.setDynamicProperty(HOMES_PROPERTY, JSON.stringify(addHomes(parseHomes(world.getDynamicProperty(HOMES_PROPERTY)), { rect: { x0: rect.x0, x1: rect.x1, z0: rect.z0, z1: rect.z1 }, loremaster: lore && !failedPosts.has(lore) ? [lore.x, lore.y, lore.z] : null, homes })));
+      world.setDynamicProperty(HOMES_PROPERTY, JSON.stringify(records.reduce(addHomes, parseHomes(world.getDynamicProperty(HOMES_PROPERTY)))));
     } catch (e) {
       console.warn(`[lothlorien] elves: could not write the home record: ${e?.message ?? e}`);
     }
@@ -97,7 +101,6 @@ export function populateVillage(dimension, rect, at) {
   for (const post of posts) {
     try { post.entity.remove(); } catch { /* unloaded meanwhile */ }
   }
-  const total = assigned.length;
-  if (villageDebug()) console.warn(`[lothlorien] elves: village at ${at[0]},${at[1]}: ${lore ? (failedPosts.has(lore) ? "loremaster FAILED" : "loremaster") : "no loremaster post"} + ${result.own} on own trees (${result.reserve} on reserves)${total < 4 ? `, only ${total} of 4 other professions found a post` : ""}${result.failed ? `, ${result.failed} failed` : ""}`);
+  if (villageDebug()) console.warn(`[lothlorien] elves: village at ${at[0]},${at[1]}: ${lines.join("; ")}`);
   return result;
 }

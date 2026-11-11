@@ -280,6 +280,19 @@ await scenario("elves: the planner run turns the posts into the five professions
   assert.equal(grep(/elves: village at/).length, 1, "one elves line"); assert.match(grep(/elves: village at/)[0], /loremaster \+ 4 on own trees \(0 on reserves\)/);
 });
 
+await scenario("elves: two neighbouring villages in one planner run each get a Loremaster and their own professions", async () => {
+  mock.setBlocks((x, y) => (y === 79 ? "lothlorien:mallorn_planks" : "minecraft:air"));
+  const mod = await loadScript("elf_village.js");
+  const post = (kind, x, z) => mock.addEntity(POST, { x: x + 0.5, y: 80, z: z + 0.5 }, { components: { "minecraft:type_family": { getTypeFamilies: () => [`elf_post_${kind}`] } } });
+  post("loremaster", 0, 0); post("loremaster", 120, 0);
+  for (const x of [10, 20, 30, 40, 80, 90, 100, 110]) post("home", x, 10);
+  mod.populateVillage(mock.dimension(), { x0: -50, x1: 200, z0: -50, z1: 60 }, [0, 0]);
+  const elves = elvesSpawned(), side = (s) => (s.entity.location.x < 60 ? "west" : "east");
+  for (const half of ["west", "east"]) assert.deepEqual(elves.filter((s) => side(s) === half).map((s) => s.opts.spawnEvent).sort(), [EL.spawnEventOf("loremaster"), ...EL.HOME_ORDER.map(EL.spawnEventOf)].sort(), `${half} village: all five professions`);
+  assert.equal(postsLeft(), 0);
+  assert.equal(homeRecords().length, 2, "one record per village"); assert.equal(mock.propWrites.filter((k) => k === EL.HOMES_PROPERTY).length, 1, "written once");
+});
+
 await scenario("elven_warden.js (elves): a release (rehome event) records the new home and the moved flag; other events, other mobs and a missing entity change nothing", async () => {
   const mod = await loadScript("elven_warden.js");
   mod.startElvenWardens(() => ({ level: 0 }), () => "neutral");

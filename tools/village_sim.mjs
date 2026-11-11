@@ -22,7 +22,7 @@ import { isPlanterPanel,planterWalkName } from "../lothlorien_bp/scripts/planter
 import { MARKER_ID, finalBlocks } from "../lothlorien_bp/scripts/village_loop.js";
 import { LINKS, isFence, connectionChanges } from "../lothlorien_bp/scripts/rail_mender_rules.js";
 import { PLAN, planVillage, discoverSync, boundedReader, chunksIn, inRect } from "../lothlorien_bp/scripts/village_planner.js";
-import { POST_ID, PROFESSIONS, HOME_MIN, HEALER2_MIN_TREES, RESERVE_POSTS, assignHomes } from "../lothlorien_bp/scripts/elf_rules.js";
+import { POST_ID, PROFESSIONS, HOME_MIN, HEALER2_MIN_TREES, RESERVE_POSTS, assignHomes, groupPosts } from "../lothlorien_bp/scripts/elf_rules.js";
 import { siteOf, findHome, planFurnish, hasLayout, frameArea, frameCell } from "../lothlorien_bp/scripts/home_furnish.js"; // the home pavilion and its furnishing (M7 WP4b), the very same pure code as elf_village.js
 export const PLANKS = "lothlorien:mallorn_planks", HEART_PLANKS = "lothlorien:mallorn_heartwood_planks", FENCE = RAIL, LANTERN_ID = "lothlorien:elven_lantern";
 const EMPTY = "minecraft:empty", AIR = "minecraft:air", JIGSAW = "minecraft:jigsaw";
@@ -701,9 +701,9 @@ export function ropeFeet(world, states, rawAt, rect) {
 export function populateElves(res, at, rect) {
   const posts = res.placed.flatMap((p) => entityCells(p, POST_ID)).filter((c) => !rect || inRect(rect, c.cell[0], c.cell[2]))
     .map(({ cell: [x, y, z], kind }) => ({ kind: kind ?? "home", x, y: y + 1, z, site: siteOf(at, { x, y: y + 1, z }) }));
-  const lore = posts.filter((q) => q.kind === "loremaster").sort((a, b) => a.x - b.x || a.z - b.z)[0] ?? null;
-  const assigned = assignHomes(posts.filter((q) => q.kind !== "loremaster"), lore ? [lore.x, lore.y, lore.z] : null);
-  const profs = [...assigned.map((a) => a.p), ...(lore ? ["loremaster"] : [])], fail = [];
+  const groups = groupPosts(posts); // like elf_village.js: one group per Loremaster post (the simulated village has one)
+  const assigned = groups.flatMap(({ lore, others }) => assignHomes(others, lore ? [lore.x, lore.y, lore.z] : null));
+  const profs = [...assigned.map((a) => a.p), ...groups.filter((g) => g.lore).map(() => "loremaster")], fail = [];
   const outerTrees = posts.filter((q) => q.kind === "home").length, healer2 = outerTrees >= HEALER2_MIN_TREES ? 1 : 0;
   for (const p of PROFESSIONS) { const n = profs.filter((q) => q === p).length, want = p === "healer" ? 1 + healer2 : 1; if (n !== want) fail.push(`${p} assigned ${n} times (expected ${want})`); }
   const own = assigned.filter((a) => a.post.kind !== "reserve");

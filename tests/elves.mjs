@@ -271,4 +271,20 @@ test("elf homes record: parse tolerates damage and the list is capped", () => {
   assert.equal(list.length, EL.MAX_HOME_RECORDS); assert.equal(list.at(-1).n, EL.MAX_HOME_RECORDS + 4);
 });
 
+test("elf groupPosts: every post joins its nearest Loremaster post; no Loremaster = one group; ties go to the first by place; reserves stay with their Loremaster", () => {
+  const post = (kind, x, z = 0) => ({ kind, x, y: 70, z });
+  const none = EL.groupPosts([post("home", 5), post("reserve", 9)]);
+  assert.equal(none.length, 1); assert.equal(none[0].lore, null); assert.equal(none[0].others.length, 2, "no Loremaster post: one group with all posts");
+  const a = post("loremaster", 0), b = post("loremaster", 120);
+  const homes = [10, 20, 30, 40, 80, 90, 100, 110].map((x) => post("home", x));
+  const two = EL.groupPosts([b, ...homes.slice().reverse(), a]);
+  assert.equal(two.length, 2); assert.deepEqual(two.map((g) => g.lore.x), [0, 120], "groups ordered by place");
+  assert.deepEqual(two.map((g) => g.others.length), [4, 4]);
+  assert.ok(two[0].others.every((q) => q.x <= 40) && two[1].others.every((q) => q.x >= 80));
+  const tie = EL.groupPosts([a, b, post("home", 60)]);
+  assert.deepEqual(tie.map((g) => g.others.length), [1, 0], "a tie goes to the first Loremaster post by place");
+  const res = EL.groupPosts([a, b, post("reserve", 4, 3), post("reserve", 116, -3)]);
+  assert.deepEqual(res.map((g) => g.others[0].x), [4, 116], "reserves stay with the Loremaster they stand beside");
+});
+
 finish();

@@ -76,6 +76,21 @@ export const MAX_HOME_RECORDS = 64;
 export const parseHomes = (s) => { try { const v = JSON.parse(s); return Array.isArray(v) ? v : []; } catch { return []; } };
 export const addHomes = (list, record) => [...list, record].slice(-MAX_HOME_RECORDS);
 
+// One planner run can cover two neighbouring villages (their markers lie within one discovery rectangle), so a run may find several Loremaster posts.
+// Every other post joins its nearest Loremaster post. -> [{ lore, others }]; lore is null when the run found none. Posts carry x, y, z and kind.
+export function groupPosts(posts) {
+  const byPlace = (a, b) => a.x - b.x || a.z - b.z || a.y - b.y;
+  const lores = posts.filter((q) => q.kind === "loremaster").sort(byPlace), others = posts.filter((q) => q.kind !== "loremaster");
+  if (!lores.length) return [{ lore: null, others }];
+  const groups = lores.map((lore) => ({ lore, others: [] }));
+  for (const q of others) {
+    let best = groups[0], near = Infinity;
+    for (const g of groups) { const d = Math.hypot(q.x - g.lore.x, q.z - g.lore.z); if (d < near) { near = d; best = g; } }
+    best.others.push(q);
+  }
+  return groups;
+}
+
 // ---- Home sites ----
 const AIR_IDS = { has: (n) => n === "minecraft:air" || n === "minecraft:cave_air" || n === "minecraft:void_air" || /^minecraft:light_block_\d+$/.test(n) }; // hidden light blocks (village generator, style guide section 5) count as air
 const PLANKS = "lothlorien:mallorn_planks", HEART_PLANKS = "lothlorien:mallorn_heartwood_planks"; // the heartwood ring round a trunk is deck too; a fence (or anything else) in the three cells above fails the air test
