@@ -104,7 +104,8 @@ test("village pieces: real lamps plus hidden gap-fill keep every walk cell >= 8"
 });
 
 // ---- keep-clear cells and deco() -----------------------------------------------------------------------------------------------
-const nodeB = () => buildTree({ pool: "p", upPool: "u", trunk: "square3", seed: 22022, levels: [{ rows: SHAPES.octagon15, conn: [{ facing: "west", off: 1 }, { facing: "east", off: -1 }, { facing: "south", off: 0 }] }] });
+let nodeBase; // built once (fixed seed, about 0.65 s); each call gets its own shallow copies of the block map and keep-clear set
+const nodeB = () => { const t = (nodeBase ??= buildTree({ pool: "p", upPool: "u", trunk: "square3", seed: 22022, levels: [{ rows: SHAPES.octagon15, conn: [{ facing: "west", off: 1 }, { facing: "east", off: -1 }, { facing: "south", off: 0 }] }] })); return { ...t, blocks: new Map(t.blocks), keep: new Set(t.keep) }; };
 test("keepClearCells: the corridor of every connector (3 wide, 4 deep), the main path to the walk ring, the ring, the trunk is not in it", () => {
   const t = nodeB(), D = FLOOR_H;
   assert.ok(t.keep.size > 50);
@@ -299,7 +300,7 @@ test("rotateStates: facing_direction (2..5 turn N -> E -> S -> W, 0 and 1 stay),
 // ---- WP3: dressing (village_dress.mjs) ------------------------------------------------------------------------------------------------
 import { homeFrame, frameCell, frameInterior, frameDoorLane, framePost, frameLamp, frameArea, rotateFrame, relinkFences } from "../tools/village_dress.mjs";
 test("homeFrame: a pavilion square on open deck against a trunk face; frame helpers: interior, door lane, post, lamp, furnishing area, rotation", () => {
-  const t = buildTree({ pool: "p", upPool: "u", trunk: "square3", seed: 22022, levels: [{ rows: SHAPES.octagon15, conn: [{ facing: "west", off: 1 }, { facing: "east", off: -1 }, { facing: "south", off: 0 }] }] });
+  const t = nodeB();
   const f = t.home;
   assert.ok(f && f.k >= 4, "node_b gets a pavilion");
   const cells = new Set(); for (let u = 0; u < f.k; u++) for (let v = 0; v < f.k; v++) cells.add(frameCell(f, u, v).join(","));

@@ -23,8 +23,9 @@ const VILLAGE = "../lothlorien_bp/structures/lothlorien/village";
 const villageData = loadVillageData();
 const DECK_NAME = "lothlorien:village_deck", DECK_HI_NAME = "lothlorien:village_deck_hi", CROWN_NAME = "lothlorien:village_crown";
 const MALLORN_LOG = "lothlorien:mallorn_log";
-const villagePieces = () => readdirSync(new URL(`${VILLAGE}/`, import.meta.url)).filter((f) => f.endsWith(".mcstructure")).map((f) =>
-  parseMcstructure(readFileSync(new URL(`${VILLAGE}/${f}`, import.meta.url)), f.replace(".mcstructure", "")));
+let piecesMemo; // parsed once (46 ms a pass, 22 callers); tests only read pieces or derive new objects from them
+const villagePieces = () => (piecesMemo ??= readdirSync(new URL(`${VILLAGE}/`, import.meta.url)).filter((f) => f.endsWith(".mcstructure")).map((f) =>
+  parseMcstructure(readFileSync(new URL(`${VILLAGE}/${f}`, import.meta.url)), f.replace(".mcstructure", ""))));
 const isTree = (n) => /^(combo_|central_)/.test(n);
 const shippedStructures = () => ["../lothlorien_bp/structures/lothlorien", VILLAGE].flatMap((d) =>
   readdirSync(new URL(`${d}/`, import.meta.url)).filter((f) => f.endsWith(".mcstructure")).map((f) =>
@@ -63,8 +64,9 @@ const walkOf = (p) => { // a parsed piece as get(x, y, z) for the checker (jigsa
 const towerSpec = () => ({ pool: "p", upPool: "u", trunk: "square3", seed: 88088, lamps: 0, levels: [
   { rows: V_SHAPES.plus15w, conn: [{ facing: "east", off: 1 }, { facing: "north", off: -1 }, { facing: "south", off: 0 }] },
   { rows: V_SHAPES.octagon15, conn: [{ facing: "south", off: 1, hi: true }, { facing: "west", off: -1, hi: true }] }] });
+let towerBase; // built once (fixed seed, about 1.8 s); every case mutates its own shallow copy of the block map
 const towerWalk = (mutate) => {
-  const t = vBuildTree(towerSpec());
+  const base = (towerBase ??= vBuildTree(towerSpec())), t = { ...base, blocks: new Map(base.blocks) };
   if (mutate) mutate(t.blocks);
   const trunk = []; for (let x = -1; x <= 1; x++) for (let z = -1; z <= 1; z++) trunk.push([x, z]);
   const box = { x0: -t.box.hx, x1: t.box.hx, y0: -V_ROOTS, y1: t.topY + 5, z0: -t.box.hz, z1: t.box.hz };
