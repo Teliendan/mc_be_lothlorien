@@ -7,6 +7,7 @@ import { message } from "./messages.js";
 // The firefly catch is script-owned in fireflies.js (it calls noteDeed like the other hooks).
 import { system, world } from "@minecraft/server";
 import { onDeed, noteDeed } from "./deeds.js";
+import { say } from "./entity_util.js";
 import {
   HARMONY_NEEDED, LESSONS, POINTS, REQUESTS, SAPLING_BLOCK, SAPLING_GROWN,
   addSaplingSpot, deliver, deliveryPlan, lessonTask, nextRank, noteDeed as rulesNoteDeed, openChapter, parse, rankOf, requestById, requestTask, saplingOutsideNotice, saplingProgress,
@@ -52,14 +53,6 @@ export function saveRenown(player) {
     // player gone
   }
 }
-
-const say = (player, text) => {
-  try {
-    player.sendMessage(text); // chat: the action bar belongs to the Harmony status (harmony_game.js)
-  } catch {
-    // player left
-  }
-};
 
 // "Progress to <rank>: n / m" or the highest-renown line.
 export function rankProgress(state) {

@@ -4,8 +4,10 @@ import { createEntityRouter } from "../../lothlorien_bp/scripts/entity_events_ru
 import * as deerRules from "../../lothlorien_bp/scripts/deer_rules.js";
 import * as rules from "../../lothlorien_bp/scripts/white_deer_rules.js";
 import * as giftRules from "../../lothlorien_bp/scripts/great_mallorn_rules.js";
+import { entityUtilFake } from "./entity_util_fake.mjs";
 let serial = 0;
 async function load(name, bindings, expose = "") {
+  bindings = { ...entityUtilFake(bindings), ...bindings };
   globalThis.__deerInteractions = bindings;
   const src = readFileSync(new URL(`../../lothlorien_bp/scripts/${name}.js`, import.meta.url), "utf8")
     .replace(/^import \{([^}]+)\} from "[^"]+";/gm, "const {$1} = globalThis.__deerInteractions;");

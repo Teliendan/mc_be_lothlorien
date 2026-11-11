@@ -13,6 +13,7 @@ import { message } from "./messages.js";
 import { system, world } from "@minecraft/server";
 import { ActionFormData } from "@minecraft/server-ui";
 import { ELF_ID, PROFESSIONS } from "./elf_rules.js";
+import { say } from "./entity_util.js";
 import { nativeElfUse } from "./elf_native_use.js";
 import { greet, speak } from "./voice.js";
 import { bandOf } from "./harmony.js";
@@ -92,13 +93,6 @@ function whereLine(profession, place) {
 }
 
 const wait = (ticks) => new Promise((resolve) => system.runTimeout(resolve, ticks));
-const say = (player, key) => {
-  try {
-    player.sendMessage(t(key));
-  } catch {
-    // player left
-  }
-};
 
 // The opening of one dialog session (Loremaster or a trader's delivery form); never on Back, retries or later screens.
 function greetOnce(player, elf) {
@@ -129,12 +123,12 @@ async function choose(ctx, body, buttons) {
   }
   const res = await show(ctx.player, form);
   if (res === BUSY) {
-    say(ctx.player, "lore.busy");
+    say(ctx.player, t("lore.busy"));
     return undefined;
   }
   if (!res) return undefined;
   if (!ctx.ok()) { // the world went on while the form was open: apply nothing if it changed
-    say(ctx.player, "lore.too_far");
+    say(ctx.player, t("lore.too_far"));
     return undefined;
   }
   return actions[res.selection]?.next;
@@ -412,7 +406,7 @@ async function dialog(ctx) {
   let next = initialScreen(ctx);
   for (let guard = 0; next && guard < MAX_SCREENS; guard++) {
     if (!ctx.ok()) {
-      say(ctx.player, "lore.too_far");
+      say(ctx.player, t("lore.too_far"));
       return;
     }
     next = await SCREENS[next[0]](ctx, next[1]);

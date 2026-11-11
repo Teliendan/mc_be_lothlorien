@@ -131,6 +131,9 @@
     "archery": [
       "archery.mjs"
     ],
+    "entity-util": [
+      "entity_util.mjs"
+    ],
     "worn-gifts": [
       "worn_gifts.mjs"
     ],
@@ -235,6 +238,7 @@
     ]
   },
   "support_files": {
+    "fixtures/entity_util_fake.mjs": "Stand-ins for entity_util.js and ids.js in the data-URL harnesses; no tests run on import.",
     "fixtures/bottle_runtime.mjs": "Shared production bottle/rope API fixture; no tests run on import.",
     "fixtures/wildlife_runtime.mjs": "Shared production wildlife API fixture; no test bodies or worlds run on import.",
     "test_helpers.mjs": "Shared assertions and JSON readers; never runs tests on import."

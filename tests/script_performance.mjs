@@ -7,6 +7,7 @@ import * as guideRules from "../lothlorien_bp/scripts/white_deer_rules.js";
 import * as giftRules from "../lothlorien_bp/scripts/great_mallorn_rules.js";
 import * as squirrelRules from "../lothlorien_bp/scripts/squirrel_rules.js";
 import * as ropeRules from "../lothlorien_bp/scripts/elven_rope_rules.js";
+import { entityUtilFake } from "./fixtures/entity_util_fake.mjs";
 class TestItem {
   constructor(typeId = guideRules.ACORN_ID, amount = 1) { Object.assign(this, { typeId, amount }); }
   clone() { return new TestItem(this.typeId, this.amount); }
@@ -85,6 +86,7 @@ function engine() {
 
 let imports = 0;
 async function load(name, bindings) {
+  bindings = { ...entityUtilFake(bindings), ...bindings };
   globalThis.__scriptPerformance = bindings;
   const source = readFileSync(new URL(`../lothlorien_bp/scripts/${name}.js`, import.meta.url), "utf8")
     .replace(/^import \{([^}]+)\} from "[^"]+";/gm, "const {$1} = globalThis.__scriptPerformance;");
@@ -151,7 +153,7 @@ const common = h => ({ system: h.system, world: h.world, onEntity: (h.onEntity ?
   mod.addBeaconSource(() => [external.id]); h.fire("entityLoad", { entity: external });
   const lateStray = h.entity(guideRules.BEACON_ID); h.fire("entityLoad", { entity: lateStray }); h.advance(1);
   assert.ok(external.isValid); assert.equal(lateStray.isValid, false);
-  h.world.players = []; h.advance(5);
+  h.world.players = []; player.isValid = false; h.advance(5); // a player who left: not listed, and world.getEntity no longer finds a valid one
   assert.equal(h.intervals(5), 0); assert.equal(owned.isValid, false);
   assert.equal(mod.isGuiding(deer.id), false);
 }
@@ -169,8 +171,8 @@ const common = h => ({ system: h.system, world: h.world, onEntity: (h.onEntity ?
   offer(first); offer(second); assert.equal(h.intervals(10), 1); assert.equal(sources[0]().length, 2);
   h.entities.delete(first.id); h.advance(10);
   assert.equal(mod.isErrand(first.id), false); assert.equal(h.intervals(10), 1, "other session survives");
-  h.world.players = []; h.advance(10); assert.equal(h.intervals(10), 0);
-  h.world.players = [player]; offer(second); assert.equal(h.intervals(10), 1, "later offer restarts timer");
+  h.world.players = []; player.isValid = false; h.advance(10); assert.equal(h.intervals(10), 0);
+  h.world.players = [player]; player.isValid = true; offer(second); assert.equal(h.intervals(10), 1, "later offer restarts timer");
   second.setProperty("lothlorien:alarmed", true); h.advance(10); assert.equal(h.intervals(10), 0);
 }
 

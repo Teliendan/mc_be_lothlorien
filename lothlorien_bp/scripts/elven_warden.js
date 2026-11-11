@@ -15,6 +15,7 @@
 //  - a lead released the elf: entities/elf.json set the engine home to where it stands; script only records it.
 import { EntityInitializationCause, EquipmentSlot, ItemStack, system, world } from "@minecraft/server";
 import { onEntity } from "./entity_events.js";
+import { playerById } from "./entity_util.js";
 import { ANGRY_EVENT, BOW_ID, DECK_BLOCKS, WARDEN_ID, isFriendlyFire, isNewFight, keepNaturalSpawn, PLAYER_ID, THANKS_RADIUS, isWardenQuarry, WARDEN_DAMAGE_CAUSES } from "./elven_warden_rules.js";
 import { HATED_TAG, recordElfFight, recordWardenFight } from "./harmony_game.js";
 import { ELF_ID, FOE_MS, FOE_TAG, HOME_OF_ELF, MOVED_PROPERTY, REHOME_EVENT, homeCell } from "./elf_rules.js";
@@ -75,7 +76,7 @@ function fighting(player) {
 
 function dropFoeTag(id) {
   try {
-    world.getPlayers().find((p) => p.id === id)?.removeTag(FOE_TAG);
+    playerById(id)?.removeTag(FOE_TAG);
   } catch {
     // player gone
   }

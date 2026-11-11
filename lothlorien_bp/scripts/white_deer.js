@@ -14,6 +14,7 @@ import { EntityInitializationCause, EquipmentSlot, GameMode, ItemStack, system, 
 import { onEntity } from "./entity_events.js";
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
+import { playerById, say } from "./entity_util.js";
 import { eatHeldFood, healAnimal, isInjured } from "./animal_food.js";
 import {
   ACORN_ID, BEACON_ID, GUIDE_TICKS, WHITE_DEER_ID, canBeGuided, hopStatus, horizontal, keepNaturalSpawn,
@@ -48,14 +49,6 @@ const beaconSources = [];
 export const addBeaconSource = (fn) => beaconSources.push(fn);
 
 const isLeashed = (deer) => deer.getComponent("minecraft:leashable")?.isLeashed ?? false;
-
-const say = (player, text) => {
-  try {
-    player.sendMessage(text); // chat: the action bar belongs to the Harmony status (harmony_game.js)
-  } catch {
-    // player left
-  }
-};
 
 // Feet height at column (x, z) found from the top: the first ground under air, plants, leaves and logs (a crown over
 // the forest floor is not ground), with two blocks of headroom; undefined for water, an unloaded chunk or no ground.
@@ -337,7 +330,7 @@ function walk(s, deer, beacon) {
 
 function tickSession(deerId, s) {
   const deer = world.getEntity(deerId);
-  const player = world.getPlayers().find((p) => p.id === s.playerId);
+  const player = playerById(s.playerId);
   if (!deer?.isValid || !(deer.getComponent("minecraft:health")?.currentValue > 0) || !activePlayer(player) || deer.dimension.id !== player.dimension.id ||
       deer.dimension.id !== s.dimensionId) return end(deerId, deer, player, undefined);
   const playerCalm = canBeGuided(bandOf(harmonyOf(player).harmony));

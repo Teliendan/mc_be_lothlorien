@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import * as foods from "../lothlorien_bp/scripts/animal_food_rules.js";
 import { createEntityRouter } from "../lothlorien_bp/scripts/entity_events_rules.js";
+import { entityUtilFake } from "./fixtures/entity_util_fake.mjs";
 import * as worldUtil from "../lothlorien_bp/scripts/world_util.js";
 import * as guideRules from "../lothlorien_bp/scripts/white_deer_rules.js";
 import * as giftRules from "../lothlorien_bp/scripts/great_mallorn_rules.js";
@@ -23,7 +24,7 @@ class TestItem {
   setLore(lines) { this.lore = structuredClone(lines); }
 }
 async function load(name, bindings) {
-  bindings = { ...worldUtil, ...bindings };
+  bindings = { ...worldUtil, ...entityUtilFake(bindings), ...bindings };
   if (name === "fireflies" && !bindings.captureUse) bindings = { ...bindings, ...await load("deferred_use", bindings) };
   if (name === "fireflies") bindings = { ...bindings, ...await load("firefly_bottle",{...bindings,message:localizedMessage}) };
   globalThis.__animalHome = bindings;

@@ -3,6 +3,7 @@
 import { system, world } from "@minecraft/server";
 import { ELF_ID } from "./elf_rules.js";
 import { nativeElfUse } from "./elf_native_use.js";
+import { say } from "./entity_util.js";
 import { greet } from "./voice.js";
 import { message } from "./messages.js";
 import {
@@ -35,9 +36,7 @@ function nearby(player, elf) {
 }
 
 const keyFor = (player) => tableKey(deps.bandOf(player), deps.rankOf(player));
-const sayKey = (player, key) => {
-  try { if (player.isValid) player.sendMessage(message(key)); } catch { /* player left */ }
-};
+const sayKey = (player, key) => { if (player.isValid) say(player, message(key)); };
 
 function applyKey(elf, key) {
   try {

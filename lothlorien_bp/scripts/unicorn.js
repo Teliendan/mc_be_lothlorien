@@ -7,19 +7,12 @@ import { EquipmentSlot, GameMode, system, world } from "@minecraft/server";
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { healAnimal } from "./animal_food.js";
+import { playerById, say } from "./entity_util.js";
 import { setEventFor } from "./deer_rules.js";
 import { ELANOR_ID, UNICORN_ID, mayRide, nextTrust, offerRefusal } from "./unicorn_rules.js";
 
 const OWNER = "lothlorien:owner"; // dynamic property on the unicorn: id of the player it is bonded to
 const OFFER_READY = "lothlorien:offer_ready"; // entity property: false during the pause the native group lothlorien:offer_wait runs
-
-const say = (player, text) => {
-  try {
-    player.sendMessage(text); // chat: the action bar belongs to the Harmony status (harmony_game.js)
-  } catch {
-    // player left
-  }
-};
 
 function consumeElanor(player) {
   if (player.getGameMode() === GameMode.Creative) return;
@@ -89,7 +82,7 @@ export function startUnicorns() {
   // Like a tamed wolf or horse: the bonded owner is told when their unicorn dies.
   world.afterEvents.entityDie.subscribe(({ deadEntity }) => {
     try {
-      const owner = world.getPlayers().find((p) => p.id === deadEntity.getDynamicProperty(OWNER));
+      const owner = playerById(deadEntity.getDynamicProperty(OWNER));
       if (owner) say(owner, message("unicorn.died"));
     } catch {
       // owner or unicorn unreadable

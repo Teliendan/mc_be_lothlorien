@@ -12,6 +12,7 @@ import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { eatHeldFood, healAnimal, isInjured } from "./animal_food.js";
 import { noteDeed } from "./deeds.js";
+import { playerById, say } from "./entity_util.js";
 import { addBeaconSource, consumeAcorn, stand } from "./white_deer.js";
 import { ACORN_ID, BEACON_ID } from "./white_deer_rules.js";
 import {
@@ -28,14 +29,6 @@ function syncSessionTimer() {
 }
 
 export const isErrand = (squirrelId) => sessions.has(squirrelId);
-
-const say = (player, text) => {
-  try {
-    player.sendMessage(text); // chat: the action bar belongs to the Harmony status (harmony_game.js)
-  } catch {
-    // player left
-  }
-};
 
 function removeBeacon(beaconId) {
   try {
@@ -122,7 +115,7 @@ function giveGift(squirrelId, squirrel, player) {
 
 function tickSession(squirrelId, s) {
   const squirrel = world.getEntity(squirrelId);
-  const player = world.getPlayers().find((p) => p.id === s.playerId);
+  const player = playerById(s.playerId);
   if (!squirrel?.isValid || !player?.isValid) return end(squirrelId, squirrel, undefined, undefined);
   if (squirrel.getComponent("minecraft:leashable")?.isLeashed) return end(squirrelId, squirrel);
   if (squirrel.getProperty("lothlorien:alarmed")) return end(squirrelId, squirrel, player, message("squirrel.alarmed"));
@@ -159,7 +152,7 @@ function tickSession(squirrelId, s) {
 function tickSessions() {
   for (const [squirrelId, s] of sessions) {
     if (system.currentTick - s.born > MAX_TICKS) {
-      end(squirrelId, s.actor, world.getPlayers().find((p) => p.id === s.playerId), message("squirrel.abort"));
+      end(squirrelId, s.actor, playerById(s.playerId), message("squirrel.abort"));
       continue;
     }
     try {
