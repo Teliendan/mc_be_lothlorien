@@ -46,6 +46,5 @@ their existing behavior. No new world is needed for these definition changes.
 or warnings); the four-plant regeneration post-pass is idempotent. The wiki
 export/contract preview passes for a temporary snapshot containing this change
 and current wiki records (83 features, 54 recipes); all 14 exporter tests pass.
-Full current-source preview export also passes after the source review recorded
-in WIKI_EXPORT.md.
+Full current-source preview export also passes after the source review.
 Rendering, snow removal and snowfall still need the engine check above.

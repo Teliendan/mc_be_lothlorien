@@ -1,16 +1,5 @@
 # Lothlorien feature tests
 
-2026-10-18; target Bedrock 1.26.52 / Script API 2.8.0. Test-only reorganization;
-no pack behavior changes. The former combined runner's 239 test bodies now live
-in 24 feature files, alongside the pre-existing standalone suites. Assertions
-are preserved; the full runner delegates to 56 independent child processes.
-The layout guard checks registration and rejects imports of other test suites.
-Validation: all 56 runners passed independently, and a source comparison proved
-all 239 extracted test expressions survived verbatim, exactly once. Named
-selection through `mods verify` also passed for equipment, crops and suite layout;
-the shared tool's 22 selection/isolation/deployment-routing tests passed.
-Shared tooling and authoring guidance are committed in workspace commit
-`a652673` (`Add named feature suites and shared test-authoring workflow`).
 
 The source of truth is [tests/suites.json](../tests/suites.json). List names with
 `mods suites lothlorien`. Choose the smallest applicable name; repeat `--suite`

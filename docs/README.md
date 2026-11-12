@@ -12,8 +12,9 @@ Start with `TODO.md` for what is left before release.
 | `NOT_IMPLEMENTED.md` | features left out and why |
 | `parity/` | vanilla-parity decisions: `BLOCKS_ITEMS.md`, `CREATURES.md` |
 | `TESTER_BRIEF.md` | private tester brief for 0.8.0 |
-| `TESTING.md`, `VERIFIER_WARNINGS.md`, `WIKI_EXPORT.md`, `LOCALIZATION.md` | test layout, documented verifier exceptions, wiki export status, translation notes |
-| `media/`, `design/banner.png` | logo, promo banners, the silver banner |
+| `TESTING.md`, `VERIFIER_WARNINGS.md`, `LOCALIZATION.md` | test layout, documented verifier exceptions, translation notes (wiki export: workspace `docs/wiki.md`) |
+| `SKINS.md` | the six player skins (skin pack `lothlorien_skins/`) |
+| `media/`, `design/banner.png`, `design/banners.txt` | logo, promo banners, the silver banner and its pattern string |
 
 ## World generation
 
@@ -49,7 +50,7 @@ Start with `TODO.md` for what is left before release.
 ## Audio and voice
 
 `SOUNDSCAPE_PLAN.md` (music, shrine, memorial and forest sounds; the name is kept because scripts point to it),
-`AMBIENT_SOUNDS.md`, `BIRDSONG.md`, `SOUND_RESEARCH.md`, `SINDARIN_VOICE.md`, `SINDARIN_VOICE_EVENTS.md`,
+`AMBIENT_SOUNDS.md` (with the animal-call research decisions), `BIRDSONG.md`, `SINDARIN_VOICE.md`, `SINDARIN_VOICE_EVENTS.md`,
 `SINDARIN_VOICE_PHRASES.md`.
 
 Shared Bedrock knowledge is in the workspace skills (`.claude/skills/`); this folder only holds what is specific to this mod.

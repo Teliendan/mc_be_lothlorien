@@ -60,8 +60,8 @@ Without `--check` the tool rebuilds the ambient Ogg assets; `--animal deer` or
 compares decoded audio, since Ogg serial numbers can change without changing
 sound. All masters/assets are finite, mono and unclipped; the check passed.
 Raw candidates, rejected variants, audition pages and research scratch are
-removed after acceptance. Research rationale remains in `SOUND_RESEARCH.md`
-and the shared animal-call skill reference.
+removed after acceptance. Research rationale: see "Decisions and research" below and the shared
+animal-call skill reference.
 
 Validation on 2026-10-16: `mods verify lothlorien` passed localization and the
 full regression suite, 0 errors, 0 warnings and 15 documented exceptions.
@@ -77,3 +77,24 @@ these sound changes. Listen near ordinary deer, white harts and swans, then
 walk away to check distance fade. Check a herd for repetition and loudness,
 plus unchanged baby/hurt/death/movement sounds. Offline checks do not establish
 native playback correctness. Sindarin remains the next, separate voice task.
+
+## Decisions and research
+
+(Merged from the former `SOUND_RESEARCH.md`; the full file is at `git show f11198a:docs/SOUND_RESEARCH.md`.)
+
+- 2026-10-16, owner: seeds **122 and 123 are kept as random variants** for deer and swan; either or both may be used. The
+  first batch's Deer 2 was only provisional; earlier samples and unselected seed 121 are retired. Quantitative screening
+  informed the generation brief; owner listening decided acceptance (including the narrower Deer 122 take). No species
+  accuracy or in-game acceptance is implied.
+- Reference rationale: calm deer ambience uses contact-call structure with natural harmonics; a distinct stag rutting roar is
+  reserved for a deliberate later feature. The swan's orange bill and black knob make the mute swan the visual analogue: short
+  social greetings, keeping threat rattles and cygnet whistles contextual.
+  Sources: [Volodin et al. 2018](https://link.springer.com/article/10.1186/s13104-018-3833-4) (hind-calf calls, CC BY 4.0
+  recording, research use only; population means are reference points, not limits);
+  [Cornell Lab mute-swan recordings](https://www.allaboutbirds.org/guide/Mute_Swan/sounds) (no Cornell audio shipped);
+  [Johnsgard 1971](https://tidsskrift.dk/Wildfowl/article/view/155417) (pages 51-52, Figure 2b: male threat, not a calm-contact
+  target). Reusable facts: workspace `.claude/skills/bedrock-mobs/references/animal-call-design.md`.
+- Later sound ideas (suggestions, nothing implemented): soft Mallorn leaf rustle or canopy breeze, used sparingly with
+  attention to overlap and performance; sparse squirrel chatter (rabbit placeholders remain); dedicated fawn and cygnet
+  voices. The unicorn's horse sounds stay low priority. Songbirds: `BIRDSONG.md`; Sindarin elf lines (owner-accepted
+  2026-10-25, wired in `96a5386`): `SINDARIN_VOICE.md`.

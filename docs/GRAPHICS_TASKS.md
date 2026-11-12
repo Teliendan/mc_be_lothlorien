@@ -4,8 +4,7 @@ Status record of the art as shipped. Every texture and model is generated: edit 
 PNG/JSON, then re-run it (it overwrites its files). Textures live in `lothlorien_rp/textures/`. General rules: PNG, 16x16 unless
 stated, block textures tile on all four sides, no baked lighting, colours baked in (no biome tint). Review tools:
 `.claude/skills/bedrock-art/scripts/` (`icon_sheet.py`, `block_sheet.py`, `bb_render.py`). Owner verdict 2026-10-04: all
-graphics then existing accepted ("All graphics is good now"); later art was accepted individually, as dated below. Design
-intent: `design/lothlorien.md`. Wood-set taste, gold budget and traps: `MALLORN_WOOD_LESSONS.md`.
+graphics then existing accepted ("All graphics is good now"); later art was accepted individually, as dated below. Wood-set taste, gold budget and traps: `MALLORN_WOOD_LESSONS.md`.
 
 ## Pack icon
 
@@ -175,16 +174,7 @@ and remove runtime diagnostics`.
   `make_galadhrim_archery.py`, `make_phial.py`. Engine fit and animation checks remain open: `GIFTS.md`.
 - Village, elf and warden art: `make_elves.py`, `make_elven_warden.py`, `design/village_style.md`, `mobs/elves.md`.
 
-## Known issue: cutout flicker (Mallorn leaves)
+## Cutout flicker (Mallorn leaves): solved
 
-**Solved 2026-11-10** by three-direction culling (owner accepted in game): `TECHNICAL_NOTES.md` "Mallorn leaf flicker". The text below is history.
-
-Seen in game (2026-09-29): custom cutout blocks shimmered at high frequency while the camera moved, in both Fancy and Vibrant
-Visuals. The saplings and Great Mallorn sprout are **solved** (their model had degenerate faces, see `bedrock-block-families`);
-flowers and corn were not reported after the redraw (the crop's geometry change is unconfirmed). **The Mallorn leaves and golden
-leaves still flicker: unsolved.** This is z-fighting between the coplanar faces of touching leaf blocks; the known fixes (an
-inset cube was tried 2026-10-02) look worse, so the owner accepted it as a known issue (2026-10-24, `TODO.md` section 4).
-Tests already done and the parameter comparison with vanilla leaves: `TECHNICAL_NOTES.md` "Flicker" and "Mallorn leaves vs vanilla
-leaves". Checklist if it is ever revisited: (1) clean hard silhouettes, no isolated single opaque pixels or 1 px gaps, transparent
-texels carrying the neighbour colour; (2) `terrain_texture.json` `padding 8` and `num_mip_levels 4` (try 0-1 mips); (3)
-`alpha_test` against `alpha_test_single_sided`, and a vanilla leaf texture swapped in to isolate art from block definition.
+**Solved 2026-11-10** by three-direction culling (owner accepted in game): `TECHNICAL_NOTES.md` "Mallorn leaf flicker". The earlier
+notes (z-fighting analysis, the 2026-10-02 inset-cube attempt, the 2026-10-24 "known issue" decision) are in git history.
