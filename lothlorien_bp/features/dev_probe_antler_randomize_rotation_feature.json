@@ -2,22 +2,22 @@
   "format_version": "1.21.40",
   "minecraft:single_block_feature": {
     "description": {
-      "identifier": "lothlorien:mallorn_blossom_a1_south_feature"
+      "identifier": "lothlorien:dev_probe_antler_randomize_rotation_feature"
     },
     "places_block": {
-      "name": "lothlorien:mallorn_blossom",
+      "name": "lothlorien:deer_antler",
       "states": {
-        "lothlorien:amount": 1,
-        "minecraft:cardinal_direction": "south",
-        "lothlorien:on_grass": true
+        "minecraft:block_face": "up"
       }
     },
+    "randomize_rotation": true,
     "enforce_survivability_rules": true,
     "enforce_placement_rules": true,
     "may_replace": [
       "minecraft:air"
     ],
     "may_attach_to": {
+      "auto_rotate": false,
       "min_sides_must_attach": 1,
       "bottom": [
         {
@@ -42,7 +42,7 @@
           "name": "minecraft:mud"
         },
         {
-          "name": "minecraft:farmland"
+          "name": "minecraft:stone"
         }
       ]
     }

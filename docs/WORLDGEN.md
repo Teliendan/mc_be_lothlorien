@@ -64,7 +64,7 @@ border; a scripted post-generation pass keyed to `estimateDepth` is the fallback
 
 Natural trees are native, no script: `feature_rules/mallorn_trees_feature_rules.json` (surface pass, tag `lothlorien`, 5 tries per chunk) places
 `select_mallorn_tree_with_litter_feature`: weighted 25 simple, 60 fancy (fancy_trunk with branches), 15 mega (2x2 trunk), vanilla `minecraft:tree_feature` shapes with our
-blocks, then a leaf-carpet scatter (90 tries, gaussian +-5), a blossom scatter and nectar blooms (see Nectar). Worldgen leaves have `persistent` false and decay.
+blocks, then a leaf-carpet scatter (90 tries, gaussian +-5), a blossom scatter and nectar blooms (see Nectar); each cover feature is one weighted `places_block` list (amounts 4:3:2:1 and 6:3:1:1 in four directions, since 2026-11-12; in-game check pending). Worldgen leaves have `persistent` false and decay.
 Test: `/place feature lothlorien:select_mallorn_tree_feature ~ ~ ~`. Feature rules cannot call script, so generator archetypes and platform branches exist only for
 saplings; large builds are structures (see "Giant Mallorn builds").
 

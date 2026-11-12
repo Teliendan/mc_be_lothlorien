@@ -76,3 +76,10 @@ prints the depth estimate and its cost; `harmony [value]` shows or sets Harmony;
 growbig, treestats, treecount, critters, deer, survey, speed, tps, village, elf, trade and the landscape probe) was removed from the pack (cleanups
 2026-09-30 and 2026-10-29); copies of the useful ones are in `tools/dev_scripts/` (see its README), the last commit with them in the pack for the first
 cleanup is `dc1182e`.
+
+## Worldgen list features: in-game check (2026-11-12)
+
+The covers and antlers place from one weighted `places_block` list each (LC-10). Check in a creative world on flat grass (existing world: new chunks are not needed for `/place`):
+`/place feature lothlorien:mallorn_leaf_carpet_scatter_feature ~ ~ ~`, the same with `lothlorien:mallorn_blossom_scatter_feature`, and `/place feature lothlorien:deer_antler_feature ~ ~ ~` about ten times; the Content Log must show no error naming the three features.
+Dev probe, not used by any feature rule and not part of worldgen: `/place feature lothlorien:dev_probe_antler_randomize_rotation_feature ~ ~ ~` places a floor antler with `randomize_rotation: true` and no cardinal state; look whether the facings vary. Delete the file after the check (or keep it as a record) and note the result in `bedrock-worldgen` reference 06.
+

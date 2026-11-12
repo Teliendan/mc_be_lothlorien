@@ -1,6 +1,6 @@
 // Execute production handlers in bounded fake worlds, without worldgen simulation.
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import * as dewRules from '../lothlorien_bp/scripts/dew_rules.js';
 import * as worldUtil from '../lothlorien_bp/scripts/world_util.js';
 import { MALLORN_LEAVES } from '../lothlorien_bp/scripts/nectar_rules.js';
@@ -173,4 +173,29 @@ for (const id of [LITTER,BLOSSOM]) {
 }
 assert.deepEqual(read('recipes/yellow_dye_from_mallorn_blossom.json')['minecraft:recipe_shaped'].result,
   { item: 'minecraft:yellow_dye', count: 1 });
+// Worldgen: one weighted places_block list per cover (LC-10); equal odds to the old selector + per-state features.
+{
+  const SOIL = ['minecraft:grass_block', 'minecraft:dirt', 'minecraft:coarse_dirt', 'minecraft:podzol',
+    'minecraft:dirt_with_roots', 'minecraft:moss_block', 'minecraft:mud', 'minecraft:farmland'];
+  for (const [name, weights, scatter] of [['mallorn_leaf_carpet', [4, 3, 2, 1], 'mallorn_leaf_carpet_scatter_feature'],
+    ['mallorn_blossom', [6, 3, 1, 1], 'mallorn_blossom_scatter_feature']]) {
+    const f = read(`features/${name}_feature.json`)['minecraft:single_block_feature'];
+    assert.equal(f.description.identifier, `lothlorien:${name}_feature`);
+    assert.ok(Array.isArray(f.places_block) && f.places_block.length === 16, `${name}: 16 weighted entries`);
+    const seen = new Set();
+    for (const e of f.places_block) {
+      assert.equal(e.block.name, `lothlorien:${name}`);
+      assert.equal(e.block.states['lothlorien:on_grass'], true, 'worldgen places the grass top');
+      assert.equal(e.weight, weights[e.block.states[AMOUNT] - 1], `${name} weight of amount ${e.block.states[AMOUNT]}`);
+      seen.add(`${e.block.states[AMOUNT]}/${e.block.states['minecraft:cardinal_direction']}`);
+    }
+    assert.equal(seen.size, 16, 'every amount in every direction once');
+    assert.deepEqual([...new Set(f.places_block.map(e => e.block.states['minecraft:cardinal_direction']))].sort(), ['east', 'north', 'south', 'west']);
+    assert.deepEqual(f.may_attach_to.bottom.map(b => b.name), SOIL);
+    assert.deepEqual(f.may_replace, ['minecraft:air']);
+    assert.equal(read(`features/${scatter}.json`)['minecraft:scatter_feature'].places_feature, `lothlorien:${name}_feature`);
+  }
+  assert.deepEqual(readdirSync(new URL('../lothlorien_bp/features/', import.meta.url)).filter(n => /_a\d_/.test(n)), [],
+    'no per-state cover feature files');
+}
 console.log(`ok   cover interactions: ${tests} production scenarios, support families, item data, counts and recipe`);
