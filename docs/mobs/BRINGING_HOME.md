@@ -33,7 +33,7 @@ healthy unnamed captures are plain, captured name/current health use localized r
 rename the animal. See [parity/CREATURES.md](../parity/CREATURES.md).
 
 Grain means harvested wheat / Western Corn grain, not seeds. Swan luring follows
-existing calm/Friend wariness; alarms and negative Harmony still take precedence.
+the native Guest/Friend lure exemption (each player's own Harmony decides); alarms and negative Harmony still take precedence.
 Flying lures work vertically. Swans use their existing surface-water navigation.
 Cygnets use the existing swan model scaled to 45%, with no separate art pass.
 Persistence prevents ordinary despawn; it does not stop wandering or damage.

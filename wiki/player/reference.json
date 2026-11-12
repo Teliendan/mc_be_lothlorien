@@ -35,7 +35,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+        "sha256": "cc955521f9611bc5637fe1db3c62cb901d81d5637097a374bb8a96427c86eab2"
       },
       {
         "path": "lothlorien_bp/entities/butterfly.json",
@@ -51,7 +51,7 @@
       "sections": [
         {
           "title": "Approach",
-          "text": "Deer are more common deeper inside the forest. Sneak to approach without alarming the herd. Negative Harmony and nearby danger can override a food lure."
+          "text": "Deer are more common deeper inside the forest. Sneak to approach without alarming the herd. Each player's own Harmony decides how far deer keep from that player; negative Harmony and nearby danger can override a food lure."
         }
       ],
       "spoilers": [],
@@ -62,7 +62,7 @@
         },
         {
           "label": "Feeding",
-          "text": "Grain breeds adults and speeds fawn growth; it does not heal. Feeding for breeding or growth makes deer familiar with players and prevents ordinary despawning. Alarms and negative Harmony still make them flee."
+          "text": "Grain breeds adults and speeds fawn growth; it does not heal. Feeding for breeding or growth makes deer familiar with players and prevents ordinary despawning. Alarms and negative Harmony (each player's own Harmony decides) still make them flee."
         },
         {
           "label": "Breeding",
@@ -83,7 +83,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+        "sha256": "cc955521f9611bc5637fe1db3c62cb901d81d5637097a374bb8a96427c86eab2"
       },
       {
         "path": "lothlorien_bp/entities/deer.json",
@@ -143,7 +143,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+        "sha256": "cc955521f9611bc5637fe1db3c62cb901d81d5637097a374bb8a96427c86eab2"
       },
       {
         "path": "lothlorien_bp/entities/elf.json",
@@ -199,7 +199,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+        "sha256": "cc955521f9611bc5637fe1db3c62cb901d81d5637097a374bb8a96427c86eab2"
       },
       {
         "path": "lothlorien_bp/entities/elven_warden.json",
@@ -253,7 +253,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+        "sha256": "cc955521f9611bc5637fe1db3c62cb901d81d5637097a374bb8a96427c86eab2"
       },
       {
         "path": "lothlorien_bp/entities/firefly.json",
@@ -301,7 +301,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+        "sha256": "cc955521f9611bc5637fe1db3c62cb901d81d5637097a374bb8a96427c86eab2"
       },
       {
         "path": "lothlorien_bp/entities/songbird.json",
@@ -317,7 +317,7 @@
       "sections": [
         {
           "title": "Approach",
-          "text": "Negative Harmony and nearby alarms can make a squirrel flee even when you hold an acorn."
+          "text": "Each player's own Harmony decides: negative Harmony and nearby alarms can make a squirrel flee even when you hold an acorn."
         }
       ],
       "spoilers": [],
@@ -347,7 +347,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+        "sha256": "cc955521f9611bc5637fe1db3c62cb901d81d5637097a374bb8a96427c86eab2"
       },
       {
         "path": "lothlorien_bp/entities/squirrel.json",
@@ -371,7 +371,7 @@
       "sections": [
         {
           "title": "Encounter",
-          "text": "Look on Lothlorien waters and nearby rivers. Swans float at the surface and walk on land. Alarms and negative Harmony take precedence over a food lure."
+          "text": "Look on Lothlorien waters and nearby rivers. Swans float at the surface and walk on land. Each player's own Harmony decides how far swans keep from that player; alarms and negative Harmony take precedence over a food lure."
         }
       ],
       "spoilers": [],
@@ -403,7 +403,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+        "sha256": "cc955521f9611bc5637fe1db3c62cb901d81d5637097a374bb8a96427c86eab2"
       },
       {
         "path": "lothlorien_bp/entities/swan.json",
@@ -427,7 +427,7 @@
       "sections": [
         {
           "title": "Approach",
-          "text": "Wild unicorns are wary of strangers. Give them space and avoid frightening nearby animals."
+          "text": "Wild unicorns are wary of strangers; each player's own Harmony decides how far one keeps from that player. Give them space and avoid frightening nearby animals."
         }
       ],
       "spoilers": [
@@ -468,7 +468,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+        "sha256": "cc955521f9611bc5637fe1db3c62cb901d81d5637097a374bb8a96427c86eab2"
       },
       {
         "path": "lothlorien_bp/entities/unicorn.json",
@@ -492,7 +492,7 @@
       "sections": [
         {
           "title": "Approach",
-          "text": "A white deer shares the ordinary deer's Harmony-based wariness. Approach gently and avoid alarming it."
+          "text": "A white deer shares the ordinary deer's Harmony-based wariness: each player's own Harmony decides how far it keeps from that player. Approach gently and avoid alarming it."
         }
       ],
       "spoilers": [],
@@ -522,7 +522,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "cb6a7d8c6e87d218aac72e517b43728597d5e0258f33eebf4dca02f35d9000b4"
+        "sha256": "cc955521f9611bc5637fe1db3c62cb901d81d5637097a374bb8a96427c86eab2"
       },
       {
         "path": "lothlorien_bp/entities/white_deer.json",

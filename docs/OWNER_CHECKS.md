@@ -17,7 +17,7 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
 | Mallorn boat waterline | 4 px model lift, seats with it: floor dry through the whole wave bob, "It works now" (2026-11-08) |
 | Native arm swing | litter/blossoms replaceable, stacking through native placement (`ground_cover.js` `cover_stack`, grass kept under a replacing block); firefly catch in the after event of the native interaction; both swing in first person, "It works" (2026-11-08) |
 | Star canopy and elven rope recipe unlock | stays on Bottle of Morning Dew; the eighth drop also runs `recipe give` (`dew.js`); works (2026-10-26) |
-| Unicorn lure | accepted 2026-10-26: vanilla `tempt` on Elanor in a `lothlorien:lure` group that only the wild Friend state adds; the ten-second offer wait is the native group `lothlorien:offer_wait` (`unicorn.js` triggers `offer_taken`; the timer's `offer_ready` event restores the lure; LM-05); a Friend is never fled from; wariness counts Creative players. By owner request the Friend state keeps 3 blocks from a Friend without Elanor (accepted 2026-10-27). Details: `mobs/unicorn.md` |
+| Unicorn lure | accepted 2026-10-26, **back to recheck since LM-01 (2026-11-12)**: vanilla `tempt` on Elanor in a `lothlorien:lure` group, now added at spawn (priority 4 below the flight), exemption `has_tag lothlorien_friend` + Elanor; the ten-second offer wait is the native group `lothlorien:offer_wait` (`unicorn.js` triggers `offer_taken`; the timer's `offer_ready` event restores the lure; LM-05); a Friend is never fled from; wariness counts Creative players. By owner request the Friend state keeps 3 blocks from a Friend without Elanor (accepted 2026-10-27). Details: `mobs/unicorn.md` |
 | Harmony action-bar icons, elven bow, unicorn art | checked OK (2026-10-24) |
 | Mob hurt and death sounds | kept as they are (2026-10-28) |
 
@@ -43,7 +43,21 @@ Source fixes made, owner retest pending:
 
 - Miruvor: empty skin, refill, last sip.
 - Star Canopy discovery in Survival (the unlock is the Bottle of Morning Dew, see above).
-- Friend unicorn lure, native AI (explicit move/look goal ownership).
+- Friend unicorn lure, native AI (explicit move/look goal ownership), now with the LM-01 per-player flight.
+- LM-01 native per-player wildlife flight (2026-11-12; Survival; set the band with `/scriptevent lothlorien:harmony <n>`: Friend 10, Guest 5, Uneasy -5, Shunned -20, Hated -40):
+  1. Old world: no group or property errors in the content log; existing animals saved before LM-01 stay fearless until alarmed (no migration), new ones flee.
+  2. Five species x five bands: flees at about the table distance walking, at the sneak distance sneaking (`tools/wildlife_wariness.py --matrix`).
+  3. Lure as Guest or Friend: the animal comes and stays (swan: wheat and corn).
+  4. Lure as Uneasy, Shunned or Hated: expect come-and-flee (accepted); it must never stay close.
+  5. Unicorn: Guest with Elanor is fled from at 13, never lured; Friend is lured, three offers 10 s apart bond; a fourth click inside the pause says "wait"; the bonded one flees nobody.
+  6. Tame deer and white deer: not fled by Guest or Friend; fled by Uneasy at 13/6; hurt: alarm, untame, after 20 s band flight again.
+  7. Alarm: hitting one animal makes all five species within 20 blocks flee every player at 36/18 for 20 s.
+  8. Guiding: a guiding white deer and an errand squirrel do not flee; the white deer is tame after arrival; leaving and re-entering mid-guide releases it.
+  9. Two players, Friend and Hated: the Friend can stand 4 blocks away while the Hated one is fled from at 30; switching bands reacts within about 1 s. This also confirms the positive `has_tag` test in avoid entries.
+  10. Breeding with a Guest next to two deer and two swans.
+  11. A wolf near a lured deer: the deer flees the wolf (expected change).
+  12. Creative, any band: not fled; a Friend lures the unicorn; a Hated player with corn lures a deer (engine behaviour, accepted).
+  13. Spectator flying near each species: record whether it flees.
 - Wind charges: removed-projectile event handling, Breeze radius, paired-door deduplication.
 - Rope while a foreign Slow Falling potion is active (the potion is preserved while climb, hold and slide work).
 - Firefly release now plays `bottle.dragonbreath` at pitch 1.3.

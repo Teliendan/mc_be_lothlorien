@@ -240,16 +240,19 @@ this. Knowledge: `.claude/skills/bedrock-mobs/references/spawning.md`. The spike
 
 ## Deer (was Phase 11; sheet `mobs/deer.md`)
 
-- **Wariness without per-player filters.** Entity filters cannot read a player's Harmony (a dynamic property), so the entity has one component group per wariness state
-  (`lothlorien:state_calm|l1|l2|l3|friend|alarmed|tame`), each holding its own `behavior.avoid_mob_type` (flight distance, sneaking halves it) and, where allowed, `behavior.tempt`. `scripts/deer.js` runs every 2 s: each
-  player votes for deer within 40 blocks, the most severe state among players inside their own state's flight radius wins, and the script fires `lothlorien:set_<state>` only when the `lothlorien:wariness` property
-  differs. Trade-off: the avoid component flees from every player at the winning state's distance.
-- **Alarm:** hurting or killing a deer fires `lothlorien:alarm` on every deer within 20 blocks: group `state_alarmed` (flee 36, no luring) with a 20 s `minecraft:timer` whose event `alarm_over` re-triggers the stored state;
-  the script skips alarmed deer. Alarms cross species (swans, squirrels, white deer).
+- **Native per-player wariness (LM-01, 2026-11-12).** The Harmony band is mirrored into player tags (`lothlorien_friend|uneasy|shunned|hated`, none for Guest; `harmony.js` `BAND_TAGS`, `docs/TAGS.md`), and
+  filters read tags, so each animal judges every player by that player's own band: one `behavior.avoid_mob_type` (priority 3) in the group `lothlorien:state_wild` with ten player entries (five bands x walking/sneaking, flat
+  `has_tag` tests, the distances and speeds of `tools/wildlife_wariness.py`) plus the unchanged wolf and monster entries. Deer and white deer add `state_tame` (Uneasy, Shunned and Hated only). The reaction is immediate and no
+  script polls (the old 2 s poll, the five `state_<band>` groups, the `set_*` events and the `lothlorien:wariness` property are gone). A Friend next to a Hated player no longer scares a deer at 30 blocks; the Hated one still does.
+  The positive `has_tag` test inside avoid entries is the one piece not yet seen in game (only `!=` is). Hand-written entity files get the avoid/tempt blocks from `python -B tools/wildlife_wariness.py --write <species>`;
+  `--check` and the suite `wildlife-wariness` compare them with the table and run every band x sneaking x held-item case through a small filter evaluator (exactly one entry matches, none for a lure-holding Guest or Friend).
+- **Alarm:** hurting or killing a wary animal fires `lothlorien:alarm` on every wary animal within 20 blocks (one `getEntities` query around the victim in `deer.js`): group `state_alarmed` (flee every player at 36/18, no luring)
+  with a 20 s `minecraft:timer` whose event `alarm_over` returns to `state_wild`, or `state_tame` for a tame deer. Alarms cross species (swans, squirrels, white deer, unicorns).
 - **Food:** Western Corn grain only (tempt, `breed_items`, fawn `feed_items`); the acorn belongs to the white deer; seeds do not count.
-- **Goal priorities:** breed 2, tempt 3, avoid 4 (tempt must outrank avoid or a lured deer runs at the edge; breeding must outrank both). Priority alone does not keep a lured deer: tempt stops on arrival and avoid takes
-  over, so in calm and Friend the player entries of `avoid_mob_type` also need `has_equipment` (hand, the lure item) and `can_get_scared` is false. Fed deer get `lothlorien:tame` -> `state_tame`. Tame and untame are
-  entity events (`become_tame`, `untame`), not `setProperty`: a property set by script is invisible to event filters until the next tick, so the state event is re-applied one tick later.
+- **Goal priorities:** breed 2, avoid 3, tempt 4 (breeding must outrank both). A wolf or an unwelcome player therefore beats the lure, and a lured animal flees a wolf (changed from tempt-over-avoid by LM-01). Priority alone does not keep a
+  lured deer: tempt stops on arrival and avoid takes over, so the Guest and Friend player entries of `avoid_mob_type` also need `has_equipment != <lure item>` (one flat test per item) and `can_get_scared` is false; the tempt goal has an explicit
+  `within_radius` 10. Uneasy, Shunned and Hated entries have no exemption: with the lure they come close sneaking and are fled from again (come-and-flee, accepted by the owner 2026-11-11). Fed deer get `lothlorien:tame` -> `state_tame`.
+  Tame and untame are entity events (`become_tame` swaps `state_wild` for `state_tame` itself, `untame`), not `setProperty`.
 - **Kept deer:** tame or leashed adds group `lothlorien:kept` (`minecraft:persistent`); `untame` removes it only when not leashed, `unleashed` only when not tame.
 - **Sex and antlers:** enum property `lothlorien:sex` (client synced) from `entity_spawned`/`entity_born`; geometry `deer_buck` (adult with antlers), `deer` (no antlers), `deer_baby`, picked by
   `query.property` in the render controller. Loot differs by sex through two adult groups (loot conditions cannot test custom properties). Venison carries item tag `minecraft:is_meat` (not inside `minecraft:food`:
@@ -291,7 +294,7 @@ mid-guidance ends it), **always an antlered hart** (geometry `deer_buck`, textur
 Spawn rule: weight 3 (deer 10), herd 1 with event `lothlorien:spawn_natural`, `density_limit.surface` 1, `distance_filter` 24-44, pool `animal`. **Spawn thinned by depth** (owner: fewer near edges): the herd event
 sets property `lothlorien:natural`; `white_deer.js` on `entitySpawn` (cause not `Loaded`) reads it one tick later, estimates depth at the deer's spot and keeps it with `SPAWN_KEEP_BY_DEPTH` outside 0, edge 0.15, inner
 0.5, heart 1, else `entity.remove()` (no loot, no Harmony, no alarm; fails open if the event never arrives; `SPAWN_WEIGHT` is pinned to the spawn rule by a test; `/summon ... lothlorien:spawn_natural` goes through the filter).
-Wariness uses the deer's state groups; only the **Mallorn acorn** lures it.
+Flight and lure come from the same table as the deer's (`state_wild`, `state_tame`); only the **Mallorn acorn** lures it.
 
 **The offer.** Right-click an adult white deer with a Mallorn acorn as a **Friend** (owner rule 2026-10-02; below 0 "shies from your restless spirit", not yet Friend "does not trust you yet", acorn kept). The entity has a
 `minecraft:interact` entry for the held acorn ("Offer Acorn"); whether `playerInteractWithEntity` fires without it is unverified. The acorn is consumed only when guidance starts.
@@ -304,8 +307,8 @@ next waypoint when within 3 blocks (`pickWaypoint`: 14 blocks ahead, down to 8, 
 more than 12 blocks, and ends with a final hop to the spot or a standable column within 5 blocks. `stand()` uses a ray from 6 above to 6 below (leaves looked through, liquid and logs reject, 1.9 headroom). The deer is
 never teleported.
 
-**Session end:** beacon removed and `guide_end` restores wariness via `alarm_over` when arrived within 3 blocks, the player is beyond 48 blocks, the player loses Harmony, 30 s pass without getting closer (counts as
-arrived within 14 blocks), 5 minutes, or the deer is hurt. Sessions are not saved: on load and every 100 ticks every `guide_beacon` without a live session is removed (the beacon also carries `minecraft:transient`, LM-04 step 1 2026-11-11: if the in-game check shows none survives a reload, the sweep goes); a deer still in `state_guiding` after a reload is released by `deer.js`. Two deer guiding close together may follow each other's beacon (accepted). Not done: sounds on the way and at arrival.
+**Session end:** beacon removed and `guide_end` restores the wild or tame state via `alarm_over` when arrived within 3 blocks, the player is beyond 48 blocks, the player loses Harmony, 30 s pass without getting closer (counts as
+arrived within 14 blocks), 5 minutes, or the deer is hurt. Sessions are not saved: on load and every 100 ticks every `guide_beacon` without a live session is removed (the beacon also carries `minecraft:transient`, LM-04 step 1 2026-11-11: if the in-game check shows none survives a reload, the sweep goes); a deer still in `state_guiding` after a reload is released by `deer.js` when it loads (`settleOnLoad`, also from the startup scan). Two deer guiding close together may follow each other's beacon (accepted). Not done: sounds on the way and at arrival.
 Fallback research and the pathfinding comparison: `.claude/skills/bedrock-mobs/references/pathfinding.md` (dolphin treasure goals cannot target a custom spot; script has no navigation target API).
 
 ## Nectar, morning dew and Star canopy (was Phase 14b; status unverified except where noted)
@@ -323,8 +326,9 @@ Fallback research and the pathfinding comparison: `.claude/skills/bedrock-mobs/r
 
 Sheets: `mobs/swan.md`, `mobs/squirrel.md`, `mobs/unicorn.md`. Owner tried squirrel and deer in game 2026-10-02 (very good); the swan floats with an occasional dip, left as is.
 
-- **Shared wariness:** swan, squirrel and unicorn carry the deer's state groups, events and properties; `deer.js` drives all (`WARY_TYPES` in `deer_rules.js`); a test pins their flight radii to `FLIGHT_RADIUS` (the unicorn's
-  `calm` flees like `l1`, only `friend` has the Elanor lure).
+- **Shared wariness:** swan, squirrel and unicorn use the same table and the same `state_wild`/`state_alarmed` groups and alarm events as the deer (`WARY_TYPES` in `deer_rules.js`; `tools/wildlife_wariness.py`; the unicorn file comes from
+  `tools/make_unicorn.py`, which imports the table). A Guest unicorn is fled from like an Uneasy player (13/6); only a Friend holding Elanor is exempt, and the Elanor lure is its own group `lure`, added at spawn.
+  Animals saved by a build before LM-01 carry no flight group and stay fearless until the first alarm (owner 2026-11-11: no migration).
 - **Swan** spawns in rivers too (spawn filter `any_of` tag `lothlorien` or `river`); `swan.js` removes natural spawns with no positively read Lothlórien sample within 48 blocks (25 samples, once per spawn). It floats with
   the chicken's float goal (turtle navigation dived, `minecraft:buoyant` sank it).
 - **Squirrel errand** reuses the white deer machinery: `squirrel.js` drives `follow_target_leader` with a moved `guide_beacon`; `white_deer.js` exports `stand` and `addBeaconSource` (the stray-beacon sweep would

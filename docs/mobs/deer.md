@@ -49,43 +49,42 @@ Goal priorities: 0 float, 1 panic (x1.8), 2 breed, 3 tempt, 4 avoid, 5 follow pa
 | Question | Decision | Tested |
 | --- | --- | --- |
 | Idle life | strolls, looks around, ears and tail flick (animation). **No grazing**: `eat_block` turns grass into dirt and would bare the golden forest floor | no |
-| Reaction to the player | flees by **wariness state** (see below); sneaking halves the flight distance | flees in survival below Harmony 0 (band Uneasy and worse); not from a **creative** player (1.26.52, 2026-09-30) |
+| Reaction to the player | flees by the player's **own Harmony band** (see below); sneaking halves the flight distance | flees in survival below Harmony 0 (band Uneasy and worse); not from a **creative** player (1.26.52, 2026-09-30) |
 | Reaction to mobs | flees wolves within 12 and monsters within 8 | no |
 | Vanilla mobs reacting to it | none (own family) | - |
 | Panic | on any damage (x1.8); fawns too | no |
 | Hostile | not hostile, no attack | - |
 
-**Wariness states** (component groups `lothlorien:state_<name>`, switched by events `lothlorien:set_<name>`;
-`scripts/deer.js` sets them every 2 s from the players' Harmony band, radius 40; Harmony 2026-10-07, `docs/design/harmony_rework_plan.md`):
+**Native per-player wariness** (LM-01, 2026-11-12; replaces the 2026-10-07 poll of component groups `state_<band>`). The Harmony band is a
+player tag (`lothlorien_friend|uneasy|shunned|hated`, Guest = none; `docs/TAGS.md`) and one `avoid_mob_type` in `lothlorien:state_wild` judges
+each player by their own tag (table in `tools/wildlife_wariness.py`, `--matrix` prints it; plan and decisions in `docs/review-2026-11-10/`):
 
-| State | Harmony band | Flight distance (walking / sneaking) | Food lures it |
+| Band | Flight distance (walking / sneaking) | Speed (walk / sprint) | Holding corn |
 | --- | --- | --- | --- |
-| `calm` | Guest (0 to +9) | 10 / 5 | yes |
-| `l1` | Uneasy (-1 to -14) | 13 / 6 | no |
-| `l2` | Shunned (-15 to -29) | 20 / 10 | no |
-| `l3` | Hated (-30 to -60) | 30 / 15 | no |
-| `friend` | Friend of Lothlorien (+10) | 3 / 2 | yes |
-| `alarmed` | (any) | 36 / 18 for 20 s, then back to the stored state | no |
+| Friend (+10) | 3 / 2 | 1.1 / 1.3 | not fled |
+| Guest (0 to +9) | 10 / 5 | 1.3 / 1.6 | not fled |
+| Uneasy (-1 to -14) | 13 / 6 | 1.4 / 1.7 | fled (come-and-flee, accepted 2026-11-11) |
+| Shunned (-15 to -29) | 20 / 10 | 1.5 / 1.9 | fled |
+| Hated (-30 to -60) | 30 / 15 | 1.6 / 2.1 | fled |
+| Alarmed (any player, 20 s) | 36 / 18 | 1.6 / 2.1 | fled |
 
-A player hurting a deer alarms every deer within 20 blocks of it (`lothlorien:alarm`, timer 20 s).
-With several players near, the **most severe state among players inside their own state's flight radius** wins
-(Hated within 30, Shunned within 20, Uneasy within 13, Guest within 10, Friend within 3); if nobody is that close, the
-nearest player decides. The flight component still applies to every player, so a calm player 25 blocks from a deer that
-reacts to a Hated player also scares it.
+A player hurting or killing a wary animal alarms every wary animal within 20 blocks (`lothlorien:alarm`, group `state_alarmed` with a 20 s timer, then
+`alarm_over` returns to `state_wild`, or `state_tame` for a tame deer). The reaction is immediate and each player counts for themselves: a Friend next to a Hated player
+can stand 4 blocks from the deer while the Hated one is fled from at 30. Deer saved by a build before LM-01 have no flight group until alarmed (no migration).
 
 ## E. Player interaction
 
 | Question | Decision | Tested |
 | --- | --- | --- |
-| Luring | **Western Corn grain only** (`lothlorien:western_corn_grain`, the harvested crop; not the seeds, since 2026-09-30 owner decision; before: Mallorn acorn or apple), calm and Friend: a player holding the grain is not fled from (avoid filter `has_equipment` hand !=), `can_get_scared` false (playtest 2026-09-30: lured deer came close, then fled even from a standing player); off from Uneasy and worse and while alarmed | no |
-| Tame | feeding corn (breeding or a fawn) sets property `lothlorien:tame`: in calm/Friend the deer takes `state_tame` (lure, flees only wolves and monsters, never players). A player hurting it clears tame; Uneasy, Shunned, Hated, panic and the alarm still make it flee | no |
+| Luring | **Western Corn grain only** (`lothlorien:western_corn_grain`, the harvested crop; not the seeds, since 2026-09-30 owner decision; before: Mallorn acorn or apple), Guest and Friend: a player holding the grain is not fled from (avoid filter `has_equipment` hand !=), `can_get_scared` false (playtest 2026-09-30: lured deer came close, then fled even from a standing player); tempt priority 4 below the flight (3), `within_radius` 10; Uneasy and worse are fled from even with grain, and the alarm still wins | no |
+| Tame | feeding corn (breeding or a fawn) sets property `lothlorien:tame`: the deer takes `state_tame` (lure, flees wolves and monsters and Uneasy, Shunned or Hated players, never Guest or Friend). A player hurting it clears tame; Uneasy, Shunned, Hated, panic and the alarm still make it flee | no |
 | Kept (no despawn) | tame **or** leashed adds group `lothlorien:kept` (`minecraft:persistent`), like vanilla tamed animals; wild deer keep `despawn_from_distance`. Events: `become_tame`, `untame` (keeps it while leashed), `leashed`/`unleashed` from `leashable.on_leash/on_unleash` (keeps it while tame). Whether removing `minecraft:persistent` really lets it despawn again is untested | no |
 | Leading | leashable | no |
 | Breeding | corn grain only (`breed_items`), `require_tame false`, any doe/buck pair, fawn follows parent, grows up in 20 min (corn grain speeds it up, `ageable.feed_items`) | no |
 | Babies | fawn model with spots; spawn egg on an adult makes a fawn | no |
 | Taming, healing, riding | not wanted | - |
 | Other | name tag (nameable) | no |
-| Mod systems | Harmony bands via the wariness states (the white deer shares them, `docs/mobs/white_deer.md`); no guidance. A kill costs 3 Harmony (a white deer 6), counted when the player or the deer is inside the forest | no |
+| Mod systems | Harmony bands via the player tags (the white deer shares them, `docs/mobs/white_deer.md`); no guidance. A kill costs 3 Harmony (a white deer 6), counted when the player or the deer is inside the forest | no |
 
 ## F. Death and rewards
 
@@ -109,7 +108,7 @@ reacts to a Hated player also scares it.
 ## H. Health of the world
 
 Protocol: `.claude/skills/bedrock-mobs/references/testing.md`; instruments `/scriptevent lothlorien:critters [watch]`
-(counts deer) and `/scriptevent lothlorien:deer` (wariness, sex, fawns, alarmed) were removed from the pack in the
+(counts deer) and `/scriptevent lothlorien:deer` (tame state, sex, fawns, alarmed) were removed from the pack in the
 2026-09-30 cleanup: copies in `tools/dev_scripts/`, code in git at `dc1182e`.
 
 | Question | Decision | Tested |

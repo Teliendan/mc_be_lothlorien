@@ -7,10 +7,13 @@ first, no guards for states the game cannot produce, after a one-tick defer re-c
 selected slot's item type, native JSON before script).
 
 ## Shared
-- Wary types (deer, white deer, swan, squirrel, unicorn): `deer.js` picks the wariness state from the nearest living
-  living non-Spectator player's Harmony band; one 40-tick interval, event-tracked set, stops when empty.
-  Spectator/dead players are ignored. Creative players count since 2026-10-26 (the owner tested the unicorn lure in
-  Creative and it never left the calm state; vanilla lures work in Creative); the engine still never flees them.
+- Wary types (deer, white deer, swan, squirrel, unicorn): native per-player flight (LM-01, 2026-11-12). One
+  `avoid_mob_type` in `state_wild` reads the player's band tag (`lothlorien_friend|uneasy|shunned|hated`, none = Guest),
+  so each player is judged by their own Harmony and the reaction is immediate; no script polls. Creative players count
+  (vanilla lures work in Creative; the engine never flees them, so a Creative player of any band can lure; owner
+  accepted 2026-11-11). Whether a Spectator is fled from is not recorded (check 13 in `OWNER_CHECKS.md`).
+  Not yet seen in game: a positive `has_tag` test inside avoid entries. Old-world animals carry no flight group until
+  alarmed (owner: no migration).
 - Interaction handlers (white deer, squirrel, unicorn): one gate (entity type + held item from `beforeItemStack`),
   then game rules. No `repeatedUse` debounce: the `minecraft:interact` entries carry `"cooldown": 1`. No re-check of
   player/target validity, dimension, reach or hand inside the same callback.
@@ -55,8 +58,9 @@ selected slot's item type, native JSON before script).
   unicorn (the before event cancels others; owner decision 2026-10-20). No equipment, inventory, leads, breeding.
 - Bonded healing is the native `minecraft:healable` (Elanor, 2 HP, `force_use:false`) in the bonded group; no script
   queue. Full-health Elanor mounts normally.
-- Friend-only lure: `follow_target_leader` filtered to a player with the `lothlorien_friend` tag holding Elanor;
-  the Harmony service syncs the tag. The no-flight exemption uses the same predicate.
+- Friend-only lure: vanilla `tempt` on Elanor in the group `lure` (present from spawn, priority 4 below the flight at 3);
+  the no-flight exemption is `has_tag lothlorien_friend` plus `has_equipment != Elanor` on the Friend entries only.
+  A Guest holding Elanor is fled from at 13/6.
 - Swimming copies the installed 1.26.50 horse float/buoyant data; no water breathing, lava damage kept.
 - Death of a bonded unicorn tells its owner (`unicorn.died`, all shipped languages), like a tamed wolf or horse
   (owner decision 2026-10-23; `entityDie` filtered to the unicorn type).

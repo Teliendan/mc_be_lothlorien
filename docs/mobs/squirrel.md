@@ -13,7 +13,7 @@ Archetype: small shy ground animal with a gift errand. Analogue: rabbit/chicken 
 only**, it runs off and brings back a small gift; the gifts make leaf litter and ground petals renewable, and sometimes
 athelas or corn seeds.
 Files: BP `entities/squirrel.json`, `spawn_rules/squirrel.json`, `loot_tables/gifts/squirrel.json`, `scripts/squirrel.js` +
-`squirrel_rules.js`, wariness in `scripts/deer.js`. RP `entity/squirrel.entity.json`, `models/entity/squirrel.geo.json`,
+`squirrel_rules.js`, the alarm in `scripts/deer.js`, flight in `entities/squirrel.json` (`state_wild`). RP `entity/squirrel.entity.json`, `models/entity/squirrel.geo.json`,
 `animations/squirrel.animation.json`, `render_controllers/squirrel.render_controllers.json`,
 `textures/entity/squirrel/squirrel_{brown,russet,dark}.png`, `sounds.json`, `.lang`. Art: `tools/make_swan_squirrel.py`.
 
@@ -24,8 +24,8 @@ Files: BP `entities/squirrel.json`, `spawn_rules/squirrel.json`, `loot_tables/gi
 | Coat | property `lothlorien:coat`: brown 55 % / russet 25 % / dark brown 20 % (random on spawn, client synced). Pale and dark flank stripes, cream belly, banded plume tail |
 | Spawn | surface on grass or dirt, biome tag `lothlorien`, light 7-15, herd 1-2, weight 12, `density_limit.surface 6`, distance 12-40, pool `animal` |
 | Despawn | standard `despawn_from_distance`; name tag or existing outside/leashed feeding keeps it. Inside wild healing/errands intentionally do not add persistence (owner 2026-10-20); existing kept animals retain their group |
-| Behaviour | 0 float, 1 panic (x1.5), 3 tempt (Mallorn acorn, calm and Friend states only), 4 avoid (Harmony wariness states), 6 stroll, 7 look at player, 8 look around |
-| Harmony | the deer's states and distances by band (see `swan.md`), via `deer.js`; a player holding a Mallorn acorn does not scare it in calm and Friend states. A player kill costs 3 Harmony (an animal) |
+| Behaviour | 0 float, 1 panic (x1.5), 3 avoid (native band-tag flight, `state_wild`), 4 tempt (Mallorn acorn), 6 stroll, 7 look at player, 8 look around |
+| Harmony | the deer's table by band (see `swan.md`), native; a Guest or Friend holding a Mallorn acorn does not scare it. A player kill costs 3 Harmony (an animal) |
 | The offer | right-click holding a Mallorn acorn (`minecraft:interact` entry, "Offer Acorn"). Refused, acorn kept: Harmony below 0, not Friend, cooldown or no standable spot 10-14 blocks away. Outside Lothlorien (depth 0) the acorn is ordinary food. Creative Friend incurs no food charge |
 | The errand | Friend only. The acorn is eaten when the errand starts. `state_guiding` follows a moved guide_beacon: away 10-14 blocks (20s at most), dig 3-5s, return. Within 2.5 blocks horizontally (and 2 vertically) of the player, every stack rolled from the table is spawned at its feet, then cooldown, optional hearts and chat. No terrain clearing or teleport |
 | Endings | player 40+ horizontal blocks away, 2 min, lost Friend/dead/invalid/Spectator player, dead/invalid squirrel, original-dimension departure, lead or alarm end it without a gift; acorn is gone. An errand that cannot finish (for example the player stands on an unreachable platform) ends at the 2 min cap with the abort message. Optional deed errors do not interrupt accepted errands |

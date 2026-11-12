@@ -134,13 +134,13 @@ measurements and their scope are in the linked finishing report.
 2026-10-11, Bedrock 1.26.52 / server 2.8.0. Source and offline regression evidence;
 the new scheduling is not yet verified or profiled in game.
 
-Wariness tracks the five loaded wildlife types via spawn/load/remove/death events,
-with one initial reconciliation across three dimensions. The two-second timer
-exists only while relevant wildlife is tracked. It reads loaded entity/player
-positions instead of issuing five native entity queries per player every cycle.
-The original 40-block 3D watch range, horizontal severity rule, alarm and guide
-handling remain. Wariness deliberately works outside Lothlorien for transported
-or tamed mobs too. Movement/pathfinding stays native JSON.
+Wariness (superseded by LM-01, 2026-11-12): the two-second timer, the tracked set and the entityRemove subscription are gone.
+Each animal judges every player natively by the player's Harmony band tag (`state_wild`, `tools/wildlife_wariness.py`), so
+there is no recurring script work for wildlife and nothing that scales with the animal count. `deer.js` keeps one startup
+scan over the two guiding types (six queries), an `entityLoad` handler for them (releases an orphaned guide), and one
+`getEntities` query around a hurt or killed animal for the alarm. The cost moved to the native avoid goal: twelve filtered
+entries per animal, evaluated by the engine; not yet measured in game. Wariness still works outside Lothlorien.
+Movement/pathfinding stays native JSON.
 
 White-deer guidance (5 ticks) and squirrel errands (10 ticks) run only during
 active sessions. Beacon cleanup uses one startup reconciliation plus spawn/load

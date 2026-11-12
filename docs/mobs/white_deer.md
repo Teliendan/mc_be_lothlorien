@@ -11,7 +11,7 @@ owner decisions of 2026-09-30 (second round: leash, always antlered, sure antler
 replaces leading to flet giants, markers removed) built the same day. **Static checks only - nothing below is tested in game** ("Tested" = `no` until a game run
 says otherwise). Guidance design, unverified assumptions and the test plan:
 `docs/TECHNICAL_NOTES.md` (White deer guidance). Files: BP `entities/white_deer.json`, `spawn_rules/white_deer.json`,
-`entities/guide_beacon.json` (helper), `scripts/white_deer.js` + `white_deer_rules.js`, wariness in `scripts/deer.js`; RP
+`entities/guide_beacon.json` (helper), `scripts/white_deer.js` + `white_deer_rules.js`, the alarm in `scripts/deer.js`; RP
 `entity/white_deer.entity.json`, `render_controllers/white_deer.render_controllers.json`, `textures/entity/deer/deer_white.png`, `sounds.json`;
 BP `loot_tables/entities/white_deer.json`.
 
@@ -26,8 +26,8 @@ BP `loot_tables/entities/white_deer.json`.
 | Despawn | standard `despawn_from_distance`; a name tag keeps it | no |
 | Group life | **loner**: no herd, no following, no breeding, no babies, no fawn texture, spawn egg on it does nothing | no |
 | Taming, leash, riding | not tamable, no riding; **leashable** (`minecraft:leashable` with only `on_leash`/`on_unleash` events for persistence; not a leash anchor itself); no balloon (`minecraft:balloonable` is an Education Edition feature: leaving it out costs nothing) | no |
-| Lead vs guidance | **a lead always wins**: a leashed white deer refuses the acorn ("will not lead while it is held on a lead", acorn kept); leashing it during a guidance ends the guidance at once (beacon removed, back to its wariness state) | no |
-| Wariness | same states and flight distances as the deer (`calm` 10 ... `l3` 30, alarmed 36 for 20 s), set by `deer.js` | no |
+| Lead vs guidance | **a lead always wins**: a leashed white deer refuses the acorn ("will not lead while it is held on a lead", acorn kept); leashing it during a guidance ends the guidance at once (beacon removed, back to its wild or tame state) | no |
+| Wariness | same native per-player flight table as the deer (Guest 10 ... Hated 30, alarmed 36 for 20 s), groups `state_wild` and `state_tame`; only the acorn lures it | no |
 | Luring | **Mallorn acorn only**, in calm and Friend states; holding the acorn stops its flight from that player, `can_get_scared` false | yes (2026-09-30) |
 | Tame | a white deer that accepts the acorn (guidance starts) is tamed like the deer (`lothlorien:tame` -> `state_tame` after guiding); hurting clears it. Tame or leashed = persistent (`lothlorien:kept`, same events as the deer) | yes (2026-09-30) |
 | Guidance (gift) | right-click with a Mallorn acorn **as a Friend of Lothlórien** (owner, 2026-10-02; calm without Friend: "does not trust you yet", acorn kept; luring and taming stay open to calm players): **once per deer** it leads to a spot inside Lothlorien 36-56 blocks away, as far from the known biome border as possible, i.e. towards the heart (loaded biome grid within 96 blocks; ties go to the longer walk; fixed to the default simulation distance, not the player's setting) and lays a **Great Mallorn nut** there. The spot is kept on the deer until the gift is given (another acorn resumes a broken guidance); afterwards the acorn is refused and kept. No spot: "nowhere to lead you", acorn kept; acorn used only when guidance starts. (Until 2026-09-30 it led to the nearest flet-giant marker within 80 blocks: dropped, the trees were already in sight.) | yes (2026-09-30) |

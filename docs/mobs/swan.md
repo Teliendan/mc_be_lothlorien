@@ -16,7 +16,7 @@ authorize them. Native chicken-style fall immunity added; explicit air+water bre
 | Spawning | Lothlorien or river water; water-animal pool; weight 10, herds 1-2, density limit 3, distance 12-40. Natural spawns include 10% cygnets. Once-only 25-point check requires observed Lothlorien within 48 blocks; missing-only samples remove natural swans intentionally (owner 2026-10-20). Eggs/summons/born animals without the natural flag stay. **Surface fix (owner decision 2026-11-02, not checked in game):** the spawn rule is the vanilla fish pattern (any water depth), so the same one-shot check (`swan.js` `judgeNaturalSpawn`, pure `swan_rules.js` `surfaceAction`) follows the water column up from the swan (water/flowing water, max 16 blocks); two air blocks above the top water block -> teleport to that block's y (x/z/rotation kept), anything overhead (bank, leaves) -> remove; already at the surface or not in water (land) -> unchanged. Weight not changed. **In-game check:** assumed `floor(location.y)` of a swimming swan is the top water block or the air block just above it, and teleporting to `y = top water block` leaves it floating (not sunk/bobbing); `/summon lothlorien:swan ~ ~ ~ ~ ~ lothlorien:spawn_natural` in deep water, under a bank, at the surface and on land near Lothlorien |
 | Despawn | Standard `despawn_from_distance`; naming, leads/keeping and born persistence use the established lifecycle |
 | Movement | Chicken-style walk navigation with water pathing and float priority 0; stroll priority 6, panic 1. Surface floating can occasionally dip; owner accepted this. No fish-style random swimming or added buoyancy |
-| Wariness | Shared deer Harmony states/radii: Guest calm 10 / 5 sneaking, Uneasy 13, Shunned 20, Hated 30, Friend 3, alarmed 36 for 20 s. Wolves/monsters scare swans; hurting/killing a deer/swan/squirrel alarms nearby creatures within 20 blocks |
+| Wariness | Native per-player flight, the deer's table (`tools/wildlife_wariness.py`): Guest 10 / 5 sneaking, Uneasy 13 / 6, Shunned 20 / 10, Hated 30 / 15, Friend 3 / 2, alarmed 36 / 18 for 20 s; Guest and Friend holding wheat or corn are not fled from (one flat `has_equipment !=` per item), worse bands are. Wolves/monsters scare swans; hurting/killing a deer/swan/squirrel alarms nearby creatures within 20 blocks |
 | Harmony | Player kill costs 3 animal Harmony when player or swan is in Lothlorien |
 | Passive feathers | One ordinary feather per living adult every random **1-5 minutes**, native `minecraft:spawn_entity`; no added script polling/scans/callbacks. Original 10-20 minutes rejected as too rare to discover; chicken eggs are 5-10 minutes |
 | Death drops | **Exactly one swan meat**, including with Looting, plus existing 1-2 feathers with their Looting bonus. XP 1-3 on player kill. Cygnets shed nothing and have no death loot |
@@ -35,7 +35,7 @@ Babies retain their age. The five-second test group and test events were removed
 from BP; RP contains only the production shake animation/controller.
 
 Source: BP `entities/swan.json`, `spawn_rules/swan.json`, `loot_tables/entities/swan.json`,
-`scripts/swan.js` and `swan_rules.js`; shared wariness in `scripts/deer.js`.
+`scripts/swan.js` and `swan_rules.js`; the alarm in `scripts/deer.js`, flight in `entities/swan.json` (`state_wild`).
 RP `entity/swan.entity.json`, model, animations/controller, texture and sounds.
 Art generators: `tools/make_swan_squirrel.py`, `make_swan_shedding.py` (Blockbench)
 and `make_swan_meat.py`. All iteration scratch removed after owner acceptance;
