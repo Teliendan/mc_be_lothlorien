@@ -6,7 +6,6 @@ import { existsSync } from "node:fs";
 import * as R from "../lothlorien_bp/scripts/deer_rules.js";
 import * as UR from "../lothlorien_bp/scripts/unicorn_rules.js";
 
-const avoidRadius = (e, w) => e.component_groups[`lothlorien:state_${w}`]["minecraft:behavior.avoid_mob_type"].entity_types[0].max_dist;
 const unicornEntity = () => readJson("../lothlorien_bp/entities/unicorn.json")["minecraft:entity"];
 
 test("unicorn: native horse float/buoyancy settings retain drowning and lava damage", () => {
@@ -34,16 +33,20 @@ test("unicorn: the third offer bonds it; only the owner may ride", () => {
   assert.ok(UR.mayRide("a", "a") && !UR.mayRide("a", "b") && UR.mayRide(undefined, "b"));
 });
 
-test("unicorn entity: Harmony wariness states and flight radii (calm is as timid as l1; Friend alone may lure it with Elanor)", () => {
+test("unicorn entity: native band-tag flight in state_wild (a Guest is as timid as Uneasy; only a Friend with Elanor comes close)", () => {
   const e = unicornEntity();
-  for (const w of R.WARINESS) {
-    assert.ok(e.component_groups[`lothlorien:state_${w}`], `group ${w}`);
-    assert.ok(e.events[R.setEventFor(w)], `event ${w}`);
-    assert.equal(avoidRadius(e, w), w === "calm" ? R.FLIGHT_RADIUS.l1 : R.FLIGHT_RADIUS[w], w);
-  }
-  // the Elanor tempt lives in its own group, which only set_friend / lure_on add (tests/unicorn_luring.mjs)
-  assert.deepEqual(e.component_groups["lothlorien:lure"]["minecraft:behavior.tempt"].items,[UR.ELANOR_ID]);
-  for (const w of ["calm", "l1", "l2", "l3"]) assert.ok(!("minecraft:behavior.tempt" in e.component_groups[`lothlorien:state_${w}`]), `${w} must not lure`);
+  assert.ok(!("lothlorien:wariness" in e.description.properties) && !JSON.stringify(e).includes("wariness"));
+  assert.deepEqual(Object.keys(e.component_groups).filter((n) => /state_(calm|l\d|friend|tame)/.test(n)), [], "the poll-era groups are gone");
+  assert.ok(!Object.keys(e.events).some((n) => n.startsWith("lothlorien:set_")));
+  const entries = e.component_groups["lothlorien:state_wild"]["minecraft:behavior.avoid_mob_type"].entity_types;
+  const dist = (tag) => entries.filter((t) => t.filters.all_of?.some((f) => f.test === "has_tag" && f.operator !== "!=" && `"${f.value}"` === tag)).map((t) => t.max_dist);
+  assert.deepEqual([dist('"lothlorien_friend"'), dist('"lothlorien_uneasy"'), dist('"lothlorien_shunned"'), dist('"lothlorien_hated"')], [[3, 2], [13, 6], [20, 10], [30, 15]]);
+  assert.deepEqual(entries.filter((t) => t.filters.all_of?.some((f) => f.operator === "!=" && f.test === "has_tag")).map((t) => t.max_dist), [13, 6], "Guest: 13/6");
+  assert.equal(e.component_groups["lothlorien:state_wild"]["minecraft:behavior.avoid_mob_type"].priority, 3);
+  assert.equal(e.component_groups["lothlorien:state_alarmed"]["minecraft:behavior.avoid_mob_type"].entity_types[0].max_dist, 36);
+  // the Elanor tempt lives in its own group (tests/unicorn_luring.mjs)
+  assert.deepEqual(e.component_groups["lothlorien:lure"]["minecraft:behavior.tempt"].items, [UR.ELANOR_ID]);
+  assert.ok(!("minecraft:behavior.tempt" in e.component_groups["lothlorien:state_wild"]), "the lure group alone owns tempt");
   assert.ok(e.events["lothlorien:alarm"] && e.events["lothlorien:alarm_over"]);
   assert.ok("lothlorien:alarmed" in e.description.properties && "lothlorien:tame" in e.description.properties);
 });
@@ -62,7 +65,7 @@ test("unicorn entity: bonded = rideable without a saddle or lead, persistent, th
   assert.equal(e.components["minecraft:health"].value, 30);
   assert.equal(e.components["minecraft:movement"].value, 0.3375);
   assert.equal(e.components["minecraft:horse.jump_strength"].value, 1.0);
-  assert.ok(e.events["lothlorien:become_tame"].add.component_groups.includes("lothlorien:bonded"));
+  assert.ok(e.events["lothlorien:become_tame"].sequence[0].add.component_groups.includes("lothlorien:bonded"));
 });
 
 test("unicorn: spawn rule is uncommon and in Lothlorien; art, sounds and names are wired", () => {

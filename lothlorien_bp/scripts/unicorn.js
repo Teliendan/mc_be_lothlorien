@@ -1,6 +1,6 @@
 import { message } from "./messages.js";
-// Unicorns in the running game (Phase 15; rules in unicorn_rules.js). Their wariness follows the nearest player's Harmony band
-// in deer.js (they are in WARY_TYPES): strangers and restless players are fled from, a Friend of Lothlorien may come close
+// Unicorns in the running game (Phase 15; rules in unicorn_rules.js). Their flight is native (entities/unicorn.json state_wild: each
+// player is judged by their own Harmony band tag; the alarm is in deer.js): strangers and restless players are fled from, a Friend of Lothlorien may come close
 // and lure one with Elanor. This file is the taming: three offers of Elanor from a Friend bond the unicorn to that player
 // (the `lothlorien:bonded` group in entities/unicorn.json makes it rideable without a saddle), and only the owner may ride it.
 import { system, world } from "@minecraft/server";
@@ -9,7 +9,6 @@ import { bandOf } from "./harmony.js";
 import { healAnimal } from "./animal_food.js";
 import { consumeHeld } from "./deferred_use.js";
 import { playerById, say } from "./entity_util.js";
-import { setEventFor } from "./deer_rules.js";
 import { ELANOR_ID, UNICORN_ID, mayRide, nextTrust, offerRefusal } from "./unicorn_rules.js";
 
 const OWNER = "lothlorien:owner"; // dynamic property on the unicorn: id of the player it is bonded to
@@ -27,18 +26,11 @@ const MESSAGES = [
   message("unicorn.trust3"),
 ];
 
-// Fed = bonded. Re-applying the current state event one tick after the event swaps state_calm/state_friend for state_tame
-// (a property change is not visible to event filters before the next tick).
+// Fed = bonded: the owner is recorded and lothlorien:become_tame adds the bonded group and takes the wild flight and the lure away
+// (entities/unicorn.json). No state is re-applied by script.
 function bond(unicorn, player) {
   unicorn.setDynamicProperty(OWNER, player.id);
   unicorn.triggerEvent("lothlorien:become_tame");
-  system.runTimeout(() => {
-    try {
-      if (!unicorn.getProperty("lothlorien:alarmed")) unicorn.triggerEvent(setEventFor(unicorn.getProperty("lothlorien:wariness")));
-    } catch {
-      // unicorn unloaded meanwhile
-    }
-  }, 1);
   try {
     unicorn.dimension.spawnParticle("minecraft:totem_particle", { x: unicorn.location.x, y: unicorn.location.y + 1.2, z: unicorn.location.z });
   } catch {

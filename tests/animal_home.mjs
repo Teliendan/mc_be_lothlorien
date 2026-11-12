@@ -248,7 +248,7 @@ for (const name of ["white_deer","squirrel"]) {
 // These callbacks do not emulate native healing or prove mount precedence.
 {
   const h=engine(), food=await load("animal_food",{...h.bindings,...foods});
-  const mod=await load("unicorn",{...h.bindings,...food,...unicornRules,setEventFor:s=>`lothlorien:set_${s}`});mod.startUnicorns();
+  const mod=await load("unicorn",{...h.bindings,...food,...unicornRules});mod.startUnicorns();
   const p=h.player(unicornRules.ELANOR_ID,2),q=h.player(unicornRules.ELANOR_ID),u=h.entity(unicornRules.UNICORN_ID);
   u.setProperty("lothlorien:tame",true);u.setDynamicProperty("lothlorien:owner",p.id);
   for(const health of [3,8]) {
@@ -272,7 +272,7 @@ for (const name of ["white_deer","squirrel"]) {
 // absent until the actual bond. This tests script integration, not native feeding.
 for(const creative of [false,true]) {
   const h=engine(), food=await load("animal_food",{...h.bindings,...foods});
-  const mod=await load("unicorn",{...h.bindings,...food,...unicornRules,setEventFor:s=>`lothlorien:set_${s}`});mod.startUnicorns();
+  const mod=await load("unicorn",{...h.bindings,...food,...unicornRules});mod.startUnicorns();
   const p=h.player(unicornRules.ELANOR_ID,3,creative),u=h.entity(unicornRules.UNICORN_ID,20,30);
   u.setProperty("lothlorien:trust",0); // native description-property default
   for(let offer=1;offer<=3;offer++) {

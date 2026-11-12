@@ -1450,11 +1450,11 @@
       },
       {
         "path": "lothlorien_bp/entities/unicorn.json",
-        "sha256": "1beb312e55158ed409f839085b77695ddd1504df87d4cda6317f7c0107b38665"
+        "sha256": "5daaf3ad067b357af0091269e1668825c934f65117bed358a5a9a118f6bcb73a"
       },
       {
         "path": "lothlorien_bp/scripts/unicorn.js",
-        "sha256": "8392875c641fdde29f5a7ec05fd5235b1946939f1c521af09333c19f69e7382b"
+        "sha256": "14227a52983c79842026dde119d7c036f1941ae227878b72f20c148241bb13aa"
       },
       {
         "path": "lothlorien_bp/scripts/unicorn_rules.js",

@@ -100,56 +100,56 @@ function matches(filter, player) {
   if (filter.test === "has_equipment") return filter.domain === "hand" && (player.held === filter.value) === (filter.operator !== "!=");
   throw Error(`unhandled filter ${filter.test}`);
 }
-await test("in the Friend state it keeps 3 blocks (2 sneaking) from players without Elanor, none from Elanor holders", async () => {
-  const avoid = entity.component_groups["lothlorien:state_friend"]["minecraft:behavior.avoid_mob_type"].entity_types.slice(0, 2);
-  assert.deepEqual(avoid.map(e => e.max_dist), [3, 2]);
+await test("a Friend keeps 3 blocks (2 sneaking) from the unicorn without Elanor and none with it; a Guest never gets the exemption", async () => {
+  const entries = entity.component_groups["lothlorien:state_wild"]["minecraft:behavior.avoid_mob_type"].entity_types.slice(0, 10);
   const h = await service();
+  const fled = (player) => entries.filter(e => matches(e.filters, player)).map(e => e.max_dist);
   for (const held of [ELANOR_ID, undefined]) for (const sneaking of [false, true]) {
-    h.player.held = held; h.player.isSneaking = sneaking;
-    assert.equal(avoid.some(e => matches(e.filters, h.player)), held !== ELANOR_ID);
+    const friend = h.playerFor(10), guest = h.playerFor(0), uneasy = h.playerFor(-5);
+    friend.addTag(h.game.FRIEND_TAG); uneasy.addTag("lothlorien_uneasy");
+    for (const p of [friend, guest, uneasy]) { p.typeId = "minecraft:player"; p.held = held; p.isSneaking = sneaking; }
+    assert.deepEqual(fled(friend), held === ELANOR_ID ? [] : [sneaking ? 2 : 3], "Friend");
+    assert.deepEqual(fled(guest), [sneaking ? 6 : 13], "Guest: Elanor does not help");
+    assert.deepEqual(fled(uneasy), [sneaking ? 6 : 13], "Uneasy: Elanor does not help (come-and-flee accepted)");
   }
 });
-await test("the lure is vanilla tempt in its own group, added only to a wild, ready Friend-state unicorn", async () => {
+await test("the lure is vanilla tempt in its own group (priority 4, below the flight), present from spawn, off during the pause, alarm and bond", async () => {
   const lure = entity.component_groups["lothlorien:lure"];
-  assert.deepEqual(lure, { "minecraft:behavior.tempt": { priority: 3, speed_multiplier: 1, items: [ELANOR_ID], within_radius: 10, can_get_scared: false } });
+  assert.deepEqual(lure, { "minecraft:behavior.tempt": { priority: 4, speed_multiplier: 1, items: [ELANOR_ID], within_radius: 10, can_get_scared: false } });
   for (const [name, group] of Object.entries(entity.component_groups)) {
     assert.equal(group["minecraft:behavior.follow_target_leader"], undefined);
     if (name !== "lothlorien:lure") assert.equal(group["minecraft:behavior.tempt"], undefined);
   }
-  const adds = ev => ev.sequence.filter(step => step.add?.component_groups.includes("lothlorien:lure"));
-  for (const n of ["calm", "l1", "l2", "l3", "friend"]) {
-    const ev = entity.events[`lothlorien:set_${n}`];
-    assert.ok(ev.sequence[0].remove.component_groups.includes("lothlorien:lure"));
-    assert.equal(adds(ev).length, n === "friend" ? 1 : 0);
-  }
-  assert.deepEqual(adds(entity.events["lothlorien:set_friend"])[0].filters, { all_of: [
+  assert.deepEqual(entity.events["minecraft:entity_spawned"], { add: { component_groups: ["lothlorien:state_wild", "lothlorien:lure"] } });
+  assert.ok(entity.events["lothlorien:alarm"].remove.component_groups.includes("lothlorien:lure"));
+  const over = entity.events["lothlorien:alarm_over"].sequence;
+  assert.deepEqual(over[0].remove.component_groups, ["lothlorien:state_wild", "lothlorien:lure", "lothlorien:state_alarmed"]);
+  assert.deepEqual(over[1], { filters: { test: "bool_property", domain: "lothlorien:tame", value: false }, add: { component_groups: ["lothlorien:state_wild"] } });
+  assert.deepEqual(over[2], { filters: { all_of: [
     { test: "bool_property", domain: "lothlorien:tame", value: false },
     { test: "bool_property", domain: "lothlorien:offer_ready", value: true },
-  ] });
-  assert.ok(entity.events["lothlorien:alarm"].remove.component_groups.includes("lothlorien:lure"));
+  ] }, add: { component_groups: ["lothlorien:lure"] } });
+  const adds = ev => ev.sequence.filter(step => step.add?.component_groups.includes("lothlorien:lure"));
   assert.deepEqual(adds(entity.events["lothlorien:lure_on"])[0].filters, { all_of: [
-    { test: "enum_property", domain: "lothlorien:wariness", value: "friend" },
     { test: "bool_property", domain: "lothlorien:alarmed", value: false },
     { test: "bool_property", domain: "lothlorien:tame", value: false },
   ] });
+  const tame = entity.events["lothlorien:become_tame"].sequence;
+  assert.deepEqual(tame[1], { filters: { test: "bool_property", domain: "lothlorien:alarmed", value: false },
+    remove: { component_groups: ["lothlorien:state_wild", "lothlorien:lure"] } });
   assert.equal(entity.events["lothlorien:lure_off"], undefined, "the pause removes the lure through offer_taken");
 });
-await test("a Guest inside the lure radius turns the state calm, so only Friends can lure", async () => {
-  const R = await import("../lothlorien_bp/scripts/deer_rules.js");
-  const radius = entity.component_groups["lothlorien:lure"]["minecraft:behavior.tempt"].within_radius;
-  assert.ok(radius <= R.FLIGHT_RADIUS.calm);
-  assert.equal(R.pickWariness([{ distance: 2, wariness: "friend" }, { distance: radius, wariness: "calm" }]), "calm");
-});
-await test("Friend state keeps its danger flight and the bond keeps no inventory", async () => {
-  const g=entity.component_groups["lothlorien:state_friend"];
+await test("Friend and the others share one flight goal that keeps its danger flight; the bond keeps no inventory", async () => {
+  const g=entity.component_groups["lothlorien:state_wild"];
   assert.equal(entity.description.identifier,UNICORN_ID);
-  assert.deepEqual(g["minecraft:behavior.avoid_mob_type"].entity_types.slice(2).map(e=>[e.filters.value,e.max_dist]),[["wolf",12],["monster",8]]);
+  assert.deepEqual(g["minecraft:behavior.avoid_mob_type"].entity_types.slice(10).map(e=>[e.filters.value,e.max_dist]),[["wolf",12],["monster",8]]);
+  assert.ok(g["minecraft:interact"], "the Elanor prompt belongs to the wild state; the script refuses by band");
   assert.equal(entity.component_groups["lothlorien:bonded"]["minecraft:inventory"],undefined);
   assert.equal(entity.component_groups["lothlorien:bonded"]["minecraft:equippable"],undefined);
 });
 await test("a bonded unicorn's death is reported to its owner only", async () => {
   const h = await setup(), mod = await load("unicorn", { ...h.base, ELANOR_ID, UNICORN_ID, mayRide: () => true, nextTrust: () => ({}),
-    offerRefusal: () => undefined, setEventFor: () => "", healAnimal() {} });
+    offerRefusal: () => undefined, healAnimal() {} });
   const other = h.entity("minecraft:player"); h.world.players.push(other);
   const sent = []; h.player.sendMessage = m => sent.push(["owner", m]); other.sendMessage = m => sent.push(["other", m]);
   mod.startUnicorns();
@@ -175,12 +175,12 @@ await test("the offer pause is a native non-looping timer group that equals OFFE
   // The alarm timer and the pause timer never share an entity: an alarm ends the pause (and frees offer_ready), the state events keep it.
   const alarm = entity.events["lothlorien:alarm"];
   assert.ok(alarm.remove.component_groups.includes("lothlorien:offer_wait")); assert.equal(alarm.set_property["lothlorien:offer_ready"], true);
-  for (const n of ["calm", "l1", "l2", "l3", "friend"]) assert.ok(!entity.events[`lothlorien:set_${n}`].sequence[0].remove.component_groups.includes("lothlorien:offer_wait"), `set_${n} must not cancel the pause`);
+  assert.ok(!entity.events["lothlorien:alarm_over"].sequence[0].remove.component_groups.includes("lothlorien:offer_wait"), "alarm_over must not cancel a pause");
   assert.equal(entity.description.properties["lothlorien:offer_ready"].default, true);
 });
 async function offerService() {
   const h = await setup();
-  h.unicorn = h.entity(UNICORN_ID); h.unicorn.setProperty("lothlorien:trust", 0); h.unicorn.setProperty("lothlorien:wariness", "friend");
+  h.unicorn = h.entity(UNICORN_ID); h.unicorn.setProperty("lothlorien:trust", 0);
   const unicorn = await load("unicorn", { ...h.base, ...UR });
   unicorn.startUnicorns(); h.player.slot.item = new Item(ELANOR_ID, 5);
   h.feed = () => h.fire("playerInteractWithEntity", { player: h.player, target: h.unicorn, itemStack: h.player.slot.item.clone() });

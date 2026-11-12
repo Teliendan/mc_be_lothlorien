@@ -9,11 +9,16 @@ lothlorien_rp/render_controllers/unicorn.render_controllers.json, lothlorien_rp/
 Body = the vanilla horse (geometry.horse.v3, white horse texture, walk/look animations) with the saddle, bridle, bags and
 mule ears left out and a three-step horn added on the head; the coat is tinted pearl, mane and tail lilac. Reads the
 vanilla files from reference/vanilla/current (git-ignored; rebuild with tools/refresh_vanilla_ref.ps1).
-Not seen in game yet. The state groups follow entities/white_deer.json (Harmony wariness, driven by scripts/deer.js).
+Not seen in game yet. Flight and lure come from tools/wildlife_wariness.py (LM-01: each player judged by their own Harmony band tag,
+no script poll); the groups state_wild, lure, offer_wait, state_alarmed and bonded are the unicorn's whole state machine.
 """
 import json
+import sys
 from pathlib import Path
 from PIL import Image
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import wildlife_wariness as table  # noqa: E402
 
 MOD = Path(__file__).resolve().parents[1]
 BP, RP = MOD / "lothlorien_bp", MOD / "lothlorien_rp"
@@ -21,7 +26,6 @@ VANILLA_RP = MOD.parents[1] / "reference" / "vanilla" / "current" / "resource_pa
 ID = "lothlorien:unicorn"
 ELANOR = "lothlorien:elanor"
 OFFER_WAIT_SECONDS = 10  # = OFFER_GAP_TICKS / 20 in scripts/unicorn_rules.js (tests/unicorn_luring.mjs checks they agree)
-ALL_STATES = [f"lothlorien:state_{n}" for n in ("calm", "l1", "l2", "l3", "friend", "tame", "alarmed")] + ["lothlorien:lure"]
 
 
 def write(path, data):
@@ -30,50 +34,29 @@ def write(path, data):
 
 
 # ---------------------------------------------------------------- behaviour entity
-# The Elanor lure is vanilla tempt, the same goal as the deer's working corn lure. It lives in its own group, added
-# only in the Friend state (a Guest within 10 blocks turns the state to calm, so a Guest cannot lure it) and only while
-# no offer wait runs. The wait is the native group lothlorien:offer_wait (a 10 s non-looping timer): the script triggers
-# offer_taken on an accepted offer (property offer_ready false, lure off, wait on) and the timer's offer_ready event ends it.
-# The alarm group has its own minecraft:timer, so an alarm removes the wait (and sets offer_ready true) rather than let two
-# timers share one entity. The pause counts loaded time (owner 2026-11-11, LM-05).
-# Owner 2026-10-26: works in Survival (earlier "ignores Elanor" retests were in Creative, which deer.js then skipped).
-LURE = {"minecraft:behavior.tempt": {"priority": 3, "speed_multiplier": 1.0, "items": [ELANOR], "within_radius": 10,
-                                     "can_get_scared": False}}
-LURE_READY = {"all_of": [
-    {"test": "enum_property", "domain": "lothlorien:wariness", "value": "friend"},
-    {"test": "bool_property", "domain": "lothlorien:alarmed", "value": False},
-    {"test": "bool_property", "domain": "lothlorien:tame", "value": False},
-]}
+# Flight: one avoid_mob_type in state_wild, every player judged by their own band tag (tools/wildlife_wariness.py; a Guest and an
+# Uneasy player are both fled from at 13/6, only a Friend may come close, and only while holding Elanor).
+# The Elanor lure is vanilla tempt, the same goal as the deer's working corn lure (priority 4, below the flight at 3). It lives in
+# its own group `lure`, present from spawn while no offer wait runs and the unicorn is neither alarmed nor bonded; a player of a
+# worse band who holds Elanor is fled from at the table distance (owner 2026-11-11: come-and-flee accepted). The wait is the native
+# group lothlorien:offer_wait (a 10 s non-looping timer): the script triggers offer_taken on an accepted offer (property offer_ready
+# false, lure off, wait on) and the timer's offer_ready event ends it. The alarm group has its own minecraft:timer, so an alarm
+# removes the wait (and sets offer_ready true) rather than let two timers share one entity. The pause counts loaded time (owner
+# 2026-11-11, LM-05). Owner 2026-10-26: works in Survival (earlier "ignores Elanor" retests were in Creative).
+WILD, LURE, ALARMED, WAIT = "lothlorien:state_wild", "lothlorien:lure", "lothlorien:state_alarmed", "lothlorien:offer_wait"
+LURE_GROUP = {"minecraft:behavior.tempt": table.tempt("unicorn")}
 
 
-def player_avoid(dist, sneak_dist, walk, sprint, lure=False):
-    def entry(sneaking, max_dist):
-        tests = [
-            {"test": "is_family", "subject": "other", "value": "player"},
-            {"test": "is_sneaking", "subject": "other", "value": sneaking},
-        ]
-        if lure:  # Friend state: keeps 3 blocks from a Friend without Elanor, none from one holding it (owner, 2026-10-26).
-            # The deer's corn exemption; a Guest this close has already turned the state calm.
-            tests.append({"test": "has_equipment", "subject": "other", "domain": "hand", "operator": "!=", "value": ELANOR})
-        return {"filters": {"all_of": tests}, "max_dist": max_dist, "walk_speed_multiplier": walk, "sprint_speed_multiplier": sprint}
-
-    return [entry(False, dist), entry(True, sneak_dist)]
+def groups(*names):
+    return {"component_groups": list(names)}
 
 
-DANGER = [
-    {"filters": {"test": "is_family", "subject": "other", "value": "wolf"}, "max_dist": 12, "walk_speed_multiplier": 1.4, "sprint_speed_multiplier": 1.8},
-    {"filters": {"test": "is_family", "subject": "other", "value": "monster"}, "max_dist": 8, "walk_speed_multiplier": 1.4, "sprint_speed_multiplier": 1.8},
-]
+def prop(name, value):
+    return {"test": "bool_property", "domain": f"lothlorien:{name}", "value": value}
 
 
-def avoid_group(dist, sneak, walk, sprint, lure=False, extra=None):
-    group = {"minecraft:behavior.avoid_mob_type": {"priority": 4, "entity_types": player_avoid(dist, sneak, walk, sprint, lure) + DANGER}}
-    if extra:
-        group.update(extra)
-    return group
-
-
-# The offer is only open to a Friend of Lothlorien (scripts/unicorn.js checks it); the interact entry just gives the prompt.
+# The offer is only open to a Friend of Lothlorien (scripts/unicorn.js checks it); the interact entry just gives the prompt
+# to every player holding Elanor.
 OFFER = {
     "minecraft:interact": {
         "interactions": [
@@ -97,63 +80,50 @@ OFFER = {
 
 
 def state_events():
-    def set_state(name):
-        base = {"set_property": {"lothlorien:wariness": name, "lothlorien:alarmed": False}, "remove": {"component_groups": ALL_STATES}}
-        return {
-            "sequence": [
-                base,
-                {"filters": {"test": "bool_property", "domain": "lothlorien:tame", "value": False}, "add": {"component_groups": [f"lothlorien:state_{name}"]}},
-                {"filters": {"test": "bool_property", "domain": "lothlorien:tame", "value": True}, "add": {"component_groups": ["lothlorien:state_tame"]}},
-            ] + ([{"filters": {"all_of": [{"test": "bool_property", "domain": "lothlorien:tame", "value": False},
-                                          {"test": "bool_property", "domain": "lothlorien:offer_ready", "value": True}]},
-                   "add": {"component_groups": ["lothlorien:lure"]}}] if name == "friend" else [])
-        }
-
-    names = ["calm", "l1", "l2", "l3", "friend"]
-    events = {f"lothlorien:set_{n}": set_state(n) for n in names}
+    events = {}
+    # alarm: flight from every player for 20 s (the group's own timer); the offer pause ends, so offer_ready is free again
     events["lothlorien:alarm"] = {
         "set_property": {"lothlorien:alarmed": True, "lothlorien:offer_ready": True},
-        "remove": {"component_groups": ALL_STATES + ["lothlorien:offer_wait"]},
-        "add": {"component_groups": ["lothlorien:state_alarmed"]},
+        "remove": groups(WILD, LURE, WAIT, ALARMED),
+        "add": groups(ALARMED),
     }
-    events["lothlorien:alarm_over"] = {
-        "sequence": [
-            {"filters": {"test": "enum_property", "domain": "lothlorien:wariness", "value": n}, "trigger": f"lothlorien:set_{n}"} for n in names
-        ]
-    }
-    events["lothlorien:lure_on"] = {"sequence": [{"filters": LURE_READY, "add": {"component_groups": ["lothlorien:lure"]}}]}
+    # back to wild unless bonded; the lure only when the pause is over (offer_ready was set by the alarm, a tick or more ago)
+    events["lothlorien:alarm_over"] = {"sequence": [
+        {"set_property": {"lothlorien:alarmed": False}, "remove": groups(WILD, LURE, ALARMED)},
+        {"filters": prop("tame", False), "add": groups(WILD)},
+        {"filters": {"all_of": [prop("tame", False), prop("offer_ready", True)]}, "add": groups(LURE)},
+    ]}
+    events["lothlorien:lure_on"] = {"sequence": [{"filters": {"all_of": [prop("alarmed", False), prop("tame", False)]}, "add": groups(LURE)}]}
     # An accepted, non-final offer starts the pause; offer_ready (the timer's time_down_event) ends it. An offer to an alarmed
     # unicorn starts none (the alarm timer owns the entity then; the alarm already set offer_ready true).
     events["lothlorien:offer_taken"] = {"sequence": [{
-        "filters": {"test": "bool_property", "domain": "lothlorien:alarmed", "value": False},
+        "filters": prop("alarmed", False),
         "set_property": {"lothlorien:offer_ready": False},
-        "remove": {"component_groups": ["lothlorien:lure"]},
-        "add": {"component_groups": ["lothlorien:offer_wait"]},
+        "remove": groups(LURE),
+        "add": groups(WAIT),
     }]}
     events["lothlorien:offer_ready"] = {"sequence": [
-        {"set_property": {"lothlorien:offer_ready": True}, "remove": {"component_groups": ["lothlorien:offer_wait"]}},
+        {"set_property": {"lothlorien:offer_ready": True}, "remove": groups(WAIT)},
         {"trigger": "lothlorien:lure_on"},  # lure_on's filter does not read offer_ready (a property set above is visible next tick)
     ]}
-    events["minecraft:entity_spawned"] = {"trigger": "lothlorien:set_calm"}
-    # The bond: the script sets the owner and the property is visible a tick later, when it re-applies the state.
-    events["lothlorien:become_tame"] = {"set_property": {"lothlorien:tame": True}, "add": {"component_groups": ["lothlorien:bonded"]}}
+    events["minecraft:entity_spawned"] = {"add": groups(WILD, LURE)}
+    # The bond: the script sets the owner. A bonded unicorn flees nobody and is not lured: wild and lure go (an alarmed one keeps
+    # the alarm group until alarm_over, which adds nothing to a bonded unicorn).
+    events["lothlorien:become_tame"] = {"sequence": [
+        {"set_property": {"lothlorien:tame": True}, "add": groups("lothlorien:bonded")},
+        {"filters": prop("alarmed", False), "remove": groups(WILD, LURE)},
+    ]}
     return events
 
 
 def behaviour_entity():
     groups = {
-        "lothlorien:state_calm": avoid_group(13, 6, 1.4, 1.7, extra=OFFER),  # a stranger: keeps its distance, no lure
-        "lothlorien:state_l1": avoid_group(13, 6, 1.4, 1.7),
-        "lothlorien:state_l2": avoid_group(20, 10, 1.5, 1.9),
-        "lothlorien:state_l3": avoid_group(30, 15, 1.6, 2.1),
-        "lothlorien:state_friend": avoid_group(3, 2, 1.1, 1.3, lure=True, extra=OFFER),
-        "lothlorien:state_tame": {},
-        "lothlorien:lure": LURE,
+        WILD: {"minecraft:behavior.avoid_mob_type": table.wild_avoid("unicorn"), **OFFER},  # the script refuses by band
+        LURE: LURE_GROUP,
         "lothlorien:offer_wait": {"minecraft:timer": {"time": OFFER_WAIT_SECONDS, "looping": False,
                                                       "time_down_event": {"event": "lothlorien:offer_ready", "target": "self"}}},
-        "lothlorien:state_alarmed": avoid_group(36, 18, 1.6, 2.1, extra={
-            "minecraft:timer": {"time": 20, "looping": False, "time_down_event": {"event": "lothlorien:alarm_over", "target": "self"}}
-        }),
+        ALARMED: {"minecraft:behavior.avoid_mob_type": table.alarmed_avoid(), "minecraft:timer": {
+            "time": 20, "looping": False, "time_down_event": {"event": "lothlorien:alarm_over", "target": "self"}}},
         # Bonded to a player: rideable by its owner without a saddle (scripts/unicorn.js keeps everyone else off), the best
         # horse's jump, never despawns. No saddle slot, no armor slot, not leashable.
         "lothlorien:bonded": {
@@ -210,7 +180,6 @@ def behaviour_entity():
                 "is_spawnable": True,
                 "is_summonable": True,
                 "properties": {
-                    "lothlorien:wariness": {"type": "enum", "values": ["calm", "l1", "l2", "l3", "friend"], "default": "calm", "client_sync": False},
                     "lothlorien:alarmed": {"type": "bool", "default": False, "client_sync": False},
                     "lothlorien:tame": {"type": "bool", "default": False, "client_sync": False},
                     "lothlorien:offer_ready": {"type": "bool", "default": True, "client_sync": False},
