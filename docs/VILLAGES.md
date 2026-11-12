@@ -32,6 +32,8 @@ Village foliage is persistent (it never decays; natural trees keep normal decay)
 from 251 to 150. Non-debug players skip the periodic depth cache. Initial generation uses 2 ms cooperative slices, 32-write
 batches and yielding walking-distance searches (one native call may still exceed a slice). Slow initial building is acceptable;
 lag in an already loaded village is what matters.
+
+Offline, `tools/village_light.mjs` `addHiddenLights` computes the light field once on a typed array and raises it incrementally after each placed light (exact: the 34 pieces come out byte-identical; a test ties `lightGrid` to the shared flood fill). `node tools/build_village.mjs` takes about 3 s instead of 29 s.
 A village's first marker records its territory and later markers inside it write nothing; both village lists (territory and planned) keep 256 villages (was 64).
 The write phase is one pass over every planned cell, then one fence mend of every written cell and its four neighbours (the old separate rails pass is gone).
 

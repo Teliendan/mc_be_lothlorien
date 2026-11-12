@@ -76,68 +76,115 @@ export function worstLight(nameAt, b, stateAt = null) {
   for (const c of cells) { const l = L.get(key(...c)) ?? 0; if (l < worst) { worst = l; at = c; } }
   return { worst, at, cells: cells.length };
 }
+// ---- typed light grid (exact, fast) ------------------------------------------------------------------------------------------------
+// Why the greedy below may update its field incrementally and stay byte-identical to the flood fill of `lightField`: the field is the maximum over
+// all sources of (source level - path length through passing cells), which is unique whatever the order of the flood. A hidden light only ever
+// replaces air or void, and all three pass light, so passability, the reach sets and the per-source decomposition never change while it runs
+// (addHiddenLights throws if that ever stops holding). Box-indexed Uint8Array, 6-neighbour steps, no Map or string keys.
+// makeGrid(nameAt, b, stateAt) -> { size, bi(x,y,z), nb(j,dir), pass, fullField(), raise(L,j,level) }; fullField() reads the emitters now.
+function makeGrid(nameAt, b, stateAt) {
+  const X = b.x1 - b.x0 + 1, Y = b.y1 - b.y0 + 1, Z = b.z1 - b.z0 + 1, size = X * Y * Z;
+  const bi = (x, y, z) => ((x - b.x0) * Y + (y - b.y0)) * Z + (z - b.z0);
+  const pass = new Uint8Array(size), passMemo = new Map();
+  const passes = (n) => { if (n === undefined) return 1; let v = passMemo.get(n); if (v === undefined) passMemo.set(n, (v = LIGHT_PASS.test(n) ? 1 : 0)); return v; };
+  for (let x = b.x0; x <= b.x1; x++) for (let y = b.y0; y <= b.y1; y++) for (let z = b.z0; z <= b.z1; z++) pass[bi(x, y, z)] = passes(nameAt(x, y, z));
+  const STEP = [Y * Z, -Y * Z, Z, -Z, 1, -1];
+  const nb = (j, d) => { // neighbour index or -1 outside the box
+    const z = j % Z, y = ((j - z) / Z) % Y, x = (j - z - y * Z) / (Y * Z);
+    if (d === 0 ? x + 1 >= X : d === 1 ? x === 0 : d === 2 ? y + 1 >= Y : d === 3 ? y === 0 : d === 4 ? z + 1 >= Z : z === 0) return -1;
+    return j + STEP[d];
+  };
+  const q = new Int32Array(size * 16); // every cell is queued at most 15 times (levels 14..0) plus once as a source
+  const relax = (L, n0, n) => { // max-propagation from the queued cells q[n0..n)
+    for (let i = n0; i < n; i++) {
+      const j = q[i], l = L[j];
+      if (l <= 1) continue;
+      for (let d = 0; d < 6; d++) { const k = nb(j, d); if (k < 0 || L[k] >= l - 1 || !pass[k]) continue; L[k] = l - 1; q[n++] = k; }
+    }
+  };
+  const emitOf = (x, y, z) => { const n = nameAt(x, y, z); if (n === undefined) return 0; return STATEFUL.test(n) ? emission(n, stateAt?.(x, y, z)) : emission(n); };
+  const fullField = () => {
+    const L = new Uint8Array(size); let n = 0;
+    for (let x = b.x0; x <= b.x1; x++) for (let y = b.y0; y <= b.y1; y++) for (let z = b.z0; z <= b.z1; z++) { const e = emitOf(x, y, z); if (e > 0) { const j = bi(x, y, z); L[j] = e; q[n++] = j; } }
+    relax(L, 0, n);
+    return L;
+  };
+  const raise = (L, j, level) => { if (L[j] >= level) return; L[j] = level; q[0] = j; relax(L, 0, 1); };
+  return { size, bi, nb, pass, fullField, raise };
+}
+// Typed twin of lightField (same model, same inputs): { L: Uint8Array, bi } with L[bi(x, y, z)] = block light of the world cell. A test ties it to lightField.
+export function lightGrid(nameAt, b, stateAt = null) {
+  const g = makeGrid(nameAt, b, stateAt);
+  return { L: g.fullField(), bi: g.bi };
+}
+
 // Hidden lights (style guide section 5; replaces the old visible lantern greedy). Greedy: the air cell that lights most still-dark walk cells gets a
 // `light_block_15`; candidates are the cells at deck + 3 over walk cells and the air / void cells right under a deck edge (never in `avoid`, never
 // outside the box). When every walk cell is >= LIGHT_TARGET each placed light is lowered as far as the target still holds (a light that is not needed
 // any more is removed). Call it AFTER all dressing: visible lamps and every other emitter already count. -> [{ x, y, z, level }] of the lights kept.
 export function addHiddenLights(blocks, b, avoid = () => false, { target = LIGHT_TARGET, visible = true } = {}) {
-  // Count the real lamps; hidden light only fills gaps. `visible:false` remains available for isolated safety-light probes.
   const nameAt = (x, y, z) => blocks.get(key(x, y, z))?.name;
-  const lightAt = (x, y, z) => { const n = nameAt(x, y, z); return !visible && n !== undefined && (EMITTERS[n] !== undefined || STATEFUL.test(n)) ? "minecraft:air" : n; }; // what the light model sees: visible emitters (lamps, jars, berries, candles) are art and do not count
+  const lightAt = (x, y, z) => { const n = nameAt(x, y, z); return !visible && n !== undefined && (EMITTERS[n] !== undefined || STATEFUL.test(n)) ? "minecraft:air" : n; };
   const stateAt = (x, y, z) => blocks.get(key(x, y, z))?.states;
   const ok = (x, y, z) => inBox(b, x, y, z) && !avoid(x, y, z);
-  const cells = walkCells(lightAt, b, stateAt); // include the center lanes beside moss-mounted skirts
+  const cells = walkCells(lightAt, b, stateAt);
   const cand = [], seenCand = new Set();
   const addCand = (x, y, z) => { const k = key(x, y, z); if (!seenCand.has(k) && ok(x, y, z)) { seenCand.add(k); cand.push([x, y, z]); } };
-  for (const [x, y, z] of cells) if (nameAt(x, y + 2, z) === "minecraft:air") addCand(x, y + 2, z); // deck + 3
-  const isDeck = isDeckBlock;
-  for (const [x, y, z] of cells) { // under the deck, where the deck ends within one cell (void or air)
-    const dy = y - 1; // the deck block
+  for (const [x, y, z] of cells) if (nameAt(x, y + 2, z) === "minecraft:air") addCand(x, y + 2, z);
+  for (const [x, y, z] of cells) {
+    const dy = y - 1;
     for (const h of [1, 2]) {
       const cy = dy - h, n = nameAt(x, cy, z);
       if (n !== undefined && n !== "minecraft:air") break;
-      if (H4.some(([dx, dz]) => !isDeck(nameAt(x + dx, dy, z + dz)))) addCand(x, cy, z);
+      if (H4.some(([dx, dz]) => !isDeckBlock(nameAt(x + dx, dy, z + dz)))) addCand(x, cy, z);
     }
   }
-  const lights = [];
-  const field = () => lightField(lightAt, b, stateAt);
-  for (let guard = 0; guard < 80; guard++) {
-    const L = field();
-    const dark = new Set(cells.filter((c) => (L.get(key(...c)) ?? 0) < target).map((c) => key(...c)));
-    if (!dark.size) break;
-    const R = 15 - target; // a level-15 light reaches the target within R steps
-    const gain = (x, y, z) => {
-      const seen = new Map([[key(x, y, z), 0]]), q = [[x, y, z]];
-      let n = 0;
-      for (let i = 0; i < q.length; i++) {
-        const [cx, cy, cz] = q[i], d = seen.get(key(cx, cy, cz));
-        if (dark.has(key(cx, cy, cz))) n++;
-        if (d >= R) continue;
-        for (const [dx, dy, dz] of N6) {
-          const nx = cx + dx, ny = cy + dy, nz = cz + dz, nk = key(nx, ny, nz);
-          if (!seen.has(nk) && inBox(b, nx, ny, nz) && clearForLight(lightAt(nx, ny, nz))) { seen.set(nk, d + 1); q.push([nx, ny, nz]); }
-        }
-      }
-      return n;
-    };
-    let best = null, bg = 0;
-    for (const [x, y, z] of cand) {
-      const n = nameAt(x, y, z);
-      if (n !== undefined && n !== "minecraft:air") continue;
-      const g = gain(x, y, z);
-      if (g > bg) { bg = g; best = [x, y, z]; }
+  const { size, bi, nb, pass, fullField, raise } = makeGrid(lightAt, b, stateAt);
+  const walk = cells.map(([x, y, z]) => bi(x, y, z));
+  const R = 15 - target;
+  const reachCache = new Map();
+  const reachOf = (c) => { // box indexes within R steps through passing cells (the candidate itself included, as gain() did)
+    const j0 = bi(c[0], c[1], c[2]);
+    let out = reachCache.get(j0);
+    if (out) return out;
+    const dist = new Map([[j0, 0]]); out = [j0];
+    for (let i = 0; i < out.length; i++) {
+      const j = out[i], dj = dist.get(j);
+      if (dj >= R) continue;
+      for (let d = 0; d < 6; d++) { const k = nb(j, d); if (k < 0 || dist.has(k) || !pass[k]) continue; dist.set(k, dj + 1); out.push(k); }
     }
-    if (!best) throw new Error(`cannot light ${dark.size} walk cells with hidden lights, e.g. ${[...dark][0]} (${[...dark].slice(0, 8).join(" ")}; below ${nameAt(...[...dark][0].split(",").map(Number).map((v, i) => (i === 1 ? v - 1 : v)))}; here ${nameAt(...[...dark][0].split(",").map(Number))})`);
+    reachCache.set(j0, out);
+    return out;
+  };
+  const lights = [];
+  const L = fullField(), dark = new Uint8Array(size);
+  for (let guard = 0; guard < 80; guard++) {
+    dark.fill(0); let nDark = 0, firstDark = -1;
+    for (const j of walk) if (L[j] < target && !dark[j]) { dark[j] = 1; nDark++; if (firstDark < 0) firstDark = j; }
+    if (!nDark) break;
+    let best = null, bg = 0;
+    for (const c of cand) {
+      const n = nameAt(c[0], c[1], c[2]);
+      if (n !== undefined && n !== "minecraft:air") continue;
+      let g = 0; for (const j of reachOf(c)) g += dark[j];
+      if (g > bg) { bg = g; best = c; }
+    }
+    if (!best) throw new Error(`cannot light ${nDark} walk cells with hidden lights`);
+    if (!pass[bi(best[0], best[1], best[2])]) throw new Error("addHiddenLights: a hidden light would replace a blocking cell");
     lights.push({ x: best[0], y: best[1], z: best[2], level: 15, orig: blocks.get(key(...best)) });
     blocks.set(key(...best), lightBlock(15));
+    raise(L, bi(best[0], best[1], best[2]), 15);
   }
-  if (cells.some((c) => (field().get(key(...c)) ?? 0) < target)) throw new Error("addHiddenLights: no convergence");
-  // lower every light as far as the target holds (binary search per light: light is monotone in the level); a light that is not needed is removed
-  const worstNow = () => { const L = field(); let w = 99; for (const c of cells) w = Math.min(w, L.get(key(...c)) ?? 0); return w; };
+  if (walk.some((j) => L[j] < target)) throw new Error("addHiddenLights: no convergence");
   for (const l of lights) {
-    const k = key(l.x, l.y, l.z), put = (v) => (v ? blocks.set(k, lightBlock(v)) : l.orig ? blocks.set(k, l.orig) : blocks.delete(k)); // 0 = give the cell back as it was
-    let lo = 0, hi = 15; // smallest level (0 = removed) that keeps the target
-    while (lo < hi) { const mid = (lo + hi) >> 1; put(mid); if (worstNow() >= target) hi = mid; else lo = mid + 1; }
+    const k = key(l.x, l.y, l.z), put = (v) => (v ? blocks.set(k, lightBlock(v)) : l.orig ? blocks.set(k, l.orig) : blocks.delete(k));
+    put(0);
+    const F = fullField(); // every other source at its current level
+    const j0 = bi(l.x, l.y, l.z), dist = new Int16Array(size).fill(-1); dist[j0] = 0; const order = [j0];
+    for (let i = 0; i < order.length; i++) { const j = order[i]; if (dist[j] >= 14) continue; for (let d = 0; d < 6; d++) { const kk = nb(j, d); if (kk < 0 || dist[kk] >= 0 || !pass[kk]) continue; dist[kk] = dist[j] + 1; order.push(kk); } }
+    const holds = (v) => { for (const j of walk) { const own = dist[j] >= 0 ? v - dist[j] : 0; if (Math.max(F[j], own) < target) return false; } return true; };
+    let lo = 0, hi = 15;
+    while (lo < hi) { const mid = (lo + hi) >> 1; if (holds(mid)) hi = mid; else lo = mid + 1; }
     l.level = lo;
     put(lo);
   }

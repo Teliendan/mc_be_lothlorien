@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { keepClearCells, keepClearViolations, deco, supportCheck, waterCheck, placementFilter } from "../tools/village_checks.mjs";
 import { buildTree, SHAPES, FLOOR_H, LEVEL_H, RING, stairLayer, RAIL } from "../tools/village_mallorn.mjs";
-import { EMITTERS, emission, lightBlock, isLightBlock, lightField, worstLight, addHiddenLights, walkCells, LIGHT_TARGET } from "../tools/village_light.mjs";
+import { EMITTERS, emission, lightBlock, isLightBlock, lightField, worstLight, addHiddenLights, lightGrid, walkCells, LIGHT_TARGET } from "../tools/village_light.mjs";
 import * as spawnApi from "../tools/village_light.mjs";
 import { rotateStates, loadVillageData, simulate, check } from "../tools/village_sim.mjs";
 import { rotateBlocks } from "../tools/village_combo.mjs";
@@ -107,6 +107,25 @@ test("village pieces: real lamps plus hidden gap-fill keep every walk cell >= 8"
 // ---- keep-clear cells and deco() -----------------------------------------------------------------------------------------------
 let nodeBase; // built once (fixed seed, about 0.65 s); each call gets its own shallow copies of the block map and keep-clear set
 const nodeB = () => { const t = (nodeBase ??= buildTree({ pool: "p", upPool: "u", trunk: "square3", seed: 22022, levels: [{ rows: SHAPES.octagon15, conn: [{ facing: "west", off: 1 }, { facing: "east", off: -1 }, { facing: "south", off: 0 }] }] })); return { ...t, blocks: new Map(t.blocks), keep: new Set(t.keep) }; };
+test("light grid equals the shared flood fill (every shipped piece and one generated tree)", () => {
+  const same = (name, nameAt, b, stateAt) => {
+    const ref = lightField(nameAt, b, stateAt), { L, bi } = lightGrid(nameAt, b, stateAt);
+    for (let x = b.x0; x <= b.x1; x++) for (let y = b.y0; y <= b.y1; y++) for (let z = b.z0; z <= b.z1; z++) {
+      assert.equal(L[bi(x, y, z)], ref.get(key(x, y, z)) ?? 0, `${name}: ${x},${y},${z}`);
+    }
+  };
+  const dir = new URL("../lothlorien_bp/structures/lothlorien/village/", import.meta.url);
+  let n = 0;
+  for (const f of readdirSync(dir).filter((q) => q.endsWith(".mcstructure"))) {
+    const p = parseMcstructure(readFileSync(new URL(f, dir)), f), grid = new Map(p.blocks.map((b) => [key(b.x, b.y, b.z), b]));
+    same(f, (x, y, z) => p.at(x, y, z) ?? undefined, { x0: 0, x1: p.size[0] - 1, y0: 0, y1: p.size[1] - 1, z0: 0, z1: p.size[2] - 1 }, (x, y, z) => grid.get(key(x, y, z))?.states);
+    n++;
+  }
+  assert.ok(n >= 30, `${n} pieces compared`);
+  const t = nodeB();
+  const cs = [...t.blocks.keys()].map((k) => k.split(",").map(Number)), lo = [0, 1, 2].map((a) => Math.min(...cs.map((c) => c[a]))), hi = [0, 1, 2].map((a) => Math.max(...cs.map((c) => c[a])));
+  same("generated tree", (x, y, z) => t.blocks.get(key(x, y, z))?.name, { x0: lo[0], x1: hi[0], y0: lo[1], y1: hi[1], z0: lo[2], z1: hi[2] }, (x, y, z) => t.blocks.get(key(x, y, z))?.states);
+});
 test("keepClearCells: the corridor of every connector (3 wide, 4 deep), the main path to the walk ring, the ring, the trunk is not in it", () => {
   const t = nodeB(), D = FLOOR_H;
   assert.ok(t.keep.size > 50);
