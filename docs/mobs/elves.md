@@ -18,8 +18,8 @@ All verified in game by the owner on 2026-10-10 unless marked otherwise.
 - **Debug:** the `/scriptevent lothlorien:elf home|rehome` command was removed (2026-10-29 debug cleanup). Each radius group still carries `minecraft:mark_variant` 1 home_near, 2 home_lore, 3 healer_day, 4 healer_night (visible in an entity dump; no marker on a lead); the recorded home cell is the `lothlorien:home` dynamic property.
 - **Second healer:** a village with at least `HEALER2_MIN_TREES` 6 outer trees gets a second healer on a leftover home post (room first, then farthest from healer 1, then x, z), never on a reserve; sim 241/300 villages.
 - **Harmony everywhere:** `elf_fight`, `elf_kill`, `warden_fight`, `warden_kill` count anywhere in the world (`harmony.js` `EVERYWHERE_DEEDS`); other deeds keep the inside-the-forest rule. Verified.
-- **Planner speed:** see `docs/TECHNICAL_NOTES.md` "Elven village" (loop planner, timing log, `START_DELAY_TICKS` 5, time-boxed job driver).
-- **Village polish** (commits 5631c22, 7b57536, 6b97311; see TECHNICAL_NOTES "Elven village"): rope foot, crowns fit their box, living pillars and planner root flares verified in game. Not yet seen: the pillar ivy start fix of 6b97311 (decoration leaves cleared ground to ground+4, low twigs removed).
+- **Planner speed:** see `design/lothlorien_jigsaw_settlement.md` section 7 (loop planner, timing log, `START_DELAY_TICKS` 5, time-boxed job driver).
+- **Village polish** (commits 5631c22, 7b57536, 6b97311; see `design/lothlorien_jigsaw_settlement.md` section 7): rope foot, crowns fit their box, living pillars and planner root flares verified in game. Not yet seen: the pillar ivy start fix of 6b97311 (decoration leaves cleared ground to ground+4, low twigs removed).
 
 ## Owner decisions (2026-10-10)
 

@@ -30,6 +30,22 @@ trading player; led-away elves still trade; a reload keeps no stale pass; Czech 
 Open engine questions kept from the design: whether `persist_trades: false` rebuilds stock after a component-group change, and
 whether `set_potion` yields the right potion (otherwise item data suffixes 21/28/40).
 
+### Implementation (M3, accepted in game 2026-10-11; moved from the technical notes 2026-11-12)
+
+Design and prices: `design/elven_inhabitants.md` section 4; regression checks: above. Reusable evidence: `.claude/skills/bedrock-modding/references/08-trading.md`.
+
+- **Single source:** `scripts/trade_rules.js` (four traders, stock and prices, nine keys `uneasy`, `guest_0..3`, `friend_0..3`, click decisions, nearest/pinned player selection, the final-gift hook). Uneasy always has starting stock.
+- **Generator:** `node tools/build_trades.mjs` writes 36 `trading/lothlorien/*.json` and only the generated trade property, groups and events in `entities/elf.json`; `--check` detects drift. One tier, one deterministic trade per group,
+  9,999,999 uses, zero trader XP, explicit zero price multipliers (the documented omitted default is 0.05).
+- **Entity:** enum `lothlorien:trade` (default `none`, persisted, not client synced); ten events swap the group by profession; the Loremaster has no table; `persist_trades: false` requests rebuilding offers; `trade_with_player` stops
+  navigation and a separate `look_at_trading_player` faces the customer; delivery interactions exclude `lothlorien_trade_pass` as well as lead and name tag.
+- **Runtime** (`scripts/trade.js`): one bounded six-block query per player every ten ticks, lazy band/rank reads, swaps only when the property changes; a trading player's pin lasts at most 600 ticks while within range, another
+  player's mismatch click overrides it. **Click flow:** Shunned/Hated refuse first; a matching request without a pass opens `openTraderForm` (`loremaster.js`); a stale table cancels, swaps and asks for another click; otherwise native
+  trading. The Trade button grants that player's next use on that elf for 200 ticks; used passes cover repeat events for ten ticks; pass tokens protect replacements from stale timers; leave/join clear state and tags. Before-handlers only
+  read, cancel and touch JS maps; tags, swaps, chat and forms are deferred. The trade debug report was removed 2026-10-29. Hover guidance on the Trade button (grey second line) owner-confirmed (9cdd1a0 on 405d482).
+- **Tests:** `tests/trade.mjs` (prices, stock, no cross-band arbitrage, request separation, ids, generation, bindings) and `tests/trade_glue.mjs` (callbacks, timers, form mapping, payment, stale-answer guards; awaited after
+  static imports so the fake clock is not shared with the village glue tests).
+
 ## Healer
 
 All values are in `scripts/healer_rules.js`; `tests/healer.mjs` runs the production module on the shared mock.

@@ -11,7 +11,7 @@ Looks: `docs/mobs/elves.md` (`tools/make_elves.py`, review sheets in `temp/elves
 |---|---|---|
 | M0 | Spikes: custom bow, arrows, belt (section 8) | done, owner-tested 2026-10-10. Spike files kept in `temp/elven_inhabitants/spike_files/` as the M5 starting point |
 | M1 | Civilian elves placed in villages, Harmony, wardens defend, leads, healer roaming (sections 1, 7, 10) + village polish (rope foot, crowns fit their box, bare branches, living pillars with planner root flares) | done, accepted in game 2026-10-10 (commits 30e1eb1, 5631c22, 6f79109, 7b57536, 6b97311; the ivy start of 6b97311 not yet seen) |
-| M2 | Renown + Loremaster dialog: lessons and requests (sections 2, 3) | done, accepted in game 2026-10-11 (commits 88dbbe2, 6019c88, f854117, ff61ae2, eb1cc5e dew, a10653f niphredil). Notes: `docs/TECHNICAL_NOTES.md` "Renown and the Loremaster (M2)" |
+| M2 | Renown + Loremaster dialog: lessons and requests (sections 2, 3) | done, accepted in game 2026-10-11 (commits 88dbbe2, 6019c88, f854117, ff61ae2, eb1cc5e dew, a10653f niphredil). Notes: section 3, "As built" |
 | M3 | Shops: trade-table generator (band x rank), table swapping by script, refusal (section 4) | complete, accepted in game 2026-10-11: shops 7f86c87 ("It all works"), Trade hover guidance 9cdd1a0 confirmed on deployed 405d482 ("It works"); [checks](../ELF_SERVICES.md) |
 | M4 | Healer heals elves and Friends (section 7) | complete, owner accepted 2026-10-11 (bc1da69); [checks](../ELF_SERVICES.md) |
 | M5 | Final items (Galadriel's gifts) + Galadhrim arrows (sections 5, 6); then the bow template for `bedrock-items` | implemented; final art selected/accepted from previews 2026-10-12: bow C, arrow 3, phial D/P4, belt B4-v2 with icon, worn cloak C2-v2 with Golden Mallorn icon. Belt/phial/corrected invisibility owner-confirmed; 0.6s bow feel/zoom and broader engine checks pending; [record](../GIFTS.md). Shared template in `.claude/skills/bedrock-items/templates/custom_archery/` |
@@ -95,6 +95,25 @@ If none is found, the Loremaster takes the request himself and says so ("Our vil
 while the player's current request is of that profession (player tag `lothlorien_deliver_<profession>`, kept by script). M3 adds Trade to that form and native trading for players with no matching request.
 
 Bands: Friend and Guest get everything; Uneasy only the Harmony lesson (task kept, paused); Shunned one chat line; Hated silence. A village whose Loremaster died has no dialog (other villages work).
+
+### As built (M2, technical; accepted in game 2026-10-11)
+
+Design: sections 2-3 above. Commits 88dbbe2 (Renown + dialog), 6019c88, f854117, ff61ae2, eb1cc5e, a10653f.
+
+- **Files:** `renown_rules.js` (pure: ranks, points, lessons, chapters, task slot, requests, rotation, delivery plan, `directionTo`, `nearestOf`, `deliveryPlace`, `tagSync`, parse/serialize), `deeds.js` (hook bus), `renown_game.js` (state in the player
+  dynamic property `lothlorien:renown`, deed listener, sapling watch, Harmony nudge, inventory, turn-in and hand-over feedback, deliver tag), `loremaster.js` (interception, forms, trader hand-over form, direction line), `fireflies.js`,
+  `dew.js`, `entities/elf.json` (prompts), tests `tests/renown.mjs`. Every text goes through `message()` with keys `lothlorien.message.lore.*` (catalog, `.\mods localize build lothlorien`).
+- **State v2:** `{ v, points, done, task, offer, queue }`, `task = null | { kind: "lesson", id, ready, since } | { kind: "request", id, spots }`; v1 migrates on read; `parse` tolerates junk.
+- **Debug** (the other debug commands: `TESTING.md`): `/scriptevent lothlorien:renown` shows the state; `points N`, `reset`, `deed <id>`, `take <lesson id>`, `chapter N`, `offer <request id>`; bands via `harmony <value>`.
+- **Interaction:** `beforeEvents.playerInteractWithEntity` on `lothlorien:elf`: cancel, then `system.run` opens the form; lead and name tag return early. `elf.json` has a prompt-only "Speak" in the `lothlorien:loremaster` group and a
+  conditional "Hand over" prompt per trader group filtered by `has_tag` `lothlorien_deliver_<profession>` (`syncDeliverTag` keeps exactly that player tag). Forms: `ActionFormData` loop, icons from this pack and `textures/ui/*`; the
+  set-aside confirm is a two-button `ActionFormData` (not `MessageFormData`, whose button order is a trap); `UserBusy` retried 10 times every 10 ticks; answers apply only within 12 blocks.
+- **Delivery:** `tradersAround` uses `getEntities({ type, location, maxDistance: 96 })` (loaded chunks); none found -> the Loremaster takes the request himself. Direction: 8 compass words, north = -Z, "close by" under 8 blocks.
+- **Firefly catch:** the prompt stays in `firefly.json`; `fireflies.js` catches in `afterEvents.playerInteractWithEntity` (the native interaction swings) and owns the deferred release; `firefly_bottle.js` stores name and current health as visible localized raw lore (stackable items cannot hold
+  dynamic properties). Offhand bottles do not catch; healthy unnamed bottles stay plain. Details `mobs/firefly.md`.
+- **Sapling request:** `afterEvents.playerPlaceBlock` with `mallorn_sapling`; inside the biome it is remembered as a distinct cell (checked at turn-in); outside it prints `lore.saplings.outside`.
+- Verified in game 2026-10-11 (owner): dialog redesign, trader hand-over, directions, the missing-trader fallback, firefly catch, Harmony nudge, the acorn request, time-shaped morning dew, Niphredil round 5. Status unverified: the outside-sapling
+  line, the Uneasy/Shunned/Hated dialog bands, a v1 save migrating, two players on one firefly, the forms in the AI-drafted locales, completing all 12 requests (testers, `TODO.md` section 2).
 
 ## 4. Shops
 
