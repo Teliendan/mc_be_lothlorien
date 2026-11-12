@@ -41,7 +41,7 @@ Start with `TODO.md` for what is left before release.
 
 | File | Content |
 |---|---|
-| `TECHNICAL_NOTES.md` | how the mod is built, by topic |
+| `TECHNICAL_NOTES.md` | how blocks and items are built (wood, saplings, flora blocks, corn, salve, rope, lighting); other topics are in their own sheets (its "Moved" table) |
 | `BLOCK_MATERIALS.md`, `TAGS.md`, `WATER.md`, `SNOW.md`, `PISTON_SUPPORT.md` | block material profiles, tag audit, water and snow policies, support blocks moved by pistons |
 | `HARVEST.md` | harvest and loot rules: one table (block, tool, drop, Fortune/Silk Touch, owner decision) plus leaf and corn details |
 | `MALLORN_WOOD_LESSONS.md`, `GRAPHICS_TASKS.md` | wood-set art lessons, art status and the leaf flicker issue |

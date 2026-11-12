@@ -1,10 +1,16 @@
 # Lothlórien: technical notes
 
-Engine facts checked against the installed game data (`C:\mcmods\reference\vanilla\current`) and the docs, kept so nobody re-derives
-them. Design lives in `design/`, mob sheets in `mobs/`, the natural placement of builds in `WORLDGEN.md`. This file holds the final
-design, verified behaviour, owner decisions and real limits; the build-by-build history is in git. Section titles keep the old phase
-numbers in parentheses because skills and other docs link to them. Statuses: "owner-verified" means seen in game by the owner;
-"status unverified" means no record of a game check was found.
+How the blocks and items are built: wood set, saplings and leaf decay, flora blocks and ground covers, leaf flicker, corn and Lembas, salve and Miruvor, nectar, dew and Star canopy, rope, lighting. Engine facts checked against the installed game data (`C:\mcmods\reference\vanilla\current`) and the docs, kept so nobody re-derives them. This file holds the final design, verified behaviour, owner decisions and real limits; the build-by-build history is in git. Statuses: "owner-verified" means seen in game by the owner; "status unverified" means no record of a game check was found.
+
+Moved to the sheet that owns the topic (2026-11-12):
+
+| Topic | Sheet |
+|---|---|
+| Biome, tags, depth estimate, ordinary and giant Mallorn trees | `WORLDGEN.md` |
+| Flora worldgen placement, falling leaves, debug commands | `FLORA_DENSITY.md`, `ATMOSPHERE.md`, `TESTING.md` |
+| Creatures, wariness, spawning and despawn, antler block | `mobs/` (`deer.md` holds the shared notes) |
+| Harmony, Renown and the Loremaster, shops | `design/harmony.md`, `design/elven_inhabitants.md`, `ELF_SERVICES.md` |
+| Village pieces, pools, loop planner, repairs, civilian elves | `design/lothlorien_jigsaw_settlement.md` section 7, `mobs/elves.md` |
 
 Pointers for later interaction audits (owner-approved decisions, deferred-use snapshots, native engine checks): [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md)
 and [parity/CREATURES.md](parity/CREATURES.md). Water and snow policies: [WATER.md](WATER.md), [SNOW.md](SNOW.md). Post-passes that keep data
@@ -13,7 +19,7 @@ controls); they preserve rope fuel 15, chandelier stack 64, lantern item tags an
 and blossoms was removed by the owner (2026-10-19): they are fallen material.
 Thin and decor blocks give no support via the stair-support trick (owner 2026-11-04, set in `configure_support.py`): [BLOCK_MATERIALS.md](BLOCK_MATERIALS.md#block-support-shape-owner-decision-2026-11-04).
 
-## Mallorn wood set (was Phase 3)
+## Mallorn wood set
 
 Block format **1.26.50**; both manifests need `min_engine_version` 1.26.50 (multi-box collision, `minecraft:tags` and `minecraft:sound` are format-gated; `tag:*`
 keys no longer work). Blocks (`lothlorien:mallorn_` + `log`, `stripped_log`, `wood`, `stripped_wood`, `planks`, `leaves`, `stairs`, `slab`, `double_slab` (hidden),
@@ -47,7 +53,7 @@ keys no longer work). Blocks (`lothlorien:mallorn_` + `log`, `stripped_log`, `wo
   `fit_to_frame: false` (poses from Kaioga's 1.26.50 templates; rule in `bedrock-block-families/references/families.md` "Item icons"). Owner-verified 2026-10-01.
 - Items left out (signs, shelf, ...): `NOT_IMPLEMENTED.md`.
 
-## Saplings, small and big Mallorns, leaf decay (was Phase 4 and 4b)
+## Saplings, small and big Mallorns, leaf decay
 
 Files: `scripts/mallorn_tree.js` (pure generator), `scripts/trees.js` (growth, bone meal, decay), `blocks/mallorn_sapling.json`, `items/mallorn_acorn.json`.
 
@@ -74,7 +80,7 @@ Files: `scripts/mallorn_tree.js` (pure generator), `scripts/trees.js` (growth, b
   order (both ways), and after every log placed back in scrambled order; at most ~2,300 block reads per search (2026-11-08). Not covered: wood moved by a
   piston, `/setblock` or `/fill` without `destroy`, a tree grown from a sapling into marked leaves. Details `HARVEST.md`. The 20-tree cut-down balance test was never run (status unverified).
 
-## Flora, ground cover and worldgen tuning (was Phase 6)
+## Flora blocks and ground covers
 
 - **Plants** `elanor`, `niphredil`, `athelas`, `golden_fern`: `minecraft:geometry.cross` (their own `plant_cross` copy), `alpha_test`, no collision, break instantly, soil-only `placement_filter`; each
   has an item of the same identifier (2D icon, creative group flower) and a block with no menu category. **Ground covers** `mallorn_leaf_carpet` (opaque) and `mallorn_blossom` (cutout), made by
@@ -93,18 +99,14 @@ Files: `scripts/mallorn_tree.js` (pure generator), `scripts/trees.js` (growth, b
 
 ### Mallorn leaf flicker (solved 2026-11-10 by three-direction culling)
 
-The leaves shimmer at high frequency; vanilla leaves do not. Established with the owner in game (2026-10-02): it is not the art (a vanilla leaf texture on all faces still flickered), not the MERS maps, not
-binary alpha. The two saplings stopped flickering when their model changed from box-UV zero-thickness cubes to the single-face `plant_cross`. For the leaves: `alpha_test_to_opaque` fixed the leaves being invisible
-from far away (with a dark colour under the transparent texels, `shade_hidden` in `make_mallorn_leaves.py`) and stays, but not the flicker. Data-driven culling (`minecraft:culling_layer.leaves`, with or without a
-custom cube) stopped it but made the canopy hollow and needs the experimental toggle (on the plain cube with the toggle off the flicker remained). An inset cube (0.1) stopped it but showed a gap; at 0.05 with
-`isotropic` it returned, and the inset-cube experiment was dropped (its generator is deleted, git has it). Conclusion: z-fighting between coplanar faces of touching leaf blocks; the known fixes look worse
-(`GRAPHICS_TASKS.md`). Until 2026-11-10 both leaf blocks were plain `geometry.full_block` with `alpha_test_to_opaque` and `isotropic` on up/down. Owner in game, 2026-11-10: `alpha_test_single_sided_to_opaque` (backface culling) **stops the flicker**, but a leaf seen through its own holes shows no inner side of its far faces (see-through, unlike vanilla), so it was rejected. **Fix, accepted by the owner in game the same day** (flicker gone, vanilla-like look; where green and golden leaves touch, the shared face shows one or the other texture depending on the side, accepted): double-sided `alpha_test_to_opaque` again, on a full-size cube `geometry.lothlorien.mallorn_leaf_cube` with `block_culling/mallorn_leaves.culling.json` and the shared layer `lothlorien:culling_layer.leaves` on both leaf blocks. The rules cull the `up`, `east` and `south` faces against a block of the same layer and leave `down`, `west` and `north` drawn, so two touching leaves share exactly one double-sided face: nothing coplanar to fight, no hollow canopy (the 2026-10-02 test culled all six directions), and about a third fewer leaf faces. All six faces still cull against full opaque blocks. Works with all experimental toggles off (owner, 2026-11-10).
+The leaves shimmered at high frequency; vanilla leaves do not. Cause: z-fighting between coplanar faces of touching leaf blocks. Established with the owner in game (2026-10-02): not the art (a vanilla leaf texture on all faces still flickered), not the MERS maps, not binary alpha; the two saplings stopped flickering when their model changed from box-UV zero-thickness cubes to the single-face `plant_cross`. `alpha_test_to_opaque` fixed the leaves being invisible from far away (with a dark colour under the transparent texels, `shade_hidden` in `make_mallorn_leaves.py`) and stays.
+**Tried and rejected:** data-driven culling (`minecraft:culling_layer.leaves`, six directions, with or without a custom cube) stopped the flicker but made the canopy hollow and needs the experimental toggle; an inset cube (0.1) showed a gap, at 0.05 with `isotropic` the flicker returned (its generator is deleted, git has it); the other known fixes look worse (`GRAPHICS_TASKS.md`). Until 2026-11-10 both leaf blocks were plain `geometry.full_block` with `alpha_test_to_opaque` and `isotropic` on up/down. Owner in game, 2026-11-10: `alpha_test_single_sided_to_opaque` (backface culling) **stops the flicker**, but a leaf seen through its own holes shows no inner side of its far faces (see-through, unlike vanilla), so it was rejected. **Fix, accepted by the owner in game the same day** (flicker gone, vanilla-like look; where green and golden leaves touch, the shared face shows one or the other texture depending on the side, accepted): double-sided `alpha_test_to_opaque` again, on a full-size cube `geometry.lothlorien.mallorn_leaf_cube` with `block_culling/mallorn_leaves.culling.json` and the shared layer `lothlorien:culling_layer.leaves` on both leaf blocks. The rules cull the `up`, `east` and `south` faces against a block of the same layer and leave `down`, `west` and `north` drawn, so two touching leaves share exactly one double-sided face: nothing coplanar to fight, no hollow canopy (the 2026-10-02 test culled all six directions), and about a third fewer leaf faces. All six faces still cull against full opaque blocks. Works with all experimental toggles off (owner, 2026-11-10).
 
 Mallorn leaves versus vanilla (parameter audit): same render method, sound `grass`, hardness and blast resistance 0.2, flammability 30/60, light dampening 1, no redstone conduction. Deliberate differences:
 ambient occlusion 0 (faces next to logs went black, game-verified); colours baked, never biome-tinted; hoe-only tool tag (vanilla drops only with shears or Silk Touch, see `HARVEST.md`); persistence state
 plus script decay with reach 10; no waterlogging or composting in the first pass (since added, see parity doc).
 
-## Western Corn and Lembas (was Phase 7; game-tested 2026-09-29, owner)
+## Western Corn and Lembas (game-tested 2026-09-29, owner)
 
 Files: `blocks/western_corn.json`, `scripts/crop.js` (component and bone meal helpers), `scripts/crop_rules.js` (pure growth numbers), `scripts/lembas.js`, items `western_corn_seeds`, `western_corn_grain`,
 `lembas_dough`, `lembas_cake`, `lembas_wrapped`, recipes and the `western_corn(.json|_mature.json)` loot tables.
@@ -119,7 +121,7 @@ Files: `blocks/western_corn.json`, `scripts/crop.js` (component and bone meal he
 - Observed in game: wild corn, growth with bone meal, dough, baking, eating. Status unverified: natural growth speed and low-light behaviour, wet versus dry farmland, the Hunger lift, food balance.
   Not done on purpose: trampled farmland leaving the crop on dirt (it survives but stops growing), water-flow breaking, fortune.
 
-## Athelas salve and Miruvor (was Phase 8)
+## Athelas salve and Miruvor
 
 Items `athelas_salve`, `miruvor`; `scripts/athelas.js` (components `lothlorien:salve`, `lothlorien:miruvor`; effects come from script because item-JSON food effects are not available in 1.26.50).
 
@@ -131,7 +133,7 @@ Items `athelas_salve`, `miruvor`; `scripts/athelas.js` (components `lothlorien:s
   firing for a non-food item, the durability bar and write-back through the main-hand slot are verified in game. Creative sip preservation, plain Lembas compost 85 % and soul-campfire cooking: parity doc.
   Food balance, ingredient-only nectar, no extra corn uses and no raw-swan debuff are intentional.
 
-## Nectar, morning dew and Star canopy (was Phase 14b; status unverified except where noted)
+## Nectar, morning dew and Star canopy (status unverified except where noted)
 
 - **Nectar bloom** `lothlorien:nectar_bloom` (`scripts/nectar.js`, `nectar_rules.js`, `tools/make_nectar_bloom.py`): state `lothlorien:nectar` 0-3, hangs under Mallorn leaves, logs or planks (`allowed_faces: ["down"]`),
   grows 1/7 per stage on random ticks only with Mallorn leaves above. A glass bottle on a full bloom gives `lothlorien:mallorn_nectar` and resets it; shears or Silk Touch collect one bloom. Worldgen: scatter
@@ -142,7 +144,7 @@ Items `athelas_salve`, `miruvor`; `scripts/athelas.js` (components `lothlorien:s
 - **Star canopy** `lothlorien:star_canopy`: full block, light 6, 6-frame blended flipbook plus emissive MERS strip. Recipe LLL/DDD/TTT = 3 Mallorn leaves, 3 morning dew, 3 deepslate tiles -> 9. Unlock is the Bottle of
   Morning Dew (`OWNER_CHECKS.md`). Whether flipbook and MERS strip render correctly: status unverified.
 
-## Elven rope (was Phase 17b; owner-accepted 2026-10-02/03)
+## Elven rope (owner-accepted 2026-10-02/03)
 
 Recipe: 1 Bottle of morning dew over 1 golden fern -> 1 rope. Item `lothlorien:elven_rope` (stack 64, component `lothlorien:rope`, `onUseOn`); block with state `lothlorien:face` (the clicked face, wall opposite), flat on the wall
 like a ladder, a knot every 8 units (art `tools/make_elven_rope.py`; the final icon is a short rope with one overhand knot). Placing (`scripts/elven_rope.js`, rules `elven_rope_rules.js`): on a side face one piece per item
@@ -155,9 +157,13 @@ tick fell faster than `CLIMB.downSpeed` = 4 (`brakes`; lands at about 3.3 blocks
 `applyKnockback`, slow falling while climbing up, slow falling alone going down. Trap: a missing `brakes` import was hidden by the tick's try/catch (a test checks imports). Effect icons cannot be hidden per effect; replacing
 vanilla icon textures was rejected. One-tick effects expire naturally and never remove or replay external potions. The lookout giants and the village use the rope (existing worlds keep ladders).
 
-## Elven lighting (was Phase 17; generator `tools/make_elven_lamps.py`)
+## Elven lighting (generator `tools/make_elven_lamps.py`)
 
 Silver **Elven Lantern** `lothlorien:elven_lantern` (light 14; two Mallorn trapdoors + Bottle of Fireflies; stands or hangs by the finial; owner-accepted design and compact icon 2026-10-03) and golden
 `elven_lantern_heartwood` (same geometry with the silver-to-heartwood mapping `make_mallorn_wood.to_gold`, silver collar, heartwood trapdoors; in-game verdict unverified). **Elven chandelier** (light 15, ceiling only,
 antler arms, five hanging lights; four antlers + Elven rope + silver lantern; placed model owner-accepted 2026-10-02). **Firefly jar** (light 11, floor only, blend glass, moss, animated flies; owner-accepted placed model). All four
 use `itemGroup.name.lanterns`; glow and fly tiles use MERS maps. Face-only filters are in `VERIFIER_WARNINGS.md`.
+
+## Former phase numbers
+
+Old labels in older notes and git history: Phase 1 biome and 2 depth -> `WORLDGEN.md`; 3 Mallorn wood set; 4 and 4b saplings and leaf decay; 5 giant Mallorns -> `WORLDGEN.md`; 6 flora -> "Flora blocks and ground covers" here and `FLORA_DENSITY.md`; 7 corn; 8 salve; 10 fauna and 11 deer -> `mobs/deer.md`; 12 white deer -> `mobs/white_deer.md`; 14b nectar and dew; 15 swan, squirrel, unicorn -> `mobs/`; 17 lighting; 17b rope. M1 civilian elves -> `mobs/elves.md`, M2 Renown -> `design/elven_inhabitants.md`, M3 shops -> `ELF_SERVICES.md`.

@@ -160,7 +160,7 @@ and remove runtime diagnostics`.
 
 - **Elven rope** (`make_elven_rope.py`): placed rope liked by the owner; single overhand knot icon accepted 2026-10-03 (a
   one-pixel hole makes the knot readable; dark-grey edge pixels replace near-black outlines).
-- **Elven lamps** (`make_elven_lamps.py`, design in `TECHNICAL_NOTES.md` "Phase 17"): chandelier final (owner, round 2); lantern
+- **Elven lamps** (`make_elven_lamps.py`, design in `TECHNICAL_NOTES.md` "Elven lighting"): chandelier final (owner, round 2); lantern
   with silver arch canopy, open four-sided glow chamber and one-layer foot, final (lowest narrow foot removed 2026-10-03);
   Golden Elven Lantern uses the stripped-heartwood palette through the shared silver-to-gold map; firefly jar (7 high, blend
   glass, moss bed, wandering flies) accepted ("beautiful"); icons accepted with the set 2026-10-03. Commit: `Elven lighting and

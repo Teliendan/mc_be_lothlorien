@@ -2,7 +2,7 @@
 
 Mod-specific: what the owner wants from the Mallorn wood set and how we got there. General art and engine lessons
 live in the shared skills (`.claude/skills/bedrock-art/references/generated-art.md`, `bedrock-block-families/references/families.md`).
-Status of each asset: `GRAPHICS_TASKS.md` "Mallorn wood set". How the blocks are built: `TECHNICAL_NOTES.md` Phase 3.
+Status of each asset: `GRAPHICS_TASKS.md` "Mallorn wood set". How the blocks are built: `TECHNICAL_NOTES.md` "Mallorn wood set".
 
 ## The owner's taste (apply to every remaining piece: gate, door, trapdoor, button, plate)
 
@@ -47,7 +47,7 @@ Status of each asset: `GRAPHICS_TASKS.md` "Mallorn wood set". How the blocks are
 ## Traps we hit in this mod
 
 - Python on Windows reads and writes cp1252 unless told otherwise: pass `encoding="utf-8"` (or run `python -X utf8`), or a
-  text with `×`/`ó` fails to match and a rewrite corrupts the file. It also writes CRLF; the block JSON is LF, the atlases, lang and `TECHNICAL_NOTES.md` are CRLF. Read and write with
+  text with `×`/`ó` fails to match and a rewrite corrupts the file. It also writes CRLF; the block JSON is LF, the atlases and lang are CRLF (`TECHNICAL_NOTES.md` is LF). Read and write with
   `newline=""` and keep each file's endings, or every line shows as changed (or a text replacement silently misses).
 - Blockbench: rendering the same model path again reuses the old texture, and it keeps rendered PNGs open (write new names).
 - Cube slopes: build them from end points (`seg()`), check the sign on a side view (the first try drew V dips).
