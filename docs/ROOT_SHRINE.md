@@ -47,4 +47,4 @@ disposable images into `temp/root-shrine/` (they approximate native pots and can
 walkability, root connections, display/flower/banner supports, chest clearance, persistent crown, no clipped cells,
 determinism, the native fixed pot contents, banner NBT, guaranteed Mending, no emeralds, the serialized anchor and the
 placement weights. Native pot fields were checked against engine-saved data; reusable evidence: workspace
-`.claude/skills/bedrock-modding/references/16-native-pot-contents.md`.
+`.claude/skills/bedrock-worldgen/references/16-native-pot-contents.md`.

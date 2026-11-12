@@ -4,7 +4,7 @@ import { GARDEN, GARDEN_FILES, buildFlowerGarden, flowerGardenFeature, flowerGar
 import { SITES, SITE_ALLOWLIST, shuffledLatticeIterations, shuffledPick, siteFeatureRule, siteSelectFeature } from "../tools/site_feature.mjs";
 import { toMcstructure } from "../tools/build_structures.mjs";
 import { readNbt } from "../tools/village_sim.mjs";
-import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs";
+import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs";
 
 const garden = buildFlowerGarden(), { blocks } = garden;
 const get = (x, y, z) => blocks.get(`${x},${y},${z}`);

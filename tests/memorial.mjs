@@ -5,7 +5,7 @@ import { placeEntities, toMcstructure } from "../tools/build_structures.mjs";
 import { readNbt } from "../tools/village_sim.mjs";
 import { SITES } from "../tools/site_feature.mjs";
 import { SILVER_WATCH } from "../tools/watch_camp_rules.mjs";
-import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs";
+import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs";
 
 const memorial = buildMemorial(), { blocks } = memorial;
 const get = (x, y, z) => blocks.get(`${x},${y},${z}`);

@@ -10,7 +10,7 @@ import { loadVillageData, parseMcstructure, rotated, PLANKS, FENCE, LANTERN_ID }
 import { RING, FLOOR_H as V_FLOOR, LEVEL_H as V_LEVEL, ROOTS as V_ROOTS, worstLight, LIGHT_TARGET, LANTERN_LIGHT } from "../tools/village_mallorn.mjs";
 import { bridgeShape } from "../lothlorien_bp/scripts/village_bridge.js";
 import { buildBridge, STRAIGHT } from "../tools/village_combo.mjs";
-import { checkWalk, protectedCells } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs";
+import { checkWalk, protectedCells } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs";
 import { buildTree as vBuildTree, SHAPES as V_SHAPES, linkRails, LEVEL_H as V_LEVEL_H } from "../tools/village_mallorn.mjs";
 import * as MEND from "../lothlorien_bp/scripts/rail_mender_rules.js";
 import * as LOOP from "../lothlorien_bp/scripts/village_loop.js";

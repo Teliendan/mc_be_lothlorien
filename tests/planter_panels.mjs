@@ -7,7 +7,7 @@ import { keepClearViolations,supportCheck } from "../tools/village_checks.mjs";
 import { parseMcstructure,applyPlan,wkey } from "../tools/village_sim.mjs";
 import { sideTarget } from "../lothlorien_bp/scripts/village_loop.js";
 import { findHome,frameArea,frameCell,framePost,planFurnish,frameLamp } from "../lothlorien_bp/scripts/home_furnish.js";
-import { checkWalk } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs";
+import { checkWalk } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs";
 
 const key=(x,y,z)=>`${x},${y},${z}`,PL="lothlorien:mallorn_planks";
 const blk=(name,states={})=>({name,states});

@@ -6,7 +6,7 @@
 // The box is (2*hx+1) x (2*hz+1), so toMcstructure offset = [hx, ROOTS, hz].
 import { makeBuilder, makeRandom, DIRS8 } from "../lothlorien_bp/scripts/mallorn_tree.js";
 import { B, LEAF_KEEP, trimFarLeaves, roundFoot, bentBranch, bareBranchEnds } from "./flet_mallorn.mjs"; // the giant Mallorns' foot and bent branch (Phase 5, accepted in game)
-import { blockLight } from "../../../.claude/skills/bedrock-modding/scripts/structure_light.mjs"; // shared skill script (one implementation of the light model)
+import { blockLight } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_light.mjs"; // shared skill script (one implementation of the light model)
 import { keepClearCells } from "./village_checks.mjs";
 import { dressTree, lantern as dressLantern } from "./village_dress.mjs"; // deck dressing, art lamps and the home pavilion (M7 WP3)
 import { isPlanterPanel } from "../lothlorien_bp/scripts/planter_panels.js";
@@ -104,7 +104,7 @@ const N6 = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]]
 const H4 = [[1, 0], [-1, 0], [0, 1], [0, -1]];
 const inBox = (b, x, y, z) => x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1 && z >= b.z0 && z <= b.z1;
 // nameAt(x, y, z) -> block name, undefined for structure void; b = { x0, x1, y0, y1, z0, z1 }; stateAt(x, y, z) -> states (optional, for candles and
-// sea pickles). The flood fill itself is the shared skill script (.claude/skills/bedrock-modding/scripts/structure_light.mjs); this wraps it for boxes that do not start at 0.
+// sea pickles). The flood fill itself is the shared skill script (.claude/skills/bedrock-worldgen/scripts/structure_light.mjs); this wraps it for boxes that do not start at 0.
 export function lightField(nameAt, b, stateAt = null) {
   const get = (x, y, z) => {
     const n = nameAt(x + b.x0, y + b.y0, z + b.z0);

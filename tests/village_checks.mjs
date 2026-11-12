@@ -8,7 +8,7 @@ import { EMITTERS, emission, lightBlock, isLightBlock, lightField, worstLight, a
 import * as spawnApi from "../tools/village_mallorn.mjs";
 import { rotateStates, loadVillageData, simulate, check, parseMcstructure } from "../tools/village_sim.mjs";
 import { rotateBlocks } from "../tools/village_combo.mjs";
-import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs";
+import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs";
 
 let failed = 0;
 function test(name, fn) { try { fn(); console.log(`ok   ${name}`); } catch (e) { failed++; console.log(`FAIL ${name}\n     ${e.message}`); } }

@@ -13,7 +13,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { toMcstructure } from "./build_structures.mjs";
 import { B, decoratePillar } from "./flet_mallorn.mjs";
-import { checkWalk } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs"; // shared walkability checker (headroom, steps, edges, rings, rail links)
+import { checkWalk } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs"; // shared walkability checker (headroom, steps, edges, rings, rail links)
 import { makeCombo, buildBalcony, STRAIGHT } from "./village_combo.mjs";
 import { sideTarget } from "../lothlorien_bp/scripts/village_loop.js"; // the runtime's own rim test decides where a side marker may stand
 import { POST_ID, POST_GROUP_PREFIX, POST_SPACING, ROPE_CLEARANCE, RESERVE_POSTS, homeSite } from "../lothlorien_bp/scripts/elf_rules.js"; // civilian elf posts (tunables live there)
@@ -57,7 +57,7 @@ for (const f of readdirSync(out)) unlinkSync(join(out, f)); // pieces of earlier
 const POOL = (n) => `lothlorien:village/${n}`;
 const summary = [];
 
-// Walkability (owner 2026-10-08, rules in .claude/skills/bedrock-modding/references/13-structure-walkability.md): every piece is checked
+// Walkability (owner 2026-10-08, rules in .claude/skills/bedrock-worldgen/references/13-structure-walkability.md): every piece is checked
 // with the shared checker; any violation stops the build. opts.ring: [{ trunk: [[x, z]], level }] (walk ring round a trunk at deck level),
 // opts.connectors: deck connectors that must be reachable from each other. `blocks` are in piece coordinates (any origin).
 export function walkReport(blocks, { connectors = [], ring = [], must: extraMust = [] } = {}) {

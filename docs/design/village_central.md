@@ -58,7 +58,7 @@ to 6 posts so that the total stays <= 12.
 - A slab with a candle on it is a "low ceiling step" for the walk checker: candles stand on the deck.
 - Elf cells: with a stair ring at 3, a walk ring at 4 and a heartwood ring at 5 only the band at Chebyshev 6..7 and a few ring cells are open deck;
   a smaller Court cannot host 7 posts.
-- Waterlogged blocks: see `.claude/skills/bedrock-modding/references/09-structures.md` (layer 1, marker state `__water`).
+- Waterlogged blocks: see `.claude/skills/bedrock-worldgen/references/09-structures.md` (layer 1, marker state `__water`).
 
 ## Open questions for the in-game test (all untested, 2026-10-15)
 

@@ -16,7 +16,7 @@ import { deflateSync } from "node:zlib";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const bp = join(root, "lothlorien_bp");
 import { RAIL, SLAB, ROOTS, lightField } from "./village_mallorn.mjs";
-import { protectedCells, checkWalk } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs"; // shared walkability checker (cells a piece owns)
+import { protectedCells, checkWalk } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs"; // shared walkability checker (cells a piece owns)
 import { supportScan, waterScan, isSupportSkipped } from "./village_checks.mjs"; // nothing floats, water stays in its vessel (the generator runs them per piece, the sim on assembled villages)
 import { isPlanterPanel,planterWalkName,PANEL_AIR } from "../lothlorien_bp/scripts/planter_panels.js";
 import { MARKER_ID, finalBlocks } from "../lothlorien_bp/scripts/village_loop.js";

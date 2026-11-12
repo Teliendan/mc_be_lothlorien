@@ -2,7 +2,7 @@
 
 Final design as shipped for Bedrock 1.26.x. The 2026-10-16..29 history (group probes, sparse-grid audit, constrained-feature
 probe pack, dense-grid test) lives in git; the last commit that still has the probe documents is `edcaf72`.
-Engine facts and primary sources: workspace skill `bedrock-modding`, references `10-jigsaw-pieces.md`,
+Engine facts and primary sources: workspace skill `bedrock-worldgen`, references `10-jigsaw-pieces.md`,
 `21-jigsaw-worldgen-policy.md` and `24-structure-placement-survey.md`. **Worldgen changes need a new world.**
 
 ## What generates

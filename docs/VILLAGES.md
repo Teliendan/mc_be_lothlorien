@@ -46,4 +46,4 @@ Simulation seeds 1..40 (`node tools/village_sim.mjs 40`) give 40 distinct layout
 Regressions cover seats, wood supports, fence targets and edits, unload safety, planter coverage (261 correctly mounted panels,
 healer and gardener in all four orientations and sizes k 4..7), cushion protection and bridge preservation. Production
 generators and tests remain for maintenance (`tools/build_village.mjs`, `tests/village_*.mjs`). Shared evidence for the
-technique: skill `bedrock-modding` reference 20 (`20-structure-polish.md`).
+technique: skill `bedrock-worldgen` reference 20 (`20-structure-polish.md`).

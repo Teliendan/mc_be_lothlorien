@@ -5,7 +5,7 @@ import { SHRINE, buildRootShrine, rootShrineLoot } from "../tools/root_shrine.mj
 import { placeEntities, toMcstructure, giantMallornPool } from "../tools/build_structures.mjs";
 import { ANCHOR_AT, TRUNK_ANCHOR } from "../tools/mallorn_anchor.mjs";
 import { readNbt } from "../tools/village_sim.mjs";
-import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-modding/scripts/structure_walk.mjs";
+import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs";
 import { SILVER_WATCH } from "../tools/watch_camp_rules.mjs";
 
 const shrine = buildRootShrine(), { blocks } = shrine;

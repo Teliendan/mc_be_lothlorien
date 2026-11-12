@@ -35,7 +35,7 @@ Thin and decor blocks give no support via the stair-support trick (owner 2026-11
 - Stable server components: `climate`, `creature_spawn_probability`, `humidity`, `map_tints`, `mountain_parameters`, `partially_frozen`, `replace_biomes`,
   `surface_builder`, `surface_material_adjustments`, `tags`. Fog, sky and grass colour are **client** components (`minecraft:client_biome`). Client
   grass/foliage take a flat `"color": "#rrggbb"` or a `color_map`.
-- General biome knowledge: `.claude/skills/bedrock-modding/references/06-biomes.md`. `/locate biome` returns the nearest point of the biome, often its edge
+- General biome knowledge: `.claude/skills/bedrock-worldgen/references/06-biomes.md`. `/locate biome` returns the nearest point of the biome, often its edge
   (possibly shallow water, because replacement keeps the terrain); walk to the centre. The biome is 3D, so caves under a replaced forest are Lothlórien too.
 
 ### Tags decide almost everything (No monster)
@@ -88,7 +88,7 @@ keys no longer work). Blocks (`lothlorien:mallorn_` + `log`, `stripped_log`, `wo
   in-game check pending, `OWNER_CHECKS.md`).
 - **Stairs:** native corners from `placement_direction` with `minecraft:corner_and_cardinal_direction` (5 shapes x 2 halves x 4 directions = 40 permutations,
   multi-box collision); the engine updates `corner` itself. Left/right follow Java. **Axis trap:** block geometry draws x mirrored while `collision_box` uses world
-  x, so the geometry cubes are the collision boxes with x negated (owner-verified 2026-09-29). Regenerate with `.claude/skills/bedrock-blocks/scripts/gen_stairs.py`.
+  x, so the geometry cubes are the collision boxes with x negated (owner-verified 2026-09-29). Regenerate with `.claude/skills/bedrock-block-families/scripts/gen_stairs.py`.
 - **Slabs:** `vertical_half`; merging in a `playerInteractWithBlock` world event (also for a neighbouring block whose face points into a slab cell); deferred
   writes revalidate target, water and the original selected slot and item. Both slabs have 15-second fuel and the native combine sound.
 - **Fence:** the `connection` trait connects to fences, gates and solid blocks (vanilla uses `minecraft:has_fence_connections`). **Door:** two-part multi-block
@@ -145,7 +145,7 @@ Shipped: two lookout trees (`mallorn_round_05`, `round_07`: flet, rope, loot che
   dropped at generation. Older square-trunk variants are in git before `d09188f`.
 - **Pipeline.** Shape in `tools/flet_mallorn.mjs` (pure); `node tools/build_structures.mjs [variant|all] [count] [firstSeed]` writes `structures/lothlorien/mallorn_<variant>_NN.mcstructure`
   (40x54x40, trunk NW cell at x/z 18, ground at y 5, about 700 KB each), `scripts/giant_trees.js` and the legacy pool; the plain command rebuilds exactly `CHOSEN` (curation candidates never enter
-  worldgen). Tree NN of every variant uses the same seed. Format traps: `.claude/skills/bedrock-modding/references/09-structures.md`. Tests (`tests/run.mjs`) check over 30 seeds that the
+  worldgen). Tree NN of every variant uses the same seed. Format traps: `.claude/skills/bedrock-worldgen/references/09-structures.md`. Tests (`tests/run.mjs`) check over 30 seeds that the
   rope is unbroken, the exit floor exists, the chest has room, leaves are within reach and everything fits the box.
 - **Engine facts [V].** Jigsaw structures are stable since 1.21.120. `max_depth` 0 builds nothing (the one cause found after six one-change tests; now 1); `separation` must be less than half of
   `spacing`. `max_distance_from_center` 116. A 40-wide `structure_template_feature` is cut at chunk borders; script-grown markers only appear within simulation distance; jigsaw spans chunks.
@@ -360,7 +360,7 @@ use `itemGroup.name.lanterns`; glow and fly tiles use MERS maps. Face-only filte
 
 ## Elven village (jigsaw; accepted 2026-10-09, finished 2026-10-16)
 
-Final design, owner decisions and toolkit: `design/lothlorien_jigsaw_settlement.md`; finish: `VILLAGES.md`; natural placement: `WORLDGEN.md`. Engine notes: `.claude/skills/bedrock-modding/references/10-jigsaw-pieces.md`.
+Final design, owner decisions and toolkit: `design/lothlorien_jigsaw_settlement.md`; finish: `VILLAGES.md`; natural placement: `WORLDGEN.md`. Engine notes: `.claude/skills/bedrock-worldgen/references/10-jigsaw-pieces.md`.
 Rebuild everything (deletes the old pieces first, byte-stable): `node tools/build_village.mjs`, then `.\mods verify lothlorien`.
 
 **Connector standard** (generator and `tests/run.mjs` check it): one `minecraft:jigsaw` per connection in the deck layer on the outer face of the piece box, in the middle of a 3-wide walk opening, facing outward; `name`
@@ -378,7 +378,7 @@ jigsaw (joint `rollable`, name = target `lothlorien:village_crown`, final state 
 - **Trees:** `flet_mallorn.mjs` shapes (`roundFoot`, `bentBranch`, `trimFarLeaves`); trunk 3x3 (central round), root flare at nominal ground, logs down to ROOTS, woven struts under each deck; crowns keep the trunk up to 40 % and taper,
   7-14 bent branches with blobs. **Bridges:** surface in half blocks `k(z) = min(z, L-1-z, top)` (top 2 for L <= 7, 4 for L >= 9), even k planks, odd k bottom `mallorn_slab`, every step 0.5 block; `scripts/village_bridge.js`
   `bridgeShape(length, offset, rise)` is shared by generator and runtime planner. **Spiral stair** (towers): the 16 ring cells round the 3x3 trunk, one half-step per cell; walkability rules (owner 2026-10-08) are enforced by
-  `.claude/skills/bedrock-modding/scripts/structure_walk.mjs` inside `build_village.mjs` and by a shipped-piece sweep in `tests/run.mjs`.
+  `.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs` inside `build_village.mjs` and by a shipped-piece sweep in `tests/run.mjs`.
 - **Pools:** `start`; `combos` (weight 3, +2 tower combos; early ends railing 10, balcony 6, lookout 2; fallback `exits`); `exits` (railing 4, braced balcony 2, lookout 1; fallback `plugs`); `crowns` (large 3, medium 2; fallback
   `crowns_fallback` large 12, medium 8, small 1); `crowns_small`; `crowns_central`. **Structure** `lothlorien:elven_village`: `max_depth` 2, `start_height` -17 (Bedrock's `world_surface` is the top solid block, so -17 puts tree y 0
   on the first air cell), `terrain_adaptation` none, max distance 116.

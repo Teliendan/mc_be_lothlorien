@@ -7,7 +7,7 @@ import { ROOT_DEPTH } from "../tools/flet_mallorn.mjs";
 import { parseMcstructure, readNbt } from "../tools/village_sim.mjs";
 import { furnishWatchCamp, watchCampLoot, CAMP_LANTERN } from "../tools/watch_camp.mjs";
 import { CAMP } from "../tools/watch_camp_rules.mjs";
-import { blockLight, defaultPasses } from "../../../.claude/skills/bedrock-modding/scripts/structure_light.mjs";
+import { blockLight, defaultPasses } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_light.mjs";
 
 const bp = new URL("../lothlorien_bp/", import.meta.url);
 const json = (p) => JSON.parse(readFileSync(new URL(p, bp), "utf8"));
