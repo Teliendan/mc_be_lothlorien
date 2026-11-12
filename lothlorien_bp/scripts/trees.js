@@ -8,7 +8,7 @@ import { treeBloomCount } from "./nectar_rules.js";
 import { TREE_WOOD, TREE_LEAVES, validSaplingSoil, saplingSoil, saplingLight } from "./tree_interaction_rules.js";
 import { findDecay, findRescue, BATCH_SPAN, OTHER, LEAF, DECAYABLE, WOOD, UNKNOWN, DECAYING } from "./leaf_decay.js";
 
-// Phase 4: Mallorn sapling growth, bone meal, leaf decay, and the tree balance instruments.
+// Mallorn sapling growth, bone meal, leaf decay, and the tree balance instruments.
 //   lothlorien:sapling  random tick: stage 0 -> 1 -> grows a small Mallorn (needs light and room);
 //                       four saplings in a 2x2 square grow one big Mallorn with a 2x2 trunk
 //   lothlorien:leaves   places as persistent (player-placed never decays); natural leaves with no tree log/wood

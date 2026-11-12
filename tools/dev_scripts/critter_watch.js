@@ -1,6 +1,6 @@
 import { world, system } from "@minecraft/server";
 
-// Phase 10 spike instrument: counts test critters so spawning, density and despawn can be
+// Spawn and despawn spike instrument (mobs/deer.md section B): counts test critters so spawning, density and despawn can be
 // judged by numbers instead of by eye. `/scriptevent lothlorien:critters` prints one report;
 // `/scriptevent lothlorien:critters watch` toggles a report every WATCH_SECONDS (chat + log).
 export const CRITTER_ID = "lothlorien:deer";

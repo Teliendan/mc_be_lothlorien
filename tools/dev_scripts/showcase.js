@@ -1,6 +1,6 @@
 import { world, system, BlockPermutation, StructureRotation } from "@minecraft/server";
 
-// Phase 5 curation instrument. `/scriptevent lothlorien:showcase [variant]` lays out the giant Mallorn
+// Giant Mallorn curation instrument. `/scriptevent lothlorien:showcase [variant]` lays out the giant Mallorn
 // structures (lothlorien:mallorn_<variant>_NN, made by tools/build_structures.mjs; no variant = all of
 // them, one block of rows per variant) on a grid of 4 columns east and south of the player, with a sign
 // in front of each ladder. Trees in unloaded chunks are retried every 2 s for 3 minutes, so fly along the

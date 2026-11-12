@@ -1,4 +1,4 @@
-"""Generates the Phase 14b nectar bloom: block + item JSON, loot table and the stage textures.
+"""Generates the nectar bloom: block + item JSON, loot table and the stage textures.
 
     python -B mods/lothlorien/tools/make_nectar_bloom.py
 

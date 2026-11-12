@@ -1,4 +1,4 @@
-"""Generates the Star canopy (Phase 14b): block + item JSON, recipe, the animated texture and its MERS strip.
+"""Generates the Star canopy: block + item JSON, recipe, the animated texture and its MERS strip.
 
     python -B mods/lothlorien/tools/make_star_canopy.py
 

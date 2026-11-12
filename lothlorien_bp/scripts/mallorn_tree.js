@@ -1,4 +1,4 @@
-// Mallorn generators (Phase 4): small (1x1 trunk) and big (2x2 trunk). Pure: no Minecraft imports, so
+// Mallorn generators (TECHNICAL_NOTES.md "Saplings, small and big Mallorns, leaf decay"): small (1x1 trunk) and big (2x2 trunk). Pure: no Minecraft imports, so
 // they run and can be measured under plain Node (tools/tree_stats.mjs). Coordinates are relative to the
 // base cell: the sapling for a small tree, the north-west (min x, min z) sapling for a big one.
 

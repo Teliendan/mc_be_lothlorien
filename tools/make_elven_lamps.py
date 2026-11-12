@@ -1,4 +1,4 @@
-"""Generates the Elven lighting set (Phase 17): Elven lantern, Firefly jar and Elven chandelier.
+"""Generates the Elven lighting set (TECHNICAL_NOTES.md "Elven lighting"): Elven lantern, Firefly jar and Elven chandelier.
 
     python -B mods/lothlorien/tools/make_elven_lamps.py
 

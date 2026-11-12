@@ -355,11 +355,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/squirrel.js",
-        "sha256": "2dfd65c7b98e2d35e4722afbfba67d32c02d12b98cd85ab07ffeac483d63e358"
+        "sha256": "00acbde59ff5c810949c51357cd122df92482dfded8cf08e78e78abfeaa468a5"
       },
       {
         "path": "lothlorien_bp/scripts/squirrel_rules.js",
-        "sha256": "56df56b647c9eebf58eded1bc9cb6d1de3b9acb6f8eb8423edbee6ca636e82c1"
+        "sha256": "0c45c15e19ed5899286fe14233ccdf53f6ffdb102eb4bf6aced03833960fe8e6"
       }
     ]
   },
@@ -411,11 +411,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/swan.js",
-        "sha256": "3ba926b67ba8a845d2d0596e500b167710dd0372f1200d7193c01f2971f92e8a"
+        "sha256": "2ffcf08f2b3429852d379bce39519cd29e9d95997c8357c5dae8619ae11cb755"
       },
       {
         "path": "lothlorien_bp/scripts/swan_rules.js",
-        "sha256": "8f04a1da017de4a7135a9b6ca9225d0012ffd828e8230e30ebe0e9d382e9dba6"
+        "sha256": "9c129e751feae11a7944df4044662e036a27b3fbea7ba0a551bdc7ec6e8a2121"
       }
     ]
   },
@@ -476,11 +476,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/unicorn.js",
-        "sha256": "14227a52983c79842026dde119d7c036f1941ae227878b72f20c148241bb13aa"
+        "sha256": "b34db5c607f78567844baa077f54f6f52836277fb5197a53058d13294e27f839"
       },
       {
         "path": "lothlorien_bp/scripts/unicorn_rules.js",
-        "sha256": "cc698ad427b0d2696c32569bf4fa55d013701d706df91bba114662422ef638b4"
+        "sha256": "3d8fa344316eafd953e293e405b67f764f35817c382fe7e830a9d546e23ddafb"
       }
     ]
   },
@@ -530,11 +530,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/white_deer.js",
-        "sha256": "f1ebd1afd00ebb180ec6a17eec6ae77e90f13c6b8879226690040b4a20f8d4cb"
+        "sha256": "d4c638f856a5d0add026537cd439d70699ed6c32facc7ebb0b363a79c156f660"
       },
       {
         "path": "lothlorien_bp/scripts/white_deer_rules.js",
-        "sha256": "237d262df093ac47bb139db01a35875789e6bf2d51a755510435423fb72e65e0"
+        "sha256": "2952e95871be2c3747a255d6b4ea055106da2b677aa889f0dddae925e9826ae4"
       }
     ]
   },
@@ -825,7 +825,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/athelas.js",
-        "sha256": "b63d3a44bd3f47d6907a44825d3a23025fd120863e1c986aa5138d3879c5a097"
+        "sha256": "30d08cec3e0de3132567ce83edc0c16120dfdae6d2b51688054acd69a768028c"
       }
     ]
   },
@@ -968,7 +968,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/athelas.js",
-        "sha256": "b63d3a44bd3f47d6907a44825d3a23025fd120863e1c986aa5138d3879c5a097"
+        "sha256": "30d08cec3e0de3132567ce83edc0c16120dfdae6d2b51688054acd69a768028c"
       }
     ]
   }

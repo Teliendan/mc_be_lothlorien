@@ -1,4 +1,4 @@
-// Elven rope (Phase 17b): a stackable item that unrolls a rope on the side of a block, and the script that makes it
+// Elven rope (TECHNICAL_NOTES.md "Elven rope"): a stackable item that unrolls a rope on the side of a block, and the script that makes it
 // climbable. Rope pieces are the block `lothlorien:elven_rope` (state `lothlorien:face`) and its structure-only twin
 // `lothlorien:elven_rope_hanging` (state `minecraft:cardinal_direction`, same values: Bedrock rotates that state with a
 // rotated structure piece, but not the custom `lothlorien:face`). Both are one rope to every rule below.

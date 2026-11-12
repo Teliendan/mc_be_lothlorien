@@ -1,4 +1,4 @@
-"""Generates the Phase 14b bottle icons: Mallorn nectar, Dew bottle (partly filled) and Bottle of morning dew.
+"""Generates the bottle icons: Mallorn nectar, Dew bottle (partly filled) and Bottle of morning dew.
 
     python -B mods/lothlorien/tools/make_nectar_dew.py
 

@@ -1,5 +1,5 @@
 import { message } from "./messages.js";
-// Ground squirrel errands in the running game (Phase 15; rules in squirrel_rules.js). A Friend of Lothlorien offers a
+// Ground squirrel errands in the running game (mobs/squirrel.md; rules in squirrel_rules.js). A Friend of Lothlorien offers a
 // Mallorn acorn: the squirrel takes it, runs off to a spot 10-14 blocks away, digs a moment, comes back and drops a small
 // gift (loot_tables/gifts/squirrel.json) at the player's feet. Not a Friend: it sniffs the acorn and keeps it.
 //

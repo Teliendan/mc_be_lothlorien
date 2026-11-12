@@ -2,7 +2,7 @@ import { system } from "@minecraft/server";
 import { MAX_GROWTH, MAX_GROW_CHANCE, advanceGrowth, bonemealSteps, growChance, cropLayout, CORN_ORIGIN, cornSoilAllowed } from "./crop_rules.js";
 import { readBlock } from "./deferred_use.js";
 
-// Phase 7: Western Corn. `lothlorien:crop` (random tick) advances the state lothlorien:growth 0-7 on farmland;
+// Western Corn (TECHNICAL_NOTES.md "Western Corn and Lembas"). `lothlorien:crop` (random tick) advances the state lothlorien:growth 0-7 on farmland;
 // wild corn from worldgen stands on grass at growth 7 and never needs to grow. Seeds only place on farmland
 // (`block_placer.use_on`). Harvest drops come from the loot tables (the mature one is set by a permutation).
 export const CROP = "lothlorien:western_corn";

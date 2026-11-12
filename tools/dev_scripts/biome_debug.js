@@ -1,4 +1,4 @@
-// DEV ONLY, not part of the pack. Phase 1 spike helpers removed from lothlorien_bp/scripts/main.js
+// DEV ONLY, not part of the pack. Biome spike helpers removed from lothlorien_bp/scripts/main.js
 // (recover: git show dc1182e:lothlorien_bp/scripts/main.js). They need biomeAt/BIOME_ID from main.js:
 // `/scriptevent lothlorien:survey` (biome share and centre within 160 blocks) and the world-load
 // "biome REGISTERED/MISSING" chat line (call reportBiomeRegistration() from the worldLoad handler;

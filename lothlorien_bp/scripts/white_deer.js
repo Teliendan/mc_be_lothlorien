@@ -1,5 +1,5 @@
 import { message } from "./messages.js";
-// White deer guidance in the running game (Phase 12; rules in white_deer_rules.js). Offer a Mallorn acorn to a white
+// White deer guidance in the running game (mobs/white_deer.md; rules in white_deer_rules.js). Offer a Mallorn acorn to a white
 // deer (lothlorien:white_deer) as a Friend of Lothlorien: once in its life it leads you to its gift, a Great Mallorn nut
 // (great_mallorn.js), at a spot inside Lothlorien 36-56 blocks away, waiting for the player to keep up, and lays the nut
 // there on arrival. The spot is kept on the deer (dynamic property) until the gift is given, so a broken-off guidance

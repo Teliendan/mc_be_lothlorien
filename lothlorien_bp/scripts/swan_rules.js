@@ -1,4 +1,4 @@
-// Swan rules (Phase 15). Pure (no @minecraft/server) so tests/run.mjs can check them offline; swan.js wires them to the game.
+// Swan rules (mobs/swan.md). Pure (no @minecraft/server) so tests/run.mjs can check them offline; swan.js wires them to the game.
 //
 // The swan's spawn rule accepts the Lothlorien biome tag OR the river tag (rivers are their own biome, so a spawn filter
 // on Lothlorien alone would never see the Nimrodel). Rivers all over the world pass that filter, so each natural spawn is

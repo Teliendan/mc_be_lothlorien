@@ -6,7 +6,7 @@ import * as DR from "../lothlorien_bp/scripts/dew_rules.js";
 
 
 
-test("Phase 14b: nectar bloom fills only under Mallorn leaves, 1/7 per stage", () => {
+test("nectar bloom fills only under Mallorn leaves, 1/7 per stage", () => {
   assert.equal(NR.nectarAfterTick(0, true, 0.1), 1);
   assert.equal(NR.nectarAfterTick(0, true, 0.2), 0, "dice fail");
   assert.equal(NR.nectarAfterTick(0, false, 0), 0, "no leaves above: stays dry");
@@ -15,7 +15,7 @@ test("Phase 14b: nectar bloom fills only under Mallorn leaves, 1/7 per stage", (
   assert.deepEqual([0.39, 0.4, 0.84, 0.85].map(NR.treeBloomCount), [0, 1, 1, 2]);
 });
 
-test("Phase 14b: morning dew window, chances and leaves-above scan", () => {
+test("morning dew window, chances and leaves-above scan", () => {
   for (const t of [23000, 23999, 0, 1000, 2999]) assert.ok(DR.inDewWindow(t), `dew at ${t}`);
   for (const t of [3000, 6000, 12000, 22999]) assert.ok(!DR.inDewWindow(t), `no dew at ${t}`);
   assert.ok(DR.inDewWindow(24000 + 100), "time wraps");
@@ -60,7 +60,7 @@ test("Phase 14b: morning dew window, chances and leaves-above scan", () => {
   assert.ok(!DR.leavesAbove((dy) => (dy === 41 ? "L" : "air"), leaf), "scan limit");
 });
 
-test("Phase 14b: Dew bottle fills drop by drop into a Bottle of morning dew", () => {
+test("Dew bottle fills drop by drop into a Bottle of morning dew", () => {
   assert.equal(DR.dropsIn(DR.NEW_DEW_BOTTLE_DAMAGE), 1, "a new Dew bottle holds one drop");
   let damage = DR.NEW_DEW_BOTTLE_DAMAGE;
   let uses = 1;
@@ -73,7 +73,7 @@ test("Phase 14b: Dew bottle fills drop by drop into a Bottle of morning dew", ()
   assert.ok(damage > 0, "the bar never reaches a full bottle early");
 });
 
-test("Phase 14b: nectar and dew content is wired (pack JSON)", () => {
+test("nectar and dew content is wired (pack JSON)", () => {
   const bloom = readJson("../lothlorien_bp/blocks/nectar_bloom.json")["minecraft:block"];
   assert.deepEqual(bloom.description.states["lothlorien:nectar"], [0, 1, 2, 3]);
   assert.deepEqual(bloom.components["minecraft:placement_filter"].conditions[0].allowed_faces, ["down"]);

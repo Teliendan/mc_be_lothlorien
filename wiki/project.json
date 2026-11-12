@@ -1683,11 +1683,11 @@
         },
         {
           "path": "lothlorien_bp/scripts/squirrel.js",
-          "sha256": "2dfd65c7b98e2d35e4722afbfba67d32c02d12b98cd85ab07ffeac483d63e358"
+          "sha256": "00acbde59ff5c810949c51357cd122df92482dfded8cf08e78e78abfeaa468a5"
         },
         {
           "path": "lothlorien_bp/scripts/squirrel_rules.js",
-          "sha256": "56df56b647c9eebf58eded1bc9cb6d1de3b9acb6f8eb8423edbee6ca636e82c1"
+          "sha256": "0c45c15e19ed5899286fe14233ccdf53f6ffdb102eb4bf6aced03833960fe8e6"
         }
       ],
       "featureId": "lothlorien:squirrel",

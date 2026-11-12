@@ -6,7 +6,7 @@ import { noteDeed } from "./deeds.js";
 import { captureUse, liveUse, readBlock } from "./deferred_use.js";
 import { swingArm } from "./swing.js";
 
-// Phase 14b: morning dew on the Mallorn ground covers (leaf litter, blossoms). The bool state `lothlorien:dew` is set
+// Morning dew (TECHNICAL_NOTES.md "Nectar, morning dew and Star canopy") on the Mallorn ground covers (leaf litter, blossoms). The bool state `lothlorien:dew` is set
 // by random tick in the morning window under Mallorn leaves (appear chance falls, dry chance rises across the window) and
 // dried with certainty by the first random tick outside it (leftover dew vanishes during the day; a visible dewy
 // patch can always be collected, at any time). A glass bottle on dewy cover

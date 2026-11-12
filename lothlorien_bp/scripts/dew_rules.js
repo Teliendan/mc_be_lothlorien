@@ -1,4 +1,4 @@
-// Pure: Phase 14b morning dew rules (tests/run.mjs imports this).
+// Pure: morning dew rules (tests/run.mjs imports this).
 export const DEW_DROPS = 8; // drops in a full Bottle of morning dew
 
 // Time of day in ticks (0 = sunrise-ish morning, 6000 noon, 12000 dusk): dew from just before sunrise until

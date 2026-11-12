@@ -1,4 +1,4 @@
-// Elven rope (Phase 17b) rules. Pure, so tests/run.mjs can check them offline; elven_rope.js wires them up.
+// Elven rope (TECHNICAL_NOTES.md "Elven rope") rules. Pure, so tests/run.mjs can check them offline; elven_rope.js wires them up.
 //
 // A rope is a vertical column of pieces hung flat on one wall. State `lothlorien:face` is the direction the rope
 // faces (the face of the wall block that was clicked), so the wall lies on the opposite side of the piece.
@@ -74,7 +74,7 @@ export function brakes(dy, downSpeed) {
 // (no component, checked 2026-10-02). While a player stands in a rope cell, Jump or walking forward climbs (levitation)
 // and otherwise the player sinks slowly (slow falling). This is the version that worked in game (owner). Two others
 // failed: teleporting a small step every tick (jumpy, no way down) and steering the velocity with applyKnockback
-// (not worked out). The effects' HUD icons show whatever showParticles says: see the Phase 17b notes for what to do.
+// (not worked out). The effects' HUD icons show whatever showParticles says: see TECHNICAL_NOTES.md "Elven rope" for what to do.
 export const CLIMB = {
   effectTicks: 4, // short, re-applied every tick and removed on leaving (only while this short: see elven_rope.js ours())
   // blocks per second; a vanilla ladder speeds up to about 4 both up and down (owner, tools/dev_scripts/ladder_speed.js)

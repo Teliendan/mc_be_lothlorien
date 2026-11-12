@@ -1,4 +1,4 @@
-// Ground squirrel rules (Phase 15). Pure (no @minecraft/server) so tests/run.mjs can check them offline; squirrel.js wires
+// Ground squirrel rules (mobs/squirrel.md). Pure (no @minecraft/server) so tests/run.mjs can check them offline; squirrel.js wires
 // them to the game.
 //
 // A Friend of Lothlorien offers a Mallorn acorn: the squirrel takes it, scampers off (the engine's own pathfinding follows

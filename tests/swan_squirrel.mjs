@@ -12,7 +12,7 @@ const ACORN = "lothlorien:mallorn_acorn";
 const swanEntity = () => readJson("../lothlorien_bp/entities/swan.json")["minecraft:entity"];
 const squirrelEntity = () => readJson("../lothlorien_bp/entities/squirrel.json")["minecraft:entity"];
 
-test("Phase 15: a swan stays when Lothlorien is near (the spot or any ring up to 48 blocks), else it is removed", () => {
+test("a swan stays when Lothlorien is near (the spot or any ring up to 48 blocks), else it is removed", () => {
   assert.equal(SR.nearOffsets().length, 1 + SR.NEAR_RADII.length * SR.NEAR_HEADINGS);
   assert.equal(SR.nearBiome(() => RIVER, L), false, "a river far from the biome");
   assert.equal(SR.nearBiome((dx, dz) => (dx === 0 && dz === 0 ? L : RIVER), L), true, "in the biome");
@@ -21,7 +21,7 @@ test("Phase 15: a swan stays when Lothlorien is near (the spot or any ring up to
   assert.equal(SR.nearBiome(() => undefined, L), false, "unloaded chunks are not the biome");
 });
 
-test("Phase 15: swan spawn rule takes Lothlorien or river water, and the natural-spawn event", () => {
+test("swan spawn rule takes Lothlorien or river water, and the natural-spawn event", () => {
   const rule = readJson("../lothlorien_bp/spawn_rules/swan.json")["minecraft:spawn_rules"];
   const c = rule.conditions[0];
   assert.deepEqual(c["minecraft:biome_filter"].any_of.map((t) => t.value).sort(), ["lothlorien", "river"]);
@@ -59,7 +59,7 @@ test("LM-01: swan and squirrel fly natively by band tag (state_wild, state_alarm
 });
 function adds2(ev) { return JSON.stringify(ev).includes("lothlorien:state_wild"); }
 
-test("Phase 15: swan floats on the surface like the chicken (float goal, path over water; no fish-style swimming) and drops a feather", () => {
+test("swan floats on the surface like the chicken (float goal, path over water; no fish-style swimming) and drops a feather", () => {
   const e = swanEntity();
   assert.ok("minecraft:behavior.float" in e.components, "float goal keeps it on the surface");
   assert.equal(e.components["minecraft:navigation.walk"].can_path_over_water, true);
@@ -70,7 +70,7 @@ test("Phase 15: swan floats on the surface like the chicken (float goal, path ov
   assert.deepEqual(loot, ["minecraft:feather"]);
 });
 
-test("Phase 15: squirrel gifts are for Friends only; calm and restless players are refused", () => {
+test("squirrel gifts are for Friends only; calm and restless players are refused", () => {
   assert.equal(QR.offerRefusal({ band: "friend", cooldownLeft: 0 }), undefined);
   assert.equal(QR.offerRefusal({ band: "guest", cooldownLeft: 0 }), "untrusted");
   for (const band of ["uneasy", "shunned", "hated"]) assert.equal(QR.offerRefusal({ band, cooldownLeft: 0 }), "restless", band);
@@ -80,7 +80,7 @@ test("Phase 15: squirrel gifts are for Friends only; calm and restless players a
   assert.equal(QR.cooldownLeft(100, undefined), 0);
 });
 
-test("Phase 15: squirrel errand: away point, phases, abort", () => {
+test("squirrel errand: away point, phases, abort", () => {
   const from = { x: 0, y: 64, z: 0 };
   const open = QR.pickAway(from, (x, z, y) => y, 0);
   assert.ok(Math.abs(Math.hypot(open.x, open.z) - 14) < 1e-6, "farthest distance first");
@@ -100,7 +100,7 @@ test("Phase 15: squirrel errand: away point, phases, abort", () => {
   assert.ok(QR.digTicks(0) === QR.DIG_TICKS.min && QR.digTicks(0.999) === QR.DIG_TICKS.max);
 });
 
-test("Phase 15: squirrel entity: errand group follows the beacon, wolves and monsters still scare it, three coats", () => {
+test("squirrel entity: errand group follows the beacon, wolves and monsters still scare it, three coats", () => {
   const e = squirrelEntity();
   const g = e.component_groups["lothlorien:state_guiding"];
   assert.equal(g["minecraft:behavior.follow_target_leader"].leader_filters.value, "lothlorien_guide_beacon");
@@ -115,7 +115,7 @@ test("Phase 15: squirrel entity: errand group follows the beacon, wolves and mon
   assert.equal(e.components["minecraft:interact"].interactions[0].on_interact.filters.all_of[1].value, ACORN);
 });
 
-test("Phase 15: squirrel gift table has litter, petals, athelas and corn seeds, and every item exists in the pack", () => {
+test("squirrel gift table has litter, petals, athelas and corn seeds, and every item exists in the pack", () => {
   const entries = readJson("../lothlorien_bp/loot_tables/gifts/squirrel.json").pools[0].entries;
   const ids = entries.map((x) => x.name);
   for (const want of ["lothlorien:mallorn_leaf_carpet", "lothlorien:mallorn_blossom", "lothlorien:athelas", "lothlorien:western_corn_seeds"]) assert.ok(ids.includes(want), want);
@@ -125,7 +125,7 @@ test("Phase 15: squirrel gift table has litter, petals, athelas and corn seeds, 
   assert.equal(QR.GIFT_TABLE, "gifts/squirrel");
 });
 
-test("Phase 15: art, sounds and names are wired for both animals", () => {
+test("art, sounds and names are wired for both animals", () => {
   const sounds = readJson("../lothlorien_rp/sounds.json").entity_sounds.entities;
   const lang = readFileSync(new URL("../lothlorien_rp/texts/en_US.lang", import.meta.url), "utf8");
   for (const n of ["swan", "squirrel"]) {

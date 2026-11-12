@@ -1,4 +1,4 @@
-// Unicorn rules (Phase 15). Pure (no @minecraft/server) so tests/run.mjs can check them offline; unicorn.js wires them to
+// Unicorn rules (mobs/unicorn.md). Pure (no @minecraft/server) so tests/run.mjs can check them offline; unicorn.js wires them to
 // the game.
 //
 // Taming is a bond earned in three offers: a Friend of Lothlorien offers Elanor (the flower) to a unicorn three times,

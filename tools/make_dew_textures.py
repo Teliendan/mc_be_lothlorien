@@ -1,4 +1,4 @@
-"""Generates the dewy ground cover textures (Phase 14b): the leaf litter and blossom textures with droplet glints.
+"""Generates the dewy ground cover textures: the leaf litter and blossom textures with droplet glints.
 
     python -B mods/lothlorien/tools/make_dew_textures.py
 

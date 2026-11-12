@@ -1,4 +1,4 @@
-// Pure: Phase 14b nectar bloom rules (tests/run.mjs imports this).
+// Pure: nectar bloom rules (tests/run.mjs imports this).
 export const MAX_NECTAR = 3;
 export const MALLORN_LEAVES = new Set(["lothlorien:mallorn_leaves", "lothlorien:mallorn_golden_leaves"]);
 

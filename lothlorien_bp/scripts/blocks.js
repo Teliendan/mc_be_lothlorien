@@ -4,7 +4,7 @@ import { captureUse, liveUse, consumeFromSlot } from "./deferred_use.js";
 import { FACE_OFFSET, cellKey, readBlock } from "./world_util.js";
 import { swingArm } from "./swing.js";
 
-// Phase 3 custom block components for the Mallorn wood set.
+// Custom block components for the Mallorn wood set (TECHNICAL_NOTES.md "Mallorn wood set").
 // Stripping logs and merging slabs are world events (see bottom), not block components: a block
 // component's onPlayerInteract swallows block placement against that block (logs could not be built on).
 //   lothlorien:toggleable {block_state,..} open/close on interact (trapdoor, fence gate)

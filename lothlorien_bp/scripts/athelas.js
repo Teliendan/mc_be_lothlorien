@@ -1,6 +1,6 @@
 import { EquipmentSlot, system, GameMode, ItemStack } from "@minecraft/server";
 
-// Phase 8: Athelas salve and Miruvor. Food JSON gives the drinking (animation, duration, can always
+// Athelas salve and Miruvor (TECHNICAL_NOTES.md "Athelas salve and Miruvor"). Food JSON gives the drinking (animation, duration, can always
 // be drunk); these components add the effects. First balance is deliberately conservative: the salve
 // is a modest heal-over-time (about 5 HP), Miruvor about 10 HP plus a short speed boost, and it costs
 // a salve, both rare flowers and Mallorn nectar. Ticks: 20 per second.

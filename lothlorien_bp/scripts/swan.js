@@ -1,4 +1,4 @@
-// Swans in the running game (Phase 15; rules in swan_rules.js). Their flight is native (entities/swan.json state_wild: each player judged by their own band tag); the alarm is in
+// Swans in the running game (mobs/swan.md; rules in swan_rules.js). Their flight is native (entities/swan.json state_wild: each player judged by their own band tag); the alarm is in
 // deer.js (they are in WARY_TYPES). This file only judges natural spawns: the spawn rule lets
 // swans spawn in any river (see swan_rules.js), and one that spawned where no Lothlorien biome is near is removed. A submerged one floats up to the open surface,
 // or is removed when a bank is overhead.

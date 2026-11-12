@@ -1,4 +1,4 @@
-// Giant Mallorn with a flet (Phase 5): a 4x4 trunk 30-38 high, a plank platform with a fence rim on
+// Giant Mallorn with a flet (WORLDGEN.md "Giant Mallorn builds"): a 4x4 trunk 30-38 high, a plank platform with a fence rim on
 // level branches under the crown, a ladder up the north face of the trunk through a hole in the
 // platform, and a loot chest. Pure (no Minecraft imports): tools/build_structures.mjs turns the result
 // into a .mcstructure for world generation.
@@ -21,7 +21,7 @@ export const B = {
   leaves: `${NS}:mallorn_leaves`,
   planks: `${NS}:mallorn_planks`,
   fence: `${NS}:mallorn_fence`,
-  rope: `${NS}:elven_rope`, // Elven rope (Phase 17b) replaced the vanilla ladder; players place this one
+  rope: `${NS}:elven_rope`, // Elven rope replaced the vanilla ladder; players place this one
   // structure-only twin: same look and use, but its side is `minecraft:cardinal_direction`, which Bedrock turns with a
   // rotated piece (the custom `lothlorien:face` of `rope` stays put, so the rope would hang on the empty side)
   ropeHanging: `${NS}:elven_rope_hanging`,

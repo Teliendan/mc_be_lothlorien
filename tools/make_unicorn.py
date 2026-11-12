@@ -1,4 +1,4 @@
-"""Generates the unicorn (Phase 15): behaviour entity, client entity, geometry, animation, render controller and texture.
+"""Generates the unicorn (mobs/unicorn.md): behaviour entity, client entity, geometry, animation, render controller and texture.
 
     python -B mods/lothlorien/tools/make_unicorn.py
 

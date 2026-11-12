@@ -1,5 +1,5 @@
 import { message } from "./messages.js";
-// Unicorns in the running game (Phase 15; rules in unicorn_rules.js). Their flight is native (entities/unicorn.json state_wild: each
+// Unicorns in the running game (mobs/unicorn.md; rules in unicorn_rules.js). Their flight is native (entities/unicorn.json state_wild: each
 // player is judged by their own Harmony band tag; the alarm is in deer.js): strangers and restless players are fled from, a Friend of Lothlorien may come close
 // and lure one with Elanor. This file is the taming: three offers of Elanor from a Friend bond the unicorn to that player
 // (the `lothlorien:bonded` group in entities/unicorn.json makes it rideable without a saddle), and only the owner may ride it.

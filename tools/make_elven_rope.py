@@ -1,4 +1,4 @@
-"""Generates the Elven rope (hithlain, Phase 17b): the wall-hung block model + texture and the item icon.
+"""Generates the Elven rope (hithlain): the wall-hung block model + texture and the item icon.
 
     python -B mods/lothlorien/tools/make_elven_rope.py
 

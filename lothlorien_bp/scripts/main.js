@@ -83,7 +83,7 @@ function showDebug() {
   }
 }
 
-// Phase 2 prototype A: runtime depth estimate (the rings and levels are in depth.js). Cheap:
+// Runtime depth estimate (WORLDGEN.md "Depth estimate (script) and the heart") (the rings and levels are in depth.js). Cheap:
 // two API calls per probe, every few seconds, never per tick.
 const DEPTH_INTERVAL_TICKS = 60;
 // Rivers cut through the biome, so crossing one is not reaching the edge.
@@ -167,7 +167,7 @@ function onScriptEvent(event) {
   player.sendMessage(message(on ? "debug.on" : "debug.off"));
 }
 
-// Phase 6: golden leaves let go of the canopy near each player standing in the biome. A random
+// Falling leaves (ATMOSPHERE.md "Falling leaves"): golden leaves let go of the canopy near each player standing in the biome. A random
 // column within LEAF_RADIUS is checked (cheap: one topmost-block lookup plus a short walk down).
 const LEAF_INTERVAL_TICKS = 12;
 const LEAF_RADIUS = 14;

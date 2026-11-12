@@ -1,4 +1,4 @@
-// Great Mallorn nut rules (Phase 12 gift). Pure (no @minecraft/server) so tests/run.mjs can check them offline;
+// Great Mallorn nut rules (white deer gift, mobs/white_deer.md "Implementation"). Pure (no @minecraft/server) so tests/run.mjs can check them offline;
 // great_mallorn.js wires them to the game.
 //
 // The white deer's one gift: a Great Mallorn nut. Planted on soil it becomes a sprout that grows like a sapling

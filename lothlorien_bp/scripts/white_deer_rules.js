@@ -1,4 +1,4 @@
-// White deer guidance rules (Phase 12). Pure (no @minecraft/server) so tests/run.mjs can check them offline;
+// White deer guidance rules (mobs/white_deer.md). Pure (no @minecraft/server) so tests/run.mjs can check them offline;
 // white_deer.js wires them to the game.
 //
 // Offer a Mallorn acorn to a white deer (entity lothlorien:white_deer) as a Friend of Lothlorien (harmony +10; a mere Guest is

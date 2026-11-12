@@ -31,7 +31,7 @@ EYE = hexc("#120b09")
 EYE_GLINT = hexc("#e8dcc0")
 CLEAR = (0, 0, 0, 0)
 
-# White deer (Phase 12, entity lothlorien:white_deer, adults only): same model and UV layout, its own palette. Cool blue-violet shadows on a white coat, faint silver
+# White deer (white deer, entity lothlorien:white_deer, adults only): same model and UV layout, its own palette. Cool blue-violet shadows on a white coat, faint silver
 # spots, pale pink nose, hooves and inner ears. Swapped in for the second texture pass in main().
 WHITE_PALETTE = {
     "COAT": [hexc(c) for c in ("#7f8798", "#a6adbb", "#c9cfd9", "#e3e7ee", "#f7f8fb")],

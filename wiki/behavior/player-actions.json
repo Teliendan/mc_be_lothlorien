@@ -105,7 +105,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/dew.js",
-        "sha256": "a2769a062938d10ef380eed0b2cc362c053ddf0ab251626fb7bcaad3d1ab6c61"
+        "sha256": "eaa19844f1c66ed281ebec1d3307e71ac39de53c11314f51f5b13f4c7afeb078"
       },
       {
         "path": "lothlorien_bp/recipes/star_canopy.json",
@@ -231,11 +231,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/elven_rope.js",
-        "sha256": "922590a52896cf776e2967d352e644e6567268fb40b9e6b10c6558877387bfb7"
+        "sha256": "58c8fcdf6ccc3a42a38286192bf91c55a4e00b6561ed0559fab41f299d738c01"
       },
       {
         "path": "lothlorien_bp/scripts/elven_rope_rules.js",
-        "sha256": "f4974feba45f39c0692fadda5c8e2ddc30076cb31c98a10ee21fba67bf5714f0"
+        "sha256": "ed6ea279f15006582e0a6d14529b9d4a0b4bb90979e9c675ae36d10cb894b011"
       }
     ]
   },
@@ -444,7 +444,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
-        "sha256": "529f520f8899027de5eb042f881e2288acbb41f3ff3daf842c6459d37e3c339b"
+        "sha256": "148980ebb1045763dec47a88f7f372a715e8de93e64045173383064d6aa7ee15"
       }
     ]
   },
@@ -494,7 +494,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
-        "sha256": "529f520f8899027de5eb042f881e2288acbb41f3ff3daf842c6459d37e3c339b"
+        "sha256": "148980ebb1045763dec47a88f7f372a715e8de93e64045173383064d6aa7ee15"
       }
     ]
   },
@@ -536,7 +536,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
-        "sha256": "529f520f8899027de5eb042f881e2288acbb41f3ff3daf842c6459d37e3c339b"
+        "sha256": "148980ebb1045763dec47a88f7f372a715e8de93e64045173383064d6aa7ee15"
       }
     ]
   },
@@ -605,7 +605,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
-        "sha256": "529f520f8899027de5eb042f881e2288acbb41f3ff3daf842c6459d37e3c339b"
+        "sha256": "148980ebb1045763dec47a88f7f372a715e8de93e64045173383064d6aa7ee15"
       }
     ]
   },
@@ -655,7 +655,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
-        "sha256": "529f520f8899027de5eb042f881e2288acbb41f3ff3daf842c6459d37e3c339b"
+        "sha256": "148980ebb1045763dec47a88f7f372a715e8de93e64045173383064d6aa7ee15"
       }
     ]
   },
@@ -697,7 +697,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
-        "sha256": "529f520f8899027de5eb042f881e2288acbb41f3ff3daf842c6459d37e3c339b"
+        "sha256": "148980ebb1045763dec47a88f7f372a715e8de93e64045173383064d6aa7ee15"
       }
     ]
   },
@@ -800,7 +800,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
-        "sha256": "529f520f8899027de5eb042f881e2288acbb41f3ff3daf842c6459d37e3c339b"
+        "sha256": "148980ebb1045763dec47a88f7f372a715e8de93e64045173383064d6aa7ee15"
       }
     ]
   },
@@ -846,7 +846,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/trees.js",
-        "sha256": "ab76ad789c0fe49243e439dd38afb9ddb516059cb9f9b9e250d7696b39d9108d"
+        "sha256": "010bca9ab1ea5cef633a71b0d84cf1a92032308aaa0dcf4125f3cac4fbd0e8b7"
       }
     ]
   },
@@ -1021,7 +1021,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
-        "sha256": "529f520f8899027de5eb042f881e2288acbb41f3ff3daf842c6459d37e3c339b"
+        "sha256": "148980ebb1045763dec47a88f7f372a715e8de93e64045173383064d6aa7ee15"
       }
     ]
   },
@@ -1059,7 +1059,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/athelas.js",
-        "sha256": "b63d3a44bd3f47d6907a44825d3a23025fd120863e1c986aa5138d3879c5a097"
+        "sha256": "30d08cec3e0de3132567ce83edc0c16120dfdae6d2b51688054acd69a768028c"
       }
     ]
   },
@@ -1408,11 +1408,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/squirrel.js",
-        "sha256": "2dfd65c7b98e2d35e4722afbfba67d32c02d12b98cd85ab07ffeac483d63e358"
+        "sha256": "00acbde59ff5c810949c51357cd122df92482dfded8cf08e78e78abfeaa468a5"
       },
       {
         "path": "lothlorien_bp/scripts/squirrel_rules.js",
-        "sha256": "56df56b647c9eebf58eded1bc9cb6d1de3b9acb6f8eb8423edbee6ca636e82c1"
+        "sha256": "0c45c15e19ed5899286fe14233ccdf53f6ffdb102eb4bf6aced03833960fe8e6"
       }
     ]
   },
@@ -1431,11 +1431,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/swan.js",
-        "sha256": "3ba926b67ba8a845d2d0596e500b167710dd0372f1200d7193c01f2971f92e8a"
+        "sha256": "2ffcf08f2b3429852d379bce39519cd29e9d95997c8357c5dae8619ae11cb755"
       },
       {
         "path": "lothlorien_bp/scripts/swan_rules.js",
-        "sha256": "8f04a1da017de4a7135a9b6ca9225d0012ffd828e8230e30ebe0e9d382e9dba6"
+        "sha256": "9c129e751feae11a7944df4044662e036a27b3fbea7ba0a551bdc7ec6e8a2121"
       }
     ]
   },
@@ -1454,11 +1454,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/unicorn.js",
-        "sha256": "14227a52983c79842026dde119d7c036f1941ae227878b72f20c148241bb13aa"
+        "sha256": "b34db5c607f78567844baa077f54f6f52836277fb5197a53058d13294e27f839"
       },
       {
         "path": "lothlorien_bp/scripts/unicorn_rules.js",
-        "sha256": "cc698ad427b0d2696c32569bf4fa55d013701d706df91bba114662422ef638b4"
+        "sha256": "3d8fa344316eafd953e293e405b67f764f35817c382fe7e830a9d546e23ddafb"
       }
     ]
   },
@@ -1477,11 +1477,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/white_deer.js",
-        "sha256": "f1ebd1afd00ebb180ec6a17eec6ae77e90f13c6b8879226690040b4a20f8d4cb"
+        "sha256": "d4c638f856a5d0add026537cd439d70699ed6c32facc7ebb0b363a79c156f660"
       },
       {
         "path": "lothlorien_bp/scripts/white_deer_rules.js",
-        "sha256": "237d262df093ac47bb139db01a35875789e6bf2d51a755510435423fb72e65e0"
+        "sha256": "2952e95871be2c3747a255d6b4ea055106da2b677aa889f0dddae925e9826ae4"
       }
     ]
   },
@@ -1630,11 +1630,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/athelas.js",
-        "sha256": "b63d3a44bd3f47d6907a44825d3a23025fd120863e1c986aa5138d3879c5a097"
+        "sha256": "30d08cec3e0de3132567ce83edc0c16120dfdae6d2b51688054acd69a768028c"
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
-        "sha256": "529f520f8899027de5eb042f881e2288acbb41f3ff3daf842c6459d37e3c339b"
+        "sha256": "148980ebb1045763dec47a88f7f372a715e8de93e64045173383064d6aa7ee15"
       },
       {
         "path": "lothlorien_bp/scripts/bonemeal.js",
@@ -1650,7 +1650,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/crop.js",
-        "sha256": "1ac8c635313543ee86a5d118d70b7f90c4476aa4778b3554962ea467cb083964"
+        "sha256": "9442e4a9f1b68403ee062895f61608454d14177e4faaf2a4637f7e83fe3510e1"
       },
       {
         "path": "lothlorien_bp/scripts/crop_rules.js",
@@ -1670,11 +1670,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/dew.js",
-        "sha256": "a2769a062938d10ef380eed0b2cc362c053ddf0ab251626fb7bcaad3d1ab6c61"
+        "sha256": "eaa19844f1c66ed281ebec1d3307e71ac39de53c11314f51f5b13f4c7afeb078"
       },
       {
         "path": "lothlorien_bp/scripts/dew_rules.js",
-        "sha256": "e7d6cbb6b9e4a177d4a3c2d45572079b7121d93645627df1d19c85be176a166d"
+        "sha256": "869d00bfe9bff61d358b74254d5d032301f35444593e48fe39a29a5138aba68c"
       },
       {
         "path": "lothlorien_bp/scripts/entity_events.js",
@@ -1702,7 +1702,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/great_mallorn_rules.js",
-        "sha256": "2102f033d3c54e9832daa92d3944fcafc648067dff0995c7a4d0360d638c7c7e"
+        "sha256": "479d7666387e4e97eae076ace4e46b3791331963b70ba360701ddad244fbd540"
       },
       {
         "path": "lothlorien_bp/scripts/ground_cover.js",
@@ -1726,7 +1726,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/lembas.js",
-        "sha256": "15d6aebe7ad6518dff5a52d8892fdfc7e1e453f1497040c79b7053232244e19b"
+        "sha256": "7d16fa4efa5dce0458deb668c526105a733f04c8a499403547d1475482e206e1"
       },
       {
         "path": "lothlorien_bp/scripts/loop_marker.js",
@@ -1738,11 +1738,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/main.js",
-        "sha256": "ec5411c729f79c827692e64095f1762d9bb7d1848f13ec7536fa83a43817352b"
+        "sha256": "3e5c3bf14adb7fe2d75d84caba176b568c623af9189af463b7216b0f5fa3a5d6"
       },
       {
         "path": "lothlorien_bp/scripts/mallorn_tree.js",
-        "sha256": "33626d2076d8ae8857f29f3e3f17d8ae6a81d4b8512cc88784f046c794fb5bfc"
+        "sha256": "0e1905eb3ed13693012ff38a63eb2cbc43f4d05e7244ccbd47f10f283ead1f96"
       },
       {
         "path": "lothlorien_bp/scripts/messages.js",
@@ -1750,11 +1750,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/nectar.js",
-        "sha256": "65fbc8f3ea18e94fe98347e7c94cab34a7ac3e6c420604c9e927dd4f2ca8c2de"
+        "sha256": "4f59a06740715868db48bd751a749c2d3e89dc25a39e53542f11db6db3e47cfa"
       },
       {
         "path": "lothlorien_bp/scripts/nectar_rules.js",
-        "sha256": "55f74bf0e31719e8beb62e179efbe005bb0fe26597e79c73ceefa54c734499b1"
+        "sha256": "b42376424523de46292379da7f9d798254ef73745d4afb9568eef74d37b8832a"
       },
       {
         "path": "lothlorien_bp/scripts/phial.js",
@@ -1794,7 +1794,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/trees.js",
-        "sha256": "ab76ad789c0fe49243e439dd38afb9ddb516059cb9f9b9e250d7696b39d9108d"
+        "sha256": "010bca9ab1ea5cef633a71b0d84cf1a92032308aaa0dcf4125f3cac4fbd0e8b7"
       },
       {
         "path": "lothlorien_bp/scripts/use_guard.js",
@@ -1841,11 +1841,11 @@
     "evidence": [
       {
         "path": "lothlorien_bp/scripts/dew.js",
-        "sha256": "a2769a062938d10ef380eed0b2cc362c053ddf0ab251626fb7bcaad3d1ab6c61"
+        "sha256": "eaa19844f1c66ed281ebec1d3307e71ac39de53c11314f51f5b13f4c7afeb078"
       },
       {
         "path": "lothlorien_bp/scripts/dew_rules.js",
-        "sha256": "e7d6cbb6b9e4a177d4a3c2d45572079b7121d93645627df1d19c85be176a166d"
+        "sha256": "869d00bfe9bff61d358b74254d5d032301f35444593e48fe39a29a5138aba68c"
       }
     ]
   },
@@ -1856,11 +1856,11 @@
     "evidence": [
       {
         "path": "lothlorien_bp/scripts/dew.js",
-        "sha256": "a2769a062938d10ef380eed0b2cc362c053ddf0ab251626fb7bcaad3d1ab6c61"
+        "sha256": "eaa19844f1c66ed281ebec1d3307e71ac39de53c11314f51f5b13f4c7afeb078"
       },
       {
         "path": "lothlorien_bp/scripts/dew_rules.js",
-        "sha256": "e7d6cbb6b9e4a177d4a3c2d45572079b7121d93645627df1d19c85be176a166d"
+        "sha256": "869d00bfe9bff61d358b74254d5d032301f35444593e48fe39a29a5138aba68c"
       }
     ]
   },
@@ -1871,11 +1871,11 @@
     "evidence": [
       {
         "path": "lothlorien_bp/scripts/nectar.js",
-        "sha256": "65fbc8f3ea18e94fe98347e7c94cab34a7ac3e6c420604c9e927dd4f2ca8c2de"
+        "sha256": "4f59a06740715868db48bd751a749c2d3e89dc25a39e53542f11db6db3e47cfa"
       },
       {
         "path": "lothlorien_bp/scripts/nectar_rules.js",
-        "sha256": "55f74bf0e31719e8beb62e179efbe005bb0fe26597e79c73ceefa54c734499b1"
+        "sha256": "b42376424523de46292379da7f9d798254ef73745d4afb9568eef74d37b8832a"
       }
     ]
   },
@@ -2273,7 +2273,7 @@
     "evidence": [
       {
         "path": "lothlorien_bp/scripts/main.js",
-        "sha256": "ec5411c729f79c827692e64095f1762d9bb7d1848f13ec7536fa83a43817352b"
+        "sha256": "3e5c3bf14adb7fe2d75d84caba176b568c623af9189af463b7216b0f5fa3a5d6"
       },
       {
         "path": "lothlorien_bp/scripts/loop_marker.js",
@@ -2296,7 +2296,7 @@
     "evidence": [
       {
         "path": "lothlorien_bp/scripts/main.js",
-        "sha256": "ec5411c729f79c827692e64095f1762d9bb7d1848f13ec7536fa83a43817352b"
+        "sha256": "3e5c3bf14adb7fe2d75d84caba176b568c623af9189af463b7216b0f5fa3a5d6"
       },
       {
         "path": "lothlorien_bp/scripts/loop_marker.js",
@@ -2327,7 +2327,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/athelas.js",
-        "sha256": "b63d3a44bd3f47d6907a44825d3a23025fd120863e1c986aa5138d3879c5a097"
+        "sha256": "30d08cec3e0de3132567ce83edc0c16120dfdae6d2b51688054acd69a768028c"
       }
     ]
   }

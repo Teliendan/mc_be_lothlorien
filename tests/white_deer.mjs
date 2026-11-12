@@ -148,7 +148,7 @@ test("white deer: phases (arrive, wait for the player, give up)", () => {
   assert.equal(ph({ age: W.MAX_TICKS + 1 }), "abort");
 });
 
-test("ordinary deer: no coat variant, no guiding state (Phase 12 moved to its own entity)", () => {
+test("ordinary deer: no coat variant, no guiding state (guidance moved to its own entity)", () => {
   const e = deerEntity();
   const text = JSON.stringify(e);
   for (const bad of ["lothlorien:coat", "lothlorien:guiding", "state_guiding", "guide_start", "coat_white"]) {
