@@ -12,9 +12,12 @@ docs/AUDIO.md). Edits are fixed in TAKES, so a re-run reproduces the shipped fil
 """
 from pathlib import Path
 import argparse
+import hashlib
 import io
+import json
 import math
 import re
+import time
 
 import numpy as np
 import soundfile as sf
@@ -157,10 +160,51 @@ def build(skipped=None):
     return out
 
 
+CACHE = MOD.parents[1] / "temp/audio-check/soundscape.json"  # workspace scratch; losing it costs one slow run
+
+
+def check_key():
+    """sha256 over every input of --check: this script, the tick rules, each master present, each shipped take, library versions."""
+    h = hashlib.sha256()
+
+    def add(label, data):
+        h.update(f"{label}|{len(data)}|".encode() + data)
+
+    add("script", Path(__file__).read_bytes())
+    add("rules", RULES.read_bytes())
+    for _, master, _, _ in TAKES:
+        source = SRC / f"{master}.flac"
+        add(f"master {master}", source.read_bytes() if source.exists() else b"<absent>")
+    for dest in [t[0] for t in TAKES] + [REST]:
+        path = RP / f"{dest}.ogg"
+        add(f"ogg {dest}", path.read_bytes() if path.exists() else b"<absent>")
+    import scipy
+    add("libs", f"{np.__version__} {scipy.__version__} {sf.__version__} {sf.__libsndfile_version__}".encode())
+    return h.hexdigest()
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="compare shipped files and piece lengths with a fresh encoding")
+    parser.add_argument("--no-cache", action="store_true", help="with --check: ignore the digest of the last passing check")
     args = parser.parse_args()
+    key = None
+    if args.check and not args.no_cache:
+        key = check_key()
+        try:
+            last = json.loads(CACHE.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            last = {}
+        if last.get("key") == key:
+            print(f"ok (inputs unchanged since {last.get('time', '?')})")
+            return
+    _run(args)
+    if key:
+        CACHE.parent.mkdir(parents=True, exist_ok=True)
+        CACHE.write_text(json.dumps({"key": key, "time": time.strftime("%Y-%m-%d %H:%M:%S")}) + "\n", encoding="utf-8", newline="\n")
+
+
+def _run(args):
     pieces, skipped = {}, []
     for dest, data in build(skipped if args.check else None).items():
         path = RP / f"{dest}.ogg"

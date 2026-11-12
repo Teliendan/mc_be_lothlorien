@@ -19,7 +19,9 @@ near the shrine or memorial.
 Owner picks from audition 2 (phone listening page, 2026-10-26). Masters in `tools/audio/soundscape/` (music masters git-ignored
 for size; generator commands with prompts and seeds in `provenance/`); edits and encoding in `tools/prepare_soundscape.py`
 (`--check` compares shipped files and piece lengths; masters missing from a clone are skipped with one line and their lengths come
-from the shipped Ogg; suite `audio` runs it).
+from the shipped Ogg; suite `audio` runs it). `--check` skips the 12 s re-encode while a digest of every input (script, tick rules,
+masters, shipped takes, numpy/scipy/soundfile versions) equals the last passing run, kept in the workspace `temp/audio-check/soundscape.json`;
+`--no-cache` forces the full check.
 
 | Layer | Wiring | Shipped takes |
 | --- | --- | --- |
