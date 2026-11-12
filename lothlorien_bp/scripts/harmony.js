@@ -1,6 +1,6 @@
 import { message } from "./messages.js";
 import { ELF_ID, PLAYER_ID, UNICORN_ID, WARDEN_ID, WHITE_DEER_ID } from "./ids.js";
-// Harmony rules (plan docs/design/harmony_rework_plan.md). Pure (no @minecraft/server) so tests/run.mjs can check
+// Harmony rules (plan docs/design/harmony.md). Pure (no @minecraft/server) so tests/run.mjs can check
 // them offline; harmony_game.js wires them to players, deaths and persistence.
 //
 // One integer per player, MIN_HARMONY..MAX_HARMONY; one point is about one minute of peaceful time in the forest.

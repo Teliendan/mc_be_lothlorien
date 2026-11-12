@@ -16,7 +16,7 @@ Colours are never biome-tinted. Deterministic; the leaf layout is data (LEAVES).
   python -B tools/make_mallorn_leaves.py --print-loot (print the ordinary table without writing files)
   python -B tools/make_mallorn_leaves.py --print-golden-loot (print the golden table without writing files)
 
-Harvest rules and unresolved Fortune/acorn choices: docs/LEAF_HARVEST.md.
+Harvest rules and unresolved Fortune/acorn choices: docs/HARVEST.md.
 Art generation never rewrites loot; the explicit loot mode preserves the reviewed rules.
 """
 import json
@@ -40,7 +40,7 @@ def leaf_loot(golden=False):
 
     Negate positive enchantment tests: a missing enchantment need not match level zero.
     Acorns retain the owner's 2% base with oak-sapling relative Fortune boosts.
-    Wiki table/revisions and current-engine confidence: docs/LEAF_HARVEST.md.
+    Wiki table/revisions and current-engine confidence: docs/HARVEST.md.
     """
     shears = {"condition": "match_tool", "item": "minecraft:shears"}
     silk = {"condition": "match_tool", "enchantments": [

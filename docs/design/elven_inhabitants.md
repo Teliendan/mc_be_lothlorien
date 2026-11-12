@@ -2,7 +2,7 @@
 
 Status: **M0-M4, M6 and M7 accepted; M5 final art selected and belt/phial/invisibility work; bow speed/zoom and broader engine checks pending** (milestones below). Target Bedrock 1.26.52 / Script API 2.8.0.
 This page holds the profession stock lists and trade-state details (the earlier settlements plan was removed; it stays in git)
-and the stock part of `harmony_rework_plan.md` section 5. The trade **architecture** of that section 5 (native trade screen, per-band tables pre-swapped by script, refusal in `beforeEvents.playerInteractWithEntity`) stays.
+and the stock part of `harmony.md` section 5. The trade **architecture** of that section 5 (native trade screen, per-band tables pre-swapped by script, refusal in `beforeEvents.playerInteractWithEntity`) stays.
 Looks: `docs/mobs/elves.md` (`tools/make_elves.py`, review sheets in `temp/elves/`). Warden: `docs/mobs/elven_warden.md`.
 
 ## 0. Milestones
@@ -42,7 +42,7 @@ forest edge keep spawning. Healers exist to prevent accidental deaths. Killing a
 
 ## 2. Harmony and Renown
 
-- **Harmony** (built, `harmony_rework_plan.md`): how the forest sees you now, volatile. Controls **access and prices**.
+- **Harmony** (built, `harmony.md`): how the forest sees you now, volatile. Controls **access and prices**.
 - **Renown** (new): what you did for the elves. **One value for the whole elven society** (owner: keep it simple; "word travels among
   the Galadhrim", so every village knows you), per player, stored on the player, **never lost**. Controls **stock depth**.
   Ranks: **Stranger (0) -> Welcome (1) -> Trusted (2) -> Elf-friend (3)**. Thresholds **3 / 8 / 15 points** (owner 2026-10-10; all values in `renown_rules.js`).

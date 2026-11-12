@@ -1500,7 +1500,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/harmony.js",
-        "sha256": "ab2d236ee70e3a3e1cd25d3d6e4e78d1c1d504d16d6f81080487711b396a0f5f"
+        "sha256": "c59bc064b5bf0cc3e56ab73dc68cd79a11e0f7a92c7705d9d31612e0bb289f55"
       },
       {
         "path": "lothlorien_bp/scripts/harmony_game.js",
@@ -1515,7 +1515,7 @@
     "evidence": [
       {
         "path": "lothlorien_bp/scripts/harmony.js",
-        "sha256": "ab2d236ee70e3a3e1cd25d3d6e4e78d1c1d504d16d6f81080487711b396a0f5f"
+        "sha256": "c59bc064b5bf0cc3e56ab73dc68cd79a11e0f7a92c7705d9d31612e0bb289f55"
       },
       {
         "path": "lothlorien_bp/scripts/harmony_game.js",
@@ -2262,7 +2262,7 @@
       },
       {
         "path": "tools/root_shrine.mjs",
-        "sha256": "a04de0c54288de667a35c7e1729b47fcbc950522a26e52ed72ef850c1a9a8fd2"
+        "sha256": "28278cc457f041b57f5ae8c1c626089c20ad9fdfb283de6615d3beb9f299a0bd"
       }
     ]
   },

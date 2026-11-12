@@ -2,7 +2,7 @@
 
 python -B tools/western_corn_loot.py --print-loot
 python -B tools/western_corn_loot.py --write
-See docs/WESTERN_CORN_HARVEST.md for sources and engine acceptance limits.
+See docs/HARVEST.md for sources and engine acceptance limits.
 """
 import argparse
 import json

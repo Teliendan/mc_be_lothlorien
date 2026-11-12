@@ -1,9 +1,9 @@
-"""Encode the soundscape masters (docs/SOUNDSCAPE_PLAN.md), or check the shipped audio.
+"""Encode the soundscape masters (docs/AUDIO.md), or check the shipped audio.
 
 Run with the moss_sfx/moss audio venv (numpy + soundfile); no model needed.
 Masters: tools/audio/soundscape/*.flac (raw generator takes, mono, committed) and
 tools/audio/soundscape/music/*.flac (raw 48 kHz stereo pieces, git-ignored for size; seeds and prompts are in
-docs/SOUNDSCAPE_PLAN.md). Edits are fixed in TAKES, so a re-run reproduces the shipped files.
+docs/AUDIO.md). Edits are fixed in TAKES, so a re-run reproduces the shipped files.
 
   sfx:   shorten inner quiet runs, trim both edges to the audible part (optional cut), short fade-in, fade-out,
          even loudness.

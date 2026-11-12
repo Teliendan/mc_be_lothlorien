@@ -46,7 +46,7 @@ Target: tester build on the weekend of 2026-10-24/25.
 
 - [x] **Sindarin voice.** Generated and owner accepted overall on 2026-10-25
   ("Sindarin - Good"). Bindings: `SINDARIN_VOICE_EVENTS.md`.
-- [x] **Music and soundscape** (`SOUNDSCAPE_PLAN.md`): village harp music, root shrine and leaf
+- [x] **Music and soundscape** (`AUDIO.md`): village harp music, root shrine and leaf
   memorial sounds, forest leaf rustles. Outside villages the biome keeps vanilla `forest` music.
 - [x] **Pack icon.** Night scene with the white hart and the lit village, accepted 2026-10-28 (`GRAPHICS_TASKS.md`, "Pack icon").
 - [x] **Promo banner** and site logo, accepted 2026-10-28 (`docs/media/`, `GRAPHICS_TASKS.md`).

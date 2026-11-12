@@ -2,7 +2,7 @@
 
 Run with the existing moss_sfx environment; no model or scratch files needed.
 DOUBLE WAV masters preserve the exact pre-encoder samples.
-See docs/AMBIENT_SOUNDS.md and docs/BIRDSONG.md for listening status and sources.
+See docs/AUDIO.md for listening status and sources.
 """
 from pathlib import Path
 import argparse

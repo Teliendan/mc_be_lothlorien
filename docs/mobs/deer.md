@@ -102,7 +102,7 @@ can stand 4 blocks from the deer while the Hated one is fled from at 30. Deer sa
 | Model | generated box model, fallow-deer look (tawny coat, pale spots, white rump, dark spine). Three geometries in one file: doe, buck (with antler bones `antler_l/r`), fawn; the render controller picks one (`is_baby`, then `lothlorien:sex`). No bone is called `head` (`head_joint`): the engine derives an armour locator from a `head` bone and the fawn's clashed with the adult's (see `bedrock-mobs` client.md) | loads without content-log errors (1.26.52, 2026-09-30) |
 | Variants | none (the white coat belongs to `lothlorien:white_deer`) | - |
 | Animations | procedural Molang: `walk` (diagonal legs, speed weighted), `run` (gallop pairs, body bob, raised tail, weight from `query.ground_speed` 3.5..6 m/s, **threshold unverified**), `idle` (ear and tail flicks), own `look_at_target` (copy of the vanilla one for `head_joint`) | no |
-| Sounds | Owner-approved local MOSS ambient calls, seeds 122/123 (2026-10-16), configured 35–80 s interval; horse hurt/death/step and fawn breathing retained. See `../AMBIENT_SOUNDS.md`; native playback check pending | listening accepted; game pending |
+| Sounds | Owner-approved local MOSS ambient calls, seeds 122/123 (2026-10-16), configured 35–80 s interval; horse hurt/death/step and fawn breathing retained. See `../AUDIO.md`; native playback check pending | listening accepted; game pending |
 | Particles | none | - |
 
 ## H. Health of the world

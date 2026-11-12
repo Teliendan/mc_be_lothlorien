@@ -99,7 +99,7 @@ with shears or Silk Touch, suppressing auxiliary drops. Other tools and decay us
 independent 2% stick (1–2 items) and custom 2% acorn pools. Native explosion decay
 processes these item entries. Owner retains custom acorn rarity with Fortune:
 2/2.5/3.333.../4%; sticks use Wiki rates 2/2.222.../2.5/3.333...% at standard
-levels. See [LEAF_HARVEST.md](LEAF_HARVEST.md); engine acceptance is pending.
+levels. See [HARVEST.md](HARVEST.md); engine acceptance is pending.
 Golden decorative leaves
 intentionally always self-drop and do not decay. Nectar bloom is explicitly
 collectible with shears or Silk Touch (owner 2026-10-11), with native blast decay.
@@ -107,7 +107,7 @@ Owner 2026-10-13: golden fern collects like a flower, one fern with any tool
 or by hand, instant mining, no wheat-seed pool or Fortune bonus. Native decay
 remains. Deer antlers now also mine instantly with any tool or by hand; a
 reasoned mining override retains their bone blast/fire/sound policy. See
-[GOLDEN_FERN_HARVEST.md](GOLDEN_FERN_HARVEST.md) for source/engine limits.
+[HARVEST.md](HARVEST.md) for source/engine limits.
 Both double slabs use set_count2 followed by native explosion_decay, matching
 the installed data-driven double-slab recipe.
 
@@ -117,9 +117,9 @@ hand; pickaxe remains its efficient tool. Native self loot and explosion decay
 remain authoritative. The added scripted collection gate and its private tool
 wear helper were removed. The explicit fern collection restriction and separate
 Starstone ore gate remain governed by their recorded policies. See
-[STAR_CANOPY_HARVEST.md](STAR_CANOPY_HARVEST.md).
+[HARVEST.md](HARVEST.md).
 The ordinary-block loot audit and nectar-bloom repair are recorded in
-[ORDINARY_HARVEST.md](ORDINARY_HARVEST.md).
+[HARVEST.md](HARVEST.md).
 
 Owner 2026-10-10: firefly jar is reusable and deer antler is an any-tool collectible.
 Their existing native default self-drops already satisfy this; no collection gate
@@ -130,7 +130,7 @@ Western corn harvest now follows Bedrock wheat: young crop one seed; mature
 crop one grain and Binomial(3+Fortune, 8/15) seeds at standard levels I–III.
 Custom grain/seed identities and growth remain. This is Wiki-documented and
 regression-tested, pending native engine acceptance. See
-[WESTERN_CORN_HARVEST.md](WESTERN_CORN_HARVEST.md).
+[HARVEST.md](HARVEST.md).
 
 Owner 2026-10-10 reports that potted plants were tested and worked. Exact tested
 plants, pot contents and removal scenarios were not specified, so this records

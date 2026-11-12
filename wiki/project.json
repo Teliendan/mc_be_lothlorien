@@ -1339,7 +1339,7 @@
         },
         {
           "path": "tools/root_shrine.mjs",
-          "sha256": "a04de0c54288de667a35c7e1729b47fcbc950522a26e52ed72ef850c1a9a8fd2"
+          "sha256": "28278cc457f041b57f5ae8c1c626089c20ad9fdfb283de6615d3beb9f299a0bd"
         }
       ],
       "featureId": "lothlorien:root_shrine",

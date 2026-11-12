@@ -176,7 +176,7 @@ target goals. Name tag keeps it (`minecraft:nameable`). A warden mid-fight beyon
   Backup in JSON per wildlife entity: `minecraft:damage_sensor` with `other_with_families lothlorien_warden`; whether `other` is the arrow or its owner **[U]**.
   Villagers and vanilla golems in the line of fire are accepted (golem retaliates: it only ignores creepers).
 - Wardens do not harm decks (no explosions, no fire arrows).
-- **Harmony (owner decisions 2026-10-07; replaces the Disharmony weights; plan `docs/design/harmony_rework_plan.md`, rules in `harmony.js` `DEED_COSTS`, hook in `harmony_game.js`).**
+- **Harmony (owner decisions 2026-10-07; replaces the Disharmony weights; plan `docs/design/harmony.md`, rules in `harmony.js` `DEED_COSTS`, hook in `harmony_game.js`).**
   Hitting a warden starts a *fight*: -1 Harmony once per fight (first player hit after 60 s without one, the `provoked` map and `PROVOKE_MS` here). Killing a warden: -6 on top.
   A kill costs only when a player is the damager (projectiles included); a warden killed by a tamed wolf costs nothing. A deed counts when the player or the warden is inside the forest,
   so a warden dying outside the biome still counts. A warden killing a monster costs the player nothing, and since 2026-10-27 (owner) neither does a player killing a monster or a player the wardens hunt (Hated or elf foe).

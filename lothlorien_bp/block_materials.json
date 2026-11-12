@@ -150,7 +150,7 @@
         "loot_tables/blocks/golden_fern.json": {
           "counterpart": "minecraft:fern",
           "explosion_decay": true,
-          "source": "Owner decision 2026-10-13, docs/GOLDEN_FERN_HARVEST.md; flower-like collectible override, not vanilla fern drop parity."
+          "source": "Owner decision 2026-10-13, docs/HARVEST.md; flower-like collectible override, not vanilla fern drop parity."
         }
       },
       "reason": "Owner 2026-10-13: collectible like a flower, overriding vanilla fern shears/seed harvesting. Retain fern material/fire and nonreplaceable placement."
@@ -390,7 +390,7 @@
       "loot_checks": {
         "loot_tables/blocks/mallorn_leaves.json": {
           "counterpart": "minecraft:oak_leaves",
-          "source": "references/harvest-explosion-loot.md; docs/LEAF_HARVEST.md; owner custom acorn base plus relative sapling Fortune curve; Minecraft Wiki Fortune revision3821973/Leaves3810011.",
+          "source": "references/harvest-explosion-loot.md; docs/HARVEST.md; owner custom acorn base plus relative sapling Fortune curve; Minecraft Wiki Fortune revision3821973/Leaves3810011.",
           "explosion_decay": true
         }
       }
@@ -575,7 +575,7 @@
     },
     "lothlorien:star_canopy": {
       "profile": "stone_tiles",
-      "harvest": "Owner policy 2026-10-10: any tool or hand collects one tile; pickaxe is the efficient mining tool, not a collection requirement. Native self loot and explosion_decay remain authoritative; no scripted harvest gate. See docs/STAR_CANOPY_HARVEST.md."
+      "harvest": "Owner policy 2026-10-10: any tool or hand collects one tile; pickaxe is the efficient mining tool, not a collection requirement. Native self loot and explosion_decay remain authoritative; no scripted harvest gate. See docs/HARVEST.md."
     },
     "lothlorien:western_corn": {
       "profile": "crop",

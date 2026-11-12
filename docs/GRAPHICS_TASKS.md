@@ -142,7 +142,7 @@ and remove runtime diagnostics`.
   Contracts: bone names `body neck_joint head_joint ear_l ear_r antler_l antler_r tail leg0..leg3` (leg0 hind right, leg1 hind
   left, leg2 front right, leg3 front left) feed the animations; **no bone may be called `head`** (armour locator error); the baby
   is authored at real size (BP scales it 0.5, client entity scales the model 2); box UV with whole-number sizes only; one sheet
-  size for adult and fawn. Sounds: see `AMBIENT_SOUNDS.md`.
+  size for adult and fawn. Sounds: see `AUDIO.md`.
 - **Antler block** (`deer_antler.png`, `models/blocks/deer_antler_{wall,floor,ceiling}.geo.json`): columns 0-7 are strip palettes
   (antler 0-3, burr 4-7; each four columns = shades down, south/west, north/east, up; rows are a length ramp from ivory tips to
   red-brown at the skull), columns 8-15 painted skull faces at 1 texel = 1 unit. Floor and ceiling models are the wall cubes turned

@@ -1,8 +1,8 @@
-# Harmony rework plan (replaces Disharmony)
+# Harmony (replaces Disharmony)
 
-Status: **design agreed with the owner 2026-10-07; phases 1-3 are built (commit `5587e94` plus the icon and docs work after it); the action-bar icons were checked OK in game (owner, 2026-10-24).**
-Target Bedrock 1.26.52 / Script API 2.8.0. Replaced the Disharmony design (the old knowledge-base section and TECHNICAL_NOTES section are gone; see git).
-Open: section 8 in-game checks, and whether the add-on glyph page renders in the action bar (the one-glyph spike was skipped: all five icons were built at once).
+Design agreed with the owner 2026-10-07; built (commit `5587e94` plus the icon and docs work after it); the action-bar icons were checked OK in game (owner, 2026-10-24).
+Target Bedrock 1.26.52 / Script API 2.8.0. Replaced the Disharmony design (git has the old knowledge-base and TECHNICAL_NOTES sections).
+Open: section 7 in-game checks, and whether the add-on glyph page renders in the action bar (the one-glyph spike was skipped: all five icons were built at once).
 
 ## 1. Model
 
@@ -75,7 +75,7 @@ Consumers to switch from `levelFor`/`isFriend` to `bandOf(harmony)`:
   `bedrock-lookup` first).
 - `elven_warden_rules.js` `isFriendlyFire`: a hated player is never shielded (like a provoked one). Test table extended.
 
-## 5. Trades and Loremaster (later phases; elf traders do not exist yet)
+## 5. Trades and Loremaster (architecture)
 
 Stock, Renown and the Loremaster (who never trades) are now designed in `elven_inhabitants.md` (2026-10-10); the architecture below stays.
 
@@ -87,7 +87,7 @@ Stock, Renown and the Loremaster (who never trades) are now designed in `elven_i
 - Bedrock cure discounts are global (not per player), Hero of the Village only discounts and leaks to vanilla villagers: not used.
 - Loremaster: dialogue chosen by band; Shunned/Hated get only the refusal line.
 
-## 6. Code changes (phase 1)
+## 6. Code changes
 
 - `scripts/disharmony.js` -> `scripts/harmony.js` (pure, no `@minecraft/server`): constants above, `newState`, `bandOf`, `deedCost(kind)`,
   `applyPenalty` (double above 0), `recordDeed`, `recordDeath(state, insideForest)`, `tick(state, inside, dt)`, `statusText`, `serialize`/`parse`.
@@ -103,17 +103,7 @@ Stock, Renown and the Loremaster (who never trades) are now designed in `elven_i
   Hated death -> -29 and other deaths unchanged, band table incl. edges (10, 9, 0, -1, -14, -15, -29, -30), junk tolerance,
   consumer mappings (wariness, refusals).
 
-## 7. Phases
-
-1. **Core** (section 6) + consumers. Verify, deploy, test in game with the debug command.
-2. **Display**: glyph spike, icons, action bar, chat messages, localization.
-3. **Hated**: tag, warden JSON, friendly fire.
-4. **Docs**: KB section 10, `TECHNICAL_NOTES.md` (new section, old Phase 9 marked superseded), `docs/mobs/*.md` Disharmony rows,
-   settlements plan trade states, README line, `NOT_IMPLEMENTED.md`. Shared knowledge (glyph page technique once verified) into
-   `.claude/skills/` (separate workspace commit).
-5. Later, with the settlements: trades (section 5) and the Loremaster.
-
-## 8. In-game checks
+## 7. In-game checks
 
 1. `/scriptevent lothlorien:harmony` shows 0 for a new player and sets values for the checks below.
 2. Stand in the forest: +1 per minute up to 10; outside from -5: +1 per 2 min, stops at 0; outside from +6: stays 6.

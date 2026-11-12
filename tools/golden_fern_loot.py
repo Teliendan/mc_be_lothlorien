@@ -2,7 +2,7 @@
 
 python -B tools/golden_fern_loot.py --print-loot
 python -B tools/golden_fern_loot.py --write
-Owner's flower-like collectible policy: docs/GOLDEN_FERN_HARVEST.md.
+Owner's flower-like collectible policy: docs/HARVEST.md.
 """
 import argparse
 import json

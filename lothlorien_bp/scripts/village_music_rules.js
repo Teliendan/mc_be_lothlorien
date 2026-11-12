@@ -1,10 +1,10 @@
-// Village soundtrack rules (docs/SOUNDSCAPE_PLAN.md, owner 2026-10-25): inside a planned village a harp piece plays, then a quiet interval,
+// Village soundtrack rules (docs/AUDIO.md, owner 2026-10-25): inside a planned village a harp piece plays, then a quiet interval,
 // then another piece; never two scores at once. Pure state machine, driven by village_music.js every CHECK_TICKS; tested in tests/village_music.mjs.
 //
 // Playback per player: play(piece) replaces whatever music runs (vanilla biome music included) and queues REST_ID, a short silent track looped,
 // so the music channel stays busy through the interval and the vanilla forest score cannot start in between. The next piece replaces the rest.
 // Leaving: only after LEAVE_TICKS outside, so briefly crossing the edge neither stops nor restarts a piece; the "stop" fades into one unlooped rest.
-// `fade` is the overlap with the track being replaced (/music semantics). Queue clearing and biome-music return need the game (SOUNDSCAPE_PLAN.md).
+// `fade` is the overlap with the track being replaced (/music semantics). Queue clearing and biome-music return need the game (AUDIO.md).
 
 export const CHECK_TICKS = 40;
 export const LEAVE_TICKS = 200;

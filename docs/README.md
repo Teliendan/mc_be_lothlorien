@@ -31,7 +31,7 @@ Start with `TODO.md` for what is left before release.
 | File | Content |
 |---|---|
 | `design/elven_inhabitants.md` | elves, Renown, Loremaster, trades, gifts (the design authority) |
-| `design/harmony_rework_plan.md` | the Harmony model |
+| `design/harmony.md` | the Harmony model |
 | `ELF_SERVICES.md` | shops, healer, watch camps |
 | `GIFTS.md`, `ARCHERY.md` | Galadriel's gifts, the phial, the Galadhrim bow and arrows |
 | `mobs/` | one sheet per creature: deer, white deer, swan, squirrel, songbird, butterfly, firefly, unicorn, elf, warden, boat; `BRINGING_HOME.md` for capture and leads |
@@ -43,14 +43,13 @@ Start with `TODO.md` for what is left before release.
 |---|---|
 | `TECHNICAL_NOTES.md` | how the mod is built, by topic |
 | `BLOCK_MATERIALS.md`, `TAGS.md`, `WATER.md`, `SNOW.md`, `PISTON_SUPPORT.md` | block material profiles, tag audit, water and snow policies, support blocks moved by pistons |
-| `LEAF_HARVEST.md`, `ORDINARY_HARVEST.md`, `GOLDEN_FERN_HARVEST.md`, `WESTERN_CORN_HARVEST.md`, `STAR_CANOPY_HARVEST.md` | harvest and loot rules |
+| `HARVEST.md` | harvest and loot rules: one table (block, tool, drop, Fortune/Silk Touch, owner decision) plus leaf and corn details |
 | `MALLORN_WOOD_LESSONS.md`, `GRAPHICS_TASKS.md` | wood-set art lessons, art status and the leaf flicker issue |
 | `SCRIPT_PERFORMANCE.md` | script cost measures |
 
 ## Audio and voice
 
-`SOUNDSCAPE_PLAN.md` (music, shrine, memorial and forest sounds; the name is kept because scripts point to it),
-`AMBIENT_SOUNDS.md` (with the animal-call research decisions), `BIRDSONG.md`, `SINDARIN_VOICE.md`, `SINDARIN_VOICE_EVENTS.md`,
+`AUDIO.md` (music, shrine, memorial and forest sounds, deer and swan calls, songbirds), `SINDARIN_VOICE.md`, `SINDARIN_VOICE_EVENTS.md`,
 `SINDARIN_VOICE_PHRASES.md`.
 
 Shared Bedrock knowledge is in the workspace skills (`.claude/skills/`); this folder only holds what is specific to this mod.

@@ -131,7 +131,7 @@ Files: `scripts/mallorn_tree.js` (pure generator), `scripts/trees.js` (growth, b
   marked leaf that reaches wood again within 10 steps, through marked leaves too (owner: over the whole reach). Nearby reports (6 blocks) share one
   search; a search over 30,000 leaves changes nothing. Offline: equal to a full recomputation after every log of two shipped giants felled in scrambled
   order (both ways), and after every log placed back in scrambled order; at most ~2,300 block reads per search (2026-11-08). Not covered: wood moved by a
-  piston, `/setblock` or `/fill` without `destroy`, a tree grown from a sapling into marked leaves. Details `LEAF_HARVEST.md`. The 20-tree cut-down balance test was never run (status unverified).
+  piston, `/setblock` or `/fill` without `destroy`, a tree grown from a sapling into marked leaves. Details `HARVEST.md`. The 20-tree cut-down balance test was never run (status unverified).
 
 ## Giant Mallorns (was Phase 5; owner-accepted in game 2026-09-30)
 
@@ -187,7 +187,7 @@ custom cube) stopped it but made the canopy hollow and needs the experimental to
 (`GRAPHICS_TASKS.md`). Until 2026-11-10 both leaf blocks were plain `geometry.full_block` with `alpha_test_to_opaque` and `isotropic` on up/down. Owner in game, 2026-11-10: `alpha_test_single_sided_to_opaque` (backface culling) **stops the flicker**, but a leaf seen through its own holes shows no inner side of its far faces (see-through, unlike vanilla), so it was rejected. **Fix, accepted by the owner in game the same day** (flicker gone, vanilla-like look; where green and golden leaves touch, the shared face shows one or the other texture depending on the side, accepted): double-sided `alpha_test_to_opaque` again, on a full-size cube `geometry.lothlorien.mallorn_leaf_cube` with `block_culling/mallorn_leaves.culling.json` and the shared layer `lothlorien:culling_layer.leaves` on both leaf blocks. The rules cull the `up`, `east` and `south` faces against a block of the same layer and leave `down`, `west` and `north` drawn, so two touching leaves share exactly one double-sided face: nothing coplanar to fight, no hollow canopy (the 2026-10-02 test culled all six directions), and about a third fewer leaf faces. All six faces still cull against full opaque blocks. Works with all experimental toggles off (owner, 2026-11-10).
 
 Mallorn leaves versus vanilla (parameter audit): same render method, sound `grass`, hardness and blast resistance 0.2, flammability 30/60, light dampening 1, no redstone conduction. Deliberate differences:
-ambient occlusion 0 (faces next to logs went black, game-verified); colours baked, never biome-tinted; hoe-only tool tag (vanilla drops only with shears or Silk Touch, see `LEAF_HARVEST.md`); persistence state
+ambient occlusion 0 (faces next to logs went black, game-verified); colours baked, never biome-tinted; hoe-only tool tag (vanilla drops only with shears or Silk Touch, see `HARVEST.md`); persistence state
 plus script decay with reach 10; no waterlogging or composting in the first pass (since added, see parity doc).
 
 ## Western Corn and Lembas (was Phase 7; game-tested 2026-09-29, owner)
@@ -195,7 +195,7 @@ plus script decay with reach 10; no waterlogging or composting in the first pass
 Files: `blocks/western_corn.json`, `scripts/crop.js` (component and bone meal helpers), `scripts/crop_rules.js` (pure growth numbers), `scripts/lembas.js`, items `western_corn_seeds`, `western_corn_grain`,
 `lembas_dough`, `lembas_cake`, `lembas_wrapped`, recipes and the `western_corn(.json|_mature.json)` loot tables.
 
-- **Loop:** find wild corn in Lothlórien -> harvest (mature: one grain plus Binomial(3+Fortune, 8/15) seeds; young: one seed, `WESTERN_CORN_HARVEST.md`) -> plant seeds on farmland anywhere -> craft **dough**
+- **Loop:** find wild corn in Lothlórien -> harvest (mature: one grain plus Binomial(3+Fortune, 8/15) seeds; young: one seed, `HARVEST.md`) -> plant seeds on farmland anywhere -> craft **dough**
   (3 grain + 1 sugar -> 2) -> smelt in furnace or smoker -> **Lembas cake** (6 nutrition, 1.6 s) -> with one Mallorn leaves block -> **wrapped Lembas** (8 nutrition, saturation 19.2, eaten in 1.0 s, lifts Hunger through
   the item component `lothlorien:lembas`). Two Content Log fixes were needed: `saturation_modifier` must be a number, and food needs `minecraft:use_animation: "eat"`.
 - **Crop block:** state `lothlorien:growth` 0-7, `geometry.cross`, stage texture by 7 permutations, mature loot chosen by a permutation that overrides `minecraft:loot`. Seeds place only on farmland
@@ -217,7 +217,7 @@ Items `athelas_salve`, `miruvor`; `scripts/athelas.js` (components `lothlorien:s
   firing for a non-food item, the durability bar and write-back through the main-hand slot are verified in game. Creative sip preservation, plain Lembas compost 85 % and soul-campfire cooking: parity doc.
   Food balance, ingredient-only nectar, no extra corn uses and no raw-swan debuff are intentional.
 
-## Harmony (replaces the earlier Disharmony; spec `design/harmony_rework_plan.md`)
+## Harmony (replaces the earlier Disharmony; spec `design/harmony.md`)
 
 - **Files.** `scripts/harmony.js` (pure: constants, `bandOf`, `DEED_COSTS`, `applyPenalty`, `recordDeed`, `recordDeath`, `tick`, `statusText`, `BAND_ICONS`, serialize/parse), `harmony_game.js` (wiring),
   consumers `deer.js`/`deer_rules.js`, `squirrel_rules.js`, `white_deer_rules.js`, `unicorn_rules.js`, `elven_warden.js` (fight hook).
@@ -260,7 +260,7 @@ this. Knowledge: `.claude/skills/bedrock-mobs/references/spawning.md`. The spike
 - **Model and animation:** procedural Molang (walk by `query.modified_distance_moved`, gallop pairs weighted `clamp((ground_speed - 3.5) / 2.5, 0, 1)`; the 3.5 m/s threshold is a guess); one slim cube per leg;
   all box sizes whole numbers (a fractional size put box-UV faces between texels and showed holes; `tools/make_deer.py` fails on fractional sizes or unpainted texels); bone z rotation has the same negated handedness
   as x. The engine logs `armor_offset.default_neck` locator warnings for a bone named `neck` (bone renamed `neck_joint`, antlers split into a separate geometry; the log text was not confirmed gone, status unverified).
-  Art: `GRAPHICS_TASKS.md`. Sounds: `AMBIENT_SOUNDS.md`.
+  Art: `GRAPHICS_TASKS.md`. Sounds: `AUDIO.md`.
 - Test protocol: `/summon lothlorien:deer`, approach (flight 10 blocks, 5 sneaking), corn lure, `/scriptevent lothlorien:harmony -40` for Hated flight 30, hurt one (herd bolts for 20 s), breeding with corn grain.
 
 ### Deer antler block

@@ -94,7 +94,7 @@
     "evidence": [
       {
         "path": "docs/TECHNICAL_NOTES.md",
-        "sha256": "d7ab022cca093f6ca911b3e7944c50ac9dafa392029bbce140a11de1f2431639"
+        "sha256": "5d7d0cf54cfbbdf7dd70d406ef15224a319929b291c6fee80665043cf299a756"
       },
       {
         "path": "lothlorien_bp/scripts/leaf_decay.js",
@@ -233,7 +233,7 @@
     "evidence": [
       {
         "path": "docs/NOT_IMPLEMENTED.md",
-        "sha256": "0512cd2256ea3abc3759f49950bb69de79da30abd3e2c7219bc716f2ccbd286f"
+        "sha256": "f27b9fc8a1d9cb94f2afa7d14c23dd6321b9dc248c2c44096222bf2deda516cb"
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_door.json",
@@ -252,7 +252,7 @@
     "evidence": [
       {
         "path": "docs/NOT_IMPLEMENTED.md",
-        "sha256": "0512cd2256ea3abc3759f49950bb69de79da30abd3e2c7219bc716f2ccbd286f"
+        "sha256": "f27b9fc8a1d9cb94f2afa7d14c23dd6321b9dc248c2c44096222bf2deda516cb"
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_heartwood_door.json",
