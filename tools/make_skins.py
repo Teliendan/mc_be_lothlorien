@@ -22,6 +22,7 @@ import json
 import sys
 from pathlib import Path
 from PIL import Image
+from artkit import hexc
 
 MOD = Path(__file__).resolve().parents[1]
 WS = MOD.parents[1]
@@ -37,11 +38,6 @@ PARTS = {
     "lleg": (16, 48, 4, 12, 4), "lpants": (0, 48, 4, 12, 4),
 }
 BASE_PARTS = ("head", "body", "rarm", "larm", "rleg", "lleg")
-
-
-def hexc(h):
-    h = h.lstrip("#")
-    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4)) + (255,)
 
 
 def ramp(s):

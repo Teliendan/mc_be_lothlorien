@@ -19,6 +19,7 @@ import sys
 from pathlib import Path
 from PIL import Image
 from json_io import write_json
+from artkit import hexc
 
 MOD = Path(__file__).resolve().parents[1]
 RP = MOD / "lothlorien_rp"
@@ -26,11 +27,6 @@ WS = MOD.parents[1]
 TEX = 64
 ID = "lothlorien:elven_warden"
 GEO_ID = "geometry.lothlorien.elven_warden"
-
-
-def hexc(h):
-    h = h.lstrip("#")
-    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4)) + (255,)
 
 
 def R(names):

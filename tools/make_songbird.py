@@ -10,14 +10,10 @@ import sys
 from pathlib import Path
 from PIL import Image
 from json_io import write_json
+from artkit import hexc
 
 RP = Path(__file__).resolve().parents[1] / "lothlorien_rp"
 TEX = 32
-
-
-def hexc(h):
-    h = h.lstrip("#")
-    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4)) + (255,)
 
 
 def ramp(hexes):

@@ -17,6 +17,7 @@ import json
 import random
 from pathlib import Path
 from PIL import Image
+from artkit import hexc
 from make_mallorn_wood import BARK as MALLORN_BARK, recolour, to_gold
 
 MOD = Path(__file__).resolve().parents[1]
@@ -24,11 +25,6 @@ BP, RP = MOD / "lothlorien_bp", MOD / "lothlorien_rp"
 NS = "lothlorien"
 FRAMES = 6
 TICKS_PER_FRAME = 30
-
-
-def hexc(h):
-    h = h.lstrip("#")
-    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4)) + (255,)
 
 
 # ---------------------------------------------------------------------------------------------- palettes

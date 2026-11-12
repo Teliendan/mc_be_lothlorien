@@ -15,15 +15,11 @@ import math
 import sys
 from pathlib import Path
 from PIL import Image
+from artkit import hexc
 
 RP = Path(__file__).resolve().parents[1] / "lothlorien_rp"
 OUT = RP / "font" / "glyph_E5.png"
 N = 12  # drawing box; the 1 px outline makes the icon 14x14, placed at offset (1, 1) of its 16x16 cell
-
-
-def hexc(h):
-    h = h.lstrip("#")
-    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4)) + (255,)
 
 
 # ---------------------------------------------------------------- shape helpers (drawing box, y down)

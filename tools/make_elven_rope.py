@@ -14,17 +14,13 @@ knot top 4-7 x 4-7, strand end 12-13 x 0-1, knot bottom 8-11 x 4-7.
 from pathlib import Path
 from PIL import Image
 from json_io import write_json
+from artkit import hexc
 
 RP = Path(__file__).resolve().parents[1] / "lothlorien_rp"
 
 HI, LI, MID, SHADE, DEEP = ("#a4a6ae", "#82848c", "#62646c", "#46484f", "#2d2f35")
 OUTLINE = "#494d57"
 DEW = "#e4f4fc"
-
-
-def hexc(h):
-    h = h.lstrip("#")
-    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4)) + (255,)
 
 
 def paint_block():

@@ -21,6 +21,7 @@ import sys
 from pathlib import Path
 
 from PIL import Image
+from artkit import hexc
 
 MOD = Path(__file__).resolve().parents[1]
 RP = MOD / "lothlorien_rp"
@@ -32,11 +33,6 @@ CLEAR = (0, 0, 0, 0)
 EGG = {1: (6, 9), 2: (5, 10), 3: (4, 11), 4: (3, 12), 5: (3, 12), **{y: (2, 13) for y in range(6, 12)},
        12: (3, 12), 13: (4, 11), 14: (5, 10)}
 LIGHT = (-0.55, -0.6, 0.58)  # towards the viewer's top-left
-
-
-def hexc(h):
-    h = h.lstrip("#")
-    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4)) + (255,)
 
 
 def ramp(hexes):
