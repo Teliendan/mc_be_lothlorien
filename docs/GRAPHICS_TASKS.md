@@ -1,7 +1,7 @@
 # Lothlórien: graphics status
 
 Status record of the art as shipped. Every texture and model is generated: edit the generator named in each entry, not the
-PNG/JSON, then re-run it (it overwrites its files). Textures live in `lothlorien_rp/textures/`. General rules: PNG, 16x16 unless
+PNG/JSON, then re-run it (it overwrites its files; `tools/generators.json` lists every generator, its outputs and its check, and `.\mods regen lothlorien` proves a rerun changes no byte). Textures live in `lothlorien_rp/textures/`. General rules: PNG, 16x16 unless
 stated, block textures tile on all four sides, no baked lighting, colours baked in (no biome tint). Review tools:
 `.claude/skills/bedrock-art/scripts/` (`icon_sheet.py`, `block_sheet.py`, `bb_render.py`). Owner verdict 2026-10-04: all
 graphics then existing accepted ("All graphics is good now"); later art was accepted individually, as dated below. Wood-set taste, gold budget and traps: `MALLORN_WOOD_LESSONS.md`.

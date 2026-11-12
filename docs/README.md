@@ -12,7 +12,7 @@ Start with `TODO.md` for what is left before release.
 | `NOT_IMPLEMENTED.md` | features left out and why |
 | `parity/` | vanilla-parity decisions: `BLOCKS_ITEMS.md`, `CREATURES.md` |
 | `TESTER_BRIEF.md` | private tester brief for 0.8.0 |
-| `TESTING.md`, `VERIFIER_WARNINGS.md`, `LOCALIZATION.md` | test layout, documented verifier exceptions, translation notes (wiki export: workspace `docs/wiki.md`) |
+| `TESTING.md`, `VERIFIER_WARNINGS.md`, `LOCALIZATION.md` | test layout and the generator manifest (`tools/generators.json`), documented verifier exceptions, translation notes (wiki export: workspace `docs/wiki.md`) |
 | `SKINS.md` | the six player skins (skin pack `lothlorien_skins/`) |
 | `media/`, `design/banner.png`, `design/banners.txt` | logo, promo banners, the silver banner and its pattern string |
 

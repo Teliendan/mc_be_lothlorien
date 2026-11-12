@@ -37,6 +37,7 @@ there is no need to run both verify and deploy without an intervening reason.
 | Mallorn boats and chest boats | `boats` (native source contracts and item/recipe/drop bindings; runtime cases in [parity/BLOCKS_ITEMS.md](parity/BLOCKS_ITEMS.md)) |
 | Nectar / dew / rope / lamps | `nectar-dew`, `rope`, `lamps` |
 | Support and performance / diagnostics | `support`, `performance`, `diagnostics` |
+| A generator added, renamed or given other output files | `generators` (`tests/generator_manifest.py`: `tools/generators.json` must name every generator and its outputs) |
 | Warden / civilian elf behavior | `wardens`, `elves`; add `village-residents` for baked resident placement |
 | Village geometry / planning / repairs | `village-structures`, `village-planner`, `village-repair`, `rail-mender`, `forest-floor` |
 | Village engine-glue models / furnishings / polish | `script-glue`, `village-checks`, `village-furnishing`, `village-polish` |
@@ -56,6 +57,10 @@ Use full coverage for broad refactors and releases; commit hooks retain that
 default. Test-only changes need no deployment; pack changes must be deployed and
 confirmed `in sync` before engine testing. Offline success does not establish
 native enchantment, rendering or worldgen acceptance.
+
+Generators: `tools/generators.json` lists every `make_*.py`, `build_*.mjs` and the key-art script with the files it writes, what it needs
+(Pillow, localization, vanilla reference, ...) and how it is checked (`regen`, `mode`, `manual` with a reason). `.\mods regen lothlorien`
+reruns the `regen` rows in a scratch copy and fails on any byte difference (about 30 s, deliberately outside `verify`).
 
 When adding tests here or to another mod, follow the shared
 [feature-suite authoring rules](../../../docs/scoped-verification.md) and templates.
