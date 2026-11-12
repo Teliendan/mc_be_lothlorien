@@ -24,154 +24,8 @@ import { SHRINE, buildRootShrine, rootShrineLoot } from "./root_shrine.mjs";
 export { ANCHOR_AT, TRUNK_ANCHOR };
 
 export const SIZE = 40, SIZE_Y = 54, TRUNK_AT = 18;
-const BLOCK_VERSION = 18168865; // as in the vanilla 1.26.30 structures
-
-// --- little-endian NBT (Bedrock) -------------------------------------------------------------
-const T = { byte: 1, short: 2, int: 3, long: 4, float: 5, string: 8, list: 9, compound: 10 };
-const tag = (type, value, of) => ({ type, value, of });
-const byte = (v) => tag(T.byte, v ? 1 : 0);
-const int = (v) => tag(T.int, v);
-const short = (v) => tag(T.short, v);
-const long = (v) => tag(T.long, BigInt(v));
-const float = (v) => tag(T.float, v);
-const str = (v) => tag(T.string, v);
-const list = (of, items) => tag(T.list, items, of);
-const compound = (obj) => tag(T.compound, obj);
-
-function encode(root) {
-  const parts = [];
-  const u8 = (v) => { const b = Buffer.alloc(1); b.writeUInt8(v); parts.push(b); };
-  const i32 = (v) => { const b = Buffer.alloc(4); b.writeInt32LE(v); parts.push(b); };
-  const s = (v) => { const d = Buffer.from(v, "utf8"); const b = Buffer.alloc(2); b.writeUInt16LE(d.length); parts.push(b, d); };
-  const payload = (t) => {
-    if (t.type === T.byte) { const b = Buffer.alloc(1); b.writeInt8(t.value); parts.push(b); }
-    else if (t.type === T.short) { const b = Buffer.alloc(2); b.writeInt16LE(t.value); parts.push(b); }
-    else if (t.type === T.int) i32(t.value);
-    else if (t.type === T.long) { const b = Buffer.alloc(8); b.writeBigInt64LE(t.value); parts.push(b); }
-    else if (t.type === T.float) { const b = Buffer.alloc(4); b.writeFloatLE(t.value); parts.push(b); }
-    else if (t.type === T.string) s(t.value);
-    else if (t.type === T.list) { u8(t.value.length ? t.of : 0); i32(t.value.length); for (const e of t.value) payload(e); }
-    else if (t.type === T.compound) {
-      for (const [k, v] of Object.entries(t.value)) { u8(v.type); s(k); payload(v); }
-      u8(0);
-    } else throw new Error(`tag type ${t.type}`);
-  };
-  u8(T.compound); s(""); payload(root);
-  return Buffer.concat(parts);
-}
-
-const stateTag = (v) => (typeof v === "boolean" ? byte(v) : typeof v === "number" ? int(v) : str(v));
-
-// blocks: Map<"x,y,z" (tree coords), { name, states, loot?, potItem? }>. size/offset default to the giant tree box.
-// NOTE: a template mob loads with ENGINE DEFAULT attributes (movement 0.7, health 20, follow_range 16), not its JSON values; the
-// definitions (component groups) do apply. Village wardens are swapped for a fresh spawn by scripts/warden_replace.js, so the
-// structures need no Attributes list (verified in a saved world, 2026-10-08).
-// Template entity (structure.entities): positions are structure-local because structure_world_origin is 0,0,0.
-// entities: [{ id, x, y, z, definitions?, mainhand?, invulnerable? }] with x/y/z in structure cells (floats allowed).
-//   definitions: component groups to add on load, "+group" strings (default: the entity itself, "+<id>"; the engine saves a
-//   placed mob's groups this way, so "+lothlorien:village_warden" puts it into that group). mainhand: item name held in the
-//   main hand (written as the saved-entity Mainhand list). invulnerable defaults to true (markers); real mobs pass false.
-const emptySlot = () => compound({ Count: byte(0), Damage: short(0), Name: str(""), WasPickedUp: byte(false) });
-const entityTag = ({ id, x, y, z, definitions, mainhand, variant, invulnerable = true }, n) => compound({
-  Air: short(300), Fire: short(0), OnGround: byte(false), Invulnerable: byte(invulnerable), isPersistent: byte(true),
-  identifier: str(id), definitions: list(T.string, (definitions ?? [`+${id}`]).map(str)),
-  ...(variant === undefined ? {} : { Variant: int(variant) }),
-  ...(mainhand ? { Mainhand: list(T.compound, [compound({ Count: byte(1), Damage: short(0), Name: str(mainhand), WasPickedUp: byte(false) })]), Offhand: list(T.compound, [emptySlot()]) } : {}),
-  Pos: list(T.float, [float(x), float(y), float(z)]), Motion: list(T.float, [float(0), float(0), float(0)]),
-  Rotation: list(T.float, [float(0), float(0)]), UniqueID: long(-(2n ** 33n) - BigInt(n) * 7919n),
-});
-
-// Template entities given in piece coordinates -> structure cells (toMcstructure entities).
-export const placeEntities = (entities, [OX, OY, OZ]) => entities.map((e) => ({ ...e, x: e.x + OX, y: e.y + OY, z: e.z + OZ }));
-
-// blocks: Map<"x,y,z" (tree coords), { name, states, loot? }>. size/offset default to the giant tree box.
-export function toMcstructure(blocks, [SX, SY, SZ] = [SIZE, SIZE_Y, SIZE], [OX, OY, OZ] = [TRUNK_AT, ROOT_DEPTH, TRUNK_AT], entities = []) {
-  const volume = SX * SY * SZ;
-  const layer0 = new Array(volume).fill(-1), layer1 = new Array(volume).fill(-1); // layer 1 = the liquid layer (a waterlogged block: states.__water)
-  const palette = [], paletteIndex = new Map(), positionData = {};
-  const paletteOf = (v) => { // one palette entry per distinct (name, states) of the real block states (the `__` markers are ours, never written)
-    const id = JSON.stringify([v.name, v.states]);
-    if (!paletteIndex.has(id)) {
-      paletteIndex.set(id, palette.length);
-      const states = {};
-      for (const [sk, sv] of Object.entries(v.states)) if (!sk.startsWith("__")) states[sk] = stateTag(sv);
-      palette.push(compound({ name: str(v.name), states: compound(states), version: int(BLOCK_VERSION) }));
-    }
-    return paletteIndex.get(id);
-  };
-  const waterEntry = { name: "minecraft:water", states: { liquid_depth: 0 } };
-  let clipped = 0;
-  for (const [k, v] of blocks) {
-    const [tx, ty, tz] = k.split(",").map(Number);
-    const x = tx + OX, y = ty + OY, z = tz + OZ;
-    if (x < 0 || x >= SX || y < 0 || y >= SY || z < 0 || z >= SZ) { clipped++; continue; }
-    const index = (x * SY + y) * SZ + z;
-    layer0[index] = paletteOf(v);
-    if (v.states?.__water) layer1[index] = paletteOf(waterEntry);
-    if (v.loot) {
-      positionData[String(index)] = compound({
-        block_entity_data: compound({
-          id: str(v.name === "minecraft:barrel" ? "Barrel" : "Chest"), isMovable: byte(true), Findable: byte(false), Items: list(T.compound, []),
-          LootTable: str(v.loot), LootTableSeed: int(0), x: int(x), y: int(y), z: int(z),
-        }),
-      });
-    }
-    if (v.potItem) {
-      if (v.name !== "minecraft:decorated_pot") throw new Error("potItem requires a native decorated pot");
-      const { name, count = 1, damage = 0 } = v.potItem;
-      if (!Number.isInteger(count) || count < 1 || count > 64) throw new Error("potItem count must be 1..64");
-      // Saved Bedrock 1.26.52 pot: one lowercase `item` compound, not a Chest/Items list.
-      // Count is a numeric byte; byte() above is intentionally a boolean helper.
-      positionData[String(index)] = compound({
-        block_entity_data: compound({
-          BlockEntityVersion: int(0), animation: byte(false), id: str("DecoratedPot"),
-          item: compound({ Count: tag(T.byte, count), Damage: short(damage), Name: str(name), WasPickedUp: byte(false) }),
-          x: int(x), y: int(y), z: int(z),
-        }),
-      });
-    }
-    if (v.jigsaw) {
-      positionData[String(index)] = compound({
-        block_entity_data: compound({
-          id: str("JigsawBlock"), isMovable: byte(true), name: str(v.jigsaw), target: str(v.jigsawTarget ?? "minecraft:empty"),
-          target_pool: str(v.jigsawPool ?? "minecraft:empty"), final_state: str(v.finalState), joint: str(v.joint ?? "rollable"),
-          x: int(x), y: int(y), z: int(z),
-        }),
-      });
-    }
-    if (v.plant) { // flower pot: the potted plant is block entity data (format from the vanilla FlowerPot entity; not verified in game)
-      const states = {};
-      for (const [sk, sv] of Object.entries(v.plant.states ?? {})) states[sk] = stateTag(sv);
-      positionData[String(index)] = compound({
-        block_entity_data: compound({
-          id: str("FlowerPot"), isMovable: byte(true),
-          PlantBlock: compound({ name: str(v.plant.name), states: compound(states), version: int(BLOCK_VERSION) }),
-          x: int(x), y: int(y), z: int(z),
-        }),
-      });
-    }
-    if (v.banner) {
-      positionData[String(index)] = compound({
-        block_entity_data: compound({
-          id: str("Banner"), isMovable: byte(true), Base: int(v.banner.baseId), Type: int(0),
-          Patterns: list(T.compound, v.banner.patterns.map((p) => compound({ Pattern: str(p.code), Color: int(p.colorId) }))),
-          x: int(x), y: int(y), z: int(z),
-        }),
-      });
-    }
-  }
-  const root = compound({
-    format_version: int(1),
-    size: list(T.int, [SX, SY, SZ].map(int)),
-    structure: compound({
-      block_indices: list(T.list, [list(T.int, layer0.map(int)), list(T.int, layer1.map(int))]),
-      entities: list(T.compound, entities.map(entityTag)),
-      palette: compound({ default: compound({ block_palette: list(T.compound, palette), block_position_data: compound(positionData) }) }),
-    }),
-    structure_world_origin: list(T.int, [0, 0, 0].map(int)),
-  });
-  return { buffer: encode(root), clipped };
-}
+import { placeEntities, toMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
+export const toGiantMcstructure = (blocks, entities = []) => toMcstructure(blocks, [SIZE, SIZE_Y, SIZE], [TRUNK_AT, ROOT_DEPTH, TRUNK_AT], entities); // the giant-tree box
 
 // Variants: options for buildFletMallorn. Add one here to experiment without touching the others.
 export const VARIANTS = {
@@ -235,7 +89,7 @@ if (process.argv[1] && realpathSync(fileURLToPath(import.meta.url)) === realpath
       x: e.x + TRUNK_AT, y: e.y + ROOT_DEPTH, z: e.z + TRUNK_AT,
     }));
     anchorMallorn(tree.blocks);
-    const { buffer, clipped } = toMcstructure(tree.blocks, undefined, undefined, campEntities);
+    const { buffer, clipped } = toGiantMcstructure(tree.blocks, campEntities);
     const name = treeName(variant, n);
     const bare = bareBranchEnds(tree.blocks); // every branch end carries >= 6 leaves within 2 (tuftBareEnds fixes the rest)
     if (bare.length) throw new Error(`${name}: bare branch end at ${bare.map((q) => `${q.x},${q.y},${q.z}`).join(" ")}`);

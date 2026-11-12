@@ -18,11 +18,12 @@ import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { gunzipSync, deflateSync } from "node:zlib";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadVillageData, parseMcstructure, rotated, wkey, wdecode, simulate, check, planLoops, renderTop, renderSide } from "./village_sim.mjs";
+import { loadVillageData, rotated, wkey, wdecode, simulate, check, planLoops, renderTop, renderSide } from "./village_sim.mjs";
 import { finalBlocks } from "../lothlorien_bp/scripts/village_loop.js";
 import { planVillage, startsFromMarkers, enumerate } from "../lothlorien_bp/scripts/village_planner.js";
 import { renderTextured } from "./textured_render.mjs";
 import { ROOTS } from "./village_mallorn.mjs";
+import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(root, "..", "..", "temp", "village_render") + "/";

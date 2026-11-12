@@ -11,7 +11,6 @@
 import { writeFileSync, mkdirSync, readdirSync, unlinkSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { toMcstructure } from "./build_structures.mjs";
 import { B, decoratePillar } from "./flet_mallorn.mjs";
 import { checkWalk } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs"; // shared walkability checker (headroom, steps, edges, rings, rail links)
 import { makeCombo, buildBalcony, STRAIGHT } from "./village_combo.mjs";
@@ -27,6 +26,7 @@ import { groundWoodPosts } from "./village_polish.mjs";
 import { relinkFences } from "./village_dress.mjs";
 import { isPlanterPanel } from "../lothlorien_bp/scripts/planter_panels.js";
 import { COURT_ROWS, COURT_CONN, HALL_ROWS, HALL_BAY, heartwoodRings, buildHall, buildStream, buildCourt, READING_POST } from "./village_central.mjs"; // the central tree: Court, Hall, stream, reading circle (M7 WP2) // keep-clear cells, nothing floats, water stays in its vessel (style guide rule 8)
+import { toMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 export const MAX_DEPTH = 2; // hops from the central tree (a combo = one hop; its crown is a sibling, not a deeper level)
 // exits (no combo fits, or the depth is used up): mostly a plain railing, sometimes a braced balcony or a lookout. The combos pool also

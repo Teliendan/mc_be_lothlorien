@@ -2,8 +2,8 @@
 import { mkdirSync, writeFileSync, realpathSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { placeEntities, toMcstructure } from "./build_structures.mjs";
 import { MEMORIAL, MEMORIAL_FEATURE, MEMORIAL_FILES, buildMemorial, memorialFeature, memorialWorldgen } from "./memorial.mjs";
+import { placeEntities, toMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 export function writeMemorial() {

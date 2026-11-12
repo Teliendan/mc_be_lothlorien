@@ -6,7 +6,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { keepClearCells, keepClearViolations, deco, supportCheck, waterCheck, placementFilter } from "../tools/village_checks.mjs";
 import { EMITTERS, emission, lightBlock, isLightBlock, lightField, worstLight, addHiddenLights, walkCells, buildTree, SHAPES, FLOOR_H, LEVEL_H, RING, stairLayer, RAIL, LIGHT_TARGET } from "../tools/village_mallorn.mjs";
 import * as spawnApi from "../tools/village_mallorn.mjs";
-import { rotateStates, loadVillageData, simulate, check, parseMcstructure } from "../tools/village_sim.mjs";
+import { rotateStates, loadVillageData, simulate, check } from "../tools/village_sim.mjs";
 import { rotateBlocks } from "../tools/village_combo.mjs";
 import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs";
 
@@ -299,6 +299,7 @@ test("rotateStates: facing_direction (2..5 turn N -> E -> S -> W, 0 and 1 stay),
 
 // ---- WP3: dressing (village_dress.mjs) ------------------------------------------------------------------------------------------------
 import { homeFrame, frameCell, frameInterior, frameDoorLane, framePost, frameLamp, frameArea, rotateFrame, relinkFences } from "../tools/village_dress.mjs";
+import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 test("homeFrame: a pavilion square on open deck against a trunk face; frame helpers: interior, door lane, post, lamp, furnishing area, rotation", () => {
   const t = nodeB();
   const f = t.home;

@@ -9,7 +9,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { parseMcstructure } from "./village_sim.mjs";
+import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const dir = join(dirname(fileURLToPath(import.meta.url)), "..", "lothlorien_bp", "structures", "lothlorien", "village");
 const [name, mode, ...rest] = process.argv.slice(2);

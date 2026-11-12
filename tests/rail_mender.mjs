@@ -3,9 +3,10 @@ import { test, finish } from './test_helpers.mjs';
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { existsSync, readdirSync } from "node:fs";
-import { parseMcstructure, FENCE } from "../tools/village_sim.mjs";
+import { FENCE } from "../tools/village_sim.mjs";
 import * as EL from "../lothlorien_bp/scripts/elf_rules.js";
 import * as MEND from "../lothlorien_bp/scripts/rail_mender_rules.js";
+import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const VILLAGE = "../lothlorien_bp/structures/lothlorien/village";
 const villagePieces = () => readdirSync(new URL(`${VILLAGE}/`, import.meta.url)).filter((f) => f.endsWith(".mcstructure")).map((f) =>

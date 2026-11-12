@@ -1,11 +1,10 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { MEMORIAL, MEMORIAL_FEATURE, MEMORIAL_FILES, buildMemorial, memorialFeature, memorialWorldgen } from "../tools/memorial.mjs";
-import { placeEntities, toMcstructure } from "../tools/build_structures.mjs";
-import { readNbt } from "../tools/village_sim.mjs";
 import { SITES } from "../tools/site_feature.mjs";
 import { SILVER_WATCH } from "../tools/watch_camp_rules.mjs";
 import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs";
+import { placeEntities, readNbt, toMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const memorial = buildMemorial(), { blocks } = memorial;
 const get = (x, y, z) => blocks.get(`${x},${y},${z}`);

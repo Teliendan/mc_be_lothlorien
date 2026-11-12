@@ -6,7 +6,7 @@ import { isPlanterPanel } from "../lothlorien_bp/scripts/planter_panels.js";
 import * as H from "../lothlorien_bp/scripts/harmony.js";
 import { B, bareBranchEnds } from "../tools/flet_mallorn.mjs";
 import { existsSync, readdirSync } from "node:fs";
-import { loadVillageData, parseMcstructure, rotated, PLANKS, FENCE, LANTERN_ID } from "../tools/village_sim.mjs";
+import { loadVillageData, rotated, PLANKS, FENCE, LANTERN_ID } from "../tools/village_sim.mjs";
 import { RING, FLOOR_H as V_FLOOR, LEVEL_H as V_LEVEL, ROOTS as V_ROOTS, worstLight, LIGHT_TARGET, LANTERN_LIGHT } from "../tools/village_mallorn.mjs";
 import { bridgeShape } from "../lothlorien_bp/scripts/village_bridge.js";
 import { buildBridge, STRAIGHT } from "../tools/village_combo.mjs";
@@ -15,6 +15,7 @@ import { buildTree as vBuildTree, SHAPES as V_SHAPES, linkRails, LEVEL_H as V_LE
 import * as MEND from "../lothlorien_bp/scripts/rail_mender_rules.js";
 import * as LOOP from "../lothlorien_bp/scripts/village_loop.js";
 import { applyPlan, joinChecks } from "../tools/village_sim.mjs";
+import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const L = "lothlorien:lothlorien", RIVER = "minecraft:river", FOREST = "minecraft:forest";
 const at = (t, x, y, z) => t.blocks.get(`${x},${y},${z}`)?.name;

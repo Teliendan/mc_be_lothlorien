@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { TREE_GRID_KINDS, TREE_GRID_SET, TREE_GRID_PLACEMENT, treeGridDefinitions } from "../tools/build_tree_grid.mjs";
-import { readNbt } from "../tools/village_sim.mjs";
+import { readNbt } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const bp = new URL("../lothlorien_bp/", import.meta.url);
 const json = path => JSON.parse(readFileSync(new URL(path, bp), "utf8"));

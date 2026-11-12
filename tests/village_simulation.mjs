@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import { planterWalkName } from "../lothlorien_bp/scripts/planter_panels.js";
 import { B } from "../tools/flet_mallorn.mjs";
 import { existsSync, readdirSync } from "node:fs";
-import { loadVillageData, parseMcstructure, runSeeds, PLANKS, FENCE, populateElves, furnishVillage } from "../tools/village_sim.mjs";
+import { loadVillageData, runSeeds, PLANKS, FENCE, populateElves, furnishVillage } from "../tools/village_sim.mjs";
 import * as EL from "../lothlorien_bp/scripts/elf_rules.js";
 import { RING, STAIR_FULL, STAIR_TOP, STAIR_CUT, FLOOR_H as V_FLOOR, LEVEL_H as V_LEVEL, ROOTS as V_ROOTS } from "../tools/village_mallorn.mjs";
 import { rotateCell } from "../tools/village_combo.mjs";
@@ -13,6 +13,7 @@ import * as LOOP from "../lothlorien_bp/scripts/village_loop.js";
 import * as PL from "../lothlorien_bp/scripts/village_planner.js";
 import * as RP from "../lothlorien_bp/scripts/village_repair.js";
 import { planLoops, discoveryCoverage, buildWorld, wkey, markerCells, walkability } from "../tools/village_sim.mjs";
+import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const at = (t, x, y, z) => t.blocks.get(`${x},${y},${z}`)?.name;
 const flat = () => 64;

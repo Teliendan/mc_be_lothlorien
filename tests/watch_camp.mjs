@@ -2,12 +2,12 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { buildFletMallorn, B, ROUND_LADDER } from "../tools/flet_mallorn.mjs";
 import { makeRandom } from "../lothlorien_bp/scripts/mallorn_tree.js";
-import { CHOSEN, VARIANTS, TRUNK_AT, ANCHOR_AT, TRUNK_ANCHOR, toMcstructure } from "../tools/build_structures.mjs";
+import { CHOSEN, VARIANTS, TRUNK_AT, ANCHOR_AT, TRUNK_ANCHOR, toGiantMcstructure } from "../tools/build_structures.mjs";
 import { ROOT_DEPTH } from "../tools/flet_mallorn.mjs";
-import { parseMcstructure, readNbt } from "../tools/village_sim.mjs";
 import { furnishWatchCamp, watchCampLoot, CAMP_LANTERN } from "../tools/watch_camp.mjs";
 import { CAMP } from "../tools/watch_camp_rules.mjs";
 import { blockLight, defaultPasses } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_light.mjs";
+import { parseMcstructure, readNbt } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const bp = new URL("../lothlorien_bp/", import.meta.url);
 const json = (p) => JSON.parse(readFileSync(new URL(p, bp), "utf8"));
@@ -85,16 +85,16 @@ for (const [variant, seed] of CHOSEN) {
 // Plain giants stay byte-identical to the unfurnished generator, and camps regenerate exactly.
 for (const [variant, seed] of CHOSEN) {
   const t = buildFletMallorn(makeRandom(seed*7919), VARIANTS[variant]);
-  const original = toMcstructure(t.blocks).buffer;
+  const original = toGiantMcstructure(t.blocks).buffer;
   const entities = furnishWatchCamp(t);
-  if (variant === "roundplain") assert.deepEqual(toMcstructure(t.blocks).buffer, original);
+  if (variant === "roundplain") assert.deepEqual(toGiantMcstructure(t.blocks).buffer, original);
   else assert.equal(entities.filter((e) => e.id === "minecraft:cushion").length, 2);
   t.blocks.set(key(ANCHOR_AT.x, ANCHOR_AT.y, ANCHOR_AT.z), {
     name: "minecraft:jigsaw", states: { facing_direction: 0, rotation: 0 },
     jigsaw: TRUNK_ANCHOR, finalState: B.log,
   });
   const local = entities.map((e) => ({ ...e, x: e.x+TRUNK_AT, y: e.y+ROOT_DEPTH, z: e.z+TRUNK_AT }));
-  const rebuilt = toMcstructure(t.blocks, undefined, undefined, local).buffer;
+  const rebuilt = toGiantMcstructure(t.blocks, local).buffer;
   assert.deepEqual(rebuilt, readFileSync(new URL(`structures/lothlorien/mallorn_${variant}_${String(seed).padStart(2,"0")}.mcstructure`, bp)), "shipped tree matches generator");
 }
 

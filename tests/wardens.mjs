@@ -5,8 +5,9 @@ import { readFileSync } from "node:fs";
 import * as H from "../lothlorien_bp/scripts/harmony.js";
 import { readdirSync } from "node:fs";
 import * as WR from "../lothlorien_bp/scripts/warden_replace_rules.js";
-import { parseMcstructure, PLANKS, FENCE } from "../tools/village_sim.mjs";
+import { PLANKS, FENCE } from "../tools/village_sim.mjs";
 import * as EW from "../lothlorien_bp/scripts/elven_warden_rules.js";
+import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const VILLAGE = "../lothlorien_bp/structures/lothlorien/village";
 const villagePieces = () => readdirSync(new URL(`${VILLAGE}/`, import.meta.url)).filter((f) => f.endsWith(".mcstructure")).map((f) =>

@@ -25,66 +25,8 @@ import { PLAN, planVillage, discoverSync, boundedReader, chunksIn, inRect } from
 import { POST_ID, PROFESSIONS, HOME_MIN, HEALER2_MIN_TREES, RESERVE_POSTS, assignHomes, groupPosts } from "../lothlorien_bp/scripts/elf_rules.js";
 import { siteOf, findHome, isFree, planFurnish, hasLayout, frameArea, frameCell } from "../lothlorien_bp/scripts/home_furnish.js"; // the home pavilion and its furnishing (M7 WP4b), the very same pure code as elf_village.js
 export const PLANKS = "lothlorien:mallorn_planks", HEART_PLANKS = "lothlorien:mallorn_heartwood_planks", FENCE = RAIL, LANTERN_ID = "lothlorien:elven_lantern";
+import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 const EMPTY = "minecraft:empty", AIR = "minecraft:air", JIGSAW = "minecraft:jigsaw";
-const FACING_VEC = { 2: [0, -1], 3: [0, 1], 4: [-1, 0], 5: [1, 0] };
-const VERT = { 0: [0, -1, 0], 1: [0, 1, 0] }; // facing_direction 0 down, 1 up (vertical jigsaws: crowns)
-
-// ---- little-endian NBT reader (Bedrock) ----------------------------------------------------------------
-export function readNbt(buf) {
-  let p = 0;
-  const s = () => { const n = buf.readUInt16LE(p); p += 2; const v = buf.toString("utf8", p, p + n); p += n; return v; };
-  const val = (t) => {
-    switch (t) {
-      case 1: return buf.readInt8(p++);
-      case 2: { const v = buf.readInt16LE(p); p += 2; return v; }
-      case 3: { const v = buf.readInt32LE(p); p += 4; return v; }
-      case 4: { p += 8; return 0; }
-      case 5: { const v = buf.readFloatLE(p); p += 4; return v; }
-      case 6: { p += 8; return 0; }
-      case 7: { const n = buf.readInt32LE(p); p += 4 + n; return null; }
-      case 8: return s();
-      case 9: { const it = buf.readUInt8(p++); const n = buf.readInt32LE(p); p += 4; const a = []; for (let i = 0; i < n; i++) a.push(val(it)); return a; }
-      case 10: { const o = {}; for (;;) { const tt = buf.readUInt8(p++); if (!tt) break; const k = s(); o[k] = val(tt); } return o; }
-      case 11: { const n = buf.readInt32LE(p); p += 4 + 4 * n; return null; }
-      default: throw new Error("nbt tag " + t);
-    }
-  };
-  const t = buf.readUInt8(p++); s(); return val(t);
-}
-
-// ---- pieces ---------------------------------------------------------------------------------------------
-const BANNER_COLOR = ["black", "red", "green", "brown", "blue", "purple", "cyan", "silver", "gray", "pink", "lime", "yellow", "light_blue", "magenta", "orange", "white"];
-export function parseMcstructure(buf, name = "?") {
-  const v = readNbt(buf);
-  const [sx, sy, sz] = v.size;
-  const pal = v.structure.palette.default;
-  const layer = v.structure.block_indices[0], layer1 = v.structure.block_indices[1];
-  const grid = new Array(layer.length); // block name per cell, null = void
-  const blocks = [], jigsaws = [];
-  for (let i = 0; i < layer.length; i++) {
-    const pi = layer[i];
-    if (pi < 0) { grid[i] = null; continue; }
-    const entry = pal.block_palette[pi];
-    grid[i] = entry.name;
-    const z = i % sz, y = Math.floor(i / sz) % sy, x = Math.floor(i / (sz * sy));
-    if (entry.name === JIGSAW) {
-      const e = pal.block_position_data[String(i)]?.block_entity_data;
-      if (!e) throw new Error(`${name}: jigsaw at ${x},${y},${z} has no block entity`);
-      const dir = FACING_VEC[entry.states.facing_direction] ?? null;
-      jigsaws.push({ x, y, z, dirId: entry.states.facing_direction, dir, vec: dir ? [dir[0], 0, dir[1]] : VERT[entry.states.facing_direction] ?? null,
-        name: e.name, target: e.target, pool: e.target_pool, final: e.final_state, joint: e.joint });
-    } else if (entry.name !== AIR) {
-      const b = { x, y, z, name: entry.name, states: entry.states ?? {} };
-      if (layer1 && layer1[i] >= 0 && pal.block_palette[layer1[i]]?.name === "minecraft:water") b.states = { ...b.states, __water: true }; // waterlogged (the liquid layer): a water source inside this block
-      const e = (entry.name === "minecraft:wall_banner" || entry.name === "minecraft:flower_pot") ? pal.block_position_data[String(i)]?.block_entity_data : null; // data the renderer draws
-      if (e?.id === "Banner") b.banner = { base: BANNER_COLOR[e.Base], patterns: (e.Patterns ?? []).map((p) => ({ pattern: p.Pattern, color: BANNER_COLOR[p.Color] })) };
-      if (e?.id === "FlowerPot" && e.PlantBlock) b.plant = { name: e.PlantBlock.name, states: e.PlantBlock.states ?? {} };
-      blocks.push(b);
-    }
-  }
-  const entities = (v.structure.entities ?? []).map((e) => ({ id: e.identifier, pos: e.Pos, defs: e.definitions, invulnerable: !!e.Invulnerable, mainhand: e.Mainhand?.[0]?.Name }));
-  return { name, size: [sx, sy, sz], grid, blocks, jigsaws, entities, at: (x, y, z) => (x < 0 || y < 0 || z < 0 || x >= sx || y >= sy || z >= sz ? undefined : grid[(x * sy + y) * sz + z]) };
-}
 
 const SIDES = ["north", "east", "south", "west"];
 // Vanilla integer orientation states, one clockwise quarter turn (seen from above). Documented (minecraft.wiki block states), NOT yet tested in game

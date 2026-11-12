@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
-import { parseMcstructure } from "../tools/village_sim.mjs";
 import { buildBalcony } from "../tools/village_combo.mjs";
 import { framePlanters, clearSeatViews } from "../tools/village_polish.mjs";
 import { relinkFences } from "../tools/village_dress.mjs";
 import { connectionChanges, isLinkTarget, LINKS } from "../lothlorien_bp/scripts/rail_mender_rules.js";
 import { closeUnusedExitsGen } from "../lothlorien_bp/scripts/village_repair.js";
 import { boundedReader, drive, overlay, walkDist, walkDistGen } from "../lothlorien_bp/scripts/village_planner.js";
+import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const key = (x,y,z) => `${x},${y},${z}`;
 const PL = "lothlorien:mallorn_planks", F = "lothlorien:mallorn_fence";

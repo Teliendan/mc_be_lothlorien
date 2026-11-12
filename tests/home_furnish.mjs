@@ -3,9 +3,10 @@ import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { findHome, furnishLayout, planFurnish, frameArea, frameCell, framePost, frameLamp, frameCu, frameSquare, siteOf, hasLayout, MARKER_LANTERN, bannerStructure, BANNER_DESIGNS, POT_PLANTS, CUSHION_VARIANTS } from "../lothlorien_bp/scripts/home_furnish.js";
 import { supportScan, isSupportSkipped } from "../tools/village_checks.mjs";
-import { parseMcstructure, entityCells } from "../tools/village_sim.mjs";
+import { entityCells } from "../tools/village_sim.mjs";
 import { furnishStructures } from "../tools/build_furnish.mjs";
 import { SILVER_WATCH } from "../tools/watch_camp_rules.mjs";
+import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 let failed = 0;
 function test(name, fn) { try { fn(); console.log(`ok   ${name}`); } catch (e) { failed++; console.log(`FAIL ${name}\n     ${e.stack.split("\n").slice(0, 4).join("\n     ")}`); } }

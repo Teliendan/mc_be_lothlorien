@@ -4,7 +4,7 @@
 import { readFileSync, writeFileSync, readdirSync, realpathSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { performance } from "node:perf_hooks";
-import { parseMcstructure } from "./village_sim.mjs";
+import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 let benchmarkRun = 0;
 
 export async function benchmark() {

@@ -6,10 +6,10 @@ import { makeRandom, makeBuilder } from "../lothlorien_bp/scripts/mallorn_tree.j
 import { buildFletMallorn, LADDER, ROUND_LADDER, LEAF_KEEP, ROOT_DEPTH, B, bentBranch } from "../tools/flet_mallorn.mjs";
 import { SIZE, SIZE_Y, TRUNK_AT, CHOSEN, TRUNK_ANCHOR } from "../tools/build_structures.mjs";
 import { existsSync } from "node:fs";
-import { parseMcstructure } from "../tools/village_sim.mjs";
 import { CHEST_BLOCK, hasChest } from "../tools/build_structures.mjs";
 import * as N from "../lothlorien_bp/scripts/great_mallorn_rules.js";
 import { ANCHOR_AT } from "../tools/build_structures.mjs";
+import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const flets = [{}, { woven: true, lush: true }].flatMap((opts) =>
   Array.from({ length: 30 }, (_, i) => buildFletMallorn(makeRandom(i * 7919 + 1), opts)));

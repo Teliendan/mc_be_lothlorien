@@ -4,10 +4,11 @@ import { register } from "node:module";
 import { isPlanterPanel,planterWalkName,PANEL_DIRS,PANEL_ID,planPlanterPanels,panelBlock } from "../lothlorien_bp/scripts/planter_panels.js";
 import { framePlanters } from "../tools/village_polish.mjs";
 import { keepClearViolations,supportCheck } from "../tools/village_checks.mjs";
-import { parseMcstructure,applyPlan,wkey } from "../tools/village_sim.mjs";
+import { applyPlan, wkey } from "../tools/village_sim.mjs";
 import { sideTarget } from "../lothlorien_bp/scripts/village_loop.js";
 import { findHome,frameArea,frameCell,framePost,planFurnish,frameLamp } from "../lothlorien_bp/scripts/home_furnish.js";
 import { checkWalk } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs";
+import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const key=(x,y,z)=>`${x},${y},${z}`,PL="lothlorien:mallorn_planks";
 const blk=(name,states={})=>({name,states});

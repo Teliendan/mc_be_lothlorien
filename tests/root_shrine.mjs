@@ -2,11 +2,11 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { SHRINE, buildRootShrine, rootShrineLoot } from "../tools/root_shrine.mjs";
-import { placeEntities, toMcstructure, giantMallornPool } from "../tools/build_structures.mjs";
+import { giantMallornPool } from "../tools/build_structures.mjs";
 import { ANCHOR_AT, TRUNK_ANCHOR } from "../tools/mallorn_anchor.mjs";
-import { readNbt } from "../tools/village_sim.mjs";
 import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs";
 import { SILVER_WATCH } from "../tools/watch_camp_rules.mjs";
+import { placeEntities, readNbt, toMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const shrine = buildRootShrine(), { blocks } = shrine;
 const key = (x, y, z) => `${x},${y},${z}`;

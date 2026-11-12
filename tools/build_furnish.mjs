@@ -7,8 +7,8 @@
 import { mkdirSync, writeFileSync, readdirSync, unlinkSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { toMcstructure } from "./build_structures.mjs";
 import { BANNER_DESIGNS, POT_PLANTS, CUSHION_VARIANTS, bannerStructure, potStructure, cushionStructure, potPlantBlock } from "../lothlorien_bp/scripts/home_furnish.js";
+import { toMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const FACING_ID = { north: 2, south: 3, west: 4, east: 5 };
 const one = (block, entities = []) => toMcstructure(new Map([["0,0,0", block]]), [1, 1, 1], [0, 0, 0], entities).buffer;

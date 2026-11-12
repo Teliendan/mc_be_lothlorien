@@ -2,9 +2,8 @@ import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { GARDEN, GARDEN_FILES, buildFlowerGarden, flowerGardenFeature, flowerGardenLoot } from "../tools/flower_garden.mjs";
 import { SITES, SITE_ALLOWLIST, shuffledLatticeIterations, shuffledPick, siteFeatureRule, siteSelectFeature } from "../tools/site_feature.mjs";
-import { toMcstructure } from "../tools/build_structures.mjs";
-import { readNbt } from "../tools/village_sim.mjs";
 import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs";
+import { readNbt, toMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const garden = buildFlowerGarden(), { blocks } = garden;
 const get = (x, y, z) => blocks.get(`${x},${y},${z}`);

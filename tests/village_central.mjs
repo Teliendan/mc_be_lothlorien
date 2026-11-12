@@ -2,7 +2,6 @@
 // reading circle. Reads the shipped piece (run `node tools/build_village.mjs` first). Nothing here is verified in game (2026-10-15).
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { parseMcstructure } from "../tools/village_sim.mjs";
 import { waterCheck, supportCheck, keepClearViolations } from "../tools/village_checks.mjs";
 import { FLOOR_H, LEVEL_H, ROOTS, STAIR7, stairLayer, RAIL } from "../tools/village_mallorn.mjs";
 import { BASIN, SPRING, READING_POST } from "../tools/village_central.mjs";
@@ -114,6 +113,7 @@ test("central tree: elves - 2 wardens, the Loremaster and 4 reserve posts on the
 
 // ---- crown stars (phase 3): lanterns on copper chains, froglights inside the blobs, spore blossoms; the last-resort crowns ---------------------------------------------
 import { readdirSync } from "node:fs";
+import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 test("crown stars: every crown carries lanterns on green copper chains, central crowns 8-10 plus spore blossoms, froglights sit inside leaf blobs (no bare cube), all supported", () => {
   const dir = new URL("../lothlorien_bp/structures/lothlorien/village/", import.meta.url);
   const want = { crown_small: [2, 1], crown_medium: [3, 2], crown_large: [4, 3], crown_central_a: [10, 3], crown_central_b: [8, 3], crown_tiny: [1, 0], crown_nub: [1, 0] };

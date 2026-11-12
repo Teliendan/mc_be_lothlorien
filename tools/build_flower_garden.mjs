@@ -2,9 +2,9 @@
 import { writeFileSync, mkdirSync, realpathSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { toMcstructure } from "./build_structures.mjs";
 import { GARDEN, GARDEN_FILES, buildFlowerGarden, flowerGardenFeature, flowerGardenLoot } from "./flower_garden.mjs";
 import { SITES, siteFeatureRule, siteSelectFeature } from "./site_feature.mjs";
+import { toMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 export function writeFlowerGarden() {

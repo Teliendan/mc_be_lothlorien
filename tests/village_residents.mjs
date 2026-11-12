@@ -4,9 +4,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { B } from "../tools/flet_mallorn.mjs";
 import { readdirSync } from "node:fs";
-import { parseMcstructure, PLANKS, FENCE } from "../tools/village_sim.mjs";
+import { PLANKS, FENCE } from "../tools/village_sim.mjs";
 import * as EL from "../lothlorien_bp/scripts/elf_rules.js";
 import * as EW from "../lothlorien_bp/scripts/elven_warden_rules.js";
+import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const at = (t, x, y, z) => t.blocks.get(`${x},${y},${z}`)?.name;
 const VILLAGE = "../lothlorien_bp/structures/lothlorien/village";
