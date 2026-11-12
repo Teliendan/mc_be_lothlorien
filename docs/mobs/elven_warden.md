@@ -229,7 +229,7 @@ Check: bow visible in hand and raised when `query.has_target`; arrow flies from 
 ### C. Verify, deploy, docs
 1. `.\mods verify lothlorien`, then `.\mods deploy lothlorien`, `.\mods status` in sync (new world needed for natural spawns).
 2. Lang: `entity.lothlorien:elven_warden.name`, `item.spawn_egg.entity.lothlorien:elven_warden.name` in the nine locales; extend `localization/catalog.json` (workspace `docs/localization.md`, mod `docs/LOCALIZATION.md`).
-3. Docs: `TECHNICAL_NOTES.md` section "Elven Warden (Phase ?)", update this sheet's tested column, record the depth ms figure.
+3. Docs: update this sheet's tested column, record the depth ms figure (the implementation summary is the last section of this sheet).
 4. **In-game protocol** (first run answers the [U] items; log each result with date):
    1. `/summon lothlorien:elven_warden`: bow in hand, no content-log errors, arms raised when it has a target, silent.
    2. `/summon zombie ~5 ~ ~`, night spawns, skeleton, spider: warden shoots; the monster walks at the warden; first arrow answered. Repeat with witch, slime (family baseline), and a creeper (ignored by design).
@@ -309,3 +309,10 @@ Wardens defend the civilian elves (`docs/mobs/elves.md`) against players. A scri
 for 60 s after the last hit (`FOE_MS`, per-player token timer; the tag is dropped on a first join). `entities/elven_warden.json` `nearest_attackable_target` has a third entry (player + `has_tag lothlorien_elf_foe`,
 24 blocks, a copy of the Hated entry), and `isFriendlyFire` takes `foe` (a foe is not shielded from warden arrows, like a Hated or provoked player). Warden arrows never hurt elves (`lothlorien:*` victims are shielded).
 Monsters near elves were already shot. Harmony for the player: 1 per elf fight + 6 per kill (like a warden).
+
+## Implementation summary (from the technical notes, 2026-11-12)
+
+Bow-armed defender `lothlorien:elven_warden` (family `irongolem`: vanilla monsters hunt it), natural spawns (spawn rule plus a one-time depth/deck judge in `scripts/elven_warden.js`, constants in `elven_warden_rules.js`) and persistent
+village wardens (template entities in `central_mallorn_01` x2, `node_b/c/f`, `tower_a/c` x1; group `lothlorien:village_warden`). A friendly-fire guard sits on `world.beforeEvents.entityHurt`. Event-driven only; despawn is the
+standard `despawn_from_distance` with no filters (see `deer.md` section B, "All Lothlorien animals"); only the village group adds `minecraft:persistent`. Harmony: fight -1, kill -6, Hated players shot on sight. The depth-estimate cost per natural spawn was never measured
+(status unverified).

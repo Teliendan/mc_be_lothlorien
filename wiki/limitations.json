@@ -94,7 +94,7 @@
     "evidence": [
       {
         "path": "docs/TECHNICAL_NOTES.md",
-        "sha256": "746420c7ee3cd1b7d375d00911e95db8ca8758d7c7d6e42c83033c434959e64a"
+        "sha256": "c99bd1c5cf3516b84b7c9efe440e80294d8650b2b18f691677878843f5cd0548"
       },
       {
         "path": "lothlorien_bp/scripts/leaf_decay.js",

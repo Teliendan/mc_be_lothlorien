@@ -50,3 +50,11 @@ shedding, shake retriggers/initialization, migration, absence of runtime test
 components and exactly-one-meat cooking bindings. Individual timer save/resume,
 unloaded-time, multiplayer, cooking/burning and language checks were not separately
 reported. Leave and re-enter the existing world after deployment; no new world.
+
+## Implementation (from the technical notes, 2026-11-12)
+
+Owner tried squirrel and deer in game 2026-10-02 ("very good"); the swan floats with an occasional dip, left as is.
+
+- **Shared wariness:** same table and groups as the deer ("Implementation" in `deer.md`; `WARY_TYPES` in `deer_rules.js`). Animals saved by a build before LM-01 carry no flight group and stay fearless until the first alarm (owner 2026-11-11: no migration).
+- **Swan** spawns in rivers too (spawn filter `any_of` tag `lothlorien` or `river`); `swan.js` removes natural spawns with no positively read Lothlórien sample within 48 blocks (25 samples, once per spawn). It floats with
+  the chicken's float goal (turtle navigation dived, `minecraft:buoyant` sank it).

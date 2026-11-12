@@ -63,7 +63,7 @@ test("elven warden: shoots monsters (spiders and creepers included), never playe
 
 test("elven warden: untouched natural wardens use standard despawn; village and deliberately led guards persist", () => {
   const e = wardenEntity();
-  assert.deepEqual(e.components["minecraft:despawn"], { despawn_from_distance: {} }, "standard rules, no filters (TECHNICAL_NOTES, Phase 10)");
+  assert.deepEqual(e.components["minecraft:despawn"], { despawn_from_distance: {} }, "standard rules, no filters (mobs/deer.md, section B)");
   assert.ok(!e.components["minecraft:persistent"]);
   assert.deepEqual(e.components["minecraft:home"], {}, "an untouched natural guard has no home restriction");
   assert.deepEqual(e.component_groups["lothlorien:kept_warden"], { "minecraft:persistent": {} }, "leading retains the guard without a home tugging against the lead");

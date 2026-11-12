@@ -8,9 +8,7 @@ See [Bringing wildlife home](BRINGING_HOME.md) for current policy and acceptance
 
 Archetype: rare, shy loner and guide, always an antlered **white hart**. Built 2026-09-30 from the deer (`docs/mobs/deer.md`);
 owner decisions of 2026-09-30 (second round: leash, always antlered, sure antler, a heavier Harmony cost, depth-dependent spawns; third round: the Great Mallorn nut gift
-replaces leading to flet giants, markers removed) built the same day. **Static checks only - nothing below is tested in game** ("Tested" = `no` until a game run
-says otherwise). Guidance design, unverified assumptions and the test plan:
-`docs/TECHNICAL_NOTES.md` (White deer guidance). Files: BP `entities/white_deer.json`, `spawn_rules/white_deer.json`,
+replaces leading to flet giants, markers removed) built the same day. **Owner playtest in game 2026-09-30 (1.26.52): guidance, gift and nut growth work** (commit `7dca691`); "Tested" cells stay `no` where no game run is recorded for that row. Guidance design, unverified assumptions and the test plan: "Implementation" below. Files: BP `entities/white_deer.json`, `spawn_rules/white_deer.json`,
 `entities/guide_beacon.json` (helper), `scripts/white_deer.js` + `white_deer_rules.js`, the alarm in `scripts/deer.js`; RP
 `entity/white_deer.entity.json`, `render_controllers/white_deer.render_controllers.json`, `textures/entity/deer/deer_white.png`, `sounds.json`;
 BP `loot_tables/entities/white_deer.json`.
@@ -38,3 +36,39 @@ BP `loot_tables/entities/white_deer.json`.
 | Harmony | a player kill costs **6** (twice a deer's 3; `DEED_COSTS` in `scripts/harmony.js`, doubled while Harmony is above 0); counted when the player or the hart is inside the forest (owner decision 2026-10-07, replaced Disharmony) | no |
 | Model, animations | deer buck geometry and the deer's procedural animations, texture `deer_white.png` (placeholder palette swap) | no |
 | Sounds | Adult deer's owner-approved MOSS calls, seeds 122/123 (2026-10-16), configured 45–100 s interval; horse hurt/death/step retained. See `../AUDIO.md`; native playback check pending | listening accepted; game pending |
+
+## Implementation (from the technical notes, 2026-11-12)
+
+**The gift.** Leading the player to hidden flet markers was dropped (2026-09-30): script cannot find placed jigsaw instances, has no world seed, and `getBiome`/`getBlock` throw in unloaded chunks. The deer now picks
+the destination: `findGiftSpot` (`white_deer.js`) samples the surface biome on an 8-block grid within 96 blocks (loaded chunks only), then 16 headings on rings 56..36 blocks (`GIFT_RINGS` in
+`great_mallorn_rules.js`, inside a 4-chunk simulation distance whatever the player's setting) for Lothlórien biome and standable ground; `pickGiftSpot` takes the spot farthest from any known border (ties within 8
+blocks go to the longer walk). Dynamic properties on the deer: `lothlorien:gift_spot` (kept until the gift is laid, so a broken guidance resumes) and `lothlorien:gifted`. On arrival (`ARRIVE_DIST` 3) `giveGift` spawns
+the Great Mallorn nut (lore set by script) with totem particles. The marker block and its search were removed (worlds generated before keep one buried unknown block per flet giant).
+
+**The nut** (`items/great_mallorn_nut.json`, `blocks/great_mallorn_sprout.json`, `scripts/great_mallorn.js` + `great_mallorn_rules.js`, art `tools/make_mallorn_seeds.py`): the sprout copies the sapling's states, soil
+filter and geometry; random tick stage 0 -> 1 -> grow. Owner decision 2026-10-16: it grows only plain Great Mallorns (`roundplain` 2, 3, 6, 8; no platform, banners, chest or elves). Growing reads the structure's
+filled cells once per session (job steps), checks each against the world with `isNatural` (terrain, plants, leaves, unstripped logs, water; anything else is built: wait and tell players within 32 blocks, at most every
+5 minutes), then `structureManager.place` with the sprout in trunk cell TRUNK_AT+1 at ground level; the jigsaw anchor is replaced by `mallorn_wood`. Unloaded space means retry; rotation is always north. Growth time
+and the obstruction message: status unverified.
+
+**Entity decisions.** Separate `lothlorien:white_deer`, a loner (spawn herd 1, no breeding, baby, ageable or spawn-egg interaction), **leashable** (a lead always wins: a leashed deer refuses the acorn, leashing it
+mid-guidance ends it), **always an antlered hart** (geometry `deer_buck`, texture `deer_white.png`). Drops: leather 0-2, venison 1-3 and **one antler on any death**; XP 1-3 on a player kill; killing it costs 6 Harmony.
+Spawn rule: weight 3 (deer 10), herd 1 with event `lothlorien:spawn_natural`, `density_limit.surface` 1, `distance_filter` 24-44, pool `animal`. **Spawn thinned by depth** (owner: fewer near edges): the herd event
+sets property `lothlorien:natural`; `white_deer.js` on `entitySpawn` (cause not `Loaded`) reads it one tick later, estimates depth at the deer's spot and keeps it with `SPAWN_KEEP_BY_DEPTH` outside 0, edge 0.15, inner
+0.5, heart 1, else `entity.remove()` (no loot, no Harmony, no alarm; fails open if the event never arrives; `SPAWN_WEIGHT` is pinned to the spawn rule by a test; `/summon ... lothlorien:spawn_natural` goes through the filter).
+Flight and lure come from the same table as the deer's (`state_wild`, `state_tame`); only the **Mallorn acorn** lures it.
+
+**The offer.** Right-click an adult white deer with a Mallorn acorn as a **Friend** (owner rule 2026-10-02; below 0 "shies from your restless spirit", not yet Friend "does not trust you yet", acorn kept). The entity has a
+`minecraft:interact` entry for the held acorn ("Offer Acorn"); whether `playerInteractWithEntity` fires without it is unverified. The acorn is consumed only when guidance starts.
+
+**Walking = engine pathfinding towards a moving helper.** Teleport-walking was rejected (jerky). `lothlorien:guide_beacon`: no gravity, collision or pushability (`minecraft:pushable` made the entity fail to load),
+invulnerable, fire immune, 330 s `minecraft:timer` -> `instant_despawn`, a zero-size cube and transparent texture. One beacon per session is spawned at the first waypoint; `state_guiding` adds
+`behavior.follow_target_leader` priority 2 (`leader_filters` family `lothlorien_guide_beacon`, `follow_distance` 1, `within_radius` 24, `search_cooldown` 5) plus the wolf/monster avoid goal. The goal lives in
+`state_guiding` (`tests/white_deer.mjs` asserts it holds `follow_target_leader`); the unused alternatives `follow_mob` and `target` and their switch script were removed (last in commit c981aed: `git show c981aed:tools/dev_scripts/guide_goal/variants.mjs`). Every 5 ticks the script:
+next waypoint when within 3 blocks (`pickWaypoint`: 14 blocks ahead, down to 8, headings 0, +-30, +-60, +-90), skips a heading after 5 s without progress, moves the beacon to the deer's feet when the player lags
+more than 12 blocks, and ends with a final hop to the spot or a standable column within 5 blocks. `stand()` uses a ray from 6 above to 6 below (leaves looked through, liquid and logs reject, 1.9 headroom). The deer is
+never teleported.
+
+**Session end:** beacon removed and `guide_end` restores the wild or tame state via `alarm_over` when arrived within 3 blocks, the player is beyond 48 blocks, the player loses Harmony, 30 s pass without getting closer (counts as
+arrived within 14 blocks), 5 minutes, or the deer is hurt. Sessions are not saved: on load and every 100 ticks every `guide_beacon` without a live session is removed (the beacon also carries `minecraft:transient`, LM-04 step 1 2026-11-11: if the in-game check shows none survives a reload, the sweep goes); a deer still in `state_guiding` after a reload is released by `deer.js` when it loads (`settleOnLoad`, also from the startup scan). Two deer guiding close together may follow each other's beacon (accepted). Not done: sounds on the way and at arrival.
+Fallback research and the pathfinding comparison: `.claude/skills/bedrock-mobs/references/pathfinding.md` (dolphin treasure goals cannot target a custom spot; script has no navigation target API).

@@ -31,6 +31,11 @@ Files: BP `entities/deer.json` (generated once from a throw-away script, now edi
 | Special spawns | none. The white deer is a separate entity since 2026-09-30 (`docs/mobs/white_deer.md`) | - |
 | Despawn | standard `despawn_from_distance`; name tag keeps it (verified for the Phase 10 critter) | no |
 
+**All Lothlorien animals (spike, owner-tested 2026-09-30, 1.26.52).** `population_control: "animal"` is a fixed engine pool shared with cows and sheep: Lórien animals compete with vanilla ones for that cap.
+**Despawn: use `{"despawn_from_distance": {}}` with no filters**: `filters` replace the engine's standard rules including the instant despawn at the simulation edge, so a mob left far away was never removed.
+Standard rules: more than 128 blocks from every player removed at once; 32-128 a 1-in-800 roll after 30 s inactive; at the simulation edge removed at once; name-tagged mobs stay. Every current vanilla mob uses
+this. Knowledge: `.claude/skills/bedrock-mobs/references/spawning.md`. The spike entity `test_critter` was replaced by the deer. The sampling tool is `tools/dev_scripts/critter_watch.js`.
+
 ## C. Body in the world
 
 | Question | Decision | Tested |
@@ -123,3 +128,38 @@ Protocol: `.claude/skills/bedrock-mobs/references/testing.md`; instruments `/scr
 renders a software preview (orthographic, approximate rotation convention) for judging shapes before the game.
 The texture was made by rule (colour ramps with hue shift, hand-placed spots, top/front light, AA-free flat shapes)
 following `bedrock-art/references/style.md`. Accepted in game (1.26.52, 2026-09-30).
+
+## Antler block
+
+- `lothlorien:deer_antler` is a block; the same-named item (bucks drop it) is its `block_placer`. Traits `placement_position` (`minecraft:block_face`) and `placement_direction`. **Top face = a shed antler on the floor**,
+  **side face = mounted antlers on a plaque** against the wall, **ceiling** too; one model (a big mounted pair filling the 16x16 face), rotated by coordinates in `tools/make_antler_block.py`. Selection boxes: floor/ceiling
+  16x4.5x16, wall 16x16x4.5. There is **no `placement_filter`** (it can only name blocks or tags); the item-frame-like survival check is the shared support service (`lothlorien:motion_support`, `scripts/support_motion.js`,
+  offsets in `antler_rules.js`): `beforeOnPlayerPlace` refuses unreadable or air/liquid support, and after `playerBreakBlock` and `blockExplode` neighbours are checked and an unsupported antler is destroyed. No polling.
+  Not covered: pistons, water flow, other mods.
+- **Natural drop:** `deer_antler_drop_feature_rules` (after surface pass, tag `lothlorien`, `scatter_chance` 1/16 per chunk, raised from 1/64 on 2026-10-02 because the owner found none), one placement attempt
+  within about 3 blocks with a weighted pick of four facings, all `up`. **Owner decision 2026-10-24: solo antlers, no batches** (three attempts looked like a clump). The feature has its own support rule
+  (`may_attach_to.bottom`: grass, dirt, coarse dirt, podzol, dirt with roots, moss, mud, stone; `may_replace: [air]`), so an antler never floats on litter; this excludes about a third of the floor. A save scan found
+  the rate about 1/50 chunks at 1/64. Status unverified after the 1/16 change and the solo change. Chest loot: the antler in `mallorn_flet.json` pool 2 (weight 2).
+
+## Implementation (from the technical notes, 2026-11-12)
+
+- **Native per-player wariness (LM-01, 2026-11-12).** The design is section D. Implementation: the Harmony band is mirrored into player tags (`harmony.js` `BAND_TAGS`, `docs/TAGS.md`); one `behavior.avoid_mob_type` (priority 3) in the group `lothlorien:state_wild` carries ten player entries and the unchanged wolf and monster entries; the old 2 s poll, the five `state_<band>` groups, the `set_*` events and the `lothlorien:wariness` property are gone. The positive `has_tag` test inside avoid entries is the one piece not yet seen in game (only `!=` is). Hand-written entity files get the avoid/tempt blocks from `python -B tools/wildlife_wariness.py --write <species>`; `--check` and the suite `wildlife-wariness` compare them with the table and run every band x sneaking x held-item case through a small filter evaluator (exactly one entry matches, none for a lure-holding Guest or Friend).
+- **Alarm:** hurting or killing a wary animal fires `lothlorien:alarm` on every wary animal within 20 blocks (one `getEntities` query around the victim in `deer.js`): group `state_alarmed` (flee every player at 36/18, no luring)
+  with a 20 s `minecraft:timer` whose event `alarm_over` returns to `state_wild`, or `state_tame` for a tame deer. Alarms cross species (swans, squirrels, white deer, unicorns).
+- **Food:** Western Corn grain only (tempt, `breed_items`, fawn `feed_items`); the acorn belongs to the white deer; seeds do not count.
+- **Goal priorities:** breed 2, avoid 3, tempt 4 (breeding must outrank both). A wolf or an unwelcome player therefore beats the lure, and a lured animal flees a wolf (changed from tempt-over-avoid by LM-01). Priority alone does not keep a
+  lured deer: tempt stops on arrival and avoid takes over, so the Guest and Friend player entries of `avoid_mob_type` also need `has_equipment != <lure item>` (one flat test per item) and `can_get_scared` is false; the tempt goal has an explicit
+  `within_radius` 10. Uneasy, Shunned and Hated entries have no exemption: with the lure they come close sneaking and are fled from again (come-and-flee, accepted by the owner 2026-11-11). Fed deer get `lothlorien:tame` -> `state_tame`.
+  Tame and untame are entity events (`become_tame` swaps `state_wild` for `state_tame` itself, `untame`), not `setProperty`.
+- **Kept deer:** tame or leashed adds group `lothlorien:kept` (`minecraft:persistent`); `untame` removes it only when not leashed, `unleashed` only when not tame.
+- **Sex and antlers:** enum property `lothlorien:sex` (client synced) from `entity_spawned`/`entity_born`; geometry `deer_buck` (adult with antlers), `deer` (no antlers), `deer_baby`, picked by
+  `query.property` in the render controller. Loot differs by sex through two adult groups (loot conditions cannot test custom properties). Venison carries item tag `minecraft:is_meat` (not inside `minecraft:food`:
+  item format 1.26.50 rejects `is_meat` there, which stopped the items loading); the tag alone does not prove wolf feeding (parity doc). One furnace recipe carries furnace, smoker, campfire.
+- **Model and animation:** procedural Molang (walk by `query.modified_distance_moved`, gallop pairs weighted `clamp((ground_speed - 3.5) / 2.5, 0, 1)`; the 3.5 m/s threshold is a guess); one slim cube per leg;
+  all box sizes whole numbers (a fractional size put box-UV faces between texels and showed holes; `tools/make_deer.py` fails on fractional sizes or unpainted texels); bone z rotation has the same negated handedness
+  as x. The engine logs `armor_offset.default_neck` locator warnings for a bone named `neck` (bone renamed `neck_joint`, antlers split into a separate geometry; the log text was not confirmed gone, status unverified).
+  Art: `GRAPHICS_TASKS.md`. Sounds: `AUDIO.md`.
+- Test protocol: `/summon lothlorien:deer`, approach (flight 10 blocks, 5 sneaking), corn lure, `/scriptevent lothlorien:harmony -40` for Hated flight 30, hurt one (herd bolts for 20 s), breeding with corn grain.
+- **Shared wariness:** swan, squirrel and unicorn use the same table and the same `state_wild`/`state_alarmed` groups and alarm events as the deer (`WARY_TYPES` in `deer_rules.js`; `tools/wildlife_wariness.py`; the unicorn file comes from
+  `tools/make_unicorn.py`, which imports the table). A Guest unicorn is fled from like an Uneasy player (13/6); only a Friend holding Elanor is exempt, and the Elanor lure is its own group `lure`, added at spawn.
+  Animals saved by a build before LM-01 carry no flight group and stay fearless until the first alarm (owner 2026-11-11: no migration).
