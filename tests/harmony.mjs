@@ -10,7 +10,7 @@ import * as EW from "../lothlorien_bp/scripts/elven_warden_rules.js";
 const hs = (harmony, timer = 0) => ({ harmony, timer });
 const afterPenalty = (h, p) => { const s = hs(h); H.applyPenalty(s, p); return s.harmony; };
 
-test("harmony: band table incl. every edge, wariness and boundary constants", () => {
+test("harmony: band table incl. every edge and boundary constants", () => {
   const band = (h) => H.bandOf(h);
   assert.deepEqual([10, 9, 0, -1, -14, -15, -29, -30, -60].map(band),
     ["friend", "guest", "guest", "uneasy", "uneasy", "shunned", "shunned", "hated", "hated"]);

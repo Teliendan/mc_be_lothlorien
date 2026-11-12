@@ -32,7 +32,7 @@ export const HOP_STUCK_TICKS = 100; // 5 s without getting a block closer to the
 export const canBeGuided = (band) => band === "friend";
 
 // Leash rule: a lead always wins over guidance. A leashed white deer refuses the acorn (kept), and a guidance ends the
-// moment the deer is leashed (beacon removed, deer back to its wariness state). One rule, no tug of war between the
+// moment the deer is leashed (beacon removed, deer back to its wild or tame state). One rule, no tug of war between the
 // lead and the follow goal.
 // Why the offer is refused: "leashed" | "restless" (harmony below 0) | "untrusted" (Guest, not yet Friend) | undefined (go ahead).
 export function offerRefusal({ band, leashed }) {

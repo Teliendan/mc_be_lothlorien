@@ -91,11 +91,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/deer.js",
-        "sha256": "ff16a04a3473bb3ba7f4f88fbd6d3c8c2d0d16195380e949a31974a8d26e5698"
+        "sha256": "adbdf593caabac2ae067ab7641e19ca8a4a25d74662e76b3dbd50b97854a8dd1"
       },
       {
         "path": "lothlorien_bp/scripts/deer_rules.js",
-        "sha256": "c6ee3dfd95ee94003437ebcda393a3ba3feb454fde0ae4e6545ffffaf3f0f068"
+        "sha256": "30d6a6951d0fbda24a1eef6ab44011a92b577bc23c081901695218d3de6b1b72"
       }
     ]
   },
@@ -534,7 +534,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/white_deer_rules.js",
-        "sha256": "e33b34da1f85144c4479b7f788e6c1941be6e101b6330b5b1fe479c59c594854"
+        "sha256": "237d262df093ac47bb139db01a35875789e6bf2d51a755510435423fb72e65e0"
       }
     ]
   },

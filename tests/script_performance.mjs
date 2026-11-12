@@ -62,7 +62,6 @@ function engine() {
         e.events.push(name);
         if (name === "lothlorien:guide_start") properties.set("lothlorien:guiding", true);
         if (name === "lothlorien:guide_end") properties.set("lothlorien:guiding", false);
-        if (name.startsWith("lothlorien:set_")) properties.set("lothlorien:wariness", name.slice(15));
       }, remove() { e.isValid = false; entities.delete(e.id); }, teleport(p) { e.location = p; } };
     entities.set(e.id, e); return e;
   }
@@ -79,7 +78,7 @@ function engine() {
       }
     }
   };
-  return { system, world, entity, fire, advance, dimensions, entities,
+  return { system, world, entity, fire, advance, dimensions, entities, timers,
     intervals: period => [...timers.values()].filter(t => t.repeat && t.period === period).length,
     get queries() { return queries; }, get reads() { return reads; } };
 }
@@ -104,38 +103,26 @@ const common = h => ({ system: h.system, world: h.world, onEntity: (h.onEntity ?
   const h = engine();
   const mod = await load("deer", { ...common(h), ...deerRules, isGuiding: () => false, isErrand: () => false });
   mod.startDeer();
-  assert.equal(h.queries, 15, "one bootstrap, five types in three dimensions");
+  assert.equal(h.queries, 6, "one bootstrap for the two guiding types in three dimensions");
   h.advance(100);
-  assert.equal(h.intervals(40), 0, "no wariness loop without loaded wildlife");
+  assert.equal(h.timers.size, 0, "deer.js registers no interval");
   const dim = h.dimensions.get("nether");
-  const friend = h.entity("minecraft:player", dim), hostile = h.entity("minecraft:player", dim, { x: 25, y: 0, z: 0 });
-  hostile.band = "hated"; h.world.players = [friend, hostile];
+  const hostile = h.entity("minecraft:player", dim, { x: 25, y: 0, z: 0 });
+  hostile.band = "hated"; h.world.players = [hostile];
   const deer = h.entity(deerRules.UNICORN_ID, dim);
   h.fire("entitySpawn", { entity: deer }); h.fire("entityLoad", { entity: deer });
-  assert.equal(h.intervals(40), 1, "duplicate load does not start a second timer");
-  h.advance(40);
-  assert.ok(deer.events.includes("lothlorien:set_l3"), "severe player wins outside Lothlorien too");
-  assert.equal(h.queries, 15, "no recurring entity queries");
-  const before = deer.events.length;
-  friend.location.y = hostile.location.y = 41; h.advance(40);
-  assert.equal(deer.events.length, before, "same 3D watch radius as original queries");
-  friend.location.y = hostile.location.y = 0;
-  deer.setProperty("lothlorien:alarmed", true); h.advance(40);
-  assert.equal(deer.events.length, before, "alarm retains native state");
-  deer.setProperty("lothlorien:alarmed", false); deer.setProperty("lothlorien:guiding", true); h.advance(40);
-  assert.ok(!deer.events.includes("lothlorien:guide_end"), "the poll no longer releases a guide (LM-01 step 3: only the load does)");
+  h.advance(400);
+  assert.deepEqual(deer.events, [], "a band never reaches the animal through script");
+  assert.equal(h.queries, 6, "no recurring entity queries");
+  deer.setProperty("lothlorien:guiding", true); h.advance(40);
+  assert.ok(!deer.events.includes("lothlorien:guide_end"), "only the types that guide are released, and only when they load");
   for (const type of [guideRules.WHITE_DEER_ID, deerRules.SQUIRREL_ID]) {
     const orphan = h.entity(type, dim); orphan.setProperty("lothlorien:guiding", true);
     h.fire("entityLoad", { entity: orphan });
     assert.ok(orphan.events.includes("lothlorien:guide_end"), `${type}: an orphaned guide is released when it loads`);
     const idle = h.entity(type, dim); h.fire("entityLoad", { entity: idle });
     assert.ok(!idle.events.includes("lothlorien:guide_end"), `${type}: a loaded animal that is not guiding is left alone`);
-    for (const extra of [orphan, idle]) h.fire("entityRemove", { removedEntityId: extra.id });
   }
-  h.fire("entityRemove", { removedEntityId: deer.id });
-  assert.equal(h.intervals(40), 0, "last unload stops timer");
-  h.fire("entityLoad", { entity: deer }); assert.equal(h.intervals(40), 1, "reload restarts timer");
-  deer.isValid = false; h.advance(40); assert.equal(h.intervals(40), 0, "invalid-handle fallback stops timer");
 }
 
 {

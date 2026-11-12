@@ -56,8 +56,7 @@ function engine() {
       getComponent(key) { return key === "minecraft:health" ? health : key === "minecraft:leashable" ? { isLeashed: e.leashed } :
         key === "equippable" ? { getEquipmentSlot: () => e.slot } : undefined; },
       triggerEvent(name) { this.events.push(name); if (name === "lothlorien:guide_start") props.set("lothlorien:guiding", true);
-        if (name === "lothlorien:guide_end") props.set("lothlorien:guiding", false);
-        if (name.startsWith("lothlorien:set_")) props.set("lothlorien:wariness", name.slice(15)); },
+        if (name === "lothlorien:guide_end") props.set("lothlorien:guiding", false); },
       hasTag: () => false, sendMessage() {}, remove() { this.isValid = false; entities.delete(this.id); }, teleport(at) { this.location = at; } };
     entities.set(e.id, e); return e;
   }

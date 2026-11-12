@@ -10,7 +10,7 @@ take it out again before committing. The pre-cleanup state is commit `dc1182e`.
 | `showcase.js` | `/scriptevent lothlorien:showcase [variant] [n] [rot]` lays out giant Mallorn structures |
 | `tree_debug.js` | `lothlorien:grow [n]`, `growbig [n]`, `treestats [n]`, `treecount [radius]` |
 | `critter_watch.js` | `lothlorien:critters [watch]` counts deer near the player |
-| `deer_debug.js` | `lothlorien:deer` counts deer by wariness and sex |
+| `deer_debug.js` | `lothlorien:deer` counts deer by tame state and sex |
 | `ladder_speed.js` | `lothlorien:ladder_speed` toggles a readout of real climb speeds on a ladder and on the Elven rope (by input) |
 | `biome_debug.js` | `lothlorien:survey` biome share; world-load biome registration message |
 

@@ -153,10 +153,10 @@ def write_species(species):
 
 
 def check_species(species):
-    """Returns a list of problems; empty when the file's owned blocks equal the table (or the file is not migrated yet)."""
+    """Returns a list of problems; empty when the file's owned blocks equal the table."""
     data = json.loads((ENTITIES / f"{species}.json").read_text(encoding="utf-8"))["minecraft:entity"]["component_groups"]
     if "lothlorien:state_wild" not in data:
-        return None
+        return [f"{species}.json has no lothlorien:state_wild group"]
     problems = []
     for name, blocks in expected_groups(species).items():
         for component, value in blocks.items():
@@ -195,9 +195,7 @@ def main(argv=None):
         failed = 0
         for species in SPECIES:
             problems = check_species(species)
-            if problems is None:
-                print(f"skip {species}: no lothlorien:state_wild group yet")
-            elif problems:
+            if problems:
                 failed += 1
                 print("\n".join(f"FAIL {p}" for p in problems))
             else:

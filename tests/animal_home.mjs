@@ -90,7 +90,7 @@ function engine() {
         if (name === "lothlorien:guide_end") properties.set("lothlorien:guiding", false);
       },
       remove() { e.isValid = false; entities.delete(e.id); }, teleport(p) { e.location = p; } };
-    properties.set("lothlorien:wariness", "calm"); entities.set(e.id, e); return e;
+    entities.set(e.id, e); return e;
   }
   function player(typeId, amount = 1, creative = false, fullInventory = false) {
     const p = entity("minecraft:player"), slot = { item: new TestItem(typeId, amount), getItem() { return this.item; },

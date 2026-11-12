@@ -1,72 +1,12 @@
-// Deer in the running game: wariness follows the nearest player's Harmony band, and a player
-// hurting a deer alarms the herd. The flight behaviour itself is JSON (entities/deer.json, entities/white_deer.json).
-import { GameMode, world, system } from "@minecraft/server";
+// The wildlife's alarm and feeding in the running game: a player hurting or killing a wary animal alarms every wary animal near it,
+// and corn tames a deer. The flight itself is native JSON: each animal judges every player by that player's own Harmony band tag
+// (entities/{deer,white_deer,swan,squirrel,unicorn}.json, generated from tools/wildlife_wariness.py); no script polls it.
+import { world } from "@minecraft/server";
 import { onEntity } from "./entity_events.js";
 import { PLAYER_ID } from "./ids.js";
-import { harmonyOf } from "./harmony_game.js";
-import { bandOf } from "./harmony.js";
 import { isGuiding } from "./white_deer.js";
 import { isErrand } from "./squirrel.js";
-import { ALARM_RADIUS, CORN_ID, DEER_ID, DEER_TYPES, SQUIRREL_ID, UNICORN_ID, WARY_TYPES, WATCH_RADIUS, WHITE_DEER_ID, pickWariness, setEventFor, warinessFor } from "./deer_rules.js";
-
-const INTERVAL_TICKS = 40;
-// Types still driven by the poll; step 6 of LM-01 moves the unicorn to native band-tag flight and this goes (step 7).
-const POLLED_TYPES = [UNICORN_ID];
-const loaded = new Map();
-let warinessTimer;
-
-function stopIfEmpty() {
-  if (!loaded.size && warinessTimer !== undefined) {
-    system.clearRun(warinessTimer);
-    warinessTimer = undefined;
-  }
-}
-function trackCreature(entity) {
-  try {
-    if (!entity.isValid || !POLLED_TYPES.includes(entity.typeId)) return;
-    loaded.set(entity.id, entity);
-    if (warinessTimer === undefined) warinessTimer = system.runInterval(updateWariness, INTERVAL_TICKS);
-  } catch { /* entity removed before delivery */ }
-}
-
-function updateWariness() {
-  const players = new Map();
-  let nearbyPlayers;
-  try { nearbyPlayers = world.getPlayers(); } catch { return; }
-  for (const player of nearbyPlayers) {
-    try {
-      // Creative counts (owner 2026-10-26): vanilla lures work in Creative, and the unicorn's lure exists only in its
-      // Friend state. The engine still never flees a Creative player.
-      if (!player.isValid || player.getGameMode() === GameMode.Spectator ||
-          !(player.getComponent("minecraft:health")?.currentValue > 0)) continue;
-      const wariness = warinessFor(bandOf(harmonyOf(player).harmony));
-      const id = player.dimension.id;
-      if (!players.has(id)) players.set(id, []);
-      players.get(id).push({ location: player.location, wariness });
-    } catch { /* one unreadable player must not suppress other players */ }
-  }
-  for (const [id, deer] of loaded) {
-    try {
-      if (!deer.isValid) { loaded.delete(id); continue; }
-      const p = deer.location, candidates = [];
-      for (const player of players.get(deer.dimension.id) || []) {
-        const dx = p.x-player.location.x, dy = p.y-player.location.y, dz = p.z-player.location.z;
-        if (dx*dx+dy*dy+dz*dz <= WATCH_RADIUS*WATCH_RADIUS)
-          candidates.push({distance:Math.hypot(dx,dz), wariness:player.wariness});
-      }
-      if (!candidates.length) continue;
-      if (deer.getProperty("lothlorien:alarmed")) continue; // the alarm timer hands back to the state
-      if (deer.getProperty("lothlorien:guiding")) continue; // a guiding white deer or errand squirrel keeps its guiding state (settleOnLoad releases an orphan)
-      const wariness = pickWariness(candidates);
-      if (wariness && deer.getProperty("lothlorien:wariness") !== wariness) deer.triggerEvent(setEventFor(wariness));
-    } catch {
-      // A property/location read can fail while a valid actor remains loaded.
-      // Removal events or a confirmed-invalid handle own tracking removal.
-      try { if (deer.isValid === false) loaded.delete(id); } catch { /* retry next pulse */ }
-    }
-  }
-  stopIfEmpty();
-}
+import { ALARM_RADIUS, CORN_ID, DEER_ID, DEER_TYPES, SQUIRREL_ID, WARY_TYPES, WHITE_DEER_ID } from "./deer_rules.js";
 
 // Fed = tame. lothlorien:become_tame sets the property, makes the deer persistent (like a vanilla tamed animal) and swaps
 // state_wild for state_tame itself (entities/deer.json).
@@ -76,6 +16,7 @@ function tame(deer) {
 }
 
 // A white deer or squirrel saved while guiding has no session after a reload (sessions live in script memory): release it once, when it loads.
+// Animals saved by a build before LM-01 carry no flight group and stay fearless until the alarm (owner 2026-11-11: no migration).
 function settleOnLoad(entity) {
   try {
     if (entity.typeId !== WHITE_DEER_ID && entity.typeId !== SQUIRREL_ID) return;
@@ -99,23 +40,19 @@ function alarmAround(dimension, location) {
 }
 
 export function startDeer() {
-  onEntity(WARY_TYPES, { spawn: ({ entity }) => trackCreature(entity), load: ({ entity }) => { trackCreature(entity); settleOnLoad(entity); } });
-  // Only wary types are tracked, so the native filters skip every other entity.
-  world.afterEvents.entityRemove.subscribe(({ removedEntityId }) => {
-    loaded.delete(removedEntityId); stopIfEmpty();
-  }, { entityTypes: WARY_TYPES });
-  // One-time bootstrap for already loaded animals; no recurring entity query.
+  onEntity([WHITE_DEER_ID, SQUIRREL_ID], { load: ({ entity }) => settleOnLoad(entity) });
+  // One-time bootstrap for animals already loaded; no recurring entity query.
   for (const id of ["overworld", "nether", "the_end"]) {
     try {
       const dimension = world.getDimension(id);
-      for (const type of WARY_TYPES) for (const entity of dimension.getEntities({ type })) { trackCreature(entity); settleOnLoad(entity); }
+      for (const type of [WHITE_DEER_ID, SQUIRREL_ID]) for (const entity of dimension.getEntities({ type })) settleOnLoad(entity);
     } catch { /* dimension unavailable */ }
   }
   world.afterEvents.entityHurt.subscribe(({ hurtEntity, damageSource }) => {
     if (!WARY_TYPES.includes(hurtEntity.typeId) || damageSource.damagingEntity?.typeId !== PLAYER_ID) return;
     try {
       // untame (no longer persistent unless leashed); the alarm below rebuilds its state without state_tame 20 s later.
-      // Swans and squirrels are never tamed, so they have no such event.
+      // Swans, squirrels and unicorns are never tamed this way, so they have no such event.
       if (DEER_TYPES.includes(hurtEntity.typeId)) hurtEntity.triggerEvent("lothlorien:untame");
     } catch {
       // deer died of the hit
@@ -132,7 +69,6 @@ export function startDeer() {
   });
   world.afterEvents.entityDie.subscribe(({ deadEntity, damageSource }) => {
     try {
-      loaded.delete(deadEntity.id); stopIfEmpty();
       if (!WARY_TYPES.includes(deadEntity.typeId) || damageSource.damagingEntity?.typeId !== PLAYER_ID) return;
       alarmAround(deadEntity.dimension, deadEntity.location);
     } catch {
