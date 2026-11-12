@@ -65,7 +65,7 @@ Consumers to switch from `levelFor`/`isFriend` to `bandOf(harmony)`:
 - **Chat:** one message per band change in each direction, with flavour (e.g. Uneasy: "The forest frowns upon your deeds.", Hated: "The
   wardens will no longer suffer your presence.", back to Guest: "The woods forgive you."), Friend gained / lost as now. A deed that does not
   change the band gets a short hint ("The trees grow quiet around you."), at most once per 30 s per player.
-- All texts through `messages.js` and `localization/catalog.json` (9 locales, workflow in `docs/LOCALIZATION.md`; `.\mods localize build lothlorien`).
+- All texts through `messages.js` and `localization/catalog.json` (9 locales, workflow in workspace `docs/localization.md`; `.\mods localize build lothlorien`).
   Retire the `disharmony.*` and `status.disharmony` keys.
 
 ## 4. Hated: wardens attack on sight
