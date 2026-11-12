@@ -15,7 +15,8 @@
 //        --crop x0 x1 z0 z1 / --y y0 y1 (piece only: render just this part of the box, e.g. the Hall of the central tree), --tag name (suffix of the file);
 //        --noleaves (hide leaves); textures are downloaded once into temp/texture_cache/. Without --tex the flat output is unchanged.
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { gunzipSync, deflateSync } from "node:zlib";
+import { gunzipSync } from "node:zlib";
+import { encodePng } from "./png.mjs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadVillageData, rotated, wkey, wdecode, simulate, check, planLoops, renderTop, renderSide } from "./village_sim.mjs";
@@ -32,15 +33,6 @@ const PL = "lothlorien:mallorn_planks", SL = "lothlorien:mallorn_slab", FE = "lo
 const AIR = (n) => !n || /air$/.test(n);
 
 // ---- PNG ---------------------------------------------------------------------------------------------------------------
-const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
-function png(W, H, img) {
-  const raw = Buffer.alloc((W * 3 + 1) * H);
-  for (let y = 0; y < H; y++) { raw[y * (W * 3 + 1)] = 0; Buffer.from(img.buffer, y * W * 3, W * 3).copy(raw, y * (W * 3 + 1) + 1); }
-  const crc = (b) => { let c = ~0; for (const v of b) c = CRC[(c ^ v) & 255] ^ (c >>> 8); return ~c >>> 0; };
-  const chunk = (type, data) => { const b = Buffer.concat([Buffer.from(type), data]), l = Buffer.alloc(4), c = Buffer.alloc(4); l.writeUInt32BE(data.length); c.writeUInt32BE(crc(b)); return Buffer.concat([l, b, c]); };
-  const ihdr = Buffer.alloc(13); ihdr.writeUInt32BE(W, 0); ihdr.writeUInt32BE(H, 4); ihdr[8] = 8; ihdr[9] = 2;
-  return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk("IHDR", ihdr), chunk("IDAT", deflateSync(raw)), chunk("IEND", Buffer.alloc(0))]);
-}
 const save = (name, buf) => { mkdirSync(OUT, { recursive: true }); writeFileSync(OUT + name, buf); console.log(OUT + name); };
 
 // ---- isometric / top renderer of any block source -----------------------------------------------------------------------
@@ -97,7 +89,7 @@ export function render(get, R, file, { iso = true, S = 14, leaves = false } = {}
       fillPoly(img, W, H, [Q(X + x0, 0, Z + z0), Q(X + x1, 0, Z + z0), Q(X + x1, 0, Z + z1), Q(X + x0, 0, Z + z1)], shade(base, k));
     }
   }
-  save(file, png(W, H, img));
+  save(file, encodePng(W, H, img));
 }
 const bothViews = (get, R, name, S) => { render(get, R, `${name}_iso.png`, { iso: true, S }); render(get, R, `${name}_top.png`, { iso: false, S }); };
 // textured isometric picture (flags --tex --night --noleaves, options --ppb --rot); the region is rendered as is
@@ -147,7 +139,7 @@ function cmdSide(name, sc = "6", axis = "z") {
     if (px % S === 0 || py % S === 0) c = shade(c, 0.8);
     img.set(c, (py * W + px) * 3);
   }
-  save(`side_${name}_${axis}.png`, png(W, H, img));
+  save(`side_${name}_${axis}.png`, encodePng(W, H, img));
 }
 
 function cmdSim(seed, flags, rest, opt = {}) {
@@ -228,7 +220,7 @@ function cmdDump(file, flags, opt) {
     for (const e of st.exits) put(e.x, e.z, [255, 40, 40], 0.5);
   }
   const tag = "dump_" + (file.split(/[\\/]/).pop().replace(/\.json(\.gz)?$/, ""));
-  save(`${tag}_top.png`, png(W, H, img));
+  save(`${tag}_top.png`, encodePng(W, H, img));
   console.log(`${markers.length} markers, ${r.merges.length} merges, ${r.picks.length} picks (budget ${opt.budget ?? 3})`);
   for (const p of r.picks) console.log(`  ${p.kind} ${p.A.x},${p.A.y},${p.A.z} -> ${p.B.x},${p.B.z}  length ${p.len}  walk saved ${p.dnet}  value ${p.value}`);
   for (const l of r.log.slice(0, 10)) console.log("  skipped: " + l);

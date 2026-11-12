@@ -8,7 +8,8 @@
 // Textures: vanilla ones are downloaded once from Mojang's public bedrock-samples repo into temp/texture_cache/ (PNG/JSON only, nothing executed); mod blocks
 // (lothlorien:*) are read from lothlorien_bp/blocks/*.json (material_instances) + lothlorien_rp/textures/terrain_texture.json. Flipbooks use their first frame.
 import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync, rmSync } from "node:fs";
-import { inflateSync, deflateSync } from "node:zlib";
+import { inflateSync } from "node:zlib";
+import { encodePng } from "./png.mjs";
 import { execFileSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -71,16 +72,6 @@ function decodeTga(buf) { // uncompressed / RLE true-colour and grey, 8-32 bit
     if (n === 1) out.set([px[s], px[s], px[s], 255], d); else out.set([px[s + 2], px[s + 1], px[s], n === 4 ? px[s + 3] : 255], d);
   }
   return { w, h, data: out };
-}
-
-const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
-export function encodePng(W, H, rgb) {
-  const raw = Buffer.alloc((W * 3 + 1) * H);
-  for (let y = 0; y < H; y++) Buffer.from(rgb.buffer, y * W * 3, W * 3).copy(raw, y * (W * 3 + 1) + 1);
-  const crc = (b) => { let c = ~0; for (const v of b) c = CRC[(c ^ v) & 255] ^ (c >>> 8); return ~c >>> 0; };
-  const chunk = (type, data) => { const b = Buffer.concat([Buffer.from(type), data]), l = Buffer.alloc(4), c = Buffer.alloc(4); l.writeUInt32BE(data.length); c.writeUInt32BE(crc(b)); return Buffer.concat([l, b, c]); };
-  const ihdr = Buffer.alloc(13); ihdr.writeUInt32BE(W, 0); ihdr.writeUInt32BE(H, 4); ihdr[8] = 8; ihdr[9] = 2;
-  return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk("IHDR", ihdr), chunk("IDAT", deflateSync(raw)), chunk("IEND", Buffer.alloc(0))]);
 }
 
 // ---- texture sources -----------------------------------------------------------------------------------------------------
