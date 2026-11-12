@@ -7,18 +7,6 @@
       "is_spawnable": true,
       "is_summonable": true,
       "properties": {
-        "lothlorien:wariness": {
-          "type": "enum",
-          "values": [
-            "calm",
-            "l1",
-            "l2",
-            "l3",
-            "friend"
-          ],
-          "default": "calm",
-          "client_sync": false
-        },
         "lothlorien:alarmed": {
           "type": "bool",
           "default": false,
@@ -37,9 +25,9 @@
       }
     },
     "component_groups": {
-      "lothlorien:state_calm": {
+      "lothlorien:state_wild": {
         "minecraft:behavior.avoid_mob_type": {
-          "priority": 4,
+          "priority": 3,
           "entity_types": [
             {
               "filters": {
@@ -55,20 +43,118 @@
                     "value": false
                   },
                   {
-                    "none_of": [
-                      {
-                        "test": "has_equipment",
-                        "subject": "other",
-                        "domain": "hand",
-                        "value": "minecraft:wheat"
-                      },
-                      {
-                        "test": "has_equipment",
-                        "subject": "other",
-                        "domain": "hand",
-                        "value": "lothlorien:western_corn_grain"
-                      }
-                    ]
+                    "test": "has_tag",
+                    "subject": "other",
+                    "value": "lothlorien_friend"
+                  },
+                  {
+                    "test": "has_equipment",
+                    "subject": "other",
+                    "domain": "hand",
+                    "operator": "!=",
+                    "value": "minecraft:wheat"
+                  },
+                  {
+                    "test": "has_equipment",
+                    "subject": "other",
+                    "domain": "hand",
+                    "operator": "!=",
+                    "value": "lothlorien:western_corn_grain"
+                  }
+                ]
+              },
+              "max_dist": 3,
+              "walk_speed_multiplier": 1.1,
+              "sprint_speed_multiplier": 1.3
+            },
+            {
+              "filters": {
+                "all_of": [
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "player"
+                  },
+                  {
+                    "test": "is_sneaking",
+                    "subject": "other",
+                    "value": true
+                  },
+                  {
+                    "test": "has_tag",
+                    "subject": "other",
+                    "value": "lothlorien_friend"
+                  },
+                  {
+                    "test": "has_equipment",
+                    "subject": "other",
+                    "domain": "hand",
+                    "operator": "!=",
+                    "value": "minecraft:wheat"
+                  },
+                  {
+                    "test": "has_equipment",
+                    "subject": "other",
+                    "domain": "hand",
+                    "operator": "!=",
+                    "value": "lothlorien:western_corn_grain"
+                  }
+                ]
+              },
+              "max_dist": 2,
+              "walk_speed_multiplier": 1.1,
+              "sprint_speed_multiplier": 1.3
+            },
+            {
+              "filters": {
+                "all_of": [
+                  {
+                    "test": "is_family",
+                    "subject": "other",
+                    "value": "player"
+                  },
+                  {
+                    "test": "is_sneaking",
+                    "subject": "other",
+                    "value": false
+                  },
+                  {
+                    "test": "has_tag",
+                    "subject": "other",
+                    "operator": "!=",
+                    "value": "lothlorien_friend"
+                  },
+                  {
+                    "test": "has_tag",
+                    "subject": "other",
+                    "operator": "!=",
+                    "value": "lothlorien_uneasy"
+                  },
+                  {
+                    "test": "has_tag",
+                    "subject": "other",
+                    "operator": "!=",
+                    "value": "lothlorien_shunned"
+                  },
+                  {
+                    "test": "has_tag",
+                    "subject": "other",
+                    "operator": "!=",
+                    "value": "lothlorien_hated"
+                  },
+                  {
+                    "test": "has_equipment",
+                    "subject": "other",
+                    "domain": "hand",
+                    "operator": "!=",
+                    "value": "minecraft:wheat"
+                  },
+                  {
+                    "test": "has_equipment",
+                    "subject": "other",
+                    "domain": "hand",
+                    "operator": "!=",
+                    "value": "lothlorien:western_corn_grain"
                   }
                 ]
               },
@@ -90,20 +176,42 @@
                     "value": true
                   },
                   {
-                    "none_of": [
-                      {
-                        "test": "has_equipment",
-                        "subject": "other",
-                        "domain": "hand",
-                        "value": "minecraft:wheat"
-                      },
-                      {
-                        "test": "has_equipment",
-                        "subject": "other",
-                        "domain": "hand",
-                        "value": "lothlorien:western_corn_grain"
-                      }
-                    ]
+                    "test": "has_tag",
+                    "subject": "other",
+                    "operator": "!=",
+                    "value": "lothlorien_friend"
+                  },
+                  {
+                    "test": "has_tag",
+                    "subject": "other",
+                    "operator": "!=",
+                    "value": "lothlorien_uneasy"
+                  },
+                  {
+                    "test": "has_tag",
+                    "subject": "other",
+                    "operator": "!=",
+                    "value": "lothlorien_shunned"
+                  },
+                  {
+                    "test": "has_tag",
+                    "subject": "other",
+                    "operator": "!=",
+                    "value": "lothlorien_hated"
+                  },
+                  {
+                    "test": "has_equipment",
+                    "subject": "other",
+                    "domain": "hand",
+                    "operator": "!=",
+                    "value": "minecraft:wheat"
+                  },
+                  {
+                    "test": "has_equipment",
+                    "subject": "other",
+                    "domain": "hand",
+                    "operator": "!=",
+                    "value": "lothlorien:western_corn_grain"
                   }
                 ]
               },
@@ -111,42 +219,6 @@
               "walk_speed_multiplier": 1.3,
               "sprint_speed_multiplier": 1.6
             },
-            {
-              "filters": {
-                "test": "is_family",
-                "subject": "other",
-                "value": "wolf"
-              },
-              "max_dist": 12,
-              "walk_speed_multiplier": 1.4,
-              "sprint_speed_multiplier": 1.8
-            },
-            {
-              "filters": {
-                "test": "is_family",
-                "subject": "other",
-                "value": "monster"
-              },
-              "max_dist": 8,
-              "walk_speed_multiplier": 1.4,
-              "sprint_speed_multiplier": 1.8
-            }
-          ]
-        },
-        "minecraft:behavior.tempt": {
-          "priority": 3,
-          "speed_multiplier": 1.0,
-          "items": [
-            "minecraft:wheat",
-            "lothlorien:western_corn_grain"
-          ],
-          "can_get_scared": false
-        }
-      },
-      "lothlorien:state_l1": {
-        "minecraft:behavior.avoid_mob_type": {
-          "priority": 4,
-          "entity_types": [
             {
               "filters": {
                 "all_of": [
@@ -159,6 +231,11 @@
                     "test": "is_sneaking",
                     "subject": "other",
                     "value": false
+                  },
+                  {
+                    "test": "has_tag",
+                    "subject": "other",
+                    "value": "lothlorien_uneasy"
                   }
                 ]
               },
@@ -178,6 +255,11 @@
                     "test": "is_sneaking",
                     "subject": "other",
                     "value": true
+                  },
+                  {
+                    "test": "has_tag",
+                    "subject": "other",
+                    "value": "lothlorien_uneasy"
                   }
                 ]
               },
@@ -185,33 +267,6 @@
               "walk_speed_multiplier": 1.4,
               "sprint_speed_multiplier": 1.7
             },
-            {
-              "filters": {
-                "test": "is_family",
-                "subject": "other",
-                "value": "wolf"
-              },
-              "max_dist": 12,
-              "walk_speed_multiplier": 1.4,
-              "sprint_speed_multiplier": 1.8
-            },
-            {
-              "filters": {
-                "test": "is_family",
-                "subject": "other",
-                "value": "monster"
-              },
-              "max_dist": 8,
-              "walk_speed_multiplier": 1.4,
-              "sprint_speed_multiplier": 1.8
-            }
-          ]
-        }
-      },
-      "lothlorien:state_l2": {
-        "minecraft:behavior.avoid_mob_type": {
-          "priority": 4,
-          "entity_types": [
             {
               "filters": {
                 "all_of": [
@@ -224,6 +279,11 @@
                     "test": "is_sneaking",
                     "subject": "other",
                     "value": false
+                  },
+                  {
+                    "test": "has_tag",
+                    "subject": "other",
+                    "value": "lothlorien_shunned"
                   }
                 ]
               },
@@ -243,6 +303,11 @@
                     "test": "is_sneaking",
                     "subject": "other",
                     "value": true
+                  },
+                  {
+                    "test": "has_tag",
+                    "subject": "other",
+                    "value": "lothlorien_shunned"
                   }
                 ]
               },
@@ -250,33 +315,6 @@
               "walk_speed_multiplier": 1.5,
               "sprint_speed_multiplier": 1.9
             },
-            {
-              "filters": {
-                "test": "is_family",
-                "subject": "other",
-                "value": "wolf"
-              },
-              "max_dist": 12,
-              "walk_speed_multiplier": 1.4,
-              "sprint_speed_multiplier": 1.8
-            },
-            {
-              "filters": {
-                "test": "is_family",
-                "subject": "other",
-                "value": "monster"
-              },
-              "max_dist": 8,
-              "walk_speed_multiplier": 1.4,
-              "sprint_speed_multiplier": 1.8
-            }
-          ]
-        }
-      },
-      "lothlorien:state_l3": {
-        "minecraft:behavior.avoid_mob_type": {
-          "priority": 4,
-          "entity_types": [
             {
               "filters": {
                 "all_of": [
@@ -289,6 +327,11 @@
                     "test": "is_sneaking",
                     "subject": "other",
                     "value": false
+                  },
+                  {
+                    "test": "has_tag",
+                    "subject": "other",
+                    "value": "lothlorien_hated"
                   }
                 ]
               },
@@ -308,6 +351,11 @@
                     "test": "is_sneaking",
                     "subject": "other",
                     "value": true
+                  },
+                  {
+                    "test": "has_tag",
+                    "subject": "other",
+                    "value": "lothlorien_hated"
                   }
                 ]
               },
@@ -336,117 +384,21 @@
               "sprint_speed_multiplier": 1.8
             }
           ]
-        }
-      },
-      "lothlorien:state_friend": {
-        "minecraft:behavior.avoid_mob_type": {
-          "priority": 4,
-          "entity_types": [
-            {
-              "filters": {
-                "all_of": [
-                  {
-                    "test": "is_family",
-                    "subject": "other",
-                    "value": "player"
-                  },
-                  {
-                    "test": "is_sneaking",
-                    "subject": "other",
-                    "value": false
-                  },
-                  {
-                    "none_of": [
-                      {
-                        "test": "has_equipment",
-                        "subject": "other",
-                        "domain": "hand",
-                        "value": "minecraft:wheat"
-                      },
-                      {
-                        "test": "has_equipment",
-                        "subject": "other",
-                        "domain": "hand",
-                        "value": "lothlorien:western_corn_grain"
-                      }
-                    ]
-                  }
-                ]
-              },
-              "max_dist": 3,
-              "walk_speed_multiplier": 1.1,
-              "sprint_speed_multiplier": 1.3
-            },
-            {
-              "filters": {
-                "all_of": [
-                  {
-                    "test": "is_family",
-                    "subject": "other",
-                    "value": "player"
-                  },
-                  {
-                    "test": "is_sneaking",
-                    "subject": "other",
-                    "value": true
-                  },
-                  {
-                    "none_of": [
-                      {
-                        "test": "has_equipment",
-                        "subject": "other",
-                        "domain": "hand",
-                        "value": "minecraft:wheat"
-                      },
-                      {
-                        "test": "has_equipment",
-                        "subject": "other",
-                        "domain": "hand",
-                        "value": "lothlorien:western_corn_grain"
-                      }
-                    ]
-                  }
-                ]
-              },
-              "max_dist": 2,
-              "walk_speed_multiplier": 1.1,
-              "sprint_speed_multiplier": 1.3
-            },
-            {
-              "filters": {
-                "test": "is_family",
-                "subject": "other",
-                "value": "wolf"
-              },
-              "max_dist": 12,
-              "walk_speed_multiplier": 1.4,
-              "sprint_speed_multiplier": 1.8
-            },
-            {
-              "filters": {
-                "test": "is_family",
-                "subject": "other",
-                "value": "monster"
-              },
-              "max_dist": 8,
-              "walk_speed_multiplier": 1.4,
-              "sprint_speed_multiplier": 1.8
-            }
-          ]
         },
         "minecraft:behavior.tempt": {
-          "priority": 3,
+          "priority": 4,
           "speed_multiplier": 1.0,
           "items": [
             "minecraft:wheat",
             "lothlorien:western_corn_grain"
           ],
+          "within_radius": 10,
           "can_get_scared": false
         }
       },
       "lothlorien:state_alarmed": {
         "minecraft:behavior.avoid_mob_type": {
-          "priority": 4,
+          "priority": 3,
           "entity_types": [
             {
               "filters": {
@@ -688,7 +640,11 @@
             "trigger": "minecraft:ageable_grow_up"
           },
           {
-            "trigger": "lothlorien:set_calm"
+            "add": {
+              "component_groups": [
+                "lothlorien:state_wild"
+              ]
+            }
           }
         ]
       },
@@ -712,114 +668,13 @@
             ]
           },
           {
-            "trigger": "lothlorien:set_calm"
+            "add": {
+              "component_groups": [
+                "lothlorien:state_wild"
+              ]
+            }
           }
         ]
-      },
-      "lothlorien:set_calm": {
-        "set_property": {
-          "lothlorien:wariness": "calm",
-          "lothlorien:alarmed": false
-        },
-        "remove": {
-          "component_groups": [
-            "lothlorien:state_calm",
-            "lothlorien:state_l1",
-            "lothlorien:state_l2",
-            "lothlorien:state_l3",
-            "lothlorien:state_friend",
-            "lothlorien:state_alarmed"
-          ]
-        },
-        "add": {
-          "component_groups": [
-            "lothlorien:state_calm"
-          ]
-        }
-      },
-      "lothlorien:set_l1": {
-        "set_property": {
-          "lothlorien:wariness": "l1",
-          "lothlorien:alarmed": false
-        },
-        "remove": {
-          "component_groups": [
-            "lothlorien:state_calm",
-            "lothlorien:state_l1",
-            "lothlorien:state_l2",
-            "lothlorien:state_l3",
-            "lothlorien:state_friend",
-            "lothlorien:state_alarmed"
-          ]
-        },
-        "add": {
-          "component_groups": [
-            "lothlorien:state_l1"
-          ]
-        }
-      },
-      "lothlorien:set_l2": {
-        "set_property": {
-          "lothlorien:wariness": "l2",
-          "lothlorien:alarmed": false
-        },
-        "remove": {
-          "component_groups": [
-            "lothlorien:state_calm",
-            "lothlorien:state_l1",
-            "lothlorien:state_l2",
-            "lothlorien:state_l3",
-            "lothlorien:state_friend",
-            "lothlorien:state_alarmed"
-          ]
-        },
-        "add": {
-          "component_groups": [
-            "lothlorien:state_l2"
-          ]
-        }
-      },
-      "lothlorien:set_l3": {
-        "set_property": {
-          "lothlorien:wariness": "l3",
-          "lothlorien:alarmed": false
-        },
-        "remove": {
-          "component_groups": [
-            "lothlorien:state_calm",
-            "lothlorien:state_l1",
-            "lothlorien:state_l2",
-            "lothlorien:state_l3",
-            "lothlorien:state_friend",
-            "lothlorien:state_alarmed"
-          ]
-        },
-        "add": {
-          "component_groups": [
-            "lothlorien:state_l3"
-          ]
-        }
-      },
-      "lothlorien:set_friend": {
-        "set_property": {
-          "lothlorien:wariness": "friend",
-          "lothlorien:alarmed": false
-        },
-        "remove": {
-          "component_groups": [
-            "lothlorien:state_calm",
-            "lothlorien:state_l1",
-            "lothlorien:state_l2",
-            "lothlorien:state_l3",
-            "lothlorien:state_friend",
-            "lothlorien:state_alarmed"
-          ]
-        },
-        "add": {
-          "component_groups": [
-            "lothlorien:state_friend"
-          ]
-        }
       },
       "lothlorien:alarm": {
         "set_property": {
@@ -827,11 +682,7 @@
         },
         "remove": {
           "component_groups": [
-            "lothlorien:state_calm",
-            "lothlorien:state_l1",
-            "lothlorien:state_l2",
-            "lothlorien:state_l3",
-            "lothlorien:state_friend",
+            "lothlorien:state_wild",
             "lothlorien:state_alarmed"
           ]
         },
@@ -842,48 +693,20 @@
         }
       },
       "lothlorien:alarm_over": {
-        "sequence": [
-          {
-            "filters": {
-              "test": "enum_property",
-              "domain": "lothlorien:wariness",
-              "value": "calm"
-            },
-            "trigger": "lothlorien:set_calm"
-          },
-          {
-            "filters": {
-              "test": "enum_property",
-              "domain": "lothlorien:wariness",
-              "value": "l1"
-            },
-            "trigger": "lothlorien:set_l1"
-          },
-          {
-            "filters": {
-              "test": "enum_property",
-              "domain": "lothlorien:wariness",
-              "value": "l2"
-            },
-            "trigger": "lothlorien:set_l2"
-          },
-          {
-            "filters": {
-              "test": "enum_property",
-              "domain": "lothlorien:wariness",
-              "value": "l3"
-            },
-            "trigger": "lothlorien:set_l3"
-          },
-          {
-            "filters": {
-              "test": "enum_property",
-              "domain": "lothlorien:wariness",
-              "value": "friend"
-            },
-            "trigger": "lothlorien:set_friend"
-          }
-        ]
+        "set_property": {
+          "lothlorien:alarmed": false
+        },
+        "remove": {
+          "component_groups": [
+            "lothlorien:state_wild",
+            "lothlorien:state_alarmed"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "lothlorien:state_wild"
+          ]
+        }
       },
       "lothlorien:fed": {
         "add": {
@@ -922,7 +745,11 @@
             "trigger": "lothlorien:spawn_cygnet"
           },
           {
-            "trigger": "lothlorien:set_calm"
+            "add": {
+              "component_groups": [
+                "lothlorien:state_wild"
+              ]
+            }
           },
           {
             "trigger": "lothlorien:fed"

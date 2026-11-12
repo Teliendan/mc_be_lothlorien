@@ -72,7 +72,7 @@ function offer(player, squirrel) {
   }
 }
 
-// Ends the errand: beacon removed, the squirrel back to its wariness state (or, if it was hurt meanwhile, left alarmed).
+// Ends the errand: beacon removed, the squirrel back to its wild state (or, if it was hurt meanwhile, left alarmed).
 function end(squirrelId, squirrel, player, text) {
   const s = sessions.get(squirrelId);
   sessions.delete(squirrelId);

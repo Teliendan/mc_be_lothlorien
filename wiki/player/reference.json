@@ -91,7 +91,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/deer.js",
-        "sha256": "cce83ab2bba3a64a370ef602f10ce7d61a00825f4f652006a35365de92f41e8d"
+        "sha256": "ff16a04a3473bb3ba7f4f88fbd6d3c8c2d0d16195380e949a31974a8d26e5698"
       },
       {
         "path": "lothlorien_bp/scripts/deer_rules.js",
@@ -351,11 +351,11 @@
       },
       {
         "path": "lothlorien_bp/entities/squirrel.json",
-        "sha256": "d3e9a28a4e4fc9442d839ec287fe6433923eb31f711f5a84240eec69386ac45f"
+        "sha256": "f757ba5ebccd1d66d5268cfe72b44ae3ca181bd795e64af425cf16b343cd6bfb"
       },
       {
         "path": "lothlorien_bp/scripts/squirrel.js",
-        "sha256": "e9585b944d50a9e081ecb6b29321a19fb7b1843a1648e4c24f87df59c8ee764a"
+        "sha256": "2dfd65c7b98e2d35e4722afbfba67d32c02d12b98cd85ab07ffeac483d63e358"
       },
       {
         "path": "lothlorien_bp/scripts/squirrel_rules.js",
@@ -407,11 +407,11 @@
       },
       {
         "path": "lothlorien_bp/entities/swan.json",
-        "sha256": "b3c4d8e1296ea8c3f0f52c807e844e038ae61a81da0b0a6e1cf7429336140f7e"
+        "sha256": "afa5fef6f55bb455386b66473723298cf79be33717f0ec6e8acab02cb5aa7afd"
       },
       {
         "path": "lothlorien_bp/scripts/swan.js",
-        "sha256": "147d52de1373ca1d505601a3175763b15b8d7f219e00c9b983d1540084464cd7"
+        "sha256": "3ba926b67ba8a845d2d0596e500b167710dd0372f1200d7193c01f2971f92e8a"
       },
       {
         "path": "lothlorien_bp/scripts/swan_rules.js",

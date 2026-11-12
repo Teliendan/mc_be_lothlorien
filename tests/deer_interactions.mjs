@@ -7,10 +7,10 @@ import * as wardenRules from "../lothlorien_bp/scripts/elven_warden_rules.js";
 import { estimateDepth } from "../lothlorien_bp/scripts/depth.js";
 import { setup, load, Item } from "./fixtures/wildlife_runtime.mjs";
 let scenarios = 0;
-const POLLED = [deerRules.SWAN_ID, deerRules.SQUIRREL_ID, deerRules.UNICORN_ID]; // deer and white deer fly natively now (LM-01 step 4)
+const POLLED = [deerRules.UNICORN_ID]; // every other species flies natively now (LM-01 steps 4-5)
 async function test(name, body) { await body(); scenarios++; console.log(`ok   deer interactions: ${name}`); }
 
-await test("a Creative Friend sets the still-polled species to Friend (LM-01 steps 5-6 retire them)", async () => {
+await test("a Creative Friend sets the still-polled unicorn to Friend (LM-01 step 6 retires it)", async () => {
   const h = await setup(); const mod = await load("deer", h.base); mod.startDeer();
   h.player.mode = "creative";
   const animals = POLLED.map(type => h.entity(type));
@@ -19,7 +19,7 @@ await test("a Creative Friend sets the still-polled species to Friend (LM-01 ste
   h.player.band = "hated"; h.advance(40);
   for (const animal of animals) assert.ok(animal.events.includes("lothlorien:set_l3"));
 });
-await test("the still-polled species ignore Spectator/dead players", async () => {
+await test("the still-polled unicorn ignores Spectator/dead players", async () => {
   const h = await setup(); const mod = await load("deer", h.base); mod.startDeer();
   const friend = h.player;
   for (const mode of ["spectator", "dead"]) {
@@ -36,7 +36,7 @@ await test("the still-polled species ignore Spectator/dead players", async () =>
 });
 await test("removed actors stop the 40-tick service", async () => {
   const h = await setup(); const mod = await load("deer", h.base); mod.startDeer();
-  const swan = h.entity(deerRules.SWAN_ID); h.fire("entityLoad", { entity: swan });
+  const swan = h.entity(deerRules.UNICORN_ID); h.fire("entityLoad", { entity: swan });
   h.advance(40); assert.ok(swan.events.includes("lothlorien:set_friend"));
   h.fire("entityRemove", { removedEntityId: swan.id });
   assert.equal([...h.timers.values()].filter(t => t.period === 40).length, 0);

@@ -1679,11 +1679,11 @@
       "evidence": [
         {
           "path": "lothlorien_bp/entities/squirrel.json",
-          "sha256": "d3e9a28a4e4fc9442d839ec287fe6433923eb31f711f5a84240eec69386ac45f"
+          "sha256": "f757ba5ebccd1d66d5268cfe72b44ae3ca181bd795e64af425cf16b343cd6bfb"
         },
         {
           "path": "lothlorien_bp/scripts/squirrel.js",
-          "sha256": "e9585b944d50a9e081ecb6b29321a19fb7b1843a1648e4c24f87df59c8ee764a"
+          "sha256": "2dfd65c7b98e2d35e4722afbfba67d32c02d12b98cd85ab07ffeac483d63e358"
         },
         {
           "path": "lothlorien_bp/scripts/squirrel_rules.js",

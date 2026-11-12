@@ -1,5 +1,5 @@
-// Swans in the running game (Phase 15; rules in swan_rules.js). Their wariness follows the nearest player's Harmony band in
-// deer.js (they are in WARY_TYPES), exactly like the deer. This file only judges natural spawns: the spawn rule lets
+// Swans in the running game (Phase 15; rules in swan_rules.js). Their flight is native (entities/swan.json state_wild: each player judged by their own band tag); the alarm is in
+// deer.js (they are in WARY_TYPES). This file only judges natural spawns: the spawn rule lets
 // swans spawn in any river (see swan_rules.js), and one that spawned where no Lothlorien biome is near is removed. A submerged one floats up to the open surface,
 // or is removed when a bank is overhead.
 import { EntityInitializationCause, system } from "@minecraft/server";

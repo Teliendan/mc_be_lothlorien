@@ -139,10 +139,11 @@ const baby = swan.component_groups["lothlorien:baby"];
 assert.ok(baby["minecraft:is_baby"]); assert.equal(baby["minecraft:loot"], undefined);
 assert.equal(baby["minecraft:breedable"], undefined); assert.equal(baby["minecraft:ageable"].duration, 1200);
 assert.deepEqual(swan.components["minecraft:offspring"].offspring_pairs, { "lothlorien:swan": "lothlorien:swan" });
-for (const state of ["calm", "friend"]) {
-  const group = swan.component_groups[`lothlorien:state_${state}`];
+{
+  const group = swan.component_groups["lothlorien:state_wild"];
   assert.deepEqual(group["minecraft:behavior.tempt"].items, foods.GRAIN_ITEMS);
-  assert.deepEqual(group["minecraft:behavior.avoid_mob_type"].entity_types[0].filters.all_of.at(-1).none_of.map(f => f.value), foods.GRAIN_ITEMS);
+  const friend = group["minecraft:behavior.avoid_mob_type"].entity_types[0].filters.all_of; // Friend walking: one flat != per grain
+  assert.deepEqual(friend.filter(f => f.test === "has_equipment").map(f => [f.operator, f.value]), foods.GRAIN_ITEMS.map(v => ["!=", v]));
 }
 const natural = swan.events["lothlorien:spawn_natural"].sequence[1].randomize;
 assert.equal(natural.find(r => r.trigger === "lothlorien:spawn_cygnet").weight, 10);

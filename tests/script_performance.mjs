@@ -110,7 +110,7 @@ const common = h => ({ system: h.system, world: h.world, onEntity: (h.onEntity ?
   const dim = h.dimensions.get("nether");
   const friend = h.entity("minecraft:player", dim), hostile = h.entity("minecraft:player", dim, { x: 25, y: 0, z: 0 });
   hostile.band = "hated"; h.world.players = [friend, hostile];
-  const deer = h.entity(deerRules.SWAN_ID, dim);
+  const deer = h.entity(deerRules.UNICORN_ID, dim);
   h.fire("entitySpawn", { entity: deer }); h.fire("entityLoad", { entity: deer });
   assert.equal(h.intervals(40), 1, "duplicate load does not start a second timer");
   h.advance(40);

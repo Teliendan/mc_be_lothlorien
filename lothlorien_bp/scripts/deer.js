@@ -7,11 +7,11 @@ import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { isGuiding } from "./white_deer.js";
 import { isErrand } from "./squirrel.js";
-import { ALARM_RADIUS, CORN_ID, DEER_ID, DEER_TYPES, SQUIRREL_ID, WARY_TYPES, WATCH_RADIUS, WHITE_DEER_ID, pickWariness, setEventFor, warinessFor } from "./deer_rules.js";
+import { ALARM_RADIUS, CORN_ID, DEER_ID, DEER_TYPES, SQUIRREL_ID, UNICORN_ID, WARY_TYPES, WATCH_RADIUS, WHITE_DEER_ID, pickWariness, setEventFor, warinessFor } from "./deer_rules.js";
 
 const INTERVAL_TICKS = 40;
-// Types still driven by the poll; steps 5-6 of LM-01 move them to native band-tag flight and this goes (step 7).
-const POLLED_TYPES = WARY_TYPES.filter(type => !DEER_TYPES.includes(type));
+// Types still driven by the poll; step 6 of LM-01 moves the unicorn to native band-tag flight and this goes (step 7).
+const POLLED_TYPES = [UNICORN_ID];
 const loaded = new Map();
 let warinessTimer;
 

@@ -8,7 +8,6 @@ import * as SR from "../lothlorien_bp/scripts/swan_rules.js";
 import * as QR from "../lothlorien_bp/scripts/squirrel_rules.js";
 
 const L = "lothlorien:lothlorien", RIVER = "minecraft:river", FOREST = "minecraft:forest";
-const avoidRadius = (e, w) => e.component_groups[`lothlorien:state_${w}`]["minecraft:behavior.avoid_mob_type"].entity_types[0].max_dist;
 const ACORN = "lothlorien:mallorn_acorn";
 const swanEntity = () => readJson("../lothlorien_bp/entities/swan.json")["minecraft:entity"];
 const squirrelEntity = () => readJson("../lothlorien_bp/entities/squirrel.json")["minecraft:entity"];
@@ -32,18 +31,33 @@ test("Phase 15: swan spawn rule takes Lothlorien or river water, and the natural
   assert.ok("lothlorien:natural" in swanEntity().description.properties);
 });
 
-test("Phase 15: swan and squirrel read the Harmony band like the deer (same states, radii, alarm; in WARY_TYPES)", () => {
+test("LM-01: swan and squirrel fly natively by band tag (state_wild, state_alarmed; no poll states, set events or wariness property)", () => {
   assert.deepEqual(R.WARY_TYPES, [R.DEER_ID, R.WHITE_DEER_ID, "lothlorien:swan", "lothlorien:squirrel", "lothlorien:unicorn"]);
-  for (const e of [swanEntity(), squirrelEntity()]) {
-    for (const w of R.WARINESS) {
-      assert.equal(avoidRadius(e, w), R.FLIGHT_RADIUS[w], `${e.description.identifier} ${w}`);
-      assert.ok(e.events[R.setEventFor(w)], `event ${w}`);
-    }
-    assert.equal(avoidRadius(e, "alarmed"), 36);
-    assert.ok(e.events["lothlorien:alarm"] && e.events["lothlorien:alarm_over"]);
-    assert.ok(e.description.properties["lothlorien:wariness"] && e.description.properties["lothlorien:alarmed"]);
+  for (const [e, lures] of [[swanEntity(), ["minecraft:wheat", R.CORN_ID]], [squirrelEntity(), [ACORN]]]) {
+    const id = e.description.identifier, g = e.component_groups;
+    assert.deepEqual(Object.keys(g).filter((n) => /state_(calm|l\d|friend|tame)/.test(n)), [], `${id}: no retired groups`);
+    assert.ok(!JSON.stringify(e).includes("wariness") && !Object.keys(e.events).some((n) => n.startsWith("lothlorien:set_")), id);
+    const tagged = (grp) => grp["minecraft:behavior.avoid_mob_type"].entity_types.filter((t) => JSON.stringify(t.filters).includes("lothlorien_")).length;
+    assert.equal(tagged(g["lothlorien:state_wild"]), 10, id);
+    assert.equal(g["lothlorien:state_alarmed"]["minecraft:behavior.avoid_mob_type"].entity_types[0].max_dist, 36, id);
+    const tempt = g["lothlorien:state_wild"]["minecraft:behavior.tempt"];
+    assert.deepEqual([tempt.priority, tempt.items, tempt.within_radius, tempt.can_get_scared], [4, lures, 10, false], id);
+    const over = e.events["lothlorien:alarm_over"];
+    assert.deepEqual([over.set_property["lothlorien:alarmed"], over.add.component_groups, over.remove.component_groups], [false, ["lothlorien:state_wild"], ["lothlorien:state_wild", "lothlorien:state_alarmed"]], id);
+    assert.equal(e.events["lothlorien:alarm"].add.component_groups[0], "lothlorien:state_alarmed");
+    assert.equal(g["lothlorien:state_alarmed"]["minecraft:timer"].time_down_event.event, "lothlorien:alarm_over");
+    assert.ok(e.description.properties["lothlorien:alarmed"]);
+    const adds = (ev) => JSON.stringify(ev).includes("lothlorien:state_wild");
+    assert.ok(adds(e.events["minecraft:entity_spawned"]), `${id}: a spawn is wild`);
   }
+  const swan = swanEntity().events;
+  assert.ok(adds2(swan["lothlorien:spawn_natural"]) && adds2(swan["minecraft:entity_born"]), "swan: natural spawns and cygnets are wild");
+  // a swan lure exemption is one flat `!=` test per item (no nested none_of)
+  const swanFriend = swanEntity().component_groups["lothlorien:state_wild"]["minecraft:behavior.avoid_mob_type"].entity_types[0].filters.all_of;
+  assert.equal(swanFriend.filter((f) => f.test === "has_equipment" && f.operator === "!=").length, 2);
+  assert.ok(!JSON.stringify(swanEntity().component_groups["lothlorien:state_wild"]).includes("none_of"));
 });
+function adds2(ev) { return JSON.stringify(ev).includes("lothlorien:state_wild"); }
 
 test("Phase 15: swan floats on the surface like the chicken (float goal, path over water; no fish-style swimming) and drops a feather", () => {
   const e = swanEntity();
@@ -93,7 +107,7 @@ test("Phase 15: squirrel entity: errand group follows the beacon, wolves and mon
   assert.ok(g["minecraft:behavior.follow_target_leader"].priority < g["minecraft:behavior.avoid_mob_type"].priority);
   assert.ok(g["minecraft:behavior.avoid_mob_type"].entity_types.every((t) => ["wolf", "monster"].includes(t.filters.value)));
   for (const ev of ["lothlorien:guide_start", "lothlorien:guide_end", "lothlorien:guide_abort"]) assert.ok(e.events[ev], ev);
-  assert.ok(e.component_groups["lothlorien:state_calm"]["minecraft:behavior.tempt"].items.includes(ACORN));
+  assert.ok(e.component_groups["lothlorien:state_wild"]["minecraft:behavior.tempt"].items.includes(ACORN));
   const coats = e.description.properties["lothlorien:coat"].values;
   const client = readJson("../lothlorien_rp/entity/squirrel.entity.json")["minecraft:client_entity"].description;
   assert.deepEqual(Object.keys(client.textures).sort(), [...coats].sort());
