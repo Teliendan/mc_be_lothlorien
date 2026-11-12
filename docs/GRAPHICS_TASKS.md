@@ -10,7 +10,8 @@ intent: `design/lothlorien.md`. Wood-set taste, gold budget and traps: `MALLORN_
 ## Pack icon
 
 Final 2026-10-28: owner chose the "night" scene; `lothlorien_bp/pack_icon.png` and `lothlorien_rp/pack_icon.png` share one
-512x512 PNG. Goal (owner): make players curious with an honest feature showcase, in-game graphics only. Night in a Mallorn
+256x256, 256-colour PNG (50 KB; owner 2026-11-12, was 512x512 RGB at 433 KB each). The 512 px master is `docs/media/logo_512.png`;
+`tools/key_art/make_key_art.py` writes both. Goal (owner): make players curious with an honest feature showcase, in-game graphics only. Night in a Mallorn
 forest; the white hart large at lower left among Elanor and Niphredil with fireflies; behind it a real village fragment (central
 Mallorn with crown, tower with the 11-block bridge, node with the 7-block bridge) lit by its own light sources; dense ordinary
 Mallorns, four giant Mallorns, stars. Made by a software renderer of the mod's real block/entity geometry and textures; the

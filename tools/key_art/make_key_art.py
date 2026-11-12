@@ -1,10 +1,10 @@
-"""Rebuild the Lothlorien key art: the pack icon (512x512) and the promo banner (1920x1080 + 1280x720).
+"""Rebuild the Lothlorien key art: the pack icon (512x512 master, 256x256 shipped) and the promo banner (1920x1080 + 1280x720).
 
     python -B mods/lothlorien/tools/key_art/make_key_art.py [icon] [banner]     (run from the workspace root)
 
-Writes into temp/key_art/: pack_icon_512.png, promo_banner_1920.png, promo_banner_1280.png (plus the render
-buffers). Installing is a copy: pack_icon_512.png -> lothlorien_bp/ and lothlorien_rp/ pack_icon.png; the banner
-and logo live in docs/media/. Everything is the mod's real geometry and textures: the village is assembled from its
+Writes into temp/key_art/: pack_icon_512.png, pack_icon_256.png (256 px, 256-colour palette), promo_banner_1920.png, promo_banner_1280.png (plus the render
+buffers). Installing is a copy: pack_icon_256.png -> lothlorien_bp/ and lothlorien_rp/ pack_icon.png; the 512 px master
+(docs/media/logo_512.png), the banner and the logo live in docs/media/. Everything is the mod's real geometry and textures: the village is assembled from its
 .mcstructure pieces by their jigsaws and sunk like worldgen (start_height -17; giant Mallorns -5); the ordinary
 forest approximates the fancy/simple/mega tree features. Night grading, fog, glow, fireflies, stars and the moon
 are post-processing (grade.py). Design and owner decisions: docs/GRAPHICS_TASKS.md ("Pack icon", "Promo banner").
@@ -61,7 +61,11 @@ def main(which):
         run(f'{KA}/layout.py', 'icon', json.dumps(ICON), out=W / 'icon.json')
         print(run(f'{KA}/render.py', str(W / 'icon.json')).strip()[:60])
         run(f'{KA}/grade.py', 'icon', json.dumps(ICON_GRADE))
-        Image.open(W / 'icon_graded.png').convert('RGB').resize((512, 512), Image.LANCZOS).save(W / 'pack_icon_512.png')
+        m512 = Image.open(W / 'icon_graded.png').convert('RGB').resize((512, 512), Image.LANCZOS)
+        m512.save(W / 'pack_icon_512.png')
+        # shipped icon: 256 px, 256-colour palette (owner 2026-11-12; about 50 KB instead of 433 KB per pack)
+        m512.resize((256, 256), Image.LANCZOS).quantize(
+            colors=256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(W / 'pack_icon_256.png', optimize=True)
     if 'banner' in which:
         run(f'{KA}/banner.py', 'banner', json.dumps(BANNER))
         print(run(f'{KA}/render.py', str(W / 'banner.json')).strip()[:60])
