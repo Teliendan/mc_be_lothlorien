@@ -159,7 +159,8 @@
       "village_repair.mjs"
     ],
     "village-simulation": [
-      "village_simulation.mjs"
+      "village_simulation.mjs",
+      "village_loop_sim.mjs"
     ],
     "village-residents": [
       "village_residents.mjs"
@@ -216,6 +217,7 @@
       "village_planner.mjs",
       "village_repair.mjs",
       "village_simulation.mjs",
+      "village_loop_sim.mjs",
       "village_residents.mjs",
       "rail_mender.mjs",
       "forest_floor.mjs",

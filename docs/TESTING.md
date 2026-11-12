@@ -46,7 +46,9 @@ there is no need to run both verify and deploy without an intervening reason.
 | Audio tools (`--check` of ambient, voice and soundscape encodings; skips without numpy/soundfile, skips absent git-ignored music masters) | `audio`; `soundscape` for the music rules |
 | Test organization | `suite-layout` |
 
-`village-simulation` alone creates the batch of 30 assembled villages; ordinary
+`village-simulation` alone creates the batch of 30 assembled villages (two runners that run in parallel:
+`village_simulation.mjs` with the pack checks on the villages, and `village_loop_sim.mjs` with the three loop-planner tests,
+which build their own 30 seeds without `check()`); ordinary
 item/animal suites do not load it. Geometry and planner suites are separate and
 can also take appreciable time; use them when those features change. Some
 integration tests exercise plants/residents against generated villages on purpose;
