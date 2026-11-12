@@ -7,9 +7,8 @@
 import { bridgeShape } from "../lothlorien_bp/scripts/village_bridge.js";
 import { B } from "./flet_mallorn.mjs";
 import { rotateStates } from "./village_sim.mjs";
-import {
-  ROOTS, FLOOR_H, FACING, SHAPES, key, AIR, planks, slab, Deck, deckJigsaw, writeRails, RAIL, addHiddenLights, DECK_HI_NAME, DECK_NAME,
-} from "./village_mallorn.mjs";
+import { ROOTS, FLOOR_H, FACING, SHAPES, key, AIR, planks, slab, Deck, deckJigsaw, writeRails, RAIL, DECK_HI_NAME, DECK_NAME } from "./village_mallorn.mjs";
+import { addHiddenLights } from "./village_light.mjs";
 import { keepClearCells } from "./village_checks.mjs";
 import { dressBridge, dressBalcony, rotateFrame, relinkFences } from "./village_dress.mjs"; // bridge / balcony dressing and the pavilion frame (M7 WP3)
 

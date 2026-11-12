@@ -4,8 +4,9 @@
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { keepClearCells, keepClearViolations, deco, supportCheck, waterCheck, placementFilter } from "../tools/village_checks.mjs";
-import { EMITTERS, emission, lightBlock, isLightBlock, lightField, worstLight, addHiddenLights, walkCells, buildTree, SHAPES, FLOOR_H, LEVEL_H, RING, stairLayer, RAIL, LIGHT_TARGET } from "../tools/village_mallorn.mjs";
-import * as spawnApi from "../tools/village_mallorn.mjs";
+import { buildTree, SHAPES, FLOOR_H, LEVEL_H, RING, stairLayer, RAIL } from "../tools/village_mallorn.mjs";
+import { EMITTERS, emission, lightBlock, isLightBlock, lightField, worstLight, addHiddenLights, walkCells, LIGHT_TARGET } from "../tools/village_light.mjs";
+import * as spawnApi from "../tools/village_light.mjs";
 import { rotateStates, loadVillageData, simulate, check } from "../tools/village_sim.mjs";
 import { rotateBlocks } from "../tools/village_combo.mjs";
 import { checkWalk, defaultCollision } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs";

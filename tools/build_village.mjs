@@ -16,10 +16,8 @@ import { checkWalk } from "../../../.claude/skills/bedrock-worldgen/scripts/stru
 import { makeCombo, buildBalcony, STRAIGHT } from "./village_combo.mjs";
 import { sideTarget } from "../lothlorien_bp/scripts/village_loop.js"; // the runtime's own rim test decides where a side marker may stand
 import { POST_ID, POST_GROUP_PREFIX, POST_SPACING, ROPE_CLEARANCE, RESERVE_POSTS, homeSite } from "../lothlorien_bp/scripts/elf_rules.js"; // civilian elf posts (tunables live there)
-import {
-  ROOTS, FLOOR_H, LEVEL_H, FACING, SHAPES, key, AIR, planks, slab, Deck, buildTree, buildCrown, buildNubCrown, deckJigsaw, lonelyRail,
-  writeRails, RAIL, shapeCells, addHiddenLights, addSpawnLights, isLightBlock, bareBranchEnds, worstLight, LIGHT_TARGET, HEART_PLANKS,
-} from "./village_mallorn.mjs";
+import { ROOTS, FLOOR_H, LEVEL_H, FACING, SHAPES, key, AIR, planks, slab, Deck, buildTree, buildCrown, buildNubCrown, deckJigsaw, lonelyRail, writeRails, RAIL, shapeCells, bareBranchEnds } from "./village_mallorn.mjs";
+import { addHiddenLights, addSpawnLights, isLightBlock, worstLight, LIGHT_TARGET, HEART_PLANKS } from "./village_light.mjs";
 import { frameCell, frameInterior, frameDoorLane, framePost, dressBalcony, dressLookout } from "./village_dress.mjs"; // deck dressing and the home pavilion frame (M7 WP3)
 import { keepClearCells, keepClearViolations, supportCheck, waterCheck } from "./village_checks.mjs";
 import { groundWoodPosts } from "./village_polish.mjs";

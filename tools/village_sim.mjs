@@ -15,7 +15,8 @@ import { encodePng } from "./png.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const bp = join(root, "lothlorien_bp");
-import { RAIL, SLAB, ROOTS, lightField } from "./village_mallorn.mjs";
+import { RAIL, SLAB, ROOTS } from "./village_mallorn.mjs";
+import { lightField } from "./village_light.mjs";
 import { protectedCells, checkWalk } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs"; // shared walkability checker (cells a piece owns)
 import { supportScan, waterScan, isSupportSkipped } from "./village_checks.mjs"; // nothing floats, water stays in its vessel (the generator runs them per piece, the sim on assembled villages)
 import { isPlanterPanel,planterWalkName,PANEL_AIR } from "../lothlorien_bp/scripts/planter_panels.js";
