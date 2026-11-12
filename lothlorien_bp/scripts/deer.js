@@ -10,6 +10,8 @@ import { isErrand } from "./squirrel.js";
 import { ALARM_RADIUS, CORN_ID, DEER_ID, DEER_TYPES, SQUIRREL_ID, WARY_TYPES, WATCH_RADIUS, WHITE_DEER_ID, pickWariness, setEventFor, warinessFor } from "./deer_rules.js";
 
 const INTERVAL_TICKS = 40;
+// Types still driven by the poll; steps 5-6 of LM-01 move them to native band-tag flight and this goes (step 7).
+const POLLED_TYPES = WARY_TYPES.filter(type => !DEER_TYPES.includes(type));
 const loaded = new Map();
 let warinessTimer;
 
@@ -21,7 +23,7 @@ function stopIfEmpty() {
 }
 function trackCreature(entity) {
   try {
-    if (!entity.isValid) return;
+    if (!entity.isValid || !POLLED_TYPES.includes(entity.typeId)) return;
     loaded.set(entity.id, entity);
     if (warinessTimer === undefined) warinessTimer = system.runInterval(updateWariness, INTERVAL_TICKS);
   } catch { /* entity removed before delivery */ }
@@ -66,21 +68,11 @@ function updateWariness() {
   stopIfEmpty();
 }
 
-// Fed = tame. lothlorien:become_tame sets the property and makes the deer persistent (like a vanilla tamed animal).
-// Re-applying the current state event then swaps state_calm/state_friend for state_tame. One tick later: a property
-// change is not visible (to getProperty or to event filters) before the next tick.
+// Fed = tame. lothlorien:become_tame sets the property, makes the deer persistent (like a vanilla tamed animal) and swaps
+// state_wild for state_tame itself (entities/deer.json).
 function tame(deer) {
   if (deer.getProperty("lothlorien:tame")) return;
   deer.triggerEvent("lothlorien:become_tame");
-  system.runTimeout(() => {
-    try {
-      if (!deer.getProperty("lothlorien:alarmed") && !deer.getProperty("lothlorien:guiding")) {
-        deer.triggerEvent(setEventFor(deer.getProperty("lothlorien:wariness")));
-      }
-    } catch {
-      // deer unloaded meanwhile
-    }
-  }, 1);
 }
 
 // A white deer or squirrel saved while guiding has no session after a reload (sessions live in script memory): release it once, when it loads.

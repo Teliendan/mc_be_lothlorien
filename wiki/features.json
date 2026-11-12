@@ -2144,11 +2144,11 @@
         },
         {
           "path": "lothlorien_bp/entities/deer.json",
-          "sha256": "1d5792e7d36080727dfe0db2081fe4e180ed7b00339359a2b030537ad907708a"
+          "sha256": "acb847b8f839df8a8aca7c7b4436ba251999f2dc36e3089cbdb886510cc09ef9"
         },
         {
           "path": "lothlorien_bp/scripts/deer.js",
-          "sha256": "050b6d1746218b42feb4c5e9bfbb6fe7c36ad3aa339e4fa895cc57d7e1590a9f"
+          "sha256": "cce83ab2bba3a64a370ef602f10ce7d61a00825f4f652006a35365de92f41e8d"
         },
         {
           "path": "lothlorien_bp/scripts/deer_rules.js",
@@ -2446,11 +2446,11 @@
         },
         {
           "path": "lothlorien_bp/entities/white_deer.json",
-          "sha256": "43faecd61fff80f3642265500e9969fb5f49b5b12f4cd03c391837b51ac8edd3"
+          "sha256": "28e8271b346d2aee26f09eba3e0d815aceb2c7bb74a216452511367c53837ba7"
         },
         {
           "path": "lothlorien_bp/scripts/white_deer.js",
-          "sha256": "be1c32541fc8da1acfba316a3da636bc05ebf2eeb91845c8b9d43fb85a4e4902"
+          "sha256": "f1ebd1afd00ebb180ec6a17eec6ae77e90f13c6b8879226690040b4a20f8d4cb"
         },
         {
           "path": "lothlorien_bp/scripts/white_deer_rules.js",

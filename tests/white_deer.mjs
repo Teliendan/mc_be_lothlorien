@@ -160,7 +160,7 @@ test("ordinary deer: no coat variant, no guiding state (Phase 12 moved to its ow
 
 test("ordinary deer: Western Corn grain is the only food (lure, breeding, fawn growth); not the seeds, acorn or apple", () => {
   const e = deerEntity();
-  for (const w of ["calm", "friend"]) assert.deepEqual(e.component_groups[`lothlorien:state_${w}`]["minecraft:behavior.tempt"].items, [GRAIN], w);
+  for (const w of ["wild", "tame"]) assert.deepEqual(e.component_groups[`lothlorien:state_${w}`]["minecraft:behavior.tempt"].items, [GRAIN], w);;
   assert.deepEqual(e.component_groups["lothlorien:adult"]["minecraft:breedable"].breed_items, [GRAIN]);
   assert.deepEqual(e.component_groups["lothlorien:baby"]["minecraft:ageable"].feed_items, [GRAIN]);
   const text = JSON.stringify(e);
@@ -187,51 +187,46 @@ test("white deer: a separate loner entity, not tamable, not breedable, no babies
   assert.ok(!e.components["minecraft:type_family"].family.includes("lothlorien_deer"), "own family");
 });
 
-test("white deer: same wariness states and flight distances as the deer; only the acorn lures it", () => {
+test("white deer: same states and flight entries as the deer; only the acorn lures it", () => {
   const e = whiteEntity(), d = deerEntity();
   // same flight, except the lure item that switches flight from its holder off
   const sameLure = (avoid) => JSON.parse(JSON.stringify(avoid).replaceAll(W.ACORN_ID, R.CORN_ID));
-  for (const w of [...R.WARINESS, "alarmed", "tame"]) {
+  for (const w of ["wild", "tame", "alarmed"]) {
     assert.deepEqual(sameLure(e.component_groups[`lothlorien:state_${w}`]["minecraft:behavior.avoid_mob_type"]),
       d.component_groups[`lothlorien:state_${w}`]["minecraft:behavior.avoid_mob_type"], w);
-    assert.ok(e.events[R.setEventFor(w)] || w === "alarmed" || w === "tame", w);
   }
   const lured = (w) => e.component_groups[`lothlorien:state_${w}`]["minecraft:behavior.tempt"]?.items;
-  assert.deepEqual(["calm", "friend"].map(lured), [[W.ACORN_ID], [W.ACORN_ID]]);
-  assert.deepEqual(["l1", "l2", "l3", "alarmed"].map(lured), [undefined, undefined, undefined, undefined]);
+  assert.deepEqual(["wild", "tame"].map(lured), [[W.ACORN_ID], [W.ACORN_ID]]);
+  assert.equal(lured("alarmed"), undefined);
   assert.deepEqual(e.events["lothlorien:alarm_over"], d.events["lothlorien:alarm_over"]);
   assert.equal(e.component_groups["lothlorien:state_alarmed"]["minecraft:timer"].time_down_event.event, "lothlorien:alarm_over");
   for (const k of ["minecraft:behavior.panic", "minecraft:behavior.float", "minecraft:behavior.random_stroll", "minecraft:navigation.walk", "minecraft:movement"]) {
     assert.deepEqual(e.components[k], d.components[k], k);
   }
-  assert.ok(R.DEER_TYPES.includes(W.WHITE_DEER_ID), "deer.js drives its wariness and alarm");
+  assert.ok(R.DEER_TYPES.includes(W.WHITE_DEER_ID), "the alarm reaches it");
 });
 
-test("both deer: a held lure beats flight, a fed (tame) deer does not flee from players, attack still wins", () => {
+test("both deer: a held lure beats flight for Guest and Friend only, a fed (tame) deer ignores them, attack still wins", () => {
   for (const [e, lure] of [[deerEntity(), R.CORN_ID], [whiteEntity(), W.ACORN_ID]]) {
     const g = e.component_groups;
     const playerEntries = (grp) => grp["minecraft:behavior.avoid_mob_type"].entity_types
       .filter((t) => JSON.stringify(t.filters).includes('"value":"player"'));
     const exempts = (t) => t.filters.all_of?.some((f) => f.test === "has_equipment" && f.subject === "other" && f.operator === "!=" && f.value === lure);
-    for (const w of ["calm", "friend"]) {
-      assert.ok(playerEntries(g[`lothlorien:state_${w}`]).every(exempts), `${w}: holding ${lure} stops the flight`);
-      assert.equal(g[`lothlorien:state_${w}`]["minecraft:behavior.tempt"].can_get_scared, false, `${w}: the lure is not broken by movement`);
-    }
-    for (const w of ["l1", "l2", "l3", "alarmed"]) assert.ok(!playerEntries(g[`lothlorien:state_${w}`]).some(exempts), `${w}: the lure does not help`);
-    assert.equal(playerEntries(g["lothlorien:state_tame"]).length, 0, "tame: no flight from players");
+    const tagOf = (t) => t.filters.all_of.filter((f) => f.test === "has_tag" && f.operator !== "!=").map((f) => f.value)[0]; // Guest: only `!=` tests
+    const wild = playerEntries(g["lothlorien:state_wild"]);
+    for (const t of wild) assert.equal(exempts(t), tagOf(t) === undefined || tagOf(t) === "lothlorien_friend", `wild ${tagOf(t) ?? "guest"}: only Guest and Friend are exempt`);
+    assert.equal(g["lothlorien:state_wild"]["minecraft:behavior.tempt"].can_get_scared, false, "the lure is not broken by movement");
+    const tame = playerEntries(g["lothlorien:state_tame"]);
+    assert.deepEqual([...new Set(tame.map(tagOf))].sort(), ["lothlorien_hated", "lothlorien_shunned", "lothlorien_uneasy"], "tame: Guest and Friend are not fled from");
+    assert.ok(!tame.some(exempts));
+    assert.ok(!playerEntries(g["lothlorien:state_alarmed"]).some(exempts), "alarmed: the lure does not help");
     assert.deepEqual(g["lothlorien:state_tame"]["minecraft:behavior.tempt"].items, [lure]);
     assert.equal(e.description.properties["lothlorien:tame"].default, false);
     for (const [name, ev] of Object.entries(e.events)) {
       const removes = [ev, ...(ev.sequence ?? [])].flatMap((s) => s.remove?.component_groups ?? []);
-      if (removes.includes("lothlorien:state_calm")) assert.ok(removes.includes("lothlorien:state_tame"), `${name} removes state_tame`);
+      if (removes.includes("lothlorien:state_wild") && name !== "lothlorien:become_tame") assert.ok(removes.includes("lothlorien:state_tame"), `${name} removes state_tame`);
     }
-    for (const w of ["calm", "friend"]) {
-      const seq = e.events[R.setEventFor(w)].sequence;
-      const addFor = (tame) => seq.find((s) => s.filters?.domain === "lothlorien:tame" && s.filters.value === tame).add.component_groups;
-      assert.deepEqual([addFor(false), addFor(true)], [[`lothlorien:state_${w}`], ["lothlorien:state_tame"]]);
-    }
-    for (const w of ["l1", "l2", "l3"]) assert.deepEqual(e.events[R.setEventFor(w)].add.component_groups, [`lothlorien:state_${w}`], w);
-    assert.equal(e.components["minecraft:behavior.panic"].priority, 1, "panic outranks the lure (3)");
+    assert.equal(e.components["minecraft:behavior.panic"].priority, 1, "panic outranks the lure (4) and the flight (3)");
   }
   const src = (f) => readFileSync(new URL(`../lothlorien_bp/scripts/${f}`, import.meta.url), "utf8");
   assert.ok(src("deer.js").includes('triggerEvent("lothlorien:untame")'), "a player hurting a deer untames it");
@@ -249,7 +244,7 @@ test("both deer: tame or leashed = persistent, like vanilla tamed animals; eithe
     const l = e.components["minecraft:leashable"];
     assert.deepEqual([l.on_leash.event, l.on_unleash.event], ["lothlorien:leashed", "lothlorien:unleashed"]);
     assert.deepEqual(ev["lothlorien:leashed"].add.component_groups, [K]);
-    assert.deepEqual(ev["lothlorien:become_tame"], { set_property: { "lothlorien:tame": true }, add: { component_groups: [K] } });
+    assert.deepEqual(ev["lothlorien:become_tame"].sequence[0], { set_property: { "lothlorien:tame": true }, add: { component_groups: [K] } });
     const unleash = ev["lothlorien:unleashed"].sequence[0];
     assert.deepEqual([unleash.filters.domain, unleash.filters.value, unleash.remove.component_groups], ["lothlorien:tame", false, [K]]);
     const [untameSet, untameRemove] = ev["lothlorien:untame"].sequence;
@@ -265,10 +260,9 @@ test("white deer: guiding state follows the beacon (one goal, below panic, above
   const e = whiteEntity();
   const g = "lothlorien:state_guiding";
   for (const [name, ev] of Object.entries(e.events)) {
-    if (name.startsWith("lothlorien:set_") || name === "lothlorien:alarm") {
-      const first = ev.sequence?.[0] ?? ev; // set_calm/set_friend: reset first, then the tame-dependent add
-      assert.ok(first.remove.component_groups.includes(g), name);
-      assert.equal(first.set_property["lothlorien:guiding"], false, name);
+    if (name === "lothlorien:alarm") {
+      assert.ok(ev.remove.component_groups.includes(g), name);
+      assert.equal(ev.set_property["lothlorien:guiding"], false, name);
     }
     if (name !== "lothlorien:guide_start") assert.ok(![ev, ...(ev.sequence ?? [])].some((s) => s.add?.component_groups?.includes(g)), name);
   }
@@ -314,8 +308,8 @@ test("white deer: rare single spawns in the biome at SPAWN_WEIGHT, flagged natur
   assert.deepEqual(e.description.properties["lothlorien:natural"], { type: "bool", default: false, client_sync: false });
   const natural = e.events["lothlorien:spawn_natural"];
   assert.equal(natural.set_property["lothlorien:natural"], true);
-  assert.equal(natural.trigger, "lothlorien:set_calm", "a natural spawn is fully set up even if entity_spawned does not also run");
-  assert.deepEqual(e.events["minecraft:entity_spawned"], { trigger: "lothlorien:set_calm" }, "summon and egg: never flagged");
+  assert.deepEqual(natural.add.component_groups, ["lothlorien:state_wild"], "a natural spawn is fully set up even if entity_spawned does not also run");
+  assert.deepEqual(e.events["minecraft:entity_spawned"], { add: { component_groups: ["lothlorien:state_wild"] } }, "summon and egg: never flagged");
   assert.ok(!JSON.stringify(e.events["minecraft:entity_spawned"]).includes("natural"));
 });
 

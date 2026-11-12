@@ -232,7 +232,7 @@ function lead(player, deer, spot) {
     deer.setDynamicProperty(GIFT_SPOT, JSON.stringify({ ...spot, dim: dimension.id }));
     const beacon = dimension.spawnEntity(BEACON_ID, { x: wp.x, y: wp.y, z: wp.z });
     beaconId = beacon.id;
-    deer.triggerEvent("lothlorien:become_tame"); // fed: persistent, and after guiding it comes back as state_tame
+    deer.triggerEvent("lothlorien:become_tame"); // fed: persistent, and after guiding alarm_over brings it back as state_tame
     deer.triggerEvent("lothlorien:guide_start");
     consumeHeld(player, ACORN_ID); // only now: guidance really starts
     healAnimal(deer);
@@ -417,10 +417,6 @@ export function startWhiteDeer(depth, inside, biomeInfo) {
         end(target.id, target);
         if (eatHeldFood(player, target, ACORN_ID)) {
           target.triggerEvent("lothlorien:become_tame");
-          system.run(() => {
-            if (target.isValid && !target.getProperty("lothlorien:alarmed"))
-              target.triggerEvent(`lothlorien:set_${target.getProperty("lothlorien:wariness")}`);
-          });
         }
         return;
       }

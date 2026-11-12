@@ -7,18 +7,19 @@ import * as wardenRules from "../lothlorien_bp/scripts/elven_warden_rules.js";
 import { estimateDepth } from "../lothlorien_bp/scripts/depth.js";
 import { setup, load, Item } from "./fixtures/wildlife_runtime.mjs";
 let scenarios = 0;
+const POLLED = [deerRules.SWAN_ID, deerRules.SQUIRREL_ID, deerRules.UNICORN_ID]; // deer and white deer fly natively now (LM-01 step 4)
 async function test(name, body) { await body(); scenarios++; console.log(`ok   deer interactions: ${name}`); }
 
-await test("a Creative Friend sets all five wary species to Friend, so the unicorn's lure exists in Creative", async () => {
+await test("a Creative Friend sets the still-polled species to Friend (LM-01 steps 5-6 retire them)", async () => {
   const h = await setup(); const mod = await load("deer", h.base); mod.startDeer();
   h.player.mode = "creative";
-  const animals = deerRules.WARY_TYPES.map(type => h.entity(type));
+  const animals = POLLED.map(type => h.entity(type));
   for (const animal of animals) h.fire("entityLoad", { entity: animal });
   h.advance(40); for (const animal of animals) assert.ok(animal.events.includes("lothlorien:set_friend"));
   h.player.band = "hated"; h.advance(40);
   for (const animal of animals) assert.ok(animal.events.includes("lothlorien:set_l3"));
 });
-await test("all five wary species ignore Spectator/dead players", async () => {
+await test("the still-polled species ignore Spectator/dead players", async () => {
   const h = await setup(); const mod = await load("deer", h.base); mod.startDeer();
   const friend = h.player;
   for (const mode of ["spectator", "dead"]) {
@@ -27,7 +28,7 @@ await test("all five wary species ignore Spectator/dead players", async () => {
     else hostile.mode = mode;
     h.world.players.push(hostile);
   }
-  const animals = deerRules.WARY_TYPES.map(type => h.entity(type));
+  const animals = POLLED.map(type => h.entity(type));
   for (const animal of animals) h.fire("entityLoad", { entity: animal });
   h.advance(40); for (const animal of animals) assert.ok(animal.events.includes("lothlorien:set_friend"));
   friend.mode = "adventure"; friend.band = "hated"; h.advance(40);
@@ -35,8 +36,9 @@ await test("all five wary species ignore Spectator/dead players", async () => {
 });
 await test("removed actors stop the 40-tick service", async () => {
   const h = await setup(); const mod = await load("deer", h.base); mod.startDeer();
-  h.advance(40); assert.ok(h.deer.events.includes("lothlorien:set_friend"));
-  h.fire("entityRemove", { removedEntityId: h.deer.id });
+  const swan = h.entity(deerRules.SWAN_ID); h.fire("entityLoad", { entity: swan });
+  h.advance(40); assert.ok(swan.events.includes("lothlorien:set_friend"));
+  h.fire("entityRemove", { removedEntityId: swan.id });
   assert.equal([...h.timers.values()].filter(t => t.period === 40).length, 0);
 });
 await test("a hurt animal alarms every wary animal within 20 blocks, once, and nothing else", async () => {
@@ -55,6 +57,15 @@ await test("a hurt animal alarms every wary animal within 20 blocks, once, and n
   assert.equal(queries, 0, "only a player's blow alarms");
   h.fire("entityDie", { deadEntity: hurt, damageSource: { damagingEntity: h.player } });
   assert.equal(queries, 1, "one query per alarm");
+});
+await test("feeding corn tames a deer with one event and no re-applied state; a second feeding does nothing", async () => {
+  const h = await setup(); const mod = await load("deer", h.base); mod.startDeer();
+  const deer = h.entity(deerRules.DEER_ID);
+  h.fire("playerInteractWithEntity", { player: h.player, target: deer, itemStack: new Item(deerRules.CORN_ID) });
+  h.advance(5); assert.deepEqual(deer.events, ["lothlorien:become_tame"]);
+  deer.setProperty("lothlorien:tame", true);
+  h.fire("playerInteractWithEntity", { player: h.player, target: deer, itemStack: new Item(deerRules.CORN_ID) });
+  assert.equal(deer.events.length, 1);
 });
 await test("the gift is laid once, whatever the particles do", async () => {
   const h = await setup(); h.dimension.particleError = true;

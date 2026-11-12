@@ -1,51 +1,55 @@
 // deer regression tests; run independently or via tests/run.mjs.
 import { test, finish, readJson } from './test_helpers.mjs';
 import assert from "node:assert/strict";
-import * as H from "../lothlorien_bp/scripts/harmony.js";
 import * as R from "../lothlorien_bp/scripts/deer_rules.js";
 
 const deerEntity = () => readJson("../lothlorien_bp/entities/deer.json")["minecraft:entity"];
-const avoidRadius = (e, w) => e.component_groups[`lothlorien:state_${w}`]["minecraft:behavior.avoid_mob_type"].entity_types[0].max_dist;
+const G = (e, name) => e.component_groups[`lothlorien:${name}`];
+const events = (ev) => [ev, ...(ev.sequence ?? [])];
+const bandTagEntries = (group) => group["minecraft:behavior.avoid_mob_type"].entity_types.filter((t) => JSON.stringify(t.filters).includes("lothlorien_"));
 
-test("deer: wariness follows the Harmony band (Friend -> friend, Guest -> calm, Uneasy -> l1, Shunned -> l2, Hated -> l3)", () => {
-  assert.deepEqual(["friend", "guest", "uneasy", "shunned", "hated"].map(R.warinessFor), ["friend", "calm", "l1", "l2", "l3"]);
-  assert.deepEqual([10, 9, 0, -1, -14, -15, -29, -30].map((h) => R.warinessFor(H.bandOf(h))), ["friend", "calm", "calm", "l1", "l1", "l2", "l2", "l3"]);
-  assert.equal(R.warinessFor(undefined), "calm");
-});
-
-test("deer: the most severe player inside their own flight radius decides", () => {
-  const pick = (...c) => R.pickWariness(c.map(([distance, wariness]) => ({ distance, wariness })));
-  assert.equal(pick([25, "l3"], [5, "calm"]), "l3");
-  assert.equal(pick([35, "l3"], [5, "calm"]), "calm"); // l3 player too far to matter
-  assert.equal(pick([15, "l2"], [12, "l1"], [2, "friend"]), "l2");
-  assert.equal(pick([2, "friend"], [8, "calm"]), "calm");
-  assert.equal(pick([30, "l2"], [35, "calm"]), "l2"); // nobody inside their radius: nearest decides
-  assert.equal(R.pickWariness([]), undefined);
-});
-
-test("deer: flight radii match the entity file", () => {
+test("deer: native band-tag flight - state_wild, state_tame and state_alarmed replace the five wariness groups, set events and property", () => {
   const e = deerEntity();
-  for (const w of R.WARINESS) assert.equal(avoidRadius(e, w), R.FLIGHT_RADIUS[w], w);
+  assert.deepEqual(Object.keys(e.component_groups).filter((n) => n.includes("state_")), ["lothlorien:state_wild", "lothlorien:state_tame", "lothlorien:state_alarmed"]);
+  assert.ok(!("lothlorien:wariness" in e.description.properties));
+  assert.ok(!Object.keys(e.events).some((n) => n.startsWith("lothlorien:set_")));
+  assert.ok(!JSON.stringify(e).includes("wariness"));
+  // wild: ten band entries (five bands x walking/sneaking); tame: Uneasy, Shunned, Hated only; alarmed: no tag at all
+  assert.equal(bandTagEntries(G(e, "state_wild")).length, 10);
+  assert.equal(bandTagEntries(G(e, "state_tame")).length, 6);
+  assert.equal(bandTagEntries(G(e, "state_alarmed")).length, 0);
+  for (const name of ["state_wild", "state_tame", "state_alarmed"]) assert.equal(G(e, name)["minecraft:behavior.avoid_mob_type"].priority, 3, name);
 });
 
-test("deer: every wariness has a state group and a set event; flight distance grows with the Harmony band", () => {
+test("deer: the lure is native tempt in wild and tame, below flight (4 > 3); the alarm hands back through alarm_over", () => {
   const e = deerEntity();
-  for (const w of R.WARINESS) {
-    assert.ok(e.component_groups[`lothlorien:state_${w}`], `group ${w}`);
-    assert.ok(e.events[R.setEventFor(w)], `event ${w}`);
+  for (const name of ["state_wild", "state_tame"]) {
+    const t = G(e, name)["minecraft:behavior.tempt"];
+    assert.deepEqual([t.priority, t.items, t.within_radius, t.can_get_scared], [4, [R.CORN_ID], 10, false], name);
   }
-  const r = (w) => avoidRadius(e, w);
-  assert.ok(r("friend") < r("calm") && r("calm") < r("l1") && r("l1") < r("l2") && r("l2") < r("l3"));
-  assert.ok(R.WATCH_RADIUS > r("l3") && R.WATCH_RADIUS > r("alarmed"), "watch radius covers the flight distances");
+  assert.ok(!G(e, "state_alarmed")["minecraft:behavior.tempt"]);
+  assert.equal(G(e, "state_alarmed")["minecraft:timer"].time_down_event.event, "lothlorien:alarm_over");
+  const over = e.events["lothlorien:alarm_over"].sequence;
+  assert.deepEqual(over.map((s) => s.add?.component_groups?.[0]), [undefined, "lothlorien:state_wild", "lothlorien:state_tame"]);
+  assert.deepEqual(over.map((s) => s.filters?.value), [undefined, false, true], "wild unless tame");
+  assert.deepEqual(over[0].remove.component_groups, ["lothlorien:state_wild", "lothlorien:state_tame", "lothlorien:state_alarmed"]);
+  assert.equal(over[0].set_property["lothlorien:alarmed"], false);
+  const alarm = e.events["lothlorien:alarm"];
+  assert.deepEqual([alarm.set_property["lothlorien:alarmed"], alarm.add.component_groups], [true, ["lothlorien:state_alarmed"]]);
+  assert.deepEqual(alarm.remove.component_groups, ["lothlorien:state_wild", "lothlorien:state_tame", "lothlorien:state_alarmed"]);
+  const tame = e.events["lothlorien:become_tame"].sequence;
+  assert.deepEqual([tame[1].filters.domain, tame[1].filters.value, tame[1].remove.component_groups, tame[1].add.component_groups],
+    ["lothlorien:alarmed", false, ["lothlorien:state_wild"], ["lothlorien:state_tame"]], "an alarmed deer stays alarmed until alarm_over");
 });
 
-test("deer: only calm states can be lured; the alarm hands back through the property", () => {
+test("deer: every way in adds state_wild (spawn, summon, birth); nothing else adds it but the alarm and tame events", () => {
   const e = deerEntity();
-  const lured = (w) => !!e.component_groups[`lothlorien:state_${w}`]["minecraft:behavior.tempt"];
-  assert.deepEqual(["calm", "l1", "friend", "l2", "l3", "alarmed"].map(lured), [true, false, true, false, false, false]);
-  const back = e.events["lothlorien:alarm_over"].sequence.map((s) => s.trigger).sort();
-  assert.deepEqual(back, R.WARINESS.map(R.setEventFor).sort());
-  assert.equal(e.component_groups["lothlorien:state_alarmed"]["minecraft:timer"].time_down_event.event, "lothlorien:alarm_over");
+  for (const name of ["minecraft:entity_spawned", "minecraft:entity_born"]) {
+    assert.ok(events(e.events[name]).some((s) => s.add?.component_groups?.includes("lothlorien:state_wild")), name);
+  }
+  for (const [name, ev] of Object.entries(e.events)) {
+    if (!["minecraft:entity_spawned", "minecraft:entity_born", "lothlorien:alarm_over"].includes(name)) assert.ok(!events(ev).some((s) => s.add?.component_groups?.includes("lothlorien:state_wild")), name);
+  }
 });
 
 test("deer: bucks drop antlers, does do not; babies drop nothing", () => {
