@@ -118,3 +118,26 @@ Completed source fixes and accepted checks, and where each open retest below is 
   remove an old false closure if needed; existing saved fences are retained.
 - [ ] **L8 / L9:** complete targeted deer and squirrel checks with explicit setups
   in the workspace checklist; no failure is inferred from an untested case.
+
+## Bedrock 26.60 impact (2026-10-27, documented only)
+
+Source review against the 26.60 changelog and API 2.11.0 / 2.12.0-beta declarations; nothing tested in game.
+Entities and blocks are format 1.26.50, scripts `@minecraft/server` 2.8.0. (Kept here, not in `parity/`, which is wiki evidence.)
+
+- Verdict: no break expected, no bump wanted (nothing needs 1.26.60). Risk: `minecraft:timer` takes `{min, max}` from
+  1.26.50 (changelog); our scalar `time` (alarmed groups of deer, white deer, squirrel, swan, unicorn; `guide_beacon`;
+  the four boat files) most likely still loads, because vanilla 1.26.50 packs keep scalars. If rejected, the fix is
+  `"time": {"min": n, "max": n}` in 10 files. Owner check: content log on world load; an alarmed deer calms after about 20 s.
+- Format 1.26.60 bump blockers: `unicorn.json` `rideable.seats` must be an array; single-object `minecraft:collision_box`
+  (lanterns, firefly jar, doors, fences, fence gates, slabs, trapdoors). The verifier's 1.26.60 shape check catches both.
+- Workarounds unchanged: MCPE-184249 grass under plants (not in the changelog), rope climbing by script (no native
+  climbable), scripted attachment survival (`neighbor_change` is still experimental: 1.26.60 + Upcoming Creator Features +
+  beta API; 100 delivered per chunk-tick, so a random-tick fallback may stay).
+- Deferred ideas: API 2.11.0 sneak events instead of part of the rope's crouch polling (the rope also reads Jump);
+  `SoundInstance`/`isBroadcast` only with a soundscape task (`village_music.js` fade-out stays: `playMusic` is not covered);
+  `onBreak` on `motion_support` for filter blocks (small cleanup); named ticks (beta).
+  Ignored: `tamedToPlayer`, server-ui 2.3.0, WorldClock, `vibration_properties`, `entity_storage`.
+- Free fixes to look at: redstone dust now bends toward the Mallorn buttons and plates (MCPE-242204); stuck panicking
+  mobs stutter less; helper entities without `pushable_by_block` stay put when pistons move blocks.
+- Rule from the "default properties are no longer saved" change: never change an entity property default without a migration.
+
