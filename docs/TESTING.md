@@ -67,3 +67,12 @@ reruns the `regen` rows in a scratch copy and fails on any byte difference (abou
 When adding tests here or to another mod, follow the shared
 [feature-suite authoring rules](../../../docs/scoped-verification.md) and templates.
 Do not grow another combined test file or import tests for their helpers.
+
+## Debug commands in the pack
+
+`/scriptevent lothlorien:debug` toggles an action-bar readout (biome id, depth level, hostile mobs within 64 blocks) and switches on every diagnostic
+content-log line through `village_debug.js` (planner, elf village summary, rail mender, warden replace); only failures log unconditionally. `depth`
+prints the depth estimate and its cost; `harmony [value]` shows or sets Harmony; `renown ...` is described in `design/elven_inhabitants.md` section 3 ("As built"). Everything else (showcase, grow,
+growbig, treestats, treecount, critters, deer, survey, speed, tps, village, elf, trade and the landscape probe) was removed from the pack (cleanups
+2026-09-30 and 2026-10-29); copies of the useful ones are in `tools/dev_scripts/` (see its README), the last commit with them in the pack for the first
+cleanup is `dc1182e`.

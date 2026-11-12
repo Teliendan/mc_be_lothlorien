@@ -5,14 +5,70 @@ probe pack, dense-grid test) lives in git; the last commit that still has the pr
 Engine facts and primary sources: workspace skill `bedrock-worldgen`, references `10-jigsaw-pieces.md`,
 `21-jigsaw-worldgen-policy.md` and `24-structure-placement-survey.md`. **Worldgen changes need a new world.**
 
+## The biome
+
+| File | Role |
+|---|---|
+| `lothlorien_bp/biomes/lothlorien.biome.json` | server biome: climate, surface, replacement, tags |
+| `lothlorien_rp/biomes/lothlorien.client_biome.json` | grass/foliage/water/sky colours, fog, music, Vibrant Visuals identifiers |
+| `lothlorien_rp/fogs/lothlorien_fog_setting.json` | `lothlorien:fog_lothlorien` |
+
+- **Only `minecraft:replace_biomes` makes a custom biome generate** (stable since 1.21.110; `format_version` at least `1.21.110`). It re-labels part of the
+  areas the vanilla generator chose as a target biome and **cannot change terrain shape**: Lothlórien has forest terrain because it replaces forests.
+- `targets` are **namespaced** ids; bare `forest` (older docs) fails in 1.26 with "No biome found with name" and the whole biome is dropped. Custom
+  biomes cannot be targets, so a nested "heart" biome is not possible.
+- **Shipped replacement:** targets `minecraft:forest`, `birch_forest`, `birch_forest_mutated`, `flower_forest`, `amount` 0.4, `noise_frequency_scale` 1.25.
+  Findings from the tuning series (several seeds, owner in game): `amount` is the dial for both coverage and connectivity (near 0.5 the replaced side of the
+  noise is one connected web); frequency only sets the scale, and at 1 or below the blobs are larger than any forest, so the target union bounds the
+  region and lower frequency just spaces regions out. A forest cannot be converted "whole or not at all" from JSON; the outline follows vanilla forest
+  shapes. Append new replacement entries at the end of the array, inserting earlier shifts the noise of existing ones. `roofed_forest` was dropped
+  (dark forest would likely lose woodland mansions); `plains` would widen regions most but is very common (undecided). River-transparent depth is liked.
+  Final region size is judged by testers (`TODO.md` section 2).
+- Stable server components: `climate`, `creature_spawn_probability`, `humidity`, `map_tints`, `mountain_parameters`, `partially_frozen`, `replace_biomes`,
+  `surface_builder`, `surface_material_adjustments`, `tags`. Fog, sky and grass colour are **client** components (`minecraft:client_biome`). Client
+  grass/foliage take a flat `"color": "#rrggbb"` or a `color_map`.
+- General biome knowledge: `.claude/skills/bedrock-worldgen/references/06-biomes.md`. `/locate biome` returns the nearest point of the biome, often its edge
+  (possibly shallow water, because replacement keeps the terrain); walk to the centre. The biome is 3D, so caves under a replaced forest are Lothlórien too.
+
+### Tags decide almost everything (no `monster` tag)
+
+Spawn rules and feature rules find biomes only by tag. The biome has `overworld` (vanilla ores, caves, structures, spawns), `bee_habitat` and `lothlorien`
+(our rules). `animal` gives vanilla passive spawns where wanted. There is **no `monster` tag**, so vanilla hostile surface spawn rules do not match. Not
+covered: phantoms, patrols and raids, spawners, mobs walking in, other add-ons' mobs. The `forest` tag was removed once Mallorns existed (vanilla forest
+trees stopped). Vanilla plants still matching by tag: tall grass and grass, the dandelion/poppy scatter (1 chunk in 32), pumpkins (1 in 300), reeds near
+water, extra mushrooms. They are rare and deliberately not fought: excluding them needs a tag such as `plains` that also switches on villages or mooshroom
+spawns. Ferns, forest flowers and forest grass belong to other tags and do not apply.
+
+### Depth estimate (script) and the heart
+
+`scripts/depth.js` (pure; sampler in `main.js`, `depthAt`) probes rings at 8/16/24/32/40 blocks at the surface under each point (at most 10 blocks apart,
+83 probes); the first ring with a foreign biome bounds the border distance. Levels: edge (border <= 16), inner (<= 40), heart (farther);
+`minecraft:river` counts as inside. It runs every 3 s per player (`DEPTH_INTERVAL_TICKS`, which reads as lag when crossing a border; accepted), never per
+tick. `getBiome` throws in unloaded chunks: an unreadable probe stops the search and the level is the lowest one still certain (shown with `?` in the debug
+bar); probes sample at the surface, since biomes are 3D. Owner-verified after that fix (2026-09-29). "Heart" means far from any border, not a designed
+centre. The cost per estimate (`/scriptevent lothlorien:depth`, 200-run average) was never recorded; it matters for natural warden and white deer spawns.
+
+Worldgen cannot see depth. The "deeper is richer" feel is approximated by world-position noise zones in the flora rules (below), independent of the biome
+border; a scripted post-generation pass keyed to `estimateDepth` is the fallback that was never needed.
+
 ## What generates
 
 | Content | How | Where it is described |
 |---|---|---|
-| Lothlorien biome | custom biome, tags, features | `TECHNICAL_NOTES.md` (Biome), `FLORA_DENSITY.md` |
-| Ordinary Mallorn trees, flora | feature rules | `TECHNICAL_NOTES.md`, `FLORA_DENSITY.md` |
+| Lothlorien biome | custom biome, tags, features | "The biome" below, `FLORA_DENSITY.md` |
+| Ordinary Mallorn trees, flora | feature rules | "Ordinary Mallorn trees" below, `FLORA_DENSITY.md` |
 | Village, platform Mallorn, plain Great Mallorn, root shrine | **one jigsaw structure set, the tree grid** (below) | this page, `ROOT_SHRINE.md`, `design/lothlorien_jigsaw_settlement.md` |
 | Flower garden, leaf memorial | native constrained `structure_template_feature`s on one shared site lattice | `FLOWER_GARDEN.md`, `MEMORIAL.md` |
+
+## Ordinary Mallorn trees
+
+Natural trees are native, no script: `feature_rules/mallorn_trees_feature_rules.json` (surface pass, tag `lothlorien`, 5 tries per chunk) places
+`select_mallorn_tree_with_litter_feature`: weighted 25 simple, 60 fancy (fancy_trunk with branches), 15 mega (2x2 trunk), vanilla `minecraft:tree_feature` shapes with our
+blocks, then a leaf-carpet scatter (90 tries, gaussian +-5), a blossom scatter and nectar blooms (see Nectar). Worldgen leaves have `persistent` false and decay.
+Test: `/place feature lothlorien:select_mallorn_tree_feature ~ ~ ~`. Feature rules cannot call script, so generator archetypes and platform branches exist only for
+saplings; large builds are structures (see "Giant Mallorn builds").
+
+Ground plants and their placement rules: `FLORA_DENSITY.md` ("Placement rules and owner decisions").
 
 ## The tree grid (release design)
 
@@ -63,6 +119,29 @@ near (`biome_filters` is the only start filter; there is no exclusion list like 
 - Direct single-template jigsaw children generate complete (8 of 8 natural sites checked by the owner).
 
 So where independent starts overlap, a build can be cut. This is a known issue (`TODO.md` section 4).
+
+## Giant Mallorn builds
+
+Owner-accepted in game 2026-09-30.
+
+Shipped: two lookout trees (`mallorn_round_05`, `round_07`: flet, rope, loot chest) and four plain giants (`roundplain` 2, 3, 6, 8). Placement: the tree grid above.
+
+- **Shape.** Round trunk (owner design 2026-10-01: the 4x4 without its corner cells, 12 cells), 30-38 high (tip narrows to 2x2), sunk 5 blocks. Its foot (`roundFoot`) is a skirt
+  2 high plus 5-7 buttress ridges of `mallorn_wood` above ground and logs down to -5. A plank platform (radius 5.5-7, fence rim) sits on 6-8 level branches 9-12 below the top;
+  an Elven rope (since 2026-10-02; existing worlds keep ladders) runs up the north face through a floor hole; a chest against the east face uses `loot_tables/chests/mallorn_flet.json`;
+  no leaves from the floor to 3 above it within radius+4. Variants: `round` (lookout) and `roundplain` (`flet: false`); options `woven` (support branches through the platform)
+  and `lush` (whorls of leafy branches); plain giants have 3-6 tilted ring branches (`bentBranch`) with leaves along their tops. Leaves further than 8 steps from a log are
+  dropped at generation. Older square-trunk variants are in git before `d09188f`.
+- **Pipeline.** Shape in `tools/flet_mallorn.mjs` (pure); `node tools/build_structures.mjs [variant|all] [count] [firstSeed]` writes `structures/lothlorien/mallorn_<variant>_NN.mcstructure`
+  (40x54x40, trunk NW cell at x/z 18, ground at y 5, about 700 KB each), `scripts/giant_trees.js` and the legacy pool; the plain command rebuilds exactly `CHOSEN` (curation candidates never enter
+  worldgen). Tree NN of every variant uses the same seed. Format traps: `.claude/skills/bedrock-worldgen/references/09-structures.md`. Tests (`tests/giant_trees.mjs`) check over 30 seeds that the
+  rope is unbroken, the exit floor exists, the chest has room, leaves are within reach and everything fits the box.
+- **Engine facts [V].** Jigsaw structures are stable since 1.21.120. `max_depth` 0 builds nothing (the one cause found after six one-change tests; now 1); `separation` must be less than half of
+  `spacing`. `max_distance_from_center` 116. A 40-wide `structure_template_feature` is cut at chunk borders; script-grown markers only appear within simulation distance; jigsaw spans chunks.
+  Every piece has a trunk anchor: the bottom trunk cell is a `minecraft:jigsaw` (name `lothlorien:giant_trunk`, empty target and pool, final state `mallorn_log`) named by `start_jigsaw_name`, so
+  the trunk sits on the start point however the piece rotates. Spacing and density: the tree grid above.
+- **Loot** (`tools/watch_camp_rules.mjs`, then `build_structures.mjs`): pool 1 rolls once (miruvor or lembas); pool 2 rolls 3-5 times from a weighted list (arrows weight 6, rope, antler weight 2, ...);
+  pool 3 is the owner's 50 % silver-pattern shield. Chest `LootTable` fills when first opened (owner-verified 2026-09-29), so unopened chests pick up changes. Watch camps: `ELF_SERVICES.md`.
 
 ## Terrain and water decisions
 

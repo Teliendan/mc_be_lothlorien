@@ -225,7 +225,7 @@ Details and recipes: `.claude/skills/bedrock-items/references/bows-and-arrows.md
 
 ## 9. Great Mallorn upgrade (complete, owner accepted 2026-10-13)
 
-The flet giants (`lothlorien:giant_mallorn`, lookout variant `round`, loot `loot_tables/chests/mallorn_flet.json`; `TECHNICAL_NOTES.md` Phase 5):
+The flet giants (`lothlorien:giant_mallorn`, lookout variant `round`, loot `loot_tables/chests/mallorn_flet.json`; `WORLDGEN.md` "Giant Mallorn builds"):
 - **Wardens:** two persistent bow guards per lookout, using the village component group and existing structure-attribute replacement.
 - **Lights:** four silver elven lanterns on the cardinal rim posts. Offline conservative block-light check: every walkable deck cell has light >= 1; actual night rendering/spawning still needs the game test.
 - **Camp furnishing:** two native straw beds across the west-side nook, heads east against the living trunk and feet west toward a small green rug. The north rope entry stays clear; sleepers shelter their heads rather than pointing them toward the approach (owner correction 2026-10-13). Two native cushions (green and light gray) overlook the south side. The 26.50 Wilderness Bound update added functional straw beds (sleep once without resetting spawn) and sit-on cushions.

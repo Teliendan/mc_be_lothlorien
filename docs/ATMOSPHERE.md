@@ -9,3 +9,8 @@
 The owner's acceptance covers the overall look; the response did not specify graphics mode or time of day. If revisiting the effect, compare noon and night with Vibrant Visuals both on and off. These are client visuals, so an already generated biome should show them; no new world is needed for this change.
 
 Schema basis: installed vanilla 1.21.90 `lighting/global.json`; Microsoft Learn, [Biome Customization](https://learn.microsoft.com/en-us/minecraft/creator/documents/vibrantvisuals/biomecustomization) and [Light Sources](https://learn.microsoft.com/en-us/minecraft/creator/documents/vibrantvisuals/lightingcustomization). Those describe per-biome lighting identifiers and smooth biome transitions; the exact appearance is judged by the owner in game.
+
+## Falling leaves
+
+`rp/particles/falling_leaf.json` spawned by `fallLeaves` in `main.js` every 12 ticks per player inside the biome in a random column within 14 blocks (`leaf_fall.js` walks down to the
+first leaf with open air below); sparse by design; the texture is a 40x8 sheet picked by Molang (`tools/make_falling_leaf.py`). Rendering status unverified.

@@ -37,7 +37,7 @@ First round:
   posts are whole logs from the deck up, never a log on a fence; banners: the original watch banner is the main one, its light-blue- and white-bordered variants are complementary;
   fewer banners, rim flags as standing banners on fence posts; no stair benches (they link to rails and can be unreachable): cushions;
   stair rails run the whole way up; nothing hangs over a walk lane below +3 (the bridge gate became lamp posts).
-- Spawning (2026-10-16): natural villages stand inside the Lothlorien biome, which has no hostile spawn rules (TECHNICAL_NOTES "No monster"),
+- Spawning (2026-10-16): natural villages stand inside the Lothlorien biome, which has no hostile spawn rules (`WORLDGEN.md` "Tags decide almost everything"),
   so the ground and root flares need no light. A zombie met in a `/place`d village outside the biome led to one rule anyway: branch tops
   near the decks and in the crowns must not be dark (hidden lights), so a stray mob cannot drop onto a deck.
 

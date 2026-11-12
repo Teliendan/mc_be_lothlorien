@@ -2,6 +2,14 @@
 
 Date: 2026-10-04. Sources: current Lothlorien pack JSON and installed vanilla reference (1.26.52, including definitions introduced in 1.26.50). Static configuration analysis; not measured in generated worlds. No pack changes.
 
+## Placement rules and owner decisions
+
+From the technical notes (2026-11-12). `single_block_feature` uses `enforce_placement_rules: true`, so the plants' `placement_filter` decides where they stand. Zone rules use `query.noise(origin/120)`;
+the lesson of the tuning: **noise thresholds are very steep** (0.3 gave "many", 0.5 gave none), so every flower has a sparse baseline everywhere plus noise zones; do not go above about 0.4 on a
+zone rule without a baseline. Elanor and Niphredil zones are independent noise fields. Current values live in `feature_rules/*_patch_*` and `*_sparse_*` (e.g. Elanor zone threshold 0.4, 2 iterations;
+golden fern: rule 1 iteration, 1 chunk in 2, patch feature 10 tries within +-4 blocks (current JSON, 2026-11-12), cut back after the owner found it too much on 2026-10-02; the table below counts 5 attempts per chunk); densities and their owner decisions: `FLORA_DENSITY.md`. Extra vanilla fern and
+`short_grass` rules add ground cover. The decorative two-block wild flowers (rose bush, peony, lilac) never worked natively and were removed (owner, 2026-10-02); "Elven roses" as our own plant is an idea only.
+
 ## Meaning of density
 
 Numbers below are expected placement attempts per 16x16 chunk, before rejection, not successfully placed plants or percentage ground coverage. Multiply feature-rule iterations by scatter probability and nested scatter iterations. Noise zones are conditional; their area fractions are unknown. Features can spill across chunk borders. Vertical offsets, terrain, air-only replacement, survival rules and competing plants affect success. Tree aggregates also stop at their first failed child.
