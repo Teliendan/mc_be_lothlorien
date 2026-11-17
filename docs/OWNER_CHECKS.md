@@ -20,6 +20,7 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
 | Unicorn lure | accepted 2026-10-26, **back to recheck since LM-01 (2026-11-12)**: vanilla `tempt` on Elanor in a `lothlorien:lure` group, now added at spawn (priority 4 below the flight), exemption `has_tag lothlorien_friend` + Elanor; the ten-second offer wait is the native group `lothlorien:offer_wait` (`unicorn.js` triggers `offer_taken`; the timer's `offer_ready` event restores the lure; LM-05); a Friend is never fled from; wariness counts Creative players. By owner request the Friend state keeps 3 blocks from a Friend without Elanor (accepted 2026-10-27). Details: `mobs/unicorn.md` |
 | Harmony action-bar icons, elven bow, unicorn art | checked OK (2026-10-24) |
 | Mob hurt and death sounds | kept as they are (2026-10-28) |
+| First-round batch of 2026-11-11 (checks A-D, F, K, O; verified in game (owner, 1.26.63, 2026-11-17)) | Support and plants (LW-02, incl. farmed corn and `/setblock` onto stone, see `PISTON_SUPPORT.md`); phial light, rope, dew, bone meal; wardens, healers, deer, swan and white deer spawn; fence links repair almost instantly (C12); village music and Harmony status; village complete and lit, moss-bed skirts intact (check 16); Court reading circle, Loremaster pushed back to the circle, four seats read well; warden arrows and chicken jockey (LM-03), unicorn offers (LM-05), cloak and belt, squirrel errand, swans breeding; inline MERS unchanged in Vibrant Visuals (check 40); LC-10 list covers accepted (`TESTING.md`); 26.60 content log clean |
 
 ## Engine limits (deferred, owner-accepted)
 
@@ -39,25 +40,25 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
 
 ## Open retests (also listed in `TODO.md`)
 
-Source fixes made, owner retest pending:
+Source fixes made, owner retest pending (fixes of 2026-11-17 in `6d2247e`, `87d619d`, `05d1180`: not re-tested; item list: `VILLAGES.md`, `TESTING.md`):
 
 - Miruvor: empty skin, refill, last sip.
 - Star Canopy discovery in Survival (the unlock is the Bottle of Morning Dew, see above).
 - Friend unicorn lure, native AI (explicit move/look goal ownership), now with the LM-01 per-player flight.
 - LM-01 native per-player wildlife flight (2026-11-12; Survival; set the band with `/scriptevent lothlorien:harmony <n>`: Friend 10, Guest 5, Uneasy -5, Shunned -20, Hated -40):
-  1. Old world: no group or property errors in the content log; existing animals saved before LM-01 stay fearless until alarmed (no migration), new ones flee.
-  2. Five species x five bands: flees at about the table distance walking, at the sneak distance sneaking (`tools/wildlife_wariness.py --matrix`). Failed 2026-11-17 (every band fled at about 3: the goal had no own `max_dist`); retest after the goal-radius fix, Friend first (a Friend must still get to about 3 blocks, which proves each entry keeps its own distance).
-  3. Lure as Guest or Friend: the animal comes and stays (swan: wheat and corn).
-  4. Lure as Uneasy, Shunned or Hated: expect come-and-flee (accepted); it must never stay close.
-  5. Unicorn: Guest with Elanor is fled from at 13, never lured; Friend is lured, three offers 10 s apart bond; a fourth click inside the pause says "wait"; the bonded one flees nobody.
-  6. Tame deer and white deer: not fled by Guest or Friend; fled by Uneasy at 13/6; hurt: alarm, untame, after 20 s band flight again.
-  7. Alarm: hitting one animal makes all five species within 20 blocks flee every player at 36/18 for 20 s.
-  8. Guiding (white deer guidance failed 2026-11-17 with "nowhere to lead you": beta `Block.isSolid` in the ground probe, fixed; retest a Friend's acorn deep in the forest first): a guiding white deer and an errand squirrel do not flee; the white deer is tame after arrival; leaving and re-entering mid-guide releases it.
-  9. Two players, Friend and Hated: the Friend can stand 4 blocks away while the Hated one is fled from at 30; switching bands reacts within about 1 s. This also confirms the positive `has_tag` test in avoid entries.
+  1. Old world: no group or property errors in the content log; existing animals saved before LM-01 stay fearless until alarmed (no migration), new ones flee. verified in game (owner, 1.26.63, 2026-11-17).
+  2. Five species x five bands: flees at about the table distance walking, at the sneak distance sneaking (`tools/wildlife_wariness.py --matrix`). Failed in game (owner, 1.26.63, 2026-11-17: every band fled at about 3 blocks; cause: the goal-level `avoid_mob_type` `max_dist` default 3, MCPE-182041; fixed in `87d619d`, not re-tested); retest after the goal-radius fix, Friend first (a Friend must still get to about 3 blocks, which proves each entry keeps its own distance).
+  3. Lure as Guest or Friend: the animal comes and stays (swan: wheat and corn). verified in game (owner, 1.26.63, 2026-11-17).
+  4. Lure as Uneasy, Shunned or Hated: expect come-and-flee (accepted); it must never stay close. verified in game (owner, 1.26.63, 2026-11-17).
+  5. Unicorn: Guest with Elanor is fled from at 13, never lured; Friend is lured, three offers 10 s apart bond; a fourth click inside the pause says "wait"; the bonded one flees nobody. Friend offers and the "wait" click: verified in game (owner, 1.26.63, 2026-11-17) (LM-05); the Guest and bonded parts untested.
+  6. Tame deer and white deer: not fled by Guest or Friend; fled by Uneasy at 13/6; hurt: alarm, untame, after 20 s band flight again. verified in game (owner, 1.26.63, 2026-11-17) (tame not fled by Guest/Friend, hurt: alarm, untame, band flight).
+  7. Alarm: hitting one animal makes all five species within 20 blocks flee every player at 36/18 for 20 s. verified in game (owner, 1.26.63, 2026-11-17).
+  8. Guiding (white deer guidance failed 2026-11-17 with "nowhere to lead you": beta `Block.isSolid` in the ground probe, fixed in `05d1180`, not re-tested; the squirrel errand worked; retest a Friend's acorn deep in the forest first): a guiding white deer and an errand squirrel do not flee; the white deer is tame after arrival; leaving and re-entering mid-guide releases it.
+  9. (Not testable for the owner, still open.) Two players, Friend and Hated: the Friend can stand 4 blocks away while the Hated one is fled from at 30; switching bands reacts within about 1 s. This also confirms the positive `has_tag` test in avoid entries.
   10. Breeding with a Guest next to two deer and two swans.
   11. A wolf near a lured deer: the deer flees the wolf (expected change).
-  12. Creative, any band: not fled; a Friend lures the unicorn; a Hated player with corn lures a deer (engine behaviour, accepted).
-  13. Spectator flying near each species: record whether it flees.
+  12. Creative, any band: not fled; a Friend lures the unicorn; a Hated player with corn lures a deer (engine behaviour, accepted). Creative never fled: verified in game (owner, 1.26.63, 2026-11-17).
+  13. Spectator flying near each species: record whether it flees. Checked, verified in game (owner, 1.26.63, 2026-11-17); no failure.
 - Wind charges: removed-projectile event handling, Breeze radius, paired-door deduplication.
 - Rope while a foreign Slow Falling potion is active (the potion is preserved while climb, hold and slide work).
 - Firefly release now plays `bottle.dragonbreath` at pitch 1.3.

@@ -81,4 +81,5 @@ cleanup is `dc1182e`.
 
 The covers and antlers place from one weighted `places_block` list each (LC-10). Check in a creative world on flat grass (existing world: new chunks are not needed for `/place`):
 `/place feature lothlorien:mallorn_leaf_carpet_scatter_feature ~ ~ ~`, the same with `lothlorien:mallorn_blossom_scatter_feature`, and `/place feature lothlorien:deer_antler_feature ~ ~ ~` about ten times; the Content Log must show no error naming the three features.
+Result, verified in game (owner, 1.26.63, 2026-11-17): LC-10 accepted (no errors, patches of 1-4 segments, mostly single petals, antlers with mixed facings, forest floor unchanged). Carpet and blossom showed one rotation everywhere (check 58); fixed in `6d2247e` with `may_attach_to.auto_rotate` false, not re-tested. The `randomize_rotation` probe (check 61) was deleted on the owner's decision.
 

@@ -13,13 +13,14 @@ generate: `WORLDGEN.md`. Changes are one-shot: existing structures do not regene
   clear, or are omitted if none fits.
 - Wood posts continue down to the deck. Generator and runtime share one explicit fence-target policy (including Mallorn slabs
   and moss). Runtime repairs follow furnishing, bridges and local player edits, never poll idle, and keep unloaded directions
-  as they were. Repair jobs are finite and serialized.
+  as they were. Repair jobs are finite and serialized. Fence links repair basically instantly after a break or TNT (verified in game (owner, 1.26.63, 2026-11-17)).
 - Unused flat connector mouths get rails when no onward surface exists, including at the lower half-step; existing bridges and
   stairs stay open.
 - Moss beds get open trapdoor borders on every available side (path-facing and off-deck sides supported by moss included);
   occupied furniture and cushion cells stay free. Only correctly facing open Mallorn trapdoors mounted against moss count as thin
   skirts in walking, lighting and bridge models: opposite 2.92/16-thick panels leave 0.635 blocks for the 0.6-wide player. Other
-  screens and closed trapdoors are obstacles.
+  screens and closed trapdoors are obstacles. Check 16, verified in game (owner, 1.26.63, 2026-11-17): the skirts stand on `light_block_0` beds, intact and walkable.
+- Owner fixes of 2026-11-17 (`6d2247e`, not re-tested): the healer bed said "obstructed" (inferred cause: the `light_block_0` headroom shield round the bed; its cells are now cleared to air at +0..+2); the Court gets two cushions and a decorated pot at its rest corner (F17); the village debug switch follows the debug tag after a reload (E14).
 - Crown lanterns hang on waxed oxidized copper chains; froglights sit inside supported foliage with no exposed white cubes on the
   Hall roof; small fallback crowns and low leaf caps prevent bare stubs where a larger crown box does not fit.
 - Existing blocks suffice: no new lamp cord, basin, leaf roof or screen block. Stair basins occupy suitable decks and cramped

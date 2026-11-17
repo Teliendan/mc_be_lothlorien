@@ -137,7 +137,7 @@ following `bedrock-art/references/style.md`. Accepted in game (1.26.52, 2026-09-
   offsets in `antler_rules.js`): `beforeOnPlayerPlace` refuses unreadable or air/liquid support, and after `playerBreakBlock` and `blockExplode` neighbours are checked and an unsupported antler is destroyed. No polling.
   Not covered: pistons, water flow, other mods.
 - **Natural drop:** `deer_antler_drop_feature_rules` (after surface pass, tag `lothlorien`, `scatter_chance` 1/16 per chunk, raised from 1/64 on 2026-10-02 because the owner found none), one placement attempt
-  within about 3 blocks, one list feature with four facings (equal weights), all `up` (list form since 2026-11-12, in-game check pending). **Owner decision 2026-10-24: solo antlers, no batches** (three attempts looked like a clump). The feature has its own support rule
+  within about 3 blocks, one list feature with four facings (equal weights), all `up` (list form since 2026-11-12, verified in game (owner, 1.26.63, 2026-11-17): mixed facings). **Owner decision 2026-10-24: solo antlers, no batches** (three attempts looked like a clump). The feature has its own support rule
   (`may_attach_to.bottom`: grass, dirt, coarse dirt, podzol, dirt with roots, moss, mud, stone; `may_replace: [air]`), so an antler never floats on litter; this excludes about a third of the floor. A save scan found
   the rate about 1/50 chunks at 1/64. Status unverified after the 1/16 change and the solo change. Chest loot: the antler in `mallorn_flet.json` pool 2 (weight 2).
 

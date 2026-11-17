@@ -80,7 +80,7 @@ seen through cutouts): skill `bedrock-block-families`, `references/families.md` 
   row 14 of the bottom texture: keep those opaque. Trapdoor renders `alpha_test_single_sided`; keep row 1 and column 1 opaque.
 - PBR: the pack declares `pbr`; per-tile `.texture_set.json` files carry the MERS layer; flat ones are an inline colour (`[0, 0, 170, 105]`,
   `[0, 0, 255, 0]`, form from vanilla `flame_atlas`), only six tiles ship a real `_mers.tga` (keep the set files when
-  replacing a texture). Higher resolution is possible if every texture of a step uses the same size.
+  replacing a texture). Inline flat MERS keeps the sheen of leaves, sapling, flowers, golden fern, corn, antler, jar glass and lantern wood in Vibrant Visuals (verified in game (owner, 1.26.63, 2026-11-17)). Higher resolution is possible if every texture of a step uses the same size.
 
 ## Seeds and saplings
 
