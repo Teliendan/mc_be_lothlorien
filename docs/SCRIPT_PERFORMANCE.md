@@ -58,7 +58,9 @@ an immediate chat line per gap (at most 5 a minute) and **a chat summary every m
 script ms, dew flips, spawned / removed, entities within 64 blocks, time of day). A freeze the tester sees in a minute
 whose summary shows no long gap was client-side. Build as before with `0.8.4`; Czech tester steps (scratch). Control
 add-on for a new vanilla world (a separate scratch pack, not in git; Czech tester steps): the same monitor and nothing else, to show the tablet's cost of any script add-on. Offline load
-tests pass; neither is game-tested. The release version must now exceed 0.8.4.
+tests pass; neither is game-tested.
+
+0.8.5 DIAG (2026-11-17, built from commit `1c9ca1a` with the same scratch scripts, `node temp/lothlorien-diag/make_diag.mjs 0.8.5 1c9ca1a`, skins added by `git archive`, then `package.py 0.8.5`): the same monitor over the whole 2026-11-11/12 audit work, for the owner's combined game check (also the LM-11 spawn/removal counts). Mock load test passes. **The release version must now exceed 0.8.5.**
 
 0.8.4 DIAG results (tester's tablet, six photos sent 2026-11-10, no notes from her; analysed 2026-11-11). Both
 builds load in game. She ran the Control pack **in the same world as Lothlorien**, so there is still no vanilla
