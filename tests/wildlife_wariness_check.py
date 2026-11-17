@@ -2,7 +2,10 @@
 
 A small evaluator for the flat entity filters the entries use (is_family, is_sneaking, has_equipment, has_tag, == and !=)
 runs every band x sneaking x held item case through the generated entries: exactly one player entry matches, except a Friend
-or Guest holding the animal's lure (the unicorn: Friend only), who matches none. Run from anywhere: python -B tests/wildlife_wariness_check.py
+or Guest holding the animal's lure (the unicorn: Friend only), who matches none. Distances are read the way the engine bounds
+them: an entry starts a flight within min(goal max_dist, entry max_dist) and ends it beyond min(goal max_flee, entry max_flee),
+with the documented defaults (goal max_dist 3, entry max_dist 16, max_flee 10). A goal without its own max_dist flees every band
+at about 3 blocks (owner J27, 1.26.63, 2026-11-17). Run from anywhere: python -B tests/wildlife_wariness_check.py
 """
 import json
 import re
@@ -47,6 +50,19 @@ def matches(filters, player):
     return result if op == "==" else not result
 
 
+# Documented engine defaults (MS Learn avoid_mob_type): the goal's own search radius, an entry's radius, the flight's end.
+GOAL_MAX_DIST, ENTRY_MAX_DIST, MAX_FLEE = 3, 16, 10
+
+
+def start_dist(goal, entry):
+    """Distance at which the entry starts a flight: the goal-level radius bounds every entry."""
+    return min(goal.get("max_dist", GOAL_MAX_DIST), entry.get("max_dist", ENTRY_MAX_DIST))
+
+
+def stop_dist(goal, entry):
+    return min(goal.get("max_flee", MAX_FLEE), entry.get("max_flee", MAX_FLEE))
+
+
 def flat(filters):
     """Every nested combiner is a single all_of of leaf tests (flat tests only)."""
     leaves = filters["all_of"] if "all_of" in filters else [filters]
@@ -88,19 +104,24 @@ for species, spec in W.SPECIES.items():
                         check(len(hit) == 1, f"{label}: matched {len(hit)} entries, expected exactly one")
                         if len(hit) == 1:
                             walking, sneak, walk, sprint = W.flight(species, band)
-                            check((hit[0]["max_dist"], hit[0]["walk_speed_multiplier"], hit[0]["sprint_speed_multiplier"]) ==
-                                  (sneak if sneaking else walking, walk, sprint), f"{label}: wrong distance or speed")
+                            check((start_dist(goal, hit[0]), hit[0]["walk_speed_multiplier"], hit[0]["sprint_speed_multiplier"]) ==
+                                  (sneak if sneaking else walking, walk, sprint), f"{label}: fled at {start_dist(goal, hit[0])} blocks, wrong distance or speed")
+                            check(stop_dist(goal, hit[0]) > start_dist(goal, hit[0]), f"{label}: the flight would end where it starts")
     # alarmed: every player, no exemption, no tag
     alarmed = PLAYER_ENTRIES(W.alarmed_avoid()["entity_types"])
     for sneaking in (False, True):
         for hand in [None, *spec["lures"]]:
             player = {"families": {"player"}, "sneaking": sneaking, "hand": hand, "tags": {W.BAND_TAGS["friend"]}}
             hit = [e for e in alarmed if matches(e["filters"], player)]
-            check(len(hit) == 1 and hit[0]["max_dist"] == (18 if sneaking else 36), f"{species} alarmed sneaking={sneaking} hand={hand}")
+            goal = W.alarmed_avoid()
+            check(len(hit) == 1 and start_dist(goal, hit[0]) == (18 if sneaking else 36) and stop_dist(goal, hit[0]) > start_dist(goal, hit[0]),
+                  f"{species} alarmed sneaking={sneaking} hand={hand}")
     # the danger entries are the same everywhere and a player matches neither
     for goal in (W.wild_avoid(species), W.alarmed_avoid()):
         danger = goal["entity_types"][-2:]
         check(danger == W.DANGER, f"{species}: danger entries differ")
+        for entry, dist in zip(danger, (12, 8)):
+            check(start_dist(goal, entry) == dist and stop_dist(goal, entry) > dist, f"{species}: wolf/monster flight bounded to {start_dist(goal, entry)}")
     check(goal["priority"] == 3 and W.tempt(species)["priority"] == 4, f"{species}: avoid must outrank tempt")
     check(W.tempt(species)["within_radius"] == 10 and W.tempt(species)["can_get_scared"] is False, f"{species}: tempt radius / scare")
     check(W.tempt(species)["items"] == spec["lures"], f"{species}: tempt items")

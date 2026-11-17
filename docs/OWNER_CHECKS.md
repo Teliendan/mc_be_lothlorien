@@ -46,7 +46,7 @@ Source fixes made, owner retest pending:
 - Friend unicorn lure, native AI (explicit move/look goal ownership), now with the LM-01 per-player flight.
 - LM-01 native per-player wildlife flight (2026-11-12; Survival; set the band with `/scriptevent lothlorien:harmony <n>`: Friend 10, Guest 5, Uneasy -5, Shunned -20, Hated -40):
   1. Old world: no group or property errors in the content log; existing animals saved before LM-01 stay fearless until alarmed (no migration), new ones flee.
-  2. Five species x five bands: flees at about the table distance walking, at the sneak distance sneaking (`tools/wildlife_wariness.py --matrix`).
+  2. Five species x five bands: flees at about the table distance walking, at the sneak distance sneaking (`tools/wildlife_wariness.py --matrix`). Failed 2026-11-17 (every band fled at about 3: the goal had no own `max_dist`); retest after the goal-radius fix, Friend first (a Friend must still get to about 3 blocks, which proves each entry keeps its own distance).
   3. Lure as Guest or Friend: the animal comes and stays (swan: wheat and corn).
   4. Lure as Uneasy, Shunned or Hated: expect come-and-flee (accepted); it must never stay close.
   5. Unicorn: Guest with Elanor is fled from at 13, never lured; Friend is lured, three offers 10 s apart bond; a fourth click inside the pause says "wait"; the bonded one flees nobody.

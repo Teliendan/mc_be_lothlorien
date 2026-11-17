@@ -33,6 +33,8 @@
       "lothlorien:state_wild": {
         "minecraft:behavior.avoid_mob_type": {
           "priority": 3,
+          "max_dist": 30,
+          "max_flee": 34,
           "entity_types": [
             {
               "filters": {
@@ -62,6 +64,7 @@
                 ]
               },
               "max_dist": 3,
+              "max_flee": 10,
               "walk_speed_multiplier": 1.1,
               "sprint_speed_multiplier": 1.3
             },
@@ -93,6 +96,7 @@
                 ]
               },
               "max_dist": 2,
+              "max_flee": 10,
               "walk_speed_multiplier": 1.1,
               "sprint_speed_multiplier": 1.3
             },
@@ -143,6 +147,7 @@
                 ]
               },
               "max_dist": 10,
+              "max_flee": 14,
               "walk_speed_multiplier": 1.3,
               "sprint_speed_multiplier": 1.6
             },
@@ -193,6 +198,7 @@
                 ]
               },
               "max_dist": 5,
+              "max_flee": 10,
               "walk_speed_multiplier": 1.3,
               "sprint_speed_multiplier": 1.6
             },
@@ -217,6 +223,7 @@
                 ]
               },
               "max_dist": 13,
+              "max_flee": 17,
               "walk_speed_multiplier": 1.4,
               "sprint_speed_multiplier": 1.7
             },
@@ -241,6 +248,7 @@
                 ]
               },
               "max_dist": 6,
+              "max_flee": 10,
               "walk_speed_multiplier": 1.4,
               "sprint_speed_multiplier": 1.7
             },
@@ -265,6 +273,7 @@
                 ]
               },
               "max_dist": 20,
+              "max_flee": 24,
               "walk_speed_multiplier": 1.5,
               "sprint_speed_multiplier": 1.9
             },
@@ -289,6 +298,7 @@
                 ]
               },
               "max_dist": 10,
+              "max_flee": 14,
               "walk_speed_multiplier": 1.5,
               "sprint_speed_multiplier": 1.9
             },
@@ -313,6 +323,7 @@
                 ]
               },
               "max_dist": 30,
+              "max_flee": 34,
               "walk_speed_multiplier": 1.6,
               "sprint_speed_multiplier": 2.1
             },
@@ -337,6 +348,7 @@
                 ]
               },
               "max_dist": 15,
+              "max_flee": 19,
               "walk_speed_multiplier": 1.6,
               "sprint_speed_multiplier": 2.1
             },
@@ -347,6 +359,7 @@
                 "value": "wolf"
               },
               "max_dist": 12,
+              "max_flee": 16,
               "walk_speed_multiplier": 1.4,
               "sprint_speed_multiplier": 1.8
             },
@@ -357,6 +370,7 @@
                 "value": "monster"
               },
               "max_dist": 8,
+              "max_flee": 12,
               "walk_speed_multiplier": 1.4,
               "sprint_speed_multiplier": 1.8
             }
@@ -375,6 +389,8 @@
       "lothlorien:state_alarmed": {
         "minecraft:behavior.avoid_mob_type": {
           "priority": 3,
+          "max_dist": 36,
+          "max_flee": 40,
           "entity_types": [
             {
               "filters": {
@@ -392,6 +408,7 @@
                 ]
               },
               "max_dist": 36,
+              "max_flee": 40,
               "walk_speed_multiplier": 1.6,
               "sprint_speed_multiplier": 2.1
             },
@@ -411,6 +428,7 @@
                 ]
               },
               "max_dist": 18,
+              "max_flee": 22,
               "walk_speed_multiplier": 1.6,
               "sprint_speed_multiplier": 2.1
             },
@@ -421,6 +439,7 @@
                 "value": "wolf"
               },
               "max_dist": 12,
+              "max_flee": 16,
               "walk_speed_multiplier": 1.4,
               "sprint_speed_multiplier": 1.8
             },
@@ -431,6 +450,7 @@
                 "value": "monster"
               },
               "max_dist": 8,
+              "max_flee": 12,
               "walk_speed_multiplier": 1.4,
               "sprint_speed_multiplier": 1.8
             }

@@ -15,7 +15,12 @@ Rules the entries keep (verified in game unless noted, see skill bedrock-mobs re
 - exactly one player entry matches a player per band x sneak x held item, or none when the lure exempts the holder;
 - a positive `has_tag` test inside avoid_mob_type is NOT yet confirmed in game (only `!=` is);
 - the lure exemption (`has_equipment !=` the lure) exists only for Friend and Guest (unicorn: Friend only). A lure holder of a
-  worse band is fled from at the sneak distance and approaches again while sneaking: owner accepted come-and-flee (2026-11-11).
+  worse band is fled from at the sneak distance and approaches again while sneaking: owner accepted come-and-flee (2026-11-11);
+- the goal itself carries `max_dist` and `max_flee` (the largest entry values). The goal-level `max_dist` (documented default 3)
+  bounds the search for an avoid target: without it every band was fled from at about 3 blocks (owner J27, 1.26.63,
+  2026-11-17; MCPE-182041). Each entry keeps its own `max_dist` and a `max_flee` above it (documented default 10, which would
+  end a flight that starts at 13+ at once). That the entry `max_dist` still narrows each band inside the goal's radius is
+  documented, not yet seen in game.
 """
 import argparse
 import json
@@ -41,9 +46,18 @@ FLIGHT = {
 }
 UNICORN_GUEST = (13, 6, 1.4, 1.7)  # a stranger is as timid as an Uneasy player
 ALARMED = (36, 18, 1.6, 2.1)  # every player, no exemption
+ENGINE_MAX_DIST = 3  # avoid_mob_type goal-level max_dist default (MS Learn): the search radius when the goal sets none
+ENGINE_MAX_FLEE = 10  # max_flee default, goal and entry (MS Learn): the flight ends this far from the avoided entity
+FLEE_MARGIN = 4  # an entry flees until this far beyond its own start distance (vanilla panda_worried: max_dist 16, max_flee 20)
+
+
+def flee_to(dist):
+    return max(ENGINE_MAX_FLEE, dist + FLEE_MARGIN)
+
+
 DANGER = [
-    {"filters": {"test": "is_family", "subject": "other", "value": "wolf"}, "max_dist": 12, "walk_speed_multiplier": 1.4, "sprint_speed_multiplier": 1.8},
-    {"filters": {"test": "is_family", "subject": "other", "value": "monster"}, "max_dist": 8, "walk_speed_multiplier": 1.4, "sprint_speed_multiplier": 1.8},
+    {"filters": {"test": "is_family", "subject": "other", "value": "wolf"}, "max_dist": 12, "max_flee": flee_to(12), "walk_speed_multiplier": 1.4, "sprint_speed_multiplier": 1.8},
+    {"filters": {"test": "is_family", "subject": "other", "value": "monster"}, "max_dist": 8, "max_flee": flee_to(8), "walk_speed_multiplier": 1.4, "sprint_speed_multiplier": 1.8},
 ]
 AVOID_PRIORITY = 3  # above tempt: a wolf or an unwelcome player beats the lure
 TEMPT_PRIORITY = 4
@@ -85,7 +99,7 @@ def player_entry(band, sneaking, dist, walk, sprint, lures):
     if band is not None:
         tests += band_tests(band)
     tests += [{"test": "has_equipment", "subject": "other", "domain": "hand", "operator": "!=", "value": item} for item in lures]
-    return {"filters": {"all_of": tests}, "max_dist": dist, "walk_speed_multiplier": walk, "sprint_speed_multiplier": sprint}
+    return {"filters": {"all_of": tests}, "max_dist": dist, "max_flee": flee_to(dist), "walk_speed_multiplier": walk, "sprint_speed_multiplier": sprint}
 
 
 def band_entries(species, bands):
@@ -99,7 +113,10 @@ def band_entries(species, bands):
 
 
 def avoid(entries):
-    return {"priority": AVOID_PRIORITY, "entity_types": entries + json.loads(json.dumps(DANGER))}
+    """The goal: its own max_dist / max_flee are the largest of its entries, so no entry is cut to the engine defaults."""
+    entity_types = entries + json.loads(json.dumps(DANGER))
+    return {"priority": AVOID_PRIORITY, "max_dist": max(e["max_dist"] for e in entity_types),
+            "max_flee": max(e["max_flee"] for e in entity_types), "entity_types": entity_types}
 
 
 def wild_avoid(species):

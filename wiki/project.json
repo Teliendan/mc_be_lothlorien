@@ -1679,7 +1679,7 @@
       "evidence": [
         {
           "path": "lothlorien_bp/entities/squirrel.json",
-          "sha256": "f757ba5ebccd1d66d5268cfe72b44ae3ca181bd795e64af425cf16b343cd6bfb"
+          "sha256": "91d0071c853a90763ac61a8d6742efbc01bfa529d3d6b9c76ed30bd746a29428"
         },
         {
           "path": "lothlorien_bp/scripts/squirrel.js",

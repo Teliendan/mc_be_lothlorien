@@ -12,7 +12,9 @@ selected slot's item type, native JSON before script).
   so each player is judged by their own Harmony and the reaction is immediate; no script polls. Creative players count
   (vanilla lures work in Creative; the engine never flees them, so a Creative player of any band can lure; owner
   accepted 2026-11-11). Whether a Spectator is fled from is not recorded (check 13 in `OWNER_CHECKS.md`).
-  Not yet seen in game: a positive `has_tag` test inside avoid entries. Old-world animals carry no flight group until
+  The goal sets its own `max_dist`/`max_flee` (largest entry): the engine default 3 bounded every band (owner J27,
+  2026-11-17). Not yet seen in game: each entry's own distance inside that radius; the positive `has_tag` test only
+  indirectly (tame deer, J30). Old-world animals carry no flight group until
   alarmed (owner: no migration).
 - Interaction handlers (white deer, squirrel, unicorn): one gate (entity type + held item from `beforeItemStack`),
   then game rules. No `repeatedUse` debounce: the `minecraft:interact` entries carry `"cooldown": 1`. No re-check of
