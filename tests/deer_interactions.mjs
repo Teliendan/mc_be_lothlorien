@@ -1,5 +1,6 @@
 // Production alarm, taming and white-deer callbacks; native navigation remains in-game acceptance.
 import assert from "node:assert/strict";
+import { readdirSync, readFileSync } from "node:fs";
 import * as deerRules from "../lothlorien_bp/scripts/deer_rules.js";
 import * as rules from "../lothlorien_bp/scripts/white_deer_rules.js";
 import * as giftRules from "../lothlorien_bp/scripts/great_mallorn_rules.js";
@@ -54,9 +55,19 @@ await test("grass blocks are ground, passable plants are skipped, both body cell
   assert.equal(h.mod.groundFeet(h.dimension, 0, 0), 65);
   h.dimension.waterlogged = "0,65,0"; assert.equal(h.mod.groundFeet(h.dimension, 0, 0), undefined);
   h.dimension.waterlogged = undefined;
-  h.dimension.blocked.set("0,66,0", "minecraft:stone"); assert.equal(h.mod.groundFeet(h.dimension, 0, 0), undefined);
-  h.dimension.blocked.set("0,66,0", "minecraft:air"); h.dimension.blocked.set("0,65,0", "minecraft:water");
+  h.dimension.top = 66; h.dimension.blocked.set("0,66,0", "lothlorien:mallorn_leaves"); // a crown at head height: looked through, no headroom
   assert.equal(h.mod.groundFeet(h.dimension, 0, 0), undefined);
+  h.dimension.top = 65; h.dimension.blocked.set("0,66,0", "minecraft:air"); h.dimension.blocked.set("0,65,0", "minecraft:water");
+  assert.equal(h.mod.groundFeet(h.dimension, 0, 0), undefined);
+});
+await test("K36: a Friend's acorn in the forest finds a gift spot on plain ground (stable Block API only, no beta isSolid)", async () => {
+  const h = await setup(), said = []; h.player.sendMessage = (text) => said.push(text);
+  h.offer(); h.flush();
+  assert.deepEqual(said, ["deer.accept"], "not deer.no_spot (\"nowhere to lead you\")");
+  assert.equal(h.mod.isGuiding(h.deer.id), true);
+  const scripts = new URL("../lothlorien_bp/scripts/", import.meta.url);
+  for (const name of readdirSync(scripts).filter((n) => n.endsWith(".js")))
+    assert.doesNotMatch(readFileSync(new URL(name, scripts), "utf8"), /\.isSolid\b/, `${name}: Block.isSolid is beta-only (not in @minecraft/server 2.8.0)`);
 });
 await test("a newly obstructed or foreign-biome gift spot is never used and is forgotten", async () => {
   const h = await setup(), s = { spot: { x: 40, y: 65, z: 0 } };

@@ -52,7 +52,7 @@ Source fixes made, owner retest pending:
   5. Unicorn: Guest with Elanor is fled from at 13, never lured; Friend is lured, three offers 10 s apart bond; a fourth click inside the pause says "wait"; the bonded one flees nobody.
   6. Tame deer and white deer: not fled by Guest or Friend; fled by Uneasy at 13/6; hurt: alarm, untame, after 20 s band flight again.
   7. Alarm: hitting one animal makes all five species within 20 blocks flee every player at 36/18 for 20 s.
-  8. Guiding: a guiding white deer and an errand squirrel do not flee; the white deer is tame after arrival; leaving and re-entering mid-guide releases it.
+  8. Guiding (white deer guidance failed 2026-11-17 with "nowhere to lead you": beta `Block.isSolid` in the ground probe, fixed; retest a Friend's acorn deep in the forest first): a guiding white deer and an errand squirrel do not flee; the white deer is tame after arrival; leaving and re-entering mid-guide releases it.
   9. Two players, Friend and Hated: the Friend can stand 4 blocks away while the Hated one is fled from at 30; switching bands reacts within about 1 s. This also confirms the positive `has_tag` test in avoid entries.
   10. Breeding with a Guest next to two deer and two swans.
   11. A wolf near a lured deer: the deer flees the wolf (expected change).

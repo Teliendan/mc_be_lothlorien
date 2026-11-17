@@ -36,7 +36,16 @@ function engine() {
     getBlock(p) { const y = Math.floor(p.y), typeId = this.blocked.get(`${Math.floor(p.x)},${y},${Math.floor(p.z)}`) || (y === 64 ? "minecraft:grass_block" : y < 64 ? "minecraft:dirt" : "minecraft:air");
       return { typeId, y, isAir: typeId === "minecraft:air", isLiquid: ["minecraft:water", "minecraft:lava"].includes(typeId),
         isWaterlogged: this.waterlogged === `${Math.floor(p.x)},${y},${Math.floor(p.z)}`,
-        isSolid: !["minecraft:air", "minecraft:short_grass", "minecraft:water", "minecraft:lava"].includes(typeId), below: () => this.getBlock({ ...p, y: y - 1 }) }; },
+        below: () => this.getBlock({ ...p, y: y - 1 }) }; }, // the Block members of @minecraft/server 2.8.0 only (no beta isSolid)
+    // vertical block raycast: air and passable plants let the ray through, liquids stop it only with includeLiquidBlocks; the start cell counts
+    getBlockFromRay(from, direction, { maxDistance = 64, includeLiquidBlocks = false } = {}) {
+      const x = Math.floor(from.x), z = Math.floor(from.z), step = direction.y < 0 ? -1 : 1, end = from.y + step * maxDistance;
+      for (let y = Math.floor(from.y); step < 0 ? y + 1 > end : y < end; y += step) {
+        const block = this.getBlock({ x, y, z });
+        if (block.isLiquid ? includeLiquidBlocks : !["minecraft:air", "minecraft:short_grass"].includes(block.typeId)) return { block };
+      }
+      return undefined;
+    },
     getTopmostBlock(p) { return this.getBlock({ ...p, y: this.top ?? 64 }); },
     getEntities({ type, location, maxDistance } = {}) { return [...entities.values()].filter(e => e.isValid && (!type || e.typeId === type) &&
       (!location || Math.hypot(e.location.x - location.x, e.location.y - location.y, e.location.z - location.z) <= maxDistance)); },

@@ -53,28 +53,41 @@ const isLeashed = (deer) => deer.getComponent("minecraft:leashable")?.isLeashed 
 
 // Feet height at column (x, z) found from the top: the first ground under air, plants, leaves and logs (a crown over
 // the forest floor is not ground), with two blocks of headroom; undefined for water, an unloaded chunk or no ground.
+// Collision is read with block raycasts, which pass through air and passable plants (as in stand() below), not with the Block
+// property isSolid: beta-only, absent from @minecraft/server 2.8.0, it reads undefined and no column had ground (K36, 2026-11-17).
 function groundFeet(dimension, x, z) {
   try {
-    let b = dimension.getTopmostBlock({ x, z });
-    while (b && !b.isLiquid && (passable(b) || canopy(b.typeId))) {
-      b = b.below();
+    const top = dimension.getTopmostBlock({ x, z });
+    if (!top) return undefined;
+    let from = top.y + 1.5; // in the air above the column
+    for (let i = 0; i < GROUND_RAYS && from > WORLD_BOTTOM; i++) {
+      const hit = dimension.getBlockFromRay({ x: x + 0.5, y: from, z: z + 0.5 }, DOWN, { includeLiquidBlocks: true, maxDistance: from - WORLD_BOTTOM });
+      if (!hit || hit.block.isLiquid) return undefined;
+      if (canopy(hit.block.typeId)) {
+        from = hit.block.y - 0.01;
+        continue;
+      }
+      const feet = hit.block.y + 1;
+      return clearBody(dimension, x, feet, z) ? feet : undefined;
     }
-    if (!b || b.isLiquid || !b.isSolid) return undefined;
-    const feet = b.y + 1;
-    return clearBody(dimension, x, feet, z) ? feet : undefined;
+    return undefined;
   } catch {
     return undefined; // unloaded chunk
   }
 }
+const GROUND_RAYS = 48; // leaf, branch and trunk blocks a column may look through before it gives up
+const WORLD_BOTTOM = -64; // Lothlorien is an overworld biome
 const canopy = id => id.includes("leaves") || id.endsWith("_log") || id.endsWith("_wood");
-const passable = block => !!block && !block.isLiquid && !block.isWaterlogged && (block.isAir || block.isSolid === false);
+const dry = block => !!block && !block.isLiquid && !block.isWaterlogged;
+// The feet and head cells at feet height y: no water, and nothing to collide with (an upward ray from the floor meets nothing).
 function clearBody(dimension, x, y, z) {
-  return passable(dimension.getBlock({ x, y, z })) && passable(dimension.getBlock({ x, y: y + 1, z }));
+  return dry(dimension.getBlock({ x, y, z })) && dry(dimension.getBlock({ x, y: y + 1, z })) &&
+    !dimension.getBlockFromRay({ x: x + 0.5, y: y + 0.05, z: z + 0.5 }, UP, { includeLiquidBlocks: true, maxDistance: 1.9 });
 }
 function giftSpace(dimension, spot) {
   try {
-    const below = dimension.getBlock({ x: spot.x, y: spot.y - 1, z: spot.z });
-    return !!below?.isSolid && !below.isLiquid && !canopy(below.typeId) &&
+    const hit = dimension.getBlockFromRay({ x: spot.x + 0.5, y: spot.y + 0.5, z: spot.z + 0.5 }, DOWN, { includeLiquidBlocks: true, maxDistance: 1.4 });
+    return !!hit && hit.block.y === spot.y - 1 && !hit.block.isLiquid && !canopy(hit.block.typeId) &&
       clearBody(dimension, spot.x, spot.y, spot.z);
   } catch { return false; }
 }
