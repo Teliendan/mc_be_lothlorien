@@ -121,7 +121,8 @@ Completed source fixes and accepted checks, and where each open retest below is 
 
 ## Bedrock 26.60 impact (2026-10-27, documented only)
 
-Source review against the 26.60 changelog and API 2.11.0 / 2.12.0-beta declarations; nothing tested in game.
+Source review against the 26.60 changelog and API 2.11.0 / 2.12.0-beta declarations. Content log on world load: no
+warnings, verified in game (owner, 1.26.63, 2026-11-17, check 45); the alarmed-deer calm time is not checked yet.
 Entities and blocks are format 1.26.50, scripts `@minecraft/server` 2.8.0. (Kept here, not in `parity/`, which is wiki evidence.)
 
 - Verdict: no break expected, no bump wanted (nothing needs 1.26.60). Risk: `minecraft:timer` takes `{min, max}` from
