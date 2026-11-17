@@ -663,6 +663,7 @@ export function furnishVillage(el, world, states, at, res, before) {
       world.set(wkey(x, y, z), name); states.set(wkey(x, y, z), st2); written.push([x, y, z]); out.objects++;
     };
     for (const w of plan.writes) put(w.x, w.y, w.z, w.name, w.states);
+    for (const c of plan.clears) { if (at(c.x, c.y, c.z) !== "minecraft:light_block_0") out.fail.push(`bed ring clear at ${c.x},${c.y},${c.z} is not light_block_0`); world.set(wkey(c.x, c.y, c.z), "minecraft:air"); }
     for (const b of plan.structures) if (b.kind !== "cushion") put(b.x, b.y, b.z, b.name, b.states); // banners and pots are blocks; a cushion is an actor
     for(const p of plan.panels) {
       const get=(x,y,z)=>{const k=wkey(x,y,z);return {name:world.get(k),states:states.get(k)};};

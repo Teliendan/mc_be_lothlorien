@@ -12,6 +12,7 @@ let failed = 0;
 function test(name, fn) { try { fn(); console.log(`ok   ${name}`); } catch (e) { failed++; console.log(`FAIL ${name}\n     ${e.stack.split("\n").slice(0, 4).join("\n     ")}`); } }
 const key = (x, y, z) => `${x},${y},${z}`;
 const PL = "lothlorien:mallorn_planks", STRIPPED = "lothlorien:mallorn_stripped_log";
+const DECK_NAMES = [PL];
 const DVS = [[0, -1], [0, 1], [-1, 0], [1, 0]];
 const FACING = { 2: [0, -1], 3: [0, 1], 4: [-1, 0], 5: [1, 0] };
 
@@ -286,6 +287,27 @@ test("home_furnish: the other professions on the real village pieces: every set 
     }
   }
   assert.ok(homes >= 12, `${homes} furnished homes`);
+});
+
+test("home_furnish: the bed ring is opened: light_block_0 round every healer bed becomes air at bed level, +1 and +2, nothing else changes (a light_block_0 shield made the bed 'obstructed')", () => {
+  const LB = "minecraft:light_block_0";
+  for (const k of [5, 6, 7]) for (const dv of DVS) {
+    const p = pavilion(k, dv), y = p.f.y;
+    const shielded = (x, yy, z) => { const n = p.m.get(key(x, yy, z))?.name; return n ?? (yy > y && yy <= y + 3 ? LB : "minecraft:air"); }; // the village pieces' dark headroom shield
+    const plan = planFurnish("healer", p.f, shielded);
+    const beds = plan.writes.filter((w) => w.name === "minecraft:straw_bed");
+    assert.ok(beds.length >= 1, `k ${k}: a bed`);
+    const m = new Map(), get = (x, yy, z) => m.get(key(x, yy, z)) ?? shielded(x, yy, z);
+    for (const w of plan.writes) m.set(key(w.x, w.y, w.z), w.name);
+    const written = new Set(m.keys());
+    for (const c of plan.clears) { assert.equal(shielded(c.x, c.y, c.z), LB, "only light_block_0 is cleared"); assert.ok(!written.has(key(c.x, c.y, c.z)), "never a planned write"); m.set(key(c.x, c.y, c.z), "minecraft:air"); }
+    for (const [id, n] of m) if (!written.has(id)) { assert.equal(n, "minecraft:air"); const [x, yy, z] = id.split(",").map(Number); assert.equal(shielded(x, yy, z), LB, "no other block changed"); }
+    for (const b of beds) {
+      const ring = [];
+      for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) if ((dx || dz) && !beds.some((o) => o.x === b.x + dx && o.z === b.z + dz && o.y === b.y)) ring.push([b.x + dx, b.z + dz]);
+      assert.ok(ring.some(([x, z]) => [0, 1, 2].every((h) => get(x, b.y + h, z) === "minecraft:air") && DECK_NAMES.includes(get(x, b.y - 1, z))), `k ${k} dv ${dv}: bed at ${b.x},${b.z} has an open ring cell with a deck below`);
+    }
+  }
 });
 
 if (failed) { console.log(`${failed} home furnishing test(s) failed`); process.exit(1); }

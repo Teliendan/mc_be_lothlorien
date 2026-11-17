@@ -192,8 +192,14 @@ assert.deepEqual(read('recipes/yellow_dye_from_mallorn_blossom.json')['minecraft
     assert.equal(seen.size, 16, 'every amount in every direction once');
     assert.deepEqual([...new Set(f.places_block.map(e => e.block.states['minecraft:cardinal_direction']))].sort(), ['east', 'north', 'south', 'west']);
     assert.deepEqual(f.may_attach_to.bottom.map(b => b.name), SOIL);
+    assert.equal(f.may_attach_to.auto_rotate, false, `${name}: auto_rotate defaults on and overwrites the cardinal_direction of every list entry (all west)`);
     assert.deepEqual(f.may_replace, ['minecraft:air']);
     assert.equal(read(`features/${scatter}.json`)['minecraft:scatter_feature'].places_feature, `lothlorien:${name}_feature`);
+  }
+  for (const n of readdirSync(new URL('../lothlorien_bp/features/', import.meta.url)).filter(n => n.endsWith('_feature.json'))) {
+    const sbf = read(`features/${n}`)['minecraft:single_block_feature'];
+    const entries = [sbf?.places_block].flat().filter(Boolean).map(e => e.block ?? e);
+    if (sbf?.may_attach_to && entries.some(b => b.states && 'minecraft:cardinal_direction' in b.states)) assert.equal(sbf.may_attach_to.auto_rotate, false, `${n}: every feature with may_attach_to that places a cardinal_direction state sets auto_rotate false`);
   }
   assert.deepEqual(readdirSync(new URL('../lothlorien_bp/features/', import.meta.url)).filter(n => /_a\d_/.test(n)), [],
     'no per-state cover feature files');

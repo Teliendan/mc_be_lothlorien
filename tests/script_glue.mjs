@@ -454,4 +454,22 @@ await scenario("renown: the Harmony nudge comes from a Harmony change (no poll),
   setHarmony(3); assert.equal(nudges(), 2, "no baseline: no nudge (a reload taught the lesson before)");
 });
 
+await scenario("debug switch follows the debug tag after a reload: tagged player -> planner debug lines on, untagged -> off; main.js calls it at world load and player spawn", async () => {
+  const player = mock.addEntity("minecraft:player", { x: 0, y: 70, z: 0 });
+  mock.players.push(player);
+  const getPlayers = world.getPlayers; world.getPlayers = (o) => mock.players.filter((p) => (o?.tags ?? []).every((t) => p.hasTag(t))); // the mock ignores the tag filter
+  try {
+    DBG.setVillageDebug(false); // a fresh script load: the module variable starts off
+    DBG.syncVillageDebug(world, "lothlorien_debug"); assert.equal(DBG.villageDebug(), false, "no tagged player: off");
+    player.addTag("lothlorien_debug"); DBG.syncVillageDebug(world, "lothlorien_debug");
+    assert.equal(DBG.villageDebug(), true, "tagged player after a reload: planner debug lines on");
+    const markers = setupV2(); await loadScript("loop_marker.js");
+    mock.fire("entityLoad", { entity: markers[0] }); mock.fire("entityLoad", { entity: markers[0] }); await mock.settle();
+    assert.ok(grep(/\(debug\) plan\+build/).length === 1, "the planner debug line is printed");
+  } finally { world.getPlayers = getPlayers; }
+  const main = readFileSync(new URL(`${SRC}main.js`), "utf8"); // main.js needs server-ui, not in the mock: its two hooks are checked by text
+  assert.ok(/worldLoad\.subscribe\(\(\) => \{\s*syncVillageDebug\(world, DEBUG_TAG\)/.test(main), "world load syncs the switch");
+  assert.ok(/playerSpawn\.subscribe\([^\n]*initialSpawn[^\n]*syncVillageDebug\(world, DEBUG_TAG\)/.test(main), "a tagged player joining syncs the switch");
+});
+
 console.warn = realWarn;

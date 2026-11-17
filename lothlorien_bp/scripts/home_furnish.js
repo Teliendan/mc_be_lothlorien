@@ -280,9 +280,26 @@ export function planFurnish(profession, frame, at, {occupied = new Set()} = {}) 
     const [x,z]=frameCell(frame,u,v);footprint.add(`${x},${z}`);
     if(nameAt(x,frame.y+1,z)==="minecraft:moss_block"&&DECK.has(at(x,frame.y,z)))beds.push({x,y:frame.y+1,z});
   }
+  best.clears = bedClears(best.writes, nameAt);
   const [px,pz]=frameCell(frame,...framePost(frame));
   best.panels=planPlanterPanels(nameAt,beds,{canPlace:p=>footprint.has(`${p.x},${p.z}`)&&!(p.x===px&&p.z===pz)&&!occupied.has(`${p.x},${p.y},${p.z}`)});
   return best;
+}
+// A bed is "obstructed" when no cell round it lets the sleeper wake up: the 10 cells round the two bed blocks (at bed level) need a free cell with two free
+// cells above. The village pieces fill their headroom with minecraft:light_block_0 (the dark shield, not air), so the ring of every bed is opened:
+// every light_block_0 cell of the ring at bed level, +1 and +2 becomes air. Only the block id light_block_0 is touched (never light_block_1..15, never a
+// planned write, never anything else). -> [{ x, y, z }]
+export function bedClears(writes, nameAt) {
+  const beds = writes.filter((w) => w.name === `${M}straw_bed`), bed = new Set(beds.map((w) => `${w.x},${w.y},${w.z}`)), out = new Map();
+  for (const w of beds) for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) {
+    if (!dx && !dz) continue;
+    for (let h = 0; h <= 2; h++) {
+      const x = w.x + dx, y = w.y + h, z = w.z + dz, id = `${x},${y},${z}`;
+      if (bed.has(id) || out.has(id) || nameAt(x, y, z) !== `${M}light_block_0`) continue; // nameAt sees the planned writes first, so furniture cells are never cleared
+      out.set(id, { x, y, z });
+    }
+  }
+  return [...out.values()];
 }
 function planOne(profession, frame, at, flip) {
   const layout = furnishLayout(profession, frame, flip), area = new Set(frameArea(frame).map((c) => c.join(",")));

@@ -226,6 +226,11 @@ export function buildCourt(ctx) {
   for (const u of [2, 4]) { const [x, z] = W(u, 2); put(x, Y(1), z, { name: `${M}light_blue_carpet`, states: {} }); } // a rug beside the lectern
   { const [x, z] = W(0, 3); put(x, Y(1), z, candle(3)); } // a candle group by the shelves
   { const [x, z] = W(0, 2); put(x, Y(1), z, decoratedPot()); }
+  // rest corner on the north deck (F17 option B, owner 2026-11-17): two native cushions with a decorated pot between them against the north rim rail,
+  // tree coordinates (1,-10) (3,-10) and the pot (2,-10); all three cells must be free (outside the warden keep, the connector lane and the loop marker row z -11)
+  for (const x of [1, 2, 3]) if (!can(x, Y(1), -10)) throw new Error(`central: the rest corner cell ${x},${Y(1)},-10 is not free (keep-clear or occupied)`);
+  cushion(1, D, -10, info); cushion(3, D, -10, info);
+  put(2, Y(1), -10, decoratedPot());
   for (const u of [5, 0]) { // a banner on a stripped-log pole beside the shelves, the cloth hangs on its inward face (the pole stands on the deck: no walled-in deck cell behind it)
     const [x, z] = W(u, 1), [bx, bz] = W(u, 2);
     if (!can(x, Y(1), z) || !can(x, Y(2), z) || !can(x, Y(3), z) || !can(bx, Y(3), bz)) continue;

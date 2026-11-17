@@ -41,6 +41,10 @@ export function furnishHome(dimension, post, profession) {
     try { dimension.getBlock({ x: w.x, y: w.y, z: w.z }).setPermutation(BlockPermutation.resolve(w.name, w.states)); n++; }
     catch (e) { console.warn(`[lothlorien] elves: furnishing ${w.name} at ${w.x},${w.y},${w.z}: ${e?.message ?? e}`); }
   }
+  for (const c of plan.clears) { // the bed ring: only a light_block_0 cell becomes air (re-read, the world may have changed since the plan)
+    try { const block = dimension.getBlock(c); if (block?.typeId === "minecraft:light_block_0") block.setPermutation(BlockPermutation.resolve("minecraft:air")); }
+    catch (e) { console.warn(`[lothlorien] elves: bed ring at ${c.x},${c.y},${c.z}: ${e?.message ?? e}`); }
+  }
   for (const b of plan.structures) { // banners, planted flower pots and cushions: pre-built one-cell structures (script can set neither banner patterns, a pot's plant nor a cushion's colour)
     try {
       if (b.kind === "cushion" && dimension.getEntities({ type: "minecraft:cushion", location: { x: b.x + 0.5, y: b.y, z: b.z + 0.5 }, maxDistance: 0.8 }).length) continue; // one cushion per cell, also on a second run

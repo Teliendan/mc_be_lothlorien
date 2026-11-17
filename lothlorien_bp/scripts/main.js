@@ -18,7 +18,7 @@ import "./great_mallorn.js";
 import "./rail_mender.js";
 import "./memorial_seed.js";
 import "./loop_marker.js";
-import { setVillageDebug } from "./village_debug.js";
+import { setVillageDebug, syncVillageDebug } from "./village_debug.js";
 import { inVillageArea } from "./village_area.js";
 import { startVillageMusic } from "./village_music.js";
 import "./warden_replace.js";
@@ -195,7 +195,10 @@ function fallLeaves() {
 }
 
 // Scripting V2 runs before the world exists: touch `world` only from events.
+// The village debug switch is module state, the tag persists in the save: re-derive the switch from the tag at world load and when a tagged player joins.
+world.afterEvents.playerSpawn.subscribe((event) => { if (event.initialSpawn && event.player.hasTag(DEBUG_TAG)) syncVillageDebug(world, DEBUG_TAG); });
 world.afterEvents.worldLoad.subscribe(() => {
+  syncVillageDebug(world, DEBUG_TAG);
   system.afterEvents.scriptEventReceive.subscribe(onScriptEvent, { namespaces: ["lothlorien"] }); // every handled id is lothlorien:*
   system.runInterval(showDebug, DEBUG_INTERVAL_TICKS);
   system.runInterval(updateDepth, DEPTH_INTERVAL_TICKS);

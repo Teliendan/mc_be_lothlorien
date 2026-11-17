@@ -2197,7 +2197,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/elf_village.js",
-          "sha256": "37688c665cbdfb07f023864fef09905bf21b6d097d9cb276977d2bdaf1ae83ec"
+          "sha256": "858bd956fb54ecb03e21d183379f2052de795c1dafcec169559b8c35ecda8685"
         }
       ]
     },
@@ -2717,7 +2717,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/home_furnish.js",
-          "sha256": "76429a0c9c31d02b3cbd77609a0d3c2d4371ebbd8f42cba29313d726a9c23f4c"
+          "sha256": "4099829e1a23a06aeee7d6c51632b1041f68fb5e0a1c9d62547963f1079ac316"
         },
         {
           "path": "lothlorien_bp/scripts/leaf_fall.js",
@@ -2737,7 +2737,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/main.js",
-          "sha256": "3e5c3bf14adb7fe2d75d84caba176b568c623af9189af463b7216b0f5fa3a5d6"
+          "sha256": "59b855967d32a67adfd7e103114fa52b5da08115d52a5a07bb64be155b0ac8f9"
         },
         {
           "path": "lothlorien_bp/scripts/mallorn_tree.js",
@@ -3179,7 +3179,7 @@
         },
         {
           "path": "lothlorien_bp/structures/lothlorien/village/central_mallorn_01.mcstructure",
-          "sha256": "1ab5c5a2cf08953dfaa6c9e7c66717d94fc257397b273859f00a008808e3d54d"
+          "sha256": "a6c0ecc6b3dcfb64408e710605f5f57f636878931aa5d9990fcd67c896ed8971"
         },
         {
           "path": "lothlorien_bp/structures/lothlorien/village/combo_node_a_north_bridge_7.mcstructure",
