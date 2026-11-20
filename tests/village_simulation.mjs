@@ -5,14 +5,14 @@ import { readFileSync } from "node:fs";
 import { planterWalkName } from "../lothlorien_bp/scripts/planter_panels.js";
 import { B } from "../tools/flet_mallorn.mjs";
 import { existsSync, readdirSync } from "node:fs";
-import { loadVillageData, runSeeds, PLANKS, FENCE, populateElves, furnishVillage } from "../tools/village_sim.mjs";
+import { loadVillageData, runSeeds, PLANKS, FENCE, populateElves, furnishVillage, clearShieldSim } from "../tools/village_sim.mjs";
 import * as EL from "../lothlorien_bp/scripts/elf_rules.js";
 import { RING, STAIR_FULL, STAIR_TOP, STAIR_CUT, FLOOR_H as V_FLOOR, LEVEL_H as V_LEVEL, ROOTS as V_ROOTS } from "../tools/village_mallorn.mjs";
 import { rotateCell } from "../tools/village_combo.mjs";
 import * as LOOP from "../lothlorien_bp/scripts/village_loop.js";
 import * as PL from "../lothlorien_bp/scripts/village_planner.js";
 import * as RP from "../lothlorien_bp/scripts/village_repair.js";
-import { planLoops, buildWorld, wkey, markerCells, walkability } from "../tools/village_sim.mjs";
+import { planLoops, buildWorld, wkey, wdecode, markerCells, walkability } from "../tools/village_sim.mjs";
 import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
 const at = (t, x, y, z) => t.blocks.get(`${x},${y},${z}`)?.name;
@@ -201,6 +201,30 @@ test("furnishing in the simulator: 12 villages furnish and skirt homes without a
     objects += fu.objects;
   }
   assert.ok(objects > 100, `${objects} objects furnished`);
+});
+
+test("shield clear in the simulator: after furnishing and the final clear every healer bed has free ring cells; only light_block_0 changed, light_block_1..15 untouched, no shield cell left in 12 villages", () => {
+  let beds = 0, cleared = 0;
+  for (const row of villages().slice(0, 12)) {
+    const world = new Map(row.ck.world), states = new Map(row.ck.states);
+    const lp = planLoops(row.res, world, states, { start: 0 });
+    const before = walkability(row.res, world, states), el = populateElves(row.res, lp.at, lp.rect);
+    assert.deepEqual(furnishVillage(el, world, states, lp.at, row.res, before).fail, [], `seed ${row.seed}`);
+    const built = new Map(world), sc = clearShieldSim(world, row.res.placed.flatMap(markerCells), lp.rect);
+    assert.equal(sc.left, 0, `seed ${row.seed}: no light_block_0 left (rect and Y band cover the shield)`);
+    for (const [k, n] of built) { const a = world.get(k); if (n === "minecraft:light_block_0") { assert.equal(a, "minecraft:air"); cleared++; } else assert.equal(a, n, `seed ${row.seed}: ${n} unchanged`); }
+    assert.equal(world.size, built.size, "no cell added or removed");
+    for (const [k, n] of built) {
+      if (!n.endsWith("straw_bed")) continue;
+      const [x, y, z] = wdecode(k), isBed = (xx, zz) => world.get(wkey(xx, y, zz))?.endsWith("straw_bed");
+      beds++;
+      const ring = [];
+      for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) if ((dx || dz) && !isBed(x + dx, z + dz)) ring.push([x + dx, z + dz]);
+      const air = (xx, yy, zz) => (world.get(wkey(xx, yy, zz)) ?? "minecraft:air") === "minecraft:air";
+      assert.ok(ring.some(([xx, zz]) => [0, 1, 2].every((h) => air(xx, y + h, zz)) && !air(xx, y - 1, zz)), `seed ${row.seed}: bed at ${x},${y},${z} has an open ring cell`);
+    }
+  }
+  assert.ok(beds >= 6 && cleared > 10000, `${beds} bed blocks, ${cleared} shield cells cleared`);
 });
 
 finish();

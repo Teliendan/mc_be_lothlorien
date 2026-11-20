@@ -1324,7 +1324,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/elf_village.js",
-        "sha256": "858bd956fb54ecb03e21d183379f2052de795c1dafcec169559b8c35ecda8685"
+        "sha256": "37688c665cbdfb07f023864fef09905bf21b6d097d9cb276977d2bdaf1ae83ec"
       }
     ]
   },
@@ -1718,7 +1718,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/home_furnish.js",
-        "sha256": "4099829e1a23a06aeee7d6c51632b1041f68fb5e0a1c9d62547963f1079ac316"
+        "sha256": "76429a0c9c31d02b3cbd77609a0d3c2d4371ebbd8f42cba29313d726a9c23f4c"
       },
       {
         "path": "lothlorien_bp/scripts/leaf_fall.js",
@@ -1730,7 +1730,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/loop_marker.js",
-        "sha256": "c03fa286c2f6f794c2a228df755da603f4484cb5f9a01981fd42095f52f74c09"
+        "sha256": "7e855f97ae77a1760fa25fe68c7bfe063a1fa145e63ab4e91d40b4850b05f86f"
       },
       {
         "path": "lothlorien_bp/scripts/loremaster.js",
@@ -2277,7 +2277,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/loop_marker.js",
-        "sha256": "c03fa286c2f6f794c2a228df755da603f4484cb5f9a01981fd42095f52f74c09"
+        "sha256": "7e855f97ae77a1760fa25fe68c7bfe063a1fa145e63ab4e91d40b4850b05f86f"
       },
       {
         "path": "lothlorien_bp/scripts/village_area.js",
@@ -2300,7 +2300,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/loop_marker.js",
-        "sha256": "c03fa286c2f6f794c2a228df755da603f4484cb5f9a01981fd42095f52f74c09"
+        "sha256": "7e855f97ae77a1760fa25fe68c7bfe063a1fa145e63ab4e91d40b4850b05f86f"
       },
       {
         "path": "lothlorien_bp/scripts/village_area.js",

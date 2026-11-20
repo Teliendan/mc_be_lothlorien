@@ -162,6 +162,9 @@
       "village_simulation.mjs",
       "village_loop_sim.mjs"
     ],
+    "village-clear": [
+      "village_clear.mjs"
+    ],
     "village-residents": [
       "village_residents.mjs"
     ],
@@ -215,6 +218,7 @@
       "script_glue.mjs",
       "village_structures.mjs",
       "village_planner.mjs",
+      "village_clear.mjs",
       "village_repair.mjs",
       "village_simulation.mjs",
       "village_loop_sim.mjs",

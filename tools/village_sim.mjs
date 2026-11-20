@@ -24,6 +24,7 @@ import { MARKER_ID, finalBlocks } from "../lothlorien_bp/scripts/village_loop.js
 import { LINKS, isFence, connectionChanges } from "../lothlorien_bp/scripts/rail_mender_rules.js";
 import { PLAN, planVillage, discoverSync, boundedReader, chunksIn, inRect } from "../lothlorien_bp/scripts/village_planner.js";
 import { POST_ID, PROFESSIONS, HOME_MIN, HEALER2_MIN_TREES, RESERVE_POSTS, assignHomes, groupPosts } from "../lothlorien_bp/scripts/elf_rules.js";
+import { SHIELD_ID, clearBand, clearSlices } from "../lothlorien_bp/scripts/village_clear.js"; // the runtime's final shield clear (loop_marker.js clearShield)
 import { siteOf, findHome, isFree, planFurnish, hasLayout, frameArea, frameCell } from "../lothlorien_bp/scripts/home_furnish.js"; // the home pavilion and its furnishing (M7 WP4b), the very same pure code as elf_village.js
 export const PLANKS = "lothlorien:mallorn_planks", HEART_PLANKS = "lothlorien:mallorn_heartwood_planks", FENCE = RAIL, LANTERN_ID = "lothlorien:elven_lantern";
 import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
@@ -663,7 +664,6 @@ export function furnishVillage(el, world, states, at, res, before) {
       world.set(wkey(x, y, z), name); states.set(wkey(x, y, z), st2); written.push([x, y, z]); out.objects++;
     };
     for (const w of plan.writes) put(w.x, w.y, w.z, w.name, w.states);
-    for (const c of plan.clears) { if (at(c.x, c.y, c.z) !== "minecraft:light_block_0") out.fail.push(`bed ring clear at ${c.x},${c.y},${c.z} is not light_block_0`); world.set(wkey(c.x, c.y, c.z), "minecraft:air"); }
     for (const b of plan.structures) if (b.kind !== "cushion") put(b.x, b.y, b.z, b.name, b.states); // banners and pots are blocks; a cushion is an actor
     for(const p of plan.panels) {
       const get=(x,y,z)=>{const k=wkey(x,y,z);return {name:world.get(k),states:states.get(k)};};
@@ -681,6 +681,24 @@ export function furnishVillage(el, world, states, at, res, before) {
   for (const v of sup) out.fail.push(`furnishing floats: ${v.name} at ${v.at} (${v.detail})`);
   const after = walkability(res, world, states);
   if (before && after.unreachable.length > before.unreachable.length) out.fail.push(`furnishing cut off ${after.unreachable.length - before.unreachable.length} walkable deck cell(s)`);
+  return out;
+}
+
+// The runtime's last build step (loop_marker.js clearShield) on the simulated village, after furnishing: every light_block_0 inside the slices
+// (village rect x the marker Y band, one slice per chunk column) becomes air; nothing else changes. `known` = the marker deck cells, `rect` the village area.
+// -> { slices, cells: light_block_0 cells cleared, left: light_block_0 cells still in the world (outside the rect or the band), band, changed: ids of cells that were not light_block_0 (must be 0) }
+export function clearShieldSim(world, known, rect, range = { min: -64, max: 319 }) {
+  const band = clearBand(known, range), out = { slices: 0, cells: 0, left: 0, band, changed: 0 };
+  if (!band) return out;
+  const slices = clearSlices(rect, band.y0, band.y1), byCol = new Map();
+  out.slices = slices.length;
+  for (const sl of slices) { const k = `${sl.x0 >> 4},${sl.z0 >> 4}`; (byCol.get(k) ?? byCol.set(k, []).get(k)).push(sl); }
+  for (const [k, n] of [...world]) {
+    if (n !== SHIELD_ID) continue;
+    const [x, y, z] = wdecode(k);
+    if (!(byCol.get(`${x >> 4},${z >> 4}`) ?? []).some((sl) => x >= sl.x0 && x <= sl.x1 && z >= sl.z0 && z <= sl.z1 && y >= sl.y0 && y <= sl.y1)) { out.left++; continue; }
+    world.set(k, "minecraft:air"); out.cells++;
+  }
   return out;
 }
 
@@ -747,6 +765,8 @@ function main() {
     const walkBefore = walkability(row.res, row.ck.world, row.ck.states);
     row.fu = furnishVillage(row.el, row.ck.world, row.ck.states, row.lp.at, row.res, walkBefore);
     row.el.fail.push(...row.fu.fail);
+    row.sc = clearShieldSim(row.ck.world, row.res.placed.flatMap(markerCells), row.lp.rect); // the runtime's final step: the whole shield goes
+    if (row.sc.left) row.el.fail.push(`${row.sc.left} light_block_0 cells survive the shield clear (outside the village rect or Y band)`);
   }
   console.log(`max_depth ${data.structure.max_depth}`);
   console.log("seed pieces trees(tow) lvl straight balc look plug open crowns(sm) unreach overl ropeW decay oneWay noDest result");
@@ -779,6 +799,7 @@ function main() {
   const per = {}; for (const r of rows) for (const [p, v] of Object.entries(r.fu.by)) { const t = per[p] ?? (per[p] = { homes: 0, framed: 0, blocks: 0, structures: 0, dropped: 0 }); for (const key of Object.keys(t)) t[key] += v[key]; }
   console.log(`  homes furnished (pavilion k ${JSON.stringify(fk)}), per profession found/homes, blocks + structures per home, groups dropped for lack of room:`);
   for (const [p, t] of Object.entries(per)) console.log(`    ${p.padEnd(12)} ${t.framed}/${t.homes}  ${(t.blocks / Math.max(1, t.framed)).toFixed(1)} + ${(t.structures / Math.max(1, t.framed)).toFixed(1)}  dropped ${t.dropped}`);
+  console.log(`  shield clear (final step): slices per village ${mm((r) => r.sc.slices)}, light_block_0 cells cleared per village ${mm((r) => r.sc.cells)}, left over ${rows.reduce((a, r) => a + r.sc.left, 0)}, Y band ${[...new Set(rows.map((r) => `${r.sc.band.y1 - r.sc.band.y0 + 1}`))].join("/")} layers`);
   const feet = rows.flatMap((r) => r.lp.ropeFeet);
   const ropeFits = (r) => r.lp.repairs.filter((p) => p.kind === "rope"), flares = rows.flatMap((r) => r.lp.repairs.filter((p) => p.kind === "flare"));
   const caps=rows.flatMap(r=>r.lp.repairs.filter(p=>p.kind==="railcap"));

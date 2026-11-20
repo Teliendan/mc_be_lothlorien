@@ -10,6 +10,8 @@
 //   3 plan       planGen on the blocks of that area (budget 3 extra links), run as a job (yields, no long tick).
 //   4 build      all picks are written in the same job (2 ms slices, a time check every WRITES_PER_CHECK writes), then every marker in the area is removed.
 //   5 populate   civilian elves: the tree pieces' `lothlorien:elf_post` entities are read, assigned and replaced by elves (elf_village.js).
+//   6 clear      every minecraft:light_block_0 of the village (the worldgen headroom shield) becomes air, so beds work (village_clear.js); still inside the
+//                ticking areas, which are released afterwards. Existing, already built villages keep their shield (owner decision).
 // The planner is one-shot: no polling, no retry loop. A failed run (quota, timeout, error) keeps the markers; they retry after world re-entry, at
 // most AREA.maxTries times per marker.
 import { BlockPermutation, BlockVolume, system, world } from "@minecraft/server";
@@ -23,6 +25,7 @@ import { LINKS } from "./rail_mender_rules.js";
 import { mendFence } from "./rail_connections.js";
 import { PANEL_ID,planterWalkName } from "./planter_panels.js";
 import { populateVillage } from "./elf_village.js";
+import { SHIELD_ID, clearBand, clearSlices } from "./village_clear.js";
 
 // START_DELAY_TICKS 5 (was 20, owner 2026-10-10: the village looked empty for a long time). JOB_SLICE_MS: one engine job step runs the planner's inner steps
 // until this many ms are used, then yields once; without it the job may advance only ONE inner step per tick (about 200 steps = 10 s).
@@ -111,6 +114,19 @@ function* planAndBuild(dimension, found, budget, stats) {
   return { ...res, blocks: count, failedWrites };
 }
 
+// Replaces every light_block_0 in the village rect by air: one native fillBlocks per chunk column and Y slice (village_clear.js), a yield after each.
+// A failing slice is logged and skipped. stats collects { slices, cells, failed }.
+function* clearShield(dimension, rect, band, stats) {
+  for (const s of clearSlices(rect, band.y0, band.y1)) {
+    try {
+      const volume = new BlockVolume({ x: s.x0, y: s.y0, z: s.z0 }, { x: s.x1, y: s.y1, z: s.z1 });
+      stats.cells += dimension.fillBlocks(volume, "minecraft:air", { blockFilter: { includeTypes: [SHIELD_ID] }, ignoreChunkBoundErrors: true }).getCapacity();
+    } catch (e) { stats.failed++; log(`shield clear ${s.x0},${s.y0},${s.z0} to ${s.x1},${s.y1},${s.z1}: ${e?.message ?? e}`); }
+    stats.slices++;
+    yield;
+  }
+}
+
 async function planVillageAt(entity, trigger) {
   const dimension = entity.dimension, first = cellOf(entity), tam = world.tickingAreaManager, base = `lothlorien_village_${first[0]}_${first[2]}_${++areaAttempt}`;
   const areas = new Map();
@@ -161,6 +177,13 @@ async function planVillageAt(entity, trigger) {
     const tPop = Date.now();
     try { populateVillage(dimension, found.rect, [first[0], first[2]]); } catch (e) { log(`elves: ${e?.message ?? e}`); }
     dlog(`populate ${ms(tPop)} ms`);
+    // Last build step, still in the ticking areas: the light_block_0 shield goes (the band covers the marker decks and the crowns above them, see village_clear.js).
+    const range = dimension.heightRange ?? { min: -64, max: 320 }, band = clearBand(found.known, { min: range.min, max: range.max - 1 });
+    if (band) {
+      const tClear = Date.now(), tickC = system.currentTick, cs = { slices: 0, cells: 0, failed: 0, steps: 0, cpu: 0 };
+      try { await runJobAsync(sliced(clearShield(dimension, found.rect, band, cs), JOB_SLICE_MS, cs)); } catch (e) { log(`shield clear: ${e?.message ?? e}`); }
+      dlog(`clear ${ms(tClear)} ms wall, ${system.currentTick - tickC} ticks, y ${band.y0}..${band.y1}, ${cs.slices} slices (${cs.failed} failed), ${cs.steps} inner steps, ${cs.cpu} ms inside them, ${cs.cells} light_block_0 cells cleared`);
+    }
     const removed = removeMarkers(dimension, found.rect);
     world.setDynamicProperty(DONE, JSON.stringify(addDone(parseDone(world.getDynamicProperty(DONE)), found.rect)));
     dlog(`village at ${first[0]},${first[2]}: ${found.known.length} markers (${removed} removed), ${found.rounds} area round(s) of ${found.sizes.join("+")} chunks${found.stable ? "" : ", NOT stable"}, ${result.nRaw} candidates, ${result.merges.length} merge(s), ${result.picks.length} link(s), ${result.repairs.length} repair(s), ${result.blocks} blocks${result.failedWrites ? `, ${result.failedWrites} write(s) failed` : ""} in ${(ms(t0) / 1000).toFixed(1)} s`);

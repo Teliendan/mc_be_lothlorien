@@ -419,5 +419,20 @@
         "sha256": "ba01f31a65b57297fb15dccfa993fa50aab007da5de18bdefde8f41afed0ae08"
       }
     ]
+  },
+  {
+    "featureId": "lothlorien:elf",
+    "id": "lothlorien:elf/village-beds",
+    "text": "Beds work in newly generated Elven villages, including beds you place yourself. A few leaves from trees that grow later can appear at deck edges; break them. A village that was generated before this change still holds invisible blocks that can make a bed say it is obstructed.",
+    "evidence": [
+      {
+        "path": "docs/VILLAGES.md",
+        "sha256": "a0327984bbb810065e17b3e7926ecbaddccb8513782659b00452c31c82a94028"
+      },
+      {
+        "path": "lothlorien_bp/scripts/village_clear.js",
+        "sha256": "e0f84d07f9a35323d9dc3210434d1de98b63a240584f68af3c17b287cac3098b"
+      }
+    ]
   }
 ]

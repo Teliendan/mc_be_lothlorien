@@ -35,7 +35,25 @@ async function scenario(name, body) {
 // debug-gated planner lines read as plain `planner: ...` unless the pattern asks for the "(debug)" marker itself
 const grep = (re) => { const keep = re.source.includes("(debug"); return lines.map((l) => (keep ? l : l.replace("planner: (debug) ", "planner: "))).filter((l) => re.test(l)); };
 const loadScript = (file) => import(`${SRC}${file}?run=${runNo}`);
+// The shared mock has no Dimension.fillBlocks / heightRange yet: a test-local shim with the engine's contract (cells of the filtered types in the volume become the
+// block; unreadable cells are skipped with ignoreChunkBoundErrors, else it throws; returns an object with getCapacity()). Calls are recorded in dim.fills.
+function shimFill(dim) {
+  dim.fills = [];
+  dim.fillBlocks = (volume, block, options = {}) => {
+    const { from, to } = volume, inc = options.blockFilter?.includeTypes;
+    dim.fills.push({ from, to, options });
+    let n = 0;
+    for (let x = from.x; x <= to.x; x++) for (let z = from.z; z <= to.z; z++) {
+      if (!dim.readable(x, z)) { if (options.ignoreChunkBoundErrors) continue; throw new Error("UnloadedChunksError"); }
+      for (let y = from.y; y <= to.y; y++) { const t = dim.typeAt(x, y, z); if (t !== undefined && (!inc || inc.includes(t))) { dim.overrides.set(`${x},${y},${z}`, { id: block, states: {} }); n++; } }
+    }
+    return { getCapacity: () => n };
+  };
+  dim.heightRange = { min: -64, max: 320 };
+  return dim;
+}
 function setupV2() {
+  shimFill(mock.dimension());
   mock.strictLoading = true; // blocks only readable inside a ready ticking area: the planner must have loaded the village itself
   mock.setBlocks(v2At);
   return f.markers.map((p) => mock.addEntity(MARKER, { x: p[0], y: p[1], z: p[2] }));
@@ -49,6 +67,12 @@ await scenario("an automatic entityLoad plans the village once, removes the mark
   const dim = mock.dimension(), getBlocks = dim.getBlocks.bind(dim);
   dim.getBlocks = (volume, filter, allowUnloaded) => { if (volume.from.y === volume.to.y) layerCalls++; return getBlocks(volume, filter, allowUnloaded); };
   assert.equal(mock.subscribers("after", "entityLoad"), 1); assert.equal(mock.subscribers("after", "entitySpawn"), 1);
+  // seeded shield cells: light_block_0 in the village (cleared), light_block_1 beside it (hidden spawn light, stays), light_block_0 far below the band and far outside the rect (stay)
+  const ov = mock.dimension().overrides, mx = Math.floor(f.markers[0][0]), my = Math.floor(f.markers[0][1]) - 1, mz = Math.floor(f.markers[0][2]);
+  const seeded0 = [[mx, my + 6, mz], [mx + 3, my + 8, mz + 2], [mx - 5, my + 12, mz - 4]], seeded1 = [[mx + 1, my + 6, mz], [mx + 1, my + 9, mz + 2]], kept0 = [[mx, my - 40, mz], [mx + 400, my + 6, mz]];
+  for (const c of seeded0) ov.set(c.join(","), { id: "minecraft:light_block_0", states: {} });
+  for (const c of seeded1) ov.set(c.join(","), { id: "minecraft:light_block_1", states: {} });
+  for (const c of kept0) ov.set(c.join(","), { id: "minecraft:light_block_0", states: {} });
   for (const i of [0, 7, 30]) mock.fire("entityLoad", { entity: markers[i] }); // several trees of one village load in the same moment
   mock.fire("entitySpawn", { entity: markers[1] });
   await mock.advance(20);
@@ -61,6 +85,14 @@ await scenario("an automatic entityLoad plans the village once, removes the mark
   assert.match(grep(/planner: start for village/)[0], /trigger entityLoad/);
   assert.equal(grep(/planner: village at/).length, 1, "one summary line");
   assert.equal(markersLeft(), 0, "every marker of the village is removed");
+  const id = (c) => mock.dimension().typeAt(...c);
+  assert.deepEqual(seeded0.map(id), seeded0.map(() => "minecraft:air"), "the final step clears every light_block_0 of the village");
+  assert.deepEqual(seeded1.map(id), seeded1.map(() => "minecraft:light_block_1"), "light_block_1 (hidden spawn light) stays");
+  assert.deepEqual(kept0.map(id), kept0.map(() => "minecraft:light_block_0"), "light_block_0 outside the village rect and the Y band stays");
+  const fills = mock.dimension().fills;
+  assert.ok(fills.length >= 1 && fills.every((c) => c.options.blockFilter.includeTypes.join() === "minecraft:light_block_0" && c.options.ignoreChunkBoundErrors === true && (c.from.x >> 4) === (c.to.x >> 4) && (c.from.z >> 4) === (c.to.z >> 4)), "fillBlocks: only light_block_0, one chunk column per call");
+  const clearLine = grep(/planner: clear \d+ ms wall, \d+ ticks, y -?\d+\.\.-?\d+, \d+ slices \(0 failed\), \d+ inner steps, \d+ ms inside them, 3 light_block_0 cells cleared/);
+  assert.equal(clearLine.length, 1, "one debug line for the clear step: " + grep(/planner: clear/).join("|"));
   const done = PL.parseDone(world.getDynamicProperty("lothlorien:village_plans"));
   assert.equal(done.length, 1, "done-list holds the village"); assert.equal(mock.propWrites.filter((k) => k === "lothlorien:village_plans").length, 1);
   assert.ok(mock.areaLog.created.length >= 2 && mock.areaLog.created.length === mock.areaLog.removed.length && mock.tickingAreas.areas.size === 0, "ticking areas created round by round and all removed again");
@@ -87,6 +119,20 @@ await scenario("an automatic entityLoad plans the village once, removes the mark
   assert.equal(late.isValid, false, "straggler removed");
   assert.equal(grep(/planner: start for village/).length, before, "no second planner run");
   assert.equal(mock.propWrites.length, props, "done-list untouched"); assert.equal(mock.areaLog.created.length, areas, "no new ticking area");
+});
+
+await scenario("shield clear: a throwing fillBlocks slice is logged and the next slices still run; the village build still finishes", async () => {
+  const markers = setupV2();
+  const dim = mock.dimension(), fill = dim.fillBlocks;
+  let calls = 0;
+  dim.fillBlocks = (...a) => { if (calls++ === 0) throw new Error("boom"); return fill(...a); };
+  await loadScript("loop_marker.js");
+  mock.fire("entityLoad", { entity: markers[0] });
+  await mock.settle();
+  assert.ok(calls > 1, `${calls} fill calls`);
+  assert.equal(grep(/planner: shield clear .*boom/).length, 1, "the failing slice is logged unconditionally");
+  assert.equal(grep(/planner: clear .*\(1 failed\)/).length, 1, "the debug line counts the failed slice");
+  assert.equal(markersLeft(), 0, "the village was built and its markers removed");
 });
 
 await scenario("a marker that appears by entitySpawn (worldgen) starts the planner too", async () => {

@@ -152,7 +152,10 @@ Shipped: two lookout trees (`mallorn_round_05`, `round_07`: flet, rope, loot che
   height (`WORLD_HEIGHT` 384 in `village_repair.js`, `LOOP.pierMaxDepth` in `village_loop.js`). Over water the prop roots leave
   the trunk two blocks above the surface and step out and down, with no leaves under water.
 - Village foliage that would fill a lookout: explicit air up to three blocks above anything solid is `minecraft:light_block_0`
-  (`shieldHeadroom`, `tools/build_village.mjs`); tree-feature leaves may replace air, never a light block.
+  (`shieldHeadroom`, `tools/build_village.mjs`); tree-feature leaves may replace air, never a light block. The shield only
+  protects during worldgen: the runtime village builder clears every `light_block_0` of the village after it has built and
+  furnished it (`village_clear.js`, last step of `loop_marker.js`, 2026-11-21), so beds work; trees from chunks generated
+  later can still put leaves at the rim (owner-accepted). `light_block_1..15` (spawn lights) are never cleared.
 - Gardens and memorials: `tools/ground_skirt.mjs` and the feature templates put soil under the footprint; the grass or deck
   row is level with the terrain top, extra dirt is below (owner correction 2026-10-24, starts -5 and -6 for the jigsaw
   copies). Water sites are refused by the feature allowlist.

@@ -289,23 +289,29 @@ test("home_furnish: the other professions on the real village pieces: every set 
   assert.ok(homes >= 12, `${homes} furnished homes`);
 });
 
-test("home_furnish: the bed ring is opened: light_block_0 round every healer bed becomes air at bed level, +1 and +2, nothing else changes (a light_block_0 shield made the bed 'obstructed')", () => {
-  const LB = "minecraft:light_block_0";
+test("home_furnish: after the village's final shield clear every healer bed has a free ring cell and nothing but light_block_0 changed (the light_block_0 shield made the bed 'obstructed')", () => {
+  const LB = "minecraft:light_block_0", LB1 = "minecraft:light_block_1";
   for (const k of [5, 6, 7]) for (const dv of DVS) {
     const p = pavilion(k, dv), y = p.f.y;
-    const shielded = (x, yy, z) => { const n = p.m.get(key(x, yy, z))?.name; return n ?? (yy > y && yy <= y + 3 ? LB : "minecraft:air"); }; // the village pieces' dark headroom shield
+    // the village pieces' dark headroom shield (light_block_0 up to 3 over the deck) plus one hidden spawn light that must survive the clear
+    const lamp = frameCell(p.f, ...p.f.post), hidden = key(lamp[0], y + 3, lamp[1]);
+    const shielded = (x, yy, z) => { const id = key(x, yy, z), n = id === hidden ? LB1 : p.m.get(id)?.name; return n ?? (yy > y && yy <= y + 3 ? LB : "minecraft:air"); };
     const plan = planFurnish("healer", p.f, shielded);
     const beds = plan.writes.filter((w) => w.name === "minecraft:straw_bed");
     assert.ok(beds.length >= 1, `k ${k}: a bed`);
-    const m = new Map(), get = (x, yy, z) => m.get(key(x, yy, z)) ?? shielded(x, yy, z);
-    for (const w of plan.writes) m.set(key(w.x, w.y, w.z), w.name);
-    const written = new Set(m.keys());
-    for (const c of plan.clears) { assert.equal(shielded(c.x, c.y, c.z), LB, "only light_block_0 is cleared"); assert.ok(!written.has(key(c.x, c.y, c.z)), "never a planned write"); m.set(key(c.x, c.y, c.z), "minecraft:air"); }
-    for (const [id, n] of m) if (!written.has(id)) { assert.equal(n, "minecraft:air"); const [x, yy, z] = id.split(",").map(Number); assert.equal(shielded(x, yy, z), LB, "no other block changed"); }
+    const written = new Map(plan.writes.map((w) => [key(w.x, w.y, w.z), w.name]));
+    const before = (x, yy, z) => written.get(key(x, yy, z)) ?? shielded(x, yy, z);
+    const after = (x, yy, z) => (before(x, yy, z) === LB ? "minecraft:air" : before(x, yy, z)); // the runtime's last step: every light_block_0 becomes air, nothing else
+    for (let x = p.f.x0 - 6; x < p.f.x0 + 14; x++) for (let z = p.f.z0 - 6; z < p.f.z0 + 14; z++) for (let yy = y - 1; yy <= y + 5; yy++) {
+      const b = before(x, yy, z), a = after(x, yy, z);
+      if (b !== LB) assert.equal(a, b, `only light_block_0 changes: ${key(x, yy, z)}`);
+      else assert.equal(a, "minecraft:air");
+    }
+    assert.equal(after(lamp[0], y + 3, lamp[1]), LB1, "a hidden spawn light (light_block_1) survives");
     for (const b of beds) {
       const ring = [];
       for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) if ((dx || dz) && !beds.some((o) => o.x === b.x + dx && o.z === b.z + dz && o.y === b.y)) ring.push([b.x + dx, b.z + dz]);
-      assert.ok(ring.some(([x, z]) => [0, 1, 2].every((h) => get(x, b.y + h, z) === "minecraft:air") && DECK_NAMES.includes(get(x, b.y - 1, z))), `k ${k} dv ${dv}: bed at ${b.x},${b.z} has an open ring cell with a deck below`);
+      assert.ok(ring.some(([x, z]) => [0, 1, 2].every((h) => after(x, b.y + h, z) === "minecraft:air") && DECK_NAMES.includes(after(x, b.y - 1, z))), `k ${k} dv ${dv}: bed at ${b.x},${b.z} has an open ring cell with a deck below`);
     }
   }
 });

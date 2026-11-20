@@ -230,6 +230,13 @@ for 100 villages, 1,972 bridge spans, 204 plazas and 312 merge layouts.
 Not done: smaller discovery areas, fence repair limited to changed cells
 (owner: the mender must also repair jigsaw seams).
 
+Village shield clear (2026-11-21, not measured in game). The last step of the village build replaces every `light_block_0` of the village rect with
+air (`village_clear.js`, `clearShield` in `loop_marker.js`): one native `Dimension.fillBlocks` per chunk column and Y slice (at most 16 x 16 x 64 cells), a job
+yield after each call (`sliced`, 2 ms steps), over the marker decks' Y range minus 4 / plus 16. Simulated villages hold about 7,900 shield cells (4,900 to 11,400)
+and the rect gives 108 to 210 calls over 21 to 37 layers, so a call touches at most about 9,500 cells. The cost per call, the changed-block and light updates it
+causes, and the total wall time are unknown; the village `clear` debug line (`docs/TESTING.md`) records them for the first in-game village. It runs once per village,
+inside the existing ticking areas, so it adds no steady load.
+
 Inside-the-forest yes/no checks (the squirrel errand every 10 ticks, the acorn feeding of squirrel and white deer) use `isInside` in `depth.js`
 (`insideAt` in `main.js`): one biome read at the centre instead of the 83-probe estimate; only a river centre falls back to the full
 estimate. Natural-spawn rolls still use `depthAt` (they need the level). Offline: `isInside` agrees with `estimateDepth(...).level > 0` on every
