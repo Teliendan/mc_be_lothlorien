@@ -93,6 +93,7 @@ await test("leave/rejoin reads fresh persisted Harmony and repairs stale Friend 
 // checks membership/exemption data, not native pathfinding/retarget timing.
 function matches(filter, player) {
   if (filter.all_of) return filter.all_of.every(f => matches(f, player));
+  if (filter.test === "distance_to_nearest_player") { assert.equal(filter.subject, "self"); return (player.nearest ?? 1) <= filter.value; }
   assert.equal(filter.subject, "other");
   if (filter.test === "is_family") return filter.value === "player" && player.typeId === "minecraft:player";
   if (filter.test === "has_tag") return player.hasTag(filter.value) === (filter.operator !== "!=");
@@ -109,6 +110,7 @@ await test("a Friend keeps 3 blocks (2 sneaking) from the unicorn without Elanor
     friend.addTag(h.game.FRIEND_TAG); uneasy.addTag("lothlorien_uneasy");
     for (const p of [friend, guest, uneasy]) { p.typeId = "minecraft:player"; p.held = held; p.isSneaking = sneaking; }
     assert.deepEqual(fled(friend), held === ELANOR_ID ? [] : [sneaking ? 2 : 3], "Friend");
+    if (held === undefined) { friend.nearest = (sneaking ? 2 : 3) + 0.5; assert.deepEqual(fled(friend), [], "Friend: not fled beyond the gate"); friend.nearest = 1; }
     assert.deepEqual(fled(guest), [sneaking ? 6 : 13], "Guest: Elanor does not help");
     assert.deepEqual(fled(uneasy), [sneaking ? 6 : 13], "Uneasy: Elanor does not help (come-and-flee accepted)");
   }
@@ -142,7 +144,7 @@ await test("the lure is vanilla tempt in its own group (priority 4, below the fl
 await test("Friend and the others share one flight goal that keeps its danger flight; the bond keeps no inventory", async () => {
   const g=entity.component_groups["lothlorien:state_wild"];
   assert.equal(entity.description.identifier,UNICORN_ID);
-  assert.deepEqual(g["minecraft:behavior.avoid_mob_type"].entity_types.slice(10).map(e=>[e.filters.value,e.max_dist]),[["wolf",12],["monster",8]]);
+  assert.deepEqual(g["minecraft:behavior.avoid_mob_type"].entity_types.slice(10).map(e=>[e.filters.value,e.max_dist]),[["wolf",undefined]], "wolf only, no monster, no own distance");
   assert.ok(g["minecraft:interact"], "the Elanor prompt belongs to the wild state; the script refuses by band");
   assert.equal(entity.component_groups["lothlorien:bonded"]["minecraft:inventory"],undefined);
   assert.equal(entity.component_groups["lothlorien:bonded"]["minecraft:equippable"],undefined);

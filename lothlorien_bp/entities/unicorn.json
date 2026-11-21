@@ -64,6 +64,12 @@
                     "domain": "hand",
                     "operator": "!=",
                     "value": "lothlorien:elanor"
+                  },
+                  {
+                    "test": "distance_to_nearest_player",
+                    "subject": "self",
+                    "operator": "<=",
+                    "value": 3
                   }
                 ]
               },
@@ -96,6 +102,12 @@
                     "domain": "hand",
                     "operator": "!=",
                     "value": "lothlorien:elanor"
+                  },
+                  {
+                    "test": "distance_to_nearest_player",
+                    "subject": "self",
+                    "operator": "<=",
+                    "value": 2
                   }
                 ]
               },
@@ -140,6 +152,12 @@
                     "subject": "other",
                     "operator": "!=",
                     "value": "lothlorien_hated"
+                  },
+                  {
+                    "test": "distance_to_nearest_player",
+                    "subject": "self",
+                    "operator": "<=",
+                    "value": 13
                   }
                 ]
               },
@@ -184,6 +202,12 @@
                     "subject": "other",
                     "operator": "!=",
                     "value": "lothlorien_hated"
+                  },
+                  {
+                    "test": "distance_to_nearest_player",
+                    "subject": "self",
+                    "operator": "<=",
+                    "value": 6
                   }
                 ]
               },
@@ -209,6 +233,12 @@
                     "test": "has_tag",
                     "subject": "other",
                     "value": "lothlorien_uneasy"
+                  },
+                  {
+                    "test": "distance_to_nearest_player",
+                    "subject": "self",
+                    "operator": "<=",
+                    "value": 13
                   }
                 ]
               },
@@ -234,6 +264,12 @@
                     "test": "has_tag",
                     "subject": "other",
                     "value": "lothlorien_uneasy"
+                  },
+                  {
+                    "test": "distance_to_nearest_player",
+                    "subject": "self",
+                    "operator": "<=",
+                    "value": 6
                   }
                 ]
               },
@@ -259,6 +295,12 @@
                     "test": "has_tag",
                     "subject": "other",
                     "value": "lothlorien_shunned"
+                  },
+                  {
+                    "test": "distance_to_nearest_player",
+                    "subject": "self",
+                    "operator": "<=",
+                    "value": 20
                   }
                 ]
               },
@@ -284,6 +326,12 @@
                     "test": "has_tag",
                     "subject": "other",
                     "value": "lothlorien_shunned"
+                  },
+                  {
+                    "test": "distance_to_nearest_player",
+                    "subject": "self",
+                    "operator": "<=",
+                    "value": 10
                   }
                 ]
               },
@@ -309,6 +357,12 @@
                     "test": "has_tag",
                     "subject": "other",
                     "value": "lothlorien_hated"
+                  },
+                  {
+                    "test": "distance_to_nearest_player",
+                    "subject": "self",
+                    "operator": "<=",
+                    "value": 30
                   }
                 ]
               },
@@ -334,6 +388,12 @@
                     "test": "has_tag",
                     "subject": "other",
                     "value": "lothlorien_hated"
+                  },
+                  {
+                    "test": "distance_to_nearest_player",
+                    "subject": "self",
+                    "operator": "<=",
+                    "value": 15
                   }
                 ]
               },
@@ -348,19 +408,6 @@
                 "subject": "other",
                 "value": "wolf"
               },
-              "max_dist": 12,
-              "max_flee": 16,
-              "walk_speed_multiplier": 1.4,
-              "sprint_speed_multiplier": 1.8
-            },
-            {
-              "filters": {
-                "test": "is_family",
-                "subject": "other",
-                "value": "monster"
-              },
-              "max_dist": 8,
-              "max_flee": 12,
               "walk_speed_multiplier": 1.4,
               "sprint_speed_multiplier": 1.8
             }
@@ -433,6 +480,12 @@
                     "test": "is_sneaking",
                     "subject": "other",
                     "value": false
+                  },
+                  {
+                    "test": "distance_to_nearest_player",
+                    "subject": "self",
+                    "operator": "<=",
+                    "value": 36
                   }
                 ]
               },
@@ -453,6 +506,12 @@
                     "test": "is_sneaking",
                     "subject": "other",
                     "value": true
+                  },
+                  {
+                    "test": "distance_to_nearest_player",
+                    "subject": "self",
+                    "operator": "<=",
+                    "value": 18
                   }
                 ]
               },
@@ -467,19 +526,6 @@
                 "subject": "other",
                 "value": "wolf"
               },
-              "max_dist": 12,
-              "max_flee": 16,
-              "walk_speed_multiplier": 1.4,
-              "sprint_speed_multiplier": 1.8
-            },
-            {
-              "filters": {
-                "test": "is_family",
-                "subject": "other",
-                "value": "monster"
-              },
-              "max_dist": 8,
-              "max_flee": 12,
               "walk_speed_multiplier": 1.4,
               "sprint_speed_multiplier": 1.8
             }

@@ -2,10 +2,10 @@
 
 A small evaluator for the flat entity filters the entries use (is_family, is_sneaking, has_equipment, has_tag, == and !=)
 runs every band x sneaking x held item case through the generated entries: exactly one player entry matches, except a Friend
-or Guest holding the animal's lure (the unicorn: Friend only), who matches none. Distances are read the way the engine bounds
-them: an entry starts a flight within min(goal max_dist, entry max_dist) and ends it beyond min(goal max_flee, entry max_flee),
-with the documented defaults (goal max_dist 3, entry max_dist 16, max_flee 10). A goal without its own max_dist flees every band
-at about 3 blocks (owner J27, 1.26.63, 2026-11-17). Run from anywhere: python -B tests/wildlife_wariness_check.py
+or Guest holding the animal's lure (the unicorn: Friend only), who matches none. Distances are read the way the engine
+works (owner R4/R5, 1.26.63, 2026-11-21; MCPE-182041): the goal's max_dist / max_flee apply to every entry and the entry's own are
+ignored, so each player entry carries a `distance_to_nearest_player` (subject self) <= gate, and a band flees at its gate distance
+(inside the goal radius). The gate is not yet verified in game. Run from anywhere: python -B tests/wildlife_wariness_check.py
 """
 import json
 import re
@@ -34,6 +34,9 @@ def matches(filters, player):
     if "none_of" in filters:
         return not any(matches(f, player) for f in filters["none_of"])
     test, value, op = filters["test"], filters["value"], filters.get("operator", "==")
+    if test == "distance_to_nearest_player":
+        assert filters.get("subject") == "self" and op == "<=", filters
+        return player["nearest"] <= value
     assert filters.get("subject") == "other", filters
     if test == "is_family":
         result = value in player["families"]
@@ -54,13 +57,21 @@ def matches(filters, player):
 GOAL_MAX_DIST, ENTRY_MAX_DIST, MAX_FLEE = 3, 16, 10
 
 
+def gate(entry):
+    """The entry's distance gate (the only distance the engine honours per entry)."""
+    leaves = entry["filters"]["all_of"]
+    values = [leaf["value"] for leaf in leaves if leaf["test"] == "distance_to_nearest_player"]
+    assert len(values) == 1, entry
+    return values[0]
+
+
 def start_dist(goal, entry):
-    """Distance at which the entry starts a flight: the goal-level radius bounds every entry."""
-    return min(goal.get("max_dist", GOAL_MAX_DIST), entry.get("max_dist", ENTRY_MAX_DIST))
+    """Distance at which the entry starts a flight: the goal radius bounds the gate."""
+    return min(goal.get("max_dist", GOAL_MAX_DIST), gate(entry))
 
 
 def stop_dist(goal, entry):
-    return min(goal.get("max_flee", MAX_FLEE), entry.get("max_flee", MAX_FLEE))
+    return goal.get("max_flee", MAX_FLEE)  # the entry's max_flee is ignored by the engine
 
 
 def flat(filters):
@@ -92,7 +103,7 @@ for species, spec in W.SPECIES.items():
             tags = {W.BAND_TAGS[band]} if band in W.BAND_TAGS else set()
             for sneaking in (False, True):
                 for hand in [None, "minecraft:stick", *spec["lures"]]:
-                    player = {"families": {"player"}, "sneaking": sneaking, "hand": hand, "tags": tags}
+                    player = {"families": {"player"}, "sneaking": sneaking, "hand": hand, "tags": tags, "nearest": 1}
                     hit = [e for e in entries if matches(e["filters"], player)]
                     cases += 1
                     label = f"{species} {group} {band} sneaking={sneaking} hand={hand}"
@@ -107,27 +118,35 @@ for species, spec in W.SPECIES.items():
                             check((start_dist(goal, hit[0]), hit[0]["walk_speed_multiplier"], hit[0]["sprint_speed_multiplier"]) ==
                                   (sneak if sneaking else walking, walk, sprint), f"{label}: fled at {start_dist(goal, hit[0])} blocks, wrong distance or speed")
                             check(stop_dist(goal, hit[0]) > start_dist(goal, hit[0]), f"{label}: the flight would end where it starts")
+                            # the gate: matches at the band's distance, not a little beyond it; the goal radius covers it
+                            expected = sneak if sneaking else walking
+                            near, far = dict(player, nearest=expected), dict(player, nearest=expected + 0.5)
+                            check([e for e in entries if matches(e["filters"], near)] == hit, f"{label}: not fled at {expected} blocks")
+                            check(not [e for e in entries if matches(e["filters"], far)], f"{label}: fled beyond {expected} blocks")
+                            check(goal["max_dist"] >= expected, f"{label}: the goal radius {goal['max_dist']} is below the gate {expected}")
     # alarmed: every player, no exemption, no tag
     alarmed = PLAYER_ENTRIES(W.alarmed_avoid()["entity_types"])
     for sneaking in (False, True):
         for hand in [None, *spec["lures"]]:
-            player = {"families": {"player"}, "sneaking": sneaking, "hand": hand, "tags": {W.BAND_TAGS["friend"]}}
+            player = {"families": {"player"}, "sneaking": sneaking, "hand": hand, "tags": {W.BAND_TAGS["friend"]}, "nearest": 1}
             hit = [e for e in alarmed if matches(e["filters"], player)]
             goal = W.alarmed_avoid()
             check(len(hit) == 1 and start_dist(goal, hit[0]) == (18 if sneaking else 36) and stop_dist(goal, hit[0]) > start_dist(goal, hit[0]),
                   f"{species} alarmed sneaking={sneaking} hand={hand}")
     # the danger entries are the same everywhere and a player matches neither
     for goal in (W.wild_avoid(species), W.alarmed_avoid()):
-        danger = goal["entity_types"][-2:]
-        check(danger == W.DANGER, f"{species}: danger entries differ")
-        for entry, dist in zip(danger, (12, 8)):
-            check(start_dist(goal, entry) == dist and stop_dist(goal, entry) > dist, f"{species}: wolf/monster flight bounded to {start_dist(goal, entry)}")
+        danger = goal["entity_types"][-1:]
+        check(danger == W.DANGER and len(W.DANGER) == 1, f"{species}: danger entries differ (the wolf only, no monster)")
+        check("monster" not in json.dumps(goal), f"{species}: a monster entry is back")
+        check("max_dist" not in danger[0] and "max_flee" not in danger[0], f"{species}: the wolf entry carries a distance the engine ignores")
     check(goal["priority"] == 3 and W.tempt(species)["priority"] == 4, f"{species}: avoid must outrank tempt")
     check(W.tempt(species)["within_radius"] == 10 and W.tempt(species)["can_get_scared"] is False, f"{species}: tempt radius / scare")
     check(W.tempt(species)["items"] == spec["lures"], f"{species}: tempt items")
 
 # 3. the table itself: distances grow with the band
 check([W.FLIGHT[b][0] for b in ("guest", "uneasy", "shunned", "hated")] == [10, 13, 20, 30], "walking distances changed")
+check(W.wild_avoid("deer")["max_dist"] == 30 and W.wild_avoid("deer")["max_flee"] == 34, "wild goal radius is 30/34")
+check(W.alarmed_avoid()["max_dist"] == 36 and W.alarmed_avoid()["max_flee"] == 40, "alarmed goal radius is 36/40")
 check([W.FLIGHT[b][1] for b in ("guest", "uneasy", "shunned", "hated")] == [5, 6, 10, 15], "sneaking distances changed")
 
 # 4. entity files that carry state_wild agree with the table

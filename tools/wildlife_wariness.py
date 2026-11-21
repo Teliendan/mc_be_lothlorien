@@ -16,11 +16,16 @@ Rules the entries keep (verified in game unless noted, see skill bedrock-mobs re
 - a positive `has_tag` test inside avoid_mob_type is NOT yet confirmed in game (only `!=` is);
 - the lure exemption (`has_equipment !=` the lure) exists only for Friend and Guest (unicorn: Friend only). A lure holder of a
   worse band is fled from at the sneak distance and approaches again while sneaking: owner accepted come-and-flee (2026-11-11);
-- the goal itself carries `max_dist` and `max_flee` (the largest entry values). The goal-level `max_dist` (documented default 3)
-  bounds the search for an avoid target: without it every band was fled from at about 3 blocks (owner J27, 1.26.63,
-  2026-11-17; MCPE-182041). Each entry keeps its own `max_dist` and a `max_flee` above it (documented default 10, which would
-  end a flight that starts at 13+ at once). That the entry `max_dist` still narrows each band inside the goal's radius is
-  documented, not yet seen in game.
+- the engine ignores an entry's own `max_dist` / `max_flee`: the goal-level values (defaults 3 / 10) apply to every entry
+  (two in-game rounds, owner R4/R5, 1.26.63, 2026-11-21; MCPE-182041). So the goal carries the largest entry values (30/34, alarmed
+  36/40), which makes every band flee at the goal radius, and each player entry is gated by `distance_to_nearest_player`
+  (subject self) <= its band's walking (or sneaking) distance: a band flees only once the nearest player is that close.
+  The gate is native and costs no script, but it is NOT yet verified in game (owner round 4); with several players a group is
+  judged by its nearest member, so it can flee early from a worse-band player while a better one stands nearer.
+  The entries keep `max_dist` / `max_flee` as documentation of the intended distance (ignored by the engine today; they become
+  real if MCPE-182041 is fixed and then the gate is redundant).
+- the wolf entry has no distance of its own and flees at the goal radius (30, alarmed 36); there is no monster entry (owner,
+  2026-11-22: zombies and the like no longer scare wildlife).
 """
 import argparse
 import json
@@ -55,9 +60,9 @@ def flee_to(dist):
     return max(ENGINE_MAX_FLEE, dist + FLEE_MARGIN)
 
 
+# Wolves only: no own distance (the engine would ignore it), so they are fled at the goal radius; no monster entry (owner 2026-11-22).
 DANGER = [
-    {"filters": {"test": "is_family", "subject": "other", "value": "wolf"}, "max_dist": 12, "max_flee": flee_to(12), "walk_speed_multiplier": 1.4, "sprint_speed_multiplier": 1.8},
-    {"filters": {"test": "is_family", "subject": "other", "value": "monster"}, "max_dist": 8, "max_flee": flee_to(8), "walk_speed_multiplier": 1.4, "sprint_speed_multiplier": 1.8},
+    {"filters": {"test": "is_family", "subject": "other", "value": "wolf"}, "walk_speed_multiplier": 1.4, "sprint_speed_multiplier": 1.8},
 ]
 AVOID_PRIORITY = 3  # above tempt: a wolf or an unwelcome player beats the lure
 TEMPT_PRIORITY = 4
@@ -94,11 +99,17 @@ def band_tests(band):
     return [{"test": "has_tag", "subject": "other", "value": BAND_TAGS[band]}]
 
 
+def distance_gate(dist):
+    """The engine applies the goal's max_dist to every entry, so each entry limits itself: the nearest player must be this close."""
+    return {"test": "distance_to_nearest_player", "subject": "self", "operator": "<=", "value": dist}
+
+
 def player_entry(band, sneaking, dist, walk, sprint, lures):
     tests = [{"test": "is_family", "subject": "other", "value": "player"}, {"test": "is_sneaking", "subject": "other", "value": sneaking}]
     if band is not None:
         tests += band_tests(band)
     tests += [{"test": "has_equipment", "subject": "other", "domain": "hand", "operator": "!=", "value": item} for item in lures]
+    tests.append(distance_gate(dist))
     return {"filters": {"all_of": tests}, "max_dist": dist, "max_flee": flee_to(dist), "walk_speed_multiplier": walk, "sprint_speed_multiplier": sprint}
 
 
@@ -113,10 +124,10 @@ def band_entries(species, bands):
 
 
 def avoid(entries):
-    """The goal: its own max_dist / max_flee are the largest of its entries, so no entry is cut to the engine defaults."""
+    """The goal: the engine uses its max_dist / max_flee for every entry, so they are the largest player-entry values."""
     entity_types = entries + json.loads(json.dumps(DANGER))
-    return {"priority": AVOID_PRIORITY, "max_dist": max(e["max_dist"] for e in entity_types),
-            "max_flee": max(e["max_flee"] for e in entity_types), "entity_types": entity_types}
+    return {"priority": AVOID_PRIORITY, "max_dist": max(e["max_dist"] for e in entries),
+            "max_flee": max(e["max_flee"] for e in entries), "entity_types": entity_types}
 
 
 def wild_avoid(species):
