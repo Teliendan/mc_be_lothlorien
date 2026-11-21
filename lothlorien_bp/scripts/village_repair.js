@@ -139,7 +139,7 @@ export function* planFlareGen(at, pillar) {
     if (c1 === undefined) return { error: `unloaded cell at ${s.sx},${y1},${s.sz}` };
     if (isLog(c1)) { roots++; continue; } // already there (a second run)
     if (!freeForRoot(c1) || !isGround(at(s.sx, s.ground, s.sz))) continue;
-    const face = s.dx ? "east" : "south", put = (x, y, z) => blocks.push({ x, y, z, id: "lothlorien:mallorn_log", states: { "minecraft:block_face": face } });
+    const face = s.dx ? "east" : "south", put = (x, y, z) => blocks.push({ x, y, z, id: "lothlorien:mallorn_log", states: LOG_FACE[face] ??= { "minecraft:block_face": face } });
     put(s.sx, y1, s.sz);
     if (hash(cx, cz, 9 + i) % 2) { // a second cell further out, on the ground of its own column when that is within a step of the first
       const tx = s.sx + s.dx, tz = s.sz + s.dz, g2 = yield* surfaceBelowGen(at, tx, tz, y1 + REPAIR.flareStep + 1, due);
@@ -208,6 +208,7 @@ export function* planPillarClearGen(at, pillar, ground) {
 // the next by a face, never a thin diagonal), then drop to the bed. No leaves (owner: none under water). A column that meets a village block
 // stays as it is; no ground down to the world floor (REPAIR.rootReach) leaves the whole tree as it is.
 // cells: [[x, z]] log cells of the trunk at layer y0. -> { blocks, columns, roots, drop, wet, x, z } | { error } | { skip: reason }
+const LOG_FACE = {};
 const ROOT_FREE = (n) => isAir(n) || WET(n) || SOFT.test(n ?? "") || /leaves/.test(n ?? "");
 export const planRootDown = (at, cells, y0, o = {}) => drive(planRootDownGen(at, cells, y0, o));
 export function* planRootDownGen(at, cells, y0, o = {}) {
@@ -259,7 +260,7 @@ export function* planRootDownGen(at, cells, y0, o = {}) {
   }
   const hang = cols.filter((c) => c.low - 1 > c.g);
   if (!hang.length) return { blocks: [], columns: 0, roots: 0, drop: 0, wet: false, x: cx, z: cz };
-  const blocks = [], put = (x, y, z, face = "up") => blocks.push({ x, y, z, id: "lothlorien:mallorn_log", states: { "minecraft:block_face": face } });
+  const blocks = [], put = (x, y, z, face = "up") => blocks.push({ x, y, z, id: "lothlorien:mallorn_log", states: LOG_FACE[face] ??= { "minecraft:block_face": face } }); // one states object per face, shared by all blocks (heap)
   let made = 0;
   for (const c of hang) for (let y = c.low - 1; y >= c.g - 1; y--) { put(c.x, y, c.z); if (++made % 128 === 0) yield "rootDown"; } // a 60-deep valley makes thousands of blocks: a step per 128; two blocks into the ground: planted, no seam (the pillar flare wants its log under the ground)
   const drop = Math.max(...hang.map((c) => c.low - 1 - c.g)), wet = hang.some((c) => c.water !== null);
@@ -384,7 +385,8 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
       if (!cur || frac < cur.t) cells.set(k, { x, z, t: frac, d, trunk: t });
     }
   }
-  const list = [...cells.values()].sort((a, b) => a.x - b.x || a.z - b.z);
+  yield "forestFloor";
+  const list = Array.from(Float64Array.from(cells.keys()).sort(), (k) => cells.get(k)); // by column key = x, then z (a native numeric sort)
   // the ground of each column (memoised): { gy, id } | null. A neighbour's ground height is the hint for the next scan.
   const ground = new Map();
   let hint = null;
@@ -493,9 +495,21 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
       for (const e of patch) place(e.c, e.g, { id: "minecraft:moss_carpet", states: {} });
     }
   }
-  // budget: the cells nearest a trunk win
-  const all = [...put.values()].sort((a, b) => a.d - b.d || a.x - b.x || a.z - b.z).slice(0, FLOOR.maxBlocks).sort((a, b) => a.x - b.x || a.z - b.z);
-  for (const b of all) { out.blocks.push({ x: b.x, y: b.y, z: b.z, id: b.id, states: b.states }); out.counts[b.id] = (out.counts[b.id] ?? 0) + 1; }
+  // budget: the cells nearest a trunk win. The result is ordered by column key (= x, then z); the distance sort is needed only when the budget cuts, and the final order
+  // is a native numeric sort of the keys (a comparator sort of 1,500 objects took ~5 ms in QuickJS).
+  yield "floorSort";
+  let keys = [...put.keys()];
+  if (keys.length > FLOOR.maxBlocks) {
+    const near = [...put.values()].sort((a, b) => a.d - b.d || a.x - b.x || a.z - b.z).slice(0, FLOOR.maxBlocks);
+    keys = near.map((b) => ck(b.x, b.z));
+    yield "floorSort";
+  }
+  const order = Float64Array.from(keys).sort();
+  for (let i = 0; i < order.length; i++) {
+    const b = put.get(order[i]);
+    out.blocks.push({ x: b.x, y: b.y, z: b.z, id: b.id, states: b.states }); out.counts[b.id] = (out.counts[b.id] ?? 0) + 1;
+    if (i % 256 === 255) yield "floorSort";
+  }
   return out;
 }
 export const planForestFloor = (at, rect, trunks, ropeFoot, seed, o) => drive(planForestFloorGen(at, rect, trunks, ropeFoot, seed, o));

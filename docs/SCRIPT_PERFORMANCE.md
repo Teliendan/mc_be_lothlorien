@@ -312,7 +312,17 @@ Round 2 (owner DIAG 0.8.9, strong PC, 1.26.63, after the budget work: builder st
   (a cell's six neighbours make 125 at most), every 256 cells of pure bookkeeping, and between origins (`leaf_decay.js STEP_READS`, `PURE_STEP`).
 - Tests: `tests/leaf_tree_interactions.mjs` (suite `leaf-tree`) has a counting dimension (reads = `getBlock`, writes = `setPermutation`) and asserts <= 128 reads / <= 16 writes per step for a small and a big tree
   (worst 31 and 123 reads, 16 writes, 25 and 118 steps) and a 3,000-leaf search (worst 122 reads, 16 writes, 37 steps); the old code fails it (262 reads / 247 writes in one step). The generator test checks the
-  reported trunk height and the sync result for 120 seeds. `tools/village_steps.mjs --heap` prints the QuickJS memory dump at the peak (3.9 MB, 30k objects, 105k allocations per village).
+  reported trunk height and the sync result for 120 seeds. `tools/village_steps.mjs --heap` prints the QuickJS memory dump at the peak (3.9 MB, 30k objects, 105k allocations per village; 76k after round 3; `HEAPLOG=1` prints the live allocations every 250 steps).
+- **Round 3 (2026-11-21, offline QuickJS, NOT measured in game): the deterministic over-budget steps.** A step that repeats at the same index on two runs of the same seeds is code; a GC
+  pause also repeats in QuickJS (allocation-triggered, so the same position), so tell them apart by whether the step does work (`LONG=3`, 6 seeds, two runs). Code spikes found and fixed:
+  `plaza>plaza` 9-12 ms: the "decks of the two exits are one piece" flood walks the whole real deck network (480 cells) with a template-string key per probe; now numeric deck keys and the walk stops
+  at B. `floorTrunk>finalBlocks` 3-6 ms (5 of 6 villages): two comparator sorts of ~1,500 objects at the end of `planForestFloorGen`; the result is ordered by column key (= x then z), so the keys
+  go through a native `Float64Array.sort` and the distance sort runs only when the 1,500-block budget cuts; a yield before and one per 256 blocks. `forestFloor` list sort the same way.
+  `layerTile>findMerges` / `plazaPartners` / `scanAhead` 3-4 ms: the layer's comparator sort of every fence cell (`sortXZ` in `village_geom.js`: packed keys, native sort), the overlay's second
+  copy+sort (skipped when nothing was added at that level), the fence set built in one go (`fenceSet` yield per 512 cells); the sort is a step of its own (`layerSort`). Heap: the overlay keeps one
+  map entry per cell (was two), the write map uses numeric cell keys, plan blocks are the written objects themselves (no `{id, states}` copy), root-log states objects are shared per face.
+  Same seeds, 6 flat villages, three runs each: steps over 3 ms 63-71 -> 41-50, over 10 ms 4-5 -> 3-4 (the remaining ones are GC pauses of 13-30 ms in `walkDist`, `rootDown`, `forestFloor`,
+  `findHome`, which sit at the same step index but in steps that do little work), peak live allocations 102,722 -> 76,408. Written blocks identical (budget suite baseline).
 - The 135 ms first-call suspect (harmony / showDebug) is measured by the 0.8.10 DIAG native timing, not changed.
 
 Not measured in game: the real step times, the first native-read costs, the wall time of a fresh village, whether the GC pauses seen in QuickJS appear in the game's QuickJS. Acceptance:

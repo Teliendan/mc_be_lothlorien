@@ -41,3 +41,11 @@ export function* layerCells(at, y, ids, rect) {
   }
   return out;
 }
+// [[x, z]] sorted by x then z through a native numeric sort of packed keys (a comparator sort of thousands of pairs took 3-5 ms in QuickJS).
+export function sortXZ(list) {
+  const n = list.length, keys = new Float64Array(n), out = new Array(n);
+  for (let i = 0; i < n; i++) keys[i] = (list[i][0] + 32768) * 65536 + (list[i][1] + 32768);
+  keys.sort();
+  for (let i = 0; i < n; i++) { const q = keys[i], x = Math.floor(q / 65536); out[i] = [x - 32768, q - x * 65536 - 32768]; }
+  return out;
+}

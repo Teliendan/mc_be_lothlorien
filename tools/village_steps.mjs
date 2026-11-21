@@ -3,6 +3,7 @@
 //   node tools/village_steps.mjs [--seeds N=10] [--first K=1] [--fixtures] [--check] [--json out.json]
 //   --fixtures  also run the deep-terrain fixtures (valley seed 3 and 12, lake seed 7 and 15)
 //   --heap      print the QuickJS memory-usage dump (objects, arrays, strings, ...) at the peak live allocation count
+//   HEAPLOG=1   print the live allocation count every 250 steps (where the heap peaks)
 //   --check     assert the budget over the villages: no inner step over 10 ms, at most 0.1 % of the steps over 3 ms, native reads per step <= 128,
 //               peak live QuickJS allocations <= HEAP_CAP; exit code 1 otherwise. Not in the normal verify (minutes: about 12 s per village).
 // Needs quickjs-emscripten 0.31: `npm i quickjs-emscripten@0.31` in a folder and QJS_DIR=<folder> (default temp/village-memory/qjs of this workspace).
@@ -109,7 +110,7 @@ for (const cs of cases) {
     if (d > worstMs.ms) worstMs = { ms: d, label: l, seed: cs };
     if (r > worstReads.n) worstReads = { n: r, label: l, seed: cs };
     const e = byLabel.get(l) ?? { n: 0, ms: 0, max: 0, reads: 0, over: 0 }; e.n++; e.ms += d; if (d > STEP_MS) e.over++; if (d > e.max) e.max = d; if (r > e.reads) e.reads = r; byLabel.set(l, e);
-    if (steps % 250 === 0) peakHeap = Math.max(peakHeap, mem());
+    if (steps % 250 === 0) { const mm = mem(); if (process.env.HEAPLOG) console.log("  heap", steps, l, mm); peakHeap = Math.max(peakHeap, mm); }
   });
   fn("__result", (j) => { result = JSON.parse(str(j)); });
   ctx.setProp(ctx.global, "__posts", ctx.newString(JSON.stringify(w.posts)));

@@ -218,7 +218,7 @@ export function* finalBlocksGen(plan) { // a yield after every 256 entries: the 
   let n = 0;
   const KIND = { plank: { id: PLANKS }, slab_bottom: { id: SLAB, states: { "minecraft:vertical_half": "bottom" } }, slab_top: { id: SLAB, states: { "minecraft:vertical_half": "top" } }, air: { id: "minecraft:air" } };
   for (const c of plan.cells) { out.set(k(c), KIND[c.kind]); if (++n % 64 === 0) yield "finalBlocks"; }
-  for (const b of plan.pier ?? []) { out.set(k(b), { id: b.id, states: b.states }); if (++n % 64 === 0) yield "finalBlocks"; }
+  for (const b of plan.pier ?? []) { out.set(k(b), b); if (++n % 64 === 0) yield "finalBlocks"; } // the block object itself (it has id and states; no copy per block: heap)
   for (const r of plan.rails) out.set(k(r), { id: FENCE, states: r.states });
   for (const l of plan.lights ?? []) out.set(k(l), { id: HIDDEN_LIGHT, states: {} }); // the safety light: invisible
   for (const l of plan.lamps ?? []) { // lamp posts: a fence on the rail post below, the lantern on top
@@ -226,7 +226,7 @@ export function* finalBlocksGen(plan) { // a yield after every 256 entries: the 
     out.set(k(l), { id: l.id ?? LANTERN, states: { "minecraft:block_face": "up" } });
   }
   for (const q of plan.pots ?? []) out.set(k(q), { id: "minecraft:decorated_pot", states: {} }); // a pot on the rail post beside a lamp post (a decorated pot: a flower pot needs block entity data; unverified in game)
-  for (const b of plan.blocks ?? []) { out.set(k(b), { id: b.id, states: b.states }); if (++n % 64 === 0) yield "finalBlocks"; } // gate arch parts and repairs (village_repair.js): free-form blocks
+  for (const b of plan.blocks ?? []) { out.set(k(b), b); if (++n % 64 === 0) yield "finalBlocks"; } // gate arch parts and repairs (village_repair.js): free-form blocks
   return out;
 }
 
@@ -328,7 +328,7 @@ export function* findPlazaPartnersGen(at, A, isFence) { // isFence(x, z): the fe
 export function* fenceTest(at, y) {
   if (!at.layer || !at.rect) return (x, z) => at(x, y, z) === FENCE;
   const r = at.rect, cells = yield* layerCells(at, y, [FENCE], r), set = new Set();
-  for (const [x, z] of cells) set.add((x - r.x0) * 65536 + (z - r.z0));
+  for (let i = 0; i < cells.length; i++) { set.add((cells[i][0] - r.x0) * 65536 + (cells[i][1] - r.z0)); if (i % 512 === 511) yield "fenceSet"; }
   return (x, z) => x >= r.x0 && x <= r.x1 && z >= r.z0 && z <= r.z1 && set.has((x - r.x0) * 65536 + (z - r.z0));
 }
 
@@ -343,7 +343,7 @@ export function* planPlazaGen(at, A, B) {
   const cell = (t, o) => [A.x + d[0] * t + e[0] * o, A.z + d[1] * t + e[1] * o];
   const corners = [cell(-ext, lo), cell(-ext, hi), cell(dist + ext, lo), cell(dist + ext, hi)];
   yield* prefetchBox(at, { x0: Math.min(...corners.map((c) => c[0])) - 2, x1: Math.max(...corners.map((c) => c[0])) + 2, y0: y, y1: y + 3, z0: Math.min(...corners.map((c) => c[1])) - 2, z1: Math.max(...corners.map((c) => c[1])) + 2 }, "plazaPrefetch");
-  const K = (x, z) => `${x},${z}`;
+  const K = (x, z) => (x + 32768) * 65536 + (z + 32768), KX = (k) => Math.floor(k / 65536) - 32768, KZ = (k) => (k % 65536) - 32768; // numeric deck keys (no string per probe)
   const deck = new Map(), fill = [], blocked = [];
   for (let t = -ext; t <= dist + ext; t++) for (let o = lo; o <= hi; o++) {
     const [x, z] = cell(t, o), n = at(x, y, z);
@@ -354,7 +354,7 @@ export function* planPlazaGen(at, A, B) {
     if (ok) { fill.push([x, z]); deck.set(K(x, z), "new"); }
   }
   if (blocked.length) return { error: "blocked", blocked };
-  const olds = [...deck].filter(([, v]) => v === "old").map(([k]) => k.split(",").map(Number));
+  const olds = [...deck].filter(([, v]) => v === "old").map(([k]) => [KX(k), KZ(k)]);
   if (!fill.length) return { error: "plaza nothing to fill" };
   let far = 0;
   for (const [x, z] of fill) {
@@ -365,9 +365,20 @@ export function* planPlazaGen(at, A, B) {
   yield "plaza"; // pure-JS phases of one plaza: a step each
   // the decks of the two exits must be one piece (4-connected) after filling
   const isD = (x, z) => deck.has(K(x, z)) || isDeck(at(x, y, z));
-  const seen = new Set([K(A.x, A.z)]), stack = [[A.x, A.z]];
-  while (stack.length) { const [x, z] = stack.pop(); for (const [a, b] of N4) if (isD(x + a, z + b) && !seen.has(K(x + a, z + b))) { seen.add(K(x + a, z + b)); stack.push([x + a, z + b]); } }
-  if (!seen.has(K(B.x, B.z))) return { error: "plaza not connected" };
+  // numeric keys, and the walk stops at B: the flood runs over the whole real deck network (hundreds of cells), string keys cost ~8 ms here
+  const nk = K, kB = K(B.x, B.z), kA = K(A.x, A.z);
+  const seen = new Set([kA]), stack = [kA];
+  let linked = kA === kB;
+  while (stack.length && !linked) {
+    const q = stack.pop(), x = Math.floor(q / 65536) - 32768, z = (q % 65536) - 32768;
+    for (let i = 0; i < 4; i++) {
+      const nx = x + N4[i][0], nz = z + N4[i][1], m = nk(nx, nz);
+      if (seen.has(m) || !isD(nx, nz)) continue;
+      seen.add(m); stack.push(m);
+      if (m === kB) { linked = true; break; }
+    }
+  }
+  if (!linked) return { error: "plaza not connected" };
   yield "plaza";
   // fences: a new deck cell with a non-deck 4-neighbour; old fences whose open sides are all new deck now go
   const hasFence = (x, z) => at(x, y + 1, z) === FENCE;
@@ -375,7 +386,7 @@ export function* planPlazaGen(at, A, B) {
   for (const [x, z] of fill) if (N4.some(([a, b]) => !isD(x + a, z + b))) newRail.add(K(x, z));
   for (const [k, v] of deck) {
     if (v !== "old") continue;
-    const [x, z] = k.split(",").map(Number);
+    const [x, z] = [KX(k), KZ(k)];
     if (!hasFence(x, z)) continue;
     const open = N4.filter(([a, b]) => !isDeck(at(x + a, y, z + b)));
     if (open.every(([a, b]) => deck.get(K(x + a, z + b)) === "new")) removed.add(k); // also a wall between two rows that now touch
@@ -385,7 +396,7 @@ export function* planPlazaGen(at, A, B) {
   // a diagonal pair of posts needs one orthogonal post (rail_diag): add it on a deck cell
   for (let guard = 0; guard < 6; guard++) {
     let added = false;
-    const dxs = [...deck.keys()].map((k) => k.split(",").map(Number)), bx0 = Math.min(...dxs.map((c) => c[0])) - 1, bx1 = Math.max(...dxs.map((c) => c[0])) + 1, bz0 = Math.min(...dxs.map((c) => c[1])) - 1, bz1 = Math.max(...dxs.map((c) => c[1])) + 1;
+    const dxs = [...deck.keys()].map((k) => [KX(k), KZ(k)]), bx0 = Math.min(...dxs.map((c) => c[0])) - 1, bx1 = Math.max(...dxs.map((c) => c[0])) + 1, bz0 = Math.min(...dxs.map((c) => c[1])) - 1, bz1 = Math.max(...dxs.map((c) => c[1])) + 1;
     const around = [];
     for (let x = bx0; x <= bx1; x++) for (let z = bz0; z <= bz1; z++) around.push([x, z]);
     for (const [x, z] of around) for (const [a, b] of [[1, 1], [1, -1]]) {
@@ -405,9 +416,9 @@ export function* planPlazaGen(at, A, B) {
   };
   const rails = [], railAt = new Set();
   const addRail = (x, z) => { if (!railAt.has(K(x, z))) { railAt.add(K(x, z)); rails.push({ x, y: y + 1, z, states: stateOf(x, z), row: 1 }); } };
-  for (const k of newRail) addRail(...k.split(",").map(Number));
+  for (const k of newRail) addRail(...[KX(k), KZ(k)]);
   for (const k of changed) { // old posts next to a changed cell: their links follow
-    const [x, z] = k.split(",").map(Number);
+    const [x, z] = [KX(k), KZ(k)];
     for (const [a, b] of N4) if (fenced(x + a, z + b)) addRail(x + a, z + b);
   }
   const cells = [];
@@ -415,11 +426,11 @@ export function* planPlazaGen(at, A, B) {
     cells.push({ x, y, z, kind: "plank", row: 1 });
     for (let h = 1; h <= 3; h++) cells.push({ x, y: y + h, z, kind: "air", row: 1 });
   }
-  for (const k of removed) { const [x, z] = k.split(",").map(Number); for (let h = 1; h <= 3; h++) cells.push({ x, y: y + h, z, kind: "air", row: 1 }); } // a lantern on the post goes too
+  for (const k of removed) { const [x, z] = [KX(k), KZ(k)]; for (let h = 1; h <= 3; h++) cells.push({ x, y: y + h, z, kind: "air", row: 1 }); } // a lantern on the post goes too
   yield "plaza";
   // lanterns on post tops until every walk cell of the patch is lit
   const posts = [], walkXZ = [];
-  for (const k of deck.keys()) { const [x, z] = k.split(",").map(Number); (fenced(x, z) ? posts : walkXZ).push([x, z]); }
+  for (const k of deck.keys()) { const [x, z] = [KX(k), KZ(k)]; (fenced(x, z) ? posts : walkXZ).push([x, z]); }
   const ov = (x, yy, z) => { // the world after the plan, for the light test
     const dk = deck.get(K(x, z));
     if (dk === "new" && yy === y) return PLANKS;

@@ -7,6 +7,7 @@ import { LINKS } from "./rail_mender_rules.js";
 import { mendFence } from "./rail_connections.js";
 import { PANEL_ID, planterWalkName } from "./planter_panels.js";
 import { SHIELD_ID, clearSlices } from "./village_clear.js";
+import { sortXZ } from "./village_geom.js";
 
 // WRITES_PER_CHECK: a lantern write also triggers a light update the engine does in the same call; MENDS_PER_CHECK: a mend reads up to 5 cells.
 const WRITES_PER_CHECK = 16, MENDS_PER_CHECK = 16, LAYER_TILE = 64;
@@ -70,18 +71,21 @@ export function* planAndBuild(dimension, found, budget, stats, engine) {
       for (const p of dimension.getBlocks(volume, { includeTypes: ids }, true).getBlockLocationIterator()) out.push([p.x, p.z]);
       yield "layerTile";
     }
-    return out.sort((p, q) => p[0] - q[0] || p[1] - q[1]);
+    yield "layerSort"; // the sort is a step of its own
+    return sortXZ(out);
   };
   let at = boundedReader(get, found.rect, layer);
   if (stats) stats.reads = at.size;
   const res = yield* planGen(at, found.known, { budget, rect: found.rect });
   res.at = null; // the overlay (its numeric maps hold every planned cell) is not needed any more: the write loop reads the base reader only (heap, F7)
+  // numeric cell keys (no string per written cell: heap); decoded again in the write loop
+  const r0 = found.rect, mendKey = (x, y, z) => ((x - r0.x0 + 2048) * 8192 + (z - r0.z0 + 2048)) * 1024 + (y + 256);
   const writes = new Map(); // one plan per step (the floor plan alone has 1,500 blocks)
   for (const p of [...res.merges, ...res.picks, ...res.repairs]) { // a repair is itself the plan
     yield "writeMap";
     const fb = yield* finalBlocksGen(p.plan ?? p);
     let i = 0;
-    for (const [k, b] of fb) { writes.set(k, b); if (++i % 64 === 0) yield "writeMap"; }
+    for (const [k, b] of fb) { const c = k.split(","); writes.set(mendKey(+c[0], +c[1], +c[2]), b); if (++i % 64 === 0) yield "writeMap"; }
   }
   if (stats) stats.writeCells = writes.size;
   if (!engine.keepPlans) for (const p of [...res.merges, ...res.picks, ...res.repairs]) { // the plans' cell lists are in the write map now: keep only what the debug lines print (heap, F7; the tests keep them)
@@ -91,12 +95,11 @@ export function* planAndBuild(dimension, found, budget, stats, engine) {
   }
   // every written cell and its four neighbours, each fence mended once (mendAround per cell visited a shared neighbour up to 5 times; a mend reads only
   // neighbour types, which mending never changes, so order and repeats do not matter). The set is built in the write loop, as numeric keys.
-  const r0 = found.rect, mendKey = (x, y, z) => ((x - r0.x0 + 2048) * 8192 + (z - r0.z0 + 2048)) * 1024 + (y + 256);
   const mend = new Set();
   let n = 0, failedWrites = 0, count = 0;
   for (const [k, b] of writes) {
-    const [x, y, z] = k.split(",").map(Number), cur = at(x, y, z);
-    mend.add(mendKey(x, y, z));
+    const y = (k % 1024) - 256, rest = Math.floor(k / 1024), z = (rest % 8192) - 2048 + r0.z0, x = Math.floor(rest / 8192) - 2048 + r0.x0, cur = at(x, y, z);
+    mend.add(k);
     for (const l of LINKS) mend.add(mendKey(x + l.dx, y, z + l.dz));
     if (!(cur === b.id && (b.id === "minecraft:air" || b.id === "lothlorien:mallorn_planks"))) { // else already right (air over air, planks over planks)
       try {

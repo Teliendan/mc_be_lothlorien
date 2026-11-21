@@ -8,7 +8,7 @@
 //   2 candidates  every exit-exit / exit-side / side-side / plaza / L target in reach (geometry only)
 //   3 score       value = shortcut gained (walking distance through the existing deck network) - cost of the new link
 //   4 greedy      take the best, build its real plan, apply it to an overlay world, enumerate and score again; stop at the budget
-import { hullOf, chunkAlign, growRect, inRect, chunksIn, drive, pace } from "./village_geom.js";
+import { hullOf, chunkAlign, growRect, inRect, chunksIn, drive, pace, sortXZ } from "./village_geom.js";
 import { repairGen } from "./village_repair.js";
 import { PLANKS, SLAB, FENCE, isPlank, LOOP, exitAt, sideTarget, sideStarts, scanAhead, findPlazaPartnersGen, findLsGen, fenceTest, sideStartsGen, planSpanGen, planPlazaGen, planLGen, planMergeGen, blockedCellsGen, clutterGen, planPierGen, finalBlocks, isNewKind, MERGE, findMerges, finalBlocksGen } from "./village_loop.js";
 
@@ -194,17 +194,17 @@ export function* scoreGen(at, cands, opts) {
 // overlay world: writes of chosen plans on top of the snapshot
 // Over a boundedReader (at.nkey / at.rect) the lookups use numeric keys (no string building per read); `over` keeps the string keys for tools.
 export function overlay(at) {
-  const over = new Map(), fast = new Map(), byY = new Map(), nkey = at.nkey, rect = at.rect;
+  const over = new Map(), byY = new Map(), nkey = at.nkey, rect = at.rect;
   const f = (x, y, z) => {
-    const v = nkey && inRect(rect, x, z) ? fast.get(nkey(x, y, z)) : over.get(key(x, y, z));
+    const v = nkey && inRect(rect, x, z) ? byY.get(y)?.get((x - rect.x0) * 65536 + (z - rect.z0)) : over.get(key(x, y, z)); // one entry per cell: the per-level map (heap)
     return v !== undefined ? v : at(x, y, z);
   };
-  // Heap (F7): over a boundedReader every cell inside the rect lives only in `fast` and in the per-level numeric map `byY` (no string key, no [x, z, id] array per cell);
+  // Heap (F7): over a boundedReader every cell inside the rect lives only in the per-level numeric map `byY` (no string key, no [x, z, id] array per cell);
   // `over` keeps the string keys of the cells outside the rect and of every cell when the reader has no nkey (the tools).
   const lk = (x, z) => (nkey && inRect(rect, x, z) ? (x - rect.x0) * 65536 + (z - rect.z0) : `${x},${z}`);
   const put = (k, b) => {
     const [x, y, z] = k.split(",").map(Number);
-    if (nkey && inRect(rect, x, z)) fast.set(nkey(x, y, z), b.id); else over.set(k, b.id);
+    if (!(nkey && inRect(rect, x, z))) over.set(k, b.id);
     let level = byY.get(y);
     if (!level) byY.set(y, level = new Map());
     level.set(lk(x, z), b.id);
@@ -218,13 +218,14 @@ export function overlay(at) {
   // the base layer with this overlay's writes at height y taken out or added, x then z like a plain loop over the rect
   if (at.layer) f.layer = function* (y, ids, r) {
     const want = new Set(ids), level = byY.get(y), base = yield* at.layer(y, ids, r);
-    const out = level ? base.filter(([x, z]) => !level.has(lk(x, z))) : base.slice();
+    const out = level ? base.filter(([x, z]) => !level.has(lk(x, z))) : base; // the base list is sorted and nobody mutates it: no copy
+    let added = false;
     if (level) for (const [k, id] of level) {
       if (!want.has(id)) continue;
       const x = typeof k === "number" ? rect.x0 + Math.floor(k / 65536) : +k.split(",")[0], z = typeof k === "number" ? rect.z0 + (k % 65536) : +k.split(",")[1];
-      if (inRect(r, x, z)) out.push([x, z]);
+      if (inRect(r, x, z)) { out.push([x, z]); added = true; }
     }
-    return out.sort((p, q) => p[0] - q[0] || p[1] - q[1]);
+    return added ? sortXZ(out) : out;
   };
   f.over = over;
   f.rect = rect; f.nkey = nkey; f.size = at.size;
