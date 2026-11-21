@@ -501,7 +501,7 @@
   {
     "featureId": "lothlorien:mallorn_fence",
     "id": "lothlorien:mallorn_fence/use",
-    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -662,7 +662,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_fence",
     "id": "lothlorien:mallorn_heartwood_fence/use",
-    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -704,7 +704,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_planks",
     "id": "lothlorien:mallorn_heartwood_planks/use",
-    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -765,7 +765,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_stairs",
     "id": "lothlorien:mallorn_heartwood_stairs/use",
-    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -853,7 +853,7 @@
   {
     "featureId": "lothlorien:mallorn_log",
     "id": "lothlorien:mallorn_log/use",
-    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -887,7 +887,7 @@
   {
     "featureId": "lothlorien:mallorn_planks",
     "id": "lothlorien:mallorn_planks/use",
-    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -948,7 +948,7 @@
   {
     "featureId": "lothlorien:mallorn_stairs",
     "id": "lothlorien:mallorn_stairs/use",
-    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -967,7 +967,7 @@
   {
     "featureId": "lothlorien:mallorn_stripped_log",
     "id": "lothlorien:mallorn_stripped_log/use",
-    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -986,7 +986,7 @@
   {
     "featureId": "lothlorien:mallorn_stripped_wood",
     "id": "lothlorien:mallorn_stripped_wood/use",
-    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -1028,7 +1028,7 @@
   {
     "featureId": "lothlorien:mallorn_wood",
     "id": "lothlorien:mallorn_wood/use",
-    "text": "Build with this Mallorn timber piece. Silver and heartwood families have separate appearances and matching recipes.",
+    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",

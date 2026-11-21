@@ -326,7 +326,7 @@
     {
       "id": "lothlorien:elven_lantern_heartwood",
       "slug": "elven_lantern_heartwood",
-      "name": "Heartwood Elven Lantern",
+      "name": "Golden Elven Lantern",
       "kind": "item",
       "aliases": [],
       "nativeIds": [
@@ -931,7 +931,7 @@
     {
       "id": "lothlorien:mallorn_heartwood_boat",
       "slug": "mallorn_heartwood_boat",
-      "name": "Mallorn Heartwood Boat",
+      "name": "Golden Mallorn Boat",
       "kind": "item",
       "aliases": [],
       "nativeIds": [
@@ -964,7 +964,7 @@
     {
       "id": "lothlorien:mallorn_heartwood_button",
       "slug": "mallorn_heartwood_button",
-      "name": "Mallorn Heartwood Button",
+      "name": "Golden Mallorn Button",
       "kind": "item",
       "aliases": [],
       "nativeIds": [
@@ -997,7 +997,7 @@
     {
       "id": "lothlorien:mallorn_heartwood_chest_boat",
       "slug": "mallorn_heartwood_chest_boat",
-      "name": "Mallorn Heartwood Boat with Chest",
+      "name": "Golden Mallorn Boat with Chest",
       "kind": "item",
       "aliases": [],
       "nativeIds": [
@@ -1030,7 +1030,7 @@
     {
       "id": "lothlorien:mallorn_heartwood_door",
       "slug": "mallorn_heartwood_door",
-      "name": "Mallorn Heartwood Door",
+      "name": "Golden Mallorn Door",
       "kind": "item",
       "aliases": [],
       "nativeIds": [
@@ -1063,7 +1063,7 @@
     {
       "id": "lothlorien:mallorn_heartwood_fence",
       "slug": "mallorn_heartwood_fence",
-      "name": "Mallorn Heartwood Fence",
+      "name": "Golden Mallorn Fence",
       "kind": "item",
       "aliases": [],
       "nativeIds": [
@@ -1096,7 +1096,7 @@
     {
       "id": "lothlorien:mallorn_heartwood_fence_gate",
       "slug": "mallorn_heartwood_fence_gate",
-      "name": "Mallorn Heartwood Fence Gate",
+      "name": "Golden Mallorn Fence Gate",
       "kind": "item",
       "aliases": [],
       "nativeIds": [
@@ -1129,7 +1129,7 @@
     {
       "id": "lothlorien:mallorn_heartwood_planks",
       "slug": "mallorn_heartwood_planks",
-      "name": "Mallorn Heartwood Planks",
+      "name": "Golden Mallorn Planks",
       "kind": "item",
       "aliases": [],
       "nativeIds": [
@@ -1162,7 +1162,7 @@
     {
       "id": "lothlorien:mallorn_heartwood_pressure_plate",
       "slug": "mallorn_heartwood_pressure_plate",
-      "name": "Mallorn Heartwood Pressure Plate",
+      "name": "Golden Mallorn Pressure Plate",
       "kind": "item",
       "aliases": [],
       "nativeIds": [
@@ -1195,7 +1195,7 @@
     {
       "id": "lothlorien:mallorn_heartwood_slab",
       "slug": "mallorn_heartwood_slab",
-      "name": "Mallorn Heartwood Slab",
+      "name": "Golden Mallorn Slab",
       "kind": "item",
       "aliases": [
         "lothlorien:mallorn_heartwood_double_slab"
@@ -1234,7 +1234,7 @@
     {
       "id": "lothlorien:mallorn_heartwood_stairs",
       "slug": "mallorn_heartwood_stairs",
-      "name": "Mallorn Heartwood Stairs",
+      "name": "Golden Mallorn Stairs",
       "kind": "item",
       "aliases": [],
       "nativeIds": [
@@ -1267,7 +1267,7 @@
     {
       "id": "lothlorien:mallorn_heartwood_trapdoor",
       "slug": "mallorn_heartwood_trapdoor",
-      "name": "Mallorn Heartwood Trapdoor",
+      "name": "Golden Mallorn Trapdoor",
       "kind": "item",
       "aliases": [],
       "nativeIds": [

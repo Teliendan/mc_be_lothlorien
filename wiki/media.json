@@ -74,7 +74,7 @@
     "featureId": "lothlorien:elven_lantern_heartwood",
     "source": "lothlorien_rp/textures/items/elven_lantern_heartwood.png",
     "kind": "item",
-    "alt": "Heartwood Elven Lantern"
+    "alt": "Golden Elven Lantern"
   },
   {
     "id": "lothlorien:elven_rope/icon",
@@ -200,77 +200,77 @@
     "featureId": "lothlorien:mallorn_heartwood_boat",
     "source": "lothlorien_rp/textures/items/mallorn_heartwood_boat.png",
     "kind": "item",
-    "alt": "Mallorn Heartwood Boat"
+    "alt": "Golden Mallorn Boat"
   },
   {
     "id": "lothlorien:mallorn_heartwood_button/icon",
     "featureId": "lothlorien:mallorn_heartwood_button",
     "source": "lothlorien_rp/textures/blocks/mallorn_heartwood_planks.png",
     "kind": "texture",
-    "alt": "Mallorn Heartwood Button"
+    "alt": "Golden Mallorn Button"
   },
   {
     "id": "lothlorien:mallorn_heartwood_chest_boat/icon",
     "featureId": "lothlorien:mallorn_heartwood_chest_boat",
     "source": "lothlorien_rp/textures/items/mallorn_heartwood_chest_boat.png",
     "kind": "item",
-    "alt": "Mallorn Heartwood Boat with Chest"
+    "alt": "Golden Mallorn Boat with Chest"
   },
   {
     "id": "lothlorien:mallorn_heartwood_door/icon",
     "featureId": "lothlorien:mallorn_heartwood_door",
     "source": "lothlorien_rp/textures/items/mallorn_heartwood_door.png",
     "kind": "item",
-    "alt": "Mallorn Heartwood Door"
+    "alt": "Golden Mallorn Door"
   },
   {
     "id": "lothlorien:mallorn_heartwood_fence/icon",
     "featureId": "lothlorien:mallorn_heartwood_fence",
     "source": "lothlorien_rp/textures/blocks/mallorn_heartwood_fence_post.png",
     "kind": "texture",
-    "alt": "Mallorn Heartwood Fence"
+    "alt": "Golden Mallorn Fence"
   },
   {
     "id": "lothlorien:mallorn_heartwood_fence_gate/icon",
     "featureId": "lothlorien:mallorn_heartwood_fence_gate",
     "source": "lothlorien_rp/textures/blocks/mallorn_heartwood_fence_post.png",
     "kind": "texture",
-    "alt": "Mallorn Heartwood Fence Gate"
+    "alt": "Golden Mallorn Fence Gate"
   },
   {
     "id": "lothlorien:mallorn_heartwood_planks/icon",
     "featureId": "lothlorien:mallorn_heartwood_planks",
     "source": "lothlorien_rp/textures/blocks/mallorn_heartwood_planks.png",
     "kind": "texture",
-    "alt": "Mallorn Heartwood Planks"
+    "alt": "Golden Mallorn Planks"
   },
   {
     "id": "lothlorien:mallorn_heartwood_pressure_plate/icon",
     "featureId": "lothlorien:mallorn_heartwood_pressure_plate",
     "source": "lothlorien_rp/textures/blocks/mallorn_heartwood_planks.png",
     "kind": "texture",
-    "alt": "Mallorn Heartwood Pressure Plate"
+    "alt": "Golden Mallorn Pressure Plate"
   },
   {
     "id": "lothlorien:mallorn_heartwood_slab/icon",
     "featureId": "lothlorien:mallorn_heartwood_slab",
     "source": "lothlorien_rp/textures/blocks/mallorn_heartwood_planks.png",
     "kind": "texture",
-    "alt": "Mallorn Heartwood Slab"
+    "alt": "Golden Mallorn Slab"
   },
   {
     "id": "lothlorien:mallorn_heartwood_stairs/icon",
     "featureId": "lothlorien:mallorn_heartwood_stairs",
     "source": "lothlorien_rp/textures/blocks/mallorn_heartwood_planks.png",
     "kind": "texture",
-    "alt": "Mallorn Heartwood Stairs"
+    "alt": "Golden Mallorn Stairs"
   },
   {
     "id": "lothlorien:mallorn_heartwood_trapdoor/icon",
     "featureId": "lothlorien:mallorn_heartwood_trapdoor",
     "source": "lothlorien_rp/textures/blocks/mallorn_heartwood_trapdoor.png",
     "kind": "texture",
-    "alt": "Mallorn Heartwood Trapdoor"
+    "alt": "Golden Mallorn Trapdoor"
   },
   {
     "id": "lothlorien:mallorn_leaf_carpet/icon",

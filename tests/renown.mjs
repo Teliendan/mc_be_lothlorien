@@ -345,7 +345,7 @@ test("goal lines: one sentence each, deed lesson texts end without the goal sent
     assert.equal(sentences, 1, `${l.id} goal: ${sentences} sentences`);
   }
   assert.equal(cat["lothlorien.message.lore.lesson.nectar.goal"].source, "Fill a glass bottle from a full bloom.");
-  assert.ok(cat["lothlorien.message.lore.lesson.nectar.text"].source.includes("Fill a glass bottle from a full bloom, and the bloom begins to fill again."));
+  assert.ok(cat["lothlorien.message.lore.lesson.nectar.text"].source.includes("Fill a glass bottle from a full bloom: the bloom empties and begins to fill again."));
   assert.ok(cat["lothlorien.message.lore.lesson.dew.text"].source.includes("Fill a glass bottle from each dewy patch"));
 });
 
