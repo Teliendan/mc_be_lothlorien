@@ -364,6 +364,7 @@ pre-warm of that one member in a job at world load. If the same tick also shows 
 
 Owner rule 2026-11-21 (workspace `bedrock-scripting/references/performance.md`, "When a call needs a job"): no single call does work that grows with world content; per step <= ~128 native reads,
 <= 16 writes. The perf audit (L2-L4) found three Lothlorien calls over it; all three are fixed with the same results. Budget test: `tests/single_call_budget.mjs` (suite `single-call-budget`), counting mocks.
+R6 (2026-11-22): `giftSpace` now calls `groundFeet`, so one arrival or one kept-spot offer costs at most `GROUND_CALLS` (52) native calls once, within the 128-call step budget.
 Worst single call / job step, native calls (mock; before = the code at `a2065fa`, measured by running the same test there):
 
 | Call | Before | After |

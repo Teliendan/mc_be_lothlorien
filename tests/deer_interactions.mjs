@@ -78,6 +78,13 @@ await test("a newly obstructed or foreign-biome gift spot is never used and is f
   }
   assert.equal(h.dimension.drops.length, 0); assert.equal(h.deer.getDynamicProperty("lothlorien:gifted"), undefined);
 });
+await test("R6: a gift spot found on a thin leaf carpet that rays stop at is laid on arrival", async () => {
+  const h = await setup(); h.dimension.shapes = new Map([["lothlorien:mallorn_leaf_carpet", 1 / 16]]);
+  h.dimension.blocked.set("40,65,0", "lothlorien:mallorn_leaf_carpet"); h.dimension.top = 65;
+  const y = h.mod.groundFeet(h.dimension, 40, 0); assert.equal(y, 66, "the search finds the carpet as ground");
+  assert.equal(h.mod.giveGift(h.deer, { spot: { x: 40, y, z: 0 } }), true);
+  assert.equal(h.dimension.drops.length, 1);
+});
 await test("a kept gift spot that is no longer clear is dropped and a new one is searched", async () => {
   const h = await setup();
   h.deer.setDynamicProperty("lothlorien:gift_spot", JSON.stringify({ x: 40, y: 65, z: 0, dim: "overworld" }));

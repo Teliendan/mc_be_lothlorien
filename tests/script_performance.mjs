@@ -41,6 +41,7 @@ function engine() {
       return [...entities.values()].filter(e => e.isValid && e.dimension === dimension && e.typeId === type);
     }, getBlock(p) { reads++; return { typeId: dimension.rope ? "lothlorien:elven_rope" : p.y < 0 ? "minecraft:stone" : "minecraft:air",
       isAir: p.y >= 0, isLiquid: false, isWaterlogged: false, y: Math.floor(p.y) }; },
+    getTopmostBlock(p) { return this.getBlock({ x: p.x, y: -1, z: p.z }); }, // the stone floor ends at y -1
     getBlockFromRay(from, direction, { maxDistance = 64 } = {}) { // vertical rays only: stone below y 0 (Block members of server 2.8.0, no isSolid)
       const step = direction.y < 0 ? -1 : 1, end = from.y + step * maxDistance;
       for (let y = Math.floor(from.y); step < 0 ? y + 1 > end : y < end; y += step) {

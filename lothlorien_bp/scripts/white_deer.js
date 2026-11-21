@@ -91,13 +91,9 @@ function clearBody(dimension, x, y, z, tally = { n: 0 }) {
   return dry(dimension.getBlock({ x, y, z })) && dry(dimension.getBlock({ x, y: y + 1, z })) &&
     !dimension.getBlockFromRay({ x: x + 0.5, y: y + 0.05, z: z + 0.5 }, UP, { includeLiquidBlocks: true, maxDistance: 1.9 });
 }
-function giftSpace(dimension, spot) {
-  try {
-    const hit = dimension.getBlockFromRay({ x: spot.x + 0.5, y: spot.y + 0.5, z: spot.z + 0.5 }, DOWN, { includeLiquidBlocks: true, maxDistance: 1.4 });
-    return !!hit && hit.block.y === spot.y - 1 && !hit.block.isLiquid && !canopy(hit.block.typeId) &&
-      clearBody(dimension, spot.x, spot.y, spot.z);
-  } catch { return false; }
-}
+// The spot is still good when the search's own probe (groundFeet) finds the same feet height there: one probe for search and
+// arrival, so a block shape the two would read differently (a thin leaf carpet under the spot) cannot fail the arrival.
+const giftSpace = (dimension, spot) => groundFeet(dimension, spot.x, spot.z) === spot.y;
 const insideGift = (dimension, spot) => biome.at(dimension, spot.x, spot.z) === biome.id;
 
 // The gift spot for a deer at `origin` (great_mallorn_rules.js, pickGiftSpot): first the border scan over the loaded grid, then

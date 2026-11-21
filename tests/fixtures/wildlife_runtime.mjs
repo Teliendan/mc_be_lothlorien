@@ -37,12 +37,16 @@ function engine() {
       return { typeId, y, isAir: typeId === "minecraft:air", isLiquid: ["minecraft:water", "minecraft:lava"].includes(typeId),
         isWaterlogged: this.waterlogged === `${Math.floor(p.x)},${y},${Math.floor(p.z)}`,
         below: () => this.getBlock({ ...p, y: y - 1 }) }; }, // the Block members of @minecraft/server 2.8.0 only (no beta isSolid)
-    // vertical block raycast: air and passable plants let the ray through, liquids stop it only with includeLiquidBlocks; the start cell counts
+    // vertical block raycast: air and passable plants let the ray through, liquids stop it only with includeLiquidBlocks; the start cell counts.
+    // Optional `shapes` (typeId -> top height in blocks, default 1): a downward ray meets such a block only within maxDistance of its top.
     getBlockFromRay(from, direction, { maxDistance = 64, includeLiquidBlocks = false } = {}) {
       const x = Math.floor(from.x), z = Math.floor(from.z), step = direction.y < 0 ? -1 : 1, end = from.y + step * maxDistance;
       for (let y = Math.floor(from.y); step < 0 ? y + 1 > end : y < end; y += step) {
         const block = this.getBlock({ x, y, z });
-        if (block.isLiquid ? includeLiquidBlocks : !["minecraft:air", "minecraft:short_grass"].includes(block.typeId)) return { block };
+        if (block.isLiquid ? !includeLiquidBlocks : ["minecraft:air", "minecraft:short_grass"].includes(block.typeId)) continue;
+        const h = block.isLiquid ? 1 : this.shapes?.get(block.typeId) ?? 1;
+        if (h < 1 && step < 0 && !(from.y >= y && from.y < y + h) && from.y - (y + h) > maxDistance) return undefined;
+        return { block };
       }
       return undefined;
     },
