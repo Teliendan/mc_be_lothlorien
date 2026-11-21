@@ -21,6 +21,8 @@ generate: `WORLDGEN.md`. Changes are one-shot: existing structures do not regene
   "cannot light" error as before. One round per job step. It replaces the old "light that helps most" greedy: the same villages, links and
   repairs, but different (still invisible) hidden-light cells, and about 50 % more of them (842 span shapes: 4,022 -> 6,028 lights; 24 simulated villages:
   bridges 35 -> 48, plazas 4 -> 6). The bridge safety counts the hidden lights alone, as before (a visible lamp may be broken).
+- Population runs as a job (2026-11-21, not verified in game): the posts query, one elf spawn per step, the pavilion furnishing in steps (<= 16 block writes, one structure placement
+  per step), so the elves and the furnishing appear over about a second after the bridges instead of in one frame (`village_populate.js`, `docs/SCRIPT_PERFORMANCE.md`).
 - Unused flat connector mouths get rails when no onward surface exists, including at the lower half-step; existing bridges and
   stairs stay open.
 - Moss beds get open trapdoor borders on every available side (path-facing and off-deck sides supported by moss included);

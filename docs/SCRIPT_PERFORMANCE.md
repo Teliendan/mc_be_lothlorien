@@ -250,3 +250,40 @@ Small trims (2026-11-11, finding LM-10, structure; not timed). The Harmony band 
 join, not twice per player per second. The Renown Harmony nudge listens to `onHarmonyChange` (`harmony_game.js`) instead of a 40-tick poll over
 all players; taking the lesson and joining record its baseline. The healer pulse tests only `isValid` of a tracked healer (variant and health
 are read when it is tracked). `use_guard.js` and the trade sessions forget a player who left.
+
+## Village build job: per-step budget (2026-11-21, offline only, NOT measured in game)
+
+Evidence: a fresh village on the owner's PC (DIAG 0.8.7 / 0.8.8) had single job calls of 358 / 439 / 168 ms; the tablet is the target and any hitch on the PC is a
+defect. One engine job call is `JOB_SLICE_MS` (2 ms) of inner steps plus one more inner step, and an inner step is all the code between two yields, so the cure
+is to make every inner step small by construction. The investigation and plan are in the workspace scratch `temp/village-hitch/plan.md`; the code is
+`village_build.js` (`sliced`, `planAndBuild`, `clearShield`), `village_populate.js` and the generators in `village_planner.js`, `village_loop.js`,
+`village_repair.js`, `home_furnish.js`.
+
+Budget per inner step (owner PC; the tablet is several times slower): pure JS <= 3 ms in the QuickJS harness, <= 128 native block reads (about 1.5-2 ms), <= 16 block writes,
+<= 1 `structureManager.place` / `spawnEntity` / `getEntities`, <= 8 entity removes, `getBlocks` <= 64 x 64 x 1, `fillBlocks` <= 16 x 16 x 64. Every yield is labelled
+(`yield "realize"`); `sliced` records the slowest step, the most native reads in one step and the steps over 3 ms by label, the debug lines print them
+(`docs/TESTING.md`), and the DIAG wrapper appends the label to the `runJob` entry, so a long call names its code. A real-world step over the budget despite
+the offline tests is logged and fixed as a case (owner decision), not capped.
+
+How a step stays small: reads go through a reader that counts fresh native reads (`at.size()`), and `pace(at)` (`village_geom.js`) tells a loop when ~48 fresh
+reads or 32 iterations were done; `prefetchBox` reads a box in such steps so the pure code after it runs on memoised cells (a deep valley costs more steps, not a
+longer step). The fan test of `enumerate` reads a per-level fence set from the native layer query instead of a block per cell. Plans are applied to the overlay
+and turned into `finalBlocks` in chunks, the write map is built one plan per step, the fence-mend set is built inside the write loop as numeric keys, and
+populate (elves, pavilion furnishing) is a job of its own steps. Light: one rule for bridges, plazas and merges (`lightFill`, `docs/VILLAGES.md`), one round per step.
+
+Tests (all offline, none in game):
+- `tests/village_build_budget.mjs` (suite `village-budget`, part of `village` and `all`; Node, deterministic): the production job on 20 simulated villages + 2 valleys
+  (30-block bowl) + 2 lakes, a counting dimension, per-step limits above, written blocks identical to the pre-change planner except the hidden light cells (baseline
+  fixture), populate (139 elves, 95 structure placements over 24 villages). Worst step on 24 villages: 96 reads (`sideStarts>enumerate`), 16 writes, 1 spawn / structure / entity query, 8 removes.
+- `tools/village_steps.mjs [--seeds N] [--fixtures] [--check]` (QuickJS, quickjs-emscripten 0.31, needs `QJS_DIR`; about 6 s per village, not in verify): times every step, per label
+  worst ms, steps over 3 ms and most reads, peak live allocations. Treat QuickJS-wasm ms on the PC as roughly game ms on the PC; native reads cost extra in game.
+- `tests/script_glue.mjs`: `sliced` with a mock clock (slowest label, reads, steps over budget).
+
+Offline numbers (before = 30 seeds of 2026-11-21 at `7751a73`, after = 30 flat + 4 fixture villages, QuickJS wasm ms): slowest step 558 ms (median of the per-seed worst 335 ms) ->
+46 ms (28 ms after a last rootDown fix, rerun on the fixtures only); most native reads in one step 28,331 -> 109; steps over 3 ms: 291,954 steps, 560 (0.19 %) over 3 ms, 10 over 10 ms (the
+`--check` limits 0.1 % / 10 ms still FAIL narrowly); the steps over 10 ms that remain are in steps that do almost no work (`walkDist`, `mend`, `clear`), which looks like QuickJS garbage
+collection pauses; live allocations at the peak 194k -> 128k (numeric overlay maps, plan lists released after the write map; no heap cap is set yet). Hidden lights vs the old greedy:
+842 span shapes 4,022 -> 6,028, 24 villages bridges 35 -> 48, plazas 4 -> 6. Wall time per village in the harness is about the same as before (a few seconds).
+
+Not measured in game: the real step times, the first native-read costs, the wall time of a fresh village, whether the GC pauses seen in QuickJS appear in the game's QuickJS. Acceptance:
+the offline tests pass and a clean PC DIAG run of a fresh village (no `loop_marker` job call over 5 ms, no gap, debug lines with `slowest step <= 3 ms`).

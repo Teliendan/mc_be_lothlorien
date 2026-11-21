@@ -260,7 +260,8 @@ export function* planRootDownGen(at, cells, y0, o = {}) {
   const hang = cols.filter((c) => c.low - 1 > c.g);
   if (!hang.length) return { blocks: [], columns: 0, roots: 0, drop: 0, wet: false, x: cx, z: cz };
   const blocks = [], put = (x, y, z, face = "up") => blocks.push({ x, y, z, id: "lothlorien:mallorn_log", states: { "minecraft:block_face": face } });
-  for (const c of hang) for (let y = c.low - 1; y >= c.g - 1; y--) put(c.x, y, c.z); // two blocks into the ground: planted, no seam (the pillar flare wants its log under the ground)
+  let made = 0;
+  for (const c of hang) for (let y = c.low - 1; y >= c.g - 1; y--) { put(c.x, y, c.z); if (++made % 128 === 0) yield "rootDown"; } // a 60-deep valley makes thousands of blocks: a step per 128; two blocks into the ground: planted, no seam (the pillar flare wants its log under the ground)
   const drop = Math.max(...hang.map((c) => c.low - 1 - c.g)), wet = hang.some((c) => c.water !== null);
   let roots = 0;
   if (o.roots !== false) {

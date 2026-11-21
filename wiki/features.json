@@ -2197,7 +2197,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/elf_village.js",
-          "sha256": "37688c665cbdfb07f023864fef09905bf21b6d097d9cb276977d2bdaf1ae83ec"
+          "sha256": "562ba5b1a05a51ecdca256faa54d7455a98df0cf8d30d65b8459163dc741e4f0"
         }
       ]
     },
@@ -2717,7 +2717,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/home_furnish.js",
-          "sha256": "76429a0c9c31d02b3cbd77609a0d3c2d4371ebbd8f42cba29313d726a9c23f4c"
+          "sha256": "560954e7e96053b09b25e60c6d1ea994cd8d1d3ce5b5d3e3a43ac4cee51ad388"
         },
         {
           "path": "lothlorien_bp/scripts/leaf_fall.js",
@@ -2729,7 +2729,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/loop_marker.js",
-          "sha256": "7fb066cee2b9751edb5aab9f6c55f3e7221c936da4406ce0b54a40b4b1831569"
+          "sha256": "cdff8f5f289dffe29510aa5cb16c501af29cf3e6ef4bc97e7a1b8924500db67c"
         },
         {
           "path": "lothlorien_bp/scripts/loremaster.js",
@@ -2805,19 +2805,19 @@
         },
         {
           "path": "lothlorien_bp/scripts/village_geom.js",
-          "sha256": "33e5c40e382731dd181cc1d51d172251a7ac1facadcd83541f978ff31f875561"
+          "sha256": "2e68f66b01858c7d1b63dfd98b283888e4bf7f3db782ad9f8e22bcc1f84e93fb"
         },
         {
           "path": "lothlorien_bp/scripts/village_loop.js",
-          "sha256": "a8af6e9bff7e464851f3e70bb3ad8be63087af340a94f5cde5b7bbc3375b2128"
+          "sha256": "bd5174cd1cd5f1974b53d837b155b75d6cdd6ba8cdfe1f1098d03a1d2a5723a0"
         },
         {
           "path": "lothlorien_bp/scripts/village_planner.js",
-          "sha256": "4dbef73a25dca644ca00bb580cc8583d366725e2fbd53eb9f6e03887ad73472d"
+          "sha256": "ca18c0d380b6ed57a177927e9a31b42cf4bb8ca70872912b7951f0846ec566dd"
         },
         {
           "path": "lothlorien_bp/scripts/village_repair.js",
-          "sha256": "cbc04b6a7ba05d8a9bc9e9c86c5201c120ddb7278bcf10307d58b9d59ceb9267"
+          "sha256": "0339f9456e2243da57ef9804086c679715e87ad190f9446349f713a8e433f4d4"
         },
         {
           "path": "lothlorien_bp/scripts/warden_replace.js",

@@ -82,7 +82,7 @@ cleanup is `dc1182e`.
 ## Village planner debug lines
 
 With village debug on (`/scriptevent lothlorien:debug`), `loop_marker.js` logs one `planner: (debug)` line per stage: `discovery`, `settle`,
-`plan+build` (wall ms, ticks, inner steps and ms inside them, distinct reads, cells written and changed, then the step fields below), `populate`, then
+`plan+build` (wall ms, ticks, inner steps and ms inside them, distinct reads, cells written and changed, then the step fields below), `populate` (`populate <ms> ms wall, <n> ticks, <steps> inner steps, <ms> ms inside them`, then the step fields: it is a job of its own steps now, village_populate.js),, then
 `clear` (the final shield step: `clear <ms> ms wall, <n> ticks, y <y0>..<y1>, <s> slices (<f> failed), <steps> inner steps, <ms> ms inside them, <c> light_block_0 cells cleared, <step fields>`; the slowest step/slice is one call the job cannot split, so it is the hitch a player feels),
 and the village summary. The step fields (`stepSummary` in loop_marker.js) read `slowest step <ms> ms (<from>><to>), most native reads in one step <n> (<from>><to>), steps over 3 ms: <n> (<label> <n>, ...)`.
 An inner step is the code between two labelled yields (`yield "realize"`); `<from>><to>` names the two yields around the step (for example `findMerges>scoreGen`).
