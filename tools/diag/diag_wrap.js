@@ -9,18 +9,32 @@ const MAX_LINES = 5;          // immediate chat lines per minute (the summary ca
 const MINUTE_MS = 60000;      // a "minute" is wall clock (Date.now()), so slow ticks do not stretch it
 const TOP = 5;
 
-let bucket = new Map();       // label -> [ms, calls, longest single call] since the last monitor tick
-let minute = new Map();       // label -> [ms, calls, longest single call] since the last summary
-const add = (map, label, ms) => {
+let bucket = new Map();       // label -> [ms, calls, longest single call, native calls inside, native ms inside] since the last monitor tick
+let minute = new Map();       // the same since the last summary
+const add = (map, label, ms, n = 0, nms = 0) => {
   const e = map.get(label);
-  if (e) { e[0] += ms; e[1]++; if (ms > e[2]) e[2] = ms; } else map.set(label, [ms, 1, ms]);
+  if (e) { e[0] += ms; e[1]++; if (ms > e[2]) e[2] = ms; e[3] += n; e[4] += nms; } else map.set(label, [ms, 1, ms, n, nms]);
 };
+// Every callback also counts the wrapped native calls made inside it (nativeN, nativeMs below), so a slow callback shows whether it made a few slow natives,
+// many cheap ones (Date.now() has 1 ms resolution: the ms of cheap calls round to 0, so read the COUNT) or none at all (time spent in plain script / GC / engine).
+// A callback of >= CALLBACK_LOG_MS is also logged at once with its label, call number, tick and native count (the "one 130 ms runInterval(20) after load" case).
+const CALLBACK_LOG_MS = 25, CALLBACK_LOG_PER_MINUTE = 10;
+let callbackLogs = 0; const calledBefore = new Set();
+function record(label, ms, n, nms) {
+  add(bucket, label, ms, n, nms); add(minute, label, ms, n, nms);
+  const first = !calledBefore.has(label);
+  if (first) calledBefore.add(label);
+  if (ms >= CALLBACK_LOG_MS && callbackLogs < CALLBACK_LOG_PER_MINUTE) {
+    callbackLogs++;
+    console.warn(`[lothlorien DIAG] slow callback ${label} ${ms} ms${first ? " (its FIRST call)" : ""}: ${n} native calls inside took ${nms} ms, so ${ms - nms} ms were plain script, uncounted natives, garbage collection or the engine (tick ${realSystem.currentTick}, ${((Date.now() - startedAt) / 1000).toFixed(1)} s after load)`);
+  }
+}
 
 function timed(label, fn) {
   return function (...args) {
-    const t0 = Date.now();
+    const t0 = Date.now(), n0 = nativeN, m0 = nativeMs;
     try { return fn.apply(this, args); }
-    finally { const ms = Date.now() - t0; add(bucket, label, ms); add(minute, label, ms); }
+    finally { record(label, Date.now() - t0, nativeN - n0, nativeMs - m0); }
   };
 }
 // A job generator may yield a string label (loop_marker.js sliced() yields the label of its slowest inner step, "from>to"): the call is
@@ -28,13 +42,13 @@ function timed(label, fn) {
 function* timedGen(label, gen) {
   let input;
   for (;;) {
-    const t0 = Date.now();
+    const t0 = Date.now(), n0 = nativeN, m0 = nativeMs;
     let r;
     try { r = gen.next(input); }
     finally {
       const ms = Date.now() - t0;
       const named = r && !r.done && typeof r.value === "string" ? `${label}[${r.value}]` : label;
-      add(bucket, named, ms); add(minute, named, ms);
+      record(named, ms, nativeN - n0, nativeMs - m0);
     }
     if (r.done) return r.value;
     input = yield r.value;
@@ -47,25 +61,31 @@ function* timedGen(label, gen) {
 // shortly after world load (harmony_game.js once, main.js showDebug once); both read biomes, so a first-call warm-up of getBiome is the suspect:
 // the first call of every native is also logged when it takes >= NATIVE_LOG_MS. The monitor's own natives (where()) are not timed (`muted`).
 const NATIVE_LOG_MS = 25, NATIVE_LOG_PER_MINUTE = 10;
+// "@name" wraps a property GETTER (0.8.12: the harmony and showDebug intervals read player.location, player.dimension and player.onScreenDisplay, which no
+// method wrapper saw; hot getters such as Block.typeId stay unwrapped so the DIAG overhead stays small).
 const NATIVE = {
   Dimension: ["getBiome", "getBlock", "getBlocks", "fillBlocks", "getEntities", "getEntitiesAtBlockLocation", "spawnEntity", "spawnItem", "spawnParticle", "playSound",
-    "getBlockFromRay", "getTopmostBlock", "containsBlock", "isChunkLoaded", "runCommand", "getPlayers"],
+    "getBlockFromRay", "getTopmostBlock", "containsBlock", "isChunkLoaded", "runCommand", "getPlayers", "@heightRange"],
   Block: ["setPermutation", "setType", "getComponent"],
-  Entity: ["remove", "kill", "teleport", "applyImpulse", "setDynamicProperty", "getDynamicProperty", "addEffect", "getComponent"],
-  World: ["setDynamicProperty", "getDynamicProperty", "getPlayers", "getDimension"],
+  Entity: ["remove", "kill", "teleport", "applyImpulse", "setDynamicProperty", "getDynamicProperty", "addEffect", "getComponent", "hasTag", "addTag", "removeTag", "@location", "@dimension"],
+  Player: ["sendMessage", "@onScreenDisplay"],
+  ScreenDisplay: ["setActionBar", "setTitle"],
+  World: ["setDynamicProperty", "getDynamicProperty", "getPlayers", "getAllPlayers", "getDimension"],
   StructureManager: ["place", "get", "createFromWorld", "delete"],
   TickingAreaManager: ["createTickingArea", "removeTickingArea", "hasTickingArea"],
 };
-let muted = false, nativeCount = 0, nativeLogs = 0;
+let muted = false, nativeCount = 0, nativeLogs = 0, nativeN = 0, nativeMs = 0; // nativeN / nativeMs: running totals of all timed native calls, diffed per callback
 const natives = new Map();     // label -> { calls, ms, max } since the last summary
 let tickNative = ["none", 0];  // the slowest single native call since the last monitor tick: [label, ms]
 let minNative = ["none", 0];   // ... since the last summary
 const nativeTop = (n = 4) => [...natives].filter(([, e]) => e.ms > 0 || e.max > 0).sort((a, b) => b[1].ms - a[1].ms).slice(0, n)
   .map(([k, e]) => `${k} ${e.ms}ms/${e.calls}x (max ${e.max})`).join("; ");
 function wrapNative(proto, cls, name) {
+  const getter = name[0] === "@";
+  if (getter) name = name.slice(1);
   const desc = Object.getOwnPropertyDescriptor(proto, name);
-  if (!desc || typeof desc.value !== "function") return false;
-  const orig = desc.value, label = `${cls}.${name}`, e = { calls: 0, ms: 0, max: 0 };
+  if (!desc || (getter ? typeof desc.get !== "function" : typeof desc.value !== "function")) return false;
+  const orig = getter ? desc.get : desc.value, label = getter ? `${cls}.${name}(get)` : `${cls}.${name}`, e = { calls: 0, ms: 0, max: 0 };
   natives.set(label, e);
   const wrapped = function (...args) {
     if (muted) return orig.apply(this, args);
@@ -73,6 +93,7 @@ function wrapNative(proto, cls, name) {
     try { return orig.apply(this, args); }
     finally {
       const ms = Date.now() - t0;
+      nativeN++; nativeMs += ms;
       e.calls++; e.ms += ms;
       if (ms > e.max) e.max = ms;
       if (ms > tickNative[1]) tickNative = [label, ms];
@@ -83,7 +104,10 @@ function wrapNative(proto, cls, name) {
       }
     }
   };
-  try { Object.defineProperty(proto, name, { value: wrapped, writable: true, configurable: true, enumerable: desc.enumerable }); return true; }
+  try {
+    Object.defineProperty(proto, name, getter ? { get: wrapped, set: desc.set, configurable: true, enumerable: desc.enumerable } : { value: wrapped, writable: true, configurable: true, enumerable: desc.enumerable });
+    return true;
+  }
   catch { natives.delete(label); return false; }
 }
 for (const [cls, methods] of Object.entries(NATIVE)) {
@@ -164,17 +188,18 @@ export function __diagWorld(file) {
 const total = (map) => { let s = 0; for (const [ms] of map.values()) s += ms; return s; };
 const merge = (a, b) => {
   const m = new Map();
-  for (const src of [a, b]) for (const [k, [ms, n, max]] of src) {
+  for (const src of [a, b]) for (const [k, [ms, n, max, nn, nms]] of src) {
     const e = m.get(k);
-    if (e) { e[0] += ms; e[1] += n; if (max > e[2]) e[2] = max; } else m.set(k, [ms, n, max]);
+    if (e) { e[0] += ms; e[1] += n; if (max > e[2]) e[2] = max; e[3] += nn; e[4] += nms; } else m.set(k, [ms, n, max, nn, nms]);
   }
   return m;
 };
 const top = (map, n = TOP, min = -1) => [...map].filter(([, [ms]]) => ms > min).sort((a, b) => b[1][0] - a[1][0] || b[1][1] - a[1][1]).slice(0, n)
-  .map(([k, [ms, calls, max]]) => `${k} ${ms}ms/${calls}x (max ${max})`).join("; ");
+  .map(([k, [ms, calls, max, nn, nms]]) => `${k} ${ms}ms/${calls}x (max ${max}; ${nn} natives ${nms}ms)`).join("; ");
 // The single slowest call: [label, ms]. A long one points at one callback; many short ones (or a slow call in a cheap
 // callback) point at garbage collection or the engine pausing inside a script call.
 const slowest = (map) => { let best = ["none", 0]; for (const [k, [, , max]] of map) if (max > best[1]) best = [k, max]; return best; };
+const nativesIn = (map) => { let n = 0, ms = 0; for (const e of map.values()) { n += e[3]; ms += e[4]; } return [n, ms]; };
 const short = (label) => label.replace(/\.js /, " ").replace(/^(\S+) (?:system\.)?(?:after|before)\./, "$1 ");
 
 function where() { // text for logs + entity count near the FIRST player (null if no player)
@@ -221,9 +246,9 @@ function monitor() {
   if (pending) { // report a gap one tick later, so script work that ran after the monitor in the long tick is counted
     const all = merge(pending.work, thisTick), lotho = total(all);
     const mins = ((now - startedAt) / 60000).toFixed(1);
-    const [slowLabel, slowMs] = slowest(all), calls = [...all.values()].reduce((n, e) => n + e[1], 0);
+    const [slowLabel, slowMs] = slowest(all), allNat = nativesIn(all), slowNat = all.get(slowLabel)?.slice(3) ?? [0, 0], calls = [...all.values()].reduce((n, e) => n + e[1], 0);
     const nat = pending.native[1] >= thisNative[1] ? pending.native : thisNative;
-    const text = `[lothlorien DIAG] ${pending.gap >= GAP3 ? "FREEZE" : "gap"} ${pending.gap} ms at tick ${pending.tick} (${mins} min after load, time ${pending.time}). Lothlorien scripts in it: ${lotho} ms in ${calls} calls; slowest single call ${slowLabel} ${slowMs} ms; slowest native ${nat[0]} ${nat[1]} ms. Top: ${top(all, TOP, 0) || "none"}. ${pending.where}`;
+    const text = `[lothlorien DIAG] ${pending.gap >= GAP3 ? "FREEZE" : "gap"} ${pending.gap} ms at tick ${pending.tick} (${mins} min after load, time ${pending.time}). Lothlorien scripts in it: ${lotho} ms in ${calls} calls; slowest single call ${slowLabel} ${slowMs} ms (${slowNat[0]} natives ${slowNat[1]} ms inside it); natives inside all of them: ${allNat[0]} calls ${allNat[1]} ms; slowest native ${nat[0]} ${nat[1]} ms. Top: ${top(all, TOP, 0) || "none"}. ${pending.where}`;
     if (pending.gap >= GAP3) console.error(text); else console.warn(text);
     chat(`§e[Lothlorien DIAG] ${pending.gap >= GAP3 ? "freeze" : "gap"} ${pending.gap} ms, scripts ${lotho} ms${lotho >= pending.gap / 2 ? " §c(script!)" : " §7(engine)"}, time ${pending.time}`);
     if (lotho >= 100) chat(`§e  slowest: ${short(slowLabel)} ${slowMs} ms; ${calls} calls`);
@@ -242,12 +267,12 @@ function monitor() {
     minNo++;
     const w = where(), sc = total(minute), time = timeOfDay();
     const types = [...spawnTypes].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, n]) => `${k.replace("minecraft:", "")} ${n}`).join(", ") || "none";
-    console.warn(`[lothlorien DIAG] summary min ${minNo}: ${ticks} ticks, longest gap ${longest} ms, gaps >=${GAP1}: ${g1}, >=${GAP2}: ${g2}, >=${GAP3}: ${g3}; Lothlorien scripts ${sc} ms. Top: ${top(minute) || "none"}. Natives: slowest ${minNative[0]} ${minNative[1]} ms; ${nativeTop() || "none"}. dew flips ${dew}; spawned ${spawned} (top: ${types}), removed ${removed}; time ${time}. ${w.text}`);
+    console.warn(`[lothlorien DIAG] summary min ${minNo}: ${ticks} ticks, longest gap ${longest} ms, gaps >=${GAP1}: ${g1}, >=${GAP2}: ${g2}, >=${GAP3}: ${g3}; Lothlorien scripts ${sc} ms (${nativesIn(minute)[0]} native calls inside, ${nativesIn(minute)[1]} ms). Top: ${top(minute) || "none"}. Natives: slowest ${minNative[0]} ${minNative[1]} ms; ${nativeTop() || "none"}. dew flips ${dew}; spawned ${spawned} (top: ${types}), removed ${removed}; time ${time}. ${w.text}`);
     if (minNative[1] >= 10) chat(`§e  slowest native this minute: ${minNative[0]} ${minNative[1]} ms`);
     chat(`§e[Lothlorien DIAG] min ${minNo}: longest gap ${longest} ms; gaps >=${GAP1}: ${g1}, >=${GAP2}: ${g2}, >=${GAP3}: ${g3}; scripts ${sc} ms; dew ${dew}; spawned ${spawned}, removed ${removed}; ents ${w.ents ?? "-"}; time ${time}`);
     ticks = 0; longest = 0; g1 = 0; g2 = 0; g3 = 0; lines = 0; dew = 0; spawned = 0; removed = 0;
     spawnTypes = new Map(); minute = new Map(); minStart = now;
-    minNative = ["none", 0]; nativeLogs = 0; for (const e of natives.values()) { e.calls = 0; e.ms = 0; e.max = 0; }
+    minNative = ["none", 0]; nativeLogs = 0; callbackLogs = 0; for (const e of natives.values()) { e.calls = 0; e.ms = 0; e.max = 0; }
   }
 }
 

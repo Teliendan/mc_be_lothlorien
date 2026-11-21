@@ -32,9 +32,17 @@ export class Dimension {
   fillBlocks() { cost("Dimension.fillBlocks"); return undefined; }
   getEntities() { cost("Dimension.getEntities"); return []; }
   spawnEntity() { cost("Dimension.spawnEntity"); return undefined; }
+  get heightRange() { cost("Dimension.heightRange"); return { min: -64, max: 320 }; }
 }
 export class Block { setPermutation() { cost("Block.setPermutation"); } }
-export class Entity { remove() { cost("Entity.remove"); } }
+export class Entity {
+  remove() { cost("Entity.remove"); }
+  hasTag() { cost("Entity.hasTag"); return false; }
+  get location() { cost("Entity.location"); return { x: 1, y: 64, z: 2 }; }
+  get dimension() { cost("Entity.dimension"); return new Dimension(); }
+}
+export class ScreenDisplay { setActionBar() { cost("ScreenDisplay.setActionBar"); } }
+export class Player extends Entity { get onScreenDisplay() { cost("Player.onScreenDisplay"); return new ScreenDisplay(); } }
 export class StructureManager { place() { cost("StructureManager.place"); } }
 export class TickingAreaManager { createTickingArea() { cost("TickingAreaManager.createTickingArea"); return Promise.resolve(); } }
 

@@ -327,3 +327,35 @@ Round 2 (owner DIAG 0.8.9, strong PC, 1.26.63, after the budget work: builder st
 
 Not measured in game: the real step times, the first native-read costs, the wall time of a fresh village, whether the GC pauses seen in QuickJS appear in the game's QuickJS. Acceptance:
 the offline tests pass and a clean PC DIAG run of a fresh village (no `loop_marker` job call over 5 ms, no gap, debug lines with `slowest step <= 3 ms`).
+
+## First 20-tick call after world load: ~130 ms once per load (2026-11-21, DIAG 0.8.11 = `8d23e1f`, offline only, NOT measured in game)
+
+Evidence (owner, strong PC, 1.26.63): in the first minute after every load ONE call of a 20-tick interval takes ~130 ms (`harmony_game.js runInterval(20)` 132 and 127 ms; once `main.js runInterval(20)` =
+`showDebug`, 135 ms). The 0.8.10/0.8.11 native timing says the slowest of the 38 wrapped methods in that minute is 1 ms. All other callbacks stay at 1-3 ms.
+
+Offline reproduction (`tools/diag/first_ticks.mjs`: the whole pack loaded as modules into QuickJS with a mock server, startup + worldLoad, 1,200 ticks with one player, every timer callback timed, live
+allocations sampled each tick; `--debug`, `--river`, `--gc-probe`, `--heap`, `--check`):
+- Load: 18,050 live allocations / 1.46 MB after the modules (89 ms to evaluate), 18,400 after `worldLoad` (0.5 ms). Of that 1,569 are functions (0.75 MB of the 1.46 MB is function code), only 2,540 objects and 631
+  arrays: there is no large module-level table (the village data is parsed from the dynamic property only when a village exists). Nothing worth shrinking; the village build's 76k peak is a different order.
+- First and later calls: the Harmony interval 0.05 ms first, 0.02 ms later; showDebug 0.05 / 0.03 ms (with the debug tag, and with the player in a river: `isInside` is NOT used by Harmony, `inBiome` is one
+  `getBiome` plus `inVillageArea`, which returns before any native when no village is known). Worst callback in the first 1,200 ticks: 0.6-0.8 ms (`fallLeaves`, `updateDepth`). No one-time initialisation (hypothesis b) and no
+  83-probe fallback (c) exists on these paths.
+- GC (a): no allocation drop (= no collection) lands in the first 60 ticks or later in the minute with these callbacks (they allocate almost nothing). A forced collection pass over this heap costs about
+  2.5 ms (`--gc-probe`: median slice 0.015 ms, longest 2.5 ms), two orders of magnitude below 130 ms; per the correction in `bedrock-scripting/references/performance.md`, GC is allocation-triggered, so it would not
+  hit "the first 20-tick call" in two different loads by chance either.
+- Conclusion: none of the three hypotheses reproduces and none can be 130 ms in QuickJS. Nothing was changed in the pack. What is left is time inside the engine that the method wrappers did not see: the property
+  GETTERS and methods the two callbacks use (`player.location`, `player.dimension`, `player.onScreenDisplay`, `setActionBar`, `hasTag`) were never timed, or an engine stall (chunk or world-load work on the script thread)
+  that happens to be running while that callback is. Both callbacks share exactly these members.
+
+0.8.12 DIAG (offline tests pass, NOT yet run in game) therefore measures instead of guessing:
+- every callback report now carries the NUMBER and total ms of wrapped native calls made inside it: the gap line (`slowest single call X 130 ms (N natives M ms inside it); natives inside all of them: N calls M ms`),
+  the minute summary (`Lothlorien scripts S ms (N native calls inside, M ms)`) and each `Top:` entry (`label 190ms/25x (max 130; 135 natives 60ms)`). `Date.now()` has 1 ms resolution, so many cheap natives show 0 ms: read the count.
+- any callback of >= 25 ms is logged at once (10 per minute): `slow callback <file runInterval(20)> 130 ms (its FIRST call): N native calls inside took M ms, so R ms were plain script, uncounted natives, garbage
+  collection or the engine (tick T, S s after load)`.
+- getters and more members are wrapped: `Entity.location`, `Entity.dimension`, `Player.onScreenDisplay`, `Dimension.heightRange` (labels end in `(get)`), `Entity.hasTag/addTag/removeTag`, `Player.sendMessage`,
+  `ScreenDisplay.setActionBar/setTitle`, `World.getAllPlayers`: up to 49 members in all. Hot getters (`Block.typeId`) stay unwrapped to keep the DIAG overhead small.
+`tools/diag/load_test.mjs` models a 130 ms plain-script first call of a Harmony-like interval and a later one that spends 60 ms inside the `Entity.location` getter, and asserts the immediate log, the native counts and the gap line.
+
+What the owner should look for next: a `slow callback ... (its FIRST call)` warning. `R ms were plain script ...` with a native count of a few and `0 ms` = nothing in the wrapped natives, so either garbage collection
+(then the summary shows no allocation-heavy work) or an engine pause inside the script call; a getter or `setActionBar` line in `Natives:` or `slow native call` with the missing 130 ms = the culprit, and the fix is a
+pre-warm of that one member in a job at world load. If the same tick also shows `gap >= 150 ms` with `scripts 130 ms`, the freeze is felt; if the gap is smaller, the time was already engine-side.

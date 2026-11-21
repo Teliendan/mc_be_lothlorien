@@ -4,7 +4,7 @@ import path from "node:path";
 import { register } from "node:module";
 import { pathToFileURL } from "node:url";
 register("./mock/hooks.mjs", import.meta.url); // "@minecraft/server" -> ./mock/server.mjs (the module imported below)
-const { subs, intervals, timeouts, chat, system, world, Dimension, StructureManager } = await import("./mock/server.mjs");
+const { subs, intervals, timeouts, chat, system, world, Dimension, StructureManager, Player } = await import("./mock/server.mjs");
 const outDir = path.resolve(process.argv[2] ?? "");
 if (!process.argv[2]) { console.error("usage: node load_test.mjs <out dir>"); process.exit(2); }
 const errors = [], warns = [];
@@ -46,6 +46,22 @@ const interval = intervals.length; intervals.push([() => natDim.getBiome(), 20])
 for (let i = 0; i < 20; i++) tick();
 new StructureManager().place(); tick(); tick();
 intervals.length = interval;
+// 0.8.12 callback accounting + getters: a Harmony-like interval (registered through the wrapped system, as the pack files do) reads player.location / dimension /
+// onScreenDisplay (wrapped getters). Its FIRST call takes 130 ms of plain script (no slow native); its 2nd call 60 ms inside the Entity.location getter.
+// Both are logged at once with their native counts, and the 130 ms gap names "41+ native calls inside".
+const { __diagSystem } = await import(pathToFileURL(path.join(outDir, "lothlorien_bp/scripts/diag_wrap.js")).href);
+const player = new Player(); let harmonyCalls = 0;
+const harmonyCost = globalThis.__nativeCost;
+globalThis.__nativeCost = (n) => { harmonyCost?.(n); if (n === "Entity.location" && harmonyCalls === 2) clock += 60; };
+const itvBefore = intervals.length;
+__diagSystem("harmony_probe.js").runInterval(() => {
+  harmonyCalls++;
+  for (let i = 0; i < 40; i++) player.hasTag("x");
+  player.location; player.dimension.heightRange; player.onScreenDisplay.setActionBar("t");
+  if (harmonyCalls === 1) clock += 130;
+}, 20);
+for (let i = 0; i < 60; i++) tick();
+intervals.length = itvBefore;
 // 20 more gaps of 200 ms: only 5 immediate lines (plus the earlier ones), all counted in the next summary
 for (let i = 0; i < 20; i++) { clock += 200; tick(); }
 world.getPlayers = fakePlayers;
@@ -53,7 +69,7 @@ clock += 60000; tick(); tick();
 Date.now = realNow;
 console.log("components:", Object.keys(comps).length, "intervals:", intervals.length, "leaf touched block:", touched);
 console.log("errors:\n " + errors.join("\n "));
-console.log("warns:\n " + warns.slice(0, 4).join("\n "));
+console.log("warns:\n " + warns.slice(0, +(process.env.WARNS ?? 4)).join("\n "));
 console.log("chat:", chat);
 const sums = chat.filter((c) => /\] min \d+:/.test(c));
 console.log("summary lines:", sums.length); console.log("first:", sums[0]); console.log("last:", sums.at(-1));
@@ -69,6 +85,9 @@ if (!warns.some((w) => /gap \d+ ms.*slowest native Dimension\.getBiome 135 ms/.t
 if (!warns.some((w) => /slow native call Dimension\.getBiome 135 ms \(call #1 of this method.*FIRST call/.test(w))) bad.push("no immediate log of the slow first getBiome");
 if (!warns.some((w) => /slow native call StructureManager\.place 40 ms/.test(w))) bad.push("no immediate log of the slow structure placement");
 if (!/Natives: slowest (Dimension\.getBiome 135|StructureManager\.place 40) ms; .*Dimension\.getBiome 135ms\/\d+x \(max 135\)/.test(warns.find((w) => /summary min/.test(w) && /Natives: slowest Dimension/.test(w)) ?? "")) bad.push("summary lacks the Natives list");
-if (/where|WHERE/.test("") ) bad.push("");
+if (!warns.some((w) => /slow callback harmony_probe.js runInterval\(20\) 130 ms \(its FIRST call\): 4\d native calls inside took 0 ms, so 130 ms were plain script/.test(w))) bad.push("no immediate log of the slow first harmony callback with its native count");
+if (!warns.some((w) => /slow callback harmony_probe.js runInterval\(20\) 6\d ms: 4\d native calls inside took 60 ms, so \d ms were plain/.test(w))) bad.push("slow getter call not counted inside its callback");
+if (!warns.some((w) => /Entity\.location\(get\) 60ms\/\d+x \(max 60\)/.test(w))) bad.push("getter Entity.location is missing from the Natives list");
+if (!warns.some((w) => /Lothlorien scripts in it: \d+ ms in \d+ calls; slowest single call harmony_probe.js runInterval\(20\) 130 ms \(4\d natives 0 ms inside it\)/.test(w))) bad.push("gap line lacks the native count of the slowest call");
 console.log(bad.length ? "FAIL: " + bad.join("; ") : "ASSERTS OK")
 if (bad.length) process.exitCode = 1;
