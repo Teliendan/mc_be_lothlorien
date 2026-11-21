@@ -85,6 +85,7 @@ export const SUPPORT_POLICIES = {
       "minecraft:podzol",
       "minecraft:dirt_with_roots",
       "minecraft:moss_block",
+      "minecraft:pale_moss_block",
       "minecraft:mud",
       "minecraft:farmland",
       "minecraft:mycelium"
@@ -811,6 +812,7 @@ export const SUPPORT_POLICIES = {
       "minecraft:podzol",
       "minecraft:dirt_with_roots",
       "minecraft:moss_block",
+      "minecraft:pale_moss_block",
       "minecraft:mud",
       "minecraft:farmland",
       "minecraft:mycelium"

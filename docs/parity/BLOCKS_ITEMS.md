@@ -54,7 +54,8 @@ Creature groups: [CREATURES.md](CREATURES.md).
 
 ## Leaves and trees
 - Both leaf blocks have same-id items (30 % compost), furnace -> leaf litter (priority 240), `chest_obstruction: never`.
-- Sapling: random-tick growth needs light 9 above; soils include mycelium; native flower pot. Bone meal (45 % to advance a stage,
+- Sapling: random-tick growth needs light 9 above; soils include mycelium and pale moss block (owner saw vanilla saplings
+  grow on it, 1.26.63, 2026-11-21; the Great Mallorn sprout shares the list); native flower pot. Bone meal (45 % to advance a stage,
   particle) delegates to `advance()`/`growTree()`, which check soil and reservation. 2x2 groups grow the Great Mallorn;
   the job rechecks saplings/soil/trunk at start and places the trunk before the canopy.
 - Great Mallorn sprout may be potted like a sapling (owner 2026-10-23). Great nut stays non-fuel, non-compost.
