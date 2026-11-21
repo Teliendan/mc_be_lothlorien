@@ -346,9 +346,9 @@ lothlorien.message.debug.on=[lothlorien] debug readout on
 ## Context: Developer diagnostic displayed to players who invoke the relevant /scriptevent command: [lothlorien] debug readout off. Translate labels; retain technical tokens and commands.
 lothlorien.message.debug.off=[lothlorien] debug readout off
 ## Context: Pack title or description for lothlorien_rp. BP means behavior pack; RP means resource pack. Keep mod brands unchanged.
-pack.name=Lothlorien — Resource Pack
+pack.name=Lothlórien — Resource Pack
 ## Context: Pack title or description for lothlorien_rp. BP means behavior pack; RP means resource pack. Keep mod brands unchanged.
-pack.description=Lothlorien resource pack: woodland textures, models, sounds and text.
+pack.description=Lothlórien resource pack: woodland textures, models, sounds and text.
 ## Context: Resource-pack appearance setting: per-player visual choice. Pretty boats switches to a more detailed boat model; no gameplay changes.
 lothlorien.settings.appearance=Lothlorien: appearance settings (each player chooses their own).
 ## Context: Resource-pack appearance setting: per-player visual choice. Pretty boats switches to a more detailed boat model; no gameplay changes.

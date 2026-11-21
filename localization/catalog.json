@@ -17,7 +17,7 @@
       "kind": "behavior",
       "entries": {
         "pack.name": {
-          "source": "Lothlorien — Behavior Pack",
+          "source": "Lothlórien — Behavior Pack",
           "context": {
             "meaning": "Pack title or description for lothlorien_bp. BP means behavior pack; RP means resource pack. Keep mod brands unchanged.",
             "location": "lothlorien_bp: pack selection screen",
@@ -29,49 +29,49 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Lothlorien — Balíček chování",
-              "based_on": "c0187b064aa9119bfaaed2b74ede3b4cd57eed8989a37fb9b5cd2073dd24827a",
+              "text": "Lothlórien — Balíček chování",
+              "based_on": "5fcd24958e7e39bd020033c1195ee7d3c4d96eb154e31cc19f37a5c11ce30871",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "Lothlorien — Paquete de comportamiento",
-              "based_on": "c0187b064aa9119bfaaed2b74ede3b4cd57eed8989a37fb9b5cd2073dd24827a",
+              "text": "Lothlórien — Paquete de comportamiento",
+              "based_on": "5fcd24958e7e39bd020033c1195ee7d3c4d96eb154e31cc19f37a5c11ce30871",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "Lothlorien — Paquete de comportamiento",
-              "based_on": "c0187b064aa9119bfaaed2b74ede3b4cd57eed8989a37fb9b5cd2073dd24827a",
+              "text": "Lothlórien — Paquete de comportamiento",
+              "based_on": "5fcd24958e7e39bd020033c1195ee7d3c4d96eb154e31cc19f37a5c11ce30871",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Lothlorien — Pacote de comportamento",
-              "based_on": "c0187b064aa9119bfaaed2b74ede3b4cd57eed8989a37fb9b5cd2073dd24827a",
+              "text": "Lothlórien — Pacote de comportamento",
+              "based_on": "5fcd24958e7e39bd020033c1195ee7d3c4d96eb154e31cc19f37a5c11ce30871",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Lothlorien — Pacote de comportamento",
-              "based_on": "c0187b064aa9119bfaaed2b74ede3b4cd57eed8989a37fb9b5cd2073dd24827a",
+              "text": "Lothlórien — Pacote de comportamento",
+              "based_on": "5fcd24958e7e39bd020033c1195ee7d3c4d96eb154e31cc19f37a5c11ce30871",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Lothlorien — Verhaltenspaket",
-              "based_on": "c0187b064aa9119bfaaed2b74ede3b4cd57eed8989a37fb9b5cd2073dd24827a",
+              "text": "Lothlórien — Verhaltenspaket",
+              "based_on": "5fcd24958e7e39bd020033c1195ee7d3c4d96eb154e31cc19f37a5c11ce30871",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Lothlorien — Pack de comportement",
-              "based_on": "c0187b064aa9119bfaaed2b74ede3b4cd57eed8989a37fb9b5cd2073dd24827a",
+              "text": "Lothlórien — Pack de comportement",
+              "based_on": "5fcd24958e7e39bd020033c1195ee7d3c4d96eb154e31cc19f37a5c11ce30871",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Lothlorien — Pakiet zachowań",
-              "based_on": "c0187b064aa9119bfaaed2b74ede3b4cd57eed8989a37fb9b5cd2073dd24827a",
+              "text": "Lothlórien — Pakiet zachowań",
+              "based_on": "5fcd24958e7e39bd020033c1195ee7d3c4d96eb154e31cc19f37a5c11ce30871",
               "status": "ai-draft"
             }
           }
         },
         "pack.description": {
-          "source": "Lothlorien behavior pack: woodland biome, Mallorn trees, wildlife and elven crafts.",
+          "source": "Lothlórien behavior pack: woodland biome, Mallorn trees, wildlife and elven crafts.",
           "context": {
             "meaning": "Pack title or description for lothlorien_bp. BP means behavior pack; RP means resource pack. Keep mod brands unchanged.",
             "location": "lothlorien_bp: pack selection screen",
@@ -83,43 +83,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Balíček chování Lothlorien: lesní biom, mallorny, lesní zvířata a elfí výrobky.",
-              "based_on": "9b5f97a9bdd7a5177657b8fac469a16dc40bd8e751f7a62da7fb89c9206259e1",
+              "text": "Balíček chování Lothlórien: lesní biom, mallorny, lesní zvířata a elfí výrobky.",
+              "based_on": "739db9539f9e26525ee87ff2743825e9208e5a1353aefc9bbe342805cb47e096",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "Paquete de comportamiento de Lothlorien: bioma del bosque, mallorns, fauna y artesanía élfica.",
-              "based_on": "9b5f97a9bdd7a5177657b8fac469a16dc40bd8e751f7a62da7fb89c9206259e1",
+              "text": "Paquete de comportamiento de Lothlórien: bioma del bosque, mallorns, fauna y artesanía élfica.",
+              "based_on": "739db9539f9e26525ee87ff2743825e9208e5a1353aefc9bbe342805cb47e096",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "Paquete de comportamiento de Lothlorien: bioma del bosque, mallorns, fauna y artesanía élfica.",
-              "based_on": "9b5f97a9bdd7a5177657b8fac469a16dc40bd8e751f7a62da7fb89c9206259e1",
+              "text": "Paquete de comportamiento de Lothlórien: bioma del bosque, mallorns, fauna y artesanía élfica.",
+              "based_on": "739db9539f9e26525ee87ff2743825e9208e5a1353aefc9bbe342805cb47e096",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Pacote de comportamento de Lothlorien: bioma do bosque, mallorns, fauna e artesanato élfico.",
-              "based_on": "9b5f97a9bdd7a5177657b8fac469a16dc40bd8e751f7a62da7fb89c9206259e1",
+              "text": "Pacote de comportamento de Lothlórien: bioma do bosque, mallorns, fauna e artesanato élfico.",
+              "based_on": "739db9539f9e26525ee87ff2743825e9208e5a1353aefc9bbe342805cb47e096",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Pacote de comportamento de Lothlorien: bioma da floresta, mallorns, fauna e artesanato élfico.",
-              "based_on": "9b5f97a9bdd7a5177657b8fac469a16dc40bd8e751f7a62da7fb89c9206259e1",
+              "text": "Pacote de comportamento de Lothlórien: bioma da floresta, mallorns, fauna e artesanato élfico.",
+              "based_on": "739db9539f9e26525ee87ff2743825e9208e5a1353aefc9bbe342805cb47e096",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Verhaltenspaket für Lothlorien: Waldbiom, Mallornbäume, Tiere und elbisches Handwerk.",
-              "based_on": "9b5f97a9bdd7a5177657b8fac469a16dc40bd8e751f7a62da7fb89c9206259e1",
+              "text": "Verhaltenspaket für Lothlórien: Waldbiom, Mallornbäume, Tiere und elbisches Handwerk.",
+              "based_on": "739db9539f9e26525ee87ff2743825e9208e5a1353aefc9bbe342805cb47e096",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Pack de comportement de Lothlorien : biome forestier, mallorns, faune et artisanat elfique.",
-              "based_on": "9b5f97a9bdd7a5177657b8fac469a16dc40bd8e751f7a62da7fb89c9206259e1",
+              "text": "Pack de comportement de Lothlórien : biome forestier, mallorns, faune et artisanat elfique.",
+              "based_on": "739db9539f9e26525ee87ff2743825e9208e5a1353aefc9bbe342805cb47e096",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Pakiet zachowań Lothlorien: leśny biom, mallorny, zwierzęta i elfickie rzemiosło.",
-              "based_on": "9b5f97a9bdd7a5177657b8fac469a16dc40bd8e751f7a62da7fb89c9206259e1",
+              "text": "Pakiet zachowań Lothlórien: leśny biom, mallorny, zwierzęta i elfickie rzemiosło.",
+              "based_on": "739db9539f9e26525ee87ff2743825e9208e5a1353aefc9bbe342805cb47e096",
               "status": "ai-draft"
             }
           }
@@ -9694,7 +9694,7 @@
           }
         },
         "pack.name": {
-          "source": "Lothlorien — Resource Pack",
+          "source": "Lothlórien — Resource Pack",
           "context": {
             "meaning": "Pack title or description for lothlorien_rp. BP means behavior pack; RP means resource pack. Keep mod brands unchanged.",
             "location": "lothlorien_rp: pack selection screen",
@@ -9706,49 +9706,49 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Lothlorien — Balíček zdrojů",
-              "based_on": "d41be1f08c8ed1958adb2a66bbc1a3faad0bf21b261414a3f8ffc7a26f9767c3",
+              "text": "Lothlórien — Balíček zdrojů",
+              "based_on": "d16214128341206e74a070be1e9cf8200322754067eedf33fb25e966442a8ed2",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "Lothlorien — Paquete de recursos",
-              "based_on": "d41be1f08c8ed1958adb2a66bbc1a3faad0bf21b261414a3f8ffc7a26f9767c3",
+              "text": "Lothlórien — Paquete de recursos",
+              "based_on": "d16214128341206e74a070be1e9cf8200322754067eedf33fb25e966442a8ed2",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "Lothlorien — Paquete de recursos",
-              "based_on": "d41be1f08c8ed1958adb2a66bbc1a3faad0bf21b261414a3f8ffc7a26f9767c3",
+              "text": "Lothlórien — Paquete de recursos",
+              "based_on": "d16214128341206e74a070be1e9cf8200322754067eedf33fb25e966442a8ed2",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Lothlorien — Pacote de recursos",
-              "based_on": "d41be1f08c8ed1958adb2a66bbc1a3faad0bf21b261414a3f8ffc7a26f9767c3",
+              "text": "Lothlórien — Pacote de recursos",
+              "based_on": "d16214128341206e74a070be1e9cf8200322754067eedf33fb25e966442a8ed2",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Lothlorien — Pacote de recursos",
-              "based_on": "d41be1f08c8ed1958adb2a66bbc1a3faad0bf21b261414a3f8ffc7a26f9767c3",
+              "text": "Lothlórien — Pacote de recursos",
+              "based_on": "d16214128341206e74a070be1e9cf8200322754067eedf33fb25e966442a8ed2",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Lothlorien — Ressourcenpaket",
-              "based_on": "d41be1f08c8ed1958adb2a66bbc1a3faad0bf21b261414a3f8ffc7a26f9767c3",
+              "text": "Lothlórien — Ressourcenpaket",
+              "based_on": "d16214128341206e74a070be1e9cf8200322754067eedf33fb25e966442a8ed2",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Lothlorien — Pack de ressources",
-              "based_on": "d41be1f08c8ed1958adb2a66bbc1a3faad0bf21b261414a3f8ffc7a26f9767c3",
+              "text": "Lothlórien — Pack de ressources",
+              "based_on": "d16214128341206e74a070be1e9cf8200322754067eedf33fb25e966442a8ed2",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Lothlorien — Pakiet zasobów",
-              "based_on": "d41be1f08c8ed1958adb2a66bbc1a3faad0bf21b261414a3f8ffc7a26f9767c3",
+              "text": "Lothlórien — Pakiet zasobów",
+              "based_on": "d16214128341206e74a070be1e9cf8200322754067eedf33fb25e966442a8ed2",
               "status": "ai-draft"
             }
           }
         },
         "pack.description": {
-          "source": "Lothlorien resource pack: woodland textures, models, sounds and text.",
+          "source": "Lothlórien resource pack: woodland textures, models, sounds and text.",
           "context": {
             "meaning": "Pack title or description for lothlorien_rp. BP means behavior pack; RP means resource pack. Keep mod brands unchanged.",
             "location": "lothlorien_rp: pack selection screen",
@@ -9760,43 +9760,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Balíček zdrojů Lothlorien: lesní textury, modely, zvuky a texty.",
-              "based_on": "1e9d0572722e321973162ad5cd8d692f4d3881869776fd9eb74346297cdf052a",
+              "text": "Balíček zdrojů Lothlórien: lesní textury, modely, zvuky a texty.",
+              "based_on": "aa1cd627561ce3ea92a7fcf7d9c62742ec56120c2094d366381b572a2139abae",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "Paquete de recursos de Lothlorien: texturas del bosque, modelos, sonidos y textos.",
-              "based_on": "1e9d0572722e321973162ad5cd8d692f4d3881869776fd9eb74346297cdf052a",
+              "text": "Paquete de recursos de Lothlórien: texturas del bosque, modelos, sonidos y textos.",
+              "based_on": "aa1cd627561ce3ea92a7fcf7d9c62742ec56120c2094d366381b572a2139abae",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "Paquete de recursos de Lothlorien: texturas del bosque, modelos, sonidos y textos.",
-              "based_on": "1e9d0572722e321973162ad5cd8d692f4d3881869776fd9eb74346297cdf052a",
+              "text": "Paquete de recursos de Lothlórien: texturas del bosque, modelos, sonidos y textos.",
+              "based_on": "aa1cd627561ce3ea92a7fcf7d9c62742ec56120c2094d366381b572a2139abae",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Pacote de recursos de Lothlorien: texturas do bosque, modelos, sons e textos.",
-              "based_on": "1e9d0572722e321973162ad5cd8d692f4d3881869776fd9eb74346297cdf052a",
+              "text": "Pacote de recursos de Lothlórien: texturas do bosque, modelos, sons e textos.",
+              "based_on": "aa1cd627561ce3ea92a7fcf7d9c62742ec56120c2094d366381b572a2139abae",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Pacote de recursos de Lothlorien: texturas da floresta, modelos, sons e textos.",
-              "based_on": "1e9d0572722e321973162ad5cd8d692f4d3881869776fd9eb74346297cdf052a",
+              "text": "Pacote de recursos de Lothlórien: texturas da floresta, modelos, sons e textos.",
+              "based_on": "aa1cd627561ce3ea92a7fcf7d9c62742ec56120c2094d366381b572a2139abae",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Ressourcenpaket für Lothlorien: Waldtexturen, Modelle, Klänge und Texte.",
-              "based_on": "1e9d0572722e321973162ad5cd8d692f4d3881869776fd9eb74346297cdf052a",
+              "text": "Ressourcenpaket für Lothlórien: Waldtexturen, Modelle, Klänge und Texte.",
+              "based_on": "aa1cd627561ce3ea92a7fcf7d9c62742ec56120c2094d366381b572a2139abae",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Pack de ressources de Lothlorien : textures forestières, modèles, sons et textes.",
-              "based_on": "1e9d0572722e321973162ad5cd8d692f4d3881869776fd9eb74346297cdf052a",
+              "text": "Pack de ressources de Lothlórien : textures forestières, modèles, sons et textes.",
+              "based_on": "aa1cd627561ce3ea92a7fcf7d9c62742ec56120c2094d366381b572a2139abae",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Pakiet zasobów Lothlorien: leśne tekstury, modele, dźwięki i teksty.",
-              "based_on": "1e9d0572722e321973162ad5cd8d692f4d3881869776fd9eb74346297cdf052a",
+              "text": "Pakiet zasobów Lothlórien: leśne tekstury, modele, dźwięki i teksty.",
+              "based_on": "aa1cd627561ce3ea92a7fcf7d9c62742ec56120c2094d366381b572a2139abae",
               "status": "ai-draft"
             }
           }
@@ -19956,7 +19956,7 @@
       "kind": "skin",
       "entries": {
         "pack.name": {
-          "source": "Lothlorien — Skin Pack",
+          "source": "Lothlórien — Skin Pack",
           "context": {
             "meaning": "Pack title for lothlorien_skins, the mod's player skin pack (skins the player can wear). Keep the mod brand unchanged.",
             "location": "lothlorien_skins: pack lists and storage screens",
@@ -19968,49 +19968,49 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Lothlorien — Balíček skinů",
-              "based_on": "bd006f5fb5b351300ac2de5705329a9ff4041350b7c488b95b006b82d93eeae2",
+              "text": "Lothlórien — Balíček skinů",
+              "based_on": "5bc877ea055a307cfb1ed484b0315ccdb119365537c18825f2c20bd1cd2ccd51",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "Lothlorien — Paquete de aspectos",
-              "based_on": "bd006f5fb5b351300ac2de5705329a9ff4041350b7c488b95b006b82d93eeae2",
+              "text": "Lothlórien — Paquete de aspectos",
+              "based_on": "5bc877ea055a307cfb1ed484b0315ccdb119365537c18825f2c20bd1cd2ccd51",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "Lothlorien — Paquete de aspectos",
-              "based_on": "bd006f5fb5b351300ac2de5705329a9ff4041350b7c488b95b006b82d93eeae2",
+              "text": "Lothlórien — Paquete de aspectos",
+              "based_on": "5bc877ea055a307cfb1ed484b0315ccdb119365537c18825f2c20bd1cd2ccd51",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Lothlorien — Pacote de skins",
-              "based_on": "bd006f5fb5b351300ac2de5705329a9ff4041350b7c488b95b006b82d93eeae2",
+              "text": "Lothlórien — Pacote de skins",
+              "based_on": "5bc877ea055a307cfb1ed484b0315ccdb119365537c18825f2c20bd1cd2ccd51",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Lothlorien — Pacote de skins",
-              "based_on": "bd006f5fb5b351300ac2de5705329a9ff4041350b7c488b95b006b82d93eeae2",
+              "text": "Lothlórien — Pacote de skins",
+              "based_on": "5bc877ea055a307cfb1ed484b0315ccdb119365537c18825f2c20bd1cd2ccd51",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Lothlorien — Skinpaket",
-              "based_on": "bd006f5fb5b351300ac2de5705329a9ff4041350b7c488b95b006b82d93eeae2",
+              "text": "Lothlórien — Skinpaket",
+              "based_on": "5bc877ea055a307cfb1ed484b0315ccdb119365537c18825f2c20bd1cd2ccd51",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Lothlorien — Pack de skins",
-              "based_on": "bd006f5fb5b351300ac2de5705329a9ff4041350b7c488b95b006b82d93eeae2",
+              "text": "Lothlórien — Pack de skins",
+              "based_on": "5bc877ea055a307cfb1ed484b0315ccdb119365537c18825f2c20bd1cd2ccd51",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Lothlorien — Pakiet skórek",
-              "based_on": "bd006f5fb5b351300ac2de5705329a9ff4041350b7c488b95b006b82d93eeae2",
+              "text": "Lothlórien — Pakiet skórek",
+              "based_on": "5bc877ea055a307cfb1ed484b0315ccdb119365537c18825f2c20bd1cd2ccd51",
               "status": "ai-draft"
             }
           }
         },
         "pack.description": {
-          "source": "Lothlorien skin pack: elven player skins from the Golden Wood.",
+          "source": "Lothlórien skin pack: elven player skins from the Golden Wood.",
           "context": {
             "meaning": "Pack description for lothlorien_skins: player skins showing elves of Lothlórien.",
             "location": "lothlorien_skins: pack details",
@@ -20022,43 +20022,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Balíček skinů Lothlorien: elfské skiny hráče ze Zlatého lesa.",
-              "based_on": "f9c787fa9d6400a53efabbf20f0db92955cb4a494a9e97b4a22c22519430b29a",
+              "text": "Balíček skinů Lothlórien: elfské skiny hráče ze Zlatého lesa.",
+              "based_on": "3bf86b4a1e2ba43def79377097193ee0acc46ea67549871b6b0a74a0f4a72124",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "Paquete de aspectos de Lothlorien: aspectos élficos del Bosque Dorado.",
-              "based_on": "f9c787fa9d6400a53efabbf20f0db92955cb4a494a9e97b4a22c22519430b29a",
+              "text": "Paquete de aspectos de Lothlórien: aspectos élficos del Bosque Dorado.",
+              "based_on": "3bf86b4a1e2ba43def79377097193ee0acc46ea67549871b6b0a74a0f4a72124",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "Paquete de aspectos de Lothlorien: aspectos élficos del Bosque Dorado.",
-              "based_on": "f9c787fa9d6400a53efabbf20f0db92955cb4a494a9e97b4a22c22519430b29a",
+              "text": "Paquete de aspectos de Lothlórien: aspectos élficos del Bosque Dorado.",
+              "based_on": "3bf86b4a1e2ba43def79377097193ee0acc46ea67549871b6b0a74a0f4a72124",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Pacote de skins de Lothlorien: skins élficas do Bosque Dourado.",
-              "based_on": "f9c787fa9d6400a53efabbf20f0db92955cb4a494a9e97b4a22c22519430b29a",
+              "text": "Pacote de skins de Lothlórien: skins élficas do Bosque Dourado.",
+              "based_on": "3bf86b4a1e2ba43def79377097193ee0acc46ea67549871b6b0a74a0f4a72124",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Pacote de skins de Lothlorien: skins élficas do Bosque Dourado.",
-              "based_on": "f9c787fa9d6400a53efabbf20f0db92955cb4a494a9e97b4a22c22519430b29a",
+              "text": "Pacote de skins de Lothlórien: skins élficas do Bosque Dourado.",
+              "based_on": "3bf86b4a1e2ba43def79377097193ee0acc46ea67549871b6b0a74a0f4a72124",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Lothlorien-Skinpaket: Elben-Skins aus dem Goldenen Wald.",
-              "based_on": "f9c787fa9d6400a53efabbf20f0db92955cb4a494a9e97b4a22c22519430b29a",
+              "text": "Lothlórien-Skinpaket: Elben-Skins aus dem Goldenen Wald.",
+              "based_on": "3bf86b4a1e2ba43def79377097193ee0acc46ea67549871b6b0a74a0f4a72124",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Pack de skins Lothlorien : skins elfiques du Bois Doré.",
-              "based_on": "f9c787fa9d6400a53efabbf20f0db92955cb4a494a9e97b4a22c22519430b29a",
+              "text": "Pack de skins Lothlórien : skins elfiques du Bois Doré.",
+              "based_on": "3bf86b4a1e2ba43def79377097193ee0acc46ea67549871b6b0a74a0f4a72124",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Pakiet skórek Lothlorien: elfie skórki ze Złotego Lasu.",
-              "based_on": "f9c787fa9d6400a53efabbf20f0db92955cb4a494a9e97b4a22c22519430b29a",
+              "text": "Pakiet skórek Lothlórien: elfie skórki ze Złotego Lasu.",
+              "based_on": "3bf86b4a1e2ba43def79377097193ee0acc46ea67549871b6b0a74a0f4a72124",
               "status": "ai-draft"
             }
           }

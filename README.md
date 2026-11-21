@@ -70,3 +70,7 @@ See [LICENSE.md](LICENSE.md).
 - `tools/` holds generators for art, audio and structures; `tests/` holds the regression tests.
 - Design, decisions and limits are indexed in [docs/README.md](docs/README.md); what is left to do is in [docs/TODO.md](docs/TODO.md).
 - Building, verifying and packaging use a separate workspace tool that is not part of this repository.
+
+## What's new
+
+See [CHANGELOG.md](CHANGELOG.md) and the [Releases page](https://github.com/Teliendan/mc_be_lothlorien/releases).
