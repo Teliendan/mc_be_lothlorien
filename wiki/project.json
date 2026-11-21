@@ -145,6 +145,10 @@
       "pattern": "lothlorien_bp/scripts/elf_village.js"
     },
     {
+      "featureId": "lothlorien:elf",
+      "pattern": "lothlorien_bp/scripts/village_populate.js"
+    },
+    {
       "featureId": "lothlorien:elven_rope",
       "pattern": "lothlorien_bp/scripts/elven_rope.js"
     },
@@ -343,6 +347,10 @@
     {
       "featureId": "lothlorien:growing",
       "pattern": "lothlorien_bp/scripts/village_bridge.js"
+    },
+    {
+      "featureId": "lothlorien:growing",
+      "pattern": "lothlorien_bp/scripts/village_build.js"
     },
     {
       "featureId": "lothlorien:growing",

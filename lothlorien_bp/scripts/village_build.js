@@ -75,6 +75,7 @@ export function* planAndBuild(dimension, found, budget, stats, engine) {
   let at = boundedReader(get, found.rect, layer);
   if (stats) stats.reads = at.size;
   const res = yield* planGen(at, found.known, { budget, rect: found.rect });
+  res.at = null; // the overlay (its numeric maps hold every planned cell) is not needed any more: the write loop reads the base reader only (heap, F7)
   const writes = new Map(); // one plan per step (the floor plan alone has 1,500 blocks)
   for (const p of [...res.merges, ...res.picks, ...res.repairs]) { // a repair is itself the plan
     yield "writeMap";
@@ -83,6 +84,11 @@ export function* planAndBuild(dimension, found, budget, stats, engine) {
     for (const [k, b] of fb) { writes.set(k, b); if (++i % 64 === 0) yield "writeMap"; }
   }
   if (stats) stats.writeCells = writes.size;
+  if (!engine.keepPlans) for (const p of [...res.merges, ...res.picks, ...res.repairs]) { // the plans' cell lists are in the write map now: keep only what the debug lines print (heap, F7; the tests keep them)
+    const plan = p.plan ?? p;
+    plan.nBlocks = plan.blocks?.length ?? 0; plan.nRails = plan.rails?.length ?? 0;
+    for (const f of ["cells", "rails", "lights", "lamps", "blocks", "pots", "pier", "shape", "parts", "core"]) plan[f] = null;
+  }
   // every written cell and its four neighbours, each fence mended once (mendAround per cell visited a shared neighbour up to 5 times; a mend reads only
   // neighbour types, which mending never changes, so order and repeats do not matter). The set is built in the write loop, as numeric keys.
   const r0 = found.rect, mendKey = (x, y, z) => ((x - r0.x0 + 2048) * 8192 + (z - r0.z0 + 2048)) * 1024 + (y + 256);

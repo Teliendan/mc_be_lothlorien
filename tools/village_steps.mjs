@@ -27,7 +27,9 @@ const MOCK = `
 const perm = (id, states) => ({ type: { id }, id, states: { ...(states ?? {}) }, getState(k) { return this.states[k]; }, withState(k, v) { return perm(id, { ...this.states, [k]: v }); } });
 export const BlockPermutation = { resolve: (id, states) => perm(id, states) };
 export class BlockVolume { constructor(from, to) { this.from = from; this.to = to; } }
-export const c = { getBlock: 0, set: 0, getBlocks: 0, fill: 0 };
+export const c = { getBlock: 0, set: 0, getBlocks: 0, fill: 0, spawn: 0, structure: 0, query: 0, remove: 0 };
+const posts = JSON.parse(globalThis.__posts).map((p) => ({ ...p, gone: false })), cushions = JSON.parse(globalThis.__cushions);
+const ent = (p) => ({ location: { x: p.x + 0.5, y: p.y, z: p.z + 0.5 }, getComponent: () => ({ getTypeFamilies: () => ["elf_post_" + p.kind] }), remove() { c.remove++; p.gone = true; }, setDynamicProperty() {} });
 export function makeDimension() {
   const block = (x, y, z) => ({
     get typeId() { return __get(x, y, z); },
@@ -38,6 +40,8 @@ export function makeDimension() {
   return {
     id: "minecraft:overworld",
     getBlock(l) { c.getBlock++; return block(l.x, l.y, l.z); },
+    getEntities(q) { c.query++; return q.type === "lothlorien:elf_post" ? posts.filter((p) => !p.gone).map(ent) : cushions.filter((u) => Math.hypot(u.x + 0.5 - q.location.x, u.z + 0.5 - q.location.z) <= q.maxDistance).map((u) => ({ location: { x: u.x + 0.5, y: u.y, z: u.z + 0.5 } })); },
+    spawnEntity() { c.spawn++; return { setDynamicProperty() {} }; },
     getBlocks(v, f) { c.getBlocks++; const xs = JSON.parse(__layer(v.from.x, v.from.z, v.to.x, v.to.z, v.from.y, f.includeTypes.join("|")));
       return { getBlockLocationIterator: () => xs.map(([x, z]) => ({ x, y: v.from.y, z })) }; },
     fillBlocks(v, id, o) { c.fill++; const n = __fill(v.from.x, v.from.y, v.from.z, v.to.x, v.to.y, v.to.z, o.blockFilter.includeTypes.join("|"), id); return { getCapacity: () => n }; },
@@ -46,6 +50,7 @@ export function makeDimension() {
 const MAIN = `
 import { planAndBuild, clearShield } from "./village_build.js";
 import { clearBand } from "./village_clear.js";
+import { populateGen } from "./village_populate.js";
 import { BlockPermutation, BlockVolume, makeDimension, c } from "./mock_server.js";
 const engine = { BlockPermutation, BlockVolume }, found = JSON.parse(globalThis.__found), dim = makeDimension();
 const stats = { steps: 0, cpu: 0, native: 0, reads: () => 0, writeCells: 0 };
@@ -60,7 +65,9 @@ const run = (gen) => {
     if (r.done) return r.value;
   }
 };
+const props = new Map(), world = { structureManager: { place() { c.structure++; } }, getDynamicProperty: (k) => props.get(k), setDynamicProperty: (k, v) => props.set(k, v) };
 const res = run(planAndBuild(dim, found, __BUDGET__, stats, engine));
+run(populateGen(dim, found.rect, [0, 0], { ...engine, world }, () => {}));
 const band = clearBand(found.known, { min: -64, max: 319 });
 if (band) run(clearShield(dim, found.rect, band, { slices: 0, cells: 0, failed: 0, steps: 0, cpu: 0 }, engine, () => {}));
 __result(JSON.stringify({ blocks: res.blocks, merges: res.merges.length, picks: res.picks.length, repairs: res.repairs.length }));
@@ -102,6 +109,8 @@ for (const cs of cases) {
     if (steps % 250 === 0) peakHeap = Math.max(peakHeap, mem());
   });
   fn("__result", (j) => { result = JSON.parse(str(j)); });
+  ctx.setProp(ctx.global, "__posts", ctx.newString(JSON.stringify(w.posts)));
+  ctx.setProp(ctx.global, "__cushions", ctx.newString(JSON.stringify(w.cushions)));
   ctx.setProp(ctx.global, "__found", ctx.newString(JSON.stringify({ rect: w.found.rect, known: w.found.known })));
   const t0 = performance.now();
   const h = ctx.evalCode(MAIN.replace("__BUDGET__", String(PLAN.budget)), "main.js", { type: "module" });

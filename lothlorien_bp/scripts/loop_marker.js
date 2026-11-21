@@ -9,7 +9,7 @@
 //                (discoverVillage), so the planner never depends on where the player stands. The areas are removed again in `finally`.
 //   3 plan       planGen on the blocks of that area (budget 3 extra links), run as a job (yields, no long tick).
 //   4 build      all picks are written in the same job (2 ms slices, a time check every WRITES_PER_CHECK writes), then every marker in the area is removed.
-//   5 populate   civilian elves: the tree pieces' `lothlorien:elf_post` entities are read, assigned and replaced by elves (elf_village.js).
+//   5 populate   civilian elves: the tree pieces' `lothlorien:elf_post` entities are read, assigned and replaced by elves, their homes furnished, as a job in steps (village_populate.js).
 //   6 clear      every minecraft:light_block_0 of the village (the worldgen headroom shield) becomes air, so beds work (village_clear.js); still inside the
 //                ticking areas, which are released afterwards. Existing, already built villages keep their shield (owner decision).
 // The planner is one-shot: no polling, no retry loop. A failed run (quota, timeout, error) keeps the markers; they retry after world re-entry, at
@@ -21,7 +21,7 @@ import { villageDebug } from "./village_debug.js";
 import { AREA, PLAN, discoverVillage, parseDone, addDone, isDone, inRect, growRect, hullOf, chunksIn, describePick, describeMerge, VILLAGE_PLANS } from "./village_planner.js";
 import { isKnownVillageCell, rememberVillageArea } from "./village_area.js";
 import { describeRepair } from "./village_repair.js";
-import { populateVillage } from "./elf_village.js";
+import { ENGINE as ELF_ENGINE, populateGen } from "./elf_village.js";
 import { clearBand } from "./village_clear.js";
 import { sliced, stepSummary, planAndBuild, clearShield } from "./village_build.js";
 
@@ -100,10 +100,11 @@ async function planVillageAt(entity, trigger) {
     const tPlan = Date.now(), tick0 = system.currentTick, stats = { steps: 0, cpu: 0, native: 0, reads: () => 0, writeCells: 0 };
     const result = await runJobAsync(sliced(planAndBuild(dimension, found, PLAN.budget, stats, ENGINE), JOB_SLICE_MS, stats));
     dlog(`plan+build ${ms(tPlan)} ms wall, ${system.currentTick - tick0} ticks, ${stats.steps} inner steps, ${stats.cpu} ms inside them, ${stats.reads()} distinct reads, ${stats.writeCells} cells written (${result.blocks} changed), ${stepSummary(stats)}`);
-    // Civilians move in while loaded. Population errors are logged and posts retained; no automatic population retry.
-    const tPop = Date.now();
-    try { populateVillage(dimension, found.rect, [first[0], first[2]]); } catch (e) { log(`elves: ${e?.message ?? e}`); }
-    dlog(`populate ${ms(tPop)} ms`);
+    // Civilians move in while loaded, as a job of its own steps (village_populate.js: one elf spawn / structure placement / entity query per step, so the elves and
+    // the furnishing appear over about a second). Population errors are logged and posts retained; no automatic population retry.
+    const tPop = Date.now(), tickP = system.currentTick, ps = { steps: 0, cpu: 0, native: 0 };
+    try { await runJobAsync(sliced(populateGen(dimension, found.rect, [first[0], first[2]], ELF_ENGINE, () => { ps.native++; }), JOB_SLICE_MS, ps)); } catch (e) { log(`elves: ${e?.message ?? e}`); }
+    dlog(`populate ${ms(tPop)} ms wall, ${system.currentTick - tickP} ticks, ${ps.steps} inner steps, ${ps.cpu} ms inside them, ${stepSummary(ps)}`);
     // Last build step, still in the ticking areas: the light_block_0 shield goes (the band covers the marker decks and the crowns above them, see village_clear.js).
     const range = dimension.heightRange ?? { min: -64, max: 320 }, band = clearBand(found.known, { min: range.min, max: range.max - 1 });
     if (band) {

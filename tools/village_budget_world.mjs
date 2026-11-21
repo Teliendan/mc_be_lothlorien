@@ -2,7 +2,8 @@
 // and tools/village_steps.mjs (QuickJS, times the steps). Villages come from tools/village_sim.mjs (flat ground at y = -1); the deep fixtures carve a valley
 // (or a lake) under the village so that trunk carries and pillar repairs have to read far down.
 //   const w = makeWorld(data, seed, "flat" | "valley" | "lake");  w.found (discoverSync result), w.nameAt / w.statesAt / w.set / w.layer, w.hash()
-import { simulate, check, markerCells, wkey } from "./village_sim.mjs";
+import { simulate, check, markerCells, wkey, entityCells } from "./village_sim.mjs";
+import { POST_ID } from "../lothlorien_bp/scripts/elf_rules.js";
 import { discoverSync, chunksIn, inRect } from "../lothlorien_bp/scripts/village_planner.js";
 
 export const FIXTURES = { valley: { drop: 30, radius: 26, water: null }, lake: { drop: 24, radius: 26, water: -9 } };
@@ -32,21 +33,28 @@ export function makeWorld(data, seed, fixture = "flat") {
   // every cell the job wrote, with its final block and states, in a fixed order: the regression oracle for "writes stay identical"
   const written = () => [...over].map(([k, id]) => [k, id, JSON.stringify(overSt.get(k))]).sort((a, b) => a[0] - b[0]);
   const hash = (skip) => { let h = 2166136261 >>> 0, n = 0; for (const [k, id, st] of written()) { if (skip && skip(id)) continue; n++; for (const ch of `${k}|${id}|${st};`) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0; } return { hash: h.toString(16), cells: n }; };
-  return { seed, fixture, found, nameAt, statesAt, set, layer, written, hash, markers: found.known.length, chunks: chunksIn(found.rect), top };
+  // the elf posts and the cushions of the village (entities of the pieces), for the populate job
+  const inFound = (c) => inRect(found.rect, c.cell[0], c.cell[2]);
+  const posts = res.placed.flatMap((p) => entityCells(p, POST_ID)).filter(inFound).map(({ cell: [x, y, z], kind }) => ({ x, y: y + 1, z, kind: kind ?? "home" }));
+  const cushions = res.placed.flatMap((p) => entityCells(p, "minecraft:cushion")).map(({ cell: [x, y, z] }) => ({ x, y: y + 1, z }));
+  return { seed, fixture, found, posts, cushions, nameAt, statesAt, set, layer, written, hash, markers: found.known.length, chunks: chunksIn(found.rect), top };
 }
 
 // ---- Node side: a dimension that counts the native calls of every job step ---------------------------------------------------------------------------
 import { planAndBuild, clearShield } from "../lothlorien_bp/scripts/village_build.js";
 import { PLAN } from "../lothlorien_bp/scripts/village_planner.js";
 import { clearBand } from "../lothlorien_bp/scripts/village_clear.js";
+import { populateGen } from "../lothlorien_bp/scripts/village_populate.js";
 
 const perm = (id, states) => ({ type: { id }, id, states: { ...(states ?? {}) }, getState(k) { return this.states[k]; }, withState(k, v) { return perm(id, { ...this.states, [k]: v }); } });
-export const nodeEngine = { BlockPermutation: { resolve: (id, states) => perm(id, states) }, BlockVolume: class { constructor(from, to) { this.from = from; this.to = to; } } };
+export const nodeEngine = { keepPlans: true, world: null, BlockPermutation: { resolve: (id, states) => perm(id, states) }, BlockVolume: class { constructor(from, to) { this.from = from; this.to = to; } } };
 export const COUNTERS = ["getBlock", "set", "getBlocks", "layerCells", "fill", "fillCells", "structure", "spawn", "entityQuery", "remove"];
 export const zeroCounters = () => ({ ...Object.fromEntries(COUNTERS.map((k) => [k, 0])), maxLayer: 0, maxFill: 0 });
 
 // c: counters (mutated). Volumes seen: c.maxLayer = the largest getBlocks volume, c.maxFill = the largest fillBlocks volume.
 export function countingDimension(w, c) {
+  const alive = w.posts.map((p) => ({ ...p, gone: false }));
+  const entity = (p) => ({ location: { x: p.x + 0.5, y: p.y, z: p.z + 0.5 }, isValid: !p.gone, getComponent: () => ({ getTypeFamilies: () => [`elf_post_${p.kind}`] }), remove() { c.remove++; p.gone = true; }, setDynamicProperty() {} });
   const block = (x, y, z) => ({
     get typeId() { return w.nameAt(x, y, z); },
     get permutation() { return perm(w.nameAt(x, y, z), w.statesAt(x, y, z)); },
@@ -56,6 +64,12 @@ export function countingDimension(w, c) {
   return {
     id: "minecraft:overworld",
     getBlock(l) { c.getBlock++; return block(l.x, l.y, l.z); },
+    getEntities(q) {
+      c.entityQuery++;
+      if (q.type === POST_ID) return alive.filter((p) => !p.gone).map(entity);
+      return w.cushions.filter((u) => Math.hypot(u.x + 0.5 - q.location.x, u.z + 0.5 - q.location.z) <= q.maxDistance).map((u) => ({ location: { x: u.x + 0.5, y: u.y, z: u.z + 0.5 } }));
+    },
+    spawnEntity() { c.spawn++; return { setDynamicProperty() {} }; },
     getBlocks(v, f) {
       const n = (v.to.x - v.from.x + 1) * (v.to.y - v.from.y + 1) * (v.to.z - v.from.z + 1);
       c.getBlocks++; c.layerCells += n; c.maxLayer = Math.max(c.maxLayer ?? 0, n);
@@ -88,9 +102,11 @@ export function runVillageJob(w, { budget = PLAN.budget, engine = nodeEngine, ex
       prev = r.value;
     }
   };
+  const props = new Map(), world = { structureManager: { place() { c.structure++; } }, getDynamicProperty: (k) => props.get(k), setDynamicProperty: (k, v) => props.set(k, v) };
   const result = run(planAndBuild(dim, w.found, budget, stats, engine));
+  const popStats = run(populateGen(dim, w.found.rect, [0, 0], { ...engine, world }, () => {}));
   const range = { min: -64, max: 319 }, band = clearBand(w.found.known, range);
   if (band) run(clearShield(dim, w.found.rect, band, { slices: 0, cells: 0, failed: 0, steps: 0, cpu: 0 }, engine, () => {}));
   if (extra) extra(dim, run, c);
-  return { result, steps, counters: c };
+  return { result, steps, counters: c, populated: popStats, homes: props.get("lothlorien:village_homes") };
 }

@@ -2,9 +2,8 @@
 // (a valley, a lake under the trees). Deterministic: it counts the native calls of every inner step (the code between two labelled yields) with a counting
 // dimension (tools/village_budget_world.mjs) and compares the written blocks with the pre-change planner (fixtures/village_build_baseline.json).
 // Pure-JS time per step is NOT asserted here (V8 time is not deterministic); tools/village_steps.mjs --check times the steps in QuickJS.
-//   node tests/village_build_budget.mjs                  assert LIMIT (the target, minus the TEMPORARY limits below that later commits tighten)
-//   BUDGET_TARGET=1 node tests/village_build_budget.mjs  assert the real TARGET (fails until the village build fixes land)
-//   node tests/village_build_budget.mjs --write-baseline rewrite the fixture from the current planner
+//   node tests/village_build_budget.mjs                  assert the budget (suite village / village-budget, part of `all`)
+//   node tests/village_build_budget.mjs --write-baseline rewrite the baseline fixture (only from the pre-change planner: it is the regression oracle)
 import assert from "node:assert/strict";
 import { readFileSync, writeFileSync } from "node:fs";
 import { test, finish } from "./test_helpers.mjs";
@@ -15,9 +14,7 @@ import { finalBlocks } from "../lothlorien_bp/scripts/village_loop.js";
 // Per inner step (plan of village_hitch, 2026-11-21): <= 128 native block reads (getBlock), <= 16 block writes, <= 1 structure placement / elf spawn / entity
 // query, <= 8 entity removes, getBlocks volumes <= 64 x 64 x 1, fillBlocks volumes <= 16 x 16 x 64.
 const TARGET = { getBlock: 128, set: 16, structure: 1, spawn: 1, entityQuery: 1, remove: 8, layer: 64 * 64, fill: 16 * 16 * 64 };
-// TEMPORARY limits: the worst values of the code before the fixes (each fix commit lowers its entry; the last one deletes this object).
-const TEMPORARY = {};
-const LIMIT = process.env.BUDGET_TARGET ? TARGET : { ...TARGET, ...TEMPORARY };
+const LIMIT = TARGET;
 const CASES = [...SEEDS.map((s) => ({ seed: s, fixture: "flat" })), { seed: 3, fixture: "valley" }, { seed: 12, fixture: "valley" }, { seed: 7, fixture: "lake" }, { seed: 15, fixture: "lake" }];
 const BASELINE = new URL("./fixtures/village_build_baseline.json", import.meta.url);
 const name = (c) => `${c.fixture}-${c.seed}`;
@@ -68,6 +65,18 @@ test("village build: everything but the light cells stays identical to the pre-c
     for (const k of Object.keys(now)) { now[k] += lightCounts(r.result)[k]; was[k] += b.lights[k]; }
   }
   console.log(`hidden lights over ${CASES.length} villages, now vs the old greedy: bridges ${now.bridge} vs ${was.bridge}, plazas ${now.plaza} vs ${was.plaza}, merges ${now.merge} vs ${was.merge}`);
+});
+
+test("village populate job: every village gets its elves (Loremaster + the professions), every post is removed, furnishing is written and structures placed", () => {
+  const sum = { elves: 0, own: 0, reserve: 0, posts: 0, writes: 0, structures: 0, spawn: 0, removed: 0 };
+  for (const c of CASES) {
+    const r = run(c), p = r.populated;
+    assert.ok(p.spawned >= 5 && p.failed === 0, `${name(c)}: ${p.spawned} elves, ${p.failed} failed`);
+    assert.equal(r.counters.remove, r.w.posts.length, `${name(c)}: every post removed`);
+    sum.elves += p.spawned; sum.own += p.own; sum.reserve += p.reserve; sum.posts += r.w.posts.length; sum.structures += r.counters.structure; sum.spawn += r.counters.spawn;
+  }
+  assert.ok(sum.structures > 0, "banners / pots / cushions are placed");
+  console.log(`populate over ${CASES.length} villages: ${JSON.stringify(sum)}`);
 });
 
 finish();

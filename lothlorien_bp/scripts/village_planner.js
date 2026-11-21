@@ -177,13 +177,15 @@ export function overlay(at) {
     const v = nkey && inRect(rect, x, z) ? fast.get(nkey(x, y, z)) : over.get(key(x, y, z));
     return v !== undefined ? v : at(x, y, z);
   };
-  const put = (k, b, nk) => {
-    over.set(k, b.id);
+  // Heap (F7): over a boundedReader every cell inside the rect lives only in `fast` and in the per-level numeric map `byY` (no string key, no [x, z, id] array per cell);
+  // `over` keeps the string keys of the cells outside the rect and of every cell when the reader has no nkey (the tools).
+  const lk = (x, z) => (nkey && inRect(rect, x, z) ? (x - rect.x0) * 65536 + (z - rect.z0) : `${x},${z}`);
+  const put = (k, b) => {
     const [x, y, z] = k.split(",").map(Number);
-    if (nkey && inRect(rect, x, z)) fast.set(nkey(x, y, z), b.id);
+    if (nkey && inRect(rect, x, z)) fast.set(nkey(x, y, z), b.id); else over.set(k, b.id);
     let level = byY.get(y);
     if (!level) byY.set(y, level = new Map());
-    level.set(`${x},${z}`, [x, z, b.id]);
+    level.set(lk(x, z), b.id);
   };
   f.apply = (plan) => { for (const [k, b] of finalBlocks(plan)) put(k, b); };
   f.applyGen = function* (plan) { // the same, a yield after every 32 cells (a plan is up to thousands of blocks)
@@ -194,8 +196,12 @@ export function overlay(at) {
   // the base layer with this overlay's writes at height y taken out or added, x then z like a plain loop over the rect
   if (at.layer) f.layer = function* (y, ids, r) {
     const want = new Set(ids), level = byY.get(y), base = yield* at.layer(y, ids, r);
-    const out = level ? base.filter(([x, z]) => !level.has(`${x},${z}`)) : base.slice();
-    if (level) for (const [x, z, id] of level.values()) if (want.has(id) && inRect(r, x, z)) out.push([x, z]);
+    const out = level ? base.filter(([x, z]) => !level.has(lk(x, z))) : base.slice();
+    if (level) for (const [k, id] of level) {
+      if (!want.has(id)) continue;
+      const x = typeof k === "number" ? rect.x0 + Math.floor(k / 65536) : +k.split(",")[0], z = typeof k === "number" ? rect.z0 + (k % 65536) : +k.split(",")[1];
+      if (inRect(r, x, z)) out.push([x, z]);
+    }
     return out.sort((p, q) => p[0] - q[0] || p[1] - q[1]);
   };
   f.over = over;

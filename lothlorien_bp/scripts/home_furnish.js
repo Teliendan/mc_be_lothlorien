@@ -11,8 +11,9 @@
 // frame's own vectors, nothing relies on a structure rotation. Nothing here is verified in game (2026-10-14): block states are the documented
 // ones (Mojang's block metadata: cauldron fill_level 0..6 + cauldron_liquid, white_candle candles 0..3 + lit, straw_bed head_piece_bit /
 // minecraft:cardinal_direction, wall_banner facing_direction).
-import { homeSite } from "./elf_rules.js";
+import { homeSite, HOME_MAX } from "./elf_rules.js";
 import { planPlanterPanels } from "./planter_panels.js";
+import { drive, pace, prefetchBox } from "./village_geom.js";
 
 const L = "lothlorien:", M = "minecraft:";
 export const MARKER_LANTERN = `${L}elven_lantern_heartwood`;
@@ -48,8 +49,10 @@ export function frameSquare(f) {
 // at(x, y, z) -> block type id | undefined; post = { x, y, z } with y the cell the elf stands in (the deck is y - 1), as elf_village.js reads it.
 // -> frame | null. The marker lantern hangs at +3 in the post's column line, 2 (k 4 or 5), 3 (k 6) or 4 (k 7) cells away; the candidate square must be
 // all deck, its interior open at +3 except the lantern, and carry a post (not air) at +3 on both outer corners. The first candidate that fits wins.
-export function findHome(at, post) {
-  const y = post.y - 1;
+export const findHome = (at, post) => drive(findHomeGen(at, post));
+// The same as a generator: the cells fitsFrame looks at are read first, in steps of ~48 fresh reads (the job step budget), so fitsFrame itself runs on memoised cells.
+export function* findHomeGen(at, post) {
+  const y = post.y - 1, due = pace(at);
   for (const dv of [[0, -1], [0, 1], [-1, 0], [1, 0]]) {
     const du = [-dv[1], dv[0]];
     for (const [n, ks] of [[2, [5, 4]], [3, [6]], [4, [7]]]) {
@@ -58,6 +61,7 @@ export function findHome(at, post) {
         const cu = (k - 1) >> 1;
         const f = { x0: post.x - du[0] * cu - dv[0], z0: post.z - du[1] * cu - dv[1], du, dv, k, y, open: k < 5 };
         f.post = framePost(f); f.lamp = frameLamp(f);
+        for (let u = 0; u < k; u++) for (let v = 0; v < k; v++) { const [x, z] = frameCell(f, u, v); at(x, y, z); at(x, y + 3, z); if (due()) yield "findHome"; }
         if (fitsFrame(at, f)) return f;
       }
     }
@@ -76,9 +80,13 @@ function fitsFrame(at, f) {
   return true;
 }
 // The home site the assignment rules see (elf_rules assignHomes uses site.k): the pavilion's square when a pavilion exists, else the old free-square search.
-export function siteOf(at, post) {
-  const f = findHome(at, post);
-  return f ? frameSquare(f) : homeSite(at, post.x, post.y - 1, post.z);
+export const siteOf = (at, post) => drive(siteOfGen(at, post));
+export function* siteOfGen(at, post) {
+  const f = yield* findHomeGen(at, post);
+  if (f) return frameSquare(f);
+  const h = HOME_MAX - 1; // homeSite looks at the cells within HOME_MAX - 1 of the post: deck and three cells of headroom
+  yield* prefetchBox(at, { x0: post.x - h, x1: post.x + h, y0: post.y - 1, y1: post.y + 2, z0: post.z - h, z1: post.z + h }, "homeSite");
+  return homeSite(at, post.x, post.y - 1, post.z);
 }
 
 // ---- the objects -------------------------------------------------------------------------------------------------------------------
@@ -262,16 +270,18 @@ const ROOF = /leaves|_log$|_wood$|mallorn_wood$/;
 // in a walkable deck cell of the pavilion (every cell that could be walked to from outside before must still be reachable: a pavilion on the deck rim is
 // entered from the trunk side only, and a bed must not wall in a gap of the screen). Both mirror images of the layout are tried; the one that keeps more wins.
 // `structures` holds every structure placement (banners too, kind "banner"), `banners` only the banners.
-export function planFurnish(profession, frame, at, {occupied = new Set()} = {}) {
+export const planFurnish = (profession, frame, at, o) => drive(planFurnishGen(profession, frame, at, o));
+export function* planFurnishGen(profession, frame, at, {occupied = new Set()} = {}) { // a yield per group of objects: the job step budget (village_populate.js)
   const base = mirrored(frame);
   let best = null;
   for (const flip of frame.k % 2 === 1 ? [base, !base] : [false]) { // an even pavilion is not symmetric about the aisle: no mirror image
-    const r = planOne(profession, frame, at, flip);
+    const r = yield* planOneGen(profession, frame, at, flip);
     if (!best || r.skipped.length < best.skipped.length) best = r;
     if (!best.skipped.length) break;
   }
   // Frame only after the winning furniture layout is known, so borders cannot
   // reserve cells needed by its objects. Thin borders may sit beside the aisle.
+  yield "plan";
   const planned=new Map([...best.writes,...best.structures].map(p=>[`${p.x},${p.y},${p.z}`,p.name]));
   const nameAt=(x,y,z)=>planned.get(`${x},${y},${z}`) ?? at(x,y,z);
   const beds=[];
@@ -284,7 +294,7 @@ export function planFurnish(profession, frame, at, {occupied = new Set()} = {}) 
   best.panels=planPlanterPanels(nameAt,beds,{canPlace:p=>footprint.has(`${p.x},${p.z}`)&&!(p.x===px&&p.z===pz)&&!occupied.has(`${p.x},${p.y},${p.z}`)});
   return best;
 }
-function planOne(profession, frame, at, flip) {
+function* planOneGen(profession, frame, at, flip) {
   const layout = furnishLayout(profession, frame, flip), area = new Set(frameArea(frame).map((c) => c.join(",")));
   const groups = new Map();
   for (const it of layout) (groups.get(it.group) ?? groups.set(it.group, []).get(it.group)).push(it);
@@ -328,6 +338,7 @@ function planOne(profession, frame, at, flip) {
   };
   // a group that does not fit where the layout wants it moves at once to the nearest free cell of the area (never the aisle column u = cu)
   for (const [group, items] of groups) {
+    yield "plan";
     const solid = items.filter((it) => it.kind !== "cushion");
     if (solid.length && solid.every((it) => { const [x, z] = frameCell(frame, it.u, it.v); return at(x, y + it.h, z) === it.name; })) { for (const it of items) used.add(`${it.u},${it.v}`); continue; } // already there (a second run)
     if (tryGroup(items)) continue;
