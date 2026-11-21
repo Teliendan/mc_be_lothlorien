@@ -28,7 +28,12 @@ masters, shipped takes, numpy/scipy/soundfile versions) equals the last passing 
 | Forest | client biome `ambient_sounds.addition` = `ambient.lothlorien.forest.additions`, non-3D, volume 1.0; a weight-168 silent entry (about 3 in 4 picks) thins them out | vanilla Dappled Forest poplar leaf rustles (`sounds/block/poplar_leaves/ambient1-24`, vanilla weights, its wind1-3 left out); no shipped files. Generated loop, rustles and gusts dropped |
 | Root shrine | invisible `lothlorien:shrine_sound` under the root ceiling, `ambient` every 10-25 s, distance 3-24 | tones s321, s322 (cut to 8 s), s323 (cut to 10 s), 22 s s322 (cut to 17.5 s), bell s322 |
 | Leaf memorial | invisible `lothlorien:memorial_sound` on the pillar cap, every 12-30 s, distance 3-24 | tones s321, s322; harp s321, s322 |
-| Village | `scripts/village_music.js`: `playMusic` piece, then a looped silent rest, 10-30 s; leaving fades after 10 s outside | 1 = harp_flute s411 (cut at 86 s, "good, positive"), 2 = harp_solo s402 ("calm"), 3 = harp_flute s431 (8 s fade-out added), 4 = s432 ("playful"), 5 = s433 ("melancholic"), 6 = harp_solo s451 ("playful, optimistic") |
+| Village | `scripts/village_music.js`: `playMusic` piece, then a looped silent rest, 10-30 s; leaving fades after 10 s outside | 1 = harp_flute s411 (cut at 86 s, "good, positive"), 2 = harp_solo s402 ("calm"), 3 = harp_flute s431, 4 = s432 ("playful"), 5 = s433 ("melancholic"), 6 = harp_solo s451 ("playful, optimistic"); 2-6 end with an 8 s fade-out |
+
+Endings (owner 2026-11-22, a tester heard pieces end abruptly): the generator stops mid-phrase, so 2, 4, 5 and 6 got the 8 s
+fade 3 already had. Auditioned against a cut at a quiet gap plus 6 s fade (owner preferred the plain fade); a reverb tail
+was declined. Lengths are unchanged. A full run of `prepare_soundscape.py` rewrites every Ogg (new serial numbers); restore
+the takes you did not change with `git checkout` and confirm with `--check --no-cache`.
 
 Maybes not shipped: harp_solo s401 (first half perfect, then a change), harp_flute s436 (a bit sharp). Loudness: structure sounds
 with loud passages at -16 dBFS RMS, peak -1 dBFS; music at -21 LUFS integrated. Game volume in `sound_definitions.json` (music 0.5,

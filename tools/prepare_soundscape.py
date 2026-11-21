@@ -30,7 +30,8 @@ RP = MOD / "lothlorien_rp/sounds"
 RULES = MOD / "lothlorien_bp/scripts/village_music_rules.js"
 RATE = 48000
 
-# output (relative to RP), master, kind, options. Owner picks 2026-10-26 (audition 2).
+# output (relative to RP), master, kind, options. Owner picks 2026-10-26 (audition 2); 8 s fade-outs on music 2, 4-6
+# (owner 2026-11-22: tester heard abrupt ends; a plain fade beat a cut at a quiet gap, no reverb tail).
 TAKES = (
     ("ambient/lothlorien/shrine_tone_1", "shrine_tone_s321", "sfx", {}),
     # owner: the ends sound silent (a low drone a small speaker drops); cut seconds into the trimmed take
@@ -43,11 +44,11 @@ TAKES = (
     ("ambient/lothlorien/memorial_harp_1", "memorial_harp_s321", "sfx", {}),
     ("ambient/lothlorien/memorial_harp_2", "memorial_harp_s322", "sfx", {}),
     ("music/lothlorien/village_1", "music/harp_flute_s411", "music", {"cut": 86.0}),  # weak after the drop at 86 s
-    ("music/lothlorien/village_2", "music/harp_solo_s402", "music", {}),
+    ("music/lothlorien/village_2", "music/harp_solo_s402", "music", {"fade_out": 8.0}),
     ("music/lothlorien/village_3", "music/harp_flute_s431", "music", {"fade_out": 8.0}),  # abrupt ending
-    ("music/lothlorien/village_4", "music/harp_flute_s432", "music", {}),
-    ("music/lothlorien/village_5", "music/harp_flute_s433", "music", {}),
-    ("music/lothlorien/village_6", "music/harp_solo_s451", "music", {}),
+    ("music/lothlorien/village_4", "music/harp_flute_s432", "music", {"fade_out": 8.0}),
+    ("music/lothlorien/village_5", "music/harp_flute_s433", "music", {"fade_out": 8.0}),
+    ("music/lothlorien/village_6", "music/harp_solo_s451", "music", {"fade_out": 8.0}),
 )
 REST = "music/lothlorien/village_rest"  # 10 s of silence, looped between pieces
 
