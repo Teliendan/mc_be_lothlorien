@@ -282,6 +282,14 @@ realWorld.afterEvents.worldLoad.subscribe(() => {
   console.warn(`[lothlorien DIAG] diagnostic build loaded: gap reports ON (>=${GAP1} ms), ${registered}/${EXPECTED} custom components registered, native call timing on ${nativeCount} methods`);
   if (nativeCount === 0) console.error("[lothlorien DIAG] native call timing unavailable: no engine prototype method could be wrapped");
   if (registered !== EXPECTED) console.error(`[lothlorien DIAG] SCRIPT LOAD BROKEN: only ${registered}/${EXPECTED} custom components registered`);
+  // Experiment (0.8.13): the first chat message of a session cost 127 ms inside the engine (Player.sendMessage, 0.8.12 run).
+  // Does an empty world message at load, usually before any player is in, take that one-time cost? Compare with the
+  // "slow native call Player.sendMessage ... FIRST call" line of the welcome message 3 s after spawn.
+  try {
+    const players = realWorld.getAllPlayers().length, t0 = Date.now();
+    realWorld.sendMessage("");
+    console.warn(`[lothlorien DIAG] warm-up: world.sendMessage("") at world load took ${Date.now() - t0} ms (${players} player(s) present)`);
+  } catch (e) { console.warn(`[lothlorien DIAG] warm-up: world.sendMessage("") failed: ${e?.message ?? e}`); }
 });
 realWorld.afterEvents.playerSpawn.subscribe(({ player, initialSpawn }) => {
   if (initialSpawn) realSystem.runTimeout(() => { try { player.sendMessage(registered === EXPECTED
