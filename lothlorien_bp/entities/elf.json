@@ -410,7 +410,8 @@
           "priority": 6,
           "speed_multiplier": 0.6,
           "xz_dist": 8,
-          "y_dist": 3
+          "y_dist": 1,
+          "interval": 60
         },
         "minecraft:follow_range": {
           "value": 64,
@@ -853,7 +854,8 @@
         "priority": 6,
         "speed_multiplier": 0.6,
         "xz_dist": 8,
-        "y_dist": 3
+        "y_dist": 1,
+        "interval": 60
       },
       "minecraft:behavior.look_at_player": {
         "priority": 7,
