@@ -10,6 +10,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { test, finish } from "./test_helpers.mjs";
 import { loadVillageData } from "../tools/village_sim.mjs";
 import { makeWorld, runVillageJob, SEEDS } from "../tools/village_budget_world.mjs";
+import { finalBlocks } from "../lothlorien_bp/scripts/village_loop.js";
 
 // Per inner step (plan of village_hitch, 2026-11-21): <= 128 native block reads (getBlock), <= 16 block writes, <= 1 structure placement / elf spawn / entity
 // query, <= 8 entity removes, getBlocks volumes <= 64 x 64 x 1, fillBlocks volumes <= 16 x 16 x 64.
@@ -22,12 +23,23 @@ const BASELINE = new URL("./fixtures/village_build_baseline.json", import.meta.u
 const name = (c) => `${c.fixture}-${c.seed}`;
 const data = loadVillageData();
 
+// The hidden light blocks of the runtime light rule (owner decision 2026-11-21: the light cells and lanterns of bridges / plazas / merges may differ from the
+// old greedy; everything else must stay identical). lightCounts: how many lights the plans of each kind carry.
+// planHash: what the plans write (merges, picks, repairs; later wins, as in planAndBuild) WITHOUT their light cells, FNV-1a over the sorted cells.
+const planHash = (res) => {
+  const writes = new Map();
+  for (const p of [...res.merges, ...res.picks, ...res.repairs]) { const plan = p.plan ?? p; for (const [k, b] of finalBlocks({ ...plan, lights: [] })) writes.set(k, b); }
+  let h = 2166136261 >>> 0;
+  for (const [k, b] of [...writes].sort((a, c) => (a[0] < c[0] ? -1 : a[0] > c[0] ? 1 : 0))) for (const ch of `${k}|${b.id}|${JSON.stringify(b.states ?? {})};`) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0;
+  return { hash: h.toString(16), cells: writes.size };
+};
+const lightCounts = (res) => { const out = { bridge: 0, plaza: 0, merge: 0 }; for (const p of res.picks) out[p.kind === "plaza" ? "plaza" : "bridge"] += p.plan.lights.length; for (const m of res.merges) out.merge += m.plan.lights.length; return out; };
 const runs = new Map();
 const run = (c) => { if (!runs.has(name(c))) { const w = makeWorld(data, c.seed, c.fixture); runs.set(name(c), { w, ...runVillageJob(w) }); } return runs.get(name(c)); };
 
 if (process.argv.includes("--write-baseline")) {
   const out = {};
-  for (const c of CASES) { const r = run(c); out[name(c)] = { ...r.w.hash(), steps: r.steps.length }; }
+  for (const c of CASES) { const r = run(c); out[name(c)] = { steps: r.steps.length, plans: planHash(r.result), lights: lightCounts(r.result) }; }
   writeFileSync(BASELINE, JSON.stringify(out, null, 1) + "\n", { encoding: "utf8" });
   console.log(`baseline written: ${Object.keys(out).length} villages`);
   process.exit(0);
@@ -48,9 +60,14 @@ test(`village build budget: no inner step over ${JSON.stringify(LIMIT)} on ${CAS
   console.log(`village build budget (worst per inner step): ${Object.entries(worst).map(([k, e]) => `${k} ${e.v} (${e.at})`).join("; ")}`);
 });
 
-test("village build: the written blocks stay identical to the pre-change planner on every simulated village", () => {
-  const base = JSON.parse(readFileSync(BASELINE, "utf8"));
-  for (const c of CASES) assert.deepEqual({ ...run(c).w.hash() }, { hash: base[name(c)].hash, cells: base[name(c)].cells }, `${name(c)}: written blocks differ from the baseline`);
+test("village build: everything but the light cells stays identical to the pre-change planner on every simulated village; light counts vs the old greedy", () => {
+  const base = JSON.parse(readFileSync(BASELINE, "utf8")), now = { bridge: 0, plaza: 0, merge: 0 }, was = { bridge: 0, plaza: 0, merge: 0 };
+  for (const c of CASES) {
+    const r = run(c), b = base[name(c)];
+    assert.deepEqual(planHash(r.result), b.plans, `${name(c)}: what the plans write (other than the hidden lights) differs from the baseline`);
+    for (const k of Object.keys(now)) { now[k] += lightCounts(r.result)[k]; was[k] += b.lights[k]; }
+  }
+  console.log(`hidden lights over ${CASES.length} villages, now vs the old greedy: bridges ${now.bridge} vs ${was.bridge}, plazas ${now.plaza} vs ${was.plaza}, merges ${now.merge} vs ${was.merge}`);
 });
 
 finish();

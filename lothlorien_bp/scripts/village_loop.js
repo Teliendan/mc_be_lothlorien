@@ -12,7 +12,7 @@
 // World reader: at(x, y, z) -> block type id; undefined = not loaded. An "exit" is { x, y, z, dir: [dx, dz] }: x, z, y = the centre
 // deck cell of the railing row, dir = the way out (away from the platform the railing closes).
 import { bridgeShape } from "./village_bridge.js";
-import { layerCells } from "./village_geom.js";
+import { layerCells, drive } from "./village_geom.js";
 
 export const MARKER_ID = "lothlorien:loop_marker";
 export const PLANKS = "lothlorien:mallorn_planks", SLAB = "lothlorien:mallorn_slab", FENCE = "lothlorien:mallorn_fence", LANTERN = "lothlorien:elven_lantern", HEART = "lothlorien:mallorn_heartwood_planks";
@@ -91,7 +91,8 @@ export function scanAhead(A, accept) {
 // ---- the bridge in world coordinates ---------------------------------------------------------------------------------------------
 // Local frame of bridgeShape: z runs from A (z = 0) to B (z = length - 1) along A's dir, local x (east) is ex = (dir.z, -dir.x).
 // Rows 0 and length - 1 are the two railing rows themselves.
-export function planBridge(A, B, length, offset, side = false, sideA = false) {
+export const planBridge = (...a) => drive(planBridgeGen(...a));
+export function* planBridgeGen(A, B, length, offset, side = false, sideA = false) {
   const shape = bridgeShape(length, offset, length <= LOOP.flatMax ? 0 : length <= 7 ? 1 : 2); // short joins are flat decks (no arch)
   const d = A.dir, ex = [d[1], -d[0]], c0 = shape.connectors[0].x;
   const w = (lx, ly, lz) => ({ x: A.x + ex[0] * (lx - c0) + d[0] * lz, y: A.y + ly, z: A.z + ex[1] * (lx - c0) + d[1] * lz });
@@ -107,7 +108,7 @@ export function planBridge(A, B, length, offset, side = false, sideA = false) {
     for (const s of r.sides) if (!(side && r.z === length - 1 && s === "south") && !(sideA && r.z === 0 && s === "north")) states[`minecraft:connection_${SIDE_OF(vec[s])}`] = true; // side: no link into the platform interior
     return { ...w(r.x, r.y, r.z), states, row: r.z };
   });
-  const pl = planLights(shape, offset);
+  const pl = yield* planLightsGen(shape, offset);
   const lights = pl.lights.map(([x, y, z]) => ({ ...w(x, y, z), row: z }));
   const lamps = pl.lamps.map((q) => ({ ...w(q.x, q.y, q.z), row: q.z, id: q.id }));
   const gateBlock = (q) => {
@@ -131,13 +132,14 @@ export function planBridge(A, B, length, offset, side = false, sideA = false) {
 // A span of `dist` blocks (A -> B, B laterally `lat` off): one arched bridge when dist <= maxDist, otherwise two bridges with a supported
 // 5 x 5 landing between them (deck, rim rail, two lamp posts and a hidden light over its middle; the openings are the bridges' own end rows). Same plan format as planBridge;
 // `landing` = { x, y, z (centre deck cell), dir, d1, d2 } and the pier (plan.pier, see planPier) is added by realize() in village_planner.js.
-export function planSpan(A, B, dist, lat, side = false, sideA = false) {
-  if (dist <= LOOP.maxDist) return planBridge(A, B, dist + 1, lat, side, sideA);
+export const planSpan = (...a) => drive(planSpanGen(...a));
+export function* planSpanGen(A, B, dist, lat, side = false, sideA = false) {
+  if (dist <= LOOP.maxDist) return yield* planBridgeGen(A, B, dist + 1, lat, side, sideA);
   const d = A.dir, ex = [d[1], -d[0]], N = LOOP.landing, span = N - 1;
   const d1 = Math.floor((dist - span) / 2), d2 = dist - span - d1, l = Math.trunc(lat / 2);
   const cell = (k, o) => ({ x: A.x + d[0] * k + ex[0] * o, y: A.y, z: A.z + d[1] * k + ex[1] * o });
-  const p1 = planBridge(A, cell(d1, l), d1 + 1, l, true, sideA);
-  const p2 = planBridge({ ...cell(d1 + span, l), dir: d }, B, d2 + 1, lat - l, side);
+  const p1 = yield* planBridgeGen(A, cell(d1, l), d1 + 1, l, true, sideA);
+  const p2 = yield* planBridgeGen({ ...cell(d1 + span, l), dir: d }, B, d2 + 1, lat - l, side);
   const cells = [], rails = new Map(), lights = [], lamps = [], blocks = [], pots = [], h = (N - 1) / 2;
   const ring = new Set(), opening = (k, o) => (k === 0 || k === N - 1) && Math.abs(o) <= 1;
   for (let k = 0; k < N; k++) for (let o = -h; o <= h; o++) {
@@ -305,7 +307,8 @@ export function findPlazaPartners(at, A) {
 
 // A filled, railed plank deck over the bounding rectangle of the two exit rows. -> a plan (kind "plaza", same format as planBridge, plus `pier`)
 // or { error, blocked? }. Frame: t forward from A, o sideways (e = (dir.z, -dir.x)); A at (0, 0), B at (dist, lat).
-export function planPlaza(at, A, B) {
+export const planPlaza = (at, A, B) => drive(planPlazaGen(at, A, B));
+export function* planPlazaGen(at, A, B) {
   const d = A.dir, e = [d[1], -d[0]], dx = B.x - A.x, dz = B.z - A.z, y = A.y;
   const dist = dx * d[0] + dz * d[1], lat = dx * e[0] + dz * e[1];
   if (dist < 1 || dist > PLAZA.maxDist || Math.abs(lat) > PLAZA.maxLat) return { error: "plaza out of range" };
@@ -390,7 +393,7 @@ export function planPlaza(at, A, B) {
     if (yy > y && yy <= y + 3 && removed.has(K(x, z))) return "minecraft:air";
     return at(x, yy, z);
   };
-  const lamps = plazaLanterns(ov, walkXZ, posts, y);
+  const lamps = yield* plazaLanterns(at, ov, walkXZ, posts, y);
   if (lamps.error) return lamps;
   // a pier under the patch when it hangs out more than PLAZA.needPier from the old deck: under the fill cell nearest to the fill's centre
   let pier = [];
@@ -403,89 +406,115 @@ export function planPlaza(at, A, B) {
   }
   return { A, B, length: dist + 1, offset: lat, shape: null, cells, rails, lights: lamps.map(([x, yy, z]) => ({ x, y: yy, z, row: 1 })), side: false, plaza: true, pier };
 }
-// ---- the light greedy: one model for bridges, plazas and merges --------------------------------------------------------------------------------
-// A light passes through open cells and loses 1 per step (6-neighbours). b = { x0, x1, y0, y1, z0, z1 }; opens(x, y, z) must not change during the greedy
-// (a placed light stands in an open cell, so it does not). Levels and reach are numeric box indexes: string keys per cell took up to ~1 s per long bridge in
-// QuickJS, one unbroken planner step (owner 2026-10-27).
-const N6 = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
-function lightBox(b, opens) {
-  const Y = b.y1 - b.y0 + 1, Z = b.z1 - b.z0 + 1, size = (b.x1 - b.x0 + 1) * Y * Z;
-  const inBox = (x, y, z) => x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1 && z >= b.z0 && z <= b.z1;
+// ---- the light rule: one model for bridges, plazas and merges --------------------------------------------------------------------------------------
+// Owner decision 2026-11-21 (replaces the old "light that helps most" greedy, which took 80-460 ms in one step): START from the existing emitters, find the FIRST
+// walk cell below LOOP.lightTarget in a fixed scan order, place a light on the allowed candidate NEAREST to it (fewest open steps; ties: the candidate list's
+// order), update the light field AROUND that one light, repeat. One round per job step; no candidate within reach of the dark cell = no plan (the callers'
+// errors). A light passes through open cells and loses 1 per step (6-neighbours); it never reaches a walk cell farther than lanternLight - lightTarget steps,
+// so the box needs only LIGHT_MARGIN cells round the walk cells. Levels, open flags and the queue are numeric box indexes (string keys per cell took up to ~1 s
+// per long bridge in QuickJS, owner 2026-10-27). The open flags are read in prefetch steps of LIGHT_STEP.reads new cells, so no step reads more than that.
+const LIGHT_IDS = [LANTERN, LANTERN_GOLD, ...Array.from({ length: 15 }, (_, i) => `minecraft:light_block_${i + 1}`)];
+const LIGHT_MARGIN = 7, LIGHT_STEP = { pops: 500, reads: 64 }; // 15 (strongest emitter) - lightTarget; queue pops and fresh native reads per job step
+// b = { x0, x1, y0, y1, z0, z1 }; opens(x, y, z) must not change during the fill (a placed light stands in an open cell, so it does not); at: the reader the
+// open flags come from (its .size() counts the native reads of a prefetch step; optional)
+function lightBox(b, opens, at) {
+  const X = b.x1 - b.x0 + 1, Y = b.y1 - b.y0 + 1, Z = b.z1 - b.z0 + 1, SX = Y * Z, size = X * SX;
+  const open = new Int8Array(size).fill(-1);
   const bi = (x, y, z) => ((x - b.x0) * Y + (y - b.y0)) * Z + (z - b.z0);
-  const open = new Int8Array(size).fill(-1), isOpen = (j, x, y, z) => (open[j] < 0 ? (open[j] = opens(x, y, z) ? 1 : 0) : open[j]);
-  const flood = (sources) => { // sources: [[x, y, z, level]], later entries win a shared cell -> levels by box index
-    const Lv = new Int8Array(size), q = [];
-    for (const l of sources) { Lv[bi(l[0], l[1], l[2])] = l[3]; q.push(l); }
-    for (let i = 0; i < q.length; i++) {
-      const [x, y, z] = q[i], v = Lv[bi(x, y, z)];
-      if (v <= 1) continue;
-      for (const [a, c, e] of N6) {
-        const nx = x + a, ny = y + c, nz = z + e;
-        if (!inBox(nx, ny, nz)) continue;
-        const j = bi(nx, ny, nz);
-        if (Lv[j] >= v - 1 || !isOpen(j, nx, ny, nz)) continue;
-        Lv[j] = v - 1; q.push([nx, ny, nz]);
-      }
+  const inBox = (x, y, z) => x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1 && z >= b.z0 && z <= b.z1;
+  const isOpen = (j, lx, ly, lz) => (open[j] < 0 ? (open[j] = opens(b.x0 + lx, b.y0 + ly, b.z0 + lz) ? 1 : 0) : open[j]);
+  const counted = at && typeof at.size === "function";
+  function* prefetch() { // every open flag, a yield after LIGHT_STEP.reads fresh reads (or every 1024 cells over a reader that cannot count)
+    let last = counted ? at.size() : 0, n = 0;
+    for (let lx = 0, j = 0; lx < X; lx++) for (let ly = 0; ly < Y; ly++) for (let lz = 0; lz < Z; lz++, j++) {
+      isOpen(j, lx, ly, lz);
+      if (counted) { const s = at.size(); if (s - last >= LIGHT_STEP.reads) { last = s; yield "lightPrefetch"; } } else if (++n % 1024 === 0) yield "lightPrefetch";
     }
-    return Lv;
-  };
-  const reach = new Map(), far = LOOP.lanternLight - LOOP.lightTarget;
-  const reachOf = (p) => { // box indexes a light at p reaches well enough: found once per candidate
-    const pk = `${p[0]},${p[1]},${p[2]}`;
-    let out = reach.get(pk);
-    if (out) return out;
-    const seen = new Uint8Array(size), q = [[p[0], p[1], p[2], 0]];
-    if (inBox(p[0], p[1], p[2])) seen[bi(p[0], p[1], p[2])] = 1;
-    out = [];
-    for (let i = 0; i < q.length; i++) {
-      const [x, y, z, d] = q[i];
-      if (inBox(x, y, z)) out.push(bi(x, y, z));
-      if (d >= far) continue;
-      for (const [a, c, e] of N6) {
-        const nx = x + a, ny = y + c, nz = z + e;
-        if (!inBox(nx, ny, nz)) continue;
-        const j = bi(nx, ny, nz);
-        if (!seen[j] && isOpen(j, nx, ny, nz)) { seen[j] = 1; q.push([nx, ny, nz, d + 1]); }
-      }
-    }
-    reach.set(pk, out);
-    return out;
-  };
-  return { size, inBox, bi, flood, reachOf };
-}
-// Place lights until every walk cell has lightTarget: each round the first candidate that lights strictly more dark cells than any before it wins.
-// -> { lights } | { dark: n } (no candidate helps) | { diverged: true } (`rounds` used up)
-function lightGreedy(box, { base = [], walk, candidates, canPlace, rounds }) {
-  const lights = [], placed = new Set();
-  for (let guard = 0; guard < rounds; guard++) {
-    const Lv = box.flood([...base, ...lights.map((l) => [l[0], l[1], l[2], LOOP.lanternLight])]), darkAt = new Uint8Array(box.size);
-    let dark = 0;
-    for (const c of walk) if (Lv[box.bi(c[0], c[1], c[2])] < LOOP.lightTarget) { darkAt[box.bi(c[0], c[1], c[2])] = 1; dark++; }
-    if (!dark) return { lights };
-    let best = null, bg = 0;
-    for (const p of candidates) {
-      if (placed.has(`${p[0]},${p[1]},${p[2]}`) || !canPlace(p)) continue;
-      let n = 0;
-      for (const j of box.reachOf(p)) n += darkAt[j];
-      if (n > bg) { bg = n; best = p; }
-    }
-    if (!best) return { dark };
-    lights.push(best); placed.add(`${best[0]},${best[1]},${best[2]}`);
   }
-  return { diverged: true };
+  // raise the levels in Lv by the sources [[x, y, z, level]] (a cell keeps the higher of what it had and what arrives); a source cell holds its level whether or not it is open
+  function* raise(Lv, sources) {
+    const q = [];
+    for (const s of sources) if (inBox(s[0], s[1], s[2])) { const j = bi(s[0], s[1], s[2]); if (Lv[j] < s[3]) { Lv[j] = s[3]; q.push(j); } }
+    for (let i = 0, since = 0; i < q.length; i++) {
+      const j = q[i], v = Lv[j];
+      if (v <= 1) continue;
+      const lx = (j / SX) | 0, r = j - lx * SX, ly = (r / Z) | 0, lz = r - ly * Z, w = v - 1;
+      let nj;
+      if (lx < X - 1 && Lv[(nj = j + SX)] < w && isOpen(nj, lx + 1, ly, lz)) { Lv[nj] = w; q.push(nj); }
+      if (lx > 0 && Lv[(nj = j - SX)] < w && isOpen(nj, lx - 1, ly, lz)) { Lv[nj] = w; q.push(nj); }
+      if (ly < Y - 1 && Lv[(nj = j + Z)] < w && isOpen(nj, lx, ly + 1, lz)) { Lv[nj] = w; q.push(nj); }
+      if (ly > 0 && Lv[(nj = j - Z)] < w && isOpen(nj, lx, ly - 1, lz)) { Lv[nj] = w; q.push(nj); }
+      if (lz < Z - 1 && Lv[(nj = j + 1)] < w && isOpen(nj, lx, ly, lz + 1)) { Lv[nj] = w; q.push(nj); }
+      if (lz > 0 && Lv[(nj = j - 1)] < w && isOpen(nj, lx, ly, lz - 1)) { Lv[nj] = w; q.push(nj); }
+      if (++since >= LIGHT_STEP.pops) { since = 0; yield "lightFlood"; }
+    }
+  }
+  // the cell with the lowest `rank(j) >= 0` among the nearest ones to `from` through open cells, at most `reach` steps -> box index | -1
+  function nearest(from, reach, rank) {
+    const seen = new Uint8Array(size);
+    let layer = [bi(from[0], from[1], from[2])];
+    seen[layer[0]] = 1;
+    for (let d = 0; d <= reach && layer.length; d++) {
+      let best = -1, bestRank = Infinity;
+      const next = [];
+      for (const j of layer) {
+        const rk = rank(j);
+        if (rk >= 0 && rk < bestRank) { bestRank = rk; best = j; }
+        if (d === reach) continue;
+        const lx = (j / SX) | 0, r = j - lx * SX, ly = (r / Z) | 0, lz = r - ly * Z;
+        let nj;
+        if (lx < X - 1 && !seen[(nj = j + SX)] && isOpen(nj, lx + 1, ly, lz)) { seen[nj] = 1; next.push(nj); }
+        if (lx > 0 && !seen[(nj = j - SX)] && isOpen(nj, lx - 1, ly, lz)) { seen[nj] = 1; next.push(nj); }
+        if (ly < Y - 1 && !seen[(nj = j + Z)] && isOpen(nj, lx, ly + 1, lz)) { seen[nj] = 1; next.push(nj); }
+        if (ly > 0 && !seen[(nj = j - Z)] && isOpen(nj, lx, ly - 1, lz)) { seen[nj] = 1; next.push(nj); }
+        if (lz < Z - 1 && !seen[(nj = j + 1)] && isOpen(nj, lx, ly, lz + 1)) { seen[nj] = 1; next.push(nj); }
+        if (lz > 0 && !seen[(nj = j - 1)] && isOpen(nj, lx, ly, lz - 1)) { seen[nj] = 1; next.push(nj); }
+      }
+      if (best >= 0) return best;
+      layer = next;
+    }
+    return -1;
+  }
+  const cellOf = (j) => { const lx = (j / SX) | 0, r = j - lx * SX, ly = (r / Z) | 0; return [b.x0 + lx, b.y0 + ly, b.z0 + r - ly * Z]; };
+  return { size, inBox, bi, cellOf, prefetch, raise, nearest };
 }
-// existing emitters in the deck band of a box: [[x, y, z, level]]
-function emittersIn(ov, b) {
-  const out = [];
-  for (let x = b.x0; x <= b.x1; x++) for (let z = b.z0; z <= b.z1; z++) for (let y = b.y0; y <= b.y1; y++) { const l = lightLevel(ov(x, y, z)); if (l > 0) out.push([x, y, z, l]); }
+// Light until every walk cell has lightTarget. walk: [[x, y, z]] in the fixed scan order, candidates: [[x, y, z]] (their order breaks ties), base: [[x, y, z, level]].
+// -> { lights } | { dark: n } (no candidate within reach of the first dark cell; n = dark cells left) | { diverged: true } (`rounds` used up)
+function* lightFill(box, { base = [], walk, candidates, canPlace, rounds }) {
+  yield* box.prefetch();
+  const Lv = new Int8Array(box.size), cand = new Int32Array(box.size).fill(-1), placed = new Set(), lights = [];
+  candidates.forEach((p, i) => { if (box.inBox(p[0], p[1], p[2])) cand[box.bi(p[0], p[1], p[2])] = i; });
+  yield* box.raise(Lv, base);
+  const reach = LOOP.lanternLight - LOOP.lightTarget, usable = (j) => (cand[j] >= 0 && !placed.has(j) && canPlace(candidates[cand[j]]) ? cand[j] : -1);
+  for (let cursor = 0, round = 0; ; round++) {
+    while (cursor < walk.length && Lv[box.bi(walk[cursor][0], walk[cursor][1], walk[cursor][2])] >= LOOP.lightTarget) cursor++;
+    if (cursor >= walk.length) return { lights };
+    if (round >= rounds) return { diverged: true };
+    yield "lightRound";
+    const j = box.nearest(walk[cursor], reach, usable);
+    if (j < 0) { let dark = 0; for (let i = cursor; i < walk.length; i++) if (Lv[box.bi(walk[i][0], walk[i][1], walk[i][2])] < LOOP.lightTarget) dark++; return { dark }; }
+    placed.add(j);
+    lights.push(candidates[cand[j]]);
+    yield* box.raise(Lv, [[...box.cellOf(j), LOOP.lanternLight]]);
+  }
+}
+// existing emitters in the deck band of a box: [[x, y, z, level]]. The base layer's emitter cells come from the native filtered layer query (in tiles); `ov` (the
+// world after the plan under test, which can only remove an emitter) says what is still there.
+function* emittersIn(at, ov, b) {
+  const out = [], rect = { x0: b.x0, x1: b.x1, z0: b.z0, z1: b.z1 };
+  for (let y = b.y0; y <= b.y1; y++) {
+    const cells = yield* layerCells(at, y, LIGHT_IDS, rect); // not `for (... of yield* ...)`: QuickJS cannot compile it (stack underflow)
+    for (const [x, z] of cells) { const l = lightLevel(ov(x, y, z)); if (l > 0) out.push([x, y, z, l]); }
+  }
   return out;
 }
+const byXZ = (p, q) => p[0] - q[0] || p[2] - q[2] || p[1] - q[1];
 const lightPasses = (n) => isAir(n) || n === FENCE || n === LANTERN;
-function plazaLanterns(ov, walkXZ, posts, y) {
-  const R = LOOP.lanternLight, xs = [...walkXZ, ...posts].map((c) => c[0]), zs = [...walkXZ, ...posts].map((c) => c[1]);
+function* plazaLanterns(at, ov, walkXZ, posts, y) {
+  const R = LIGHT_MARGIN, xs = [...walkXZ, ...posts].map((c) => c[0]), zs = [...walkXZ, ...posts].map((c) => c[1]);
   const b = { x0: Math.min(...xs) - R, x1: Math.max(...xs) + R, y0: y - 1, y1: y + 5, z0: Math.min(...zs) - R, z1: Math.max(...zs) + R };
-  const walk = walkXZ.filter(([x, z]) => isAir(ov(x, y + 1, z)) || ov(x, y + 1, z) === LANTERN).map(([x, z]) => [x, y + 1, z]);
-  const r = lightGreedy(lightBox(b, (x, yy, z) => lightPasses(ov(x, yy, z))), { base: emittersIn(ov, b), walk, candidates: posts.map(([x, z]) => [x, y + 2, z]), canPlace: (p) => isAir(ov(...p)), rounds: 40 });
+  const walk = walkXZ.filter(([x, z]) => isAir(ov(x, y + 1, z)) || ov(x, y + 1, z) === LANTERN).map(([x, z]) => [x, y + 1, z]).sort(byXZ);
+  const r = yield* lightFill(lightBox(b, (x, yy, z) => lightPasses(ov(x, yy, z)), at), { base: yield* emittersIn(at, ov, b), walk, candidates: posts.map(([x, z]) => [x, y + 2, z]).sort(byXZ), canPlace: (p) => isAir(ov(...p)), rounds: 40 });
   return r.lights ?? { error: r.dark ? `plaza: cannot light ${r.dark} walk cells` : "plaza: lighting did not converge" };
 }
 
@@ -511,13 +540,14 @@ export function planLanding(C, opens) { // C = centre deck cell {x, y, z}; opens
   for (const [i, j] of [[-h, -h], [h, h]]) lights.push({ x: C.x + i, y: C.y + 3, z: C.z + j, row: 1 }); // hidden lights two cells over two diagonal corner posts
   return { cells, rails, lamps, lights };
 }
-export function planL(A, B, s, u) {
+export const planL = (...a) => drive(planLGen(...a));
+export function* planLGen(A, B, s, u) {
   const d = A.dir, e = B.dir, h = (LOOP.landing - 1) / 2;
   const C = { x: A.x + d[0] * s, y: A.y, z: A.z + d[1] * s };
   if (C.x !== B.x + e[0] * u || C.z !== B.z + e[1] * u) throw new Error("planL: corner mismatch");
   const f = [-e[0], -e[1]]; // heading from the landing to B
   const near = { x: C.x - d[0] * h, y: A.y, z: C.z - d[1] * h }, far = { x: C.x + f[0] * h, y: A.y, z: C.z + f[1] * h, dir: f };
-  const p1 = planBridge(A, near, s - h + 1, 0, true), p2 = planBridge(far, B, u - h + 1, 0, false, true);
+  const p1 = yield* planBridgeGen(A, near, s - h + 1, 0, true), p2 = yield* planBridgeGen(far, B, u - h + 1, 0, false, true);
   const L = planLanding(C, [[-d[0], -d[1]], f]);
   const rm = new Map();
   for (const r of [...p1.rails, ...p2.rails, ...L.rails]) {
@@ -548,7 +578,8 @@ export function findLs(at, A) {
 //   gate:  on a straight bridge of >= 11 whose arch has a flat crown: the two rail posts at mid-span are lamp posts with gold lanterns (nothing hangs over or spans the walk lanes).
 //   lights: hidden `light_block_14` cells (above the walk strip at deck + 3, or above rail posts) until every walk cell is >= lightTarget by them ALONE.
 // Light model as in skill 11-structure-lighting: a light of 14 passes through air, void, fences and lamps, loses 1 per step, everything else stops it.
-export function planLights(shape, offset = 0) {
+export const planLights = (shape, offset = 0) => drive(planLightsGen(shape, offset));
+export function* planLightsGen(shape, offset = 0) {
   const [W, H, L] = shape.size, k = (x, y, z) => `${x},${y},${z}`;
   const g = new Map();
   for (const c of shape.cells) g.set(k(c.x, c.y, c.z), c.kind === "air" ? "a" : "s");
@@ -591,7 +622,8 @@ export function planLights(shape, offset = 0) {
   const cand = []; // candidate cells: above the middle of the walk strip at deck + 3 (the walk cell is the feet cell: + 2), then above the rail posts; never in the two end rows
   for (const c of shape.walk) if (c[2] > 0 && c[2] < L - 1) cand.push([c[0], c[1] + 2, c[2]]);
   for (const r of shape.rails) cand.push([r.x, r.y + 1, r.z]);
-  const r = lightGreedy(lightBox({ x0: 0, x1: W - 1, y0: 0, y1: H - 1, z0: 0, z1: L - 1 }, passes), { walk: shape.walk, candidates: cand, canPlace: (p) => p[2] !== 0 && p[2] !== L - 1 && g.get(k(...p)) === "a", rounds: 60 });
+  const walk = shape.walk.map((c) => [c[0], c[1], c[2]]).sort((p, q) => p[2] - q[2] || p[0] - q[0] || p[1] - q[1]); // the scan runs from the first rail row to the last
+  const r = yield* lightFill(lightBox({ x0: 0, x1: W - 1, y0: 0, y1: H - 1, z0: 0, z1: L - 1 }, passes), { walk, candidates: cand, canPlace: (p) => p[2] !== 0 && p[2] !== L - 1 && g.get(k(...p)) === "a", rounds: 60 });
   if (r.dark) throw new Error(`planLights: cannot light ${r.dark} walk cells`);
   if (!r.lights) throw new Error("planLights: no convergence");
   return { lights: r.lights, lamps, gate, pots };
@@ -651,7 +683,8 @@ export function* findMerges(at, y, rect) {
 
 // The real build of one stretch (re-checks every pair on the current world, so a stretch that an earlier merge changed fails cleanly).
 // -> { plan } in the plaza plan format (cells / rails / lanterns, plan.merge = true) | { error }
-export function planMerge(at, m) {
+export const planMerge = (at, m) => drive(planMergeGen(at, m));
+export function* planMergeGen(at, m) {
   const { y, d, g, run } = m, n = run.length, K = (x, z) => `${x},${z}`;
   if (!run.every(([x, z]) => mergePair(at, y, d, g, x, z))) return { error: "merge: stretch changed" };
   const span = mergeSpan(at, y, d, g, run);
@@ -701,21 +734,29 @@ export function planMerge(at, m) {
   for (let i = lo; i <= hi; i++) { walk.push(P[i], Q[i]); if (g === 1) walk.push(G[i]); }
   const xs = [...P, ...Q].map((c) => c[0]), zs = [...P, ...Q].map((c) => c[1]);
   const box = { x0: Math.min(...xs) - 12, x1: Math.max(...xs) + 12, z0: Math.min(...zs) - 12, z1: Math.max(...zs) + 12 };
-  const posts = [];
-  for (let x = box.x0 + 4; x <= box.x1 - 4; x++) for (let z = box.z0 + 4; z <= box.z1 - 4; z++) if (fenced(x, z)) posts.push([x, z]);
-  const lamps = mergeLanterns(at, ovA, walk, posts, y, box);
+  const inner = { x0: box.x0 + 4, x1: box.x1 - 4, z0: box.z0 + 4, z1: box.z1 - 4 }, postAt = new Map(); // the rail posts of the area (fenced), by the native layer query
+  const fenceCells = yield* layerCells(at, y + 1, [FENCE], inner);
+  for (const [x, z] of fenceCells) if (!removed.has(K(x, z))) postAt.set(K(x, z), [x, z]);
+  for (const k of added) { const [x, z] = k.split(",").map(Number); if (x >= inner.x0 && x <= inner.x1 && z >= inner.z0 && z <= inner.z1) postAt.set(k, [x, z]); }
+  const posts = [...postAt.values()].sort((p, q) => p[0] - q[0] || p[1] - q[1]);
+  const lamps = yield* mergeLanterns(at, ovA, walk, posts, y, box);
   if (lamps.error) return lamps;
   const mid = lo + Math.floor((hi - lo + 1) / 2);
   const A = { x: P[mid][0] - d[0], y, z: P[mid][1] - d[1] }, B = { x: Q[mid][0] + d[0], y, z: Q[mid][1] + d[1] };
   return { plan: { A, B, length: n, offset: 0, shape: null, cells, rails, lights: lamps.map(([x, yy, z]) => ({ x, y: yy, z, row: 1 })), side: false, merge: true, gap: g, pier: [] } };
 }
-// Lanterns on post tops until every watched walk cell (the stretch + all deck cells that were lit before) is lit again; ovB / ovA = the world before / after.
-function mergeLanterns(ovB, ovA, walkXZ, posts, y, area) {
-  const b = { ...area, y0: y - 1, y1: y + 5 }, boxOf = (ov) => lightBox(b, (x, yy, z) => lightPasses(ov(x, yy, z)));
-  const before = boxOf(ovB), litBefore = before.flood(emittersIn(ovB, b)), after = boxOf(ovA), watch = new Map();
-  const standing = (x, z) => isPlank(ovA(x, y, z)) && isAir(ovA(x, y + 1, z)), cell = (x, z) => watch.set(`${x},${z}`, [x, y + 1, z]);
+// Lanterns on post tops until every watched walk cell (the stretch + all deck cells that were lit before) is lit again (the light rule above); `at` / ovA = the world
+// before / after.
+function* mergeLanterns(at, ovA, walkXZ, posts, y, area) {
+  const b = { ...area, y0: y - 1, y1: y + 5 }, rect = { x0: b.x0, x1: b.x1, z0: b.z0, z1: b.z1 };
+  const before = lightBox(b, (x, yy, z) => lightPasses(at(x, yy, z)), at), after = lightBox(b, (x, yy, z) => lightPasses(ovA(x, yy, z)), at);
+  yield* before.prefetch();
+  const litBefore = new Int8Array(before.size);
+  yield* before.raise(litBefore, yield* emittersIn(at, at, b));
+  const standing = (x, z) => isPlank(ovA(x, y, z)) && isAir(ovA(x, y + 1, z)), watch = new Map(), cell = (x, z) => watch.set(`${x},${z}`, [x, y + 1, z]);
   for (const [x, z] of walkXZ) if (standing(x, z)) cell(x, z);
-  for (let x = b.x0; x <= b.x1; x++) for (let z = b.z0; z <= b.z1; z++) if (standing(x, z) && litBefore[before.bi(x, y + 1, z)] >= LOOP.lightTarget) cell(x, z);
-  const r = lightGreedy(after, { base: emittersIn(ovA, b), walk: [...watch.values()], candidates: posts.map(([x, z]) => [x, y + 2, z]), canPlace: (p) => isAir(ovA(...p)), rounds: 30 });
+  const decks = yield* layerCells(at, y, [PLANKS, HEART], rect);
+  for (const [x, z] of decks) if (standing(x, z) && litBefore[before.bi(x, y + 1, z)] >= LOOP.lightTarget) cell(x, z);
+  const r = yield* lightFill(after, { base: yield* emittersIn(at, ovA, b), walk: [...watch.values()].sort(byXZ), candidates: posts.map(([x, z]) => [x, y + 2, z]), canPlace: (p) => isAir(ovA(...p)), rounds: 30 });
   return r.lights ?? { error: r.dark ? `merge: cannot light ${r.dark} walk cells` : "merge: lighting did not converge" };
 }

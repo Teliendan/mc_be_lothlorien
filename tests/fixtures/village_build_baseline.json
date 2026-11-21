@@ -1,122 +1,290 @@
 {
  "flat-1": {
-  "hash": "17e4070f",
-  "cells": 16225,
-  "steps": 23789
+  "steps": 23789,
+  "plans": {
+   "hash": "76dd9ef1",
+   "cells": 7338
+  },
+  "lights": {
+   "bridge": 0,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "flat-2": {
-  "hash": "844153de",
-  "cells": 19382,
-  "steps": 32729
+  "steps": 32729,
+  "plans": {
+   "hash": "b94e95c5",
+   "cells": 9777
+  },
+  "lights": {
+   "bridge": 3,
+   "plaza": 1,
+   "merge": 0
+  }
  },
  "flat-3": {
-  "hash": "b3836089",
-  "cells": 15352,
-  "steps": 24377
+  "steps": 24377,
+  "plans": {
+   "hash": "abb99856",
+   "cells": 7283
+  },
+  "lights": {
+   "bridge": 3,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "flat-4": {
-  "hash": "9a678246",
-  "cells": 9480,
-  "steps": 13874
+  "steps": 13874,
+  "plans": {
+   "hash": "12ec91ba",
+   "cells": 4535
+  },
+  "lights": {
+   "bridge": 0,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "flat-5": {
-  "hash": "d35ce8fb",
-  "cells": 13869,
-  "steps": 23144
+  "steps": 23144,
+  "plans": {
+   "hash": "e22a3c3d",
+   "cells": 7104
+  },
+  "lights": {
+   "bridge": 2,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "flat-6": {
-  "hash": "8d2c7781",
-  "cells": 15944,
-  "steps": 23008
+  "steps": 23008,
+  "plans": {
+   "hash": "f970ae2",
+   "cells": 7037
+  },
+  "lights": {
+   "bridge": 3,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "flat-7": {
-  "hash": "c33c5558",
-  "cells": 14659,
-  "steps": 20126
+  "steps": 20126,
+  "plans": {
+   "hash": "5041724a",
+   "cells": 6428
+  },
+  "lights": {
+   "bridge": 0,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "flat-8": {
-  "hash": "7f37bd7c",
-  "cells": 9405,
-  "steps": 11439
+  "steps": 11439,
+  "plans": {
+   "hash": "96420677",
+   "cells": 3621
+  },
+  "lights": {
+   "bridge": 3,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "flat-9": {
-  "hash": "56973844",
-  "cells": 9687,
-  "steps": 12784
+  "steps": 12784,
+  "plans": {
+   "hash": "d2426bc5",
+   "cells": 4091
+  },
+  "lights": {
+   "bridge": 0,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "flat-10": {
-  "hash": "34dc00f9",
-  "cells": 9809,
-  "steps": 15326
+  "steps": 15326,
+  "plans": {
+   "hash": "1f4997c5",
+   "cells": 4577
+  },
+  "lights": {
+   "bridge": 0,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "flat-11": {
-  "hash": "95799d8b",
-  "cells": 20165,
-  "steps": 30970
+  "steps": 30970,
+  "plans": {
+   "hash": "32d3f5b6",
+   "cells": 8802
+  },
+  "lights": {
+   "bridge": 3,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "flat-12": {
-  "hash": "6cc90737",
-  "cells": 17128,
-  "steps": 22688
+  "steps": 22688,
+  "plans": {
+   "hash": "5a616c81",
+   "cells": 7288
+  },
+  "lights": {
+   "bridge": 0,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "flat-13": {
-  "hash": "fa6cc1e1",
-  "cells": 13671,
-  "steps": 24005
+  "steps": 24005,
+  "plans": {
+   "hash": "682e11f3",
+   "cells": 7220
+  },
+  "lights": {
+   "bridge": 3,
+   "plaza": 3,
+   "merge": 0
+  }
  },
  "flat-14": {
-  "hash": "2950ce0",
-  "cells": 19126,
-  "steps": 25855
+  "steps": 25855,
+  "plans": {
+   "hash": "8780bd31",
+   "cells": 8053
+  },
+  "lights": {
+   "bridge": 0,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "flat-15": {
-  "hash": "c997ae5",
-  "cells": 17668,
-  "steps": 25043
+  "steps": 25043,
+  "plans": {
+   "hash": "dc1732a8",
+   "cells": 7604
+  },
+  "lights": {
+   "bridge": 3,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "flat-16": {
-  "hash": "94843415",
-  "cells": 10494,
-  "steps": 12421
+  "steps": 12421,
+  "plans": {
+   "hash": "98c8120d",
+   "cells": 3899
+  },
+  "lights": {
+   "bridge": 0,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "flat-17": {
-  "hash": "32ea761a",
-  "cells": 13548,
-  "steps": 21922
+  "steps": 21922,
+  "plans": {
+   "hash": "d8bc329f",
+   "cells": 6641
+  },
+  "lights": {
+   "bridge": 3,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "flat-18": {
-  "hash": "33d31f9e",
-  "cells": 14046,
-  "steps": 21056
+  "steps": 21056,
+  "plans": {
+   "hash": "ec2e4446",
+   "cells": 6454
+  },
+  "lights": {
+   "bridge": 0,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "flat-19": {
-  "hash": "5806f784",
-  "cells": 11538,
-  "steps": 18605
+  "steps": 18605,
+  "plans": {
+   "hash": "24360f4f",
+   "cells": 5841
+  },
+  "lights": {
+   "bridge": 0,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "flat-20": {
-  "hash": "7f8885fa",
-  "cells": 17394,
-  "steps": 25942
+  "steps": 25942,
+  "plans": {
+   "hash": "9319bc5",
+   "cells": 7789
+  },
+  "lights": {
+   "bridge": 3,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "valley-3": {
-  "hash": "a5ba64b2",
-  "cells": 17494,
-  "steps": 29481
+  "steps": 29481,
+  "plans": {
+   "hash": "9aa03d97",
+   "cells": 9425
+  },
+  "lights": {
+   "bridge": 3,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "valley-12": {
-  "hash": "2d327aec",
-  "cells": 19440,
-  "steps": 28343
+  "steps": 28343,
+  "plans": {
+   "hash": "9ef41c7d",
+   "cells": 9600
+  },
+  "lights": {
+   "bridge": 0,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "lake-7": {
-  "hash": "7f1162ee",
-  "cells": 16512,
-  "steps": 24676
+  "steps": 24676,
+  "plans": {
+   "hash": "3b5c9fca",
+   "cells": 8281
+  },
+  "lights": {
+   "bridge": 0,
+   "plaza": 0,
+   "merge": 0
+  }
  },
  "lake-15": {
-  "hash": "d1be448a",
-  "cells": 19204,
-  "steps": 28719
+  "steps": 28719,
+  "plans": {
+   "hash": "40dc2a04",
+   "cells": 9140
+  },
+  "lights": {
+   "bridge": 3,
+   "plaza": 0,
+   "merge": 0
+  }
  }
 }

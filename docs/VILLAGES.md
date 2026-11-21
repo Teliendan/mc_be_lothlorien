@@ -14,6 +14,13 @@ generate: `WORLDGEN.md`. Changes are one-shot: existing structures do not regene
 - Wood posts continue down to the deck. Generator and runtime share one explicit fence-target policy (including Mallorn slabs
   and moss). Runtime repairs follow furnishing, bridges and local player edits, never poll idle, and keep unloaded directions
   as they were. Repair jobs are finite and serialized. Fence links repair basically instantly after a break or TNT (verified in game (owner, 1.26.63, 2026-11-17)).
+- Runtime light rule (owner decision 2026-11-21, `village_loop.js` `lightFill`; not verified in game): bridges (`planLights`), plazas (`plazaLanterns`)
+  and merges (`mergeLanterns`) share ONE rule. Start from the existing emitters, find the first walk cell below `LOOP.lightTarget` (8) in a fixed scan
+  order, put a light on the allowed candidate nearest to it (bridges: the hidden `light_block_14` above the walk strip or a rail post; plazas and merges:
+  the light on the nearest rail post top), update the light field round that one light, repeat; no candidate within reach of a dark cell is the same
+  "cannot light" error as before. One round per job step. It replaces the old "light that helps most" greedy: the same villages, links and
+  repairs, but different (still invisible) hidden-light cells, and about 50 % more of them (842 span shapes: 4,022 -> 6,028 lights; 24 simulated villages:
+  bridges 35 -> 48, plazas 4 -> 6). The bridge safety counts the hidden lights alone, as before (a visible lamp may be broken).
 - Unused flat connector mouths get rails when no onward surface exists, including at the lower half-step; existing bridges and
   stairs stay open.
 - Moss beds get open trapdoor borders on every available side (path-facing and off-deck sides supported by moss included);

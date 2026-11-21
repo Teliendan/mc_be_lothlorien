@@ -10,7 +10,7 @@
 //   4 greedy      take the best, build its real plan, apply it to an overlay world, enumerate and score again; stop at the budget
 import { hullOf, chunkAlign, growRect, inRect, chunksIn, drive } from "./village_geom.js";
 import { repairGen } from "./village_repair.js";
-import { PLANKS, SLAB, FENCE, isPlank, LOOP, exitAt, sideTarget, sideStarts, scanAhead, findPlazaPartners, findLs, planSpan, planPlaza, planL, blockedCells, clutter, planPier, finalBlocks, isNewKind, MERGE, findMerges, planMerge } from "./village_loop.js";
+import { PLANKS, SLAB, FENCE, isPlank, LOOP, exitAt, sideTarget, sideStarts, scanAhead, findPlazaPartners, findLs, planSpanGen, planPlazaGen, planLGen, planMergeGen, blockedCells, clutter, planPier, finalBlocks, isNewKind, MERGE, findMerges } from "./village_loop.js";
 
 export { hullOf, chunkAlign, growRect, inRect, chunksIn, drive }; // their home is village_geom.js; existing importers keep working
 
@@ -109,11 +109,12 @@ export function enumerate(at, starts) {
 }
 
 // the real build of one candidate: same checks as the old closer (blocked corridor, clutter for new kinds, pier for landings, lanterns inside the plan)
-export function realize(at, c) {
+export const realize = (at, c) => drive(realizeGen(at, c));
+export function* realizeGen(at, c) {
   try {
-    if (c.kind === "plaza") { const plan = planPlaza(at, c.A, c.B); return plan.error ? { error: plan.error, blocked: plan.blocked } : { plan }; }
+    if (c.kind === "plaza") { const plan = yield* planPlazaGen(at, c.A, c.B); return plan.error ? { error: plan.error, blocked: plan.blocked } : { plan }; }
     if (c.kind === "L") {
-      const plan = planL(c.A, c.B, c.s, c.u), blocked = blockedCells(at, plan);
+      const plan = yield* planLGen(c.A, c.B, c.s, c.u), blocked = blockedCells(at, plan);
       if (blocked.length) return { error: "blocked", blocked };
       if (clutter(at, plan)) return { error: "clutter" };
       const pier = planPier(at, plan.landing);
@@ -121,7 +122,7 @@ export function realize(at, c) {
       plan.pier = pier.blocks; return { plan };
     }
     const sideStart = c.kind === "sideside", side = c.kind !== "exit";
-    const plan = planSpan(c.A, c.B, c.dist, c.offset, side, sideStart), blocked = blockedCells(at, plan);
+    const plan = yield* planSpanGen(c.A, c.B, c.dist, c.offset, side, sideStart), blocked = blockedCells(at, plan);
     if (blocked.length) return { error: "blocked", blocked };
     if (isNewKind(sideStart, c.dist, c.offset) && clutter(at, plan)) return { error: "clutter" };
     if (plan.landing) { const pier = planPier(at, plan.landing); if (pier.error) return { error: pier.error }; plan.pier = pier.blocks; }
@@ -188,7 +189,7 @@ export function* planGen(at0, markers, opts = {}) {
       for (const m of found) {
         if (merges.length >= o.mergeCap) break;
         yield "merge";
-        const r = planMerge(at, m);
+        const r = yield* planMergeGen(at, m);
         if (!r.plan) { log.push(`merge ${m.run[0][0]},${m.run[0][1]} (${m.run.length}, gap ${m.g}): ${r.error}`); continue; }
         if (openWalk(at, r.plan.A, r.plan.B, MERGE.minNet - 1)) { log.push(`merge ${m.run[0][0]},${m.run[0][1]}: decks already joined by a short walk`); continue; }
         at.apply(r.plan);
@@ -210,7 +211,7 @@ export function* planGen(at0, markers, opts = {}) {
       if (c.value < o.minValue) break;
       tried.add(c.kind + pairKey(c.A, c.B));
       yield "realize";
-      const r = realize(at, c);
+      const r = yield* realizeGen(at, c);
       if (!r.plan) { log.push(`${c.kind} ${c.A.x},${c.A.z}->${c.B.x},${c.B.z}: ${r.error}${r.blocked ? ` (${r.blocked[0].block} at ${r.blocked[0].x},${r.blocked[0].y},${r.blocked[0].z})` : ""}`); continue; }
       at.apply(r.plan);
       picks.push({ kind: c.kind, A: c.A, B: c.B, plan: r.plan, dnet: c.dnet, len: c.len, value: Math.round(c.value) });
