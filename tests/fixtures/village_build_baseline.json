@@ -1,0 +1,122 @@
+{
+ "flat-1": {
+  "hash": "17e4070f",
+  "cells": 16225,
+  "steps": 23789
+ },
+ "flat-2": {
+  "hash": "844153de",
+  "cells": 19382,
+  "steps": 32729
+ },
+ "flat-3": {
+  "hash": "b3836089",
+  "cells": 15352,
+  "steps": 24377
+ },
+ "flat-4": {
+  "hash": "9a678246",
+  "cells": 9480,
+  "steps": 13874
+ },
+ "flat-5": {
+  "hash": "d35ce8fb",
+  "cells": 13869,
+  "steps": 23144
+ },
+ "flat-6": {
+  "hash": "8d2c7781",
+  "cells": 15944,
+  "steps": 23008
+ },
+ "flat-7": {
+  "hash": "c33c5558",
+  "cells": 14659,
+  "steps": 20126
+ },
+ "flat-8": {
+  "hash": "7f37bd7c",
+  "cells": 9405,
+  "steps": 11439
+ },
+ "flat-9": {
+  "hash": "56973844",
+  "cells": 9687,
+  "steps": 12784
+ },
+ "flat-10": {
+  "hash": "34dc00f9",
+  "cells": 9809,
+  "steps": 15326
+ },
+ "flat-11": {
+  "hash": "95799d8b",
+  "cells": 20165,
+  "steps": 30970
+ },
+ "flat-12": {
+  "hash": "6cc90737",
+  "cells": 17128,
+  "steps": 22688
+ },
+ "flat-13": {
+  "hash": "fa6cc1e1",
+  "cells": 13671,
+  "steps": 24005
+ },
+ "flat-14": {
+  "hash": "2950ce0",
+  "cells": 19126,
+  "steps": 25855
+ },
+ "flat-15": {
+  "hash": "c997ae5",
+  "cells": 17668,
+  "steps": 25043
+ },
+ "flat-16": {
+  "hash": "94843415",
+  "cells": 10494,
+  "steps": 12421
+ },
+ "flat-17": {
+  "hash": "32ea761a",
+  "cells": 13548,
+  "steps": 21922
+ },
+ "flat-18": {
+  "hash": "33d31f9e",
+  "cells": 14046,
+  "steps": 21056
+ },
+ "flat-19": {
+  "hash": "5806f784",
+  "cells": 11538,
+  "steps": 18605
+ },
+ "flat-20": {
+  "hash": "7f8885fa",
+  "cells": 17394,
+  "steps": 25942
+ },
+ "valley-3": {
+  "hash": "a5ba64b2",
+  "cells": 17494,
+  "steps": 29481
+ },
+ "valley-12": {
+  "hash": "2d327aec",
+  "cells": 19440,
+  "steps": 28343
+ },
+ "lake-7": {
+  "hash": "7f1162ee",
+  "cells": 16512,
+  "steps": 24676
+ },
+ "lake-15": {
+  "hash": "d1be448a",
+  "cells": 19204,
+  "steps": 28719
+ }
+}

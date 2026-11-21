@@ -16,20 +16,21 @@
 // most AREA.maxTries times per marker.
 import { BlockPermutation, BlockVolume, system, world } from "@minecraft/server";
 import { onEntity } from "./entity_events.js";
-import { MARKER_ID, finalBlocks } from "./village_loop.js";
+import { MARKER_ID } from "./village_loop.js";
 import { villageDebug } from "./village_debug.js";
-import { AREA, PLAN, planGen, discoverVillage, boundedReader, parseDone, addDone, isDone, inRect, growRect, hullOf, chunksIn, describePick, describeMerge, VILLAGE_PLANS } from "./village_planner.js";
+import { AREA, PLAN, discoverVillage, parseDone, addDone, isDone, inRect, growRect, hullOf, chunksIn, describePick, describeMerge, VILLAGE_PLANS } from "./village_planner.js";
 import { isKnownVillageCell, rememberVillageArea } from "./village_area.js";
 import { describeRepair } from "./village_repair.js";
-import { LINKS } from "./rail_mender_rules.js";
-import { mendFence } from "./rail_connections.js";
-import { PANEL_ID,planterWalkName } from "./planter_panels.js";
 import { populateVillage } from "./elf_village.js";
-import { SHIELD_ID, clearBand, clearSlices } from "./village_clear.js";
+import { clearBand } from "./village_clear.js";
+import { sliced, stepSummary, planAndBuild, clearShield } from "./village_build.js";
+
+export { sliced, stepSummary }; // tests drive them with a mock clock
 
 // START_DELAY_TICKS 5 (was 20, owner 2026-10-10: the village looked empty for a long time). JOB_SLICE_MS: one engine job step runs the planner's inner steps
 // until this many ms are used, then yields once; without it the job may advance only ONE inner step per tick (about 200 steps = 10 s).
-const START_DELAY_TICKS = 5, SETTLE_TICKS = 40, AREA_TIMEOUT_TICKS = 600, WRITES_PER_CHECK = 32, JOB_SLICE_MS = 2, LAYER_TILE = 64;
+const START_DELAY_TICKS = 5, SETTLE_TICKS = 40, AREA_TIMEOUT_TICKS = 600, JOB_SLICE_MS = 2;
+const ENGINE = { BlockPermutation, BlockVolume }; // the pure build module (village_build.js) imports nothing from @minecraft/server
 const TRIES = "lothlorien:loop_tries", DONE = VILLAGE_PLANS;
 const seen = new Set(), queue = [], failed = [];
 let claim = null, running = false, loggedQuota = false, areaAttempt = 0;
@@ -51,108 +52,6 @@ function removeMarkers(dimension, r) {
   let n = 0;
   for (const e of dimension.getEntities(boxQuery(r))) { e.remove(); n++; }
   return n;
-}
-
-// Time-boxed job driver: runs `gen` step by step until `ms` milliseconds are used, yields once, and goes on; returns the generator's value.
-// An inner step is all the code between two yields. Every generator yield carries a label (a string naming the code just before it), and a step is
-// named "label of the yield that started it>label of the yield that ended it" ("findMerges>scoreGen"). stats (optional) collects { steps, cpu } plus
-// the slowest step (maxStep, maxLabel), the most native reads in one step (maxReads, maxReadsLabel; the caller bumps stats.native per read) and
-// the steps over STEP_BUDGET_MS (over, overBy: label -> count). Each slice yields the label of its slowest inner step outward, so the DIAG wrapper
-// (tools/diag/diag_wrap.js) can name the code of a long job call. `now` is injectable for tests.
-export const STEP_BUDGET_MS = 3;
-export function* sliced(gen, ms, stats, now = Date.now) {
-  let prev = "start";
-  for (;;) {
-    const t0 = now();
-    let r, slow = undefined, slowMs = -1;
-    do {
-      const s0 = now(), n0 = stats ? stats.native ?? 0 : 0;
-      r = gen.next();
-      const d = now() - s0, label = `${prev}>${r.done ? "done" : typeof r.value === "string" ? r.value : "?"}`;
-      if (!r.done) prev = typeof r.value === "string" ? r.value : "?";
-      if (d > slowMs) { slowMs = d; slow = label; }
-      if (stats) {
-        stats.steps++;
-        if (d > (stats.maxStep ?? 0)) { stats.maxStep = d; stats.maxLabel = label; } // the slowest single inner step: the slicer cannot split it
-        const reads = (stats.native ?? 0) - n0;
-        if (reads > (stats.maxReads ?? 0)) { stats.maxReads = reads; stats.maxReadsLabel = label; }
-        if (d > STEP_BUDGET_MS) { stats.over = (stats.over ?? 0) + 1; const by = stats.overBy ??= {}; by[label] = (by[label] ?? 0) + 1; }
-      }
-    } while (!r.done && now() - t0 < ms);
-    if (stats) stats.cpu += now() - t0;
-    if (r.done) return r.value;
-    yield slow;
-  }
-}
-// "slowest step 7 ms (a>b), most native reads in one step 30 (a>b), steps over 3 ms: 2 (a>b 2)" for the debug lines
-export function stepSummary(s) {
-  const by = Object.entries(s.overBy ?? {}).sort((p, q) => q[1] - p[1]).slice(0, 4).map(([k, v]) => `${k} ${v}`).join(", ");
-  return `slowest step ${s.maxStep ?? 0} ms (${s.maxLabel ?? "-"}), most native reads in one step ${s.maxReads ?? 0} (${s.maxReadsLabel ?? "-"}), steps over ${STEP_BUDGET_MS} ms: ${s.over ?? 0}${by ? ` (${by})` : ""}`;
-}
-
-// one job: plan on the loaded blocks, then write every pick (fence links as rail_mender_rules wants them)
-function* planAndBuild(dimension, found, budget, stats) {
-  const nat = () => { if (stats) stats.native++; }; // one native block read, for the per-step read count of sliced()
-  const raw = (x,y,z) => {
-    nat();
-    try {
-      const block=dimension.getBlock({x,y,z});
-      if(!block)return undefined;
-      const id=block.typeId;
-      return id===PANEL_ID ? {name:id,states:{"lothlorien:open":block.permutation.getState("lothlorien:open"),"minecraft:cardinal_direction":block.permutation.getState("minecraft:cardinal_direction")}} : id;
-    } catch {return undefined;}
-  };
-  const get = planterWalkName(raw);
-  // Native filtered layer query for the planner's full-area scans, in tiles so that no single call is large; a yield between tiles.
-  const layer = function* (y, ids, r) {
-    const out = [];
-    for (let x = r.x0; x <= r.x1; x += LAYER_TILE) for (let z = r.z0; z <= r.z1; z += LAYER_TILE) {
-      const volume = new BlockVolume({ x, y, z }, { x: Math.min(x + LAYER_TILE - 1, r.x1), y, z: Math.min(z + LAYER_TILE - 1, r.z1) });
-      for (const p of dimension.getBlocks(volume, { includeTypes: ids }, true).getBlockLocationIterator()) out.push([p.x, p.z]);
-      yield "layerTile";
-    }
-    return out.sort((p, q) => p[0] - q[0] || p[1] - q[1]);
-  };
-  let at = boundedReader(get, found.rect, layer);
-  if (stats) stats.reads = at.size;
-  const res = yield* planGen(at, found.known, { budget, rect: found.rect });
-  const writes = new Map();
-  for (const p of [...res.merges, ...res.picks, ...res.repairs]) for (const [k, b] of finalBlocks(p.plan ?? p)) writes.set(k, b); // a repair is itself the plan
-  if (stats) stats.writeCells = writes.size;
-  let n = 0, failedWrites = 0, count = 0;
-  for (const [k, b] of writes) {
-    const [x, y, z] = k.split(",").map(Number), cur = at(x, y, z);
-    if (cur === b.id && (b.id === "minecraft:air" || b.id === "lothlorien:mallorn_planks")) continue; // already right (air over air, planks over planks)
-    try {
-      nat();
-      const block = dimension.getBlock({ x, y, z });
-      if (b.id === "minecraft:air") block.setType("minecraft:air");
-      else block.setPermutation(BlockPermutation.resolve(b.id, b.states ?? {}));
-      count++;
-    } catch { failedWrites++; }
-    if (++n % WRITES_PER_CHECK === 0) yield "write";
-  }
-  at = null; res.at = null; // release the block memo and the overlay before the fence mend pass (watchdog memory, 2026-10-27)
-  // every written cell and its four neighbours, each fence mended once (mendAround per cell visited a shared neighbour up to 5 times;
-  // a mend reads only neighbour types, which mending never changes, so order and repeats do not matter)
-  const mend = new Set();
-  for (const k of writes.keys()) { const [x, y, z] = k.split(",").map(Number); mend.add(k); for (const l of LINKS) mend.add(`${x + l.dx},${y},${z + l.dz}`); }
-  const counted = { getBlock: (l) => { nat(); return dimension.getBlock(l); } };
-  for (const k of mend) { const [x, y, z] = k.split(",").map(Number); try { mendFence(counted, { x, y, z }); } catch { /* unloaded */ } yield "mend"; }
-  return { ...res, blocks: count, failedWrites };
-}
-
-// Replaces every light_block_0 in the village rect by air: one native fillBlocks per chunk column and Y slice (village_clear.js), a yield after each.
-// A failing slice is logged and skipped. stats collects { slices, cells, failed }.
-function* clearShield(dimension, rect, band, stats) {
-  for (const s of clearSlices(rect, band.y0, band.y1)) {
-    try {
-      const volume = new BlockVolume({ x: s.x0, y: s.y0, z: s.z0 }, { x: s.x1, y: s.y1, z: s.z1 });
-      stats.cells += dimension.fillBlocks(volume, "minecraft:air", { blockFilter: { includeTypes: [SHIELD_ID] }, ignoreChunkBoundErrors: true }).getCapacity();
-    } catch (e) { stats.failed++; log(`shield clear ${s.x0},${s.y0},${s.z0} to ${s.x1},${s.y1},${s.z1}: ${e?.message ?? e}`); }
-    stats.slices++;
-    yield "clear";
-  }
 }
 
 async function planVillageAt(entity, trigger) {
@@ -199,7 +98,7 @@ async function planVillageAt(entity, trigger) {
     await sleep(SETTLE_TICKS); // neighbouring chunks of a fresh village finish their decoration
     dlog(`settle ${ms(tSettle)} ms`);
     const tPlan = Date.now(), tick0 = system.currentTick, stats = { steps: 0, cpu: 0, native: 0, reads: () => 0, writeCells: 0 };
-    const result = await runJobAsync(sliced(planAndBuild(dimension, found, PLAN.budget, stats), JOB_SLICE_MS, stats));
+    const result = await runJobAsync(sliced(planAndBuild(dimension, found, PLAN.budget, stats, ENGINE), JOB_SLICE_MS, stats));
     dlog(`plan+build ${ms(tPlan)} ms wall, ${system.currentTick - tick0} ticks, ${stats.steps} inner steps, ${stats.cpu} ms inside them, ${stats.reads()} distinct reads, ${stats.writeCells} cells written (${result.blocks} changed), ${stepSummary(stats)}`);
     // Civilians move in while loaded. Population errors are logged and posts retained; no automatic population retry.
     const tPop = Date.now();
@@ -209,7 +108,7 @@ async function planVillageAt(entity, trigger) {
     const range = dimension.heightRange ?? { min: -64, max: 320 }, band = clearBand(found.known, { min: range.min, max: range.max - 1 });
     if (band) {
       const tClear = Date.now(), tickC = system.currentTick, cs = { slices: 0, cells: 0, failed: 0, steps: 0, cpu: 0 };
-      try { await runJobAsync(sliced(clearShield(dimension, found.rect, band, cs), JOB_SLICE_MS, cs)); } catch (e) { log(`shield clear: ${e?.message ?? e}`); }
+      try { await runJobAsync(sliced(clearShield(dimension, found.rect, band, cs, ENGINE, log), JOB_SLICE_MS, cs)); } catch (e) { log(`shield clear: ${e?.message ?? e}`); }
       dlog(`clear ${ms(tClear)} ms wall, ${system.currentTick - tickC} ticks, y ${band.y0}..${band.y1}, ${cs.slices} slices (${cs.failed} failed), ${cs.steps} inner steps, ${cs.cpu} ms inside them, ${cs.cells} light_block_0 cells cleared, ${stepSummary(cs)}`);
     }
     const removed = removeMarkers(dimension, found.rect);

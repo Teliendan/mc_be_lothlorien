@@ -184,6 +184,9 @@
     "village-polish": [
       "village_polish.mjs"
     ],
+    "village-budget": [
+      "village_build_budget.mjs"
+    ],
     "watch-camp": [
       "watch_camp.mjs"
     ],
@@ -228,7 +231,8 @@
       "village_checks.mjs",
       "village_central.mjs",
       "home_furnish.mjs",
-      "village_polish.mjs"
+      "village_polish.mjs",
+      "village_build_budget.mjs"
     ],
     "worldgen-spacing": [
       "worldgen_spacing.mjs"
