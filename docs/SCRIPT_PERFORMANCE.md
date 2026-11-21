@@ -64,7 +64,7 @@ tests pass; neither is game-tested.
 
 0.8.6 DIAG (2026-11-17, built from commit `6d2247e`: `node temp/lothlorien-diag/make_diag.mjs 0.8.6 6d2247e`, skins by `git archive`, `package.py 0.8.6`): the same monitor over the owner-fix round (re-tests R1-R15 and LM-11 counts). Mock load test passes. Superseded as the threshold by 0.8.7.
 
-0.8.7 DIAG (2026-11-21, built from commit `791c323`: `node temp/lothlorien-diag/make_diag.mjs 0.8.7 791c323`, skins by `git archive`, `package.py 0.8.7`): adds the village shield clear to the 0.8.6 round (re-test R16: `clear` debug line, stutter on PC and tablet). Mock load test passes. **The release version must now exceed 0.8.7.**
+0.8.7 DIAG (2026-11-21, built from commit `791c323`: `node temp/lothlorien-diag/make_diag.mjs 0.8.7 791c323`, skins by `git archive`, `package.py 0.8.7`): adds the village shield clear to the 0.8.6 round (re-test R16: `clear` debug line, stutter on PC and tablet). Mock load test passes. Deployed into the development packs with `.\mods deploy lothlorien --from temp/lothlorien-diag/out` (no .mcaddon import; commits keep it, a plain `.\mods deploy lothlorien` restores). **The release version must now exceed 0.8.7.**
 
 0.8.4 DIAG results (tester's tablet, six photos sent 2026-11-10, no notes from her; analysed 2026-11-11). Both
 builds load in game. She ran the Control pack **in the same world as Lothlorien**, so there is still no vanilla
