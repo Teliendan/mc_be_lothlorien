@@ -370,6 +370,8 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
   const rOf = (t) => t === central ? FLOOR.rCentral : FLOOR.rTree, pOf = (t) => t === central ? FLOOR.pCentral : FLOOR.pTree, r0Of = (t) => Math.max(1.5, t.r);
   const S = (seed | 0) * 7919;
   // candidate cells: the disc round every trunk; a cell belongs to the trunk it is closest to (in disc fractions)
+  // numeric column keys (no template string per cell: the floor visits thousands of cells and QuickJS GC pauses of 20+ ms were seen, owner DIAG 0.8.9)
+  const ck = (x, z) => (x + 32768) * 65536 + (z + 32768);
   const cells = new Map(), due = pace(at);
   for (const t of trunks) {
     const R = rOf(t), r0 = r0Of(t);
@@ -378,7 +380,7 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
       const d = Math.hypot(x - t.x, z - t.z);
       if (d < r0 + 0.5 || d > R || x < rect.x0 || x > rect.x1 || z < rect.z0 || z > rect.z1) continue;
       if (feet.some((f) => Math.abs(f.x - x) <= FLOOR.clear && Math.abs(f.z - z) <= FLOOR.clear)) continue;
-      const frac = (d - r0) / (R - r0), k = `${x},${z}`, cur = cells.get(k);
+      const frac = (d - r0) / (R - r0), k = ck(x, z), cur = cells.get(k);
       if (!cur || frac < cur.t) cells.set(k, { x, z, t: frac, d, trunk: t });
     }
   }
@@ -398,7 +400,7 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
     return null;
   };
   const groundOf = function* (c) {
-    const k = `${c.x},${c.z}`;
+    const k = ck(c.x, c.z);
     if (ground.has(k)) return ground.get(k);
     const start = hint === null ? undefined : at(c.x, hint + 4, c.z);
     const res = start !== undefined && SEE_THROUGH(start) ? yield* scan(c, hint + 4, hint - REPAIR.flareScan) : yield* scan(c, o.y0, o.y0 - REPAIR.flareScan);
@@ -407,8 +409,8 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
     return res;
   };
   const free = (c, g) => { const n = at(c.x, g.gy + 1, c.z); return n !== undefined && (isAir(n) || FLOOR_OPEN.has(n)); };
-  const put = new Map(); // "x,z" -> { x, y, z, id, states, d }
-  const place = (c, g, b) => put.set(`${c.x},${c.z}`, { x: c.x, y: g.gy + 1, z: c.z, id: b.id, states: b.states, d: c.d });
+  const put = new Map(); // column key -> { x, y, z, id, states, d }
+  const place = (c, g, b) => put.set(ck(c.x, c.z), { x: c.x, y: g.gy + 1, z: c.z, id: b.id, states: b.states, d: c.d });
   const onGrass = (g) => g.id === "minecraft:grass_block";
   const dirOf = (c, k) => DIRS4[Math.floor(U(c.x, c.z, k) * 4)];
   const make = (c, g, kind) => {
@@ -424,7 +426,7 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
   // themes: a jittered grid of blobs; the nearest blob point of a cell gives its theme and its fill. Flowers round the trunk feet, litter and ferns outside.
   const B = FLOOR.blob, blobs = new Map();
   const blobOf = (gx, gz) => {
-    const k = `${gx},${gz}`;
+    const k = ck(gx, gz);
     let b = blobs.get(k);
     if (!b) {
       const px = gx * B + U(gx, gz, S + 1) * B, pz = gz * B + U(gx, gz, S + 2) * B, nt = trunks.map((t) => ({ t, d: Math.hypot(t.x - px, t.z - pz) })).sort((p, q) => p.d - q.d)[0];
@@ -437,13 +439,15 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
     }
     return b;
   };
+  const near = { b: null, d: 0 }; // blobAt's result, reused (no object per cell)
   const blobAt = (x, z) => {
-    let best = null;
+    let best = null, bd = 0;
     for (let gx = Math.floor(x / B) - 1; gx <= Math.floor(x / B) + 1; gx++) for (let gz = Math.floor(z / B) - 1; gz <= Math.floor(z / B) + 1; gz++) {
       const b = blobOf(gx, gz), d = (b.px - x) ** 2 + (b.pz - z) ** 2;
-      if (!best || d < best.d) best = { b, d };
+      if (!best || d < bd) { best = b; bd = d; }
     }
-    return { b: best.b, d: Math.sqrt(best.d) };
+    near.b = best; near.d = Math.sqrt(bd);
+    return near;
   };
   let n = 0;
   for (const c of list) {
@@ -464,8 +468,8 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
     place(c, g, make(c, g, kind));
   }
   // fireflies (2-4 per tree) and small moss patches (2-4 cells): explicit, over whatever the blobs chose
-  const eligible = function* (x, z) { const c = cells.get(`${x},${z}`); if (!c) return null; const g = yield* groundOf(c); return g && free(c, g) ? { c, g } : null; };
-  const isBush = (e) => put.get(`${e.c.x},${e.c.z}`)?.id === "minecraft:firefly_bush";
+  const eligible = function* (x, z) { const c = cells.get(ck(x, z)); if (!c) return null; const g = yield* groundOf(c); return g && free(c, g) ? { c, g } : null; };
+  const isBush = (e) => put.get(ck(e.c.x, e.c.z))?.id === "minecraft:firefly_bush";
   const ring = function* (t, R, lo, hi, i, k) { const a = U(i, k, S + 21) * Math.PI * 2, d = t.r + lo + (R - t.r - lo - 1) * (hi * U(i, k, S + 22)); return yield* eligible(Math.round(t.x + Math.cos(a) * d), Math.round(t.z + Math.sin(a) * d)); };
   for (const [ti, t] of trunks.entries()) {
     yield "floorTrunk";

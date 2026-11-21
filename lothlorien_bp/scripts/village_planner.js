@@ -30,21 +30,32 @@ export const AREA = { seed: 48, margins: [32, 28, 24], maxRounds: 8, minPad: 12,
 const isWalk = (n) => isPlank(n) || n === SLAB || (typeof n === "string" && /_stairs?$/.test(n));
 const key = (x, y, z) => `${x},${y},${z}`;
 const N4 = [[1, 0], [-1, 0], [0, 1], [0, -1]], DY = [0, 1, -1]; // BFS steps, hoisted out of the per-cell loops
+const WX = [], WY = [], WZ = []; // the 12 walk steps (4 sides x dy 0, +1, -1) as flat number arrays, same order as before
+for (const [a, b] of N4) for (const dy of DY) { WX.push(a); WY.push(dy); WZ.push(b); }
 
-// shortest walking distance (cells) from A over deck cells (4-neighbours, |dy| <= 1: arched slab bridges, stairs) to every cell, up to `limit`
+// shortest walking distance (cells) from A over deck cells (4-neighbours, |dy| <= 1: arched slab bridges, stairs) to every cell, up to `limit`.
+// Allocation-free per pop (QuickJS GC pauses of 20+ ms landed in these steps, owner DIAG 0.8.9): numeric cell keys (walkKey), the queue is three plain number
+// arrays, the neighbour loops are unrolled over constants. `goals` (optional Set of walkKeys): the search stops once every goal has a distance (a BFS
+// distance never changes after its first visit), so a candidate pair does not flood the whole deck network. `work` (optional { dist, qx, qy, qz }) is reused.
+export const walkKey = (x, y, z) => ((x + 32768) * 65536 + (z + 32768)) * 1024 + (y + 256);
 export function walkDist(at, A, limit = 400) {
   return drive(walkDistGen(at, A, limit));
 }
-export function* walkDistGen(at, A, limit = 400) {
-  const dist = new Map([[key(A.x, A.y, A.z), 0]]), q = [[A.x, A.y, A.z]];
-  for (let i = 0; i < q.length; i++) {
+export function* walkDistGen(at, A, limit = 400, goals = null, work = null) {
+  const dist = work?.dist ?? new Map(), qx = work?.qx ?? [], qy = work?.qy ?? [], qz = work?.qz ?? [];
+  dist.clear(); qx.length = qy.length = qz.length = 0;
+  dist.set(walkKey(A.x, A.y, A.z), 0); qx.push(A.x); qy.push(A.y); qz.push(A.z);
+  let left = goals ? goals.size : -1;
+  if (goals?.has(walkKey(A.x, A.y, A.z))) left--;
+  for (let i = 0; i < qx.length && left !== 0; i++) {
     if (i % 8 === 0) yield "walkDist";
-    const [x, y, z] = q[i], d = dist.get(key(x, y, z));
+    const x = qx[i], y = qy[i], z = qz[i], d = dist.get(walkKey(x, y, z));
     if (d >= limit) continue;
-    for (const [a, b] of N4) for (const dy of DY) {
-      const nx = x + a, ny = y + dy, nz = z + b, k = key(nx, ny, nz);
+    for (let n = 0; n < 12; n++) {
+      const nx = x + WX[n], ny = y + WY[n], nz = z + WZ[n], k = walkKey(nx, ny, nz);
       if (dist.has(k) || !isWalk(at(nx, ny, nz))) continue;
-      dist.set(k, d + 1); q.push([nx, ny, nz]);
+      dist.set(k, d + 1); qx.push(nx); qy.push(ny); qz.push(nz);
+      if (goals?.has(k)) left--;
     }
   }
   return dist;
@@ -154,12 +165,23 @@ export function* realizeGen(at, c) {
 }
 
 export function* scoreGen(at, cands, opts) {
-  const o = { ...PLAN, ...opts }, maps = new Map();
-  const dm = function* (A) { const k = key(A.x, A.y, A.z); if (!maps.has(k)) maps.set(k, yield* walkDistGen(at, A, 500)); return maps.get(k); };
+  const o = { ...PLAN, ...opts };
+  // one walk per distinct start A, run once with all its targets as goals; the distance maps are not kept (heap), only the wanted distances
+  const goalsOf = new Map(), dnetOf = new Map(), work = { dist: new Map(), qx: [], qy: [], qz: [] };
+  for (const c of cands) {
+    const k = walkKey(c.A.x, c.A.y, c.A.z);
+    let g = goalsOf.get(k); if (!g) goalsOf.set(k, g = { A: c.A, goals: new Set() });
+    g.goals.add(walkKey(c.B.x, c.B.y, c.B.z));
+  }
+  for (const [k, g] of goalsOf) {
+    const dist = yield* walkDistGen(at, g.A, 500, g.goals, work);
+    const got = new Map(); for (const bk of g.goals) got.set(bk, dist.get(bk));
+    dnetOf.set(k, got);
+  }
   const list = [];
   for (const c of cands) {
     yield "scoreGen";
-    const got = (yield* dm(c.A)).get(key(c.B.x, c.B.y, c.B.z)); // B is on the same deck level; it is a plank cell
+    const got = dnetOf.get(walkKey(c.A.x, c.A.y, c.A.z)).get(walkKey(c.B.x, c.B.y, c.B.z)); // B is on the same deck level; it is a plank cell
     const dnet = got === undefined ? 999 : got;
     const landing = c.dist > LOOP.maxDist || c.kind === "L" ? 1 : 0;
     const value = Math.min(dnet, o.maxNet) - 2 * c.len - o.kindCost[c.kind] - o.landingCost * landing - 0.5 * Math.abs(c.offset);

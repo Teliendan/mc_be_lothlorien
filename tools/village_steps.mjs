@@ -2,6 +2,7 @@
 // Bedrock scripts run on) on simulated villages, with a mock dimension that counts the native calls per step. The tool of docs/SCRIPT_PERFORMANCE.md.
 //   node tools/village_steps.mjs [--seeds N=10] [--first K=1] [--fixtures] [--check] [--json out.json]
 //   --fixtures  also run the deep-terrain fixtures (valley seed 3 and 12, lake seed 7 and 15)
+//   --heap      print the QuickJS memory-usage dump (objects, arrays, strings, ...) at the peak live allocation count
 //   --check     assert the budget over the villages: no inner step over 10 ms, at most 0.1 % of the steps over 3 ms, native reads per step <= 128,
 //               peak live QuickJS allocations <= HEAP_CAP; exit code 1 otherwise. Not in the normal verify (minutes: about 12 s per village).
 // Needs quickjs-emscripten 0.31: `npm i quickjs-emscripten@0.31` in a folder and QJS_DIR=<folder> (default temp/village-memory/qjs of this workspace).
@@ -79,6 +80,7 @@ const cases = Array.from({ length: count }, (_, i) => ({ seed: first + i, fixtur
 if (flag("fixtures")) cases.push({ seed: 3, fixture: "valley" }, { seed: 12, fixture: "valley" }, { seed: 7, fixture: "lake" }, { seed: 15, fixture: "lake" });
 const QJS = await newQuickJSWASMModule(RELEASE_SYNC);
 const all = [], byLabel = new Map();
+let peakDump = { malloc_count: 0 };
 let nSteps = 0, over3 = 0, over10 = 0, worstMs = { ms: 0 }, worstReads = { n: 0 }, peakHeap = 0;
 for (const cs of cases) {
   const w = makeWorld(data, cs.seed, cs.fixture);
@@ -89,7 +91,7 @@ for (const cs of cases) {
   const fn = (n, f) => ctx.setProp(ctx.global, n, ctx.newFunction(n, f));
   const num = (h) => ctx.getNumber(h), str = (h) => ctx.getString(h);
   let result = null, steps = 0, villageWorst = 0;
-  const mem = () => { const h = rt.computeMemoryUsage(), o = ctx.dump(h); h.dispose(); return o.malloc_count; };
+  const mem = () => { const h = rt.computeMemoryUsage(), o = ctx.dump(h); h.dispose(); if (flag("heap") && o.malloc_count > peakDump.malloc_count) peakDump = o; return o.malloc_count; };
   fn("__get", (x, y, z) => ctx.newString(w.nameAt(num(x), num(y), num(z))));
   fn("__states", (x, y, z) => ctx.newString(JSON.stringify(w.statesAt(num(x), num(y), num(z)))));
   fn("__set", (x, y, z, id, st) => { w.set(num(x), num(y), num(z), str(id), JSON.parse(str(st))); });
@@ -102,6 +104,7 @@ for (const cs of cases) {
   fn("__now", () => ctx.newNumber(performance.now()));
   fn("__step", (ms, label, reads, sets) => {
     const d = num(ms), l = str(label), r = num(reads);
+    if (process.env.LONG && d > +process.env.LONG) console.log("  long step", steps, l, d.toFixed(1), "ms", r, "reads");
     nSteps++; steps++; if (d > STEP_MS) over3++; if (d > STEP_MAX_MS) over10++; if (d > villageWorst) villageWorst = d;
     if (d > worstMs.ms) worstMs = { ms: d, label: l, seed: cs };
     if (r > worstReads.n) worstReads = { n: r, label: l, seed: cs };
@@ -124,6 +127,7 @@ for (const cs of cases) {
 const table = [...byLabel].map(([label, e]) => ({ label, steps: e.n, totalMs: Math.round(e.ms), worstMs: +e.max.toFixed(1), over3: e.over, mostReads: e.reads })).filter((x) => x.worstMs > STEP_MS || x.mostReads > READS).sort((a, b) => b.worstMs - a.worstMs).slice(0, +opt("rows", 25));
 if (table.length) console.table(table);
 const summary = { villages: all.length, steps: nSteps, over3ms: over3, over10ms: over10, worstMs: +worstMs.ms.toFixed(1), worstLabel: worstMs.label, worstReads: worstReads.n, worstReadsLabel: worstReads.label, peakLiveAllocations: peakHeap };
+if (flag("heap")) console.log("peak heap dump", JSON.stringify(peakDump));
 console.log("summary", JSON.stringify(summary));
 const outFile = opt("json", null);
 if (outFile) writeFileSync(outFile, JSON.stringify({ summary, all, table }), "utf8");
