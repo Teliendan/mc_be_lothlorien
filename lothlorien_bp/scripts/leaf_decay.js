@@ -29,11 +29,14 @@ const SPAN = 2048, HALF = SPAN / 2;
 // Leaves within SEARCH_STEPS of the origins (an origin that is itself a leaf counts as step 0), each with its steps to
 // wood inside the searched set when that is at most LEAF_REACH (`reach`). Wood and unreadable cells count as wood.
 // Returns undefined past MAX_SEARCH_LEAVES.
+// Step budget (owner rule 2026-11-21, tablet target): one step makes at most `yieldEvery` + 5 fresh native reads (a cell's six neighbours are read before the
+// check; the default 120 keeps that under 128) and walks at most PURE_STEP cells of pure bookkeeping.
+export const STEP_READS = 120, PURE_STEP = 256;
 function* survey(classify, origins, yieldEvery) {
   const o = origins[0];
   const key = (x, y, z) => ((x - o.x + HALF) * SPAN + (y - o.y + HALF)) * SPAN + (z - o.z + HALF);
   const kinds = new Map();
-  let sinceYield = 0;
+  let sinceYield = 0, popped = 0;
   const kindAt = (x, y, z, k) => {
     let kind = kinds.get(k);
     if (kind === undefined) { kind = classify(x, y, z); kinds.set(k, kind); sinceYield++; }
@@ -52,10 +55,12 @@ function* survey(classify, origins, yieldEvery) {
   for (const p of origins) {
     if (Math.abs(p.x - o.x) > ORIGIN_SPAN || Math.abs(p.y - o.y) > ORIGIN_SPAN || Math.abs(p.z - o.z) > ORIGIN_SPAN) continue;
     visit(p.x, p.y, p.z, 0, first);
+    if (sinceYield >= yieldEvery) { sinceYield = 0; yield; }
   }
   for (const p of origins) {
     if (Math.abs(p.x - o.x) > ORIGIN_SPAN || Math.abs(p.y - o.y) > ORIGIN_SPAN || Math.abs(p.z - o.z) > ORIGIN_SPAN) continue;
     for (const [dx, dy, dz] of STEPS) visit(p.x + dx, p.y + dy, p.z + dz, 1, layer);
+    if (sinceYield >= yieldEvery) { sinceYield = 0; yield; }
   }
   layer = [...first, ...layer];
   while (layer.length) {
@@ -70,7 +75,7 @@ function* survey(classify, origins, yieldEvery) {
           if (steps.size > MAX_SEARCH_LEAVES) return undefined;
         }
       }
-      if (sinceYield >= yieldEvery) { sinceYield = 0; yield; }
+      if (sinceYield >= yieldEvery || ++popped % PURE_STEP === 0) { sinceYield = 0; yield; }
     }
     layer = next;
   }
@@ -81,6 +86,7 @@ function* survey(classify, origins, yieldEvery) {
   for (let i = 0; i < cells.length; i += 4) {
     index.set(cells[i + 3], i);
     if (near.has(cells[i + 3])) { reach.set(cells[i + 3], 1); wave.push(i); }
+    if ((i >> 2) % PURE_STEP === PURE_STEP - 1) yield;
   }
   for (let d = 1; d < LEAF_REACH && wave.length; d++) {
     const next = [];
@@ -89,7 +95,7 @@ function* survey(classify, origins, yieldEvery) {
         const nk = key(cells[i] + dx, cells[i + 1] + dy, cells[i + 2] + dz);
         if (steps.has(nk) && !reach.has(nk)) { reach.set(nk, d + 1); next.push(index.get(nk)); }
       }
-      if (++work % (yieldEvery * 8) === 0) yield;
+      if (++work % PURE_STEP === 0) yield;
     }
     wave = next;
   }
@@ -100,7 +106,7 @@ function* survey(classify, origins, yieldEvery) {
 // Leaves already DECAYING count as gone. Yields every `yieldEvery` reads. Returns [{x, y, z, frontier}]: `frontier`
 // marks a decaying leaf next to a leaf this search could not decide (one cut off before, e.g. a crown left by a decay-off
 // test build); its own break starts the next search, so such a crown still clears step by step.
-export function* findDecay(classify, origins, yieldEvery = 128) {
+export function* findDecay(classify, origins, yieldEvery = STEP_READS) {
   if (!origins.length) return [];
   const gone = (x, y, z) => { const kind = classify(x, y, z); return kind === DECAYING ? OTHER : kind; };
   const s = yield* survey(gone, origins, yieldEvery);
@@ -110,6 +116,7 @@ export function* findDecay(classify, origins, yieldEvery = 128) {
   // wood is the only undecided case.
   const out = [];
   for (let i = 0; i < cells.length; i += 4) {
+    if ((i >> 2) % PURE_STEP === PURE_STEP - 1) yield;
     const x = cells[i], y = cells[i + 1], z = cells[i + 2], k = cells[i + 3];
     if (steps.get(k) > LEAF_REACH || reach.has(k) || kinds.get(k) !== DECAYABLE) continue;
     const frontier = STEPS.some(([dx, dy, dz]) => {
@@ -125,7 +132,7 @@ export function* findDecay(classify, origins, yieldEvery = 128) {
 // Decaying leaves carry the path like any leaf, so the restored connection spreads the whole LEAF_REACH through them.
 // A marked leaf whose new path to wood is at most LEAF_REACH steps lies within LEAF_REACH steps of the placed cell, and
 // so does its whole path: the search range covers it exactly. Returns [{x, y, z}].
-export function* findRescue(classify, origins, yieldEvery = 128) {
+export function* findRescue(classify, origins, yieldEvery = STEP_READS) {
   if (!origins.length) return [];
   const s = yield* survey(classify, origins, yieldEvery);
   if (!s) return [];
@@ -133,6 +140,7 @@ export function* findRescue(classify, origins, yieldEvery = 128) {
   for (let i = 0; i < s.cells.length; i += 4) {
     const k = s.cells[i + 3];
     if (s.kinds.get(k) === DECAYING && s.reach.has(k)) out.push({ x: s.cells[i], y: s.cells[i + 1], z: s.cells[i + 2] });
+    if ((i >> 2) % PURE_STEP === PURE_STEP - 1) yield;
   }
   return out;
 }

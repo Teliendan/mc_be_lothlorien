@@ -24,7 +24,7 @@ async function scenario(name, body, file = 'trees.js') {
   const blocks = new Map(), components = new Map(), handlers = [], queue = [], jobs = [], commands = [], particles = [];
   const intervals = new Map(), events = {};
   let nextRun = 1;
-  let reads = 0, unloaded, thrown, rejectJob = false;
+  let reads = 0, nwrites = 0, unloaded, thrown, rejectJob = false;
   const placements = [];
   const key = p => `${p.x},${p.y},${p.z}`;
   const dim = { id: 'overworld', getBlock(p) {
@@ -34,7 +34,7 @@ async function scenario(name, body, file = 'trees.js') {
   function block(id, states = {}, location = { x: 0, y: 64, z: 0 }, light = 15) {
     const b = { typeId: id, permutation: perm(id, states), location, ...location, dimension: dim, isAir: id === 'minecraft:air',
       getLightLevel: () => light, setPermutation(p) { this.permutation = p; this.typeId = p.type.id;
-        this.isAir = this.typeId === 'minecraft:air'; this.writes = (this.writes ?? 0) + 1; } };
+        this.isAir = this.typeId === 'minecraft:air'; this.writes = (this.writes ?? 0) + 1; nwrites++; } };
     blocks.set(key(location), b); return b;
   }
   const system = { currentTick: 0, beforeEvents: { startup: { subscribe(fn) { fn({ blockComponentRegistry: {
@@ -54,7 +54,7 @@ async function scenario(name, body, file = 'trees.js') {
       place: (...args) => placements.push(args),
     } },
     BlockPermutation: { resolve: perm }, EquipmentSlot: { Mainhand: 'main' }, GameMode: { Creative: 'creative' },
-    makeRandom() {}, buildSmallMallorn: () => tree, buildBigMallorn: () => tree, repeatedUse: () => false,
+    makeRandom() {}, buildSmallMallornGen: function* () { yield { height: tree.height ?? 7 }; return tree; }, buildBigMallornGen: function* () { yield { height: tree.height ?? 7 }; return tree; }, repeatedUse: () => false,
     hangBloom: () => false, treeBloomCount: () => 0 };
   const source = file === 'trees.js' ? SOURCE : readFileSync(new URL('../lothlorien_bp/scripts/' + file, import.meta.url), 'utf8')
     .replace(/^import \{([\s\S]*?)\} from "[^"]+";/gm, 'const {$1} = globalThis.__tree;');
@@ -86,7 +86,7 @@ async function scenario(name, body, file = 'trees.js') {
     events, intervals, components,
     advance: n => { for (let i = 0; i < n; i++) { system.currentTick++; for (const fn of [...intervals.values()]) fn(); } },
     flush: () => { while (queue.length) queue.shift()(); }, finish: () => { for (const job of jobs) while (!job.next().done) {} },
-    unload: fn => { unloaded = fn; }, throwRead: fn => { thrown = fn; }, rejectJob: value => { rejectJob = value; }, reads: () => reads,
+    unload: fn => { unloaded = fn; }, throwRead: fn => { thrown = fn; }, rejectJob: value => { rejectJob = value; }, reads: () => reads, writeCount: () => nwrites,
   }); } finally { Math.random = random; }
   count++; console.log('ok   leaf/tree interactions: ' + name);
 }
@@ -145,7 +145,57 @@ await scenario('growth accepts other species leaves, converts grass, protects la
   assert.equal(b.typeId, 'lothlorien:mallorn_log'); assert.equal(e.dim.getBlock({ x: 0, y: 63, z: 0 }).typeId, 'minecraft:dirt');
   const house = e.block('minecraft:glass', {}, { x: 220, y: 70, z: 0 }); e.finish(); assert.equal(house.writes, undefined);
 });
+{
+  // the cooperative generators: the first yield reports the trunk height, the result equals the sync builders', every other yield is a plain step
+  const gens = await import('../lothlorien_bp/scripts/mallorn_tree.js');
+  let yields = 0;
+  for (let seed = 1; seed <= 120; seed++) for (const [gen, sync, cells] of [[gens.buildSmallMallornGen, gens.buildSmallMallorn, 1], [gens.buildBigMallornGen, gens.buildBigMallorn, 4]]) {
+    const g = gen(gens.makeRandom(seed)), first = g.next();
+    let r = first; while (!r.done) { r = g.next(); if (!r.done) yields++; }
+    assert.equal(first.value.height * cells, r.value.logs.filter(c => c.face === 'up' && c.x >= 0 && c.x <= 1 && c.z >= 0 && c.z <= 1).length, `seed ${seed}: reported trunk height`);
+    assert.deepEqual(r.value, sync(gens.makeRandom(seed)), `seed ${seed}: same tree as the sync builder`);
+  }
+  assert.ok(yields > 120 * 30, 'the crown is drawn in many small steps');
+  count++; console.log('ok   leaf/tree interactions: Mallorn generators report the trunk first and draw the crown in small steps');
+}
 const at = x => ({ x, y: 64, z: 0 });
+// Job step budget (owner rule 2026-11-21, tablet target: no script call longer than a few ms): between two yields a trees.js job makes at most
+// 128 native reads and 16 block writes. A counting dimension (reads = getBlock calls, writes = setPermutation calls) measures each step.
+const STEP = { reads: 128, writes: 16 };
+const budgeted = (e, job) => {
+  const worst = { reads: 0, writes: 0, steps: 0 };
+  for (;;) {
+    const r0 = e.reads(), w0 = e.writeCount(), r = job.next();
+    worst.steps++; worst.reads = Math.max(worst.reads, e.reads() - r0); worst.writes = Math.max(worst.writes, e.writeCount() - w0);
+    if (r.done) return worst;
+  }
+};
+for (const [name, logs, leaves, trunk, big] of [['small', 46, 348, 13, false], ['big', 172, 1740, 96, true]]) {
+  await scenario(`job step budget: a grown ${name} Mallorn (${trunk} trunk cells, ${logs} logs, ${leaves} leaves) stays within 128 reads and 16 writes per step`, e => {
+    e.tree.height = big ? 24 : 13;
+    e.tree.logs = Array.from({ length: logs }, (_, i) => i < trunk ? (big ? { x: i % 2, y: i >> 2, z: (i >> 1) % 2, face: 'up' } : { x: 0, y: i, z: 0, face: 'up' }) : { x: 2 + (i % 9), y: 20 + Math.floor(i / 9), z: 3, face: 'x' });
+    e.tree.leaves = Array.from({ length: leaves }, (_, i) => ({ x: (i % 20) - 10, y: 30 + Math.floor(i / 400), z: Math.floor(i / 20) % 20 - 10 }));
+    const b = e.plant(1);
+    if (big) for (const [x, z] of [[1, 0], [0, 1], [1, 1]]) { e.block('minecraft:dirt', {}, { x, y: 63, z }); e.block(SAPLING, { [STAGE]: 1 }, { x, y: 64, z }); }
+    const r0 = e.reads();
+    assert.equal(e.runtime.growTree(b, 1, big), true, name);
+    assert.ok(e.reads() - r0 <= STEP.reads, `${name}: the synchronous room check made ${e.reads() - r0} reads (limit ${STEP.reads})`);
+    const w = budgeted(e, e.jobs[0]);
+    assert.ok(w.reads <= STEP.reads && w.writes <= STEP.writes, `${name}: a growth step made ${w.reads} reads / ${w.writes} writes (limit ${STEP.reads} / ${STEP.writes})`);
+    assert.ok(w.steps >= leaves / STEP.writes / 2, `${name}: the growth ran in ${w.steps} steps`);
+    console.log(`     tree growth ${name}: ${w.steps} steps, worst step ${w.reads} reads / ${w.writes} writes`);
+  });
+}
+await scenario('job step budget: a leaf search over a 3,000-leaf crown (search, then marks) stays within 128 reads and 16 writes per step', e => {
+  for (let x = 0; x < 30; x++) for (let y = 0; y < 10; y++) for (let z = 0; z < 10; z++) e.block(LEAF, { [PERSISTENT]: false }, { x: x + 1, y: 64 + y, z });
+  e.woodBroken({ x: 0, y: 64, z: 0 });
+  const w = budgeted(e, e.jobs[0]);
+  assert.ok(w.reads <= STEP.reads && w.writes <= STEP.writes, `a search step made ${w.reads} reads / ${w.writes} writes (limit ${STEP.reads} / ${STEP.writes})`);
+  assert.ok(w.steps > 20, `the search ran in ${w.steps} steps`);
+  let marked = 0; for (let x = 0; x < 30; x++) for (let y = 0; y < 10; y++) for (let z = 0; z < 10; z++) if (e.decayOf({ x: x + 1, y: 64 + y, z }) > 0) marked++;
+  assert.ok(marked > 100, `${marked} leaves marked`);
+  console.log(`     leaf search: ${w.steps} steps, worst step ${w.reads} reads / ${w.writes} writes, ${marked} leaves marked`);
+});
 await scenario('mixed species bridge and stripped vanilla wood keep a leaf; breaking that wood marks it', e => {
   e.block(LEAF, { [PERSISTENT]: false });
   e.block('minecraft:oak_leaves', {}, at(1)); e.block('lothlorien:mallorn_golden_leaves', {}, at(2));

@@ -1,5 +1,5 @@
 import { world, system, BlockPermutation } from "@minecraft/server";
-import { makeRandom, buildSmallMallorn, buildBigMallorn } from "./mallorn_tree.js";
+import { makeRandom, buildSmallMallornGen, buildBigMallornGen } from "./mallorn_tree.js";
 import { captureUse, liveUse, consumeFromSlot } from "./deferred_use.js";
 import { cellKey, readBlock } from "./world_util.js";
 import { swingArm } from "./swing.js";
@@ -28,6 +28,7 @@ const STAGE = `${NS}:stage`;
 
 const GROW_CHANCE = 1 / 7; // per random tick and stage, like vanilla saplings
 const MIN_LIGHT = 9;
+const JOB_READS = 120, JOB_WRITES = 16; // job step budget: native reads / block writes between two yields (leaf_decay.js keeps its searches under the same reads)
 const BONE_MEAL_CHANCE = 0.45;
 const SOFT_PLANTS = new Set(["minecraft:short_grass", "minecraft:tall_grass", "minecraft:fern", "minecraft:snow_layer", SAPLING]);
 const growing = new Set();
@@ -45,51 +46,62 @@ function replaceable(block, allowLeaves) {
 // Placement is spread over ticks (a big tree is ~1600 blocks).
 export function growTree(base, seed, big = false) {
   if (base?.typeId !== SAPLING) return false;
-  const build = big ? buildBigMallorn : buildSmallMallorn;
-  const tree = build(makeRandom(seed ?? Math.floor(Math.random() * 4294967296)));
+  // The tree is drawn in the job (a big crown took 9-12 ms in one call): here only its trunk, which the generator reports first.
+  const gen = (big ? buildBigMallornGen : buildSmallMallornGen)(makeRandom(seed ?? Math.floor(Math.random() * 4294967296)));
+  const height = gen.next().value.height;
   const dim = base.dimension;
   const { x, y, z } = base.location;
   const at = (c) => readBlock(dim, { x: x + c.x, y: y + c.y, z: z + c.z });
+  const trunkCells = [];
+  for (let h = 0; h < height; h++) for (const [dx, dz] of big ? [[0, 0], [1, 0], [0, 1], [1, 1]] : [[0, 0]]) trunkCells.push({ x: dx, y: h, z: dz });
   const saplings = (big ? [[0, 0], [1, 0], [0, 1], [1, 1]] : [[0, 0]])
     .map(([dx, dz]) => at({ x: dx, y: 0, z: dz }));
   if (saplings.some(b => b?.typeId !== SAPLING || !validSaplingSoil(b) || growing.has(cellKey(dim, b.location)))) return false;
 
-  for (const c of tree.logs) {
-    const trunk = c.face === "up" && c.x >= 0 && c.x <= 1 && c.z >= 0 && c.z <= 1;
-    if (trunk && !replaceable(at(c), true)) return false;
-  }
+  for (const c of trunkCells) if (!replaceable(at(c), true)) return false;
   const leaf = BlockPermutation.resolve(LEAVES, { [PERSISTENT]: false });
   for (const b of saplings) growing.add(cellKey(dim, b.location));
   const job = (function* () {
+    // Step budget (owner rule 2026-11-21, tablet target): at most JOB_READS native reads and JOB_WRITES block writes between two yields
+    // (a 1,700-leaf crown used to place 200 leaves per step, up to 14 ms on the owner's PC). Every write re-reads its cell first, so a
+    // yield between the room check and the write only skips cells that changed meanwhile.
+    let reads = 0, writes = 0;
+    const read = (c) => { reads++; return at(c); };
+    const full = () => reads >= JOB_READS || writes >= JOB_WRITES;
     try {
       // A job starts later: do not grow from a removed sapling or changed soil.
+      reads += saplings.length;
       if (saplings.some(b => {
         const now = readBlock(dim, b.location);
         return now?.typeId !== SAPLING || !validSaplingSoil(now);
       })) return;
-      for (const c of tree.logs) {
-        const trunk = c.face === "up" && c.x >= 0 && c.x <= 1 && c.z >= 0 && c.z <= 1;
-        if (trunk && !replaceable(at(c), true)) return;
+      for (const c of trunkCells) {
+        if (!replaceable(read(c), true)) return;
+        if (full()) { reads = writes = 0; yield; }
       }
+      const tree = yield* gen; // the rest of the tree, one x slice of a blob per step
       for (const b of saplings) {
+        reads++;
         const soil = saplingSoil(b);
-        if (soil?.typeId === "minecraft:grass_block") soil.setPermutation(BlockPermutation.resolve("minecraft:dirt"));
+        if (soil?.typeId === "minecraft:grass_block") { soil.setPermutation(BlockPermutation.resolve("minecraft:dirt")); writes++; }
+        if (full()) { reads = writes = 0; yield; }
       }
-      // Commit the small trunk/branch pass before yielding; then only fill currently free canopy cells.
       for (const c of tree.logs) {
-        const b = at(c);
-        if (b && replaceable(b, true)) b.setPermutation(BlockPermutation.resolve(LOG, { "minecraft:block_face": c.face }));
+        const b = read(c);
+        if (b && replaceable(b, true)) { b.setPermutation(BlockPermutation.resolve(LOG, { "minecraft:block_face": c.face })); writes++; }
+        if (full()) { reads = writes = 0; yield; }
       }
-      let n = 0;
       for (const c of tree.leaves) {
-        const b = at(c);
-        if (b && replaceable(b, false) && b.typeId !== LEAVES) b.setPermutation(leaf);
-        if (++n % 200 === 0) yield;
+        const b = read(c);
+        if (b && replaceable(b, false) && b.typeId !== LEAVES) { b.setPermutation(leaf); writes++; }
+        if (full()) { reads = writes = 0; yield; }
       }
       // nectar blooms hang under the crown (natural trees get full ones from worldgen, a grown tree starts dry)
       for (let tries = 0, left = treeBloomCount(Math.random()); left > 0 && tries < 40 && tree.leaves.length; tries++) {
         const c = tree.leaves[Math.floor(Math.random() * tree.leaves.length)];
-        if (hangBloom(at({ x: c.x, y: c.y - 1, z: c.z }))) left--;
+        reads += 2; // the cell and the one above it
+        if (hangBloom(at({ x: c.x, y: c.y - 1, z: c.z }))) { left--; writes += 2; }
+        if (full()) { reads = writes = 0; yield; }
       }
     } finally {
       for (const b of saplings) growing.delete(cellKey(dim, b.location));
@@ -141,7 +153,6 @@ function advance(block) {
 // marked leaves clears their mark over the whole reach (findRescue). Not covered: wood moved by a piston, /setblock or
 // /fill without `destroy`, until a neighbouring log or leaf breaks or is placed.
 const DECAY = `${NS}:decay`;
-const MARKS_PER_STEP = 32; // permutation writes between job yields
 const VANILLA_TREE_PARTS = [...TREE_WOOD, ...TREE_LEAVES].filter((id) => id.startsWith("minecraft:"));
 const VANILLA_TREE_SET = new Set(VANILLA_TREE_PARTS);
 // dimension id -> { dimension, cells: Map(cell key -> {x, y, z, placed}) }: changed cells waiting for a search
@@ -191,10 +202,14 @@ function* searchJob() {
       let found = [];
       try { found = yield* (first.placed ? findRescue(classify, origins) : findDecay(classify, origins)); }
       catch { found = []; } // the dimension went away mid-search: change nothing
-      let writes = 0;
+      yield; // the search's last step may be nearly full of reads: marks start a fresh step
+      let reads = 0, writes = 0; // marks: one read each, at most JOB_WRITES writes and JOB_READS reads per step
       for (const leaf of found) {
-        if (mark(dimension, leaf, first.placed ? 0 : leaf.frontier ? 2 : 1) && ++writes % MARKS_PER_STEP === 0) yield;
+        reads++;
+        if (mark(dimension, leaf, first.placed ? 0 : leaf.frontier ? 2 : 1)) writes++;
+        if (reads >= JOB_READS || writes >= JOB_WRITES) { reads = writes = 0; yield; }
       }
+      yield;
     }
   } finally {
     searching = false;
