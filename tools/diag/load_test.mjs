@@ -4,7 +4,7 @@ import path from "node:path";
 import { register } from "node:module";
 import { pathToFileURL } from "node:url";
 register("./mock/hooks.mjs", import.meta.url); // "@minecraft/server" -> ./mock/server.mjs (the module imported below)
-const { subs, intervals, timeouts, chat, system, world } = await import("./mock/server.mjs");
+const { subs, intervals, timeouts, chat, system, world, Dimension, StructureManager } = await import("./mock/server.mjs");
 const outDir = path.resolve(process.argv[2] ?? "");
 if (!process.argv[2]) { console.error("usage: node load_test.mjs <out dir>"); process.exit(2); }
 const errors = [], warns = [];
@@ -39,6 +39,13 @@ tick(); tick(); tick();
 clock += 2500; tick(); tick(); tick();
 tod = 23450;
 for (let i = 0; i < 1300; i++) tick();
+// native call timing (0.8.10): the FIRST getBiome of an interval "takes" 135 ms (the world-load warm-up the owner saw twice); a later structure placement 40 ms
+let biomeSlow = true; const natDim = new Dimension();
+globalThis.__nativeCost = (n) => { if (n === "Dimension.getBiome" && biomeSlow) { biomeSlow = false; clock += 135; } else if (n === "StructureManager.place") clock += 40; };
+const interval = intervals.length; intervals.push([() => natDim.getBiome(), 20]);
+for (let i = 0; i < 20; i++) tick();
+new StructureManager().place(); tick(); tick();
+intervals.length = interval;
 // 20 more gaps of 200 ms: only 5 immediate lines (plus the earlier ones), all counted in the next summary
 for (let i = 0; i < 20; i++) { clock += 200; tick(); }
 world.getPlayers = fakePlayers;
@@ -56,5 +63,12 @@ if (!/dew 3;/.test(sums[0] ?? "")) bad.push("dew counter != 3");
 if (!/spawned 4, removed 1; ents -; time 23450/.test(sums[0] ?? "") || !/ents 38; time 23450/.test(sums.at(-1) ?? "")) bad.push("spawn/removed/ents/time");
 if (!/gaps >=150: [1-9]/.test(sums.at(-1) ?? "")) bad.push("last summary has no gaps");
 if (chat.filter((c) => /\] (gap|freeze) /.test(c)).length > 5 * sums.length + 0) bad.push("too many immediate lines");
+const gapNative = chat.filter((c) => /slowest native: Dimension\.getBiome 135 ms/.test(c));
+if (!gapNative.length) bad.push("no chat line names the slowest native getBiome 135 ms");
+if (!warns.some((w) => /gap \d+ ms.*slowest native Dimension\.getBiome 135 ms/.test(w))) bad.push("gap log line lacks 'slowest native Dimension.getBiome 135 ms'");
+if (!warns.some((w) => /slow native call Dimension\.getBiome 135 ms \(call #1 of this method.*FIRST call/.test(w))) bad.push("no immediate log of the slow first getBiome");
+if (!warns.some((w) => /slow native call StructureManager\.place 40 ms/.test(w))) bad.push("no immediate log of the slow structure placement");
+if (!/Natives: slowest (Dimension\.getBiome 135|StructureManager\.place 40) ms; .*Dimension\.getBiome 135ms\/\d+x \(max 135\)/.test(warns.find((w) => /summary min/.test(w) && /Natives: slowest Dimension/.test(w)) ?? "")) bad.push("summary lacks the Natives list");
+if (/where|WHERE/.test("") ) bad.push("");
 console.log(bad.length ? "FAIL: " + bad.join("; ") : "ASSERTS OK")
 if (bad.length) process.exitCode = 1;

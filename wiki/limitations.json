@@ -98,11 +98,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/leaf_decay.js",
-        "sha256": "28c77688c9626015be1e07a7ee1891155fc1edd2530730694b23b14ef27921be"
+        "sha256": "99ff3c88a52157fa2274cce2a778a682736a1aa51ee43fbf307ecbc9b8a72210"
       },
       {
         "path": "lothlorien_bp/scripts/trees.js",
-        "sha256": "010bca9ab1ea5cef633a71b0d84cf1a92032308aaa0dcf4125f3cac4fbd0e8b7"
+        "sha256": "7c1556fae65aa6b62c8c30b583e86d7a50a48f28930a62714e21252fff00bfb1"
       }
     ]
   },
@@ -412,7 +412,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/trees.js",
-        "sha256": "010bca9ab1ea5cef633a71b0d84cf1a92032308aaa0dcf4125f3cac4fbd0e8b7"
+        "sha256": "7c1556fae65aa6b62c8c30b583e86d7a50a48f28930a62714e21252fff00bfb1"
       },
       {
         "path": "lothlorien_bp/scripts/swing.js",

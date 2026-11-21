@@ -72,7 +72,7 @@ Do not grow another combined test file or import tests for their helpers.
 
 `/scriptevent lothlorien:debug` toggles an action-bar readout (biome id, depth level, hostile mobs within 64 blocks) and switches on every diagnostic
 
-DIAG (timing) build for the tester's tablet: `.\mods diag lothlorien <version> [--commit REV] [--deploy]`; see `SCRIPT_PERFORMANCE.md`.
+DIAG (timing) build for the tester's tablet: `.\mods diag lothlorien <version> [--commit REV] [--deploy]`; see `SCRIPT_PERFORMANCE.md`. Since 0.8.10 it also times native engine calls (`slowest native ...` in gap lines and the summary).
 content-log line through `village_debug.js` (planner, elf village summary, rail mender, warden replace); only failures log unconditionally. The switch follows the debug tag: it is re-derived from it at world load and when a tagged player joins, so one command toggles tag and log lines together after a reload. `depth`
 prints the depth estimate and its cost; `harmony [value]` shows or sets Harmony; `renown ...` is described in `design/elven_inhabitants.md` section 3 ("As built"). Everything else (showcase, grow,
 growbig, treestats, treecount, critters, deer, survey, speed, tps, village, elf, trade and the landscape probe) was removed from the pack (cleanups

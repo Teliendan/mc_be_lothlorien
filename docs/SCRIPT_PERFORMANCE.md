@@ -68,6 +68,14 @@ tests pass; neither is game-tested.
 
 0.8.7 DIAG (2026-11-21, commit `791c323`): adds the village shield clear to the 0.8.6 round (re-test R16: `clear` debug line, stutter on PC and tablet). Mock load test passes. Deployed into the development packs (no .mcaddon import; commits keep it, a plain `.\mods deploy lothlorien` restores). **The release version must now exceed 0.8.7.**
 
+0.8.10 DIAG (2026-11-21, offline tests pass, NOT yet run in game): adds native call timing. `diag_wrap.js` wraps the engine methods the mod calls on their prototypes (Dimension getBiome / getBlock / getBlocks /
+fillBlocks / getEntities / spawnEntity / spawnItem / containsBlock / runCommand ..., Block setPermutation / setType, Entity remove / teleport ..., World and Entity dynamic properties, StructureManager.place,
+TickingAreaManager.createTickingArea). A gap or freeze line now ends its script part with `slowest native <Class.method> <ms> ms` (plus a chat line when it is >= 10 ms); any single native call >= 25 ms is
+logged at once (`slow native call Dimension.getBiome 135 ms (call #1 of this method, ..., its FIRST call)`, at most 10 per minute); the minute summary has `Natives: slowest <label> <ms> ms; <top four by total ms>`.
+Why: two runs showed ONE ~135 ms call of a `runInterval(20)` shortly after world load (once `harmony_game.js`, once `main.js` showDebug); both read biomes, so a first-`getBiome` warm-up is the suspect, and
+this build measures it before anything is pre-warmed or changed. The monitor's own natives (player position text) are not timed. The overhead is one `Date.now()` pair per native call (a few percent of a `getBlock`).
+`tools/diag/load_test.mjs` models a first `getBiome` of 135 ms and a 40 ms structure placement and asserts the gap line, the immediate log and the summary.
+
 0.8.4 DIAG results (tester's tablet, six photos sent 2026-11-10, no notes from her; analysed 2026-11-11). Both
 builds load in game. She ran the Control pack **in the same world as Lothlorien**, so there is still no vanilla
 baseline; the two monitors agree on every gap (540/540, 381/336, 350/350 ms), which confirms the monitor itself.
@@ -284,6 +292,28 @@ Offline numbers (before = 30 seeds of 2026-11-21 at `7751a73`, after = 30 flat +
 `--check` limits 0.1 % / 10 ms still FAIL narrowly); the steps over 10 ms that remain are in steps that do almost no work (`walkDist`, `mend`, `clear`), which looks like QuickJS garbage
 collection pauses; live allocations at the peak 194k -> 128k (numeric overlay maps, plan lists released after the write map; no heap cap is set yet). Hidden lights vs the old greedy:
 842 span shapes 4,022 -> 6,028, 24 villages bridges 35 -> 48, plazas 4 -> 6. Wall time per village in the harness is about the same as before (a few seconds).
+
+Round 2 (owner DIAG 0.8.9, strong PC, 1.26.63, after the budget work: builder steps mostly <= 3 ms, but `runJob[walkDist>walkDist]` single calls up to 22 ms (594 calls, 1,213 ms in one village),
+`forestFloor` up to 7 ms, and `trees.js` job calls up to 14 ms (41 calls, 153 ms); offline, not measured in game):
+- **walkDist (scoring a candidate link).** The step itself is small (8 queue pops, at most 96 reads, 40 measured), but the BFS made a template-string key, a `[x, y, z]` array and a destructured copy per pop and per
+  neighbour, and `scoreGen` ran one full BFS per distinct start and KEPT every distance map: the most allocation-heavy code of the build, so the QuickJS garbage collector (allocation-triggered, walks the whole
+  live heap) paused inside it. Now: numeric keys (`walkKey`), the queue is three number arrays, the 12 neighbour steps are flat arrays, one reusable map/queue, the search stops once every goal of that start has a
+  distance (BFS distances are final at first visit), and only the wanted distances are kept. Written blocks are identical to the baseline (budget suite). QuickJS, 4 seeds (flat 1-4): `walkDist` 18,267 steps /
+  9,209 ms / worst 27.6 ms -> 8,106 steps / 3,301 ms / worst <= 4.7 ms; total steps 38,586 -> 28,395, steps over 3 ms 75 -> 31-34. **What remains**: 2-3 steps over 10 ms per 4 villages, a different one on every run
+  (`mend`, `rootDown`, `findHome`, `write`: steps that do almost no work, run-to-run varying positions), which are GC / wasm-memory pauses, not code: one full collection of the 30k-object live heap costs 15-25 ms in the harness.
+  Fewer allocations make them rarer, only a smaller live heap makes them shorter.
+- **forestFloor**: a template-string key per column in five maps and an object per `blobAt` call (nine `blobOf` string keys per cell); now numeric column keys and a reused `blobAt` result (output identical,
+  forest-floor suite). Mean step 0.68 -> 0.58 ms; the occasional 5-17 ms step is the same GC effect.
+- **trees.js sapling growth.** Placing 200 leaves per step (read + `setPermutation` each) and all trunk and branch logs in one step was up to 250 reads and 250 writes; now <= 120 reads and <= 16 writes per
+  step (check after every cell, counters reset at each yield; a yield between the room check and the write only skips cells that changed meanwhile). Drawing the tree itself (`buildBigMallorn`: about 2,000 leaf
+  cells, 9-12 ms in QuickJS) ran synchronously inside the sapling random tick, outside any job; it is now a generator that yields once per x slice of a blob (worst step 1.5 ms, 156 steps per big tree), runs inside the
+  growth job, and `growTree` only asks it for the trunk height first (`yield { height }`) for the synchronous room check (<= 104 reads). Same trees for the same seeds (300 seeds compared with the old generator);
+  numeric cell keys in the builder. **Leaf search** (`searchJob`): marks <= 16 writes and <= 128 reads per step, a yield after the search so the marks start a fresh step; `survey` yields every 120 fresh reads
+  (a cell's six neighbours make 125 at most), every 256 cells of pure bookkeeping, and between origins (`leaf_decay.js STEP_READS`, `PURE_STEP`).
+- Tests: `tests/leaf_tree_interactions.mjs` (suite `leaf-tree`) has a counting dimension (reads = `getBlock`, writes = `setPermutation`) and asserts <= 128 reads / <= 16 writes per step for a small and a big tree
+  (worst 31 and 123 reads, 16 writes, 25 and 118 steps) and a 3,000-leaf search (worst 122 reads, 16 writes, 37 steps); the old code fails it (262 reads / 247 writes in one step). The generator test checks the
+  reported trunk height and the sync result for 120 seeds. `tools/village_steps.mjs --heap` prints the QuickJS memory dump at the peak (3.9 MB, 30k objects, 105k allocations per village).
+- The 135 ms first-call suspect (harmony / showDebug) is measured by the 0.8.10 DIAG native timing, not changed.
 
 Not measured in game: the real step times, the first native-read costs, the wall time of a fresh village, whether the GC pauses seen in QuickJS appear in the game's QuickJS. Acceptance:
 the offline tests pass and a clean PC DIAG run of a fresh village (no `loop_marker` job call over 5 ms, no gap, debug lines with `slowest step <= 3 ms`).

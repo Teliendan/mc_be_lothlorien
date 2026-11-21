@@ -22,6 +22,22 @@ export const BlockPermutation = deep("BlockPermutation"), BlockVolume = deep("Bl
   EntityInitializationCause = { Loaded: "Loaded", Spawned: "Spawned", Born: "Born" }, EquipmentSlot = deep("EquipmentSlot"),
   GameMode = { Creative: "Creative", Survival: "Survival" }, ItemStack = deep("ItemStack");
 
+// Engine classes with prototype methods, like the real module: diag_wrap.js wraps them to time native calls. globalThis.__nativeCost(name) lets a test
+// advance its fake clock inside a call ("a native call that takes 135 ms").
+const cost = (n) => globalThis.__nativeCost?.(n);
+export class Dimension {
+  getBiome() { cost("Dimension.getBiome"); return { id: "minecraft:forest" }; }
+  getBlock() { cost("Dimension.getBlock"); return undefined; }
+  getBlocks() { cost("Dimension.getBlocks"); return undefined; }
+  fillBlocks() { cost("Dimension.fillBlocks"); return undefined; }
+  getEntities() { cost("Dimension.getEntities"); return []; }
+  spawnEntity() { cost("Dimension.spawnEntity"); return undefined; }
+}
+export class Block { setPermutation() { cost("Block.setPermutation"); } }
+export class Entity { remove() { cost("Entity.remove"); } }
+export class StructureManager { place() { cost("StructureManager.place"); } }
+export class TickingAreaManager { createTickingArea() { cost("TickingAreaManager.createTickingArea"); return Promise.resolve(); } }
+
 // STRICT_NATIVE=1: model engine properties that are read-only and non-configurable on the world object
 if (process.env.STRICT_NATIVE) for (const o of [world, system]) for (const k of ["beforeEvents", "afterEvents"])
   Object.defineProperty(o, k, { value: o[k], writable: false, configurable: false });
