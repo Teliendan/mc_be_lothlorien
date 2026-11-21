@@ -7,6 +7,28 @@ export const inRect = (r, x, z) => x >= r.x0 && x <= r.x1 && z >= r.z0 && z <= r
 export const chunksIn = (r) => ((r.x1 - r.x0 + 1) >> 4) * ((r.z1 - r.z0 + 1) >> 4);
 // Generators (`function*`) yield now and then so the runtime can run a planner inside system.runJob without one long tick; `drive` runs one to the end.
 export function drive(gen) { let r = gen.next(); while (!r.done) r = gen.next(); return r.value; }
+// Pacing for generators that read through `at` (job step budget: at most ~128 native reads and 3 ms per step): `const due = pace(at); ... if (due()) yield "label";`
+// is true once `limit` fresh native reads happened (a boundedReader / overlay counts them in .size()) or after `every` calls, whichever comes first. One loop body
+// must stay under 128 - limit reads, so limit 48 leaves room for a body of up to 80.
+export function pace(at, limit = 48, every = 32) {
+  const counted = typeof at?.size === "function";
+  let last = counted ? at.size() : 0, n = 0;
+  return () => {
+    if (++n >= every) { n = 0; if (counted) last = at.size(); return true; }
+    if (!counted) return false;
+    const s = at.size();
+    if (s - last >= limit) { last = s; n = 0; return true; }
+    return false;
+  };
+}
+// Reads every cell of a box through `at` in steps of ~`limit` fresh reads, so that the pure code after it runs on memoised cells only (a boundedReader remembers them).
+export function* prefetchBox(at, b, label = "prefetch") {
+  const due = pace(at);
+  for (let x = b.x0; x <= b.x1; x++) for (let z = b.z0; z <= b.z1; z++) {
+    for (let y = b.y0; y <= b.y1; y++) at(x, y, z);
+    if (due()) yield label;
+  }
+}
 // The [x, z] cells of `rect` whose block at height y is one of `ids`, ordered x then z (the order of a plain loop over the rect). Uses at.layer when the
 // reader has one (native filtered query in game); otherwise loops, so a plain function reader gives the same cells.
 export function* layerCells(at, y, ids, rect) {

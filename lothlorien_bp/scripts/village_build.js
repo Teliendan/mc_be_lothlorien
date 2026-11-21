@@ -1,14 +1,15 @@
 // The village build job, pure JS (no @minecraft/server import: loop_marker.js passes `engine` = { BlockPermutation, BlockVolume }, the tests and
 // tools/village_steps.mjs pass fakes): sliced() (the time-boxed job driver with the per-step instrumentation), planAndBuild() (plan on the loaded
 // blocks, write every pick, mend the fences) and clearShield() (the light_block_0 shield). loop_marker.js keeps the ticking areas and the async flow.
-import { finalBlocks } from "./village_loop.js";
+import { finalBlocksGen } from "./village_loop.js";
 import { planGen, boundedReader } from "./village_planner.js";
 import { LINKS } from "./rail_mender_rules.js";
 import { mendFence } from "./rail_connections.js";
 import { PANEL_ID, planterWalkName } from "./planter_panels.js";
 import { SHIELD_ID, clearSlices } from "./village_clear.js";
 
-const WRITES_PER_CHECK = 32, LAYER_TILE = 64;
+// WRITES_PER_CHECK: a lantern write also triggers a light update the engine does in the same call; MENDS_PER_CHECK: a mend reads up to 5 cells.
+const WRITES_PER_CHECK = 16, MENDS_PER_CHECK = 16, LAYER_TILE = 64;
 
 // Time-boxed job driver: runs `gen` step by step until `ms` milliseconds are used, yields once, and goes on; returns the generator's value.
 // An inner step is all the code between two yields. Every generator yield carries a label (a string naming the code just before it), and a step is
@@ -74,29 +75,44 @@ export function* planAndBuild(dimension, found, budget, stats, engine) {
   let at = boundedReader(get, found.rect, layer);
   if (stats) stats.reads = at.size;
   const res = yield* planGen(at, found.known, { budget, rect: found.rect });
-  const writes = new Map();
-  for (const p of [...res.merges, ...res.picks, ...res.repairs]) for (const [k, b] of finalBlocks(p.plan ?? p)) writes.set(k, b); // a repair is itself the plan
+  const writes = new Map(); // one plan per step (the floor plan alone has 1,500 blocks)
+  for (const p of [...res.merges, ...res.picks, ...res.repairs]) { // a repair is itself the plan
+    yield "writeMap";
+    const fb = yield* finalBlocksGen(p.plan ?? p);
+    let i = 0;
+    for (const [k, b] of fb) { writes.set(k, b); if (++i % 64 === 0) yield "writeMap"; }
+  }
   if (stats) stats.writeCells = writes.size;
+  // every written cell and its four neighbours, each fence mended once (mendAround per cell visited a shared neighbour up to 5 times; a mend reads only
+  // neighbour types, which mending never changes, so order and repeats do not matter). The set is built in the write loop, as numeric keys.
+  const r0 = found.rect, mendKey = (x, y, z) => ((x - r0.x0 + 2048) * 8192 + (z - r0.z0 + 2048)) * 1024 + (y + 256);
+  const mend = new Set();
   let n = 0, failedWrites = 0, count = 0;
   for (const [k, b] of writes) {
     const [x, y, z] = k.split(",").map(Number), cur = at(x, y, z);
-    if (cur === b.id && (b.id === "minecraft:air" || b.id === "lothlorien:mallorn_planks")) continue; // already right (air over air, planks over planks)
-    try {
-      nat();
-      const block = dimension.getBlock({ x, y, z });
-      if (b.id === "minecraft:air") block.setType("minecraft:air");
-      else block.setPermutation(BlockPermutation.resolve(b.id, b.states ?? {}));
-      count++;
-    } catch { failedWrites++; }
+    mend.add(mendKey(x, y, z));
+    for (const l of LINKS) mend.add(mendKey(x + l.dx, y, z + l.dz));
+    if (!(cur === b.id && (b.id === "minecraft:air" || b.id === "lothlorien:mallorn_planks"))) { // else already right (air over air, planks over planks)
+      try {
+        nat();
+        const block = dimension.getBlock({ x, y, z });
+        if (b.id === "minecraft:air") block.setType("minecraft:air");
+        else block.setPermutation(BlockPermutation.resolve(b.id, b.states ?? {}));
+        count++;
+      } catch { failedWrites++; }
+    }
     if (++n % WRITES_PER_CHECK === 0) yield "write";
   }
+  yield "write";
+  writes.clear();
   at = null; res.at = null; // release the block memo and the overlay before the fence mend pass (watchdog memory, 2026-10-27)
-  // every written cell and its four neighbours, each fence mended once (mendAround per cell visited a shared neighbour up to 5 times;
-  // a mend reads only neighbour types, which mending never changes, so order and repeats do not matter)
-  const mend = new Set();
-  for (const k of writes.keys()) { const [x, y, z] = k.split(",").map(Number); mend.add(k); for (const l of LINKS) mend.add(`${x + l.dx},${y},${z + l.dz}`); }
   const counted = { getBlock: (l) => { nat(); return dimension.getBlock(l); } };
-  for (const k of mend) { const [x, y, z] = k.split(",").map(Number); try { mendFence(counted, { x, y, z }); } catch { /* unloaded */ } yield "mend"; }
+  let m = 0;
+  for (const mk of mend) {
+    const y = (mk % 1024) - 256, rest = Math.floor(mk / 1024), z = (rest % 8192) - 2048 + r0.z0, x = Math.floor(rest / 8192) - 2048 + r0.x0;
+    try { mendFence(counted, { x, y, z }); } catch { /* unloaded */ }
+    if (++m % MENDS_PER_CHECK === 0) yield "mend";
+  }
   return { ...res, blocks: count, failedWrites };
 }
 

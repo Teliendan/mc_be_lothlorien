@@ -12,7 +12,7 @@
 // World reader: at(x, y, z) -> block type id; undefined = not loaded. An "exit" is { x, y, z, dir: [dx, dz] }: x, z, y = the centre
 // deck cell of the railing row, dir = the way out (away from the platform the railing closes).
 import { bridgeShape } from "./village_bridge.js";
-import { layerCells, drive } from "./village_geom.js";
+import { layerCells, drive, pace, prefetchBox } from "./village_geom.js";
 
 export const MARKER_ID = "lothlorien:loop_marker";
 export const PLANKS = "lothlorien:mallorn_planks", SLAB = "lothlorien:mallorn_slab", FENCE = "lothlorien:mallorn_fence", LANTERN = "lothlorien:elven_lantern", HEART = "lothlorien:mallorn_heartwood_planks";
@@ -93,7 +93,9 @@ export function scanAhead(A, accept) {
 // Rows 0 and length - 1 are the two railing rows themselves.
 export const planBridge = (...a) => drive(planBridgeGen(...a));
 export function* planBridgeGen(A, B, length, offset, side = false, sideA = false) {
+  yield "bridge"; // the shape, the world cells and the lights are a step each
   const shape = bridgeShape(length, offset, length <= LOOP.flatMax ? 0 : length <= 7 ? 1 : 2); // short joins are flat decks (no arch)
+  yield "bridge";
   const d = A.dir, ex = [d[1], -d[0]], c0 = shape.connectors[0].x;
   const w = (lx, ly, lz) => ({ x: A.x + ex[0] * (lx - c0) + d[0] * lz, y: A.y + ly, z: A.z + ex[1] * (lx - c0) + d[1] * lz });
   const vec = { north: [-d[0], -d[1]], south: [d[0], d[1]], west: [-ex[0], -ex[1]], east: [ex[0], ex[1]] };
@@ -186,13 +188,15 @@ export function* planSpanGen(A, B, dist, lat, side = false, sideA = false) {
 // are fine under water, the same as the balcony's pillar) and stop on the first other block; no ground within pierMaxDepth, lava or an unloaded
 // column = { error }. -> { blocks: [{ x, y, z, id, states }] } | { error }
 const WET = (n) => n === "minecraft:water" || n === "minecraft:flowing_water" || /seagrass|kelp|bubble_column/.test(n ?? "");
-export function planPier(at, L) {
-  const free = (n) => isAir(n) || isLeaves(n) || WET(n), logAt = (face) => ({ id: LOG, states: { "minecraft:block_face": face } });
+export const planPier = (at, L) => drive(planPierGen(at, L));
+export function* planPierGen(at, L) {
+  const due = pace(at), free = (n) => isAir(n) || isLeaves(n) || WET(n), logAt = (face) => ({ id: LOG, states: { "minecraft:block_face": face } });
   const blocks = [];
   for (const [dx, dz] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) {
     let y = L.y - 1, depth = 0;
     for (; ; y--, depth++) {
       const n = at(L.x + dx, y, L.z + dz);
+      if (due()) yield "pier";
       if (n === undefined) return { error: "pier column not loaded" };
       if (n === "minecraft:lava" || n === "minecraft:flowing_lava") return { error: "pier over lava" };
       if (!free(n)) break;
@@ -208,11 +212,13 @@ export function planPier(at, L) {
 }
 
 // Everything the bridge writes: Map "x,y,z" -> { id, states? }. Later entries win (rails, hidden lights and lamp posts replace headroom air).
-export function finalBlocks(plan) {
+export const finalBlocks = (plan) => drive(finalBlocksGen(plan));
+export function* finalBlocksGen(plan) { // a yield after every 256 entries: the floor plan has 1,500 and a deep trunk carry thousands
   const out = new Map(), k = (c) => `${c.x},${c.y},${c.z}`;
+  let n = 0;
   const KIND = { plank: { id: PLANKS }, slab_bottom: { id: SLAB, states: { "minecraft:vertical_half": "bottom" } }, slab_top: { id: SLAB, states: { "minecraft:vertical_half": "top" } }, air: { id: "minecraft:air" } };
-  for (const c of plan.cells) out.set(k(c), KIND[c.kind]);
-  for (const b of plan.pier ?? []) out.set(k(b), { id: b.id, states: b.states });
+  for (const c of plan.cells) { out.set(k(c), KIND[c.kind]); if (++n % 64 === 0) yield "finalBlocks"; }
+  for (const b of plan.pier ?? []) { out.set(k(b), { id: b.id, states: b.states }); if (++n % 64 === 0) yield "finalBlocks"; }
   for (const r of plan.rails) out.set(k(r), { id: FENCE, states: r.states });
   for (const l of plan.lights ?? []) out.set(k(l), { id: HIDDEN_LIGHT, states: {} }); // the safety light: invisible
   for (const l of plan.lamps ?? []) { // lamp posts: a fence on the rail post below, the lantern on top
@@ -220,16 +226,23 @@ export function finalBlocks(plan) {
     out.set(k(l), { id: l.id ?? LANTERN, states: { "minecraft:block_face": "up" } });
   }
   for (const q of plan.pots ?? []) out.set(k(q), { id: "minecraft:decorated_pot", states: {} }); // a pot on the rail post beside a lamp post (a decorated pot: a flower pot needs block entity data; unverified in game)
-  for (const b of plan.blocks ?? []) out.set(k(b), { id: b.id, states: b.states }); // gate arch parts and repairs (village_repair.js): free-form blocks
+  for (const b of plan.blocks ?? []) { out.set(k(b), { id: b.id, states: b.states }); if (++n % 64 === 0) yield "finalBlocks"; } // gate arch parts and repairs (village_repair.js): free-form blocks
   return out;
 }
 
 // Cells of the bridge that cannot be built over: anything but air or leaves (the end rows may hold the railing's own planks and fences).
-export function blockedCells(at, plan) {
-  if (plan.parts) return [...plan.parts.flatMap((p) => blockedCells(at, p)), ...blockedCells(at, plan.core)]; // L-join: the legs, then the landing (nothing of it exists yet)
-  const bad = [], last = plan.length - 1;
+export const blockedCells = (at, plan) => drive(blockedCellsGen(at, plan));
+export function* blockedCellsGen(at, plan) {
+  if (plan.parts) { // L-join: the legs, then the landing (nothing of it exists yet)
+    const out = [];
+    for (const p of plan.parts) out.push(...(yield* blockedCellsGen(at, p)));
+    out.push(...(yield* blockedCellsGen(at, plan.core)));
+    return out;
+  }
+  const bad = [], last = plan.length - 1, due = pace(at);
   for (const c of [...plan.cells, ...plan.rails]) {
     const n = at(c.x, c.y, c.z);
+    if (due()) yield "blocked";
     const own = (c.row === 0 || c.row === last) && (n === PLANKS || n === FENCE || n === LANTERN); // an end row's own railing (a rim post may carry a lantern)
     if (!(isAir(n) || isLeaves(n) || own)) bad.push({ x: c.x, y: c.y, z: c.z, block: n });
   }
@@ -259,23 +272,26 @@ export function sideTarget(at, x, y, z, d) {
 // ---- F1: a side as the START of a bridge ---------------------------------------------------------------------------------------------
 // A side marker sits on a rim deck cell of a platform. -> the rim cell (within LOOP.sideSearch cells along the rim, nearest first) where
 // sideTarget holds for a bridge heading INTO the platform, as an exit-like start { x, y, z, dir (outward), side: true }, or null.
-export function sideStarts(at, x, y, z) {
+export const sideStarts = (at, x, y, z) => drive(sideStartsGen(at, x, y, z));
+export function* sideStartsGen(at, x, y, z) {
   if (!isPlank(at(x, y, z)) || at(x, y + 1, z) !== FENCE) return [];
-  const found = [];
+  const found = [], due = pace(at);
   for (const out of [[0, -1], [0, 1], [-1, 0], [1, 0]]) {
     const a = [out[1], -out[0]];
     for (let o = -LOOP.sideSearch; o <= LOOP.sideSearch; o++) {
       const cx = x + a[0] * o, cz = z + a[1] * o;
       if (sideTarget(at, cx, y, cz, [-out[0], -out[1]])) found.push({ x: cx, y, z: cz, dir: out, side: true, score: Math.abs(o) });
+      if (due()) yield "sideStarts";
     }
   }
   return found.sort((p, q) => p.score - q.score).slice(0, LOOP.sideStarts).map(({ score, ...A }) => A);
 }
 // ---- clutter rule (owner 2026-10-09): a NEW kind of join is refused when a foreign deck / rail lies within clutterMargin cells of its footprint ----
 // Footprint = the plan's cells on rows 1..length-2; the three rows at each end are skipped (they belong to the platforms being joined).
-export function clutter(at, plan, margin = LOOP.clutterMargin) {
-  if (plan.parts) return plan.parts.some((p) => clutter(at, p, margin));
-  const foot = new Set();
+export const clutter = (at, plan, margin = LOOP.clutterMargin) => drive(clutterGen(at, plan, margin));
+export function* clutterGen(at, plan, margin = LOOP.clutterMargin) {
+  if (plan.parts) { for (const p of plan.parts) if (yield* clutterGen(at, p, margin)) return true; return false; }
+  const foot = new Set(), due = pace(at);
   for (const c of plan.cells) if (c.row > 0 && c.row < plan.length - 1) foot.add(`${c.x},${c.z}`);
   const d = plan.A.dir;
   for (const k of foot) {
@@ -284,6 +300,7 @@ export function clutter(at, plan, margin = LOOP.clutterMargin) {
       const t = (x + dx - plan.A.x) * d[0] + (z + dz - plan.A.z) * d[1];
       if (foot.has(`${x + dx},${z + dz}`) || t < 3 || t > plan.length - 4) continue;
       for (let y = plan.A.y - 1; y <= plan.A.y + 3; y++) { const n = at(x + dx, y, z + dz); if (isPlank(n) || n === SLAB || n === FENCE) return true; }
+      if (due()) yield "clutter";
     }
   }
   return false;
@@ -294,15 +311,25 @@ export const isNewKind = (sideStart, dist, offset) => sideStart || dist < LOOP.l
 const isDeck = (n) => isPlank(n) || n === SLAB;
 const N4 = [[1, 0], [-1, 0], [0, 1], [0, -1]];
 // Exits facing A at dist 1..PLAZA.maxDist ahead, |lat| <= PLAZA.maxLat, same height: nearest first. -> [{ B, dist, lat, score }]
-export function findPlazaPartners(at, A) {
-  const d = A.dir, e = [d[1], -d[0]], out = [];
+export const findPlazaPartners = (at, A) => drive(findPlazaPartnersGen(at, A, (x, z) => at(x, A.y + 1, z) === FENCE));
+export function* findPlazaPartnersGen(at, A, isFence) { // isFence(x, z): the fence set of the layer A.y + 1 (fenceTest), so only real fence cells are read further
+  const d = A.dir, e = [d[1], -d[0]], out = [], due = pace(at);
   for (let dist = 1; dist <= PLAZA.maxDist; dist++) for (let lat = -PLAZA.maxLat; lat <= PLAZA.maxLat; lat++) {
     const x = A.x + d[0] * dist + e[0] * lat, z = A.z + d[1] * dist + e[1] * lat;
-    if (at(x, A.y + 1, z) !== FENCE) continue;
+    if (!isFence(x, z)) continue;
     const B = exitAt(at, x, A.y, z);
     if (B && B.dir[0] === -d[0] && B.dir[1] === -d[1]) out.push({ B, dist, lat, score: dist + Math.abs(lat) });
+    if (due()) yield "plazaPartners";
   }
   return out.sort((a, b) => a.score - b.score || a.dist - b.dist);
+}
+// A fence test for the layer y (the deck level + 1) over the reader's whole area: the cells come from the native filtered layer query (at.layer, overlay-aware, in
+// tiles), so a fan or a search over hundreds of cells does not read one block per cell. A reader without a layer (a plain function) is asked cell by cell.
+export function* fenceTest(at, y) {
+  if (!at.layer || !at.rect) return (x, z) => at(x, y, z) === FENCE;
+  const r = at.rect, cells = yield* layerCells(at, y, [FENCE], r), set = new Set();
+  for (const [x, z] of cells) set.add((x - r.x0) * 65536 + (z - r.z0));
+  return (x, z) => x >= r.x0 && x <= r.x1 && z >= r.z0 && z <= r.z1 && set.has((x - r.x0) * 65536 + (z - r.z0));
 }
 
 // A filled, railed plank deck over the bounding rectangle of the two exit rows. -> a plan (kind "plaza", same format as planBridge, plus `pier`)
@@ -314,6 +341,8 @@ export function* planPlazaGen(at, A, B) {
   if (dist < 1 || dist > PLAZA.maxDist || Math.abs(lat) > PLAZA.maxLat) return { error: "plaza out of range" };
   const lo = Math.min(-2, lat - 2), hi = Math.max(2, lat + 2), ext = dist < 4 ? 1 : 0;
   const cell = (t, o) => [A.x + d[0] * t + e[0] * o, A.z + d[1] * t + e[1] * o];
+  const corners = [cell(-ext, lo), cell(-ext, hi), cell(dist + ext, lo), cell(dist + ext, hi)];
+  yield* prefetchBox(at, { x0: Math.min(...corners.map((c) => c[0])) - 2, x1: Math.max(...corners.map((c) => c[0])) + 2, y0: y, y1: y + 3, z0: Math.min(...corners.map((c) => c[1])) - 2, z1: Math.max(...corners.map((c) => c[1])) + 2 }, "plazaPrefetch");
   const K = (x, z) => `${x},${z}`;
   const deck = new Map(), fill = [], blocked = [];
   for (let t = -ext; t <= dist + ext; t++) for (let o = lo; o <= hi; o++) {
@@ -333,11 +362,13 @@ export function* planPlazaGen(at, A, B) {
     if (m > PLAZA.cantilever) return { error: "plaza cantilever" };
     far = Math.max(far, m);
   }
+  yield "plaza"; // pure-JS phases of one plaza: a step each
   // the decks of the two exits must be one piece (4-connected) after filling
   const isD = (x, z) => deck.has(K(x, z)) || isDeck(at(x, y, z));
   const seen = new Set([K(A.x, A.z)]), stack = [[A.x, A.z]];
   while (stack.length) { const [x, z] = stack.pop(); for (const [a, b] of N4) if (isD(x + a, z + b) && !seen.has(K(x + a, z + b))) { seen.add(K(x + a, z + b)); stack.push([x + a, z + b]); } }
   if (!seen.has(K(B.x, B.z))) return { error: "plaza not connected" };
+  yield "plaza";
   // fences: a new deck cell with a non-deck 4-neighbour; old fences whose open sides are all new deck now go
   const hasFence = (x, z) => at(x, y + 1, z) === FENCE;
   const newRail = new Set(), removed = new Set();
@@ -350,6 +381,7 @@ export function* planPlazaGen(at, A, B) {
     if (open.every(([a, b]) => deck.get(K(x + a, z + b)) === "new")) removed.add(k); // also a wall between two rows that now touch
   }
   const fenced = (x, z) => newRail.has(K(x, z)) || (hasFence(x, z) && !removed.has(K(x, z)));
+  yield "plaza";
   // a diagonal pair of posts needs one orthogonal post (rail_diag): add it on a deck cell
   for (let guard = 0; guard < 6; guard++) {
     let added = false;
@@ -364,6 +396,7 @@ export function* planPlazaGen(at, A, B) {
     }
     if (!added) break;
   }
+  yield "plaza";
   const changed = [...newRail, ...removed];
   const stateOf = (x, z) => {
     const st = {};
@@ -383,6 +416,7 @@ export function* planPlazaGen(at, A, B) {
     for (let h = 1; h <= 3; h++) cells.push({ x, y: y + h, z, kind: "air", row: 1 });
   }
   for (const k of removed) { const [x, z] = k.split(",").map(Number); for (let h = 1; h <= 3; h++) cells.push({ x, y: y + h, z, kind: "air", row: 1 }); } // a lantern on the post goes too
+  yield "plaza";
   // lanterns on post tops until every walk cell of the patch is lit
   const posts = [], walkXZ = [];
   for (const k of deck.keys()) { const [x, z] = k.split(",").map(Number); (fenced(x, z) ? posts : walkXZ).push([x, z]); }
@@ -400,7 +434,7 @@ export function* planPlazaGen(at, A, B) {
   if (far > PLAZA.needPier) {
     const mx = fill.reduce((s, c) => s + c[0], 0) / fill.length, mz = fill.reduce((s, c) => s + c[1], 0) / fill.length;
     const [px, pz] = fill.slice().sort((p, q) => Math.hypot(p[0] - mx, p[1] - mz) - Math.hypot(q[0] - mx, q[1] - mz))[0];
-    const r = planPier(at, { x: px, y, z: pz });
+    const r = yield* planPierGen(at, { x: px, y, z: pz });
     if (r.error) return { error: r.error };
     pier = r.blocks;
   }
@@ -558,14 +592,16 @@ export function* planLGen(A, B, s, u) {
     side: false, landing: { x: C.x, y: C.y, z: C.z, dir: d, d1: s - h, d2: u - h }, pier: [], L: true, parts: [p1, p2], core: { cells: L.cells, rails: L.rails, length: 99 } };
 }
 // Exits at right angles to A (same deck height) whose heading line crosses A's ahead: [{ B, s, u, score }] nearest first.
-export function findLs(at, A) {
-  const d = A.dir, h = (LOOP.landing - 1) / 2, out = [], lim = LOOP.maxDist + h;
+export const findLs = (at, A) => drive(findLsGen(at, A, (x, z) => at(x, A.y + 1, z) === FENCE));
+export function* findLsGen(at, A, isFence) {
+  const d = A.dir, h = (LOOP.landing - 1) / 2, out = [], lim = LOOP.maxDist + h, due = pace(at);
   for (const e of [[d[1], -d[0]], [-d[1], d[0]]]) { // e = heading of B
     for (let s = h + LOOP.minLeg; s <= lim; s++) for (let u = h + LOOP.minLeg; u <= lim; u++) {
       const x = A.x + d[0] * s - e[0] * u, z = A.z + d[1] * s - e[1] * u;
-      if (at(x, A.y + 1, z) !== FENCE) continue;
+      if (!isFence(x, z)) continue;
       const B = exitAt(at, x, A.y, z);
       if (B && B.dir[0] === e[0] && B.dir[1] === e[1]) out.push({ B, s, u, score: s + u });
+      if (due()) yield "findLs";
     }
   }
   return out.sort((a, b) => a.score - b.score || a.s - b.s);
@@ -584,6 +620,7 @@ export function* planLightsGen(shape, offset = 0) {
   const g = new Map();
   for (const c of shape.cells) g.set(k(c.x, c.y, c.z), c.kind === "air" ? "a" : "s");
   for (const r of shape.rails) g.set(k(r.x, r.y, r.z), "f");
+  yield "bridgeLights";
   const lamps = [], gate = [], pots = [];
   const top = (x, z) => shape.rails.filter((r) => r.x === x && r.z === z).reduce((m, r) => Math.max(m, r.y), -1);
   const lonely = (x, y, z) => ![[1, 0], [-1, 0], [0, 1], [0, -1]].some(([a, b]) => g.get(k(x + a, y, z + b)) === "f"); // a fence with no fence beside it keeps its stored links off
@@ -660,13 +697,13 @@ function mergeSpan(at, y, d, g, run) {
 }
 // Every shared stretch within rect on level y: [{ y, d, g, a, run: [[x, z] ...], span: [lo, hi] }] (run = the P cells of the core in order along the rims), widest opening first.
 export function* findMerges(at, y, rect) {
-  const out = [], fences = yield* layerCells(at, y + 1, [FENCE], rect); // nothing is applied during this scan, so one list serves all four passes
+  const out = [], fences = yield* layerCells(at, y + 1, [FENCE], rect), due = pace(at, 48, 16); // nothing is applied during this scan, so one list serves all four passes
   for (const d of [[1, 0], [0, 1]]) for (let g = 0; g <= MERGE.maxGap; g++) {
     const ok = new Set(), a = [d[1], d[0]];
     let n = 0;
     for (const [x, z] of fences) {
       if (mergePair(at, y, d, g, x, z)) ok.add(`${x},${z}`);
-      if (++n % 32 === 0) yield "findMerges";
+      if (due()) yield "findMerges";
     }
     for (const k of ok) {
       const [x, z] = k.split(",").map(Number);
@@ -686,6 +723,8 @@ export function* findMerges(at, y, rect) {
 export const planMerge = (at, m) => drive(planMergeGen(at, m));
 export function* planMergeGen(at, m) {
   const { y, d, g, run } = m, n = run.length, K = (x, z) => `${x},${z}`;
+  const xs0 = run.map((c) => c[0]), zs0 = run.map((c) => c[1]);
+  yield* prefetchBox(at, { x0: Math.min(...xs0) - 4, x1: Math.max(...xs0) + 4, y0: y, y1: y + 3, z0: Math.min(...zs0) - 4, z1: Math.max(...zs0) + 4 }, "mergePrefetch"); // the stretch's cells (mostly read by findMerges already)
   if (!run.every(([x, z]) => mergePair(at, y, d, g, x, z))) return { error: "merge: stretch changed" };
   const span = mergeSpan(at, y, d, g, run);
   if (!span) return { error: "merge: stretch changed" };
@@ -719,6 +758,7 @@ export function* planMergeGen(at, m) {
     rails.push({ x, y: y + 1, z, states: st, row: 1 });
   };
   for (const k of [...removed, ...added]) { const [x, z] = k.split(",").map(Number); addRail(x, z); for (const v of N4) addRail(x + v[0], z + v[1]); }
+  yield "merge";
   // light: every walk cell of the stretch and every walk cell that was lit before must still have light >= lightTarget
   const ovA = (x, yy, z) => {
     const k = K(x, z);

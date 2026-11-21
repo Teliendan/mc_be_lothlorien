@@ -98,7 +98,7 @@ for (const cs of cases) {
     nSteps++; steps++; if (d > STEP_MS) over3++; if (d > STEP_MAX_MS) over10++; if (d > villageWorst) villageWorst = d;
     if (d > worstMs.ms) worstMs = { ms: d, label: l, seed: cs };
     if (r > worstReads.n) worstReads = { n: r, label: l, seed: cs };
-    const e = byLabel.get(l) ?? { n: 0, ms: 0, max: 0, reads: 0 }; e.n++; e.ms += d; if (d > e.max) e.max = d; if (r > e.reads) e.reads = r; byLabel.set(l, e);
+    const e = byLabel.get(l) ?? { n: 0, ms: 0, max: 0, reads: 0, over: 0 }; e.n++; e.ms += d; if (d > STEP_MS) e.over++; if (d > e.max) e.max = d; if (r > e.reads) e.reads = r; byLabel.set(l, e);
     if (steps % 250 === 0) peakHeap = Math.max(peakHeap, mem());
   });
   fn("__result", (j) => { result = JSON.parse(str(j)); });
@@ -112,7 +112,7 @@ for (const cs of cases) {
   if (result) all.push({ ...cs, markers: w.markers, steps, worst: villageWorst, wall: Math.round(performance.now() - t0) });
   console.log(`${cs.fixture}-${cs.seed}: ${w.markers} markers, ${steps} steps, worst step ${villageWorst.toFixed(1)} ms, ${Math.round(performance.now() - t0)} ms wall`);
 }
-const table = [...byLabel].map(([label, e]) => ({ label, steps: e.n, totalMs: Math.round(e.ms), worstMs: +e.max.toFixed(1), mostReads: e.reads })).filter((x) => x.worstMs > STEP_MS || x.mostReads > READS).sort((a, b) => b.worstMs - a.worstMs).slice(0, 25);
+const table = [...byLabel].map(([label, e]) => ({ label, steps: e.n, totalMs: Math.round(e.ms), worstMs: +e.max.toFixed(1), over3: e.over, mostReads: e.reads })).filter((x) => x.worstMs > STEP_MS || x.mostReads > READS).sort((a, b) => b.worstMs - a.worstMs).slice(0, +opt("rows", 25));
 if (table.length) console.table(table);
 const summary = { villages: all.length, steps: nSteps, over3ms: over3, over10ms: over10, worstMs: +worstMs.ms.toFixed(1), worstLabel: worstMs.label, worstReads: worstReads.n, worstReadsLabel: worstReads.label, peakLiveAllocations: peakHeap };
 console.log("summary", JSON.stringify(summary));

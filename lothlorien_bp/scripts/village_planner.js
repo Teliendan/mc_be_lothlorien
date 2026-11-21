@@ -8,9 +8,9 @@
 //   2 candidates  every exit-exit / exit-side / side-side / plaza / L target in reach (geometry only)
 //   3 score       value = shortcut gained (walking distance through the existing deck network) - cost of the new link
 //   4 greedy      take the best, build its real plan, apply it to an overlay world, enumerate and score again; stop at the budget
-import { hullOf, chunkAlign, growRect, inRect, chunksIn, drive } from "./village_geom.js";
+import { hullOf, chunkAlign, growRect, inRect, chunksIn, drive, pace } from "./village_geom.js";
 import { repairGen } from "./village_repair.js";
-import { PLANKS, SLAB, FENCE, isPlank, LOOP, exitAt, sideTarget, sideStarts, scanAhead, findPlazaPartners, findLs, planSpanGen, planPlazaGen, planLGen, planMergeGen, blockedCells, clutter, planPier, finalBlocks, isNewKind, MERGE, findMerges } from "./village_loop.js";
+import { PLANKS, SLAB, FENCE, isPlank, LOOP, exitAt, sideTarget, sideStarts, scanAhead, findPlazaPartnersGen, findLsGen, fenceTest, sideStartsGen, planSpanGen, planPlazaGen, planLGen, planMergeGen, blockedCellsGen, clutterGen, planPierGen, finalBlocks, isNewKind, MERGE, findMerges, finalBlocksGen } from "./village_loop.js";
 
 export { hullOf, chunkAlign, growRect, inRect, chunksIn, drive }; // their home is village_geom.js; existing importers keep working
 
@@ -38,7 +38,7 @@ export function walkDist(at, A, limit = 400) {
 export function* walkDistGen(at, A, limit = 400) {
   const dist = new Map([[key(A.x, A.y, A.z), 0]]), q = [[A.x, A.y, A.z]];
   for (let i = 0; i < q.length; i++) {
-    if (i % 32 === 0) yield "walkDist";
+    if (i % 8 === 0) yield "walkDist";
     const [x, y, z] = q[i], d = dist.get(key(x, y, z));
     if (d >= limit) continue;
     for (const [a, b] of N4) for (const dy of DY) {
@@ -67,15 +67,18 @@ export function openWalk(at, A, B, limit) {
 }
 
 // Starts from the marker cells: an exit marker is an exit start; a marker on a plain rim gives up to LOOP.sideStarts rim starts.
-export function startsFromMarkers(at, markers) {
-  const exits = [], rims = [], seenE = new Set(), seenR = new Set();
+export const startsFromMarkers = (at, markers) => drive(startsFromMarkersGen(at, markers));
+export function* startsFromMarkersGen(at, markers) {
+  const exits = [], rims = [], seenE = new Set(), seenR = new Set(), due = pace(at);
   for (const [x, y, z] of markers) {
     const e = exitAt(at, x, y, z);
     if (e) { if (!seenE.has(key(e.x, e.y, e.z))) { seenE.add(key(e.x, e.y, e.z)); exits.push(e); } continue; }
-    for (const A of sideStarts(at, x, y, z)) {
+    const sides = yield* sideStartsGen(at, x, y, z);
+    for (const A of sides) {
       const k = key(A.x, A.y, A.z) + A.dir; if (seenR.has(k)) continue; seenR.add(k);
       rims.push({ ...A, run: `${x},${y},${z}|${A.dir}` });
     }
+    if (due()) yield "starts";
   }
   return { exits, rims };
 }
@@ -83,25 +86,45 @@ export function startsFromMarkers(at, markers) {
 const pairKey = (a, b) => (a.x < b.x || (a.x === b.x && a.z < b.z) ? `${key(a.x, a.y, a.z)}~${key(b.x, b.y, b.z)}` : `${key(b.x, b.y, b.z)}~${key(a.x, a.y, a.z)}`);
 
 // every raw candidate (geometry only, nothing built yet)
-export function enumerate(at, starts) {
+export const enumerate = (at, starts) => drive(enumerateGen(at, starts));
+export function* enumerateGen(at, starts) {
   const out = new Map(), add = (c) => { const k = c.kind + "|" + pairKey(c.A, c.B); if (!out.has(k) || out.get(k).score > c.score) out.set(k, c); };
+  const fences = new Map(), due = pace(at); // the fence set of each level, from the native layer query (a fan reads hundreds of cells)
+  const fenceOf = function* (y) { if (!fences.has(y)) fences.set(y, yield* fenceTest(at, y + 1)); return fences.get(y); };
   for (const A of starts.exits) {
-    const d = A.dir;
-    for (const c of scanAhead(A, (x, z) => at(x, A.y + 1, z) === FENCE)) {
+    yield "enumerate";
+    const d = A.dir, isF = yield* fenceOf(A.y);
+    for (const c of scanAhead(A, isF)) {
       const B = exitAt(at, c.x, A.y, c.z);
       if (B && B.dir[0] === -d[0] && B.dir[1] === -d[1]) add({ kind: "exit", A, B, dist: c.dist, offset: c.offset, len: c.length, score: c.score });
       else if (!B && sideTarget(at, c.x, A.y, c.z, d)) add({ kind: "side", A, B: { x: c.x, y: A.y, z: c.z }, dist: c.dist, offset: c.offset, len: c.length, score: c.score });
+      if (due()) yield "scanAhead";
     }
-    for (const c of findPlazaPartners(at, A)) if (findPlazaPartners(at, c.B).some((q) => q.B.x === A.x && q.B.z === A.z)) add({ kind: "plaza", A, B: c.B, dist: c.dist, offset: c.lat, len: c.dist + 1, score: c.score });
-    for (const c of findLs(at, A)) if (c.s + c.u + 1 <= PLAN.lMaxLen && c.s - 2 <= PLAN.lMaxLeg && c.u - 2 <= PLAN.lMaxLeg && findLs(at, c.B).some((q) => q.B.x === A.x && q.B.z === A.z)) add({ kind: "L", A, B: c.B, s: c.s, u: c.u, dist: c.s + c.u, offset: 0, len: c.s + c.u + 1, score: c.score });
+    yield "plazaPartners";
+    const partners = yield* findPlazaPartnersGen(at, A, isF);
+    for (const c of partners) {
+      const back = yield* findPlazaPartnersGen(at, c.B, yield* fenceOf(c.B.y));
+      if (back.some((q) => q.B.x === A.x && q.B.z === A.z)) add({ kind: "plaza", A, B: c.B, dist: c.dist, offset: c.lat, len: c.dist + 1, score: c.score });
+    }
+    yield "findLs";
+    const ls = yield* findLsGen(at, A, isF);
+    for (const c of ls) {
+      if (!(c.s + c.u + 1 <= PLAN.lMaxLen && c.s - 2 <= PLAN.lMaxLeg && c.u - 2 <= PLAN.lMaxLeg)) continue;
+      const back = yield* findLsGen(at, c.B, yield* fenceOf(c.B.y));
+      if (back.some((q) => q.B.x === A.x && q.B.z === A.z)) add({ kind: "L", A, B: c.B, s: c.s, u: c.u, dist: c.s + c.u, offset: 0, len: c.s + c.u + 1, score: c.score });
+    }
   }
   // side-to-side: per rim start and per 7 x 7 cell of the far side only the best (shortest, least sideways) pair of start cells
   const grp = new Map();
   for (const A of starts.rims) {
-    for (const c of scanAhead(A, (x, z) => at(x, A.y + 1, z) === FENCE && !exitAt(at, x, A.y, z) && sideTarget(at, x, A.y, z, A.dir))) {
+    yield "sideSide";
+    const isF = yield* fenceOf(A.y);
+    for (const c of scanAhead(A, isF)) {
+      if (exitAt(at, c.x, A.y, c.z) || !sideTarget(at, c.x, A.y, c.z, A.dir)) { if (due()) yield "scanAhead"; continue; }
       const B = { x: c.x, y: A.y, z: c.z }, cand = { kind: "sideside", A, B, dist: c.dist, offset: c.offset, len: c.length, score: c.score };
       const g = `${A.run}|${Math.floor(B.x / 7)},${Math.floor(B.z / 7)}`;
       if (!grp.has(g) || grp.get(g).score > cand.score) grp.set(g, cand);
+      if (due()) yield "scanAhead";
     }
   }
   for (const c of grp.values()) add(c);
@@ -114,18 +137,18 @@ export function* realizeGen(at, c) {
   try {
     if (c.kind === "plaza") { const plan = yield* planPlazaGen(at, c.A, c.B); return plan.error ? { error: plan.error, blocked: plan.blocked } : { plan }; }
     if (c.kind === "L") {
-      const plan = yield* planLGen(c.A, c.B, c.s, c.u), blocked = blockedCells(at, plan);
+      const plan = yield* planLGen(c.A, c.B, c.s, c.u), blocked = yield* blockedCellsGen(at, plan);
       if (blocked.length) return { error: "blocked", blocked };
-      if (clutter(at, plan)) return { error: "clutter" };
-      const pier = planPier(at, plan.landing);
+      if (yield* clutterGen(at, plan)) return { error: "clutter" };
+      const pier = yield* planPierGen(at, plan.landing);
       if (pier.error) return { error: pier.error };
       plan.pier = pier.blocks; return { plan };
     }
     const sideStart = c.kind === "sideside", side = c.kind !== "exit";
-    const plan = yield* planSpanGen(c.A, c.B, c.dist, c.offset, side, sideStart), blocked = blockedCells(at, plan);
+    const plan = yield* planSpanGen(c.A, c.B, c.dist, c.offset, side, sideStart), blocked = yield* blockedCellsGen(at, plan);
     if (blocked.length) return { error: "blocked", blocked };
-    if (isNewKind(sideStart, c.dist, c.offset) && clutter(at, plan)) return { error: "clutter" };
-    if (plan.landing) { const pier = planPier(at, plan.landing); if (pier.error) return { error: pier.error }; plan.pier = pier.blocks; }
+    if (isNewKind(sideStart, c.dist, c.offset) && (yield* clutterGen(at, plan))) return { error: "clutter" };
+    if (plan.landing) { const pier = yield* planPierGen(at, plan.landing); if (pier.error) return { error: pier.error }; plan.pier = pier.blocks; }
     return { plan };
   } catch (e) { return { error: String(e.message ?? e) }; }
 }
@@ -154,15 +177,19 @@ export function overlay(at) {
     const v = nkey && inRect(rect, x, z) ? fast.get(nkey(x, y, z)) : over.get(key(x, y, z));
     return v !== undefined ? v : at(x, y, z);
   };
-  f.apply = (plan) => {
-    for (const [k, b] of finalBlocks(plan)) {
-      over.set(k, b.id);
-      const [x, y, z] = k.split(",").map(Number);
-      if (nkey && inRect(rect, x, z)) fast.set(nkey(x, y, z), b.id);
-      let level = byY.get(y);
-      if (!level) byY.set(y, level = new Map());
-      level.set(`${x},${z}`, [x, z, b.id]);
-    }
+  const put = (k, b, nk) => {
+    over.set(k, b.id);
+    const [x, y, z] = k.split(",").map(Number);
+    if (nkey && inRect(rect, x, z)) fast.set(nkey(x, y, z), b.id);
+    let level = byY.get(y);
+    if (!level) byY.set(y, level = new Map());
+    level.set(`${x},${z}`, [x, z, b.id]);
+  };
+  f.apply = (plan) => { for (const [k, b] of finalBlocks(plan)) put(k, b); };
+  f.applyGen = function* (plan) { // the same, a yield after every 32 cells (a plan is up to thousands of blocks)
+    const fb = yield* finalBlocksGen(plan);
+    let n = 0;
+    for (const [k, b] of fb) { put(k, b); if (++n % 32 === 0) yield "apply"; }
   };
   // the base layer with this overlay's writes at height y taken out or added, x then z like a plain loop over the rect
   if (at.layer) f.layer = function* (y, ids, r) {
@@ -192,13 +219,13 @@ export function* planGen(at0, markers, opts = {}) {
         const r = yield* planMergeGen(at, m);
         if (!r.plan) { log.push(`merge ${m.run[0][0]},${m.run[0][1]} (${m.run.length}, gap ${m.g}): ${r.error}`); continue; }
         if (openWalk(at, r.plan.A, r.plan.B, MERGE.minNet - 1)) { log.push(`merge ${m.run[0][0]},${m.run[0][1]}: decks already joined by a short walk`); continue; }
-        at.apply(r.plan);
+        yield* at.applyGen(r.plan);
         merges.push({ kind: "merge", A: r.plan.A, B: r.plan.B, plan: r.plan, len: m.span[1] - m.span[0] + 1, gap: m.g });
       }
     }
   }
-  const startsOf = () => startsFromMarkers(at, markers);
-  let cands = enumerate(at, startsOf());
+  const startsOf = function* () { return yield* startsFromMarkersGen(at, markers); };
+  let cands = yield* enumerateGen(at, yield* startsOf());
   const nRaw = cands.length, tried = new Set();
   for (let round = 0; round < o.budget + 6 && picks.length < o.budget; round++) {
     const scored = (yield* scoreGen(at, cands, o)).filter((c) => !tried.has(c.kind + pairKey(c.A, c.B)));
@@ -213,13 +240,13 @@ export function* planGen(at0, markers, opts = {}) {
       yield "realize";
       const r = yield* realizeGen(at, c);
       if (!r.plan) { log.push(`${c.kind} ${c.A.x},${c.A.z}->${c.B.x},${c.B.z}: ${r.error}${r.blocked ? ` (${r.blocked[0].block} at ${r.blocked[0].x},${r.blocked[0].y},${r.blocked[0].z})` : ""}`); continue; }
-      at.apply(r.plan);
+      yield* at.applyGen(r.plan);
       picks.push({ kind: c.kind, A: c.A, B: c.B, plan: r.plan, dnet: c.dnet, len: c.len, value: Math.round(c.value) });
       done = true; break;
     }
     if (!done) break;
     yield "pick";
-    cands = enumerate(at, startsOf()); // the network and the rims changed
+    cands = yield* enumerateGen(at, yield* startsOf()); // the network and the rims changed
   }
   // repairs last, on the finished network (village_repair.js: the rope fit); opts.repairs === false turns them off
   const repairs = yield* repairGen(at, markers, { ...o, log });

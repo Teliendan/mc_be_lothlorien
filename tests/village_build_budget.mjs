@@ -16,7 +16,7 @@ import { finalBlocks } from "../lothlorien_bp/scripts/village_loop.js";
 // query, <= 8 entity removes, getBlocks volumes <= 64 x 64 x 1, fillBlocks volumes <= 16 x 16 x 64.
 const TARGET = { getBlock: 128, set: 16, structure: 1, spawn: 1, entityQuery: 1, remove: 8, layer: 64 * 64, fill: 16 * 16 * 64 };
 // TEMPORARY limits: the worst values of the code before the fixes (each fix commit lowers its entry; the last one deletes this object).
-const TEMPORARY = { getBlock: 28000, set: 32 };
+const TEMPORARY = {};
 const LIMIT = process.env.BUDGET_TARGET ? TARGET : { ...TARGET, ...TEMPORARY };
 const CASES = [...SEEDS.map((s) => ({ seed: s, fixture: "flat" })), { seed: 3, fixture: "valley" }, { seed: 12, fixture: "valley" }, { seed: 7, fixture: "lake" }, { seed: 15, fixture: "lake" }];
 const BASELINE = new URL("./fixtures/village_build_baseline.json", import.meta.url);

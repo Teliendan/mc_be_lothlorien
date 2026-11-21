@@ -16,7 +16,7 @@
 // leaf carpets, ferns, golden ferns, elanor, niphredil, wildflowers, a few firefly bushes and small moss patches. Blobs (a jittered grid, nearest point wins)
 // pick a theme each, so the floor reads as patches and drifts, not confetti; flowers lie near the trunk feet, litter and ferns farther out; the central tree
 // (the one nearest the rope) gets the widest and densest disc. Pure and deterministic (hash of cell and village seed). Not verified in game.
-import { hullOf, growRect, drive, layerCells } from "./village_geom.js";
+import { hullOf, growRect, drive, layerCells, pace } from "./village_geom.js";
 import { FENCE_IDS, LINKS, POST_IDS } from "./rail_mender_rules.js";
 
 export const ROPE_ID = "lothlorien:elven_rope_hanging";
@@ -93,9 +93,10 @@ export function findPillar(at, m) {
   return null;
 }
 // The first terrain surface cell (isGround) of a column, scanning down from y0: -> { y } | { error } (unloaded) | { none: true } (no ground within reach)
-function surfaceBelow(at, x, z, y0) {
+function* surfaceBelowGen(at, x, z, y0, due) {
   for (let y = y0; y > y0 - REPAIR.flareScan; y--) {
     const n = at(x, y, z);
+    if (due()) yield "flare";
     if (n === undefined) return { error: `unloaded cell at ${x},${y},${z}` };
     if (isGround(n) || WET(n)) return { y, wet: WET(n) };
   }
@@ -105,12 +106,13 @@ function surfaceBelow(at, x, z, y0) {
 const hash = (x, z, i) => { let h = (Math.imul(x, 73856093) ^ Math.imul(z, 19349663) ^ Math.imul(i + 1, 83492791)) >>> 0; h = Math.imul(h ^ (h >>> 13), 0x5bd1e995) >>> 0; return (h ^ (h >>> 15)) >>> 0; };
 
 // The roots of one pillar. -> { blocks: [{ x, y, z, id, states }], roots, x, z } | { error } | { skip: reason }
-export function planFlare(at, pillar) {
-  const { x: cx, z: cz, y: deck } = pillar;
+export const planFlare = (at, pillar) => drive(planFlareGen(at, pillar));
+export function* planFlareGen(at, pillar) {
+  const { x: cx, z: cz, y: deck } = pillar, due = pace(at);
   const sides = [];
   for (let i = 0; i < 4; i++) {
     const [dx, dz] = OFFSETS[i], sx = cx + dx * 2, sz = cz + dz * 2;
-    const g = surfaceBelow(at, sx, sz, deck - 2);
+    const g = yield* surfaceBelowGen(at, sx, sz, deck - 2, due);
     if (g.error) return { error: g.error };
     if (g.none) return { skip: "no ground under the pillar within reach" };
     if (g.wet) { sides.push(null); continue; }
@@ -140,7 +142,7 @@ export function planFlare(at, pillar) {
     const face = s.dx ? "east" : "south", put = (x, y, z) => blocks.push({ x, y, z, id: "lothlorien:mallorn_log", states: { "minecraft:block_face": face } });
     put(s.sx, y1, s.sz);
     if (hash(cx, cz, 9 + i) % 2) { // a second cell further out, on the ground of its own column when that is within a step of the first
-      const tx = s.sx + s.dx, tz = s.sz + s.dz, g2 = surfaceBelow(at, tx, tz, y1 + REPAIR.flareStep + 1);
+      const tx = s.sx + s.dx, tz = s.sz + s.dz, g2 = yield* surfaceBelowGen(at, tx, tz, y1 + REPAIR.flareStep + 1, due);
       if (!g2.error && !g2.none && !g2.wet && Math.abs(g2.y + 1 - y1) <= REPAIR.flareStep && freeForRoot(at(tx, g2.y + 1, tz))) put(tx, g2.y + 1, tz);
     }
     roots++;
@@ -152,8 +154,9 @@ export function planFlare(at, pillar) {
 // not know the real ground, so the leaves of the pillar's own ring (cells within 3 of the pillar axis, i.e. 2 of its outer faces) from ground + 1 to ground +
 // REPAIR.PILLAR_LEAF_CLEAR become air. A twig (a log component of the ring with more than one level, no root: roots lie on one level) whose top is within one
 // block above the band loses its tuft, so it is removed whole, with the leaves within 2 of it (in the band). -> { blocks, leaves, twigs } | { error }
-export function planPillarClear(at, pillar, ground) {
-  const { x: cx, z: cz } = pillar, top = ground + REPAIR.PILLAR_LEAF_CLEAR, blocks = [], k = (x, y, z) => `${x},${y},${z}`;
+export const planPillarClear = (at, pillar, ground) => drive(planPillarClearGen(at, pillar, ground));
+export function* planPillarClearGen(at, pillar, ground) {
+  const due = pace(at), { x: cx, z: cz } = pillar, top = ground + REPAIR.PILLAR_LEAF_CLEAR, blocks = [], k = (x, y, z) => `${x},${y},${z}`;
   const cleared = new Set(), air = (x, y, z) => { if (cleared.has(k(x, y, z))) return; cleared.add(k(x, y, z)); blocks.push({ x, y, z, id: "minecraft:air", states: {} }); };
   const logs = new Map();
   let leaves = 0, twigs = 0;
@@ -164,6 +167,7 @@ export function planPillarClear(at, pillar, ground) {
       if (n === undefined) return { error: `unloaded cell at ${x},${y},${z}` };
       if (n === LEAF_ID && y <= top) { air(x, y, z); leaves++; } else if (isLog(n)) logs.set(k(x, y, z), [x, y, z]);
     }
+    if (due()) yield "pillarClear";
   }
   const seen = new Set();
   for (const [key0, start] of logs) {
@@ -182,6 +186,7 @@ export function planPillarClear(at, pillar, ground) {
     if (Math.max(...ys) > top + 1 || Math.min(...ys) === Math.max(...ys)) continue; // a tip above the band keeps its tuft; one level = a root
     twigs++;
     for (const [x, y, z] of comp) {
+      if (due()) yield "pillarClear";
       air(x, y, z);
       for (let a = -2; a <= 2; a++) for (let b = -2; b <= 2; b++) for (let c = -2; c <= 2; c++) {
         const ly = y + c;
@@ -204,7 +209,9 @@ export function planPillarClear(at, pillar, ground) {
 // stays as it is; no ground down to the world floor (REPAIR.rootReach) leaves the whole tree as it is.
 // cells: [[x, z]] log cells of the trunk at layer y0. -> { blocks, columns, roots, drop, wet, x, z } | { error } | { skip: reason }
 const ROOT_FREE = (n) => isAir(n) || WET(n) || SOFT.test(n ?? "") || /leaves/.test(n ?? "");
-export function planRootDown(at, cells, y0, o = {}) {
+export const planRootDown = (at, cells, y0, o = {}) => drive(planRootDownGen(at, cells, y0, o));
+export function* planRootDownGen(at, cells, y0, o = {}) {
+  const due = pace(at); // a deep valley costs more steps, not a longer step
   const cx = cells.reduce((a, c) => a + c[0], 0) / cells.length, cz = cells.reduce((a, c) => a + c[1], 0) / cells.length;
   const half = Math.max(...cells.map(([x, z]) => Math.max(Math.abs(x - cx), Math.abs(z - cz)))) + 1; // the collar: one ring wider than the trunk
   // the lowest log of the trunk itself
@@ -212,6 +219,7 @@ export function planRootDown(at, cells, y0, o = {}) {
   for (const [x, z] of cells) {
     let y = y0;
     while (y > y0 - REPAIR.rootScan && isLog(at(x, y - 1, z))) y--;
+    if (due()) yield "rootDown";
     if (at(x, y - 1, z) === undefined) return { error: `unloaded cell at ${x},${y - 1},${z}` };
     bottom = Math.min(bottom, y);
   }
@@ -220,6 +228,7 @@ export function planRootDown(at, cells, y0, o = {}) {
   for (let y = bottom; y <= y0; y++) {
     const todo = cells.filter(([x, z]) => isLog(at(x, y, z))), seen = new Set(todo.map(([x, z]) => K(x, z)));
     while (todo.length) {
+      if (due()) yield "rootDown";
       const [x, z] = todo.pop();
       if (!foot.has(K(x, z))) foot.set(K(x, z), [x, z]);
       for (const [a, b] of OFFSETS) {
@@ -238,6 +247,7 @@ export function planRootDown(at, cells, y0, o = {}) {
     let g = null, water = null, blocked = false;
     for (let q = y - 1; q >= y - 1 - REPAIR.rootReach; q--) {
       const n = at(x, q, z);
+      if (due()) yield "rootDown";
       if (n === undefined) return { error: `unloaded cell at ${x},${q},${z}` };
       if (isGround(n)) { g = q; break; }
       if (!ROOT_FREE(n)) { blocked = true; break; }
@@ -255,10 +265,11 @@ export function planRootDown(at, cells, y0, o = {}) {
   let roots = 0;
   if (o.roots !== false) {
     const inFoot = (x, z) => foot.has(K(x, z)), byCol = new Map(cols.map((c) => [K(c.x, c.z), c])), taken = new Set();
-    const groundOf = (x, z, from) => { // -> { g, water } | null (unloaded, blocked or too deep)
+    const groundOf = function* (x, z, from) { // -> { g, water } | null (unloaded, blocked or too deep)
       let water = null;
       for (let q = from; q >= from - REPAIR.rootReach; q--) {
         const n = at(x, q, z);
+        if (due()) yield "rootDown";
         if (n === undefined || (!isGround(n) && !ROOT_FREE(n))) return null;
         if (isGround(n)) return { g: q, water };
         if (water === null && WET(n)) water = q;
@@ -279,7 +290,7 @@ export function planRootDown(at, cells, y0, o = {}) {
             const x = c.x + dx * k, z = c.z + dz * k, y = top - (k - 1);
             for (const yy of [y, y - 1]) { const n = at(x, yy, z); if (n === undefined || !ROOT_FREE(n)) ok = false; else plan.push([x, yy, z, "up"]); }
             if (k === len + 1 && ok) {
-              const gr = groundOf(x, z, y - 2);
+              const gr = yield* groundOf(x, z, y - 2);
               if (!gr || y - 2 - gr.g > REPAIR.rootReach) ok = false;
               else for (let yy = y - 2; yy > gr.g; yy--) plan.push([x, yy, z, "up"]);
             }
@@ -288,7 +299,7 @@ export function planRootDown(at, cells, y0, o = {}) {
         } else { // a lying root on the ground, following it within a step
           let y = c.g + 1;
           for (let k = 1; k <= len; k++) {
-            const x = c.x + dx * k, z = c.z + dz * k, gr = groundOf(x, z, y + REPAIR.flareStep);
+            const x = c.x + dx * k, z = c.z + dz * k, gr = yield* groundOf(x, z, y + REPAIR.flareStep);
             if (!gr || gr.water !== null || Math.abs(gr.g + 1 - y) > REPAIR.flareStep) break;
             y = gr.g + 1;
             plan.push([x, y, z, face]);
@@ -327,6 +338,7 @@ export function* findTrunksGen(at, rect, y) {
   const seen = new Set(), out = [];
   for (const [k0, s] of logs) {
     if (seen.has(k0)) continue;
+    yield "trunks";
     const comp = [], todo = [s];
     seen.add(k0);
     while (todo.length) {
@@ -357,10 +369,11 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
   const rOf = (t) => t === central ? FLOOR.rCentral : FLOOR.rTree, pOf = (t) => t === central ? FLOOR.pCentral : FLOOR.pTree, r0Of = (t) => Math.max(1.5, t.r);
   const S = (seed | 0) * 7919;
   // candidate cells: the disc round every trunk; a cell belongs to the trunk it is closest to (in disc fractions)
-  const cells = new Map();
+  const cells = new Map(), due = pace(at);
   for (const t of trunks) {
     const R = rOf(t), r0 = r0Of(t);
     for (let x = Math.floor(t.x - R); x <= Math.ceil(t.x + R); x++) for (let z = Math.floor(t.z - R); z <= Math.ceil(t.z + R); z++) {
+      if (z === Math.floor(t.z - R) && (x - Math.floor(t.x - R)) % 6 === 5) yield "forestFloor"; // every few rows of the disc
       const d = Math.hypot(x - t.x, z - t.z);
       if (d < r0 + 0.5 || d > R || x < rect.x0 || x > rect.x1 || z < rect.z0 || z > rect.z1) continue;
       if (feet.some((f) => Math.abs(f.x - x) <= FLOOR.clear && Math.abs(f.z - z) <= FLOOR.clear)) continue;
@@ -372,21 +385,22 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
   // the ground of each column (memoised): { gy, id } | null. A neighbour's ground height is the hint for the next scan.
   const ground = new Map();
   let hint = null;
-  const scan = (c, y0, stop) => {
+  const scan = function* (c, y0, stop) {
     for (let y = y0; y > stop; y--) {
       const n = at(c.x, y, c.z);
       out.reads++;
+      if (due()) yield "forestFloor"; // a deep valley costs more steps, not a longer step
       if (n === undefined) return null; // unloaded: no block
       if (SEE_THROUGH(n)) continue;
       return FLOOR_GROUND.test(n) ? { gy: y, id: n } : null;
     }
     return null;
   };
-  const groundOf = (c) => {
+  const groundOf = function* (c) {
     const k = `${c.x},${c.z}`;
     if (ground.has(k)) return ground.get(k);
     const start = hint === null ? undefined : at(c.x, hint + 4, c.z);
-    const res = start !== undefined && SEE_THROUGH(start) ? scan(c, hint + 4, hint - REPAIR.flareScan) : scan(c, o.y0, o.y0 - REPAIR.flareScan);
+    const res = start !== undefined && SEE_THROUGH(start) ? yield* scan(c, hint + 4, hint - REPAIR.flareScan) : yield* scan(c, o.y0, o.y0 - REPAIR.flareScan);
     if (res) hint = res.gy;
     ground.set(k, res);
     return res;
@@ -432,8 +446,8 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
   };
   let n = 0;
   for (const c of list) {
-    if (++n % 64 === 0) yield "forestFloor";
-    const g = groundOf(c);
+    if (++n % 16 === 0) yield "forestFloor";
+    const g = yield* groundOf(c);
     if (!g || !free(c, g)) { out.skipped++; continue; }
     const p = FLOOR.pEdge + (pOf(c.trunk) - FLOOR.pEdge) * (1 - c.t) ** 1.7, { b, d: bd } = blobAt(c.x, c.z);
     if (b.theme === "bare") continue;
@@ -449,14 +463,14 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
     place(c, g, make(c, g, kind));
   }
   // fireflies (2-4 per tree) and small moss patches (2-4 cells): explicit, over whatever the blobs chose
-  const eligible = (x, z) => { const c = cells.get(`${x},${z}`); if (!c) return null; const g = groundOf(c); return g && free(c, g) ? { c, g } : null; };
+  const eligible = function* (x, z) { const c = cells.get(`${x},${z}`); if (!c) return null; const g = yield* groundOf(c); return g && free(c, g) ? { c, g } : null; };
   const isBush = (e) => put.get(`${e.c.x},${e.c.z}`)?.id === "minecraft:firefly_bush";
-  const ring = (t, R, lo, hi, i, k) => { const a = U(i, k, S + 21) * Math.PI * 2, d = t.r + lo + (R - t.r - lo - 1) * (hi * U(i, k, S + 22)); return eligible(Math.round(t.x + Math.cos(a) * d), Math.round(t.z + Math.sin(a) * d)); };
+  const ring = function* (t, R, lo, hi, i, k) { const a = U(i, k, S + 21) * Math.PI * 2, d = t.r + lo + (R - t.r - lo - 1) * (hi * U(i, k, S + 22)); return yield* eligible(Math.round(t.x + Math.cos(a) * d), Math.round(t.z + Math.sin(a) * d)); };
   for (const [ti, t] of trunks.entries()) {
     yield "floorTrunk";
     const R = rOf(t), h = hash(Math.round(t.x), Math.round(t.z), S + 20), want = t === central ? FLOOR.fireflies[1] + 1 : FLOOR.fireflies[0] + (h % (FLOOR.fireflies[1] - FLOOR.fireflies[0] + 1));
     for (let i = 0, got = 0; i < 60 && got < want; i++) {
-      const e = ring(t, R, 2.5, 1, ti, i);
+      const e = yield* ring(t, R, 2.5, 1, ti, i);
       if (!e || isBush(e)) continue;
       place(e.c, e.g, { id: "minecraft:firefly_bush", states: {} }); got++;
     }
@@ -464,11 +478,11 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
     for (let m = 0; m < patches; m++) {
       const size = 2 + Math.floor(U(ti, m, S + 24) * 3);
       let first = null;
-      for (let i = 0; i < 30 && !first; i++) { const e = ring(t, R, 3, 1, ti, 100 + m * 31 + i); if (e && !isBush(e)) first = e; }
+      for (let i = 0; i < 30 && !first; i++) { const e = yield* ring(t, R, 3, 1, ti, 100 + m * 31 + i); if (e && !isBush(e)) first = e; }
       if (!first) continue;
       const patch = [first];
       for (let i = 0; i < 14 && patch.length < size; i++) {
-        const from = patch[Math.floor(U(ti, m * 17 + i, S + 27) * patch.length)], [dx, dz] = OFFSETS[Math.floor(U(ti, m * 17 + i, S + 28) * 4)], e = eligible(from.c.x + dx, from.c.z + dz);
+        const from = patch[Math.floor(U(ti, m * 17 + i, S + 27) * patch.length)], [dx, dz] = OFFSETS[Math.floor(U(ti, m * 17 + i, S + 28) * 4)], e = yield* eligible(from.c.x + dx, from.c.z + dz);
         if (e && !isBush(e) && !patch.some((q) => q.c === e.c)) patch.push(e);
       }
       for (const e of patch) place(e.c, e.g, { id: "minecraft:moss_carpet", states: {} });
@@ -504,7 +518,8 @@ export function* closeUnusedExitsGen(at, rect, levels) {
       }
     };
     const found = yield* layerCells(at, y + 1, [...FENCE_IDS, ...POST_IDS], rect);
-    for (const [x, z] of found) note(x, z);
+    let noted = 0;
+    for (const [x, z] of found) { note(x, z); if (++noted % 64 === 0) yield "closeExits"; }
     for (let x = rect.x0 + 2; x <= rect.x1 - 2; x++) {
     yield "closeExits";
     const column = centres.get(x);
@@ -527,7 +542,7 @@ export function* closeUnusedExitsGen(at, rect, levels) {
         const rails = [-1,0,1].map(s => ({x:x+px*s,y:y+1,z:z+pz*s}));
         const states = Object.fromEntries(LINKS.map(l => [l.state, l.dx * px + l.dz * pz !== 0]));
         const plan = {kind:"railcap",x,y,z,cells:[],rails,lanterns:[],blocks:rails.map(p => ({...p,id:FENCE_IDS[0],states}))};
-        out.push(plan); at.apply(plan); for (const p of rails) note(p.x, p.z); break;
+        out.push(plan); yield* at.applyGen(plan); for (const p of rails) note(p.x, p.z); break;
       }
     }
     }
@@ -541,17 +556,18 @@ export function* repairGen(at, markers, o = {}) {
   const rect = o.rect ?? growRect(hullOf(markers), 24), y = Math.min(...markers.map((m) => m[1])), out = [];
   out.push(...yield* closeUnusedExitsGen(at, rect, markers.map(m => m[1])));
   const ropes = yield* findRopesGen(at, rect, y);
-  const columns = ropes.filter((r) => at(r.x, r.y + 1, r.z) !== ROPE_ID); // the top piece of each column only (no rope above it)
+  const columns = [], due = pace(at); // the top piece of each column only (no rope above it)
+  for (const r of ropes) { if (at(r.x, r.y + 1, r.z) !== ROPE_ID) columns.push(r); if (due()) yield "ropeFit"; }
   const feet = columns.map((r) => ({ x: r.x, z: r.z }));
   // root down first: the rope fit, the flares and the floor then read the ground the trunks stand on
   const trunks = yield* findTrunksGen(at, rect, y - 1); // not `for (... of yield* ...)`: QuickJS cannot compile it (stack underflow)
   for (const t of trunks) {
     yield "rootDown";
-    const rd = planRootDown(at, t.cells, y - 1);
+    const rd = yield* planRootDownGen(at, t.cells, y - 1);
     if (rd.error || rd.skip) { o.log?.push(`root down ${Math.round(t.x)},${Math.round(t.z)}: ${rd.error ?? `skipped, ${rd.skip}`}`); continue; }
     if (!rd.blocks.length) continue;
     const plan = { kind: "rootdown", x: Math.round(rd.x), z: Math.round(rd.z), columns: rd.columns, roots: rd.roots, drop: rd.drop, wet: rd.wet, buried: 0, hung: 0, cells: [], rails: [], lanterns: [], blocks: rd.blocks };
-    at.apply(plan);
+    yield* at.applyGen(plan);
     out.push(plan);
   }
   for (const top of columns) {
@@ -560,7 +576,7 @@ export function* repairGen(at, markers, o = {}) {
     if (fit.error) { o.log?.push(`rope ${top.x},${top.z}: ${fit.error}`); continue; }
     if (!fit.blocks.length) continue;
     const plan = { kind: "rope", x: top.x, z: top.z, buried: fit.buried, hung: fit.hung, cells: [], rails: [], lanterns: [], blocks: fit.blocks };
-    at.apply(plan);
+    yield* at.applyGen(plan);
     out.push(plan);
   }
   // root flares: every pillar of a balcony / lookout (found once from the markers), at the real ground
@@ -569,30 +585,35 @@ export function* repairGen(at, markers, o = {}) {
     yield "pillar";
     const pillar = findPillar(at, m);
     if (!pillar || seen.has(`${pillar.x},${pillar.z}`)) continue;
+    yield "pillar";
     seen.add(`${pillar.x},${pillar.z}`);
-    const rd = planRootDown(at, [[0, 0], ...OFFSETS].map(([a, b]) => [pillar.x + a, pillar.z + b]), pillar.y - 1, { roots: false }); // the flare roots it
+    const rd = yield* planRootDownGen(at, [[0, 0], ...OFFSETS].map(([a, b]) => [pillar.x + a, pillar.z + b]), pillar.y - 1, { roots: false }); // the flare roots it
     if (rd.error || rd.skip) o.log?.push(`root down ${pillar.x},${pillar.z}: ${rd.error ?? `skipped, ${rd.skip}`}`);
     else if (rd.blocks.length) {
       const plan = { kind: "rootdown", x: pillar.x, z: pillar.z, columns: rd.columns, roots: 0, drop: rd.drop, wet: rd.wet, buried: 0, hung: 0, cells: [], rails: [], lanterns: [], blocks: rd.blocks };
-      at.apply(plan);
+      yield* at.applyGen(plan);
       out.push(plan);
     }
-    let fl = planFlare(at, pillar);
+    yield "pillar";
+    let fl = yield* planFlareGen(at, pillar);
     if (fl.ground !== undefined) { // bare foot first (the leaves would block the roots), then the roots on the cleared ground
-      const cl = planPillarClear(at, pillar, fl.ground);
+      yield "pillar";
+      const cl = yield* planPillarClearGen(at, pillar, fl.ground);
       if (cl.error) o.log?.push(`pillar clear ${pillar.x},${pillar.z}: ${cl.error}`);
       else if (cl.blocks.length) {
         const cp = { kind: "pillarclear", x: pillar.x, z: pillar.z, leaves: cl.leaves, twigs: cl.twigs, roots: 0, buried: 0, hung: 0, cells: [], rails: [], lanterns: [], blocks: cl.blocks };
-        at.apply(cp);
+        yield* at.applyGen(cp);
         out.push(cp);
-        fl = planFlare(at, pillar);
+        yield "pillar";
+        fl = yield* planFlareGen(at, pillar);
       }
     }
     if (fl.error) { o.log?.push(`flare ${pillar.x},${pillar.z}: ${fl.error}`); continue; }
     if (fl.skip) { o.log?.push(`flare ${pillar.x},${pillar.z}: skipped, ${fl.skip}`); continue; }
     if (!fl.blocks.length) continue;
+    yield "pillar";
     const plan = { kind: "flare", x: pillar.x, z: pillar.z, roots: fl.roots, buried: 0, hung: 0, cells: [], rails: [], lanterns: [], blocks: fl.blocks };
-    at.apply(plan);
+    yield* at.applyGen(plan);
     out.push(plan);
   }
   // forest floor (7.8): the trunks of the trees (a layer scan just under the lowest deck), the real ground round them; o.floor === false turns it off
@@ -603,7 +624,7 @@ export function* repairGen(at, markers, o = {}) {
       const seed = hash(rect.x0 * 31 + rect.x1, rect.z0 * 31 + rect.z1, 77) >>> 4, fl = yield* planForestFloorGen(at, rect, trunks, feet, seed, { y0: y - 2 });
       if (fl.blocks.length) {
         const plan = { kind: "floor", x: Math.round(trunks[0].x), z: Math.round(trunks[0].z), trunks: trunks.length, counts: fl.counts, buried: 0, hung: 0, cells: [], rails: [], lanterns: [], blocks: fl.blocks };
-        at.apply(plan);
+        yield* at.applyGen(plan);
         out.push(plan);
       }
     }
