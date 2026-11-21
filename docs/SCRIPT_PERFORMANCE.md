@@ -53,18 +53,20 @@ pattern revealed near players); try the leaf render method (`TECHNICAL_NOTES.md`
 owner's look pending). Action bar left as it is: vanilla `hud_screen.json` fades it with a 3 s `in_expo` alpha
 animation and no separate hold time, so a 2 s resend could show a dip; only an in-game measurement would justify it.
 
-0.8.4 DIAG (2026-11-10, rebuilt from commit `c38aa3e`: leaf flicker fix included; the skin pack is added by `git archive <commit> lothlorien_skins` into `out/` before `package.py`): tick gaps counted from 150 / 300 / 700 ms,
+**How to build a DIAG build** (any commit; tooling in `tools/diag/`, output in scratch `temp/lothlorien-diag/`): `.\mods diag lothlorien <version> [--commit REV] [--deploy]`. It archives the commit (default HEAD, refused when the tree is dirty), wraps every script with `diag_wrap.js`, loads the result against the mock server (must print `ASSERTS OK`), writes `temp/lothlorien-diag/lothlorien-<version>-DIAG.mcaddon` and with `--deploy` copies it into the development packs. The version must exceed the installed one (same UUIDs); the release version must exceed every DIAG version. The raw verifier on `out/` shows exception-evidence path errors: expected.
+
+0.8.4 DIAG (2026-11-10, rebuilt from commit `c38aa3e`: leaf flicker fix included): tick gaps counted from 150 / 300 / 700 ms,
 an immediate chat line per gap (at most 5 a minute) and **a chat summary every minute** (longest gap, gap counts,
 script ms, dew flips, spawned / removed, entities within 64 blocks, time of day). A freeze the tester sees in a minute
-whose summary shows no long gap was client-side. Build as before with `0.8.4`; Czech tester steps (scratch). Control
+whose summary shows no long gap was client-side. Czech tester steps (scratch). Control
 add-on for a new vanilla world (a separate scratch pack, not in git; Czech tester steps): the same monitor and nothing else, to show the tablet's cost of any script add-on. Offline load
 tests pass; neither is game-tested.
 
-0.8.5 DIAG (2026-11-17, built from commit `1c9ca1a` with the same scratch scripts, `node temp/lothlorien-diag/make_diag.mjs 0.8.5 1c9ca1a`, skins added by `git archive`, then `package.py 0.8.5`): the same monitor over the whole 2026-11-11/12 audit work, for the owner's combined game check (also the LM-11 spawn/removal counts). Mock load test passes. The 0.8.6 build below supersedes it as the threshold.
+0.8.5 DIAG (2026-11-17, commit `1c9ca1a`): the same monitor over the whole 2026-11-11/12 audit work, for the owner's combined game check (also the LM-11 spawn/removal counts). Mock load test passes. The 0.8.6 build below supersedes it as the threshold.
 
-0.8.6 DIAG (2026-11-17, built from commit `6d2247e`: `node temp/lothlorien-diag/make_diag.mjs 0.8.6 6d2247e`, skins by `git archive`, `package.py 0.8.6`): the same monitor over the owner-fix round (re-tests R1-R15 and LM-11 counts). Mock load test passes. Superseded as the threshold by 0.8.7.
+0.8.6 DIAG (2026-11-17, commit `6d2247e`): the same monitor over the owner-fix round (re-tests R1-R15 and LM-11 counts). Mock load test passes. Superseded as the threshold by 0.8.7.
 
-0.8.7 DIAG (2026-11-21, built from commit `791c323`: `node temp/lothlorien-diag/make_diag.mjs 0.8.7 791c323`, skins by `git archive`, `package.py 0.8.7`): adds the village shield clear to the 0.8.6 round (re-test R16: `clear` debug line, stutter on PC and tablet). Mock load test passes. Deployed into the development packs with `.\mods deploy lothlorien --from temp/lothlorien-diag/out` (no .mcaddon import; commits keep it, a plain `.\mods deploy lothlorien` restores). **The release version must now exceed 0.8.7.**
+0.8.7 DIAG (2026-11-21, commit `791c323`): adds the village shield clear to the 0.8.6 round (re-test R16: `clear` debug line, stutter on PC and tablet). Mock load test passes. Deployed into the development packs (no .mcaddon import; commits keep it, a plain `.\mods deploy lothlorien` restores). **The release version must now exceed 0.8.7.**
 
 0.8.4 DIAG results (tester's tablet, six photos sent 2026-11-10, no notes from her; analysed 2026-11-11). Both
 builds load in game. She ran the Control pack **in the same world as Lothlorien**, so there is still no vanilla
