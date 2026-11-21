@@ -1477,7 +1477,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/white_deer.js",
-        "sha256": "4d5a97e61ad1ea15e3f8514161a8609d4eee396299c43f1d31fc4d66b4b5c10d"
+        "sha256": "3f0d482ca62ab23ebeb71b8d294eabdab447c865887e7872256b5821bb8f5b25"
       },
       {
         "path": "lothlorien_bp/scripts/white_deer_rules.js",
@@ -1770,7 +1770,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/rail_mender.js",
-        "sha256": "781da67c3d4348505ad4d276fc816e063ba31d499c7458b14afbe8c066d7a2f6"
+        "sha256": "252a66a9083efcfcb615d92127a9760778e73c05b1186413d8eef56bff41abbd"
       },
       {
         "path": "lothlorien_bp/scripts/rail_mender_rules.js",
@@ -1806,19 +1806,19 @@
       },
       {
         "path": "lothlorien_bp/scripts/village_geom.js",
-        "sha256": "2e68f66b01858c7d1b63dfd98b283888e4bf7f3db782ad9f8e22bcc1f84e93fb"
+        "sha256": "1def9c3bd6fed79fdcc3fe5426b92edf0fce40e33b638d981b4c72658db35a36"
       },
       {
         "path": "lothlorien_bp/scripts/village_loop.js",
-        "sha256": "bd5174cd1cd5f1974b53d837b155b75d6cdd6ba8cdfe1f1098d03a1d2a5723a0"
+        "sha256": "7e3a3714730da2501360de1d72a315e9b39993d56f3010c3569af789d53f997b"
       },
       {
         "path": "lothlorien_bp/scripts/village_planner.js",
-        "sha256": "ae33ca0586f621f2f6438d692396233458771c2e67ae88ce7ea34a1356d89044"
+        "sha256": "3a1fcb1c5fad8bd356c6a9841c8f97947aa1bcc7b6df2964b41df80c97bb9dfd"
       },
       {
         "path": "lothlorien_bp/scripts/village_repair.js",
-        "sha256": "b69cd449440c68a8a75128a20bece2d8482ec8cacfb01716502db6bd7d9e88a0"
+        "sha256": "27502efa46c65f197fc41419b8d9d6cc49befb288dc86749705d2c5f4e655ca1"
       },
       {
         "path": "lothlorien_bp/scripts/warden_replace.js",
@@ -2285,7 +2285,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/village_planner.js",
-        "sha256": "ae33ca0586f621f2f6438d692396233458771c2e67ae88ce7ea34a1356d89044"
+        "sha256": "3a1fcb1c5fad8bd356c6a9841c8f97947aa1bcc7b6df2964b41df80c97bb9dfd"
       }
     ]
   },
@@ -2308,7 +2308,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/village_planner.js",
-        "sha256": "ae33ca0586f621f2f6438d692396233458771c2e67ae88ce7ea34a1356d89044"
+        "sha256": "3a1fcb1c5fad8bd356c6a9841c8f97947aa1bcc7b6df2964b41df80c97bb9dfd"
       }
     ]
   },
