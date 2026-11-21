@@ -192,6 +192,10 @@ test("great nut: unique rare item that plants the sprout; sprout grows like a sa
   const catalog = readJson("../localization/catalog.json");
   assert.match(catalog.packs.lothlorien_rp.entries["lothlorien.message.mallorn.planted"].source, /40 blocks wide and 50 high/);
   assert.ok(readFileSync(new URL("../lothlorien_bp/scripts/main.js", import.meta.url), "utf8").includes('import "./great_mallorn.js"'));
+  // performance rule: the growth job reads at most 128 blocks per step (structure cells and the space check)
+  const per = Number(/const READS_PER_STEP = (\d+);/.exec(src)?.[1]);
+  assert.ok(per > 0 && per <= 128, "READS_PER_STEP <= 128");
+  assert.ok(!/%\s*(400|SIZE)/.test(src) && (src.match(/% READS_PER_STEP === 0\) yield/g) ?? []).length === 2, "both read loops yield by READS_PER_STEP");
 });
 
 test("giant structures: worldgen flet giants hold a chest, plain giants none; no leftover marker blocks", () => {

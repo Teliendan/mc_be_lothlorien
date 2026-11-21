@@ -18,19 +18,23 @@ const toldAt = new Map(); // same key -> tick of the last "blocked" message
 
 
 // The filled cells of a structure, collected in job steps (the box is 40 x 54 x 40).
+// One job step reads at most this many blocks (owner DIAG 2026-11-22: 400 / 2,160 per step gave a 15 ms step).
+const READS_PER_STEP = 128;
+
 function* readCells(id) {
   if (cellsOf.has(id)) return cellsOf.get(id);
   const structure = world.structureManager.get(id);
   if (!structure) return undefined;
   const cells = [];
+  let reads = 0;
   for (let x = 0; x < SIZE; x++) {
     for (let y = 0; y < SIZE_Y; y++) {
       for (let z = 0; z < SIZE; z++) {
         const p = structure.getBlockPermutation({ x, y, z });
         if (p && p.type.id !== "minecraft:structure_void") cells.push({ x, y, z });
+        if (++reads % READS_PER_STEP === 0) yield; // performance rule: <= ~128 native reads per job step
       }
     }
-    yield;
   }
   cellsOf.set(id, cells);
   return cells;
@@ -65,7 +69,7 @@ function* grow(dimension, at) {
       if (sprout?.typeId === SPROUT_ID) tellBlocked(sprout, b);
       return;
     }
-    if (++n % 400 === 0) yield;
+    if (++n % READS_PER_STEP === 0) yield;
   }
   const sprout = dimension.getBlock(at);
   if (sprout?.typeId !== SPROUT_ID || !permutation.matches(sprout.typeId, sprout.permutation.getAllStates()) ||
