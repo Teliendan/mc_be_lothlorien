@@ -19,7 +19,7 @@ Target: tester build on the weekend of 2026-10-24/25.
   `speed_stats.js`, `tick_rate*.js`, `planNearest`, `elfDebug`, `handleTradeEvent`, 22 catalog keys, `diagnostics.mjs`).
   Also removed the landscape probe (two structures, six pools, `structures/lothlorien/landscape_probe/`,
   `build_landscape_probe.mjs`, its test). `verification_exceptions.json` stays in the repo; `mods package`
-  does not exclude it yet (needs `verification_exceptions.json` added to `SKIP_NAMES` in workspace `tools/mods.py`).
+  leaves it out (`SKIP_NAMES` in workspace `tools/mods.py`).
 - [ ] **Feedback retests only.** Owner completed the broad checks on 2026-10-25.
   Accepted results and fixes: `OWNER_CHECKS.md`; remaining focused
   checks: workspace `docs/game-checks.md`. L8 is untested and L9 inconclusive.
