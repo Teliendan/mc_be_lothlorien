@@ -413,6 +413,24 @@ await scenario("loop_marker.js: sliced() runs many inner steps per engine step, 
   for (const re of [/\(debug\) discovery lothlorien_village_-?\d+_-?\d+_\d+_1: \d+ chunks in \d+ ms/, /\(debug\) settle \d+ ms/, /\(debug\) plan\+build \d+ ms wall, \d+ ticks, \d+ inner steps, \d+ ms inside them, \d+ distinct reads, \d+ cells written/, /\(debug\) populate \d+ ms/]) assert.equal(grep(re).length, 1, String(re));
 });
 
+await scenario("loop_marker.js: sliced() records the slowest step's label, the most native reads in a step and the steps over the budget; each slice yields its slowest label", async () => {
+  const mod = await loadScript("loop_marker.js");
+  let t = 0; const now = () => t, stats = { steps: 0, cpu: 0, native: 0 };
+  const work = [["a", 1, 5], ["b", 7, 400], ["c", 2, 0], ["d", 9, 20], ["e", 1, 0]]; // [label of the ending yield, ms, native reads]
+  const gen = (function* () { for (const [label, ms, reads] of work) { t += ms; stats.native += reads; yield label; } t += 1; return "ok"; })();
+  const g = mod.sliced(gen, 5, stats, now), yielded = [];
+  let r;
+  while (!(r = g.next()).done) yielded.push(r.value);
+  assert.equal(r.value, "ok");
+  assert.equal(stats.steps, 6);
+  assert.equal(stats.maxStep, 9); assert.equal(stats.maxLabel, "c>d", "the slowest step is named start>end by its two yield labels");
+  assert.equal(stats.maxReads, 400); assert.equal(stats.maxReadsLabel, "a>b");
+  assert.equal(stats.over, 2, "steps over STEP_BUDGET_MS (3 ms): the 7 and the 9"); assert.deepEqual(stats.overBy, { "a>b": 1, "c>d": 1 });
+  assert.deepEqual(yielded, ["a>b", "c>d"], "a slice (5 ms: a, b | c, d | e, end) yields the label of its slowest step");
+  assert.match(mod.stepSummary(stats), /^slowest step 9 ms \(c>d\), most native reads in one step 400 \(a>b\), steps over 3 ms: 2 \(/);
+  assert.equal(mod.stepSummary({}), "slowest step 0 ms (-), most native reads in one step 0 (-), steps over 3 ms: 0");
+});
+
 await scenario("rail connections: deferred player edits link moss and slabs, clear removed targets, and finish with no timer", async () => {
   const F="lothlorien:mallorn_fence";
   mock.setBlocks((x,y,z)=>y===70 && x===0 && z===0 ? F : "minecraft:air");

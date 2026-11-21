@@ -634,7 +634,7 @@ export function* findMerges(at, y, rect) {
     let n = 0;
     for (const [x, z] of fences) {
       if (mergePair(at, y, d, g, x, z)) ok.add(`${x},${z}`);
-      if (++n % 32 === 0) yield;
+      if (++n % 32 === 0) yield "findMerges";
     }
     for (const k of ok) {
       const [x, z] = k.split(",").map(Number);

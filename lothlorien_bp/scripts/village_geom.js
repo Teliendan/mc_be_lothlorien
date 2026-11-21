@@ -15,7 +15,7 @@ export function* layerCells(at, y, ids, rect) {
   let n = 0;
   for (let x = rect.x0; x <= rect.x1; x++) for (let z = rect.z0; z <= rect.z1; z++) {
     if (want.has(at(x, y, z))) out.push([x, z]);
-    if (++n % 512 === 0) yield;
+    if (++n % 512 === 0) yield "layerScan";
   }
   return out;
 }

@@ -22,13 +22,19 @@ function timed(label, fn) {
     finally { const ms = Date.now() - t0; add(bucket, label, ms); add(minute, label, ms); }
   };
 }
+// A job generator may yield a string label (loop_marker.js sliced() yields the label of its slowest inner step, "from>to"): the call is
+// recorded as `<label>[<yielded label>]`, so a long job call names the planner phase and function that ran.
 function* timedGen(label, gen) {
   let input;
   for (;;) {
     const t0 = Date.now();
     let r;
     try { r = gen.next(input); }
-    finally { const ms = Date.now() - t0; add(bucket, label, ms); add(minute, label, ms); }
+    finally {
+      const ms = Date.now() - t0;
+      const named = r && !r.done && typeof r.value === "string" ? `${label}[${r.value}]` : label;
+      add(bucket, named, ms); add(minute, named, ms);
+    }
     if (r.done) return r.value;
     input = yield r.value;
   }

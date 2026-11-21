@@ -82,9 +82,11 @@ cleanup is `dc1182e`.
 ## Village planner debug lines
 
 With village debug on (`/scriptevent lothlorien:debug`), `loop_marker.js` logs one `planner: (debug)` line per stage: `discovery`, `settle`,
-`plan+build` (wall ms, ticks, inner steps and ms inside them, distinct reads, cells written and changed, slowest single step), `populate`, then
-`clear` (the final shield step: `clear <ms> ms wall, <n> ticks, y <y0>..<y1>, <s> slices (<f> failed), <steps> inner steps, <ms> ms inside them, <c> light_block_0 cells cleared, slowest slice <ms> ms`; the slowest step/slice is one call the job cannot split, so it is the hitch a player feels),
-and the village summary. `clear` is `Dimension.fillBlocks(..., { blockFilter: { includeTypes: ["minecraft:light_block_0"] }, ignoreChunkBoundErrors: true })`
+`plan+build` (wall ms, ticks, inner steps and ms inside them, distinct reads, cells written and changed, then the step fields below), `populate`, then
+`clear` (the final shield step: `clear <ms> ms wall, <n> ticks, y <y0>..<y1>, <s> slices (<f> failed), <steps> inner steps, <ms> ms inside them, <c> light_block_0 cells cleared, <step fields>`; the slowest step/slice is one call the job cannot split, so it is the hitch a player feels),
+and the village summary. The step fields (`stepSummary` in loop_marker.js) read `slowest step <ms> ms (<from>><to>), most native reads in one step <n> (<from>><to>), steps over 3 ms: <n> (<label> <n>, ...)`.
+An inner step is the code between two labelled yields (`yield "realize"`); `<from>><to>` names the two yields around the step (for example `findMerges>scoreGen`).
+The budget is 3 ms and 128 native reads per step (docs/SCRIPT_PERFORMANCE.md). The DIAG build appends the label of a slice's slowest step to the runJob entry (`loop_marker.js runJob[from>to]`). `clear` is `Dimension.fillBlocks(..., { blockFilter: { includeTypes: ["minecraft:light_block_0"] }, ignoreChunkBoundErrors: true })`
 once per 16 x 16 chunk column and Y slice of the village rect (`village_clear.js`), over the marker deck Y range minus 4 / plus 16 clamped to the
 dimension; `<c>` is the sum of the `ListBlockVolume` capacities the calls return. A failing slice logs `planner: shield clear <volume>: <error>` unconditionally and the
 next slice still runs. Expected in the simulator (20 seeds): about 7,900 cells and 108 to 210 slices per village; in game the numbers are not yet measured.

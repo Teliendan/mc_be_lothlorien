@@ -38,7 +38,7 @@ export function walkDist(at, A, limit = 400) {
 export function* walkDistGen(at, A, limit = 400) {
   const dist = new Map([[key(A.x, A.y, A.z), 0]]), q = [[A.x, A.y, A.z]];
   for (let i = 0; i < q.length; i++) {
-    if (i % 32 === 0) yield;
+    if (i % 32 === 0) yield "walkDist";
     const [x, y, z] = q[i], d = dist.get(key(x, y, z));
     if (d >= limit) continue;
     for (const [a, b] of N4) for (const dy of DY) {
@@ -134,7 +134,7 @@ export function* scoreGen(at, cands, opts) {
   const dm = function* (A) { const k = key(A.x, A.y, A.z); if (!maps.has(k)) maps.set(k, yield* walkDistGen(at, A, 500)); return maps.get(k); };
   const list = [];
   for (const c of cands) {
-    yield;
+    yield "scoreGen";
     const got = (yield* dm(c.A)).get(key(c.B.x, c.B.y, c.B.z)); // B is on the same deck level; it is a plank cell
     const dnet = got === undefined ? 999 : got;
     const landing = c.dist > LOOP.maxDist || c.kind === "L" ? 1 : 0;
@@ -187,7 +187,7 @@ export function* planGen(at0, markers, opts = {}) {
       const found = yield* findMerges(at, y, rect);
       for (const m of found) {
         if (merges.length >= o.mergeCap) break;
-        yield;
+        yield "merge";
         const r = planMerge(at, m);
         if (!r.plan) { log.push(`merge ${m.run[0][0]},${m.run[0][1]} (${m.run.length}, gap ${m.g}): ${r.error}`); continue; }
         if (openWalk(at, r.plan.A, r.plan.B, MERGE.minNet - 1)) { log.push(`merge ${m.run[0][0]},${m.run[0][1]}: decks already joined by a short walk`); continue; }
@@ -209,7 +209,7 @@ export function* planGen(at0, markers, opts = {}) {
     for (const c of scored.slice(0, 12)) {
       if (c.value < o.minValue) break;
       tried.add(c.kind + pairKey(c.A, c.B));
-      yield;
+      yield "realize";
       const r = realize(at, c);
       if (!r.plan) { log.push(`${c.kind} ${c.A.x},${c.A.z}->${c.B.x},${c.B.z}: ${r.error}${r.blocked ? ` (${r.blocked[0].block} at ${r.blocked[0].x},${r.blocked[0].y},${r.blocked[0].z})` : ""}`); continue; }
       at.apply(r.plan);
@@ -217,7 +217,7 @@ export function* planGen(at0, markers, opts = {}) {
       done = true; break;
     }
     if (!done) break;
-    yield;
+    yield "pick";
     cands = enumerate(at, startsOf()); // the network and the rims changed
   }
   // repairs last, on the finished network (village_repair.js: the rope fit); opts.repairs === false turns them off

@@ -432,7 +432,7 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
   };
   let n = 0;
   for (const c of list) {
-    if (++n % 64 === 0) yield;
+    if (++n % 64 === 0) yield "forestFloor";
     const g = groundOf(c);
     if (!g || !free(c, g)) { out.skipped++; continue; }
     const p = FLOOR.pEdge + (pOf(c.trunk) - FLOOR.pEdge) * (1 - c.t) ** 1.7, { b, d: bd } = blobAt(c.x, c.z);
@@ -453,7 +453,7 @@ export function* planForestFloorGen(at, rect, trunks, ropeFoot, seed, o = {}) {
   const isBush = (e) => put.get(`${e.c.x},${e.c.z}`)?.id === "minecraft:firefly_bush";
   const ring = (t, R, lo, hi, i, k) => { const a = U(i, k, S + 21) * Math.PI * 2, d = t.r + lo + (R - t.r - lo - 1) * (hi * U(i, k, S + 22)); return eligible(Math.round(t.x + Math.cos(a) * d), Math.round(t.z + Math.sin(a) * d)); };
   for (const [ti, t] of trunks.entries()) {
-    yield;
+    yield "floorTrunk";
     const R = rOf(t), h = hash(Math.round(t.x), Math.round(t.z), S + 20), want = t === central ? FLOOR.fireflies[1] + 1 : FLOOR.fireflies[0] + (h % (FLOOR.fireflies[1] - FLOOR.fireflies[0] + 1));
     for (let i = 0, got = 0; i < 60 && got < want; i++) {
       const e = ring(t, R, 2.5, 1, ti, i);
@@ -506,7 +506,7 @@ export function* closeUnusedExitsGen(at, rect, levels) {
     const found = yield* layerCells(at, y + 1, [...FENCE_IDS, ...POST_IDS], rect);
     for (const [x, z] of found) note(x, z);
     for (let x = rect.x0 + 2; x <= rect.x1 - 2; x++) {
-    yield;
+    yield "closeExits";
     const column = centres.get(x);
     if (!column) continue;
     for (let last = -Infinity;;) {
@@ -546,7 +546,7 @@ export function* repairGen(at, markers, o = {}) {
   // root down first: the rope fit, the flares and the floor then read the ground the trunks stand on
   const trunks = yield* findTrunksGen(at, rect, y - 1); // not `for (... of yield* ...)`: QuickJS cannot compile it (stack underflow)
   for (const t of trunks) {
-    yield;
+    yield "rootDown";
     const rd = planRootDown(at, t.cells, y - 1);
     if (rd.error || rd.skip) { o.log?.push(`root down ${Math.round(t.x)},${Math.round(t.z)}: ${rd.error ?? `skipped, ${rd.skip}`}`); continue; }
     if (!rd.blocks.length) continue;
@@ -555,7 +555,7 @@ export function* repairGen(at, markers, o = {}) {
     out.push(plan);
   }
   for (const top of columns) {
-    yield;
+    yield "ropeFit";
     const fit = planRopeFit(at, top);
     if (fit.error) { o.log?.push(`rope ${top.x},${top.z}: ${fit.error}`); continue; }
     if (!fit.blocks.length) continue;
@@ -566,7 +566,7 @@ export function* repairGen(at, markers, o = {}) {
   // root flares: every pillar of a balcony / lookout (found once from the markers), at the real ground
   const seen = new Set();
   for (const m of markers) {
-    yield;
+    yield "pillar";
     const pillar = findPillar(at, m);
     if (!pillar || seen.has(`${pillar.x},${pillar.z}`)) continue;
     seen.add(`${pillar.x},${pillar.z}`);
