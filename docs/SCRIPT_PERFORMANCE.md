@@ -373,6 +373,27 @@ Worst single call / job step, native calls (mock; before = the code at `a2065fa`
 | Breaking a 384-piece rope (`elven_rope.js`, `dropWholeRope`) | ~770 reads + 383 writes in one call (analytic) | 128 reads, 16 writes per step (28 steps) |
 
 Rope notes: the first step still runs inside the call, so a short rope is gone before it returns (as before); a long rope continues as a job. Pieces are counted when removed, so the several calls an
-explosion makes for one rope never drop a piece twice (stack sizes may split differently, the item total is identical: one item per removed piece). `useRope` (extending a rope) still walks the whole
-rope in one call: not in this change.
+explosion makes for one rope never drop a piece twice (stack sizes may split differently, the item total is identical: one item per removed piece). `useRope` (extending a rope) was still one call here; see the next section.
 Not measured in game: the real step times and the native costs of the raycasts; no DIAG was built for this change.
+
+## Rope extension and per-exploded-block handlers (2026-11-22, offline only, NOT measured in game)
+
+Owner decision 2026-11-22: extending a rope matches rope removal, and no event callback may do work that grows with the number of exploded blocks. Counting mocks in `tests/single_call_budget.mjs`
+(`tree blast` in `tests/leaf_tree_interactions.mjs`); "before" = the code at `e73ffb4`, same worlds. Native calls per call or job step:
+
+| Call | Before | After |
+|---|---|---|
+| Extending a rope (`useRope`, 320-piece rope + 64 items -> 384) | ~520 reads + ~70 writes in one call (analytic; walk to both ends, 2 reads per row, a write per piece) | 128 reads, 15 writes per step (8 steps; first step inline) |
+| Rope explosion, 750 exploded pieces of 10 ropes (`elven_rope.js`) | 2,750 reads + 255 writes over 750 callbacks of one tick (each up to 128 reads + 16 writes inline) | callbacks 0 native calls; one job, worst step 128 reads, 16 writes (33 steps) |
+| Support check, 1,150-block blast (`support_motion.js`, 625 flowers, 3 ropes) | 9,225 reads + 625 removals inside 1,150 callbacks of one tick | callbacks 0 native calls (forgetting the block's own record is bookkeeping); one job, worst step 102 reads, 10 writes (94 steps) |
+| Leaf/log explosion, 1,000 exploded logs, 2,100 leaves (`trees.js`) | callbacks already only noted cells (0 reads); search job already counted | unchanged: worst step 122 reads, 16 writes (123 steps); the search batches cells within 6 blocks of the first, so overlapping blocks share one search |
+
+- Extension: `hangRope` is one counted generator. It walks to both ends (<= 128 reads per step), then reads each row (cell + wall, re-read right before its piece is placed), at most 12 pieces per step, and the
+  hand pays one item per piece at the end of each step (1 write), sound and deed once after the first step (2 writes). A hand that no longer holds rope stops the job; a second use on the same column while a job
+  runs is ignored. Rows chosen are those `planRope` chose (parity test against `planRope`/`columnBounds`); a short rope still extends inside the use call.
+- Rope explosion: `blockExplode` only appends the piece to a list; one job removes them with the same per-piece call as before (`ropeRemoval`) on a shared budget, so the drops are the same
+  list of stacks.
+- Support check: positions are queued, `invalidate` (a map lookup) stays in the callback, `resetAround` runs in the job, <= 96 reads and <= 10 removals before it yields (one position reads about 6-20). A rope that
+  loses its wall inside that job is removed by its own job (`dropWholeRope(..., { defer: true })`), not inline. Cost: support loss next to a blast is handled a few ticks later (not in the explosion tick).
+- Leaves: no code change; the audit's per-block cost was a map write plus one job start.
+Not measured in game: real step times; no DIAG was built.

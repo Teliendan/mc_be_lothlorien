@@ -196,6 +196,34 @@ await scenario('job step budget: a leaf search over a 3,000-leaf crown (search, 
   assert.ok(marked > 100, `${marked} leaves marked`);
   console.log(`     leaf search: ${w.steps} steps, worst step ${w.reads} reads / ${w.writes} writes, ${marked} leaves marked`);
 });
+await scenario('1,000-block blast: the explosion callbacks only note positions (no native read), one search job at a time works through them in steps of <= 128 reads and 16 writes, marking only leaves a single search over all of them finds', e => {
+  // an oak log block (x 0..9, y 64..73, z 0..9) was blown away; 2,100 natural Mallorn leaves hung on it (x 10..30)
+  const origins = [], leaves = [];
+  for (let x = 0; x < 10; x++) for (let y = 0; y < 10; y++) for (let z = 0; z < 10; z++) origins.push({ x, y: 64 + y, z });
+  for (let x = 10; x <= 30; x++) for (let y = 0; y < 10; y++) for (let z = 0; z < 10; z++) { leaves.push({ x, y: 64 + y, z }); e.block(LEAF, { [PERSISTENT]: false }, { x, y: 64 + y, z }); }
+  const classify = (x, y, z) => { const b = e.dim.getBlock({ x, y, z }); return b.typeId === LEAF ? decayRules.DECAYABLE : decayRules.OTHER; };
+  const oracle = new Map(); // the marks one search over every origin would set (the old per-cell calls ended in the same decisions)
+  { const g = decayRules.findDecay(classify, origins, 1e9); let r; while (!(r = g.next()).done); for (const l of r.value) oracle.set(`${l.x},${l.y},${l.z}`, l.frontier ? 2 : 1); }
+  assert.equal(oracle.size, 1000, 'the 10 leaf columns within LEAF_REACH of the blast are decided');
+  const r0 = e.reads(), w0 = e.writeCount();
+  for (const location of origins) e.exploded(location, 'minecraft:oak_log');
+  assert.equal(e.reads() - r0, 0, 'the callbacks read nothing');
+  assert.equal(e.writeCount() - w0, 0, 'the callbacks write nothing');
+  assert.equal(e.jobs.length, 1, 'one search job runs at a time');
+  let worst = { reads: 0, writes: 0, steps: 0 };
+  for (const job of e.jobs) { const w = budgeted(e, job); worst = { reads: Math.max(worst.reads, w.reads), writes: Math.max(worst.writes, w.writes), steps: worst.steps + w.steps }; }
+  assert.ok(worst.reads <= STEP.reads && worst.writes <= STEP.writes, `a step made ${worst.reads} reads / ${worst.writes} writes (limit ${STEP.reads} / ${STEP.writes})`);
+  // This is the per-cell behaviour of before (treePartChanged is unchanged), not the single search: batches decide leaves near
+  // their own origins and mark a leaf next to an undecided one as frontier (2), whose own break starts the next search.
+  // So nothing outside what the single search decides is marked, and the frontier carries the rest on.
+  let marked = 0, frontier = 0;
+  for (const l of leaves) {
+    const v = e.decayOf(l);
+    if (v > 0) { marked++; if (v === 2) frontier++; assert.ok(oracle.has(`${l.x},${l.y},${l.z}`), `leaf ${l.x},${l.y},${l.z} marked without being cut off`); }
+  }
+  assert.ok(marked >= 800 && frontier > 0, `${marked} leaves marked, ${frontier} frontier`);
+  console.log(`     tree blast (1,000 exploded logs, ${marked} leaves marked): ${worst.steps} steps, worst step ${worst.reads} reads / ${worst.writes} writes`);
+});
 await scenario('mixed species bridge and stripped vanilla wood keep a leaf; breaking that wood marks it', e => {
   e.block(LEAF, { [PERSISTENT]: false });
   e.block('minecraft:oak_leaves', {}, at(1)); e.block('lothlorien:mallorn_golden_leaves', {}, at(2));

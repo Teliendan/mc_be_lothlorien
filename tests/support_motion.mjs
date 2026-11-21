@@ -238,7 +238,8 @@ for (const [id, policy] of Object.entries(SUPPORT_POLICIES)) {
 // antlers lose support through a player-break event with no preceding callback.
 {
   const components = new Map(), events = new Map(), tasks = [], cells = new Map(), drops = [];
-  const ropeDrops = [];
+  const ropeDrops = [], jobs = [];
+  const drain = () => { for (const job of jobs.splice(0)) while (!job.next().done); }; // an explosion's support checks run as a job
   const dimension = { id: "cold-adapter", getBlock: p => cells.get(key(p)),
     runCommand(command) { drops.push(command); const [, x, y, z] = command.split(" "); cells.delete(`${x},${y},${z}`); } };
   const put = (p, typeId, states = {}) => cells.set(key(p), { location:p, dimension, typeId,
@@ -246,7 +247,7 @@ for (const [id, policy] of Object.entries(SUPPORT_POLICIES)) {
     permutation:{ getState: name => name in states ? states[name] : name === "minecraft:block_face" ? "up" : undefined } });
   globalThis.__supportAdapter = {
     ...worldUtil, SUPPORT_POLICIES, createSupportMotionService, supportOffset, cornSoilAllowed, CORN_ORIGIN, dropWholeRope(...call) { ropeDrops.push(call); },
-    system: { currentTick:0, runTimeout(fn) { tasks.push(fn); }, beforeEvents:{ startup:{
+    system: { currentTick:0, runTimeout(fn) { tasks.push(fn); }, runJob(gen) { jobs.push(gen); }, beforeEvents:{ startup:{
       subscribe(fn) { fn({blockComponentRegistry:{registerCustomComponent:(id, c) => components.set(id,c)}}); }
     } } },
     world: { afterEvents:new Proxy({}, { get:(_, name) => ({subscribe:fn => events.set(name,fn)}) }) },
@@ -285,21 +286,21 @@ for (const [id, policy] of Object.entries(SUPPORT_POLICIES)) {
     for (const [name, states] of attached) {
       cells.clear(); drops.length = 0; ropeDrops.length = 0;
       put(A, `lothlorien:${name}`, states); put(S, "minecraft:air");
-      events.get(eventName)({ dimension, block: dimension.getBlock(S) });
+      events.get(eventName)({ dimension, block: dimension.getBlock(S) }); drain();
       assert.deepEqual(drops, ["setblock 1 1 0 air destroy"], `${name}: one drop on ${eventName}`);
     }
     // rope on the north face: the wall lies to its south
     const rope = { x: 4, y: 0, z: 4 }, w = wallOffset("north"), wall = { x: 4 + w.x, y: 0, z: 4 + w.z };
     cells.clear(); drops.length = 0; ropeDrops.length = 0;
     put(rope, "lothlorien:elven_rope", { "lothlorien:face": "north" }); put(wall, "minecraft:air");
-    events.get(eventName)({ dimension, block: dimension.getBlock(wall) });
+    events.get(eventName)({ dimension, block: dimension.getBlock(wall) }); drain();
     assert.equal(ropeDrops.length, 1, `rope: one whole-rope drop on ${eventName}`);
     assert.equal(ropeDrops[0][2], "north");
     // an unreadable wall cell is left alone
     cells.clear(); ropeDrops.length = 0;
     put(rope, "lothlorien:elven_rope", { "lothlorien:face": "north" }); put(wall, "minecraft:air");
     const broken = dimension.getBlock(wall); cells.delete(key(wall));
-    events.get(eventName)({ dimension, block: broken });
+    events.get(eventName)({ dimension, block: broken }); drain();
     assert.equal(ropeDrops.length, 0, `rope with an unreadable wall survives ${eventName}`);
   }
 }

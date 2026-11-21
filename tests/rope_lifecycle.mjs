@@ -3,13 +3,14 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import * as rules from "../lothlorien_bp/scripts/elven_rope_rules.js";
 
-const breaks = [], explosions = [];
+const breaks = [], explosions = [], jobs = [];
+const drain = () => { for (const job of jobs.splice(0)) while (!job.next().done); }; // an explosion's rope removal runs as a job
 globalThis.__ropeLifecycle = { ...rules,
   BlockPermutation: {}, EquipmentSlot: {}, GameMode: { Creative: "creative" },
   ItemStack: class { constructor(typeId, amount) { this.typeId = typeId; this.amount = amount; } },
   repeatedUse: () => false,
   readBlock: (dimension, location) => dimension.getBlock(location),
-  system: { beforeEvents: { startup: { subscribe() {} } } },
+  system: { beforeEvents: { startup: { subscribe() {} } }, runJob: (gen) => jobs.push(gen) },
   world: { gameRules: { doTileDrops: true }, afterEvents: { playerBreakBlock: { subscribe(fn) { breaks.push(fn); } },
     blockExplode: { subscribe(fn) { explosions.push(fn); } } } },
 };
@@ -50,6 +51,7 @@ for (const id of ["lothlorien:elven_rope", "lothlorien:elven_rope_hanging"]) {
   {
     const r = rope(id); r.nativePop();
     for (const fn of explosions) fn({ block: r.center, dimension: r.dimension, explodedBlockPermutation: r.before });
+    drain();
     assert.equal(r.count(), 3, `${id}: explosion callback does not repeat native piece loot`);
     assert.ok(r.empty());
   }

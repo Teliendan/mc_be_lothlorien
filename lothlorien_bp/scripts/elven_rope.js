@@ -8,7 +8,7 @@
 //     piece does the same (the shared support service, support_motion.js, handles that).
 //   - Climbing: see startRopeClimbing() and CLIMB in elven_rope_rules.js.
 import { BlockPermutation, EquipmentSlot, GameMode, ItemStack, system, world } from "@minecraft/server";
-import { brakes, CLIMB, columnBounds, dropStacks, isUnsupported, levitationStep, pieceOffset, planRope, wallOffset } from "./elven_rope_rules.js";
+import { brakes, CLIMB, dropStacks, isUnsupported, levitationStep, pieceOffset, wallOffset } from "./elven_rope_rules.js";
 import { repeatedUse } from "./use_guard.js";
 import { noteDeed } from "./deeds.js";
 import { readBlock } from "./deferred_use.js";
@@ -31,89 +31,174 @@ function hasWall(dimension, { x, y, z }, face) {
 
 const heightBounds = (dimension) => ({ minY: dimension.heightRange.min, maxY: dimension.heightRange.max });
 
+// A rope can be 384 pieces long, so every walk over it is counted (owner rule 2026-11-21): a step makes at most ROPE_READS
+// native reads and ROPE_WRITES writes (a piece placed or removed, an item spawn, the hand update, the sound) and then
+// yields. The first step runs at once (a short rope is placed or gone before the call returns, as before); a long one
+// continues as a job. A `budget` ({ reads, writes }) is shared by everything one job does, so a batch of ropes never
+// adds up inside one step.
+const ROPE_READS = 128, ROPE_WRITES = 16, EXTEND_PIECES = 12; // 12 pieces + the hand update + sound and deed <= 16 writes
+const newBudget = () => ({ reads: 0, writes: 0 });
+function runCounted(gen) {
+  try {
+    if (gen.next().done) return;
+    system.runJob((function* () { while (!gen.next().done) yield; })());
+  } catch (e) { gen.return(); throw e; }
+}
+
+// Ropes being extended right now ("dimension|x,z"), so a second use cannot plan over the first one's job.
+const extending = new Set();
+
+// Hangs pieces in column (x, z) on `face`, at most `count`, downwards from `y` first (a new rope) or from the bottom
+// piece (an extension: the walk to both ends comes first), then upwards: the rows the rope plan in elven_rope_rules.js picks, row by row. A row takes
+// a piece when it is air with a wall behind it, read right before the piece is placed. The hand pays one item per piece
+// at the end of each step, and a changed hand stops the rope.
+function* hangRope({ player, dimension, x, y: y0, z, face, extend, count, creative, budget: b, guard }) {
+  try {
+    const { minY, maxY } = heightBounds(dimension);
+    let downFrom = y0, upFrom = y0 + 1;
+    if (extend) {
+      let bottom = y0, top = y0;
+      const piece = (row) => { b.reads++; return faceOf(readBlock(dimension, { x, y: row, z })) === face; };
+      while (bottom - 1 >= minY) {
+        if (b.reads >= ROPE_READS) { yield; b.reads = 0; }
+        if (!piece(bottom - 1)) break;
+        bottom--;
+      }
+      while (top + 1 <= maxY) {
+        if (b.reads >= ROPE_READS) { yield; b.reads = 0; }
+        if (!piece(top + 1)) break;
+        top++;
+      }
+      downFrom = bottom - 1; upFrom = top + 1;
+    }
+    const permutation = BlockPermutation.resolve(ROPE_ID, { [FACE_STATE]: face });
+    const slot = creative ? undefined : player.getComponent("equippable").getEquipmentSlot(EquipmentSlot.Mainhand);
+    let avail = Infinity, placed = 0, stepPlaced = 0, firstRow, announced = false;
+    const refresh = () => {
+      if (!slot) return;
+      const held = slot.getItem();
+      b.reads++;
+      avail = held?.typeId === ROPE_ID ? held.amount : 0;
+    };
+    const settle = () => { // pay for this step's pieces; sound and deed once the first ones are down
+      if (stepPlaced) {
+        b.writes++;
+        if (slot) { if (avail - stepPlaced > 0) slot.amount = avail - stepPlaced; else slot.setItem(undefined); }
+        stepPlaced = 0;
+      }
+      if (!announced && firstRow !== undefined) {
+        announced = true; b.writes += 2;
+        noteDeed(player, "rope");
+        dimension.playSound("dig.grass", { x: x + 0.5, y: firstRow, z: z + 0.5 });
+      }
+    };
+    refresh();
+    let up = false, y = downFrom;
+    while (placed < count) {
+      if (up ? y > maxY : y < minY) { if (up) break; up = true; y = upFrom; continue; }
+      if (b.reads + 3 > ROPE_READS || b.writes >= ROPE_WRITES - 3 || stepPlaced >= EXTEND_PIECES) {
+        settle(); yield; b.reads = b.writes = 0; refresh();
+      }
+      if (stepPlaced >= avail) break; // the hand is empty (or no longer holds rope)
+      const cell = readBlock(dimension, { x, y, z });
+      b.reads += 2; // the cell and its wall
+      if (cell?.isAir && hasWall(dimension, { x, y, z }, face) === true) {
+        cell.setPermutation(permutation);
+        b.writes++; placed++; stepPlaced++; firstRow ??= y;
+        y += up ? 1 : -1;
+      } else if (up) break;
+      else if (!extend && !placed) break; // a new rope needs its clicked cell
+      else { up = true; y = upFrom; }
+    }
+    settle();
+  } finally { extending.delete(guard); }
+}
+
 // The rope item is used on a block: hang pieces downwards first, then upwards, one per item in the hand.
 function useRope(player, block, blockFace, itemStack) {
   const dimension = block.dimension;
-  const bounds = heightBounds(dimension), count = itemStack.amount;
   const clickedFace = faceOf(block);
-  let { x, y: y0, z } = block.location;
-  let face;
-  let plan;
-  const rowFree = (f) => (y) => {
-    const cell = readBlock(dimension, { x, y, z });
-    return !!cell && cell.isAir && hasWall(dimension, { x, y, z }, f) === true;
-  };
-  if (clickedFace) { // extend: down from the bottom piece, then up from the top piece
-    face = clickedFace;
-    const { bottom, top } = columnBounds((y) => faceOf(readBlock(dimension, { x, y, z })) === face, y0, bounds.minY, bounds.maxY);
-    plan = planRope({ downFrom: bottom - 1, upFrom: top + 1, count, free: rowFree(face), ...bounds });
-  } else { // new rope in the cell beside the clicked side face
+  let { x, y, z } = block.location;
+  let face = clickedFace;
+  if (!clickedFace) { // new rope in the cell beside the clicked side face
     face = String(blockFace).toLowerCase();
     const off = pieceOffset(face);
     if (!off) return; // top or bottom face: a rope hangs on the side of a block
     x += off.x;
     z += off.z;
-    const free = rowFree(face);
-    if (!free(y0)) return;
-    plan = planRope({ downFrom: y0, upFrom: y0 + 1, count, free, ...bounds });
   }
-  if (!plan.length) return;
-  const permutation = BlockPermutation.resolve(ROPE_ID, { [FACE_STATE]: face });
-  for (const y of plan) dimension.getBlock({ x, y, z }).setPermutation(permutation);
-  if (player.getGameMode() !== GameMode.Creative) {
-    const slot = player.getComponent("equippable").getEquipmentSlot(EquipmentSlot.Mainhand);
-    if (plan.length >= count) slot.setItem(undefined);
-    else slot.amount = count - plan.length;
-  }
-  noteDeed(player, "rope");
-  dimension.playSound("dig.grass", { x: x + 0.5, y: plan[0], z: z + 0.5 });
+  const guard = `${dimension.id}|${x},${z}`;
+  if (extending.has(guard)) return;
+  extending.add(guard);
+  runCounted(hangRope({ player, dimension, x, y, z, face, extend: !!clickedFace, count: itemStack.amount,
+    creative: player.getGameMode() === GameMode.Creative, budget: newBudget(), guard }));
 }
 
 // Removes every piece of the rope in column (x, z) that is connected to row y and drops all of them, plus one when
-// the piece at y is already gone (`gone`), as stacks at row y.
-// A rope can be 384 pieces long, so the work is counted: at most ROPE_READS reads and ROPE_WRITES writes (a piece
-// removal or an item spawn) per step. The first step runs at once (a short rope is gone before this returns, as before);
-// a long rope continues as a job. Pieces are counted as they are removed, so two overlapping calls never drop twice.
-const ROPE_READS = 128, ROPE_WRITES = 16;
-function* ropeRemoval(dimension, { x, y, z }, face, creative, gone) {
+// the piece at y is already gone (`gone`), as stacks at row y. Pieces are counted as they are removed, so two
+// overlapping calls never drop twice.
+function* ropeRemoval(dimension, { x, y, z }, face, creative, gone, b = newBudget()) {
   const { minY, maxY } = heightBounds(dimension);
-  let reads = 0, writes = 0;
   const piece = (row) => {
-    reads++;
+    b.reads++;
     return faceOf(readBlock(dimension, { x, y: row, z })) === face;
   };
   let bottom = y, top = y;
   while (bottom - 1 >= minY) {
-    if (reads >= ROPE_READS) { yield; reads = 0; }
+    if (b.reads >= ROPE_READS) { yield; b.reads = 0; }
     if (!piece(bottom - 1)) break;
     bottom--;
   }
   while (top + 1 <= maxY) {
-    if (reads >= ROPE_READS) { yield; reads = 0; }
+    if (b.reads >= ROPE_READS) { yield; b.reads = 0; }
     if (!piece(top + 1)) break;
     top++;
   }
   let total = gone ? 1 : 0;
   for (let row = bottom; row <= top; row++) {
-    if (writes >= ROPE_WRITES || reads >= ROPE_READS) { yield; reads = writes = 0; }
-    reads++;
+    if (b.writes >= ROPE_WRITES || b.reads >= ROPE_READS) { yield; b.reads = b.writes = 0; }
+    b.reads++;
     const block = readBlock(dimension, { x, y: row, z });
     if (faceOf(block) !== face) continue;
     block.setType("minecraft:air");
-    writes++;
+    b.writes++;
     total++;
   }
   if (creative || world.gameRules.doTileDrops !== true) return;
   for (const amount of dropStacks(total)) {
-    if (writes >= ROPE_WRITES) { yield; writes = 0; }
+    if (b.writes >= ROPE_WRITES) { yield; b.writes = 0; }
     dimension.spawnItem(new ItemStack(ROPE_ID, amount), { x: x + 0.5, y: y + 0.5, z: z + 0.5 });
-    writes++;
+    b.writes++;
   }
 }
-export function dropWholeRope(dimension, location, face, { creative = false, gone = false } = {}) {
+// `defer`: no inline first step, the whole removal runs as a job (a caller that is itself one step of a counted job).
+export function dropWholeRope(dimension, location, face, { creative = false, gone = false, defer = false } = {}) {
   const removal = ropeRemoval(dimension, location, face, creative, gone);
-  if (removal.next().done) return;
+  if (!defer) { runCounted(removal); return; }
   system.runJob((function* () { while (!removal.next().done) yield; })());
+}
+
+// An explosion fires blockExplode once per destroyed block, and a TNT cluster destroys thousands: the callback only
+// notes each exploded rope piece (no native reads); one job walks the notes in counted steps, one removal per piece,
+// exactly what a call per piece did (the engine drops the exploded piece itself; the connected rest drops once: the
+// first walk removes it, later walks find air).
+const exploded = []; // flat: { dimension, face }, x, y, z per piece
+let explodedJob = false;
+function* explodedRopes() {
+  try {
+    const b = newBudget();
+    for (let i = 0; i < exploded.length; i += 4) { // the list may grow while the job runs
+      const { dimension, face } = exploded[i];
+      yield* ropeRemoval(dimension, { x: exploded[i + 1], y: exploded[i + 2], z: exploded[i + 3] }, face, false, false, b);
+      if (b.reads >= ROPE_READS || b.writes >= ROPE_WRITES) { yield; b.reads = b.writes = 0; }
+    }
+  } finally { exploded.length = 0; explodedJob = false; }
+}
+function noteExplodedRope(dimension, { x, y, z }, face) {
+  exploded.push({ dimension, face }, x, y, z);
+  if (explodedJob) return;
+  explodedJob = true;
+  try { system.runJob(explodedRopes()); } catch { exploded.length = 0; explodedJob = false; }
 }
 
 system.beforeEvents.startup.subscribe(({ itemComponentRegistry }) => {
@@ -134,7 +219,7 @@ world.afterEvents.playerBreakBlock.subscribe(({ block, brokenBlockPermutation, p
 });
 world.afterEvents.blockExplode.subscribe(({ block, dimension, explodedBlockPermutation }) => {
   if (ROPE_IDS.has(explodedBlockPermutation.type.id)) {
-    dropWholeRope(dimension, block.location, permFace(explodedBlockPermutation));
+    noteExplodedRope(dimension, block.location, permFace(explodedBlockPermutation));
   }
 });
 
