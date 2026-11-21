@@ -59,7 +59,11 @@ export function* sliced(gen, ms, stats, now = Date.now) {
   for (;;) {
     const t0 = now();
     let r;
-    do { r = gen.next(); if (stats) stats.steps++; } while (!r.done && now() - t0 < ms);
+    do {
+      const s0 = now();
+      r = gen.next();
+      if (stats) { stats.steps++; const d = now() - s0; if (d > (stats.maxStep ?? 0)) stats.maxStep = d; } // the slowest single inner step: the slicer cannot split it
+    } while (!r.done && now() - t0 < ms);
     if (stats) stats.cpu += now() - t0;
     if (r.done) return r.value;
     yield;
@@ -172,7 +176,7 @@ async function planVillageAt(entity, trigger) {
     dlog(`settle ${ms(tSettle)} ms`);
     const tPlan = Date.now(), tick0 = system.currentTick, stats = { steps: 0, cpu: 0, reads: () => 0, writeCells: 0 };
     const result = await runJobAsync(sliced(planAndBuild(dimension, found, PLAN.budget, stats), JOB_SLICE_MS, stats));
-    dlog(`plan+build ${ms(tPlan)} ms wall, ${system.currentTick - tick0} ticks, ${stats.steps} inner steps, ${stats.cpu} ms inside them, ${stats.reads()} distinct reads, ${stats.writeCells} cells written (${result.blocks} changed)`);
+    dlog(`plan+build ${ms(tPlan)} ms wall, ${system.currentTick - tick0} ticks, ${stats.steps} inner steps, ${stats.cpu} ms inside them, ${stats.reads()} distinct reads, ${stats.writeCells} cells written (${result.blocks} changed), slowest step ${stats.maxStep ?? 0} ms`);
     // Civilians move in while loaded. Population errors are logged and posts retained; no automatic population retry.
     const tPop = Date.now();
     try { populateVillage(dimension, found.rect, [first[0], first[2]]); } catch (e) { log(`elves: ${e?.message ?? e}`); }
@@ -182,7 +186,7 @@ async function planVillageAt(entity, trigger) {
     if (band) {
       const tClear = Date.now(), tickC = system.currentTick, cs = { slices: 0, cells: 0, failed: 0, steps: 0, cpu: 0 };
       try { await runJobAsync(sliced(clearShield(dimension, found.rect, band, cs), JOB_SLICE_MS, cs)); } catch (e) { log(`shield clear: ${e?.message ?? e}`); }
-      dlog(`clear ${ms(tClear)} ms wall, ${system.currentTick - tickC} ticks, y ${band.y0}..${band.y1}, ${cs.slices} slices (${cs.failed} failed), ${cs.steps} inner steps, ${cs.cpu} ms inside them, ${cs.cells} light_block_0 cells cleared`);
+      dlog(`clear ${ms(tClear)} ms wall, ${system.currentTick - tickC} ticks, y ${band.y0}..${band.y1}, ${cs.slices} slices (${cs.failed} failed), ${cs.steps} inner steps, ${cs.cpu} ms inside them, ${cs.cells} light_block_0 cells cleared, slowest slice ${cs.maxStep ?? 0} ms`);
     }
     const removed = removeMarkers(dimension, found.rect);
     world.setDynamicProperty(DONE, JSON.stringify(addDone(parseDone(world.getDynamicProperty(DONE)), found.rect)));

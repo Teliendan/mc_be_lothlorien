@@ -82,8 +82,8 @@ cleanup is `dc1182e`.
 ## Village planner debug lines
 
 With village debug on (`/scriptevent lothlorien:debug`), `loop_marker.js` logs one `planner: (debug)` line per stage: `discovery`, `settle`,
-`plan+build` (wall ms, ticks, inner steps and ms inside them, distinct reads, cells written and changed), `populate`, then
-`clear` (the final shield step: `clear <ms> ms wall, <n> ticks, y <y0>..<y1>, <s> slices (<f> failed), <steps> inner steps, <ms> ms inside them, <c> light_block_0 cells cleared`),
+`plan+build` (wall ms, ticks, inner steps and ms inside them, distinct reads, cells written and changed, slowest single step), `populate`, then
+`clear` (the final shield step: `clear <ms> ms wall, <n> ticks, y <y0>..<y1>, <s> slices (<f> failed), <steps> inner steps, <ms> ms inside them, <c> light_block_0 cells cleared, slowest slice <ms> ms`; the slowest step/slice is one call the job cannot split, so it is the hitch a player feels),
 and the village summary. `clear` is `Dimension.fillBlocks(..., { blockFilter: { includeTypes: ["minecraft:light_block_0"] }, ignoreChunkBoundErrors: true })`
 once per 16 x 16 chunk column and Y slice of the village rect (`village_clear.js`), over the marker deck Y range minus 4 / plus 16 clamped to the
 dimension; `<c>` is the sum of the `ListBlockVolume` capacities the calls return. A failing slice logs `planner: shield clear <volume>: <error>` unconditionally and the
