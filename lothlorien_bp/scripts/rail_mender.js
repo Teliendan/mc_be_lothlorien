@@ -77,12 +77,22 @@ onEntity(MENDER_ID, { load: ({ entity }) => onMarker(entity), spawn: ({ entity }
 // Repairs remain local after player edits; no per-fence polling. Defer until native
 // neighbor updates settle, then restore all known connections around the edited cell.
 // One timer per tick, not per event: a piston or explosion edits many cells in one tick. Same 2-tick delay.
+// The batch grows with the blast (a TNT cluster breaks thousands of cells), so it is mended by a job: at most
+// MEND_CELLS cells per step (<= 5 reads and one write each, so <= 80 reads and 16 writes).
+export const MEND_CELLS = 16;
 let batch, batchTick;
+function* mendBatch(cells) {
+  let n = 0;
+  for (const { dimension, loc } of cells.values()) {
+    try { mendFence(dimension, loc); } catch { /* unloaded */ }
+    if (++n % MEND_CELLS === 0) yield;
+  }
+}
 const edited = ({ block, dimension }) => {
   if (batchTick !== system.currentTick) {
     batchTick = system.currentTick;
     const cells = batch = new Map();
-    system.runTimeout(() => { for (const { dimension, loc } of cells.values()) { try { mendFence(dimension, loc); } catch { /* unloaded */ } } }, 2);
+    system.runTimeout(() => system.runJob(mendBatch(cells)), 2);
   }
   for (const loc of cellsAround(block.location)) batch.set(`${dimension.id}|${loc.x},${loc.y},${loc.z}`, { dimension, loc });
 };

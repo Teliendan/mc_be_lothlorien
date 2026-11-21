@@ -359,3 +359,20 @@ allocations sampled each tick; `--debug`, `--river`, `--gc-probe`, `--heap`, `--
 What the owner should look for next: a `slow callback ... (its FIRST call)` warning. `R ms were plain script ...` with a native count of a few and `0 ms` = nothing in the wrapped natives, so either garbage collection
 (then the summary shows no allocation-heavy work) or an engine pause inside the script call; a getter or `setActionBar` line in `Natives:` or `slow native call` with the missing 130 ms = the culprit, and the fix is a
 pre-warm of that one member in a job at world load. If the same tick also shows `gap >= 150 ms` with `scripts 130 ms`, the freeze is felt; if the gap is smaller, the time was already engine-side.
+
+## Single calls that grew with the world: gift-spot search, rail mender batch, elven rope removal (2026-11-21, offline only, NOT measured in game)
+
+Owner rule 2026-11-21 (workspace `bedrock-scripting/references/performance.md`, "When a call needs a job"): no single call does work that grows with world content; per step <= ~128 native reads,
+<= 16 writes. The perf audit (L2-L4) found three Lothlorien calls over it; all three are fixed with the same results. Budget test: `tests/single_call_budget.mjs` (suite `single-call-budget`), counting mocks.
+Worst single call / job step, native calls (mock; before = the code at `a2065fa`, measured by running the same test there):
+
+| Call | Before | After |
+|---|---|---|
+| White deer gift-spot search (`white_deer.js`, forest, 46-leaf canopy in every column) | 2,120 reads in one step (40 candidates per step) | 106 reads (steps yield when the next probe could pass 128 calls; a probe costs <= 3 for the biome, <= 52 for a column) |
+| Rail mender, 1,000 broken cells (`rail_mender.js`) | 6,400 reads + 1,000 writes in one timeout | 72 reads, 14 writes per step (16 cells per step; a job started by the 2-tick timeout) |
+| Breaking a 384-piece rope (`elven_rope.js`, `dropWholeRope`) | ~770 reads + 383 writes in one call (analytic) | 128 reads, 16 writes per step (28 steps) |
+
+Rope notes: the first step still runs inside the call, so a short rope is gone before it returns (as before); a long rope continues as a job. Pieces are counted when removed, so the several calls an
+explosion makes for one rope never drop a piece twice (stack sizes may split differently, the item total is identical: one item per removed piece). `useRope` (extending a rope) still walks the whole
+rope in one call: not in this change.
+Not measured in game: the real step times and the native costs of the raycasts; no DIAG was built for this change.

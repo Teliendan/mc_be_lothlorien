@@ -187,6 +187,9 @@
     "village-budget": [
       "village_build_budget.mjs"
     ],
+    "single-call-budget": [
+      "single_call_budget.mjs"
+    ],
     "watch-camp": [
       "watch_camp.mjs"
     ],

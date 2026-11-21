@@ -55,12 +55,15 @@ const isLeashed = (deer) => deer.getComponent("minecraft:leashable")?.isLeashed 
 // the forest floor is not ground), with two blocks of headroom; undefined for water, an unloaded chunk or no ground.
 // Collision is read with block raycasts, which pass through air and passable plants (as in stand() below), not with the Block
 // property isSolid: beta-only, absent from @minecraft/server 2.8.0, it reads undefined and no column had ground (K36, 2026-11-17).
-function groundFeet(dimension, x, z) {
+// `tally.n` counts the native calls made (the gift-spot job budgets its steps by it).
+function groundFeet(dimension, x, z, tally = { n: 0 }) {
   try {
+    tally.n++;
     const top = dimension.getTopmostBlock({ x, z });
     if (!top) return undefined;
     let from = top.y + 1.5; // in the air above the column
     for (let i = 0; i < GROUND_RAYS && from > WORLD_BOTTOM; i++) {
+      tally.n++;
       const hit = dimension.getBlockFromRay({ x: x + 0.5, y: from, z: z + 0.5 }, DOWN, { includeLiquidBlocks: true, maxDistance: from - WORLD_BOTTOM });
       if (!hit || hit.block.isLiquid) return undefined;
       if (canopy(hit.block.typeId)) {
@@ -68,7 +71,7 @@ function groundFeet(dimension, x, z) {
         continue;
       }
       const feet = hit.block.y + 1;
-      return clearBody(dimension, x, feet, z) ? feet : undefined;
+      return clearBody(dimension, x, feet, z, tally) ? feet : undefined;
     }
     return undefined;
   } catch {
@@ -76,11 +79,15 @@ function groundFeet(dimension, x, z) {
   }
 }
 const GROUND_RAYS = 48; // leaf, branch and trunk blocks a column may look through before it gives up
+const GROUND_CALLS = 1 + GROUND_RAYS + 3; // most native calls one groundFeet makes: topmost block, rays, clearBody
+const BIOME_CALLS = 3; // one biome.at probe (main.js: topmost block, biome, location)
+const STEP_CALLS = 128; // native calls per gift-spot job step
 const WORLD_BOTTOM = -64; // Lothlorien is an overworld biome
 const canopy = id => id.includes("leaves") || id.endsWith("_log") || id.endsWith("_wood");
 const dry = block => !!block && !block.isLiquid && !block.isWaterlogged;
 // The feet and head cells at feet height y: no water, and nothing to collide with (an upward ray from the floor meets nothing).
-function clearBody(dimension, x, y, z) {
+function clearBody(dimension, x, y, z, tally = { n: 0 }) {
+  tally.n += 3;
   return dry(dimension.getBlock({ x, y, z })) && dry(dimension.getBlock({ x, y: y + 1, z })) &&
     !dimension.getBlockFromRay({ x: x + 0.5, y: y + 0.05, z: z + 0.5 }, UP, { includeLiquidBlocks: true, maxDistance: 1.9 });
 }
@@ -94,22 +101,26 @@ function giftSpace(dimension, spot) {
 const insideGift = (dimension, spot) => biome.at(dimension, spot.x, spot.z) === biome.id;
 
 // The gift spot for a deer at `origin` (great_mallorn_rules.js, pickGiftSpot): first the border scan over the loaded grid, then
-// the candidates, a few dozen probes per job step. Calls done({x, y, z}) or done(undefined).
+// the candidates, at most STEP_CALLS native calls per job step. Calls done({x, y, z}) or done(undefined).
 function findGiftSpot(dimension, origin, done) {
   system.runJob(
     (function* () {
+      const tally = { n: 0 };
+      // Yield before a probe that could take the step past STEP_CALLS native calls (so no step exceeds it).
+      const room = (worst) => tally.n + worst <= STEP_CALLS || ((tally.n = 0), false);
       const border = [];
-      let n = 0;
       for (const p of borderGrid(origin.x, origin.z)) {
+        if (!room(BIOME_CALLS)) yield;
+        tally.n += BIOME_CALLS;
         const id = biome.at(dimension, p.x, p.z);
         if (id !== undefined && id !== biome.id && !biome.transparent.has(id)) border.push(p);
-        if (++n % 40 === 0) yield;
       }
       const candidates = giftCandidates(origin.x, origin.z, Math.random() * 2 * Math.PI);
       for (const c of candidates) {
+        if (!room(BIOME_CALLS + GROUND_CALLS)) yield;
+        tally.n += BIOME_CALLS;
         c.inside = biome.at(dimension, c.x, c.z) === biome.id;
-        c.y = c.inside ? groundFeet(dimension, c.x, c.z) : undefined;
-        if (++n % 40 === 0) yield;
+        c.y = c.inside ? groundFeet(dimension, c.x, c.z, tally) : undefined;
       }
       const best = pickGiftSpot(candidates, border);
       done(best && { x: best.x, y: best.y, z: best.z });

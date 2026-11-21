@@ -71,18 +71,49 @@ function useRope(player, block, blockFace, itemStack) {
 
 // Removes every piece of the rope in column (x, z) that is connected to row y and drops all of them, plus one when
 // the piece at y is already gone (`gone`), as stacks at row y.
-export function dropWholeRope(dimension, { x, y, z }, face, { creative = false, gone = false } = {}) {
-  const bounds = heightBounds(dimension);
-  const { bottom, top } = columnBounds((row) => faceOf(readBlock(dimension, { x, y: row, z })) === face, y, bounds.minY, bounds.maxY);
+// A rope can be 384 pieces long, so the work is counted: at most ROPE_READS reads and ROPE_WRITES writes (a piece
+// removal or an item spawn) per step. The first step runs at once (a short rope is gone before this returns, as before);
+// a long rope continues as a job. Pieces are counted as they are removed, so two overlapping calls never drop twice.
+const ROPE_READS = 128, ROPE_WRITES = 16;
+function* ropeRemoval(dimension, { x, y, z }, face, creative, gone) {
+  const { minY, maxY } = heightBounds(dimension);
+  let reads = 0, writes = 0;
+  const piece = (row) => {
+    reads++;
+    return faceOf(readBlock(dimension, { x, y: row, z })) === face;
+  };
+  let bottom = y, top = y;
+  while (bottom - 1 >= minY) {
+    if (reads >= ROPE_READS) { yield; reads = 0; }
+    if (!piece(bottom - 1)) break;
+    bottom--;
+  }
+  while (top + 1 <= maxY) {
+    if (reads >= ROPE_READS) { yield; reads = 0; }
+    if (!piece(top + 1)) break;
+    top++;
+  }
   let total = gone ? 1 : 0;
   for (let row = bottom; row <= top; row++) {
-    const piece = readBlock(dimension, { x, y: row, z });
-    if (faceOf(piece) !== face) continue;
-    piece.setType("minecraft:air");
+    if (writes >= ROPE_WRITES || reads >= ROPE_READS) { yield; reads = writes = 0; }
+    reads++;
+    const block = readBlock(dimension, { x, y: row, z });
+    if (faceOf(block) !== face) continue;
+    block.setType("minecraft:air");
+    writes++;
     total++;
   }
   if (creative || world.gameRules.doTileDrops !== true) return;
-  for (const amount of dropStacks(total)) dimension.spawnItem(new ItemStack(ROPE_ID, amount), { x: x + 0.5, y: y + 0.5, z: z + 0.5 });
+  for (const amount of dropStacks(total)) {
+    if (writes >= ROPE_WRITES) { yield; writes = 0; }
+    dimension.spawnItem(new ItemStack(ROPE_ID, amount), { x: x + 0.5, y: y + 0.5, z: z + 0.5 });
+    writes++;
+  }
+}
+export function dropWholeRope(dimension, location, face, { creative = false, gone = false } = {}) {
+  const removal = ropeRemoval(dimension, location, face, creative, gone);
+  if (removal.next().done) return;
+  system.runJob((function* () { while (!removal.next().done) yield; })());
 }
 
 system.beforeEvents.startup.subscribe(({ itemComponentRegistry }) => {
