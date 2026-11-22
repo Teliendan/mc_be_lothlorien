@@ -20,9 +20,9 @@ Target: tester build on the weekend of 2026-10-24/25.
   Also removed the landscape probe (two structures, six pools, `structures/lothlorien/landscape_probe/`,
   `build_landscape_probe.mjs`, its test). `verification_exceptions.json` stays in the repo; `mods package`
   leaves it out (`SKIP_NAMES` in workspace `tools/mods.py`).
-- [ ] **Feedback retests only.** Owner completed the broad checks on 2026-10-25.
+- [x] **Feedback retests only.** All owner retests done 2026-11-22. Owner completed the broad checks on 2026-10-25.
   Accepted results and fixes: `OWNER_CHECKS.md`; remaining focused
-  checks: workspace `docs/game-checks.md`. L8 is untested and L9 inconclusive.
+  checks: workspace `docs/game-checks.md`. L8 and L9 closed as untestable (owner, 2026-11-22).
 - [x] **Snow on blocks.** Native snowlogging enabled for Elanor, Niphredil, Athelas and Golden Fern
   (2026-10-25); counterpart scope and remaining game checks: `SNOW.md`.
 - [x] **Mob hurt and death sounds.** Owner checked them in game on 2026-10-28 and kept all of them:
@@ -118,8 +118,7 @@ Completed source fixes and accepted checks, and where each open retest below is 
   remove an old false closure if needed; existing saved fences are retained.
 - [x] **Wildlife retests** (bands, guiding R7/R8, breeding, wolf): passed in single player (owner, 2026-11-22);
   the two-player Friend + Hated check goes to testers.
-- [ ] **L8 / L9:** complete targeted deer and squirrel checks with explicit setups
-  in the workspace checklist; no failure is inferred from an untested case.
+- [x] **L8 / L9:** closed as untestable (owner, 2026-11-22); no failure is inferred.
 
 ## Bedrock 26.60 impact (2026-10-27, documented only)
 
