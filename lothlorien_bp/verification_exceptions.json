@@ -111,6 +111,237 @@
       "subject": "geometry.bow_pulling_2",
       "reason": "Reuse vanilla bow mesh with local Galadhrim textures and native draw stages. Exact ID verified in installed 1.26.52 RP models/entity/bow.geo.json on 2026-10-13; checker sees this RP only.",
       "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/elven_warden.json",
+      "subject": "lothlorien:leashed -> lothlorien:village_warden / minecraft:home",
+      "reason": "Leashed warden has no home restriction on purpose: removing village_warden strips the base home too and kept_warden is added. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_boat.json",
+      "subject": "minecraft:entered_bubble_column_down -> minecraft:floating / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_boat.json",
+      "subject": "minecraft:exited_bubble_column -> minecraft:above_bubble_column_down / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_boat.json",
+      "subject": "minecraft:exited_bubble_column -> minecraft:above_bubble_column_up / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_boat.json",
+      "subject": "minecraft:entered_bubble_column_up -> minecraft:floating / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_boat.json",
+      "subject": "minecraft:sink -> minecraft:floating / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_boat.json",
+      "subject": "minecraft:sink -> minecraft:can_ride_default / minecraft:rideable",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_boat.json",
+      "subject": "minecraft:sink -> minecraft:above_bubble_column_down / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_boat.json",
+      "subject": "minecraft:sink -> minecraft:above_bubble_column_up / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_chest_boat.json",
+      "subject": "minecraft:entered_bubble_column_down -> minecraft:floating / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_chest_boat.json",
+      "subject": "minecraft:exited_bubble_column -> minecraft:above_bubble_column_down / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_chest_boat.json",
+      "subject": "minecraft:exited_bubble_column -> minecraft:above_bubble_column_up / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_chest_boat.json",
+      "subject": "minecraft:entered_bubble_column_up -> minecraft:floating / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_chest_boat.json",
+      "subject": "minecraft:sink -> minecraft:floating / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_chest_boat.json",
+      "subject": "minecraft:sink -> minecraft:can_ride_default / minecraft:rideable",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_chest_boat.json",
+      "subject": "minecraft:sink -> minecraft:above_bubble_column_down / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_chest_boat.json",
+      "subject": "minecraft:sink -> minecraft:above_bubble_column_up / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_heartwood_boat.json",
+      "subject": "minecraft:entered_bubble_column_down -> minecraft:floating / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_heartwood_boat.json",
+      "subject": "minecraft:exited_bubble_column -> minecraft:above_bubble_column_down / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_heartwood_boat.json",
+      "subject": "minecraft:exited_bubble_column -> minecraft:above_bubble_column_up / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_heartwood_boat.json",
+      "subject": "minecraft:entered_bubble_column_up -> minecraft:floating / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_heartwood_boat.json",
+      "subject": "minecraft:sink -> minecraft:floating / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_heartwood_boat.json",
+      "subject": "minecraft:sink -> minecraft:can_ride_default / minecraft:rideable",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_heartwood_boat.json",
+      "subject": "minecraft:sink -> minecraft:above_bubble_column_down / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_heartwood_boat.json",
+      "subject": "minecraft:sink -> minecraft:above_bubble_column_up / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_heartwood_chest_boat.json",
+      "subject": "minecraft:entered_bubble_column_down -> minecraft:floating / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_heartwood_chest_boat.json",
+      "subject": "minecraft:exited_bubble_column -> minecraft:above_bubble_column_down / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_heartwood_chest_boat.json",
+      "subject": "minecraft:exited_bubble_column -> minecraft:above_bubble_column_up / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_heartwood_chest_boat.json",
+      "subject": "minecraft:entered_bubble_column_up -> minecraft:floating / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_heartwood_chest_boat.json",
+      "subject": "minecraft:sink -> minecraft:floating / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_heartwood_chest_boat.json",
+      "subject": "minecraft:sink -> minecraft:can_ride_default / minecraft:rideable",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_heartwood_chest_boat.json",
+      "subject": "minecraft:sink -> minecraft:above_bubble_column_down / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
+    },
+    {
+      "rule": "entity.group_removal_strips_base",
+      "path": "bp/entities/mallorn_heartwood_chest_boat.json",
+      "subject": "minecraft:sink -> minecraft:above_bubble_column_up / minecraft:buoyant",
+      "reason": "Intended strip: mirrors the vanilla boat's minecraft:sink and bubble-column events, which remove the group to drop the base buoyant/rideable component; the same events add the replacement group. Reviewed 2026-11-22, 1.26.63; see docs/VERIFIER_WARNINGS.md.",
+      "evidence": "docs/VERIFIER_WARNINGS.md"
     }
   ]
 }

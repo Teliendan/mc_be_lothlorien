@@ -35,3 +35,7 @@ Evidence is source/static review, plus previously recorded support engine probes
 and their limits. No new game tests. Production support edge cases and separate
 bow behavior/rendering acceptance remain as listed in their design notes.
 Shared mechanism: [verification exceptions](../../../.claude/skills/bedrock-lookup/references/verification-exceptions.md).
+
+## Group removal that strips a base component (2026-11-22, 1.26.63)
+
+Rule `entity.group_removal_strips_base`: removing a component group strips its components even when the base has the same one (inferred from the elf stroll A/B, `mobs/elves.md`). Intended cases, accepted: the four Mallorn boats copy the vanilla boat, whose `minecraft:sink` and bubble-column events remove `floating`, `above_bubble_column_*` and `can_ride_default` on purpose to drop the base `buoyant` / `rideable` and add the replacement group; the leashed warden removes `village_warden` so it has no home restriction (`kept_warden` is added). The elf had this as a real bug and was fixed (commit 612f044).
