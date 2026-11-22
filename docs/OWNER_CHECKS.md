@@ -61,7 +61,7 @@ Source fixes made, owner retest pending (fixes of 2026-11-17 in `6d2247e`, `87d6
   is refused when the filled bottle has no room (a single held bottle still swaps in hand): the firefly stays, the player hears
   `bundle.insert_fail` and reads a chat line. Retest: a stack of glass bottles, every slot full, click a firefly; then free a slot.
 
-- Elves and Elven Wardens avoid every fence and wall (and the rope), never gates, doors or trapdoors (owner 2026-11-22; `AVOID_BLOCKS`, 50 names). Verified in game for elves and the Mallorn fences only. Retest: a pen of oak fence and one of cobblestone wall with a raised floor beside the rail, an elf and a warden inside, nobody stranded outside; and watch for stutter with many elves around (the list is long, cost undocumented).
+- Elves and Elven Wardens avoid every fence and wall (and the rope), never gates, doors or trapdoors (owner 2026-11-22; `AVOID_BLOCKS`, 50 names). Passed in game (owner Z1-Z4, 2026-11-22, 1.26.63): elves and wardens stay inside Mallorn and vanilla fences and walls, gates and the rope hole are fine, no new stutter.
 
 Passed (owner X1-X3, 1.26.63, 2026-11-22, new village): **elves walk around their posts** after `random_stroll` and `follow_range` moved from the base into every radius group (cause: removing a group stripped the base stroll; `mobs/elves.md`); the Healer roams as before; a led and untied elf strolls round its new spot. Elves saved in older worlds are not repaired (owner decision).
 
