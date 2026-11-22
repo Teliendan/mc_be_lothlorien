@@ -4,7 +4,7 @@
         "name": "pack.name",
         "description": "pack.description",
         "uuid": "d535a52f-4844-41f8-a99f-343476d5c9dd",
-        "version": "0.8.0",
+        "version": "0.9.0",
         "min_engine_version": "1.26.50"
     },
     "modules": [

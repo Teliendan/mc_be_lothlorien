@@ -350,7 +350,7 @@ lothlorien.message.debug.off=[lothlorien] debug readout off
 ## Context: Pack title or description for lothlorien_rp. BP means behavior pack; RP means resource pack. Keep mod brands unchanged.
 pack.name=Lothlórien — Resource Pack
 ## Context: Pack title or description for lothlorien_rp. BP means behavior pack; RP means resource pack. Keep mod brands unchanged.
-pack.description=v0.8.0 · Lothlórien resource pack: woodland textures, models, sounds and text.
+pack.description=v0.9.0 · Lothlórien resource pack: woodland textures, models, sounds and text.
 ## Context: Resource-pack appearance setting: per-player visual choice. Pretty boats switches to a more detailed boat model; no gameplay changes.
 lothlorien.settings.appearance=Lothlórien: appearance settings (each player chooses their own).
 ## Context: Resource-pack appearance setting: per-player visual choice. Pretty boats switches to a more detailed boat model; no gameplay changes.
