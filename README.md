@@ -26,12 +26,14 @@ Towering Mallorn woodland, wildlife, elven villages and a forest that remembers 
 ## Install
 
 1. Download the `.mcaddon` from the [Releases page](https://github.com/Teliendan/mc_be_lothlorien/releases).
-2. Open the file with Minecraft; it imports all three packs. The skins then appear in the Dressing Room.
+2. Open the file with Minecraft on Windows, Android or iPhone/iPad; it imports all three packs. The skins then appear in the Dressing Room.
 3. Create a world and turn on the Lothlórien **behavior pack** (its resource pack comes with it).
 
 The biome and its buildings appear only in **newly generated chunks**. Start a new world, or explore areas you have not visited yet. Back up an existing world before you add the pack to it.
 
-Requirements: Minecraft Bedrock 1.26.50 or newer. No experimental toggles are needed. It works on its own and needs none of my other add-ons.
+Xbox, PlayStation and Switch can't import add-on files directly, but console players can join a world that already has it.
+
+Requirements: Minecraft Bedrock 1.26.50 or newer, tested on 1.26.63. No experimental toggles are needed. It works on its own and needs none of my other add-ons.
 
 ## Known issues
 
@@ -40,7 +42,7 @@ Requirements: Minecraft Bedrock 1.26.50 or newer. No experimental toggles are ne
 
 ## Feedback
 
-Found a bug or have an idea? Tell me through the [report form](https://teliendan.com/contact/?project=lothlorien&utm_source=github&utm_medium=referral&utm_campaign=profile&utm_content=readme#report). [GitHub issues](https://github.com/Teliendan/mc_be_lothlorien/issues) work too. Note your Minecraft version, device, and whether the world was new.
+Found a bug or have an idea? Tell me through the [report form](https://teliendan.com/contact/?project=lothlorien&utm_source=github&utm_medium=referral&utm_campaign=profile&utm_content=readme#report). Note your Minecraft version, device, and whether the world was new.
 
 ## Credits
 
