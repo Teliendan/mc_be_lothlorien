@@ -23,7 +23,8 @@ Creature groups: [CREATURES.md](CREATURES.md).
 ## Boats
 - Four entities are copies of vanilla boat/chest_boat with documented adaptations (enforced by tests/boats.mjs
   when the vanilla reference exists). Fuel 60 s, own loot, chest seat x 0.35, no raft seats.
-- Owner verified 2026-10-18: placing, riding, leads, leaving, self-drop, chest inventory.
+- Owner verified 2026-10-18: placing, riding, leads, leaving, self-drop, chest inventory. Chest boats hold 27 slots:
+  confirmed by the owner (1.26.63, 2026-11-23).
 - Dispenser: `"dispense_on": ["minecraft:water", "minecraft:flowing_water"]` on all four items; onto water a boat, on dry
   land the item is ejected, same as an oak boat beside it (verified in game (owner, 1.26.63, 2026-11-22, oak and Mallorn dispensers side by side)).
 
@@ -40,14 +41,16 @@ Creature groups: [CREATURES.md](CREATURES.md).
 - Wooden sounds: `random.wood_click` (0.6 / 0.5), `click_on/off.wooden_pressure_plate`.
 - Gate in a vanilla wall: lowered model, kept current by place/break events and the gate's random tick (no explosion/piston hooks).
 - Game checks: button release fires from the native tick; wind charge events deliver a valid projectile (`isValid`);
-  walls actually draw an arm to the gate.
+  walls actually draw an arm to the gate. Buttons work the standard vanilla way: confirmed by the owner (1.26.63,
+  2026-11-23). The wall arm is an accepted limit (`OWNER_CHECKS.md`).
 
 ## Wood (logs, planks, slabs, stairs)
 - Logs/bark wood: `block_face` trait with three axes; axe stripping and slab merging are `playerInteractWithBlock`
   handlers (a block component would swallow normal placement). One-tick defer: block unchanged + main-hand item type.
   Held-button repeats are ignored with `isFirstEvent`. Adventure players are left to the engine (CanPlaceOn/CanDestroy).
   Cancelling also cancels the engine swing: `swing.js` plays a copy of the vanilla swing, seen in third person only
-  (first-person held-item swing is engine code; owner 2026-11-08).
+  (first-person held-item swing is engine code; owner 2026-11-08; stays a known limitation, owner decision 2026-11-23,
+  1.26.63).
 - Axes: `minecraft:is_axe` tag plus vanilla ids; Unbreaking-aware wear (clamped 0-3); Creative/unbreakable skipped.
 - Slab merge sound is vanilla wood placement (`dig.wood`, pitch 0.8). Fuel 15 s for logs/planks/stairs/slabs.
 - Known limit: planks as anvil repair for vanilla wooden tools (needs overriding vanilla items).

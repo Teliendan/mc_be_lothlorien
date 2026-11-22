@@ -20,6 +20,7 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
 | Unicorn lure | accepted 2026-10-26, **back to recheck since LM-01 (2026-11-12)**: vanilla `tempt` on Elanor in a `lothlorien:lure` group, now added at spawn (priority 4 below the flight), exemption `has_tag lothlorien_friend` + Elanor; the ten-second offer wait is the native group `lothlorien:offer_wait` (`unicorn.js` triggers `offer_taken`; the timer's `offer_ready` event restores the lure; LM-05); a Friend is never fled from; wariness counts Creative players. By owner request the Friend state keeps 3 blocks from a Friend without Elanor (accepted 2026-10-27). Details: `mobs/unicorn.md` |
 | Harmony action-bar icons, elven bow, unicorn art | checked OK (2026-10-24) |
 | Mob hurt and death sounds | kept as they are (2026-10-28) |
+| Chest boats and buttons (confirmed by the owner, 1.26.63, 2026-11-23) | Mallorn and Golden Mallorn boats with chest hold 27 slots; Mallorn and Golden Mallorn buttons work the standard vanilla way |
 | Retest batch of 2026-11-22 (verified in game (owner, 1.26.63, 2026-11-22)) | Firefly catch with a full inventory refused (sound `bundle.insert_fail` + chat line, firefly and bottles kept); Miruvor (empty skin, refill, last sip); unicorn (Friend lure and offers, Guest with Elanor fled from, bonded flees nobody); Star Canopy unlock in Survival; wind charges open doors (removed-projectile handling); rope with a foreign Slow Falling potion; firefly release sound; leaf decay pace (event-driven, native random tick); support pop of flowers, carpets and lanterns; village generators incl. the railing joins ("seem OK"); alarmed deer calm after about 20 s (26.60 scalar `minecraft:timer` still loads) |
 | First-round batch of 2026-11-11 (checks A-D, F, K, O; verified in game (owner, 1.26.63, 2026-11-17)) | Support and plants (LW-02, incl. farmed corn and `/setblock` onto stone, see `PISTON_SUPPORT.md`); phial light, rope, dew, bone meal; wardens, healers, deer, swan and white deer spawn; fence links repair almost instantly (C12); village music and Harmony status; village complete and lit, moss-bed skirts intact (check 16); Court reading circle, Loremaster pushed back to the circle, four seats read well; warden arrows and chicken jockey (LM-03), unicorn offers (LM-05), cloak and belt, squirrel errand, swans breeding; inline MERS unchanged in Vibrant Visuals (check 40); LC-10 list covers accepted (`TESTING.md`); 26.60 content log clean |
 
@@ -28,7 +29,8 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
 - **First-person swing.** The scripted swing (`swing.js`, copy of the vanilla swing) plays for stripping, slab merge, bone meal
   (flora, saplings), nectar and dew bottling and firefly release, and shows in third person (other players, F5), but not in your
   own first-person view: a held normal item's first-person swing is engine code (owner check 2026-11-08; reasons in the
-  workspace `bedrock-scripting` reference `arm-swing.md`). Wiki limitation `first-person-swing`.
+  workspace `bedrock-scripting` reference `arm-swing.md`). Wiki limitation `first-person-swing`. Stays a known limitation
+  (owner decision, 1.26.63, 2026-11-23).
 
 - **Wall arm beside a gate** (accepted as a limit, owner 2026-11-22). The Mallorn fence gate lowers beside a cobblestone wall, but the wall draws no arm toward it.
   Native connection modes cannot narrowly advertise a custom gate as a vanilla gate to walls; broad connection changes would
