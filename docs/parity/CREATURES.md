@@ -31,7 +31,7 @@ selected slot's item type, native JSON before script).
 - White deer: solitary adult, no breeding/riding. A Friend of Lothlorien inside the forest offers a Mallorn acorn:
   once in its life it walks to a spot 36-56 blocks away (inside Lothlorien, clear ground) and lays a Great Mallorn nut.
   Never moved by script; the engine navigator follows an invisible guide beacon that the script moves in hops.
-  Outside Lothlorien an acorn only feeds/heals it. Leashed/alarmed deer do not lead. Injured deer eat the acorn.
+  Outside Lothlorien an acorn only feeds/heals it. Leashed/alarmed deer do not lead (they answer, acorn kept). A hurt deer leads on the first acorn, which heals it (owner D1, 2026-11-22); only a hurt deer that already gave its gift eats and heals alone (`deer.fed`). Outside, the deer says it leads no one (`deer.outside`).
 - Stored `GIFT_SPOT` (dynamic property) survives a broken-off guidance. A kept spot that is no longer clear or inside
   Lothlorien is cleared and a new spot is searched on the next acorn. On arrival, a spot that went bad is cleared
   (message "no spot"; the next acorn searches again), so the lifetime gift is never lost silently (fixed 2026-10-23).
@@ -47,7 +47,7 @@ selected slot's item type, native JSON before script).
 - Squirrels: acorn from a Friend inside Lothlorien starts an errand (10-14 blocks away, dig 3-5 s, return, gift from
   `loot_tables/gifts/squirrel.json`, 4 weighted entries; every rolled stack is spawned). Cooldown in the
   `gift_ready_at` dynamic property. Not a Friend: refusal messages; outside Lothlorien and leashed squirrels are fed
-  (domesticated = persistent). Inside, feeding does not domesticate (owner 2026-10-20). Powder-snow walking,
+  (domesticated = persistent; `squirrel.outside` says it runs no errands there). Inside, feeding does not domesticate (owner 2026-10-20). R8 (2026-11-22): a hurt Friend's acorn starts the errand and heals it; a hurt squirrel on cooldown eats, heals and says `squirrel.fed`; busy, alarmed and every errand ending answer (`squirrel.busy`, `squirrel.startled`, `squirrel.stop_leashed`, `squirrel.abort`); leaving the forest mid-errand does not end it (the errand re-checks band, dimension, lead, alarm and life, not the biome). Powder-snow walking,
   `leashable_to`, no freezing immunity.
 - The gift drops at the squirrel's position with no drop-space test (it occupies that cell). Hand-over needs the
   player within 2.5 blocks horizontally and 2 blocks vertically; otherwise it keeps returning. Every errand that

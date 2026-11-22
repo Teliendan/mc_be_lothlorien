@@ -247,16 +247,18 @@ function offer(player, deer) {
     say(player, message("deer.restless"));
     return;
   }
-  // A completed gift never prevents healing; feeding does not reset that gift.
-  if (isInjured(deer)) {
-    eatHeldFood(player, deer, ACORN_ID);
-    return;
-  }
   if (deer.getDynamicProperty(GIFTED)) {
+    // A completed gift never prevents healing; feeding does not reset that gift. Nothing starts, so the deer says it ate.
+    if (isInjured(deer) && eatHeldFood(player, deer, ACORN_ID)) {
+      dlog(() => `offer ${deer.id}: fed (injured, gifted)`);
+      say(player, message("deer.fed"));
+      return;
+    }
     dlog(() => `offer ${deer.id}: refused (gifted)`);
     say(player, message("deer.gifted"));
     return;
   }
+  // A hurt deer that can still guide is not fed first: the acorn that starts the guidance heals it (lead() below), one acorn.
   const offered = { dimension: deer.dimension, index: player.selectedSlotIndex };
   const kept = storedSpot(deer);
   if (kept) {
@@ -480,13 +482,17 @@ export function startWhiteDeer(depth, inside, biomeInfo) {
       if (target.typeId !== WHITE_DEER_ID || (beforeItemStack ?? itemStack)?.typeId !== ACORN_ID) return;
       if (!insideAt(target.dimension, target.location)) { // outside Lothlorien: an ordinary tame-by-feeding
         end(target.id, target);
-        if (eatHeldFood(player, target, ACORN_ID)) {
+        const fed = eatHeldFood(player, target, ACORN_ID);
+        if (fed) {
           target.triggerEvent("lothlorien:become_tame");
+          say(player, message("deer.outside"));
         }
+        dlog(() => `offer ${target.id}: ${fed ? "fed" : "nothing eaten"} (outside)`);
         return;
       }
-      if (target.getProperty("lothlorien:alarmed")) {
-        dlog(() => `offer ${target.id}: ignored (alarmed)`);
+      if (target.getProperty("lothlorien:alarmed")) { // hurt by a player a moment ago: the acorn is kept
+        dlog(() => `offer ${target.id}: refused (alarmed), answered deer.startled`);
+        say(player, message("deer.startled"));
         return;
       }
       offer(player, target);

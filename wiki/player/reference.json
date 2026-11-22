@@ -328,7 +328,7 @@
         },
         {
           "label": "Feeding",
-          "text": "Acorns heal up to {{lothlorien:rule/food-health}} health points. Feeding outside Lothlorien, or while leashed, prevents ordinary despawning. Inside the forest, an eligible Friend can start an errand instead; feeding there does not make it stay."
+          "text": "Acorns heal up to {{lothlorien:rule/food-health}} health points. Feeding outside Lothlorien, or while leashed, prevents ordinary despawning; outside the forest the squirrel says it runs no errands there. Inside the forest, an eligible Friend can start an errand with the acorn; feeding there does not make it stay."
         },
         {
           "label": "Breeding",
@@ -340,7 +340,7 @@
         }
       ],
       "production": [
-        "Inside Lothlorien, a Friend can offer a Mallorn Acorn to an unalarmed, unleashed squirrel to start an errand. An injured squirrel eats to heal instead. It runs away, digs and returns with one of the gifts listed below. After a successful gift, that squirrel has a cooldown of {{lothlorien:rule/errand-cooldown|duration}}. Stay close when it returns. Leashing, damage, separation or losing Friend standing can end the errand; an errand that cannot finish ends after {{lothlorien:rule/errand-timeout|duration}}."
+        "Inside Lothlorien, a Friend can offer a Mallorn Acorn to an unalarmed, unleashed squirrel to start an errand; the same acorn heals a hurt squirrel. A squirrel that is startled, already on an errand or resting after a gift says so and keeps the acorn (a hurt one resting after a gift still eats it to heal). It runs away, digs and returns with one of the gifts listed below. After a successful gift, that squirrel has a cooldown of {{lothlorien:rule/errand-cooldown|duration}}. Stay close when it returns. Leashing, damage, separation or losing Friend standing can end the errand, and the squirrel tells you why; running past the forest edge does not. An errand that cannot finish ends after {{lothlorien:rule/errand-timeout|duration}}."
       ],
       "dropNotes": []
     },
@@ -503,7 +503,7 @@
         },
         {
           "label": "Feeding",
-          "text": "Acorns heal up to {{lothlorien:rule/food-health}} health points. Outside Lothlorien, feeding prevents ordinary despawning; an eligible Friend inside can start guidance instead."
+          "text": "Acorns heal up to {{lothlorien:rule/food-health}} health points. Outside Lothlorien, feeding prevents ordinary despawning and the deer says it leads no one there; an eligible Friend inside can start guidance with the acorn."
         },
         {
           "label": "Breeding",
@@ -515,7 +515,7 @@
         }
       ],
       "production": [
-        "Inside Lothlorien, a Friend can offer a Mallorn Acorn to an unleashed, unalarmed White Deer to begin guidance. An injured deer eats to heal instead. Follow it towards a place deeper in the forest; when you arrive it lays a Great Mallorn Nut at its feet, once in its lifetime. Another acorn offered while it is leading is kept, and the deer answers that it is already leading the way. Attaching a lead interrupts the walk. If its destination becomes blocked or flooded, offer another acorn to start a new search. Outside feeding does not spend the gift."
+        "Inside Lothlorien, a Friend can offer a Mallorn Acorn to an unleashed White Deer to begin guidance; the same acorn heals a hurt deer. A deer that was hurt a moment ago says it is still startled and keeps the acorn. Follow it towards a place deeper in the forest; when you arrive it lays a Great Mallorn Nut at its feet, once in its lifetime. Another acorn offered while it is leading is kept, and the deer answers that it is already leading the way. Attaching a lead interrupts the walk. If its destination becomes blocked or flooded, offer another acorn to start a new search. Outside feeding does not spend the gift. A hurt deer that has already given its gift still eats the acorn to heal."
       ],
       "dropNotes": []
     },

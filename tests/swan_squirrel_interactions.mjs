@@ -105,13 +105,13 @@ await test("Survival last acorn, stacked acorns and Creative Friend have correct
     assert.ok(!h.s.events.includes("lothlorien:fed"), "wild inside errand is not domestication");
   }
 });
-await test("owner limits domestication to outside/leashed feeding, not inside healing", async () => {
+await test("owner limits domestication to outside/leashed feeding; an injured squirrel inside runs its errand (R8, D1)", async () => {
   for (const kind of ["inside", "outside", "leashed"]) {
     const h = await squirrel(); h.s.health.currentValue = 2;
     if (kind === "outside") { h.depth = { level: 0, complete: true }; h.player.band = "hated"; }
     if (kind === "leashed") { h.s.leashed = true; h.player.band = "hated"; }
     h.click(); assert.equal(h.s.health.currentValue, 4); assert.equal(h.player.slot.item.amount, 2);
-    assert.equal(h.s.events.includes("lothlorien:fed"), kind !== "inside"); assert.equal(h.q.isErrand(h.s.id), false);
+    assert.equal(h.s.events.includes("lothlorien:fed"), kind !== "inside"); assert.equal(h.q.isErrand(h.s.id), kind === "inside");
   }
 });
 await test("optional deed failure preserves the accepted session and only one charge", async () => {
@@ -123,7 +123,7 @@ const endings = {
   dead: h => h.player.health.currentValue = 0, deadAnimal: h => h.s.health.currentValue = 0,
   spectator: h => h.player.mode = "spectator", trust: h => h.player.band = "guest",
   bothDimensions: h => { const d = { ...h.dimension, id: "nether" }; h.player.dimension = d; h.s.dimension = d; },
-  outside: h => h.depth = { level: 0, complete: true }, leash: h => h.s.leashed = true,
+  leash: h => h.s.leashed = true,
   stoppedGuiding: h => h.s.setProperty("lothlorien:guiding", false),
 };
 for (const [name, mutate] of Object.entries(endings)) await test(`return eligibility rejects ${name} before gift`, async () => {
@@ -151,5 +151,90 @@ await test("every rolled stack is delivered unchanged once and the cooldown is k
     assert.equal(h.s.getDynamicProperty("lothlorien:gift_ready_at"), Q.COOLDOWN_TICKS); assert.ok(h.messages.includes("squirrel.gift"));
     h.click(); assert.equal(h.q.isErrand(h.s.id), false); assert.ok(h.messages.includes("squirrel.full")); assert.equal(h.player.slot.item.amount, 2);
   }
+});
+// R8 (2026-11-22): the owner's third errand "lost its way" and later offers were met with silence. No state survives an abort,
+// and every refusal and exit now answers (squirrel.md, "R8").
+const fresh = h => { const q = h.entity(Q.SQUIRREL_ID); q.health.currentValue = q.health.effectiveMax = 4; return q; };
+const offerTo = (h, target) => { const before = h.messages.length, acorns = h.player.slot.item?.amount ?? 0;
+  h.fire("playerInteractWithEntity", { player: h.player, target, itemStack: h.player.slot.item?.clone() });
+  return { said: h.messages.slice(before), eaten: acorns - (h.player.slot.item?.amount ?? 0), errand: h.q.isErrand(target.id) }; };
+await test("R8: no lock after any abort: two gifts, a third errand that ends by cap, distance or band, and a fresh squirrel still answers accept", async () => {
+  const routes = {
+    cap: h => { h.returning(); h.player.location.y += 8; h.advance(Q.MAX_TICKS + 2 * Q.SQUIRREL_TICKS); },
+    distance: h => { h.player.location = { x: 60, y: 65, z: 0 }; h.advance(Q.SQUIRREL_TICKS); },
+    band: h => { h.player.band = "guest"; h.advance(Q.SQUIRREL_TICKS); },
+  };
+  for (const [route, end] of Object.entries(routes)) {
+    const h = await squirrel(); h.player.slot.item.amount = 64;
+    for (let i = 0; i < 2; i++) { const q = fresh(h); h.s = q; offerTo(h, q); h.returning(); h.q.tickSessions(); assert.equal(h.q.isErrand(q.id), false); }
+    const lost = fresh(h); h.s = lost; offerTo(h, lost); end(h);
+    assert.equal(h.q.isErrand(lost.id), false, route); assert.ok(h.messages.includes("squirrel.abort"), route);
+    h.player.location = { x: 0, y: 65, z: 0 }; h.player.band = "friend";
+    const r = offerTo(h, fresh(h)); assert.deepEqual(r.said, ["squirrel.accept"], route); assert.equal(r.eaten, 1);
+  }
+});
+await test("R8: every exit says something: a lead says stop_leashed, a vanished squirrel says abort, a dead squirrel and a gone player are silent, a throwing tick aborts at once", async () => {
+  const run = async (mutate) => { const h = await squirrel(); h.click(); const beacon = h.world.getEntity(h.returning().beaconId), before = h.messages.length;
+    mutate(h, beacon); h.q.tickSessions(); return { h, beacon, said: h.messages.slice(before) }; };
+  let r = await run(h => h.s.leashed = true); assert.deepEqual(r.said, ["squirrel.stop_leashed"]); assert.equal(r.h.q.isErrand(r.h.s.id), false);
+  r = await run(h => h.s.remove()); assert.deepEqual(r.said, ["squirrel.abort"]); assert.equal(r.beacon.isValid, false);
+  r = await run(h => h.s.health.currentValue = 0); assert.deepEqual(r.said, []); assert.equal(r.h.q.isErrand(r.h.s.id), false);
+  r = await run(h => h.player.isValid = false); assert.deepEqual(r.said, []); assert.equal(r.h.q.isErrand(r.h.s.id), false);
+  r = await run(h => h.s.setProperty("lothlorien:alarmed", true)); assert.deepEqual(r.said, ["squirrel.alarmed"]);
+  const h = await squirrel(); h.click(); const s = h.returning(), get = h.world.getEntity.bind(h.world), ev = [...h.s.events];
+  h.world.getEntity = id => { if (id === s.beaconId) throw Error("boom"); return get(id); };
+  const before = h.messages.length; h.q.tickSessions();
+  assert.equal(h.q.isErrand(h.s.id), false, "the session is gone at once, no silent retry"); assert.deepEqual(h.messages.slice(before), ["squirrel.abort"]);
+  assert.ok(h.s.events.includes("lothlorien:guide_end") && h.s.events.length > ev.length);
+});
+await test("R8: an offer to a squirrel on its errand answers busy and keeps the acorn; an alarmed squirrel answers startled and keeps it", async () => {
+  const h = await squirrel(); h.click(); const r = offerTo(h, h.s);
+  assert.deepEqual(r.said, ["squirrel.busy"]); assert.equal(r.eaten, 0);
+  const calm = fresh(h); calm.setProperty("lothlorien:alarmed", true); const a = offerTo(h, calm);
+  assert.deepEqual(a.said, ["squirrel.startled"]); assert.equal(a.eaten, 0); assert.equal(a.errand, false);
+});
+await test("R8: an injured Friend's acorn starts the errand and heals it, one acorn (D1); on cooldown a hurt squirrel eats, heals and says fed", async () => {
+  const h = await squirrel(); h.player.slot.item.amount = 64; h.s.health.currentValue = 2;
+  const r = offerTo(h, h.s); assert.deepEqual(r.said, ["squirrel.accept"]); assert.equal(r.eaten, 1); assert.equal(h.s.health.currentValue, 4); assert.equal(r.errand, true);
+  h.returning(); h.q.tickSessions(); assert.equal(h.q.isErrand(h.s.id), false); h.s.health.currentValue = 2;
+  const f = offerTo(h, h.s); assert.deepEqual(f.said, ["squirrel.fed"]); assert.equal(f.eaten, 1); assert.equal(h.s.health.currentValue, 4); assert.equal(f.errand, false);
+  const full = offerTo(h, h.s); assert.deepEqual(full.said, ["squirrel.full"]); assert.equal(full.eaten, 0, "a healthy squirrel on cooldown keeps the acorn");
+});
+await test("R8: feeding outside the forest eats one acorn and says outside; an errand squirrel clicked outside ends with abort first", async () => {
+  const h = await squirrel(); h.depth = { level: 0, complete: true };
+  const r = offerTo(h, h.s); assert.deepEqual(r.said, ["squirrel.outside"]); assert.equal(r.eaten, 1); assert.ok(h.s.events.includes("lothlorien:fed")); assert.equal(r.errand, false);
+  const g = await squirrel(); g.click(); g.depth = { level: 0, complete: true }; const beacon = g.world.getEntity(g.returning().beaconId);
+  const e = offerTo(g, g.s); assert.deepEqual(e.said, ["squirrel.abort", "squirrel.outside"]); assert.equal(e.errand, false); assert.equal(beacon.isValid, false);
+});
+await test("R8: a failing start keeps the acorn, releases the squirrel and says no_path", async () => {
+  for (const failAt of ["spawn", "event"]) {
+    const h = await squirrel();
+    if (failAt === "spawn") h.dimension.spawnEntity = () => { throw Error("spawn"); };
+    else h.s.triggerEvent = () => { throw Error("event"); };
+    const r = offerTo(h, h.s); assert.deepEqual(r.said, ["squirrel.no_path"], failAt); assert.equal(r.eaten, 0, failAt); assert.equal(r.errand, false);
+    assert.equal(h.s.getProperty("lothlorien:guiding"), undefined, failAt); assert.equal(h.q.sessions.size, 0);
+    assert.equal([...h.timers.values()].filter(t => t.period === Q.SQUIRREL_TICKS).length, 0);
+  }
+});
+await test("R8: an errand that runs out of the biome still delivers; leaving the forest is no ending", async () => {
+  const h = await squirrel(); h.click(); h.returning(); h.depth = { level: 0, complete: true };
+  h.q.tickSessions(); assert.equal(h.dimension.drops.length, 1); assert.ok(h.messages.includes("squirrel.gift")); assert.ok(!h.messages.includes("squirrel.abort"));
+});
+await test("R8: debug lines only while the switch is on: none when off; offer, accept, phases, gift and end lines when on, never per tick", async () => {
+  const run = async debug => {
+    const h = await squirrel(), warn = console.warn, lines = []; console.warn = l => lines.push(String(l)); h.debug = debug;
+    try {
+      h.click(); h.click(); h.q.tickSessions(); h.q.tickSessions(); // busy offer, then ticks while it runs
+      h.q.sessions.get(h.s.id).phase = "away"; h.player.location = { x: 12, y: 65, z: 0 }; h.s.location = { x: 12, y: 65, z: 0 };
+      for (let i = 0; i < 40; i++) { h.advance(Q.SQUIRREL_TICKS); if (!h.q.isErrand(h.s.id)) break; }
+      const sq2 = fresh(h); h.player.band = "guest"; h.fire("playerInteractWithEntity", { player: h.player, target: sq2, itemStack: h.player.slot.item.clone() });
+      return lines;
+    } finally { console.warn = warn; }
+  };
+  assert.deepEqual((await run(false)).filter(l => l.includes("squirrel:")), []);
+  const on = await run(true);
+  for (const re of [/offer e\d+: refused \(busy\)/, /accept e\d+: away /, /phase away->dig/, /gift at /, /end \(gift\): squirrel\.gift/, /offer e\d+: refused \(untrusted\)/])
+    assert.ok(on.some(l => re.test(l)), `${re}\n${on.join("\n")}`);
+  assert.ok(on.every(l => l.startsWith("[lothlorien] squirrel: (debug) ")), on.join("\n"));
 });
 console.log(`Passed ${scenarios} production swan/squirrel interaction scenarios.`);

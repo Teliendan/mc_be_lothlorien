@@ -20006,6 +20006,462 @@
               "status": "ai-draft"
             }
           }
+        },
+        "lothlorien.message.squirrel.busy": {
+          "source": "§7The squirrel is already off on your errand.",
+          "context": {
+            "meaning": "Offering an acorn to a squirrel that is already on its errand for the player; the acorn stays in the hand.",
+            "location": "lothlorien_rp: chat or action bar",
+            "trigger": "Offering an acorn to a squirrel that is already on its errand for the player; the acorn stays in the hand.",
+            "tone": "Gentle woodland narration",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/squirrel.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Veverka už je na pochůzce pro vás.",
+              "based_on": "1b11f3ae66d63d5cccc2a8a0def67ddd9cc630e9de945f87a3eb85f6b9d13eac",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§7La ardilla ya anda haciendo tu encargo.",
+              "based_on": "1b11f3ae66d63d5cccc2a8a0def67ddd9cc630e9de945f87a3eb85f6b9d13eac",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§7La ardilla ya salió a hacer tu encargo.",
+              "based_on": "1b11f3ae66d63d5cccc2a8a0def67ddd9cc630e9de945f87a3eb85f6b9d13eac",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§7O esquilo já foi tratar do teu recado.",
+              "based_on": "1b11f3ae66d63d5cccc2a8a0def67ddd9cc630e9de945f87a3eb85f6b9d13eac",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§7O esquilo já saiu para fazer o seu recado.",
+              "based_on": "1b11f3ae66d63d5cccc2a8a0def67ddd9cc630e9de945f87a3eb85f6b9d13eac",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§7Das Waldhörnchen ist schon in deinem Auftrag unterwegs.",
+              "based_on": "1b11f3ae66d63d5cccc2a8a0def67ddd9cc630e9de945f87a3eb85f6b9d13eac",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§7L’écureuil est déjà parti faire votre course.",
+              "based_on": "1b11f3ae66d63d5cccc2a8a0def67ddd9cc630e9de945f87a3eb85f6b9d13eac",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§7Wiewiórka już pobiegła załatwić twoją sprawę.",
+              "based_on": "1b11f3ae66d63d5cccc2a8a0def67ddd9cc630e9de945f87a3eb85f6b9d13eac",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.squirrel.stop_leashed": {
+          "source": "§7The lead holds the squirrel back, and it drops the errand. The acorn is gone.",
+          "context": {
+            "meaning": "A squirrel on an errand is put on a lead; the errand ends and the consumed acorn is lost. Lead is the vanilla item.",
+            "location": "lothlorien_rp: chat or action bar",
+            "trigger": "A squirrel on an errand is put on a lead; the errand ends and the consumed acorn is lost. Lead is the vanilla item.",
+            "tone": "Gentle woodland narration",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/squirrel.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Veverku zadrželo vodítko, a tak pochůzku vzdala. Žalud je pryč.",
+              "based_on": "99d2ff5e6b9617f9378b82071fe4dc7e7bd35e10b3f6a67615231b067b66d7ec",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§7La rienda frena a la ardilla y esta abandona el encargo. Has perdido la bellota.",
+              "based_on": "99d2ff5e6b9617f9378b82071fe4dc7e7bd35e10b3f6a67615231b067b66d7ec",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§7La correa detiene a la ardilla y esta deja el encargo. La bellota se perdió.",
+              "based_on": "99d2ff5e6b9617f9378b82071fe4dc7e7bd35e10b3f6a67615231b067b66d7ec",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§7A Corda-guia prende o esquilo, que desiste do recado. Lá se foi a bolota.",
+              "based_on": "99d2ff5e6b9617f9378b82071fe4dc7e7bd35e10b3f6a67615231b067b66d7ec",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§7O Laço segura o esquilo, que desiste do recado. A bolota se foi.",
+              "based_on": "99d2ff5e6b9617f9378b82071fe4dc7e7bd35e10b3f6a67615231b067b66d7ec",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§7Die Leine hält das Waldhörnchen zurück, und es gibt den Auftrag auf. Die Eichel ist weg.",
+              "based_on": "99d2ff5e6b9617f9378b82071fe4dc7e7bd35e10b3f6a67615231b067b66d7ec",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§7La laisse retient l’écureuil, qui renonce à sa course. Le gland est perdu.",
+              "based_on": "99d2ff5e6b9617f9378b82071fe4dc7e7bd35e10b3f6a67615231b067b66d7ec",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§7Postronek zatrzymuje wiewiórkę, więc rezygnuje z zadania. Żołądź przepadł.",
+              "based_on": "99d2ff5e6b9617f9378b82071fe4dc7e7bd35e10b3f6a67615231b067b66d7ec",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.squirrel.fed": {
+          "source": "§7The squirrel eats the acorn and feels better. It is still busy with its stash.",
+          "context": {
+            "meaning": "A hurt squirrel that has just run an errand (cooldown) eats the offered acorn and heals; no new errand starts.",
+            "location": "lothlorien_rp: chat or action bar",
+            "trigger": "A hurt squirrel that has just run an errand (cooldown) eats the offered acorn and heals; no new errand starts.",
+            "tone": "Gentle woodland narration",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/squirrel.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Veverka žalud snědla a už se cítí lépe. Pořád má ale plno práce se zásobami.",
+              "based_on": "6fbc69a3834465e63d852e82c774503a0a28cffcc92052321429de5b6a041f69",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§7La ardilla se come la bellota y se siente mejor. Sigue ocupada con sus reservas.",
+              "based_on": "6fbc69a3834465e63d852e82c774503a0a28cffcc92052321429de5b6a041f69",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§7La ardilla se come la bellota y se siente mejor. Sigue ocupada con sus reservas.",
+              "based_on": "6fbc69a3834465e63d852e82c774503a0a28cffcc92052321429de5b6a041f69",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§7O esquilo come a bolota e sente-se melhor. Continua ocupado com as suas provisões.",
+              "based_on": "6fbc69a3834465e63d852e82c774503a0a28cffcc92052321429de5b6a041f69",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§7O esquilo come a bolota e se sente melhor. Ele continua ocupado com suas provisões.",
+              "based_on": "6fbc69a3834465e63d852e82c774503a0a28cffcc92052321429de5b6a041f69",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§7Das Waldhörnchen frisst die Eichel und fühlt sich besser. Es ist aber weiter mit seinem Vorrat beschäftigt.",
+              "based_on": "6fbc69a3834465e63d852e82c774503a0a28cffcc92052321429de5b6a041f69",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§7L’écureuil mange le gland et se sent mieux. Il est toujours occupé par ses réserves.",
+              "based_on": "6fbc69a3834465e63d852e82c774503a0a28cffcc92052321429de5b6a041f69",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§7Wiewiórka zjada żołądź i czuje się lepiej. Nadal jednak zajmuje się swoimi zapasami.",
+              "based_on": "6fbc69a3834465e63d852e82c774503a0a28cffcc92052321429de5b6a041f69",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.squirrel.startled": {
+          "source": "§7The squirrel is still startled. Give it a moment.",
+          "context": {
+            "meaning": "Offering an acorn to a squirrel that is alarmed because a player hit an animal nearby (about 20 seconds); the acorn is kept.",
+            "location": "lothlorien_rp: chat or action bar",
+            "trigger": "Offering an acorn to a squirrel that is alarmed because a player hit an animal nearby (about 20 seconds); the acorn is kept.",
+            "tone": "Gentle woodland narration",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/squirrel.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Veverka je ještě vyplašená. Dejte jí chvilku.",
+              "based_on": "1321be6fc87974c8d391d0b38aec9b99554c1708bb7a3e05b1be165145210728",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§7La ardilla aún está asustada. Dale un momento.",
+              "based_on": "1321be6fc87974c8d391d0b38aec9b99554c1708bb7a3e05b1be165145210728",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§7La ardilla sigue asustada. Dale un momento.",
+              "based_on": "1321be6fc87974c8d391d0b38aec9b99554c1708bb7a3e05b1be165145210728",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§7O esquilo ainda está assustado. Dá-lhe um momento.",
+              "based_on": "1321be6fc87974c8d391d0b38aec9b99554c1708bb7a3e05b1be165145210728",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§7O esquilo ainda está assustado. Dê um tempinho a ele.",
+              "based_on": "1321be6fc87974c8d391d0b38aec9b99554c1708bb7a3e05b1be165145210728",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§7Das Waldhörnchen ist noch verschreckt. Gib ihm einen Moment.",
+              "based_on": "1321be6fc87974c8d391d0b38aec9b99554c1708bb7a3e05b1be165145210728",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§7L’écureuil est encore effrayé. Laissez-lui un instant.",
+              "based_on": "1321be6fc87974c8d391d0b38aec9b99554c1708bb7a3e05b1be165145210728",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§7Wiewiórka jest jeszcze wystraszona. Daj jej chwilę.",
+              "based_on": "1321be6fc87974c8d391d0b38aec9b99554c1708bb7a3e05b1be165145210728",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.squirrel.outside": {
+          "source": "§7The squirrel nibbles the acorn. Beyond Lothlórien it runs no errands.",
+          "context": {
+            "meaning": "Feeding a squirrel an acorn outside the Lothlórien biome: it eats it like ordinary food but only runs errands inside the forest.",
+            "location": "lothlorien_rp: chat or action bar",
+            "trigger": "Feeding a squirrel an acorn outside the Lothlórien biome: it eats it like ordinary food but only runs errands inside the forest.",
+            "tone": "Gentle woodland narration",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/squirrel.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Veverka si pochutnává na žaludu. Mimo Lothlórien ale žádné pochůzky nevyřizuje.",
+              "based_on": "7ba6eba836c558ea54d5e2d0d7d4d2b97e36a78b57662f982953d5dd3656fb81",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§7La ardilla mordisquea la bellota. Fuera de Lothlórien no hace encargos.",
+              "based_on": "7ba6eba836c558ea54d5e2d0d7d4d2b97e36a78b57662f982953d5dd3656fb81",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§7La ardilla mordisquea la bellota. Fuera de Lothlórien no hace encargos.",
+              "based_on": "7ba6eba836c558ea54d5e2d0d7d4d2b97e36a78b57662f982953d5dd3656fb81",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§7O esquilo trinca a bolota. Fora de Lothlórien não faz recados.",
+              "based_on": "7ba6eba836c558ea54d5e2d0d7d4d2b97e36a78b57662f982953d5dd3656fb81",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§7O esquilo mordisca a bolota. Fora de Lothlórien ele não faz recados.",
+              "based_on": "7ba6eba836c558ea54d5e2d0d7d4d2b97e36a78b57662f982953d5dd3656fb81",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§7Das Waldhörnchen knabbert an der Eichel. Außerhalb von Lothlórien erledigt es keine Aufträge.",
+              "based_on": "7ba6eba836c558ea54d5e2d0d7d4d2b97e36a78b57662f982953d5dd3656fb81",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§7L’écureuil grignote le gland. En dehors de Lothlórien, il ne fait pas de courses.",
+              "based_on": "7ba6eba836c558ea54d5e2d0d7d4d2b97e36a78b57662f982953d5dd3656fb81",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§7Wiewiórka podgryza żołądź. Poza Lothlórien nie załatwia żadnych spraw.",
+              "based_on": "7ba6eba836c558ea54d5e2d0d7d4d2b97e36a78b57662f982953d5dd3656fb81",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.deer.startled": {
+          "source": "§7The white deer is still startled. Give it a moment.",
+          "context": {
+            "meaning": "Offering an acorn to a white deer that is alarmed because a player hit an animal nearby (about 20 seconds); the acorn is kept.",
+            "location": "lothlorien_rp: chat or action bar",
+            "trigger": "Offering an acorn to a white deer that is alarmed because a player hit an animal nearby (about 20 seconds); the acorn is kept.",
+            "tone": "Gentle woodland narration",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/white_deer.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Bílý jelen je ještě vyplašený. Dejte mu chvilku.",
+              "based_on": "629c58b2a76ac10be5c86eba1336584ca3679c7838eb5eb61acf0eba47cd0047",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§7El ciervo blanco aún está asustado. Dale un momento.",
+              "based_on": "629c58b2a76ac10be5c86eba1336584ca3679c7838eb5eb61acf0eba47cd0047",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§7El venado blanco sigue asustado. Dale un momento.",
+              "based_on": "629c58b2a76ac10be5c86eba1336584ca3679c7838eb5eb61acf0eba47cd0047",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§7O veado branco ainda está assustado. Dá-lhe um momento.",
+              "based_on": "629c58b2a76ac10be5c86eba1336584ca3679c7838eb5eb61acf0eba47cd0047",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§7O veado branco ainda está assustado. Dê um tempinho a ele.",
+              "based_on": "629c58b2a76ac10be5c86eba1336584ca3679c7838eb5eb61acf0eba47cd0047",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§7Der weiße Hirsch ist noch verschreckt. Gib ihm einen Moment.",
+              "based_on": "629c58b2a76ac10be5c86eba1336584ca3679c7838eb5eb61acf0eba47cd0047",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§7Le cerf blanc est encore effrayé. Laissez-lui un instant.",
+              "based_on": "629c58b2a76ac10be5c86eba1336584ca3679c7838eb5eb61acf0eba47cd0047",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§7Biały jeleń jest jeszcze wystraszony. Daj mu chwilę.",
+              "based_on": "629c58b2a76ac10be5c86eba1336584ca3679c7838eb5eb61acf0eba47cd0047",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.deer.fed": {
+          "source": "§7The white deer eats the acorn and its wounds ease.",
+          "context": {
+            "meaning": "A hurt white deer that has already given its gift eats the offered acorn and heals; nothing else happens.",
+            "location": "lothlorien_rp: chat or action bar",
+            "trigger": "A hurt white deer that has already given its gift eats the offered acorn and heals; nothing else happens.",
+            "tone": "Gentle woodland narration",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/white_deer.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Bílý jelen žalud snědl a rány se mu hojí.",
+              "based_on": "60f17061245d2a8ddeab328205ac50b728886eae472acc035cea853ffc695bd4",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§7El ciervo blanco se come la bellota y sus heridas mejoran.",
+              "based_on": "60f17061245d2a8ddeab328205ac50b728886eae472acc035cea853ffc695bd4",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§7El venado blanco se come la bellota y sus heridas mejoran.",
+              "based_on": "60f17061245d2a8ddeab328205ac50b728886eae472acc035cea853ffc695bd4",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§7O veado branco come a bolota e as suas feridas aliviam.",
+              "based_on": "60f17061245d2a8ddeab328205ac50b728886eae472acc035cea853ffc695bd4",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§7O veado branco come a bolota e suas feridas melhoram.",
+              "based_on": "60f17061245d2a8ddeab328205ac50b728886eae472acc035cea853ffc695bd4",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§7Der weiße Hirsch frisst die Eichel, und seine Wunden heilen.",
+              "based_on": "60f17061245d2a8ddeab328205ac50b728886eae472acc035cea853ffc695bd4",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§7Le cerf blanc mange le gland et ses blessures s’apaisent.",
+              "based_on": "60f17061245d2a8ddeab328205ac50b728886eae472acc035cea853ffc695bd4",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§7Biały jeleń zjada żołądź i jego rany się goją.",
+              "based_on": "60f17061245d2a8ddeab328205ac50b728886eae472acc035cea853ffc695bd4",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.deer.outside": {
+          "source": "§7The white deer eats the acorn. Beyond Lothlórien it leads no one.",
+          "context": {
+            "meaning": "Feeding a white deer an acorn outside the Lothlórien biome: it eats it like ordinary food but only guides inside the forest.",
+            "location": "lothlorien_rp: chat or action bar",
+            "trigger": "Feeding a white deer an acorn outside the Lothlórien biome: it eats it like ordinary food but only guides inside the forest.",
+            "tone": "Gentle woodland narration",
+            "grammar": "Complete sentence; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/white_deer.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Bílý jelen žalud snědl. Mimo Lothlórien ale nikoho nevede.",
+              "based_on": "70ade85f4031034f44d02ae10393a25367c5df972ee5a1599f3b33ca5f8ada9b",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§7El ciervo blanco se come la bellota. Fuera de Lothlórien no guía a nadie.",
+              "based_on": "70ade85f4031034f44d02ae10393a25367c5df972ee5a1599f3b33ca5f8ada9b",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§7El venado blanco se come la bellota. Fuera de Lothlórien no guía a nadie.",
+              "based_on": "70ade85f4031034f44d02ae10393a25367c5df972ee5a1599f3b33ca5f8ada9b",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§7O veado branco come a bolota. Fora de Lothlórien não guia ninguém.",
+              "based_on": "70ade85f4031034f44d02ae10393a25367c5df972ee5a1599f3b33ca5f8ada9b",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§7O veado branco come a bolota. Fora de Lothlórien não guia ninguém.",
+              "based_on": "70ade85f4031034f44d02ae10393a25367c5df972ee5a1599f3b33ca5f8ada9b",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§7Der weiße Hirsch frisst die Eichel. Außerhalb von Lothlórien führt er niemanden.",
+              "based_on": "70ade85f4031034f44d02ae10393a25367c5df972ee5a1599f3b33ca5f8ada9b",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§7Le cerf blanc mange le gland. En dehors de Lothlórien, il ne guide personne.",
+              "based_on": "70ade85f4031034f44d02ae10393a25367c5df972ee5a1599f3b33ca5f8ada9b",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§7Biały jeleń zjada żołądź. Poza Lothlórien nikogo nie prowadzi.",
+              "based_on": "70ade85f4031034f44d02ae10393a25367c5df972ee5a1599f3b33ca5f8ada9b",
+              "status": "ai-draft"
+            }
+          }
         }
       }
     },

@@ -206,6 +206,33 @@ await test("debug lines only while the switch is on: none when off; offer, searc
   assert.ok(on.lines.every(l => l.startsWith("[lothlorien] white deer: (debug) ")));
   assert.ok(on.lines.length < on.ticks / rules.GUIDE_TICKS / 4, `${on.lines.length} lines in ${on.ticks} ticks`);
 });
+// R8 (2026-11-22): a hurt deer used to eat its first acorn silently (the hit that ended a guidance left it hurt), so leading again took
+// two clicks. Now the acorn that starts the guidance heals; where nothing starts, the deer says so.
+const hurt = (h, by = 6) => { h.deer.health.currentValue = h.deer.health.effectiveMax - by; };
+await test("R8: a hurt deer's first acorn after an aborted guidance leads, one acorn, healed", async () => {
+  for (const by of [1, 6]) {
+    const h = await setup(), out = said(h); h.offer(); h.flush(); h.deer.setProperty("lothlorien:guiding", false); h.mod.tickSessions(); // a hit ends the walk
+    assert.equal(h.mod.isGuiding(h.deer.id), false); hurt(h, by); out.length = 0; const before = h.player.slot.amount;
+    h.offer(); h.flush();
+    assert.equal(h.mod.isGuiding(h.deer.id), true, `hurt by ${by}`); assert.deepEqual(out, ["deer.accept"]); assert.equal(before - h.player.slot.amount, 1);
+    assert.equal(h.deer.health.currentValue, Math.min(h.deer.health.effectiveMax, h.deer.health.effectiveMax - by + 2));
+  }
+});
+await test("R8: an injured deer that already gave its gift eats, heals and says fed; a healthy one still says gifted and keeps the acorn", async () => {
+  const h = await setup(), out = said(h); h.deer.setDynamicProperty("lothlorien:gifted", true); hurt(h, 6); const before = h.player.slot.amount;
+  h.offer(); h.flush(); assert.deepEqual(out, ["deer.fed"]); assert.equal(before - h.player.slot.amount, 1); assert.equal(h.deer.health.currentValue, h.deer.health.effectiveMax - 4);
+  assert.equal(h.mod.isGuiding(h.deer.id), false);
+  h.deer.health.currentValue = h.deer.health.effectiveMax; out.length = 0; h.offer(); assert.deepEqual(out, ["deer.gifted"]); assert.equal(before - h.player.slot.amount, 1);
+});
+await test("R8: an alarmed deer answers startled and keeps the acorn", async () => {
+  const h = await setup(), out = said(h); h.deer.setProperty("lothlorien:alarmed", true); const before = h.player.slot.amount;
+  h.offer(); h.flush(); assert.deepEqual(out, ["deer.startled"]); assert.equal(h.player.slot.amount, before); assert.equal(h.mod.isGuiding(h.deer.id), false);
+});
+await test("R8: feeding outside the forest eats one acorn, tames and says outside", async () => {
+  const h = await setup(), out = said(h); h.depth = { level: 0, complete: true }; const before = h.player.slot.amount;
+  h.offer(); h.flush(); assert.deepEqual(out, ["deer.outside"]); assert.equal(before - h.player.slot.amount, 1);
+  assert.ok(h.deer.events.includes("lothlorien:become_tame")); assert.equal(h.mod.isGuiding(h.deer.id), false);
+});
 const changes = {
   hand: h => h.player.slot.item = new Item("minecraft:diamond"),
   slot: h => h.player.selectedSlotIndex++,

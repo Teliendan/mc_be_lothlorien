@@ -701,3 +701,19 @@ lothlorien.message.firefly.name_more=%s
 lothlorien.message.firefly.health=Health: %s
 ## Context: An empty reusable leather container for Miruvor. Craft it from leather, fill it in the Miruvor recipe, and recover it after the last sip. Skin means wineskin, not body skin.
 item.lothlorien:empty_miruvor_skin=Empty Miruvor Skin
+## Context: Offering an acorn to a squirrel that is already on its errand for the player; the acorn stays in the hand.
+lothlorien.message.squirrel.busy=§7The squirrel is already off on your errand.
+## Context: A squirrel on an errand is put on a lead; the errand ends and the consumed acorn is lost. Lead is the vanilla item.
+lothlorien.message.squirrel.stop_leashed=§7The lead holds the squirrel back, and it drops the errand. The acorn is gone.
+## Context: A hurt squirrel that has just run an errand (cooldown) eats the offered acorn and heals; no new errand starts.
+lothlorien.message.squirrel.fed=§7The squirrel eats the acorn and feels better. It is still busy with its stash.
+## Context: Offering an acorn to a squirrel that is alarmed because a player hit an animal nearby (about 20 seconds); the acorn is kept.
+lothlorien.message.squirrel.startled=§7The squirrel is still startled. Give it a moment.
+## Context: Feeding a squirrel an acorn outside the Lothlórien biome: it eats it like ordinary food but only runs errands inside the forest.
+lothlorien.message.squirrel.outside=§7The squirrel nibbles the acorn. Beyond Lothlórien it runs no errands.
+## Context: Offering an acorn to a white deer that is alarmed because a player hit an animal nearby (about 20 seconds); the acorn is kept.
+lothlorien.message.deer.startled=§7The white deer is still startled. Give it a moment.
+## Context: A hurt white deer that has already given its gift eats the offered acorn and heals; nothing else happens.
+lothlorien.message.deer.fed=§7The white deer eats the acorn and its wounds ease.
+## Context: Feeding a white deer an acorn outside the Lothlórien biome: it eats it like ordinary food but only guides inside the forest.
+lothlorien.message.deer.outside=§7The white deer eats the acorn. Beyond Lothlórien it leads no one.

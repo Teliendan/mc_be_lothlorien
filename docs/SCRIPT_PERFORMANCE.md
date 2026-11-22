@@ -249,7 +249,7 @@ and the rect gives 108 to 210 calls over 21 to 37 layers, so a call touches at m
 causes, and the total wall time are unknown; the village `clear` debug line (`docs/TESTING.md`) records them for the first in-game village. It runs once per village,
 inside the existing ticking areas, so it adds no steady load.
 
-Inside-the-forest yes/no checks (the squirrel errand every 10 ticks, the acorn feeding of squirrel and white deer) use `isInside` in `depth.js`
+Inside-the-forest yes/no checks (the acorn feeding of squirrel and white deer; the squirrel errand no longer probes the biome every 10 ticks since R8, 2026-11-22) use `isInside` in `depth.js`
 (`insideAt` in `main.js`): one biome read at the centre instead of the 83-probe estimate; only a river centre falls back to the full
 estimate. Natural-spawn rolls still use `depthAt` (they need the level). Offline: `isInside` agrees with `estimateDepth(...).level > 0` on every
 fixture of `tests/biome_depth.mjs`. Not timed in game.
