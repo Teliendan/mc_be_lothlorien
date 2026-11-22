@@ -2181,7 +2181,7 @@
         },
         {
           "path": "lothlorien_bp/entities/elf.json",
-          "sha256": "60183b40caa40cdd344a15b1e4aade4f349304e7df9b71ab63fe3d3a632e396c"
+          "sha256": "7a2ac4ce39a8081a46f529109d9037d5a6a31bf611d7c1da4356f1cbe0381388"
         },
         {
           "path": "lothlorien_bp/scripts/elven_warden.js",
@@ -2193,7 +2193,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/elf_rules.js",
-          "sha256": "e317245b045b2f9c4735a5fe028acd668038cb578fd54d9842868ae177a6cb15"
+          "sha256": "858428d4dc4851f6fd8913054f0e628edf4c3640793f1b59861a5ff992734f15"
         },
         {
           "path": "lothlorien_bp/scripts/elf_village.js",
