@@ -2181,7 +2181,7 @@
         },
         {
           "path": "lothlorien_bp/entities/elf.json",
-          "sha256": "7a2ac4ce39a8081a46f529109d9037d5a6a31bf611d7c1da4356f1cbe0381388"
+          "sha256": "1f6722d244214e9853d7070e573223c9a77a78ef08ac75e0ec8ef0c512463c7a"
         },
         {
           "path": "lothlorien_bp/scripts/elven_warden.js",
