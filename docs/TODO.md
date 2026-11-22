@@ -78,11 +78,9 @@ Target: tester build on the weekend of 2026-10-24/25.
   (now `tools/build_tree_grid.mjs`, `tests/tree_grid.mjs`, suite `tree-grid`) are gone.
   - [x] Workspace `temp/localization/` is gone (checked 2026-11-22).
 - [x] **Tester feedback** worked in (owner, 2026-11-22).
-- [ ] **Release 0.9.0** (testers have DIAG builds up to 0.8.13 with the same UUIDs; 0.9.0 upgrades them):
-  check `changes/` covers every player-visible change since v0.8.0, `.\mods release lothlorien --version 0.9.0`,
-  a Defender scan of `dist/lothlorien` (two scans minutes apart; skill `bedrock-modding` reference 05), the smoke
-  test above on the packaged build, then `.\mods release lothlorien --publish` (workspace `docs/changelog.md`).
-  Then update the GitHub repo description (it still says "pre-release (0.8.0)").
+- [x] **Release 0.9.0.** Pre-release v0.9.0 published 2026-11-22 on GitHub Releases (tag on `c202375`;
+  two Defender scans of `dist/lothlorien` clean). The smoke test above was not reported before publishing.
+  The GitHub About text is updated from the brand repo.
 - The website (wiki, documents, download) is a separate project.
 
 ## 4. Known issues (go into the tester brief and README)
