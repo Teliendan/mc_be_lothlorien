@@ -14,7 +14,7 @@ selected slot's item type, native JSON before script).
   accepted 2026-11-11). Whether a Spectator is fled from is not recorded (check 13 in `OWNER_CHECKS.md`).
   The goal sets its own `max_dist`/`max_flee` (largest entry) and the engine applies them to every entry, ignoring the
   entry's own (owner J27 2026-11-17, R4/R5 2026-11-21; MCPE-182041); per-band distance is a `distance_to_nearest_player`
-  gate in each entry (2026-11-22, not yet seen in game); wolves flee at the goal radius, monsters are not fled. The positive `has_tag` test only
+  gate in each entry (2026-11-22, verified in game the same day, 1.26.63); wolves flee at the goal radius, monsters are not fled. The positive `has_tag` test only
   indirectly (tame deer, J30). Old-world animals carry no flight group until
   alarmed (owner: no migration).
 - Interaction handlers (white deer, squirrel, unicorn): one gate (entity type + held item from `beforeItemStack`),
