@@ -1,0 +1,1 @@
+- Where two generated builds overlap, one of them can be cut off.

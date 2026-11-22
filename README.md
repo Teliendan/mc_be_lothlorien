@@ -2,9 +2,9 @@
 
 ![Lothlórien promo banner](docs/media/promo_banner_1280.png)
 
-A rare, peaceful Lothlórien biome for Minecraft Bedrock Edition: golden Mallorn trees reaching into the sky, elven villages in their crowns, gentle wildlife, and elves who remember how you treat their forest. It is a behavior pack plus a resource pack and needs no experimental toggles.
+A rare, peaceful Lothlórien biome for Minecraft Bedrock Edition: golden Mallorn trees reaching into the sky, elven villages in their crowns, gentle wildlife, and elves who remember how you treat their forest. It is a behavior pack plus a resource pack, with a skin pack of six elf skins, and needs no experimental toggles.
 
-> **Status: pre-release 0.8.0, private testing.** Things may still change a lot.
+> **Status: pre-release 0.9.0, testing.** Things may still change before the public release.
 
 Testers: see [docs/TESTER_BRIEF.md](docs/TESTER_BRIEF.md).
 
@@ -23,11 +23,12 @@ Testers: see [docs/TESTER_BRIEF.md](docs/TESTER_BRIEF.md).
 - **Sindarin voice:** elves and wardens speak short Sindarin phrases.
 - **Soundscape:** harp music in elven villages, and sounds at shrines and memorials.
 - **Items:** the Bow of the Galadhrim and its arrows, the Phial of Galadriel, lembas, Miruvor, Athelas salve, elven cloak and silver belt, firefly jars and more.
+- **Elf skins:** the skin pack "Elves of Lothlórien" with six skins for your character: Warden, Sentinel, Forester, Pathfinder, Highborn Lady and Highborn Lord.
 
 ## Install
 
 1. Download the latest `.mcaddon` from the [Releases page](https://github.com/Teliendan/mc_be_lothlorien/releases) (pre-releases are listed there).
-2. Open the file with Minecraft; it imports both packs. The resource pack comes with it.
+2. Open the file with Minecraft; it imports all three packs. The skins then appear in the Dressing Room.
 3. Create a world and enable the Lothlórien **behavior pack** (the resource pack is attached to it).
 
 Requirements: Minecraft Bedrock Edition 1.26.50 or newer. No experimental features need to be switched on.
@@ -38,7 +39,6 @@ The biome and its structures appear only in **newly generated chunks**. Use a ne
 
 ## Known issues
 
-- Mallorn and golden leaves can flicker at some angles (z-fighting between leaf faces). The known fixes looked worse.
 - Where independent worldgen starts overlap, a build can be cut off. The engine offers no better option.
 - Some vanilla features are left out because Bedrock does not allow them for custom content: see [docs/NOT_IMPLEMENTED.md](docs/NOT_IMPLEMENTED.md) and the vanilla-parity limits in [docs/parity/BLOCKS_ITEMS.md](docs/parity/BLOCKS_ITEMS.md).
 
