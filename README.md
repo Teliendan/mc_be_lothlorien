@@ -2,13 +2,11 @@
 
 ![Lothlórien promo banner](docs/media/promo_banner_1280.png)
 
-A rare, peaceful Lothlórien biome for Minecraft Bedrock Edition: golden Mallorn trees reaching into the sky, elven villages in their crowns, gentle wildlife, and elves who remember how you treat their forest. It is a behavior pack plus a resource pack, with a skin pack of six elf skins, and needs no experimental toggles.
+Towering Mallorn woodland, wildlife, elven villages and a forest that remembers how you treat it. Lothlórien is a rare, peaceful biome: golden Mallorn trees reach into the sky, elves live in their crowns, and a skin pack with six elf skins comes with it.
 
-> **Status: pre-release 0.9.0, testing.** Things may still change before the public release.
+> **Status: Test version.** Things may still change before the public release, so back up any world you care about. Download: [Releases page](https://github.com/Teliendan/mc_be_lothlorien/releases).
 
-Testers: see [docs/TESTER_BRIEF.md](docs/TESTER_BRIEF.md).
-
-**Wiki:** [teliendan.com/wiki/lothlorien](https://teliendan.com/wiki/lothlorien/): blocks, items, creatures, recipes and how everything works.
+**Project page:** [teliendan.com](https://teliendan.com/mods/lothlorien/?utm_source=github&utm_medium=referral&utm_campaign=profile&utm_content=readme) · **Wiki:** [blocks, items, creatures, recipes and how everything works](https://teliendan.com/wiki/lothlorien/?utm_source=github&utm_medium=referral&utm_campaign=profile&utm_content=readme)
 
 ## Features
 
@@ -27,28 +25,26 @@ Testers: see [docs/TESTER_BRIEF.md](docs/TESTER_BRIEF.md).
 
 ## Install
 
-1. Download the latest `.mcaddon` from the [Releases page](https://github.com/Teliendan/mc_be_lothlorien/releases) (pre-releases are listed there).
+1. Download the `.mcaddon` from the [Releases page](https://github.com/Teliendan/mc_be_lothlorien/releases).
 2. Open the file with Minecraft; it imports all three packs. The skins then appear in the Dressing Room.
-3. Create a world and enable the Lothlórien **behavior pack** (the resource pack is attached to it).
+3. Create a world and turn on the Lothlórien **behavior pack** (its resource pack comes with it).
 
-Requirements: Minecraft Bedrock Edition 1.26.50 or newer. No experimental features need to be switched on.
+The biome and its buildings appear only in **newly generated chunks**. Start a new world, or explore areas you have not visited yet. Back up an existing world before you add the pack to it.
 
-## Warning: new chunks only
-
-The biome and its structures appear only in **newly generated chunks**. Use a new world, or back up your world before adding the pack to an existing one.
+Requirements: Minecraft Bedrock 1.26.50 or newer. No experimental toggles are needed. It works on its own and needs none of my other add-ons.
 
 ## Known issues
 
-- Where independent worldgen starts overlap, a build can be cut off. The engine offers no better option.
+- Where two generated builds overlap, one of them can be cut off. The game offers no better option.
 - Some vanilla features are left out because Bedrock does not allow them for custom content: see [docs/NOT_IMPLEMENTED.md](docs/NOT_IMPLEMENTED.md) and the vanilla-parity limits in [docs/parity/BLOCKS_ITEMS.md](docs/parity/BLOCKS_ITEMS.md).
 
 ## Feedback
 
-Look things up in the [Lothlórien wiki](https://teliendan.com/wiki/lothlorien/). Please report bugs and ideas as [GitHub issues](https://github.com/Teliendan/mc_be_lothlorien/issues). Note your Minecraft version, device, and whether the world was new.
+Found a bug or have an idea? Tell me through the [report form](https://teliendan.com/contact/?project=lothlorien&utm_source=github&utm_medium=referral&utm_campaign=profile&utm_content=readme#report). [GitHub issues](https://github.com/Teliendan/mc_be_lothlorien/issues) work too. Note your Minecraft version, device, and whether the world was new.
 
 ## Credits
 
-Made by [Teliendan](https://teliendan.com) (karel-murgas). Contact: [hello@teliendan.com](mailto:hello@teliendan.com).
+Made by [Teliendan](https://teliendan.com/?utm_source=github&utm_medium=referral&utm_campaign=profile&utm_content=readme).
 
 - Code written with the AI coding agents **Claude Code** (Anthropic) and **Codex** (OpenAI), directed and tested by Teliendan.
 - Textures, models and key art are made with scripts written for this project.
@@ -58,7 +54,7 @@ Made by [Teliendan](https://teliendan.com) (karel-murgas). Contact: [hello@telie
 
 ## Disclaimer
 
-This is unofficial fan work inspired by J.R.R. Tolkien's legendarium. It is not affiliated with or endorsed by the Tolkien Estate, Middle-earth Enterprises, Mojang Studios or Microsoft. "Minecraft" is a trademark of Mojang Studios / Microsoft. Tolkien's names and works belong to their owners, and the licence grants no rights to them. Anything derived from vanilla Minecraft files remains Mojang's.
+Unofficial fan work inspired by J.R.R. Tolkien's legendarium. Not affiliated with or endorsed by the Tolkien Estate, Middle-earth Enterprises, Mojang Studios or Microsoft. "Minecraft" is a trademark of Mojang Studios / Microsoft. Tolkien's names and works belong to their owners, and the licence grants no rights to them. Anything derived from vanilla Minecraft files remains Mojang's.
 
 ## Licence
 
@@ -66,10 +62,7 @@ See [LICENSE.md](LICENSE.md).
 
 ## For developers
 
-- `lothlorien_bp/` is the behavior pack (JSON plus Script API in `scripts/`); `lothlorien_rp/` is the resource pack. Namespace: `lothlorien:`.
-- `tools/` holds generators for art, audio and structures; `tests/` holds the regression tests.
-- Design, decisions and limits are indexed in [docs/README.md](docs/README.md); what is left to do is in [docs/TODO.md](docs/TODO.md).
-- Building, verifying and packaging use a separate workspace tool that is not part of this repository.
+Pack layout, namespace, generators, tests, the tester brief and design notes: [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 
 ## What's new
 
