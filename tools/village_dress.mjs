@@ -652,6 +652,44 @@ function bothSidesSkirted(blocks, y, cells) {
   }));
 }
 
+// A bed that bothSidesSkirted rejects is made up for with a small decoration (owner 2026-11-22): a flower pot on the nearest rail post (a rail top is no walk cell,
+// so it cannot box an elf in) and now and then a second item on another post (a firefly jar or a second pot), or a decorated pot on the deck where the bed was
+// when that keeps every walkable cell of the level connected (potKeepsLinks) and is no 1-wide lane. Its own random stream, seeded by the bed's cell: the dressing's stream
+// does not move. y = deck + 1 (the bed level). Returns the number of items placed.
+function potKeepsLinks(blocks, Y, x, z) {
+  const c0 = walkComps(blocks, Y), self = `${x},${z}`;
+  if (!c0.id.has(self)) return false;
+  const walk = (a, b) => c0.id.has(`${a},${b}`);
+  for (const [dx, dz] of [[1, 0], [0, 1]]) if (walk(x + dx, z + dz) && walk(x - dx, z - dz) && !walk(x + dz, z + dx) && !walk(x - dz, z - dx)) return false; // a 1-wide lane
+  const temp = new Map(blocks); temp.set(key(x, Y + 1, z), { name: "minecraft:stone", states: {} });
+  const c1 = walkComps(temp, Y), seen = new Map();
+  for (const [cell, i0] of c0.id) {
+    if (cell === self) continue;
+    const i1 = c1.id.get(cell);
+    if (i1 === undefined || (seen.has(i0) && seen.get(i0) !== i1)) return false;
+    seen.set(i0, i1);
+  }
+  return true;
+}
+function bedPots(blocks, put, can, y, cells) {
+  const r = makeRandom((cells[0][0] * 73856093 ^ cells[0][1] * 19349663 ^ y * 83492791 ^ 0x5b0d) >>> 0);
+  const posts = new Map();
+  for (const [cx, cz] of cells) for (let dx = -2; dx <= 2; dx++) for (let dz = -2; dz <= 2; dz++) {
+    const x = cx + dx, z = cz + dz, k = `${x},${z}`, d = Math.max(Math.abs(dx), Math.abs(dz));
+    if (blocks.get(key(x, y, z))?.name === RAIL && can(x, y + 1, z) && (!posts.has(k) || posts.get(k).d > d)) posts.set(k, { x, z, d });
+  }
+  const order = [...posts.values()].sort((a, b) => a.d - b.d || a.x - b.x || a.z - b.z);
+  let n = 0;
+  if (order.length) { put(order[0].x, y + 1, order[0].z, flowerPot(pickPlant(r))); n++; }
+  const second = order.find((p) => p !== order[0] && Math.max(Math.abs(p.x - order[0].x), Math.abs(p.z - order[0].z)) <= 2);
+  if (second && r() < 0.6) { put(second.x, y + 1, second.z, r() < 0.4 ? jar() : flowerPot(pickPlant(r))); n++; }
+  if (r() < 0.3 && order.length) { // a decorated pot on the deck against the rail, where the bed was
+    const [x, z] = cells.map(([a, b]) => [a, b, Math.min(...order.map((p) => Math.max(Math.abs(p.x - a), Math.abs(p.z - b))))]).sort((a, b) => a[2] - b[2])[0];
+    if (deckAt(blocks, x, y - 1, z) && can(x, y, z) && can(x, y + 1, z) && potKeepsLinks(blocks, y - 1, x, z)) { put(x, y, z, decoratedPot()); n++; }
+  }
+  return n;
+}
+
 // ---- rim dressing (7.10): every 5-7 rail posts away from connectors one small thing ---------------------------------------------------------
 function rimDressing(blocks, keep, lv, o, rnd, stats, homeInfo, cushion, flagsLeft) {
   const Y = lv.y, { put, can } = deco(blocks, keep), soft = softWriter(blocks);
@@ -739,7 +777,11 @@ function rimDressing(blocks, keep, lv, o, rnd, stats, homeInfo, cushion, flagsLe
       for (const [x, z] of cells) {
         if (!can(x, Y + 2, z)) return false;
       }
-      if (bothSidesSkirted(blocks, Y + 1, cells)) return false;
+      if (bothSidesSkirted(blocks, Y + 1, cells)) { // no bed here: pots instead (nothing to place: the next kind is tried)
+        const n = bedPots(blocks, put, can, Y + 1, cells);
+        stats.bedPots = (stats.bedPots ?? 0) + n;
+        return n > 0;
+      }
       for (const [x, z] of cells) {
         put(x, Y + 1, z, mossBlock());
         const plantsOn = pickPlant(rnd);
@@ -840,7 +882,10 @@ export function dressBalcony(blocks, keep, seed) {
   if (can(sx, 2, 4) && rnd() < 0.7) put(sx, 2, 4, moss(true)); // a beard of moss from the beam (nothing hangs lower than deck + 3 over a walk cell)
   // the other side: a jar and a planter, leaf drifts
   if (can(-sx, 1, 2)) put(-sx, 1, 2, jar());
-  if (can(-sx, 1, 3) && can(-sx, 2, 3) && !bothSidesSkirted(blocks, 1, [[-sx, 3]])) { put(-sx, 1, 3, mossBlock()); put(-sx, 2, 3, { name: `${L}elanor`, states: { [`${L}on_grass`]: true } }); }
+  if (can(-sx, 1, 3) && can(-sx, 2, 3)) {
+    if (bothSidesSkirted(blocks, 1, [[-sx, 3]])) stats.bedPots = (stats.bedPots ?? 0) + bedPots(blocks, put, can, 1, [[-sx, 3]]); // no bed here: pots instead
+    else { put(-sx, 1, 3, mossBlock()); put(-sx, 2, 3, { name: `${L}elanor`, states: { [`${L}on_grass`]: true } }); }
+  }
   finishDressing(blocks, keep, stats.cushions);
   return stats;
 }
@@ -862,7 +907,8 @@ export function dressLookout(blocks, keep, y, seed) {
   // the other corners: planter beds (moss, a flower, open trapdoors round the free sides) and one jar
   const bed = (cx, cz) => {
     const cells = [[cx, cz], [cx + Math.sign(cx), cz]].filter(([x, z]) => blocks.get(key(x, y, z))?.name === PLANKS && !rail(x, z) && can(x, y + 1, z) && can(x, y + 2, z));
-    if (cells.length < 2 || bothSidesSkirted(blocks, y + 1, cells)) return;
+    if (cells.length < 2) return;
+    if (bothSidesSkirted(blocks, y + 1, cells)) { stats.bedPots = (stats.bedPots ?? 0) + bedPots(blocks, put, can, y + 1, cells); return; } // no bed here: pots instead
     for (const [x, z] of cells) { put(x, y + 1, z, mossBlock()); put(x, y + 2, z, plantBlock(pickPlant(rnd))); }
     for (const [x, z] of cells) for (const d of D4) { const tx = x + d[0], tz = z + d[1]; if (!cells.some(([bx, bz]) => bx === tx && bz === tz) && blocks.get(key(tx, y, tz))?.name === PLANKS && !rail(tx, tz) && can(tx, y + 1, tz) && Math.hypot(tx, tz) > 1.5 && Math.abs(tz) >= 2) put(tx, y + 1, tz, trapOpen(d)); }
   };
