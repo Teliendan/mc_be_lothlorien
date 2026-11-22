@@ -117,6 +117,8 @@ Completed source fixes and accepted checks, and where each open retest below is 
 - [x] **Railing follow-up:** village generators OK since the fix (owner, 2026-11-22). Was: verify newly processed upward half-step bridge joins
   remain open. Inspect the photographed location (1040,141,-1338) and manually
   remove an old false closure if needed; existing saved fences are retained.
+- [x] **Wildlife retests** (bands, guiding R7/R8, breeding, wolf): passed in single player (owner, 2026-11-22);
+  the two-player Friend + Hated check goes to testers.
 - [ ] **L8 / L9:** complete targeted deer and squirrel checks with explicit setups
   in the workspace checklist; no failure is inferred from an untested case.
 
