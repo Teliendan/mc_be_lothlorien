@@ -367,7 +367,7 @@
     "evidence": [
       {
         "path": "docs/VILLAGES.md",
-        "sha256": "8623df7bbfcbc539d7d980b9160b67cdcd8372d45e4eef38edc52a1ea3e78cd9"
+        "sha256": "c6efc4db3a29768ad8e6923aae69e8cc2e7eccaeb837f5de39c1193ca74e1a38"
       },
       {
         "path": "lothlorien_bp/scripts/village_clear.js",
