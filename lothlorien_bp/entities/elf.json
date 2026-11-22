@@ -379,10 +379,6 @@
           "xz_dist": 32,
           "y_dist": 4
         },
-        "minecraft:follow_range": {
-          "value": 64,
-          "max": 64
-        },
         "minecraft:environment_sensor": {
           "triggers": [
             {
@@ -412,10 +408,6 @@
           "xz_dist": 8,
           "y_dist": 1,
           "interval": 60
-        },
-        "minecraft:follow_range": {
-          "value": 64,
-          "max": 64
         },
         "minecraft:environment_sensor": {
           "triggers": [
@@ -722,6 +714,10 @@
       }
     },
     "components": {
+      "minecraft:follow_range": {
+        "value": 64,
+        "max": 64
+      },
       "minecraft:type_family": {
         "family": [
           "lothlorien_elf",

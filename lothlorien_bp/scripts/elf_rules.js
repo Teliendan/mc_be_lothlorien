@@ -43,10 +43,11 @@ export const HEALER_DAWN_EVENT = "lothlorien:healer_dawn";
 // time, so it stays round its own tree. The radius is only a fence, not a drive: with that stroll a 64 radius barely shows (owner 2026-10-10:
 // "healers seem to stay on their platform"), because a deck is left only through a 3-wide bridge mouth and a short random walk rarely crosses a 7..15
 // bridge (roam sim in docs/mobs/elves.md: 36-80 % of healers reach another tree in 40 strolls). So the healer's day group strolls far (HEALER_ROAM, 89-100 %),
-// and both healer groups raise the path reach: `followRange` is the engine's path search range (default 16 [D]); far stroll targets and the dusk walk
-// home across bridges need more (vanilla iron golem 64 with xz 16, villager 128). y stays small: decks are 16+ above the ground, crowns 6 above the deck.
+// and every elf has `follow_range` 64 in the base (FOLLOW_RANGE): without it even the 8 / 1 stroll barely moved on the decks (A/B in game 2026-11-22), and
+// far stroll targets and the dusk walk home across bridges need it (vanilla iron golem 64 with xz 16, villager 128). y stays small: decks are 16+ above the ground, crowns 6 above the deck.
 export const STROLL = { xz: 8, y: 1, interval: 60 }; // interval 60 ticks (default 120) and y 1: owner R7 2026-11-21, elves strolled too rarely; decks are flat
-export const HEALER_ROAM = { xz: 32, y: 4, followRange: 64 };
+export const FOLLOW_RANGE = 64; // base component of every elf: without it the stroll barely moved (owner A/B 2026-11-22, 1.26.63)
+export const HEALER_ROAM = { xz: 32, y: 4, followRange: FOLLOW_RANGE };
 // Debug marker: every radius group carries `minecraft:mark_variant` with this value (no client use; it only tells which radius group the engine has on the elf,
 // readable in an entity dump). No marker = no radius group (on a lead).
 export const RADIUS_MARK = { [HOME_NEAR_GROUP]: 1, [HOME_LORE_GROUP]: 2, [HEALER_DAY_GROUP]: 3, [HEALER_NIGHT_GROUP]: 4 };

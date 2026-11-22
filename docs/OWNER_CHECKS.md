@@ -75,6 +75,8 @@ Source fixes made, owner retest pending (fixes of 2026-11-17 in `6d2247e`, `87d6
   corrected with rotation tests). Existing closures are saved blocks and are not removed automatically; the photographed
   location was (1040, 141, -1338).
 
+Open retest (2026-11-22, 1.26.63): **elves walk around their posts** after `follow_range` 64 moved into the base components (cause found by the owner's A/B: the Healer with it walked, the other professions without it stood still; `mobs/elves.md`). Check each profession strolls within its radius.
+
 Untested, no result inferred: **L8** deer with a blocked kept gift spot, **L9** squirrel with an unreachable destination
 (explicit setups in the workspace checklist).
 

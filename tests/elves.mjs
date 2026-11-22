@@ -108,7 +108,7 @@ test("elf healer roam: by day a far stroll and a long path reach cross bridges; 
   const stroll = (xz, y, interval) => { const s = { ...base, xz_dist: xz, y_dist: y }; if (interval === undefined) delete s.interval; else s.interval = interval; return s; }; // the day stroll keeps the engine's default interval (120)
   assert.deepEqual(day["minecraft:behavior.random_stroll"], stroll(EL.HEALER_ROAM.xz, EL.HEALER_ROAM.y), "day: same priority and speed as the base stroll, far targets");
   assert.deepEqual(night["minecraft:behavior.random_stroll"], stroll(EL.STROLL.xz, EL.STROLL.y, EL.STROLL.interval), "night: the base stroll, explicit (whether a removed group gives the base one back is not relied on)");
-  for (const g of [day, night]) assert.deepEqual(g["minecraft:follow_range"], { value: EL.HEALER_ROAM.followRange, max: EL.HEALER_ROAM.followRange });
+  assert.deepEqual(e.components["minecraft:follow_range"], { value: EL.FOLLOW_RANGE, max: EL.FOLLOW_RANGE }, "every elf has follow_range 64 in the base (without it the stroll barely moved, owner A/B 2026-11-22)");
   assert.ok(EL.HEALER_ROAM.xz >= 2 * 15 && EL.HEALER_ROAM.xz <= EL.HOME_RADIUS.healerDay, "one day stroll can reach past the longest bridge (15), inside the day radius");
   assert.ok(EL.HEALER_ROAM.y >= 3 && EL.HEALER_ROAM.y < 6, "y covers a rise-2 arch, stays below the crowns (6 above the deck) and far above nothing (decks 16 up)");
   assert.ok(EL.HEALER_ROAM.followRange >= EL.HOME_RADIUS.healerDay, "the dusk walk home starts up to the day radius away");
@@ -116,7 +116,6 @@ test("elf healer roam: by day a far stroll and a long path reach cross bridges; 
     if (name === EL.HEALER_DAY_GROUP || name === EL.HEALER_NIGHT_GROUP) continue;
     assert.ok(!("minecraft:behavior.random_stroll" in g) && !("minecraft:follow_range" in g), `${name}: other professions keep the base stroll and reach`);
   }
-  assert.ok(!("minecraft:follow_range" in e.components), "base reach is the engine default");
   // debug marker: every radius group, unique values, nothing else carries one
   const marks = EL.RADIUS_GROUPS.map((g) => e.component_groups[g]["minecraft:mark_variant"]?.value);
   assert.deepEqual(marks, EL.RADIUS_GROUPS.map((g) => EL.RADIUS_MARK[g])); assert.equal(new Set(marks).size, marks.length);
