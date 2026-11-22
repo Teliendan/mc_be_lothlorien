@@ -24,7 +24,7 @@ export const POST_GROUP_PREFIX = "lothlorien:post_";
 
 // Blocks the elves and the Elven Wardens never step on or over (`minecraft:navigation.walk.blocks_to_avoid` by `name` in entities/elf.json and
 // entities/elven_warden.json; tests/elves.mjs checks both files carry exactly this list, in this order). A block beside a fence or wall is a
-// 1-high step over it. No documented block tag covers fences or walls, so each id is listed. Not gates, doors or trapdoors (owner 2026-11-22).
+// 1-high step over it; lanterns, the firefly jar and the pots are the same kind of step (owner 2026-11-22: they get at the railing block that way). No documented block tag covers fences or walls, so each id is listed. Not gates, doors or trapdoors (owner 2026-11-22).
 export const AVOID_BLOCKS = [
   "lothlorien:elven_rope", "lothlorien:elven_rope_hanging", "lothlorien:mallorn_fence", "lothlorien:mallorn_heartwood_fence",
   "minecraft:oak_fence", "minecraft:spruce_fence", "minecraft:birch_fence",
@@ -43,6 +43,10 @@ export const AVOID_BLOCKS = [
   "minecraft:resin_brick_wall", "minecraft:cinnabar_wall", "minecraft:polished_cinnabar_wall",
   "minecraft:cinnabar_brick_wall", "minecraft:sulfur_wall", "minecraft:polished_sulfur_wall",
   "minecraft:sulfur_brick_wall",
+  "lothlorien:elven_lantern", "lothlorien:elven_lantern_heartwood", "minecraft:lantern", "minecraft:soul_lantern",
+  "minecraft:copper_lantern", "minecraft:exposed_copper_lantern", "minecraft:weathered_copper_lantern", "minecraft:oxidized_copper_lantern",
+  "minecraft:waxed_copper_lantern", "minecraft:waxed_exposed_copper_lantern", "minecraft:waxed_weathered_copper_lantern", "minecraft:waxed_oxidized_copper_lantern",
+  "lothlorien:firefly_jar", "minecraft:decorated_pot", "minecraft:flower_pot",
 ];
 
 // ---- Entity values (entities/elf.json): THE place to tune how the elves behave. ----

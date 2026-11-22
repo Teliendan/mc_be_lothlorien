@@ -44,10 +44,10 @@ test("elf: entity values come from elf_rules STATS / HOME_RADIUS; persistent, no
   assert.ok(!Object.values(e.component_groups).some((g) => GROUP_NAMES(g).includes("minecraft:variant") && "minecraft:home" in g), "a profession group carries no home radius");
   const nav = c["minecraft:navigation.walk"];
   const avoidOf = (ent) => ent["minecraft:entity"].components["minecraft:navigation.walk"].blocks_to_avoid.map((b) => b.name);
-  assert.deepEqual(nav.blocks_to_avoid.map((b) => b.name), EL.AVOID_BLOCKS, "avoids exactly elf_rules AVOID_BLOCKS: rope cells, every fence and wall");
+  assert.deepEqual(nav.blocks_to_avoid.map((b) => b.name), EL.AVOID_BLOCKS, "avoids exactly elf_rules AVOID_BLOCKS: rope cells, every fence and wall, every lantern, the jar and the pots");
   assert.deepEqual(avoidOf(readJson("../lothlorien_bp/entities/elven_warden.json")), EL.AVOID_BLOCKS, "the Elven Warden carries the same list in the same order");
   assert.equal(new Set(EL.AVOID_BLOCKS).size, EL.AVOID_BLOCKS.length, "no duplicates");
-  for (const n of EL.AVOID_BLOCKS) assert.ok(/^lothlorien:elven_rope(_hanging)?$|_(fence|wall)$/.test(n), `${n}: only the rope, fences and walls`);
+  for (const n of EL.AVOID_BLOCKS) assert.ok(/^lothlorien:elven_rope(_hanging)?$|_(fence|wall)$|(^|:)(elven_|soul_|copper_|waxed_|exposed_|weathered_|oxidized_)*lantern(_heartwood)?$|^lothlorien:firefly_jar$|^minecraft:(decorated|flower)_pot$/.test(n), `${n}: only the rope, fences, walls, lanterns, the jar and the pots`);
   assert.ok(!EL.AVOID_BLOCKS.some((n) => /gate|door|trapdoor/.test(n)), "never gates, doors or trapdoors");
   assert.deepEqual(c["minecraft:damage_sensor"].triggers, [{ cause: "fall", deals_damage: "no" }], "no fall damage");
 });

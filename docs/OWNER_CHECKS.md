@@ -59,7 +59,7 @@ Source fixes made, owner retest pending (fixes of 2026-11-17 in `6d2247e`, `87d6
   12. Creative, any band: not fled; a Friend lures the unicorn; a Hated player with corn lures a deer (engine behaviour, accepted). Creative never fled: verified in game (owner, 1.26.63, 2026-11-17).
   13. Spectator flying near each species: record whether it flees. Checked, verified in game (owner, 1.26.63, 2026-11-17); no failure.
 
-- Elves and Elven Wardens avoid every fence and wall (and the rope), never gates, doors or trapdoors (owner 2026-11-22; `AVOID_BLOCKS`, 50 names). Passed in game (owner Z1-Z4, 2026-11-22, 1.26.63): elves and wardens stay inside Mallorn and vanilla fences and walls, gates and the rope hole are fine, no new stutter.
+- Elves and Elven Wardens avoid every fence and wall, every lantern, the firefly jar and the pots (and the rope), never gates, doors or trapdoors (owner 2026-11-22; `AVOID_BLOCKS`, now 65 names). Passed in game (owner Z1-Z4, 2026-11-22, 1.26.63): elves and wardens stay inside Mallorn and vanilla fences and walls, gates and the rope hole are fine, no new stutter. Lanterns, the jar and the pots were added to the list later the same day: retest pending (an elf beside a railing with a lantern or pot on it must not step onto it).
 
 Passed (owner X1-X3, 1.26.63, 2026-11-22, new village): **elves walk around their posts** after `random_stroll` and `follow_range` moved from the base into every radius group (cause: removing a group stripped the base stroll; `mobs/elves.md`); the Healer roams as before; a led and untied elf strolls round its new spot. Elves saved in older worlds are not repaired (owner decision).
 
