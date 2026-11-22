@@ -1695,7 +1695,7 @@
         },
         {
           "path": "lothlorien_bp/scripts/squirrel.js",
-          "sha256": "00acbde59ff5c810949c51357cd122df92482dfded8cf08e78e78abfeaa468a5"
+          "sha256": "9e405bed6864a6debdbe808d0d849e20a6227eb80fbf52d1ddbc9017f7fecc18"
         },
         {
           "path": "lothlorien_bp/scripts/squirrel_rules.js",
