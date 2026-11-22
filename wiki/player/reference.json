@@ -35,7 +35,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "37c14979e1eac1c925e7ddf7c54f0d8dd72378a8dbd811761369311b37de41f7"
+        "sha256": "0bddd3d1b9c35b94ddaef83cfdb29e422e36f95378f3e43c4245976fbda2cace"
       },
       {
         "path": "lothlorien_bp/entities/butterfly.json",
@@ -83,7 +83,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "37c14979e1eac1c925e7ddf7c54f0d8dd72378a8dbd811761369311b37de41f7"
+        "sha256": "0bddd3d1b9c35b94ddaef83cfdb29e422e36f95378f3e43c4245976fbda2cace"
       },
       {
         "path": "lothlorien_bp/entities/deer.json",
@@ -143,7 +143,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "37c14979e1eac1c925e7ddf7c54f0d8dd72378a8dbd811761369311b37de41f7"
+        "sha256": "0bddd3d1b9c35b94ddaef83cfdb29e422e36f95378f3e43c4245976fbda2cace"
       },
       {
         "path": "lothlorien_bp/entities/elf.json",
@@ -199,7 +199,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "37c14979e1eac1c925e7ddf7c54f0d8dd72378a8dbd811761369311b37de41f7"
+        "sha256": "0bddd3d1b9c35b94ddaef83cfdb29e422e36f95378f3e43c4245976fbda2cace"
       },
       {
         "path": "lothlorien_bp/entities/elven_warden.json",
@@ -253,7 +253,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "37c14979e1eac1c925e7ddf7c54f0d8dd72378a8dbd811761369311b37de41f7"
+        "sha256": "0bddd3d1b9c35b94ddaef83cfdb29e422e36f95378f3e43c4245976fbda2cace"
       },
       {
         "path": "lothlorien_bp/entities/firefly.json",
@@ -301,7 +301,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "37c14979e1eac1c925e7ddf7c54f0d8dd72378a8dbd811761369311b37de41f7"
+        "sha256": "0bddd3d1b9c35b94ddaef83cfdb29e422e36f95378f3e43c4245976fbda2cace"
       },
       {
         "path": "lothlorien_bp/entities/songbird.json",
@@ -347,7 +347,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "37c14979e1eac1c925e7ddf7c54f0d8dd72378a8dbd811761369311b37de41f7"
+        "sha256": "0bddd3d1b9c35b94ddaef83cfdb29e422e36f95378f3e43c4245976fbda2cace"
       },
       {
         "path": "lothlorien_bp/entities/squirrel.json",
@@ -355,7 +355,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/squirrel.js",
-        "sha256": "9e405bed6864a6debdbe808d0d849e20a6227eb80fbf52d1ddbc9017f7fecc18"
+        "sha256": "79506381b23ec2d9f0ecca1025e1b37cb7a2e950f58186b9a6cedee3f3666d29"
       },
       {
         "path": "lothlorien_bp/scripts/squirrel_rules.js",
@@ -403,7 +403,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "37c14979e1eac1c925e7ddf7c54f0d8dd72378a8dbd811761369311b37de41f7"
+        "sha256": "0bddd3d1b9c35b94ddaef83cfdb29e422e36f95378f3e43c4245976fbda2cace"
       },
       {
         "path": "lothlorien_bp/entities/swan.json",
@@ -468,7 +468,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "37c14979e1eac1c925e7ddf7c54f0d8dd72378a8dbd811761369311b37de41f7"
+        "sha256": "0bddd3d1b9c35b94ddaef83cfdb29e422e36f95378f3e43c4245976fbda2cace"
       },
       {
         "path": "lothlorien_bp/entities/unicorn.json",
@@ -522,7 +522,7 @@
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
-        "sha256": "37c14979e1eac1c925e7ddf7c54f0d8dd72378a8dbd811761369311b37de41f7"
+        "sha256": "0bddd3d1b9c35b94ddaef83cfdb29e422e36f95378f3e43c4245976fbda2cace"
       },
       {
         "path": "lothlorien_bp/entities/white_deer.json",
@@ -530,7 +530,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/white_deer.js",
-        "sha256": "0a2454cb5a9a2932e7ec9e55f7964b4d1d7e5d349a5c60260322021b4dfdc601"
+        "sha256": "ca19b515943b7ecee69550fa3c88f68e139f326ab49739139a4b0406f31451ea"
       },
       {
         "path": "lothlorien_bp/scripts/white_deer_rules.js",
