@@ -2131,15 +2131,15 @@
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/village/combo_node_b_east_bridge_13.mcstructure",
-        "sha256": "3527d31cb360b8a3090e12852cfe96767e6297ad741adc77ce01103366ea455f"
+        "sha256": "344c3bf9563371150d9a370c1e368120e974a3139f550f90b678368b07e29e02"
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/village/combo_node_b_south_bridge_15.mcstructure",
-        "sha256": "aaa95997c3a555b82628a1c07f9f3a568a42e417b6052a967fd75cee3346b336"
+        "sha256": "0270d3f05a0906c5a24c9186535a378d4df9fc8520358ac5744f10e433d91520"
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/village/combo_node_b_west_bridge_11.mcstructure",
-        "sha256": "efc3e9ff66f1b03563fc05618778f61fc0b097c3498ee882b213d447f379cfbd"
+        "sha256": "fab54afd61d353376555460ad45e4182ea3c0f6413d8410b6c6656cc578ad9b9"
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/village/combo_node_c_east_bridge_9.mcstructure",
@@ -2171,11 +2171,11 @@
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/village/combo_node_e_east_bridge_13.mcstructure",
-        "sha256": "abb5ab104289fad3ed4d4663117f2ac6fc694029f35ad6e7f87ab668cfa04d74"
+        "sha256": "c7b6845bf0cd610effc2ef576655c524e5046bc44a482b1652e019d8b9267b16"
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/village/combo_node_e_north_bridge_11.mcstructure",
-        "sha256": "864ebf5dd09582674a134dec4b5b0002993e541b8fa4299f4e6b51686807e741"
+        "sha256": "b3ac8a0519e35891af72afc21e793cfe25b15829bc42c57ad5c61c73e7db234e"
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/village/combo_node_f_east_bridge_7.mcstructure",
@@ -2191,27 +2191,27 @@
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_a_south_bridge_11.mcstructure",
-        "sha256": "0dbd71070b4880f3ffc82bbc8d6216d37695e17aa341aa5386d45f66e7b3b9c4"
+        "sha256": "e3d2c0ad7a6ecf8e6070e0129a8d3840c2935d41f40e480ba8ab29383e7f931d"
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_a_west_bridge_13.mcstructure",
-        "sha256": "899b98be197999ac04036203f7f20e92a2a41a196b20b947db96292e4e59215f"
+        "sha256": "d70fe6590e1b9e4f71b6da93d16e3cbaf015ee567a9b4527dd2582e12b3f3db8"
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_b_east_bridge_15.mcstructure",
-        "sha256": "b7ac82bddec78877427b589527a14bde9aa2fd9c75e81d8f1d93de441922b6d8"
+        "sha256": "592a6e9bd51a62ce27b50605fe1fced8ee47cea6656b666c93b0f0f2a44c05f6"
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_b_north_bridge_7.mcstructure",
-        "sha256": "f0b2cfe73c96c1019d1e42f908572a6ae090d0b26114735b2df3502d509f873a"
+        "sha256": "b11bdd43b81aabf7f5f87a37268f7fb2458e34399318820729f00de09f248a58"
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_c_north_bridge_9.mcstructure",
-        "sha256": "04219c87f1aad12efdba140664f751e64d3f065e0e49cdb3fa55da905855bb06"
+        "sha256": "212d20bef5729f02ca41ca54f505cc5a4850adff1e3e4a52c2f1046e38aab121"
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/village/combo_tower_c_south_bridge_11.mcstructure",
-        "sha256": "cccaf96f522b61a829b4ed7827e48339b7184314ea8a0db434800d1b6ea9c3b1"
+        "sha256": "8b54df1b2d69906a454242721132640c6f74aed0e335aa933941f95c2b8a4eba"
       },
       {
         "path": "lothlorien_bp/structures/lothlorien/village/crown_central_a.mcstructure",
