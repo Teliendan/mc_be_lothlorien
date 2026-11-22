@@ -58,10 +58,11 @@ for (const f of readdirSync(dir).filter(f => /^(combo_node_e_|balcony_braced|loo
 assert.ok(beds >= 6, `${beds} moss beds scanned`);
 console.log("ok   village polish: no rim planter of combo_node_e_*, balcony_braced or lookout_01 shuts a narrow lane with a skirt at each end");
 
-// Where a bed is not placed (the rule above) the dressing sets pots instead (owner 2026-11-22): the node_e pieces carry flower pots on rail posts, and no floor pot or jar in any
+// Where a bed is not placed (the rule above) the dressing sets flower pots on the bed's floor cells instead (owner 2026-11-22: one block each, no skirts, nothing on the rail posts
+// for this purpose): the node_e pieces carry floor flower pots, and no floor pot or jar in any
 // shipped piece cuts a walkable cell off from its neighbours or stands in a 1-wide lane (elves treat every pot and jar as an obstacle).
 {
-  let railPots = 0, floorPots = 0;
+  let floorPots = 0;
   const nodeE = {};
   for (const f of readdirSync(dir).filter(f => f.endsWith(".mcstructure"))) {
     const p = parseMcstructure(readFileSync(new URL(f,dir)), f), nm = (x,y,z) => p.at(x,y,z) ?? "minecraft:air";
@@ -73,8 +74,9 @@ console.log("ok   village polish: no rim planter of combo_node_e_*, balcony_brac
     for (const b of p.blocks) {
       if (!isPot(b.name)) continue;
       const deck = /mallorn_(heartwood_)?planks$/.test(nm(b.x,b.y-1,b.z));
-      if (!deck) { if (nm(b.x,b.y-1,b.z) === "lothlorien:mallorn_fence" && b.name === "minecraft:flower_pot") { railPots++; if (/^combo_node_e_/.test(f)) nodeE[f] = (nodeE[f] ?? 0) + 1; } continue; }
+      if (!deck) continue;
       floorPots++;
+      if (/^combo_node_e_/.test(f) && b.name === "minecraft:flower_pot") nodeE[f] = (nodeE[f] ?? 0) + 1;
       const walk = (x,z) => /mallorn_(heartwood_)?planks$/.test(nm(x,b.y-1,z)) && free(x,b.y,z) && free(x,b.y+1,z) && !(x === b.x && z === b.z);
       const nbrs = [[1,0],[-1,0],[0,1],[0,-1]].map(([dx,dz]) => [b.x+dx,b.z+dz]).filter(([x,z]) => walk(x,z));
       // the neighbours of the pot cell stay one piece (a flood fill without the pot cell reaches them all), unless the pot only has one open side
@@ -87,9 +89,8 @@ console.log("ok   village polish: no rim planter of combo_node_e_*, balcony_brac
       assert.ok(!lane, `${f}: the ${b.name} at ${b.x},${b.y},${b.z} stands in a 1-wide lane`);
     }
   }
-  for (const f of readdirSync(dir).filter(f => /^combo_node_e_/.test(f))) assert.ok((nodeE[f] ?? 0) >= 4, `${f}: pots stand in for the planters the lane rule rejected (${nodeE[f] ?? 0})`);
-  assert.ok(railPots >= 8, `${railPots} flower pots on rail posts`);
-  console.log(`ok   village polish: ${railPots} rail-post flower pots and ${floorPots} floor pots or jars in the shipped pieces, none cuts the deck or stands in a 1-wide lane`);
+  for (const f of readdirSync(dir).filter(f => /^combo_node_e_/.test(f))) assert.ok((nodeE[f] ?? 0) >= 2, `${f}: floor flower pots stand in for the planters the lane rule rejected (${nodeE[f] ?? 0})`);
+  console.log(`ok   village polish: ${floorPots} floor pots or jars in the shipped pieces (node_e: ${JSON.stringify(nodeE)}), none cuts the deck or stands in a 1-wide lane`);
 }
 
 const m = new Map([[key(0,1,0),block(F)],[key(1,1,0),block("minecraft:moss_block")],[key(-1,1,0),block("lothlorien:mallorn_slab")]]);

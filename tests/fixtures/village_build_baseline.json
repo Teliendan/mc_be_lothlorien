@@ -132,7 +132,7 @@
   }
  },
  "flat-12": {
-  "steps": 6083,
+  "steps": 6082,
   "plans": {
    "hash": "5a616c81",
    "cells": 7288
@@ -252,7 +252,7 @@
   }
  },
  "valley-12": {
-  "steps": 6904,
+  "steps": 6903,
   "plans": {
    "hash": "468ce309",
    "cells": 9588

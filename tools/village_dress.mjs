@@ -652,10 +652,10 @@ function bothSidesSkirted(blocks, y, cells) {
   }));
 }
 
-// A bed that bothSidesSkirted rejects is made up for with a small decoration (owner 2026-11-22): a flower pot on the nearest rail post (a rail top is no walk cell,
-// so it cannot box an elf in) and now and then a second item on another post (a firefly jar or a second pot), or a decorated pot on the deck where the bed was
-// when that keeps every walkable cell of the level connected (potKeepsLinks) and is no 1-wide lane. Its own random stream, seeded by the bed's cell: the dressing's stream
-// does not move. y = deck + 1 (the bed level). Returns the number of items placed.
+// A bed that bothSidesSkirted rejects is made up for with flower pots on its former floor cells (owner 2026-11-22: "the pots fill the empty floor; a bed takes several blocks
+// with its trapdoors, use something of one block"). One pot per cell, about four in five, a pot standing against the rail is fine (elves avoid flower_pot). A cell stays empty
+// when a pot there would cut the walkable cells of the level apart or stand in a 1-wide lane (potKeepsLinks, pots set before count as obstacles). No skirts, no rail-post items,
+// no decorated pots, no jars. Own random stream, seeded by the bed's cell: the dressing's stream does not move. y = deck + 1 (the bed level). Returns the number of pots placed.
 function potKeepsLinks(blocks, Y, x, z) {
   const c0 = walkComps(blocks, Y), self = `${x},${z}`;
   if (!c0.id.has(self)) return false;
@@ -673,19 +673,10 @@ function potKeepsLinks(blocks, Y, x, z) {
 }
 function bedPots(blocks, put, can, y, cells) {
   const r = makeRandom((cells[0][0] * 73856093 ^ cells[0][1] * 19349663 ^ y * 83492791 ^ 0x5b0d) >>> 0);
-  const posts = new Map();
-  for (const [cx, cz] of cells) for (let dx = -2; dx <= 2; dx++) for (let dz = -2; dz <= 2; dz++) {
-    const x = cx + dx, z = cz + dz, k = `${x},${z}`, d = Math.max(Math.abs(dx), Math.abs(dz));
-    if (blocks.get(key(x, y, z))?.name === RAIL && can(x, y + 1, z) && (!posts.has(k) || posts.get(k).d > d)) posts.set(k, { x, z, d });
-  }
-  const order = [...posts.values()].sort((a, b) => a.d - b.d || a.x - b.x || a.z - b.z);
   let n = 0;
-  if (order.length) { put(order[0].x, y + 1, order[0].z, flowerPot(pickPlant(r))); n++; }
-  const second = order.find((p) => p !== order[0] && Math.max(Math.abs(p.x - order[0].x), Math.abs(p.z - order[0].z)) <= 2);
-  if (second && r() < 0.6) { put(second.x, y + 1, second.z, r() < 0.4 ? jar() : flowerPot(pickPlant(r))); n++; }
-  if (r() < 0.3 && order.length) { // a decorated pot on the deck against the rail, where the bed was
-    const [x, z] = cells.map(([a, b]) => [a, b, Math.min(...order.map((p) => Math.max(Math.abs(p.x - a), Math.abs(p.z - b))))]).sort((a, b) => a[2] - b[2])[0];
-    if (deckAt(blocks, x, y - 1, z) && can(x, y, z) && can(x, y + 1, z) && potKeepsLinks(blocks, y - 1, x, z)) { put(x, y, z, decoratedPot()); n++; }
+  for (const [x, z] of cells) {
+    const plant = pickPlant(r), roll = r(); // both drawn for every cell: the stream does not depend on which cells are refused
+    if (roll < 0.8 && deckAt(blocks, x, y - 1, z) && can(x, y, z) && can(x, y + 1, z) && potKeepsLinks(blocks, y - 1, x, z)) { put(x, y, z, flowerPot(plant)); n++; }
   }
   return n;
 }
