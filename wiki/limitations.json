@@ -374,5 +374,32 @@
         "sha256": "e0f84d07f9a35323d9dc3210434d1de98b63a240584f68af3c17b287cac3098b"
       }
     ]
+  },
+  {
+    "featureId": "lothlorien:harmony",
+    "id": "lothlorien:harmony/nearest-player-distance",
+    "text": "With several players nearby, an animal judges distance by the nearest player: while one player stands close, it can also run from a player with lower Harmony who is farther away than that player's usual distance.",
+    "evidence": [
+      {
+        "path": "lothlorien_bp/entities/deer.json",
+        "sha256": "0130f14088782adab24c71a7586225fa5a2584a86ce32d8ac09776a5f201cb29"
+      },
+      {
+        "path": "lothlorien_bp/entities/white_deer.json",
+        "sha256": "b07a97088acc6af7f2c15197bc527cbcc3d3c0b7935958f0ef32c47da8528665"
+      },
+      {
+        "path": "lothlorien_bp/entities/swan.json",
+        "sha256": "262b9d5f38684634ce5df5a1e05db528c616c3e3c13175d1db074b3cfef2e663"
+      },
+      {
+        "path": "lothlorien_bp/entities/squirrel.json",
+        "sha256": "6c491a01876e6460805ebbd76b58d891faa31ebf7630762cd18efda5e8d7876f"
+      },
+      {
+        "path": "lothlorien_bp/entities/unicorn.json",
+        "sha256": "76ba647f1df61e9d0ac20d51fe904d658f9f57372514449742f3caeb83190c3b"
+      }
+    ]
   }
 ]
