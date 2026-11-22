@@ -1,5 +1,6 @@
 import { world, system } from "@minecraft/server";
-import { GLASS_BOTTLE, swapHeldBottle, newItem } from "./bottles.js";
+import { FULL, GLASS_BOTTLE, swapHeldBottle, newItem } from "./bottles.js";
+import { message } from "./messages.js";
 import { repeatedUse } from "./use_guard.js";
 import { noteDeed } from "./deeds.js";
 import { captureUse, liveUse } from "./deferred_use.js";
@@ -23,7 +24,15 @@ world.afterEvents.playerInteractWithEntity.subscribe(({ player, target, beforeIt
     const result = bottleFirefly(newItem(FIREFLY_BOTTLE), target);
     // Deliver before removing the animal: a native inventory/drop error must
     // leave it catchable instead of silently deleting a named firefly.
-    if (!swapHeldBottle(player, result, GLASS_BOTTLE)) return;
+    // A full inventory refuses the catch (owner 2026-11-22): the firefly stays, the bottles stay, the player hears
+    // vanilla's "bundle is full" sound and reads why.
+    const swapped = swapHeldBottle(player, result, GLASS_BOTTLE, true);
+    if (swapped === FULL) {
+      try { player.playSound("bundle.insert_fail"); } catch { /* optional sound */ }
+      try { player.sendMessage(message("firefly.inventory_full")); } catch { /* player left */ }
+      return;
+    }
+    if (!swapped) return;
     target.remove();
     try { noteDeed(player, "fireflies"); } catch { /* optional feedback */ }
     try { dimension.playSound("bottle.dragonbreath", location, { volume: 0.35, pitch: 1.5 }); } catch { /* optional sound */ }

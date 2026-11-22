@@ -102,18 +102,18 @@ performance, Loremaster edge cases, survival balance and translations are not to
 
 Completed source fixes and accepted checks, and where each open retest below is described: `OWNER_CHECKS.md`.
 
-- [ ] **Retest bounded fixes:** Miruvor empty skin/refill/last sip; Friend unicorn lure (Guest and bonded parts);
-  full-inventory named/injured firefly capture; water-only boat dispensing (owner 2026-11-22: "we should look into
-  it"). Passed 2026-11-22: Star Canopy unlock, wind charges, rope with Slow Falling, firefly release sound, leaf
+- [ ] **Retest bounded fixes:** firefly catch with a full inventory, now refused with a sound and a chat line
+  (changed 2026-11-22 after the owner saw the firefly vanish). Passed 2026-11-22: Miruvor, unicorn, dispensing onto
+  water, Star Canopy unlock, wind charges, rope with Slow Falling, firefly release sound, leaf
   decay, support pop, village generators (`OWNER_CHECKS.md`).
 - [x] **Spawn egg graphics:** the current eggs are final; owner confirmed 2026-10-29 (`GRAPHICS_TASKS.md`). Old note: replace generic eggs with the current
   creature-recognizable vanilla visual language, using the shared Bedrock art
   guide and reproducible asset generators. No artwork overhaul in this pass.
-- [ ] **Wall/gate visual connection (deferred engine limit):** gate lowers,
+- [x] **Wall/gate visual connection:** accepted as a limit (owner, 2026-11-22). Was: gate lowers,
   cobblestone wall arm stays absent. Avoid changing unrelated connections just
   to make this cosmetic junction connect.
-- [ ] **Boat hull lift (deferred):** redesign long hull/native dispenser spawn fit;
-  the water-only filter does not correct vertical lift above the dispenser.
+- [ ] **Boat hull lift on ground:** a boat dispensed onto ground rises above the dispenser (owner 2026-11-22: find a
+  solution; onto water it is right). Research and routes: `temp/boat-dispense/plan.md`.
 - [x] **Railing follow-up:** village generators OK since the fix (owner, 2026-11-22). Was: verify newly processed upward half-step bridge joins
   remain open. Inspect the photographed location (1040,141,-1338) and manually
   remove an old false closure if needed; existing saved fences are retained.

@@ -113,7 +113,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "ccf8ee32c646a387b5ab9bf012d5611eed2fdc8599a7acba39384e83ddf87509"
+        "sha256": "9b605840f4c75ffccec268a38af19c3834fbec254fa6a55c71080c37ae44b340"
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_fence_gate.json",
@@ -128,7 +128,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "ccf8ee32c646a387b5ab9bf012d5611eed2fdc8599a7acba39384e83ddf87509"
+        "sha256": "9b605840f4c75ffccec268a38af19c3834fbec254fa6a55c71080c37ae44b340"
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_heartwood_fence_gate.json",
@@ -139,11 +139,11 @@
   {
     "featureId": "lothlorien:mallorn_boat",
     "id": "lothlorien:mallorn_boat/dispenser-clearance",
-    "text": "The long hull can rise over the dispenser when dispensed. Place the boat by hand to avoid that dispenser placement.",
+    "text": "Dispensed onto ground, the long hull can rise over the dispenser; dispensing onto water places it correctly. Place the boat by hand on land.",
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "ccf8ee32c646a387b5ab9bf012d5611eed2fdc8599a7acba39384e83ddf87509"
+        "sha256": "9b605840f4c75ffccec268a38af19c3834fbec254fa6a55c71080c37ae44b340"
       },
       {
         "path": "lothlorien_bp/items/mallorn_boat.json",
@@ -154,11 +154,11 @@
   {
     "featureId": "lothlorien:mallorn_chest_boat",
     "id": "lothlorien:mallorn_chest_boat/dispenser-clearance",
-    "text": "The long hull can rise over the dispenser when dispensed. Place the boat by hand to avoid that dispenser placement.",
+    "text": "Dispensed onto ground, the long hull can rise over the dispenser; dispensing onto water places it correctly. Place the boat by hand on land.",
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "ccf8ee32c646a387b5ab9bf012d5611eed2fdc8599a7acba39384e83ddf87509"
+        "sha256": "9b605840f4c75ffccec268a38af19c3834fbec254fa6a55c71080c37ae44b340"
       },
       {
         "path": "lothlorien_bp/items/mallorn_chest_boat.json",
@@ -169,11 +169,11 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_boat",
     "id": "lothlorien:mallorn_heartwood_boat/dispenser-clearance",
-    "text": "The long hull can rise over the dispenser when dispensed. Place the boat by hand to avoid that dispenser placement.",
+    "text": "Dispensed onto ground, the long hull can rise over the dispenser; dispensing onto water places it correctly. Place the boat by hand on land.",
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "ccf8ee32c646a387b5ab9bf012d5611eed2fdc8599a7acba39384e83ddf87509"
+        "sha256": "9b605840f4c75ffccec268a38af19c3834fbec254fa6a55c71080c37ae44b340"
       },
       {
         "path": "lothlorien_bp/items/mallorn_heartwood_boat.json",
@@ -184,11 +184,11 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_chest_boat",
     "id": "lothlorien:mallorn_heartwood_chest_boat/dispenser-clearance",
-    "text": "The long hull can rise over the dispenser when dispensed. Place the boat by hand to avoid that dispenser placement.",
+    "text": "Dispensed onto ground, the long hull can rise over the dispenser; dispensing onto water places it correctly. Place the boat by hand on land.",
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "ccf8ee32c646a387b5ab9bf012d5611eed2fdc8599a7acba39384e83ddf87509"
+        "sha256": "9b605840f4c75ffccec268a38af19c3834fbec254fa6a55c71080c37ae44b340"
       },
       {
         "path": "lothlorien_bp/items/mallorn_heartwood_chest_boat.json",
@@ -271,7 +271,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "ccf8ee32c646a387b5ab9bf012d5611eed2fdc8599a7acba39384e83ddf87509"
+        "sha256": "9b605840f4c75ffccec268a38af19c3834fbec254fa6a55c71080c37ae44b340"
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
@@ -290,7 +290,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "ccf8ee32c646a387b5ab9bf012d5611eed2fdc8599a7acba39384e83ddf87509"
+        "sha256": "9b605840f4c75ffccec268a38af19c3834fbec254fa6a55c71080c37ae44b340"
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
@@ -309,7 +309,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "ccf8ee32c646a387b5ab9bf012d5611eed2fdc8599a7acba39384e83ddf87509"
+        "sha256": "9b605840f4c75ffccec268a38af19c3834fbec254fa6a55c71080c37ae44b340"
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
@@ -328,7 +328,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "ccf8ee32c646a387b5ab9bf012d5611eed2fdc8599a7acba39384e83ddf87509"
+        "sha256": "9b605840f4c75ffccec268a38af19c3834fbec254fa6a55c71080c37ae44b340"
       },
       {
         "path": "lothlorien_bp/scripts/blocks.js",
@@ -347,7 +347,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "ccf8ee32c646a387b5ab9bf012d5611eed2fdc8599a7acba39384e83ddf87509"
+        "sha256": "9b605840f4c75ffccec268a38af19c3834fbec254fa6a55c71080c37ae44b340"
       },
       {
         "path": "lothlorien_bp/scripts/nectar.js",
@@ -366,7 +366,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "ccf8ee32c646a387b5ab9bf012d5611eed2fdc8599a7acba39384e83ddf87509"
+        "sha256": "9b605840f4c75ffccec268a38af19c3834fbec254fa6a55c71080c37ae44b340"
       },
       {
         "path": "lothlorien_bp/scripts/dew.js",
@@ -385,11 +385,11 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "ccf8ee32c646a387b5ab9bf012d5611eed2fdc8599a7acba39384e83ddf87509"
+        "sha256": "9b605840f4c75ffccec268a38af19c3834fbec254fa6a55c71080c37ae44b340"
       },
       {
         "path": "lothlorien_bp/scripts/fireflies.js",
-        "sha256": "77322a408526b1a77c911f99ea963283ad9367ee26e5aef9e668366db43daf4b"
+        "sha256": "8783e36275a7d9fbe7ad802ff5c2cc44f0d01cf14b6000c82e51e0a167f13334"
       },
       {
         "path": "lothlorien_bp/scripts/swing.js",
@@ -404,7 +404,7 @@
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
-        "sha256": "ccf8ee32c646a387b5ab9bf012d5611eed2fdc8599a7acba39384e83ddf87509"
+        "sha256": "9b605840f4c75ffccec268a38af19c3834fbec254fa6a55c71080c37ae44b340"
       },
       {
         "path": "lothlorien_bp/scripts/bonemeal.js",

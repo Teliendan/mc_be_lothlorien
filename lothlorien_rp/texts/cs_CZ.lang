@@ -349,6 +349,7 @@ item.lothlorien:swan_meat_cooked=Vařené labutí maso
 lothlorien.message.firefly.name=Světluška: %s
 lothlorien.message.firefly.name_more=%s
 lothlorien.message.firefly.health=Zdraví: %s
+lothlorien.message.firefly.inventory_full=§7Inventář je plný. Uvolněte v něm místo a světlušku chytíte.
 item.lothlorien:empty_miruvor_skin=Prázdný měch na miruvor
 lothlorien.message.squirrel.busy=§7Veverka už je na pochůzce pro vás.
 lothlorien.message.squirrel.stop_leashed=§7Veverku zadrželo vodítko, a tak pochůzku vzdala. Žalud je pryč.

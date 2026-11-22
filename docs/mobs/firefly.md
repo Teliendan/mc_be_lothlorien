@@ -21,7 +21,11 @@ Art: `tools/make_firefly.py` (generated; green abdomen glows).
 
 ## Capture feedback - 2026-10-25 follow-up
 
-Owner confirms full-inventory capture works after delivery-before-removal.
+Full inventory (owner decision 2026-11-22, replaces the earlier drop at the feet): when the filled bottle has no room
+(a stack of glass bottles; a single held bottle still swaps in hand), the catch is refused. The firefly and the bottles
+stay, the player hears vanilla `bundle.insert_fail` and reads `lothlorien.message.firefly.inventory_full` in chat
+(`swapHeldBottle(..., refuseWhenFull)` in `bottles.js`; `tests/small_flyer_interactions.mjs`). Release still drops
+its glass bottle at the feet when full, like nectar and dew bottling. In game pending.
 The water cues were rejected. Capture plays vanilla `bottle.dragonbreath`
 (volume 0.35, pitch 1.5), accepted by the owner 2026-10-26; release plays the same
 sound at pitch 1.3 (retest pending). No generated audio needed. Native file identity checked in installed vanilla

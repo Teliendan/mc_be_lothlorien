@@ -350,6 +350,7 @@ item.lothlorien:swan_meat_cooked=Viande de cygne cuite
 lothlorien.message.firefly.name=Luciole : %s
 lothlorien.message.firefly.name_more=%s
 lothlorien.message.firefly.health=Santé : %s
+lothlorien.message.firefly.inventory_full=§7Votre inventaire est plein. Faites de la place pour attraper la luciole.
 item.lothlorien:empty_miruvor_skin=Outre de miruvor vide
 lothlorien.message.squirrel.busy=§7L’écureuil est déjà parti faire votre course.
 lothlorien.message.squirrel.stop_leashed=§7La laisse retient l’écureuil, qui renonce à sa course. Le gland est perdu.

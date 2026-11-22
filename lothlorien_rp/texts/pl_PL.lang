@@ -349,6 +349,7 @@ item.lothlorien:swan_meat_cooked=Pieczone mięso łabędzia
 lothlorien.message.firefly.name=Świetlik: %s
 lothlorien.message.firefly.name_more=%s
 lothlorien.message.firefly.health=Zdrowie: %s
+lothlorien.message.firefly.inventory_full=§7Twój ekwipunek jest pełny. Zrób miejsce, aby złapać świetlika.
 item.lothlorien:empty_miruvor_skin=Pusty bukłak na miruvor
 lothlorien.message.squirrel.busy=§7Wiewiórka już pobiegła załatwić twoją sprawę.
 lothlorien.message.squirrel.stop_leashed=§7Postronek zatrzymuje wiewiórkę, więc rezygnuje z zadania. Żołądź przepadł.

@@ -70,6 +70,7 @@ async function createWorld() {
     const p = { id: `p${serial++}`, isValid: true, dimension, selectedSlotIndex: 0, mode: 'survival', location: { x: 0, y: 64, z: 0 },
       held: stack(id, amount, data), inventory: [], full: false, noInventory: false, effects: new Map(), grants: [], removals: [], teleports: [], commands: [],
       runCommand(command) { this.commands.push(command); },
+      sounds: [], messages: [], playSound(id) { this.sounds.push(id); }, sendMessage(m) { this.messages.push(m); },
       isSneaking: false, velocity: { x: 0, y: 0, z: 0 }, jump: false, forward: 0,
       getGameMode() { if (!this.isValid) throw Error('left'); return this.mode; },
       getHeadLocation() { return { ...this.location, y: this.location.y + 1.6 }; },

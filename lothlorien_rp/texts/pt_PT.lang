@@ -349,6 +349,7 @@ item.lothlorien:swan_meat_cooked=Carne de Cisne Cozinhada
 lothlorien.message.firefly.name=Pirilampo: %s
 lothlorien.message.firefly.name_more=%s
 lothlorien.message.firefly.health=Vida: %s
+lothlorien.message.firefly.inventory_full=§7O teu inventário está cheio. Arranja espaço para apanhar o pirilampo.
 item.lothlorien:empty_miruvor_skin=Odre de Miruvor Vazio
 lothlorien.message.squirrel.busy=§7O esquilo já foi tratar do teu recado.
 lothlorien.message.squirrel.stop_leashed=§7A Corda-guia prende o esquilo, que desiste do recado. Lá se foi a bolota.

@@ -20,7 +20,7 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
 | Unicorn lure | accepted 2026-10-26, **back to recheck since LM-01 (2026-11-12)**: vanilla `tempt` on Elanor in a `lothlorien:lure` group, now added at spawn (priority 4 below the flight), exemption `has_tag lothlorien_friend` + Elanor; the ten-second offer wait is the native group `lothlorien:offer_wait` (`unicorn.js` triggers `offer_taken`; the timer's `offer_ready` event restores the lure; LM-05); a Friend is never fled from; wariness counts Creative players. By owner request the Friend state keeps 3 blocks from a Friend without Elanor (accepted 2026-10-27). Details: `mobs/unicorn.md` |
 | Harmony action-bar icons, elven bow, unicorn art | checked OK (2026-10-24) |
 | Mob hurt and death sounds | kept as they are (2026-10-28) |
-| Retest batch of 2026-11-22 (verified in game (owner, 1.26.63, 2026-11-22)) | Star Canopy unlock in Survival; wind charges open doors (removed-projectile handling); rope with a foreign Slow Falling potion; firefly release sound; leaf decay pace (event-driven, native random tick); support pop of flowers, carpets and lanterns; village generators incl. the railing joins ("seem OK"); alarmed deer calm after about 20 s (26.60 scalar `minecraft:timer` still loads) |
+| Retest batch of 2026-11-22 (verified in game (owner, 1.26.63, 2026-11-22)) | Miruvor (empty skin, refill, last sip); unicorn (Friend lure and offers, Guest with Elanor fled from, bonded flees nobody); Star Canopy unlock in Survival; wind charges open doors (removed-projectile handling); rope with a foreign Slow Falling potion; firefly release sound; leaf decay pace (event-driven, native random tick); support pop of flowers, carpets and lanterns; village generators incl. the railing joins ("seem OK"); alarmed deer calm after about 20 s (26.60 scalar `minecraft:timer` still loads) |
 | First-round batch of 2026-11-11 (checks A-D, F, K, O; verified in game (owner, 1.26.63, 2026-11-17)) | Support and plants (LW-02, incl. farmed corn and `/setblock` onto stone, see `PISTON_SUPPORT.md`); phial light, rope, dew, bone meal; wardens, healers, deer, swan and white deer spawn; fence links repair almost instantly (C12); village music and Harmony status; village complete and lit, moss-bed skirts intact (check 16); Court reading circle, Loremaster pushed back to the circle, four seats read well; warden arrows and chicken jockey (LM-03), unicorn offers (LM-05), cloak and belt, squirrel errand, swans breeding; inline MERS unchanged in Vibrant Visuals (check 40); LC-10 list covers accepted (`TESTING.md`); 26.60 content log clean |
 
 ## Engine limits (deferred, owner-accepted)
@@ -30,11 +30,11 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
   own first-person view: a held normal item's first-person swing is engine code (owner check 2026-11-08; reasons in the
   workspace `bedrock-scripting` reference `arm-swing.md`). Wiki limitation `first-person-swing`.
 
-- **Wall arm beside a gate.** The Mallorn fence gate lowers beside a cobblestone wall, but the wall draws no arm toward it.
+- **Wall arm beside a gate** (accepted as a limit, owner 2026-11-22). The Mallorn fence gate lowers beside a cobblestone wall, but the wall draws no arm toward it.
   Native connection modes cannot narrowly advertise a custom gate as a vanilla gate to walls; broad connection changes would
   alter unrelated blocks. (Wiki limitation `wall-connection`.)
-- **Boat hull lift.** A dispensed Mallorn boat is placed in water only (the water filter works), but the long hull rises above
-  the dispenser to fit. Placing by hand avoids it; a hull or spawn-position redesign is a later task. (Wiki limitation
+- **Boat hull lift.** Dispensing onto water is right (owner 2026-11-22). Dispensed onto ground, the long hull rises above
+  the dispenser (wrong height); placing by hand avoids it. Owner 2026-11-22: find a solution (research `temp/boat-dispense/`). (Wiki limitation
   `dispenser-clearance`.)
 - **Leaf flicker** is z-fighting between leaf faces; see `TODO.md` section 4 and `GRAPHICS_TASKS.md`.
 - Other engine limits: `parity/BLOCKS_ITEMS.md`, `NOT_IMPLEMENTED.md`.
@@ -43,14 +43,12 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
 
 Source fixes made, owner retest pending (fixes of 2026-11-17 in `6d2247e`, `87d619d`, `05d1180`: not re-tested; item list: `VILLAGES.md`, `TESTING.md`):
 
-- Miruvor: empty skin, refill, last sip.
-- Friend unicorn lure, native AI (explicit move/look goal ownership), now with the LM-01 per-player flight.
 - LM-01 native per-player wildlife flight (2026-11-12; Survival; set the band with `/scriptevent lothlorien:harmony <n>`: Friend 10, Guest 5, Uneasy -5, Shunned -20, Hated -40):
   1. Old world: no group or property errors in the content log; existing animals saved before LM-01 stay fearless until alarmed (no migration), new ones flee. verified in game (owner, 1.26.63, 2026-11-17).
   2. Five species x five bands: flees at about the table distance walking, at the sneak distance sneaking (`tools/wildlife_wariness.py --matrix`). Failed in game (owner, 1.26.63, 2026-11-17: every band fled at about 3 blocks; cause: the goal-level `avoid_mob_type` `max_dist` default 3, MCPE-182041; fixed in `87d619d`, not re-tested); Round 2 (2026-11-21): goal 30 made Friend and Guest flee from far away (the engine ignores entry distances); fixed 2026-11-22 by a `distance_to_nearest_player` gate per entry, passed in game the same day (owner S3-S5, 1.26.63). Retest order: Friend walking reaches about 3; Guest about 10, Hated about 30; sneaking about half; two players (Friend at 5 + Guest at 20: the animal flees, expected). If a Friend is again fled from far away, the gate does not evaluate in avoid entries (fallback: entity_sensor tiers). Wolves flee at about 30; monsters are no longer fled.
   3. Lure as Guest or Friend: the animal comes and stays (swan: wheat and corn). verified in game (owner, 1.26.63, 2026-11-17).
   4. Lure as Uneasy, Shunned or Hated: expect come-and-flee (accepted); it must never stay close. verified in game (owner, 1.26.63, 2026-11-17).
-  5. Unicorn: Guest with Elanor is fled from at 13, never lured; Friend is lured, three offers 10 s apart bond; a fourth click inside the pause says "wait"; the bonded one flees nobody. Friend offers and the "wait" click: verified in game (owner, 1.26.63, 2026-11-17) (LM-05); the Guest and bonded parts untested.
+  5. Unicorn: Guest with Elanor is fled from at 13, never lured; Friend is lured, three offers 10 s apart bond; a fourth click inside the pause says "wait"; the bonded one flees nobody. Friend offers and the "wait" click: verified in game (owner, 1.26.63, 2026-11-17) (LM-05); Guest and bonded parts: verified in game (owner, 1.26.63, 2026-11-22).
   6. Tame deer and white deer: not fled by Guest or Friend; fled by Uneasy at 13/6; hurt: alarm, untame, after 20 s band flight again. verified in game (owner, 1.26.63, 2026-11-17) (tame not fled by Guest/Friend, hurt: alarm, untame, band flight).
   7. Alarm: hitting one animal makes all five species within 20 blocks flee every player at 36/18 for 20 s. verified in game (owner, 1.26.63, 2026-11-17).
   8. Guiding (white deer guidance failed 2026-11-17 with "nowhere to lead you": beta `Block.isSolid` in the ground probe, fixed in `05d1180`, not re-tested; the squirrel errand worked; retest a Friend's acorn deep in the forest first; R6 round 3: the deer walked, then refused on arrival because the arrival ray differed from the search ray, fixed by one shared probe, in game pending: the nut must appear on arrival; R7 2026-11-22: run 1 said "gift" with no nut because the spot was on a plank flet, run 2 stood silent, fixed by natural-only ground, the nut at the deer's feet, a 5 s last-hop timeout, the answer "already leading the way" and an abort message on every exit, in game pending. Retest with a new white deer deep in the heart near lookout giants or villages, `/scriptevent lothlorien:debug` on, content log visible: the nut must lie at the deer's feet on arrival, a second acorn mid-walk must answer, and the log shows one `white deer: (debug)` line per phase change or exit): R8 2026-11-22 (squirrel and white deer answers, in game pending): offer acorns to several squirrels, also near the forest edge and a village on it, with `/scriptevent lothlorien:debug` on: every click gets a chat answer (accept, busy, startled, full, outside) and one `squirrel: (debug)` line; a hurt squirrel or white deer starts its errand or guidance on the first acorn; hit the white deer, wait 20 s, one acorn must lead (before that it says it is startled); an errand that runs past the forest edge still brings the gift; **close L9 only when tested**; a guiding white deer and an errand squirrel do not flee; the white deer is tame after arrival; leaving and re-entering mid-guide releases it.
@@ -59,11 +57,13 @@ Source fixes made, owner retest pending (fixes of 2026-11-17 in `6d2247e`, `87d6
   11. A wolf near a lured deer: the deer flees the wolf (expected change).
   12. Creative, any band: not fled; a Friend lures the unicorn; a Hated player with corn lures a deer (engine behaviour, accepted). Creative never fled: verified in game (owner, 1.26.63, 2026-11-17).
   13. Spectator flying near each species: record whether it flees. Checked, verified in game (owner, 1.26.63, 2026-11-17); no failure.
-- Water-only boat dispensing: owner 2026-11-22 "we should look into it" (details pending).
+- Firefly catch with a full inventory: the owner saw the firefly vanish (2026-11-22; the bottle went to the ground). Now the catch
+  is refused when the filled bottle has no room (a single held bottle still swaps in hand): the firefly stays, the player hears
+  `bundle.insert_fail` and reads a chat line. Retest: a stack of glass bottles, every slot full, click a firefly; then free a slot.
 
 Passed (owner X1-X3, 1.26.63, 2026-11-22, new village): **elves walk around their posts** after `random_stroll` and `follow_range` moved from the base into every radius group (cause: removing a group stripped the base stroll; `mobs/elves.md`); the Healer roams as before; a led and untied elf strolls round its new spot. Elves saved in older worlds are not repaired (owner decision).
 
 Untested, no result inferred: **L8** deer with a blocked kept gift spot, **L9** squirrel with an unreachable destination
 (explicit setups in the workspace checklist).
 
-Deferred work: the wall arm, the boat hull lift.
+Open work: the boat hull lift on ground (above). Accepted limit: the wall arm.

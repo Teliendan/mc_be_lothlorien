@@ -350,6 +350,7 @@ item.lothlorien:swan_meat_cooked=Cooked Swan Meat
 lothlorien.message.firefly.name=Firefly: %s
 lothlorien.message.firefly.name_more=%s
 lothlorien.message.firefly.health=Health: %s
+lothlorien.message.firefly.inventory_full=§7Your inventory is full. Make room to catch the firefly.
 item.lothlorien:empty_miruvor_skin=Empty Miruvor Skin
 lothlorien.message.squirrel.busy=§7The squirrel is already off on your errand.
 lothlorien.message.squirrel.stop_leashed=§7The lead holds the squirrel back, and it drops the errand. The acorn is gone.

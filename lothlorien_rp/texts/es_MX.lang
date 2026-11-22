@@ -349,6 +349,7 @@ item.lothlorien:swan_meat_cooked=Carne de cisne asada
 lothlorien.message.firefly.name=Luciérnaga: %s
 lothlorien.message.firefly.name_more=%s
 lothlorien.message.firefly.health=Salud: %s
+lothlorien.message.firefly.inventory_full=§7Tu inventario está lleno. Haz espacio para atrapar la luciérnaga.
 item.lothlorien:empty_miruvor_skin=Odre de miruvor vacío
 lothlorien.message.squirrel.busy=§7La ardilla ya salió a hacer tu encargo.
 lothlorien.message.squirrel.stop_leashed=§7La correa detiene a la ardilla y esta deja el encargo. La bellota se perdió.

@@ -1354,7 +1354,7 @@
   {
     "featureId": "lothlorien:firefly",
     "id": "lothlorien:firefly/care",
-    "text": "Tiny hovering insects that glow in the dark. Use a glass bottle to catch one. Its name and current health are kept when released. If your inventory is full, the filled bottle drops at your feet.",
+    "text": "Tiny hovering insects that glow in the dark. Use a glass bottle to catch one. Its name and current health are kept when released. If your inventory has no room for the filled bottle, the catch is refused: the firefly stays free and a message says to make room.",
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
@@ -1370,11 +1370,11 @@
       },
       {
         "path": "lothlorien_bp/scripts/fireflies.js",
-        "sha256": "77322a408526b1a77c911f99ea963283ad9367ee26e5aef9e668366db43daf4b"
+        "sha256": "8783e36275a7d9fbe7ad802ff5c2cc44f0d01cf14b6000c82e51e0a167f13334"
       },
       {
         "path": "lothlorien_bp/scripts/bottles.js",
-        "sha256": "6fda452aa9f979b3c80a878906d8e052c90d656b1150c51cf0fcf3d9167440b2"
+        "sha256": "e0335af913592d033b8dd2275f7f1ae04136d6ff11633480fa841df187ea7196"
       }
     ]
   },
@@ -1642,7 +1642,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/bottles.js",
-        "sha256": "6fda452aa9f979b3c80a878906d8e052c90d656b1150c51cf0fcf3d9167440b2"
+        "sha256": "e0335af913592d033b8dd2275f7f1ae04136d6ff11633480fa841df187ea7196"
       },
       {
         "path": "lothlorien_bp/scripts/control_rules.js",
@@ -1682,7 +1682,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/fireflies.js",
-        "sha256": "77322a408526b1a77c911f99ea963283ad9367ee26e5aef9e668366db43daf4b"
+        "sha256": "8783e36275a7d9fbe7ad802ff5c2cc44f0d01cf14b6000c82e51e0a167f13334"
       },
       {
         "path": "lothlorien_bp/scripts/flora_table.js",

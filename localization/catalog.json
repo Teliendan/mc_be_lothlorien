@@ -19953,6 +19953,63 @@
             }
           }
         },
+        "lothlorien.message.firefly.inventory_full": {
+          "source": "§7Your inventory is full. Make room to catch the firefly.",
+          "context": {
+            "meaning": "The player tried to catch a firefly with a glass bottle, but there is no free inventory slot for the Bottle of Fireflies. The catch is refused: the firefly stays and no bottle is used.",
+            "location": "lothlorien_rp: chat",
+            "trigger": "Using a stack of glass bottles on a firefly while the inventory has no room for the filled bottle.",
+            "tone": "Brief, helpful Minecraft notice",
+            "grammar": "Two complete sentences; address the player without assuming gender.",
+            "constraints": "Preserve the leading §7 color code. Use the official Minecraft word for Inventory and the mod's firefly name. No assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/fireflies.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Inventář je plný. Uvolněte v něm místo a světlušku chytíte.",
+              "based_on": "9fb96e5f73615aa7760ca448b8fd13ba012a3ba7187bab35c5b6aca9236392b8",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§7Tu inventario está lleno. Haz sitio para atrapar la luciérnaga.",
+              "based_on": "9fb96e5f73615aa7760ca448b8fd13ba012a3ba7187bab35c5b6aca9236392b8",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§7Tu inventario está lleno. Haz espacio para atrapar la luciérnaga.",
+              "based_on": "9fb96e5f73615aa7760ca448b8fd13ba012a3ba7187bab35c5b6aca9236392b8",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§7O teu inventário está cheio. Arranja espaço para apanhar o pirilampo.",
+              "based_on": "9fb96e5f73615aa7760ca448b8fd13ba012a3ba7187bab35c5b6aca9236392b8",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§7Seu inventário está cheio. Libere espaço para pegar o vaga-lume.",
+              "based_on": "9fb96e5f73615aa7760ca448b8fd13ba012a3ba7187bab35c5b6aca9236392b8",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§7Dein Inventar ist voll. Schaffe Platz, um das Glühwürmchen zu fangen.",
+              "based_on": "9fb96e5f73615aa7760ca448b8fd13ba012a3ba7187bab35c5b6aca9236392b8",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§7Votre inventaire est plein. Faites de la place pour attraper la luciole.",
+              "based_on": "9fb96e5f73615aa7760ca448b8fd13ba012a3ba7187bab35c5b6aca9236392b8",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§7Twój ekwipunek jest pełny. Zrób miejsce, aby złapać świetlika.",
+              "based_on": "9fb96e5f73615aa7760ca448b8fd13ba012a3ba7187bab35c5b6aca9236392b8",
+              "status": "ai-draft"
+            }
+          }
+        },
         "item.lothlorien:empty_miruvor_skin": {
           "source": "Empty Miruvor Skin",
           "context": {

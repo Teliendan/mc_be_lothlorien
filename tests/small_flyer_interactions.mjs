@@ -57,7 +57,8 @@ await test('anvil-renamed plain bottles and unrelated lore never supply animal i
 });
 await test('stacked/full-inventory and Creative capture/release preserve metadata and existing container policy',e=>{
   for(const [amount,creative,full] of [[3,false,false],[3,false,true],[1,true,false],[3,true,true]]){
-    const p=e.player(GLASS,amount),f=e.fly();p.mode=creative?'creative':'survival';p.full=full;f.nameTag='Carried';f.health.currentValue=1;
+    // the catch itself needs room (a full inventory refuses it, see below); the release still drops its glass when full
+    const p=e.player(GLASS,amount),f=e.fly();p.mode=creative?'creative':'survival';f.nameTag='Carried';f.health.currentValue=1;
     e.catch(p,f);e.flush();const item=captured(e,p);assert.equal(item.typeId,BOTTLE);
     if(creative||amount>1)assert.equal(p.held.amount,creative?amount:amount-1);
     const q=e.player(BOTTLE);q.held=item.clone();q.held.amount=3;q.mode=p.mode;q.full=full;
@@ -72,12 +73,20 @@ await test('different capture data stays distinct while identical data matches s
   assert.notDeepEqual(bottles[0].getRawLore(),bottles[1].getRawLore());assert.notDeepEqual(bottles[0].getRawLore(),bottles[2].getRawLore());
   assert.deepEqual(bottles[0].getRawLore(),bottles[3].getRawLore()); // actual native merge behavior is not simulated
 });
-await test('failed full-inventory delivery keeps the firefly and the empty bottles',e=>{
-  const p=e.player(GLASS,3), f=e.fly(); p.full=true; e.dimension.failDrop=true;
-  f.nameTag='Still here'; e.catch(p,f); e.flush();
-  assert.equal(f.isValid,true); assert.equal(p.held.amount,3); assert.equal(e.drops.length,0);
-  e.dimension.failDrop=false; e.catch(p,f); e.flush();
-  assert.equal(f.isValid,false); assert.equal(p.held.amount,2);
-  const out=release(e,e.drops.at(-1).item); assert.equal(out.animal.nameTag,'Still here');
+await test('a full inventory refuses the catch: firefly and bottles stay, the player hears and reads why',e=>{
+  for(const creative of [false,true]){
+    const p=e.player(GLASS,3), f=e.fly(); p.full=true; p.mode=creative?'creative':'survival'; f.nameTag='Still here';
+    e.catch(p,f); e.flush();
+    assert.equal(f.isValid,true); assert.equal(p.held.amount,3); assert.equal(e.drops.length,0); assert.equal(p.inventory.length,0);
+    assert.deepEqual(p.sounds,['bundle.insert_fail']); assert.equal(p.messages.length,1);
+    assert.equal(p.messages[0].translate,'lothlorien.message.firefly.inventory_full');
+    p.full=false; e.catch(p,f); e.flush();
+    assert.equal(f.isValid,false); assert.equal(p.held.amount,creative?3:2); assert.equal(p.messages.length,1);
+    assert.equal(p.inventory.at(-1).typeId,BOTTLE);
+  }
+});
+await test('a single held bottle is swapped in hand, so a full inventory still catches',e=>{
+  const p=e.player(GLASS,1), f=e.fly(); p.full=true; e.catch(p,f); e.flush();
+  assert.equal(f.isValid,false); assert.equal(p.held.typeId,BOTTLE); assert.equal(p.messages.length,0);
 });
 console.log(`Passed ${cases} production small-flyer/data scenarios; native lore persistence/stacking remains acceptance.`);

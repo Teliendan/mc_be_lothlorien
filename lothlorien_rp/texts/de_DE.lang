@@ -349,6 +349,7 @@ item.lothlorien:swan_meat_cooked=Gebratenes Schwanenfleisch
 lothlorien.message.firefly.name=Glühwürmchen: %s
 lothlorien.message.firefly.name_more=%s
 lothlorien.message.firefly.health=Gesundheit: %s
+lothlorien.message.firefly.inventory_full=§7Dein Inventar ist voll. Schaffe Platz, um das Glühwürmchen zu fangen.
 item.lothlorien:empty_miruvor_skin=Leerer Miruvorschlauch
 lothlorien.message.squirrel.busy=§7Das Waldhörnchen ist schon in deinem Auftrag unterwegs.
 lothlorien.message.squirrel.stop_leashed=§7Die Leine hält das Waldhörnchen zurück, und es gibt den Auftrag auf. Die Eichel ist weg.

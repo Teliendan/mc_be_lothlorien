@@ -349,6 +349,7 @@ item.lothlorien:swan_meat_cooked=Carne de Cisne Assada
 lothlorien.message.firefly.name=Vaga-lume: %s
 lothlorien.message.firefly.name_more=%s
 lothlorien.message.firefly.health=Vida: %s
+lothlorien.message.firefly.inventory_full=§7Seu inventário está cheio. Libere espaço para pegar o vaga-lume.
 item.lothlorien:empty_miruvor_skin=Odre de Miruvor Vazio
 lothlorien.message.squirrel.busy=§7O esquilo já saiu para fazer o seu recado.
 lothlorien.message.squirrel.stop_leashed=§7O Laço segura o esquilo, que desiste do recado. A bolota se foi.
