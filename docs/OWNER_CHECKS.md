@@ -75,7 +75,7 @@ Source fixes made, owner retest pending (fixes of 2026-11-17 in `6d2247e`, `87d6
   corrected with rotation tests). Existing closures are saved blocks and are not removed automatically; the photographed
   location was (1040, 141, -1338).
 
-Open retest (2026-11-22, 1.26.63): **elves walk around their posts** after `follow_range` 64 moved into the base components (cause found by the owner's A/B: the Healer with it walked, the other professions without it stood still; `mobs/elves.md`). Check each profession strolls within its radius.
+Open retest (2026-11-22, 1.26.63): **elves walk around their posts** after `random_stroll` and `follow_range` moved from the base into every radius group (cause: removing a group stripped the base stroll; `mobs/elves.md`). Check each profession strolls within its radius, on a fresh elf AND in an existing village (saved elves may stay without a stroll if the engine does not re-apply group components on load; then they need `lothlorien:rehome` or a new village).
 
 Untested, no result inferred: **L8** deer with a blocked kept gift spot, **L9** squirrel with an unreachable destination
 (explicit setups in the workspace checklist).

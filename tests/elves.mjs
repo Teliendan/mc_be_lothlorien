@@ -35,10 +35,12 @@ test("elf: entity values come from elf_rules STATS / HOME_RADIUS; persistent, no
   assert.deepEqual([avoid.max_dist, avoid.walk_speed_multiplier, avoid.sprint_speed_multiplier], [EL.STATS.avoidDist, EL.STATS.avoidWalk, EL.STATS.avoidSprint]);
   assert.deepEqual(avoid.filters.all_of.map((f) => [f.test, f.value, f.operator ?? "="]), [["is_family", "monster", "="], ["is_family", "enderman", "!="]]);
   assert.equal(c["minecraft:behavior.move_towards_home_restriction"].speed_multiplier, EL.STATS.home);
-  assert.equal(c["minecraft:behavior.random_stroll"].speed_multiplier, EL.STATS.stroll);
-  assert.deepEqual([c["minecraft:behavior.random_stroll"].xz_dist, c["minecraft:behavior.random_stroll"].y_dist, c["minecraft:behavior.random_stroll"].interval], [EL.STROLL.xz, EL.STROLL.y, EL.STROLL.interval], "base stroll from STROLL");
+  assert.ok(!("minecraft:behavior.random_stroll" in c) && !("minecraft:follow_range" in c) && !("minecraft:home" in c), "stroll, follow_range and home live only in the radius groups: removing a group strips a same-named base component too (2026-11-22)");
+  for (const g of [EL.HOME_NEAR_GROUP, EL.HOME_LORE_GROUP]) {
+    const s = e.component_groups[g]["minecraft:behavior.random_stroll"];
+    assert.deepEqual([s.xz_dist, s.y_dist, s.interval, s.speed_multiplier], [EL.STROLL.xz, EL.STROLL.y, EL.STROLL.interval, EL.STATS.stroll], `${g}: stroll from STROLL`);
+  }
   assert.equal(c["minecraft:behavior.look_at_player"].look_distance, EL.STATS.lookDistance);
-  assert.deepEqual(c["minecraft:home"], {}, "base home is empty (restriction none); the radius comes from the radius groups, so a lead can take it away");
   assert.ok(!Object.values(e.component_groups).some((g) => GROUP_NAMES(g).includes("minecraft:variant") && "minecraft:home" in g), "a profession group carries no home radius");
   const nav = c["minecraft:navigation.walk"];
   assert.deepEqual(nav.blocks_to_avoid.map((b) => b.name), ["lothlorien:elven_rope", "lothlorien:elven_rope_hanging"], "avoids the rope cells");
@@ -79,8 +81,9 @@ test("elf: every profession group has its variant index and its interact entry; 
   });
   const home = (r) => ({ restriction_type: "random_movement", restriction_radius: r });
   const mark = (g) => ({ "minecraft:mark_variant": { value: EL.RADIUS_MARK[g] } });
-  assert.deepEqual(e.component_groups[EL.HOME_NEAR_GROUP], { "minecraft:home": home(EL.HOME_RADIUS.near), ...mark(EL.HOME_NEAR_GROUP) }, "home_near: radius + debug marker, the stroll stays the base one");
-  assert.deepEqual(e.component_groups[EL.HOME_LORE_GROUP], { "minecraft:home": home(EL.HOME_RADIUS.loremaster), ...mark(EL.HOME_LORE_GROUP) });
+  const own = { "minecraft:follow_range": { value: EL.FOLLOW_RANGE, max: EL.FOLLOW_RANGE }, "minecraft:behavior.random_stroll": { priority: 6, speed_multiplier: EL.STATS.stroll, xz_dist: EL.STROLL.xz, y_dist: EL.STROLL.y, interval: EL.STROLL.interval } };
+  assert.deepEqual(e.component_groups[EL.HOME_NEAR_GROUP], { ...own, "minecraft:home": home(EL.HOME_RADIUS.near), ...mark(EL.HOME_NEAR_GROUP) }, "home_near: own stroll and reach, radius, debug marker");
+  assert.deepEqual(e.component_groups[EL.HOME_LORE_GROUP], { ...own, "minecraft:home": home(EL.HOME_RADIUS.loremaster), ...mark(EL.HOME_LORE_GROUP) });
   const sp = e.events["minecraft:entity_spawned"];
   assert.equal(sp.randomize.length, EL.PROFESSIONS.length);
   assert.deepEqual(sp.randomize.map((r) => r.add.component_groups), EL.PROFESSIONS.map((p) => [GROUP(p), EL.radiusGroupOf(p)]), "one egg: random profession with its radius group");
@@ -104,18 +107,25 @@ test("elf healer: day group roams HOME_RADIUS.healerDay and flips to night at du
 
 test("elf healer roam: by day a far stroll and a long path reach cross bridges; from dusk the base stroll, the reach stays for the walk home; radius markers", () => {
   // owner 2026-10-10: "healers seem to stay on their platform" with radius 64 and the base 8 / 3 stroll (the radius is a fence, the stroll the drive)
-  const e = elfEntity(), base = e.components["minecraft:behavior.random_stroll"], day = e.component_groups[EL.HEALER_DAY_GROUP], night = e.component_groups[EL.HEALER_NIGHT_GROUP];
+  const e = elfEntity(), base = { priority: 6, speed_multiplier: EL.STATS.stroll }, day = e.component_groups[EL.HEALER_DAY_GROUP], night = e.component_groups[EL.HEALER_NIGHT_GROUP];
   const stroll = (xz, y, interval) => { const s = { ...base, xz_dist: xz, y_dist: y }; if (interval === undefined) delete s.interval; else s.interval = interval; return s; }; // the day stroll keeps the engine's default interval (120)
   assert.deepEqual(day["minecraft:behavior.random_stroll"], stroll(EL.HEALER_ROAM.xz, EL.HEALER_ROAM.y), "day: same priority and speed as the base stroll, far targets");
   assert.deepEqual(night["minecraft:behavior.random_stroll"], stroll(EL.STROLL.xz, EL.STROLL.y, EL.STROLL.interval), "night: the base stroll, explicit (whether a removed group gives the base one back is not relied on)");
-  assert.deepEqual(e.components["minecraft:follow_range"], { value: EL.FOLLOW_RANGE, max: EL.FOLLOW_RANGE }, "every elf has follow_range 64 in the base (without it the stroll barely moved, owner A/B 2026-11-22)");
+  for (const g of EL.RADIUS_GROUPS) assert.deepEqual(e.component_groups[g]["minecraft:follow_range"], { value: EL.FOLLOW_RANGE, max: EL.FOLLOW_RANGE }, `${g}: own follow_range`);
   assert.ok(EL.HEALER_ROAM.xz >= 2 * 15 && EL.HEALER_ROAM.xz <= EL.HOME_RADIUS.healerDay, "one day stroll can reach past the longest bridge (15), inside the day radius");
   assert.ok(EL.HEALER_ROAM.y >= 3 && EL.HEALER_ROAM.y < 6, "y covers a rise-2 arch, stays below the crowns (6 above the deck) and far above nothing (decks 16 up)");
   assert.ok(EL.HEALER_ROAM.followRange >= EL.HOME_RADIUS.healerDay, "the dusk walk home starts up to the day radius away");
   for (const [name, g] of Object.entries(e.component_groups)) {
-    if (name === EL.HEALER_DAY_GROUP || name === EL.HEALER_NIGHT_GROUP) continue;
-    assert.ok(!("minecraft:behavior.random_stroll" in g) && !("minecraft:follow_range" in g), `${name}: other professions keep the base stroll and reach`);
+    if (EL.RADIUS_GROUPS.includes(name)) continue;
+    assert.ok(!("minecraft:behavior.random_stroll" in g) && !("minecraft:follow_range" in g), `${name}: only radius groups carry a stroll or reach`);
   }
+  // 2026-11-22: removing a group strips its components even when the base has the same one, so no event may remove such a group; every radius group strolls
+  const baseKeys = new Set(Object.keys(e.components));
+  const removed = new Set();
+  const walk = (x) => { if (Array.isArray(x)) x.forEach(walk); else if (x && typeof x === "object") { for (const [k, v] of Object.entries(x)) { if (k === "remove" && v?.component_groups) v.component_groups.forEach((g) => removed.add(g)); walk(v); } } };
+  walk(e.events);
+  for (const g of removed) assert.deepEqual(Object.keys(e.component_groups[g] ?? {}).filter((k) => baseKeys.has(k)), [], `a removed group (${g}) shares no component with the base components`);
+  for (const g of EL.RADIUS_GROUPS) assert.ok("minecraft:behavior.random_stroll" in e.component_groups[g], `${g}: has its own stroll`);
   // debug marker: every radius group, unique values, nothing else carries one
   const marks = EL.RADIUS_GROUPS.map((g) => e.component_groups[g]["minecraft:mark_variant"]?.value);
   assert.deepEqual(marks, EL.RADIUS_GROUPS.map((g) => EL.RADIUS_MARK[g])); assert.equal(new Set(marks).size, marks.length);

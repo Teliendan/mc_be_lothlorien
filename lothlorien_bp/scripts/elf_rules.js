@@ -43,10 +43,11 @@ export const HEALER_DAWN_EVENT = "lothlorien:healer_dawn";
 // time, so it stays round its own tree. The radius is only a fence, not a drive: with that stroll a 64 radius barely shows (owner 2026-10-10:
 // "healers seem to stay on their platform"), because a deck is left only through a 3-wide bridge mouth and a short random walk rarely crosses a 7..15
 // bridge (roam sim in docs/mobs/elves.md: 36-80 % of healers reach another tree in 40 strolls). So the healer's day group strolls far (HEALER_ROAM, 89-100 %),
-// and every elf has `follow_range` 64 in the base (FOLLOW_RANGE): without it even the 8 / 1 stroll barely moved on the decks (A/B in game 2026-11-22), and
-// far stroll targets and the dusk walk home across bridges need it (vanilla iron golem 64 with xz 16, villager 128). y stays small: decks are 16+ above the ground, crowns 6 above the deck.
+// and every radius group carries its own `random_stroll` and `follow_range` 64 (FOLLOW_RANGE), never the base: an event that removes a group strips its
+// components even when the base has the same one, which left non-healer elves without any stroll (A/B in game 2026-11-22, 1.26.63; strongly inferred, not
+// documented). follow_range was NOT the cause; it is kept for the far day stroll and the dusk walk home across bridges (vanilla iron golem 64, villager 128). y stays small: decks are 16+ above the ground, crowns 6 above the deck.
 export const STROLL = { xz: 8, y: 1, interval: 60 }; // interval 60 ticks (default 120) and y 1: owner R7 2026-11-21, elves strolled too rarely; decks are flat
-export const FOLLOW_RANGE = 64; // base component of every elf: without it the stroll barely moved (owner A/B 2026-11-22, 1.26.63)
+export const FOLLOW_RANGE = 64; // in every radius group; not a fix for the standing elves (that was the stripped base stroll), kept for far targets and the dusk walk home
 export const HEALER_ROAM = { xz: 32, y: 4, followRange: FOLLOW_RANGE };
 // Debug marker: every radius group carries `minecraft:mark_variant` with this value (no client use; it only tells which radius group the engine has on the elf,
 // readable in an entity dump). No marker = no radius group (on a lead).

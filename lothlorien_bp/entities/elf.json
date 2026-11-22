@@ -348,6 +348,17 @@
         }
       },
       "lothlorien:home_near": {
+        "minecraft:follow_range": {
+          "value": 64,
+          "max": 64
+        },
+        "minecraft:behavior.random_stroll": {
+          "priority": 6,
+          "speed_multiplier": 0.6,
+          "xz_dist": 8,
+          "y_dist": 1,
+          "interval": 60
+        },
         "minecraft:home": {
           "restriction_type": "random_movement",
           "restriction_radius": 10
@@ -357,6 +368,17 @@
         }
       },
       "lothlorien:home_lore": {
+        "minecraft:follow_range": {
+          "value": 64,
+          "max": 64
+        },
+        "minecraft:behavior.random_stroll": {
+          "priority": 6,
+          "speed_multiplier": 0.6,
+          "xz_dist": 8,
+          "y_dist": 1,
+          "interval": 60
+        },
         "minecraft:home": {
           "restriction_type": "random_movement",
           "restriction_radius": 6
@@ -366,6 +388,10 @@
         }
       },
       "lothlorien:healer_day": {
+        "minecraft:follow_range": {
+          "value": 64,
+          "max": 64
+        },
         "minecraft:home": {
           "restriction_type": "random_movement",
           "restriction_radius": 64
@@ -395,6 +421,10 @@
         }
       },
       "lothlorien:healer_night": {
+        "minecraft:follow_range": {
+          "value": 64,
+          "max": 64
+        },
         "minecraft:home": {
           "restriction_type": "random_movement",
           "restriction_radius": 10
@@ -714,10 +744,6 @@
       }
     },
     "components": {
-      "minecraft:follow_range": {
-        "value": 64,
-        "max": 64
-      },
       "minecraft:type_family": {
         "family": [
           "lothlorien_elf",
@@ -783,7 +809,6 @@
       },
       "minecraft:nameable": {},
       "minecraft:persistent": {},
-      "minecraft:home": {},
       "minecraft:leashable": {
         "can_be_stolen": false,
         "can_be_cut": true,
@@ -845,13 +870,6 @@
       "minecraft:behavior.move_towards_home_restriction": {
         "priority": 5,
         "speed_multiplier": 0.6
-      },
-      "minecraft:behavior.random_stroll": {
-        "priority": 6,
-        "speed_multiplier": 0.6,
-        "xz_dist": 8,
-        "y_dist": 1,
-        "interval": 60
       },
       "minecraft:behavior.look_at_player": {
         "priority": 7,
