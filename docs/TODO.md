@@ -102,8 +102,8 @@ performance, Loremaster edge cases, survival balance and translations are not to
 
 Completed source fixes and accepted checks, and where each open retest below is described: `OWNER_CHECKS.md`.
 
-- [ ] **Retest bounded fixes:** firefly catch with a full inventory, now refused with a sound and a chat line
-  (changed 2026-11-22 after the owner saw the firefly vanish). Passed 2026-11-22: Miruvor, unicorn, dispensing onto
+- [x] **Retest bounded fixes:** firefly catch with a full inventory, now refused with a sound and a chat line
+  (verified in game (owner, 1.26.63, 2026-11-22)). Passed 2026-11-22: Miruvor, unicorn, dispensing onto
   water, Star Canopy unlock, wind charges, rope with Slow Falling, firefly release sound, leaf
   decay, support pop, village generators (`OWNER_CHECKS.md`).
 - [x] **Spawn egg graphics:** the current eggs are final; owner confirmed 2026-10-29 (`GRAPHICS_TASKS.md`). Old note: replace generic eggs with the current
