@@ -24,8 +24,8 @@ Creature groups: [CREATURES.md](CREATURES.md).
 - Four entities are copies of vanilla boat/chest_boat with documented adaptations (enforced by tests/boats.mjs
   when the vanilla reference exists). Fuel 60 s, own loot, chest seat x 0.35, no raft seats.
 - Owner verified 2026-10-18: placing, riding, leads, leaving, self-drop, chest inventory.
-- Game check: dispenser may put a boat on dry land (`entity_placer` has no `dispense_on`); add
-  `"dispense_on": ["minecraft:water", "minecraft:flowing_water"]` if so.
+- Dispenser: `"dispense_on": ["minecraft:water", "minecraft:flowing_water"]` on all four items; onto water a boat, on dry
+  land the item is ejected, same as an oak boat beside it (verified in game (owner, 1.26.63, 2026-11-22, oak and Mallorn dispensers side by side)).
 
 ## Controls (doors, trapdoors, gates, buttons, plates)
 - Doors/trapdoors/gates toggle by script (`blocks.js`); synchronized double doors are an owner convenience (2026-10-18).

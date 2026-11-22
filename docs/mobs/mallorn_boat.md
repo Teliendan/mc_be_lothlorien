@@ -18,7 +18,7 @@ entities; lang and item_texture entries). Do not hand-edit the generated files.
 - BP entities are copies of vanilla `boat` / `chest_boat` (1.26.30) with `runtime_identifier` `minecraft:boat` /
   `minecraft:chest_boat`: the hard-coded boat class does placing, steering, the boat UI and the 27-slot chest.
   Bamboo-raft seat group dropped; own loot tables. Chest boat seat at x 0.35 (vanilla 0.2 would sit in the chest).
-- Items: `entity_placer` + `liquid_clipped`, stack 1, fuel 60 seconds (six smelts); plain boats use `itemGroup.name.boat`, chest boats use `itemGroup.name.chestboat`. Omitted `dispense_on` is an unrestricted native default, not missing dispenser permission; exact boat-placement parity still needs the linked game comparisons.
+- Items: `entity_placer` + `liquid_clipped`, stack 1, fuel 60 seconds (six smelts); plain boats use `itemGroup.name.boat`, chest boats use `itemGroup.name.chestboat`. `dispense_on` water and flowing water: a dispenser places the boat onto water and ejects the item on dry land, like the oak boat (verified in game, owner, 1.26.63, 2026-11-22).
 - Recipes: boat = 5 planks in a U (silver or heartwood planks); chest boat = chest over the boat (shaped only).
 - Client: the `hull` bone is turned by the actor yaw (a runtime boat does not turn a custom model); one `lead`
   locator, identical in every geometry (they share locators), on the bow neck; paddles row while ridden and moving;

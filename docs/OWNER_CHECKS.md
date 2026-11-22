@@ -33,9 +33,9 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
 - **Wall arm beside a gate** (accepted as a limit, owner 2026-11-22). The Mallorn fence gate lowers beside a cobblestone wall, but the wall draws no arm toward it.
   Native connection modes cannot narrowly advertise a custom gate as a vanilla gate to walls; broad connection changes would
   alter unrelated blocks. (Wiki limitation `wall-connection`.)
-- **Boat hull lift.** Dispensing onto water is right (owner 2026-11-22). Dispensed onto ground, a boat still appears (so the
-  items' `dispense_on` water list does not stop land dispensing) and the long hull rises above the dispenser (wrong height); placing by hand avoids it. Owner 2026-11-22: find a solution (research `temp/boat-dispense/`). (Wiki limitation
-  `dispenser-clearance`.)
+- **Boat dispensing** (closed 2026-11-22): matches vanilla. A dispenser places a Mallorn boat onto water and ejects
+  the item on dry land, exactly like the oak boat beside it (verified in game (owner, 1.26.63, 2026-11-22, oak and Mallorn dispensers side by side); the items' `dispense_on` water list does
+  this). The earlier "hull rises above the dispenser" report is no longer seen; its wiki limitation was removed.
 - **Leaf flicker** is z-fighting between leaf faces; see `TODO.md` section 4 and `GRAPHICS_TASKS.md`.
 - Other engine limits: `parity/BLOCKS_ITEMS.md`, `NOT_IMPLEMENTED.md`.
 
@@ -68,4 +68,4 @@ Passed (owner X1-X3, 1.26.63, 2026-11-22, new village): **elves walk around thei
 Untested, no result inferred: **L8** deer with a blocked kept gift spot, **L9** squirrel with an unreachable destination
 (explicit setups in the workspace checklist).
 
-Open work: the boat hull lift on ground (above). Accepted limit: the wall arm.
+Accepted limit: the wall arm.

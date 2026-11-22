@@ -112,8 +112,7 @@ Completed source fixes and accepted checks, and where each open retest below is 
 - [x] **Wall/gate visual connection:** accepted as a limit (owner, 2026-11-22). Was: gate lowers,
   cobblestone wall arm stays absent. Avoid changing unrelated connections just
   to make this cosmetic junction connect.
-- [ ] **Boat hull lift on ground:** a boat dispensed onto ground rises above the dispenser (owner 2026-11-22: find a
-  solution; onto water it is right). Research and routes: `temp/boat-dispense/plan.md`.
+- [x] **Boat dispensing:** matches vanilla (onto water a boat, on land the item, like oak); no fix (owner, 2026-11-22).
 - [x] **Railing follow-up:** village generators OK since the fix (owner, 2026-11-22). Was: verify newly processed upward half-step bridge joins
   remain open. Inspect the photographed location (1040,141,-1338) and manually
   remove an old false closure if needed; existing saved fences are retained.
