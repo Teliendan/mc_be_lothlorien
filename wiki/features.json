@@ -264,7 +264,7 @@
     {
       "id": "lothlorien:elven_cloak",
       "slug": "elven_cloak",
-      "name": "Elven cloak",
+      "name": "Elven Cloak",
       "kind": "item",
       "aliases": [],
       "nativeIds": [
@@ -439,7 +439,7 @@
     {
       "id": "lothlorien:galadhrim_arrow",
       "slug": "galadhrim_arrow",
-      "name": "Galadhrim arrow",
+      "name": "Galadhrim Arrow",
       "kind": "item",
       "aliases": [],
       "nativeIds": [
@@ -1851,7 +1851,7 @@
     {
       "id": "lothlorien:silver_belt",
       "slug": "silver_belt",
-      "name": "Silver belt",
+      "name": "Silver Belt",
       "kind": "item",
       "aliases": [],
       "nativeIds": [

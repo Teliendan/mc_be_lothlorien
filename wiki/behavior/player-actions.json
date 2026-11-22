@@ -51,7 +51,7 @@
   {
     "featureId": "lothlorien:bow",
     "id": "lothlorien:bow/use",
-    "text": "Draw and release like a normal bow; it reaches full draw faster. It shoots ordinary arrows and Galadhrim arrows.",
+    "text": "Draw and release like a normal bow; it reaches full draw faster. It shoots ordinary arrows and Galadhrim Arrows.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",

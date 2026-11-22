@@ -19230,7 +19230,7 @@
           }
         },
         "item.lothlorien:elven_cloak": {
-          "source": "Elven cloak",
+          "source": "Elven Cloak",
           "context": {
             "meaning": "Chest armour with leather-level protection. Grants invisibility after sneaking without moving for one second.",
             "location": "lothlorien_rp: inventory, creative equipment and native elf trade screen",
@@ -19243,42 +19243,42 @@
           "translations": {
             "cs_CZ": {
               "text": "Elfí plášť",
-              "based_on": "9496eafcaf1aeaee266350786b8af6dcc0d4d1fa1bdb7ac7d5a65f6a5f39df8d",
+              "based_on": "86600ade5a00f66e68e7309c7754f360ce5377d5d9cdc29910195189d6266f0c",
               "status": "ai-draft"
             },
             "es_ES": {
               "text": "Capa élfica",
-              "based_on": "9496eafcaf1aeaee266350786b8af6dcc0d4d1fa1bdb7ac7d5a65f6a5f39df8d",
+              "based_on": "86600ade5a00f66e68e7309c7754f360ce5377d5d9cdc29910195189d6266f0c",
               "status": "ai-draft"
             },
             "es_MX": {
               "text": "Capa élfica",
-              "based_on": "9496eafcaf1aeaee266350786b8af6dcc0d4d1fa1bdb7ac7d5a65f6a5f39df8d",
+              "based_on": "86600ade5a00f66e68e7309c7754f360ce5377d5d9cdc29910195189d6266f0c",
               "status": "ai-draft"
             },
             "pt_PT": {
               "text": "Capa Élfica",
-              "based_on": "9496eafcaf1aeaee266350786b8af6dcc0d4d1fa1bdb7ac7d5a65f6a5f39df8d",
+              "based_on": "86600ade5a00f66e68e7309c7754f360ce5377d5d9cdc29910195189d6266f0c",
               "status": "ai-draft"
             },
             "pt_BR": {
               "text": "Capa Élfica",
-              "based_on": "9496eafcaf1aeaee266350786b8af6dcc0d4d1fa1bdb7ac7d5a65f6a5f39df8d",
+              "based_on": "86600ade5a00f66e68e7309c7754f360ce5377d5d9cdc29910195189d6266f0c",
               "status": "ai-draft"
             },
             "de_DE": {
               "text": "Elbenumhang",
-              "based_on": "9496eafcaf1aeaee266350786b8af6dcc0d4d1fa1bdb7ac7d5a65f6a5f39df8d",
+              "based_on": "86600ade5a00f66e68e7309c7754f360ce5377d5d9cdc29910195189d6266f0c",
               "status": "ai-draft"
             },
             "fr_FR": {
               "text": "Cape elfique",
-              "based_on": "9496eafcaf1aeaee266350786b8af6dcc0d4d1fa1bdb7ac7d5a65f6a5f39df8d",
+              "based_on": "86600ade5a00f66e68e7309c7754f360ce5377d5d9cdc29910195189d6266f0c",
               "status": "ai-draft"
             },
             "pl_PL": {
               "text": "Elfi płaszcz",
-              "based_on": "9496eafcaf1aeaee266350786b8af6dcc0d4d1fa1bdb7ac7d5a65f6a5f39df8d",
+              "based_on": "86600ade5a00f66e68e7309c7754f360ce5377d5d9cdc29910195189d6266f0c",
               "status": "ai-draft"
             }
           }
@@ -19338,7 +19338,7 @@
           }
         },
         "item.lothlorien:silver_belt": {
-          "source": "Silver belt",
+          "source": "Silver Belt",
           "context": {
             "meaning": "Off-hand gift rendered at the waist; grants Regeneration I while health is strictly below half maximum.",
             "location": "lothlorien_rp: inventory, creative equipment and native elf trade screen",
@@ -19351,42 +19351,42 @@
           "translations": {
             "cs_CZ": {
               "text": "Stříbrný opasek",
-              "based_on": "ad6b5e6d52c677bf079e1e0eec1f50a74ec791dcd84c8c6bc95ac07fa4c2dd61",
+              "based_on": "2705410c0363d441622be8eec1215050320bb095d52a116794c7f607b807d2de",
               "status": "ai-draft"
             },
             "es_ES": {
               "text": "Cinturón de plata",
-              "based_on": "ad6b5e6d52c677bf079e1e0eec1f50a74ec791dcd84c8c6bc95ac07fa4c2dd61",
+              "based_on": "2705410c0363d441622be8eec1215050320bb095d52a116794c7f607b807d2de",
               "status": "ai-draft"
             },
             "es_MX": {
               "text": "Cinturón de plata",
-              "based_on": "ad6b5e6d52c677bf079e1e0eec1f50a74ec791dcd84c8c6bc95ac07fa4c2dd61",
+              "based_on": "2705410c0363d441622be8eec1215050320bb095d52a116794c7f607b807d2de",
               "status": "ai-draft"
             },
             "pt_PT": {
               "text": "Cinto de Prata",
-              "based_on": "ad6b5e6d52c677bf079e1e0eec1f50a74ec791dcd84c8c6bc95ac07fa4c2dd61",
+              "based_on": "2705410c0363d441622be8eec1215050320bb095d52a116794c7f607b807d2de",
               "status": "ai-draft"
             },
             "pt_BR": {
               "text": "Cinto de Prata",
-              "based_on": "ad6b5e6d52c677bf079e1e0eec1f50a74ec791dcd84c8c6bc95ac07fa4c2dd61",
+              "based_on": "2705410c0363d441622be8eec1215050320bb095d52a116794c7f607b807d2de",
               "status": "ai-draft"
             },
             "de_DE": {
               "text": "Silbergürtel",
-              "based_on": "ad6b5e6d52c677bf079e1e0eec1f50a74ec791dcd84c8c6bc95ac07fa4c2dd61",
+              "based_on": "2705410c0363d441622be8eec1215050320bb095d52a116794c7f607b807d2de",
               "status": "ai-draft"
             },
             "fr_FR": {
               "text": "Ceinture d’argent",
-              "based_on": "ad6b5e6d52c677bf079e1e0eec1f50a74ec791dcd84c8c6bc95ac07fa4c2dd61",
+              "based_on": "2705410c0363d441622be8eec1215050320bb095d52a116794c7f607b807d2de",
               "status": "ai-draft"
             },
             "pl_PL": {
               "text": "Srebrny pas",
-              "based_on": "ad6b5e6d52c677bf079e1e0eec1f50a74ec791dcd84c8c6bc95ac07fa4c2dd61",
+              "based_on": "2705410c0363d441622be8eec1215050320bb095d52a116794c7f607b807d2de",
               "status": "ai-draft"
             }
           }
@@ -19446,7 +19446,7 @@
           }
         },
         "item.lothlorien:galadhrim_arrow": {
-          "source": "Galadhrim arrow",
+          "source": "Galadhrim Arrow",
           "context": {
             "meaning": "Recoverable arrow ammunition fired only by the Bow of the Galadhrim in Survival; same trajectory as a vanilla arrow.",
             "location": "lothlorien_rp: inventory, creative equipment and native elf trade screen",
@@ -19459,48 +19459,48 @@
           "translations": {
             "cs_CZ": {
               "text": "Galadhrimský šíp",
-              "based_on": "f764d40ee24045fda6551063b6893be5905501d273aafbfbf1a13889efa9be19",
+              "based_on": "3aece409eb95274390f71c094b3b02e80c7f373b9b1e3869d5cce46c5597ff58",
               "status": "ai-draft"
             },
             "es_ES": {
               "text": "Flecha de los Galadhrim",
-              "based_on": "f764d40ee24045fda6551063b6893be5905501d273aafbfbf1a13889efa9be19",
+              "based_on": "3aece409eb95274390f71c094b3b02e80c7f373b9b1e3869d5cce46c5597ff58",
               "status": "ai-draft"
             },
             "es_MX": {
               "text": "Flecha de los Galadhrim",
-              "based_on": "f764d40ee24045fda6551063b6893be5905501d273aafbfbf1a13889efa9be19",
+              "based_on": "3aece409eb95274390f71c094b3b02e80c7f373b9b1e3869d5cce46c5597ff58",
               "status": "ai-draft"
             },
             "pt_PT": {
               "text": "Flecha dos Galadhrim",
-              "based_on": "f764d40ee24045fda6551063b6893be5905501d273aafbfbf1a13889efa9be19",
+              "based_on": "3aece409eb95274390f71c094b3b02e80c7f373b9b1e3869d5cce46c5597ff58",
               "status": "ai-draft"
             },
             "pt_BR": {
               "text": "Flecha dos Galadhrim",
-              "based_on": "f764d40ee24045fda6551063b6893be5905501d273aafbfbf1a13889efa9be19",
+              "based_on": "3aece409eb95274390f71c094b3b02e80c7f373b9b1e3869d5cce46c5597ff58",
               "status": "ai-draft"
             },
             "de_DE": {
               "text": "Galadhrim-Pfeil",
-              "based_on": "f764d40ee24045fda6551063b6893be5905501d273aafbfbf1a13889efa9be19",
+              "based_on": "3aece409eb95274390f71c094b3b02e80c7f373b9b1e3869d5cce46c5597ff58",
               "status": "ai-draft"
             },
             "fr_FR": {
               "text": "Flèche des Galadhrim",
-              "based_on": "f764d40ee24045fda6551063b6893be5905501d273aafbfbf1a13889efa9be19",
+              "based_on": "3aece409eb95274390f71c094b3b02e80c7f373b9b1e3869d5cce46c5597ff58",
               "status": "ai-draft"
             },
             "pl_PL": {
               "text": "Strzała Galadhrim",
-              "based_on": "f764d40ee24045fda6551063b6893be5905501d273aafbfbf1a13889efa9be19",
+              "based_on": "3aece409eb95274390f71c094b3b02e80c7f373b9b1e3869d5cce46c5597ff58",
               "status": "ai-draft"
             }
           }
         },
         "entity.lothlorien:galadhrim_arrow.name": {
-          "source": "Galadhrim arrow",
+          "source": "Galadhrim Arrow",
           "context": {
             "meaning": "Recoverable arrow ammunition fired only by the Bow of the Galadhrim in Survival; same trajectory as a vanilla arrow.",
             "location": "lothlorien_rp: projectile entity name",
@@ -19513,48 +19513,48 @@
           "translations": {
             "cs_CZ": {
               "text": "Galadhrimský šíp",
-              "based_on": "4b47af1d885eacfa07423d5e2e7bfa1bf133c4296317a88dbfe4b0f795131a55",
+              "based_on": "5fde1d2b579949badfdd7a9b55bffba4b1f8a40f80b3f6c32bd867cedb7bfeeb",
               "status": "ai-draft"
             },
             "es_ES": {
               "text": "Flecha de los Galadhrim",
-              "based_on": "4b47af1d885eacfa07423d5e2e7bfa1bf133c4296317a88dbfe4b0f795131a55",
+              "based_on": "5fde1d2b579949badfdd7a9b55bffba4b1f8a40f80b3f6c32bd867cedb7bfeeb",
               "status": "ai-draft"
             },
             "es_MX": {
               "text": "Flecha de los Galadhrim",
-              "based_on": "4b47af1d885eacfa07423d5e2e7bfa1bf133c4296317a88dbfe4b0f795131a55",
+              "based_on": "5fde1d2b579949badfdd7a9b55bffba4b1f8a40f80b3f6c32bd867cedb7bfeeb",
               "status": "ai-draft"
             },
             "pt_PT": {
               "text": "Flecha dos Galadhrim",
-              "based_on": "4b47af1d885eacfa07423d5e2e7bfa1bf133c4296317a88dbfe4b0f795131a55",
+              "based_on": "5fde1d2b579949badfdd7a9b55bffba4b1f8a40f80b3f6c32bd867cedb7bfeeb",
               "status": "ai-draft"
             },
             "pt_BR": {
               "text": "Flecha dos Galadhrim",
-              "based_on": "4b47af1d885eacfa07423d5e2e7bfa1bf133c4296317a88dbfe4b0f795131a55",
+              "based_on": "5fde1d2b579949badfdd7a9b55bffba4b1f8a40f80b3f6c32bd867cedb7bfeeb",
               "status": "ai-draft"
             },
             "de_DE": {
               "text": "Galadhrim-Pfeil",
-              "based_on": "4b47af1d885eacfa07423d5e2e7bfa1bf133c4296317a88dbfe4b0f795131a55",
+              "based_on": "5fde1d2b579949badfdd7a9b55bffba4b1f8a40f80b3f6c32bd867cedb7bfeeb",
               "status": "ai-draft"
             },
             "fr_FR": {
               "text": "Flèche des Galadhrim",
-              "based_on": "4b47af1d885eacfa07423d5e2e7bfa1bf133c4296317a88dbfe4b0f795131a55",
+              "based_on": "5fde1d2b579949badfdd7a9b55bffba4b1f8a40f80b3f6c32bd867cedb7bfeeb",
               "status": "ai-draft"
             },
             "pl_PL": {
               "text": "Strzała Galadhrim",
-              "based_on": "4b47af1d885eacfa07423d5e2e7bfa1bf133c4296317a88dbfe4b0f795131a55",
+              "based_on": "5fde1d2b579949badfdd7a9b55bffba4b1f8a40f80b3f6c32bd867cedb7bfeeb",
               "status": "ai-draft"
             }
           }
         },
         "tile.lothlorien:phial_light.name": {
-          "source": "Phial light",
+          "source": "Phial Light",
           "context": {
             "meaning": "Invisible temporary air-space light used by the Phial of Galadriel; hidden from creative inventory and drops nothing.",
             "location": "lothlorien_rp: block name if inspected through commands",
@@ -19567,48 +19567,48 @@
           "translations": {
             "cs_CZ": {
               "text": "Světlo lahvičky",
-              "based_on": "880cebc7ec7b1706eab525cf37bfad75410ec1825bd6a5f7f0ace15fd1fdaf89",
+              "based_on": "be47b99937b8320b6f2a0faf9f2fdb9ffab18a5bb255568827e939740de7fb66",
               "status": "ai-draft"
             },
             "es_ES": {
               "text": "Luz de la redoma",
-              "based_on": "880cebc7ec7b1706eab525cf37bfad75410ec1825bd6a5f7f0ace15fd1fdaf89",
+              "based_on": "be47b99937b8320b6f2a0faf9f2fdb9ffab18a5bb255568827e939740de7fb66",
               "status": "ai-draft"
             },
             "es_MX": {
               "text": "Luz de la redoma",
-              "based_on": "880cebc7ec7b1706eab525cf37bfad75410ec1825bd6a5f7f0ace15fd1fdaf89",
+              "based_on": "be47b99937b8320b6f2a0faf9f2fdb9ffab18a5bb255568827e939740de7fb66",
               "status": "ai-draft"
             },
             "pt_PT": {
               "text": "Luz do Frasco",
-              "based_on": "880cebc7ec7b1706eab525cf37bfad75410ec1825bd6a5f7f0ace15fd1fdaf89",
+              "based_on": "be47b99937b8320b6f2a0faf9f2fdb9ffab18a5bb255568827e939740de7fb66",
               "status": "ai-draft"
             },
             "pt_BR": {
               "text": "Luz do Frasco",
-              "based_on": "880cebc7ec7b1706eab525cf37bfad75410ec1825bd6a5f7f0ace15fd1fdaf89",
+              "based_on": "be47b99937b8320b6f2a0faf9f2fdb9ffab18a5bb255568827e939740de7fb66",
               "status": "ai-draft"
             },
             "de_DE": {
               "text": "Phiolenlicht",
-              "based_on": "880cebc7ec7b1706eab525cf37bfad75410ec1825bd6a5f7f0ace15fd1fdaf89",
+              "based_on": "be47b99937b8320b6f2a0faf9f2fdb9ffab18a5bb255568827e939740de7fb66",
               "status": "ai-draft"
             },
             "fr_FR": {
               "text": "Lumière de la fiole",
-              "based_on": "880cebc7ec7b1706eab525cf37bfad75410ec1825bd6a5f7f0ace15fd1fdaf89",
+              "based_on": "be47b99937b8320b6f2a0faf9f2fdb9ffab18a5bb255568827e939740de7fb66",
               "status": "ai-draft"
             },
             "pl_PL": {
               "text": "Światło flakonika",
-              "based_on": "880cebc7ec7b1706eab525cf37bfad75410ec1825bd6a5f7f0ace15fd1fdaf89",
+              "based_on": "be47b99937b8320b6f2a0faf9f2fdb9ffab18a5bb255568827e939740de7fb66",
               "status": "ai-draft"
             }
           }
         },
         "lothlorien.message.archery.normal_bow": {
-          "source": "§7A normal bow cannot shoot Galadhrim arrows.",
+          "source": "§7A normal bow cannot shoot Galadhrim Arrows.",
           "context": {
             "meaning": "The player tried to draw an ordinary (vanilla) bow while carrying Galadhrim arrows and no normal arrows, so it did not draw. Deliberately vague: say only that an ordinary bow cannot shoot them; do not name the elven bow. Galadhrim is a lore proper name; the arrow name should match its item translation.",
             "location": "lothlorien_rp: chat (the action bar shows the Harmony status)",
@@ -19625,42 +19625,42 @@
           "translations": {
             "cs_CZ": {
               "text": "§7Obyčejný luk galadhrimské šípy nevystřelí.",
-              "based_on": "2a940a3c7e42167cbf7da94d83ad4e9245c9273aed6f78580162d7b5bc3ea4d0",
+              "based_on": "47a6291f264fdff36b092aa76f7d0ad3632e71816d93c35994e4399aedb770b2",
               "status": "ai-draft"
             },
             "es_ES": {
               "text": "§7Un arco normal no puede disparar flechas de los Galadhrim.",
-              "based_on": "2a940a3c7e42167cbf7da94d83ad4e9245c9273aed6f78580162d7b5bc3ea4d0",
+              "based_on": "47a6291f264fdff36b092aa76f7d0ad3632e71816d93c35994e4399aedb770b2",
               "status": "ai-draft"
             },
             "es_MX": {
               "text": "§7Un arco normal no puede disparar flechas de los Galadhrim.",
-              "based_on": "2a940a3c7e42167cbf7da94d83ad4e9245c9273aed6f78580162d7b5bc3ea4d0",
+              "based_on": "47a6291f264fdff36b092aa76f7d0ad3632e71816d93c35994e4399aedb770b2",
               "status": "ai-draft"
             },
             "pt_PT": {
               "text": "§7Um arco comum não dispara flechas dos Galadhrim.",
-              "based_on": "2a940a3c7e42167cbf7da94d83ad4e9245c9273aed6f78580162d7b5bc3ea4d0",
+              "based_on": "47a6291f264fdff36b092aa76f7d0ad3632e71816d93c35994e4399aedb770b2",
               "status": "ai-draft"
             },
             "pt_BR": {
               "text": "§7Um arco comum não dispara flechas dos Galadhrim.",
-              "based_on": "2a940a3c7e42167cbf7da94d83ad4e9245c9273aed6f78580162d7b5bc3ea4d0",
+              "based_on": "47a6291f264fdff36b092aa76f7d0ad3632e71816d93c35994e4399aedb770b2",
               "status": "ai-draft"
             },
             "de_DE": {
               "text": "§7Ein gewöhnlicher Bogen verschießt keine Galadhrim-Pfeile.",
-              "based_on": "2a940a3c7e42167cbf7da94d83ad4e9245c9273aed6f78580162d7b5bc3ea4d0",
+              "based_on": "47a6291f264fdff36b092aa76f7d0ad3632e71816d93c35994e4399aedb770b2",
               "status": "ai-draft"
             },
             "fr_FR": {
               "text": "§7Un arc ordinaire ne tire pas les flèches des Galadhrim.",
-              "based_on": "2a940a3c7e42167cbf7da94d83ad4e9245c9273aed6f78580162d7b5bc3ea4d0",
+              "based_on": "47a6291f264fdff36b092aa76f7d0ad3632e71816d93c35994e4399aedb770b2",
               "status": "ai-draft"
             },
             "pl_PL": {
               "text": "§7Zwykły łuk nie wystrzeli strzał Galadhrim.",
-              "based_on": "2a940a3c7e42167cbf7da94d83ad4e9245c9273aed6f78580162d7b5bc3ea4d0",
+              "based_on": "47a6291f264fdff36b092aa76f7d0ad3632e71816d93c35994e4399aedb770b2",
               "status": "ai-draft"
             }
           }

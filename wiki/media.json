@@ -60,7 +60,7 @@
     "featureId": "lothlorien:elven_cloak",
     "source": "lothlorien_rp/textures/items/elven_cloak.png",
     "kind": "item",
-    "alt": "Elven cloak"
+    "alt": "Elven Cloak"
   },
   {
     "id": "lothlorien:elven_lantern/icon",
@@ -95,7 +95,7 @@
     "featureId": "lothlorien:galadhrim_arrow",
     "source": "lothlorien_rp/textures/items/galadhrim_arrow.png",
     "kind": "item",
-    "alt": "Galadhrim arrow"
+    "alt": "Galadhrim Arrow"
   },
   {
     "id": "lothlorien:golden_fern/icon",
@@ -396,7 +396,7 @@
     "featureId": "lothlorien:silver_belt",
     "source": "lothlorien_rp/textures/items/silver_belt.png",
     "kind": "item",
-    "alt": "Silver belt"
+    "alt": "Silver Belt"
   },
   {
     "id": "lothlorien:star_canopy/icon",

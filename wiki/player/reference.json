@@ -794,7 +794,7 @@
         ],
         "notes": [
           "Walls and terrain can block the light or keep spiders from being pushed away.",
-          "The phial and the Silver belt share the offhand slot, so you must choose which to hold."
+          "The phial and the Silver Belt share the offhand slot, so you must choose which to hold."
         ]
       }
     },
@@ -867,7 +867,7 @@
         ],
         "notes": [],
         "warnings": [
-          "A normal bow cannot use Galadhrim arrows in Survival."
+          "A normal bow cannot use Galadhrim Arrows in Survival."
         ]
       }
     },
@@ -911,7 +911,7 @@
     "details": {
       "introduction": "The Bow of the Galadhrim has a {{lothlorien:rule/bow-draw}}-second full draw and {{lothlorien:rule/bow-durability}} durability.",
       "equipment": {
-        "summary": "A faster-drawing bow with the same damage as a normal bow. Use Galadhrim arrows to recover ammunition after hits.",
+        "summary": "A faster-drawing bow with the same damage as a normal bow. Use Galadhrim Arrows to recover ammunition after hits.",
         "stats": [
           {
             "label": "Damage",
@@ -927,7 +927,7 @@
           },
           {
             "label": "Ammunition",
-            "value": "Galadhrim arrows and ordinary arrows"
+            "value": "Galadhrim Arrows and ordinary arrows"
           },
           {
             "label": "Zoom",
@@ -936,7 +936,7 @@
         ],
         "notes": [
           "Draw fully for the strongest shot.",
-          "Galadhrim arrows drop where they hit a creature, ready to collect. Ordinary arrows do not gain this recovery effect.",
+          "Galadhrim Arrows drop where they hit a creature, ready to collect. Ordinary arrows do not gain this recovery effect.",
           "It cannot replace a normal bow in a dispenser crafting recipe."
         ]
       }

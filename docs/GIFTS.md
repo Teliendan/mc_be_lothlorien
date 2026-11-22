@@ -20,8 +20,8 @@ then `node tools/build_trades.mjs` and `node tools/build_gift_loot.mjs`.
 |---|---|
 | Bow of the Galadhrim | Main hand; 0.6 s (12 tick) draw, 384 durability, native damage, flight and bow enchantments. Zoom FOV 60 while drawing with a 0.6 s linear ease. Shooter, custom critical threshold, pull-frame charge and zoom share the 0.6 s. Fires vanilla arrows too |
 | Galadhrim arrows | Native vanilla trajectory; 100 % item recovery after a destroyed entity hit, native ground pickup; no trail, no crafting. Fired from the Galadhrim bow and a native dispenser; the vanilla bow and crossbow keep their custom-ammo restriction. Shops: unlock at Trusted, 8 per emerald for Guests and 10 for Friends; Great Mallorn chests add stacks of 4-8 at weight 2 |
-| Elven cloak | Chest slot, armour 3, durability 80. Sneak without moving for 20 ticks grants Invisibility I; movement, unsneak or unequip stops renewal. The cloak mesh hides through `query.is_invisible`, other gear follows native invisibility |
-| Silver belt | Off-hand, worn at the waist (raised two model units after owner feedback). Regeneration I while living health is strictly below half the effective maximum |
+| Elven Cloak | Chest slot, armour 3, durability 80. Sneak without moving for 20 ticks grants Invisibility I; movement, unsneak or unequip stops renewal. The cloak mesh hides through `query.is_invisible`, other gear follows native invisibility |
+| Silver Belt | Off-hand, worn at the waist (raised two model units after owner feedback). Regeneration I while living health is strictly below half the effective maximum |
 | Phial of Galadriel | Off-hand. One hidden light-14 helper block in free head, feet or overhead air (never replaces plants, solids, liquids or a real light block). Repels spiders and cave spiders within 8 blocks with one native horizontal impulse per pass, at most 24 inspected per holder every 5 ticks; no damage, no upward force, contact attacks remain possible |
 
 Cloak and belt never call `removeEffect` and never clear a potion on exit: equal or stronger external effects finish untouched

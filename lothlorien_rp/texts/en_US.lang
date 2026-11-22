@@ -674,21 +674,21 @@ lothlorien.message.lore.btn.trade=Trade
 ## Context: Selecting Trade closes the request form. The player must then click the same elf again to open the native trade screen. This instruction is shown before selecting the button.
 lothlorien.message.lore.btn.trade_hint=Then click the elf again
 ## Context: Chest armour with leather-level protection. Grants invisibility after sneaking without moving for one second.
-item.lothlorien:elven_cloak=Elven cloak
+item.lothlorien:elven_cloak=Elven Cloak
 ## Context: Elven bow with a faster draw, native bow enchantments and vanilla arrow flight. Galadhrim is a lore proper name.
 item.lothlorien:bow=Bow of the Galadhrim
 ## Context: Off-hand gift rendered at the waist; grants Regeneration I while health is strictly below half maximum.
-item.lothlorien:silver_belt=Silver belt
+item.lothlorien:silver_belt=Silver Belt
 ## Context: Off-hand gift that lights nearby air and repels spiders. Galadriel is a lore proper name; phial means a small vial.
 item.lothlorien:phial_of_galadriel=Phial of Galadriel
 ## Context: Recoverable arrow ammunition fired only by the Bow of the Galadhrim in Survival; same trajectory as a vanilla arrow.
-item.lothlorien:galadhrim_arrow=Galadhrim arrow
+item.lothlorien:galadhrim_arrow=Galadhrim Arrow
 ## Context: Recoverable arrow ammunition fired only by the Bow of the Galadhrim in Survival; same trajectory as a vanilla arrow.
-entity.lothlorien:galadhrim_arrow.name=Galadhrim arrow
+entity.lothlorien:galadhrim_arrow.name=Galadhrim Arrow
 ## Context: Invisible temporary air-space light used by the Phial of Galadriel; hidden from creative inventory and drops nothing.
-tile.lothlorien:phial_light.name=Phial light
+tile.lothlorien:phial_light.name=Phial Light
 ## Context: The player tried to draw an ordinary (vanilla) bow while carrying Galadhrim arrows and no normal arrows, so it did not draw. Deliberately vague: say only that an ordinary bow cannot shoot them; do not name the elven bow. Galadhrim is a lore proper name; the arrow name should match its item translation.
-lothlorien.message.archery.normal_bow=§7A normal bow cannot shoot Galadhrim arrows.
+lothlorien.message.archery.normal_bow=§7A normal bow cannot shoot Galadhrim Arrows.
 ## Context: A raw, edible cut of meat dropped by an adult swan; can be cooked.
 item.lothlorien:swan_meat_raw=Raw Swan Meat
 ## Context: The cooked edible cut of swan meat, made in a furnace, smoker or campfire.

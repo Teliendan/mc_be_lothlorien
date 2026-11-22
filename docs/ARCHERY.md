@@ -73,7 +73,7 @@ bow draw` (`03cc808`); final worn choices: `Finalize selected Galadriel worn gif
 Wrong-bow hint 2026-10-13 (owner request: players may get arrows before the bow).
 A vanilla bow cannot draw with only Galadhrim arrows. When a player uses a vanilla bow,
 no draw starts that tick and Galadhrim arrows are in the inventory or off-hand, chat
-shows `archery.normal_bow` ("A normal bow cannot shoot Galadhrim arrows"), at most once per
+shows `archery.normal_bow` ("A normal bow cannot shoot Galadhrim Arrows"), at most once per
 10 s. Owner choices: keep it vague, without naming the elven bow; use chat, not the action
 bar, because the action bar competes with the Harmony status. The trigger was probed in
 game on 1.26.52: a refused draw fires `itemUse` but no `itemStartUse`. The probe has been
