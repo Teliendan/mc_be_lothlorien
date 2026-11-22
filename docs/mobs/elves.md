@@ -24,7 +24,7 @@ All verified in game by the owner on 2026-10-10 unless marked otherwise.
 ## Owner decisions (2026-10-10)
 
 - Hit by a player: panic; flee monsters within 6 blocks. Wardens defend elves: the hitter carries tag `lothlorien_elf_foe` for 60 s (after the LAST hit); wardens target the tag and warden arrows stop being shielded from that player.
-- Harmony: 1 per fight (first hit after 60 s without one) + 6 per kill, like a warden. Night: no change. No fall damage, and avoid the rope cells.
+- Harmony: 1 per fight (first hit after 60 s without one) + 6 per kill, like a warden. Night: no change. No fall damage, and avoid the rope cells and both Mallorn fences (not the gates): a 1-high block beside a fence was a step over it, and the elf was stranded outside (owner 2026-11-22; `blocks_to_avoid` with custom fences NOT yet verified in game, nor whether it covers standing on top). Pushes over a fence are accepted mechanics (owner).
 - Generated names are locale-only: the planner assigns no personal `nameTag`. Players may use native name tags (`nameable` and shop/dialog handoff). One random spawn egg, `/summon lothlorien:elf ~ ~ ~ ~ ~ lothlorien:as_<profession>` (the rotation `~ ~` is required before an event).
 - Population: every new village gets all five professions: the Loremaster on the central tree, healer / gardener / woodwright / lamplighter each on an outer tree of their own
   (warden trees allowed, post at least 3 cells from the warden). Fallback F1: with fewer than 4 outer trees the leftover professions stand on reserve posts on the central tree.

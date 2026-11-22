@@ -775,6 +775,12 @@
           },
           {
             "name": "lothlorien:elven_rope_hanging"
+          },
+          {
+            "name": "lothlorien:mallorn_fence"
+          },
+          {
+            "name": "lothlorien:mallorn_heartwood_fence"
           }
         ]
       },
