@@ -136,6 +136,7 @@ lothlorien.message.squirrel.full=§7Veverka očichává žalud, ale teď má pln
 lothlorien.message.squirrel.untrusted=§7Veverka očichává žalud a pozoruje vás, ale zatím vám nedůvěřuje.
 lothlorien.message.squirrel.restless=§7Váš neklidný duch veverku plaší.
 lothlorien.message.deer.abort=§7Bílý jelen zabloudil a přestal vás vést. Dalším žaludem ho můžete znovu vyslat na cestu.
+lothlorien.message.deer.leading=§7Bílý jelen vás už vede. Jděte za ním.
 lothlorien.message.deer.stop_leashed=§7Bílý jelen je na vodítku, a tak vás přestal vést.
 lothlorien.message.deer.gift=§fBílý jelen se zastavil a sklonil hlavu. V mechu se něco zalesklo: ořech velkého mallornu.
 lothlorien.message.deer.accept=§fBílý jelen vzal žalud, zvedl hlavu a otočil se. Následujte ho.

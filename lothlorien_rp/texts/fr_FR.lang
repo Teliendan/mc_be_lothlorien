@@ -136,6 +136,7 @@ lothlorien.message.squirrel.full=§7L’écureuil renifle le gland, mais il est 
 lothlorien.message.squirrel.untrusted=§7L’écureuil renifle le gland et vous observe, mais ne vous fait pas encore confiance.
 lothlorien.message.squirrel.restless=§7Votre esprit agité fait fuir l’écureuil.
 lothlorien.message.deer.abort=§7Le cerf blanc s’égare et vous laisse partir. Un autre gland pourrait le remettre en route.
+lothlorien.message.deer.leading=§7Le cerf blanc vous guide déjà. Suivez-le.
 lothlorien.message.deer.stop_leashed=§7Tenu en laisse, le cerf blanc cesse de vous guider.
 lothlorien.message.deer.gift=§fLe cerf blanc s’arrête et baisse la tête. Quelque chose brille dans la mousse : une noix de grand mallorn.
 lothlorien.message.deer.accept=§fLe cerf blanc prend le gland, relève la tête et se détourne. Suivez-le.

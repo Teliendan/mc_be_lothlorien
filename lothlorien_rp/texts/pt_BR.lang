@@ -136,6 +136,7 @@ lothlorien.message.squirrel.full=§7O esquilo cheira a bolota, mas está ocupado
 lothlorien.message.squirrel.untrusted=§7O esquilo cheira a bolota e observa você, ainda desconfiado.
 lothlorien.message.squirrel.restless=§7O esquilo recua diante do seu espírito inquieto.
 lothlorien.message.deer.abort=§7O veado branco se perde e para de guiar você. Outra bolota pode colocá-lo de novo no caminho.
+lothlorien.message.deer.leading=§7O veado branco já está guiando você. Siga-o.
 lothlorien.message.deer.stop_leashed=§7O veado branco foi preso com um Laço e para de guiar você.
 lothlorien.message.deer.gift=§fO veado branco para e abaixa a cabeça. Algo brilha no musgo: uma Noz de Grande Mallorn.
 lothlorien.message.deer.accept=§fO veado branco aceita a bolota, ergue a cabeça e se vira. Siga-o.

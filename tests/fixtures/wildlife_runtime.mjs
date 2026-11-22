@@ -50,7 +50,8 @@ function engine() {
       }
       return undefined;
     },
-    getTopmostBlock(p) { return this.getBlock({ ...p, y: this.top ?? 64 }); },
+    // `tops` ("x,z" -> y) gives single columns their own topmost block, like a crown over a deck; `top` is the default
+    getTopmostBlock(p) { return this.getBlock({ ...p, y: this.tops?.get(`${Math.floor(p.x)},${Math.floor(p.z)}`) ?? this.top ?? 64 }); },
     getEntities({ type, location, maxDistance } = {}) { return [...entities.values()].filter(e => e.isValid && (!type || e.typeId === type) &&
       (!location || Math.hypot(e.location.x - location.x, e.location.y - location.y, e.location.z - location.z) <= maxDistance)); },
     spawnParticle() { this.particles++; if (this.particleError) throw Error("particle"); },
@@ -79,12 +80,15 @@ function engine() {
   const flush = () => { for (const job of jobs.splice(0)) while (!job.next().done) {} };
   return { world, system, dimension, entity, fire, advance, flush, timers, jobs, onEntity: createEntityRouter(world).on };
 }
-async function setup() {
-  const h = engine(), base = { ...h, ...deerRules, ...rules, ...giftRules,
+// `realWalk`: keep the real pickWaypoint and hopStatus (the default mocks both: a waypoint 14 ahead, always "go"); `h.debug` is the debug switch.
+async function setup({ realWalk = false } = {}) {
+  const h = engine(); h.debug = false;
+  const base = { ...h, ...deerRules, ...rules, ...giftRules,
     EquipmentSlot: { Mainhand: "mainhand" }, GameMode: { Survival: "survival", Adventure: "adventure", Creative: "creative", Spectator: "spectator" },
     EntityInitializationCause: { Loaded: "Loaded" }, ItemStack: Item, harmonyOf: e => ({ harmony: e.band }), bandOf: b => b,
     message: s => s, repeatedUse: () => false, isGuiding: () => false, isErrand: () => false,
-    pickWaypoint: () => ({ x: 14, y: 65, z: 0, final: false }), hopStatus: () => "go" };
+    villageDebug: () => h.debug,
+    ...(realWalk ? {} : { pickWaypoint: () => ({ x: 14, y: 65, z: 0, final: false }), hopStatus: () => "go" }) };
   const food = await load("animal_food", { ...base, FOOD_HEALTH: 2, FLOWER_ITEMS: [], GRAIN_ITEMS: [] });
   h.base = { ...base, ...food }; h.depth = { level: 3, complete: true };
   h.biome = { id: "lothlorien", transparent: new Set(), at: () => "lothlorien" };

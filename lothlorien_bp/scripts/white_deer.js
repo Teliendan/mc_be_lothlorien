@@ -2,7 +2,7 @@ import { message } from "./messages.js";
 // White deer guidance in the running game (mobs/white_deer.md; rules in white_deer_rules.js). Offer a Mallorn acorn to a white
 // deer (lothlorien:white_deer) as a Friend of Lothlorien: once in its life it leads you to its gift, a Great Mallorn nut
 // (great_mallorn.js), at a spot inside Lothlorien 36-56 blocks away, waiting for the player to keep up, and lays the nut
-// there on arrival. The spot is kept on the deer (dynamic property) until the gift is given, so a broken-off guidance
+// at its feet on arrival. The spot is kept on the deer (dynamic property) until the gift is given, so a broken-off guidance
 // can be taken up again with another acorn. A leashed white deer does not lead (white_deer_rules.js, offerRefusal).
 // Natural spawns are thinned by depth.
 //
@@ -17,11 +17,12 @@ import { bandOf } from "./harmony.js";
 import { consumeHeld } from "./deferred_use.js";
 import { judgeNatural, moveBeacon, playerById, removeBeacon, say } from "./entity_util.js";
 import { eatHeldFood, healAnimal, isInjured } from "./animal_food.js";
+import { villageDebug } from "./village_debug.js";
 import {
-  ACORN_ID, BEACON_ID, GUIDE_TICKS, WHITE_DEER_ID, canBeGuided, hopStatus, horizontal, keepNaturalSpawn,
+  ACORN_ID, ARRIVE_DIST, BEACON_ID, GUIDE_TICKS, WHITE_DEER_ID, canBeGuided, hopStatus, horizontal, keepNaturalSpawn,
   newHop, offerRefusal, phase, pickWaypoint, trackProgress,
 } from "./white_deer_rules.js";
-import { NUT_ID, borderGrid, giftCandidates, pickGiftSpot } from "./great_mallorn_rules.js";
+import { NUT_ID, borderGrid, giftCandidates, isNatural, pickGiftSpot } from "./great_mallorn_rules.js";
 
 // session: { playerId, beaconId, target, bestDist, stuck, born, phase, hop, skip, bias, waiting }
 const sessions = new Map(); // deer id -> session
@@ -52,11 +53,16 @@ export const addBeaconSource = (fn) => beaconSources.push(fn);
 const isLeashed = (deer) => deer.getComponent("minecraft:leashable")?.isLeashed ?? false;
 
 // Feet height at column (x, z) found from the top: the first ground under air, plants, leaves and logs (a crown over
-// the forest floor is not ground), with two blocks of headroom; undefined for water, an unloaded chunk or no ground.
+// the forest floor is not ground), with two blocks of headroom; undefined for water, an unloaded chunk, no ground, or built
+// ground (planks, carpets, slabs, lanterns, chests: a ray lands on a flet or village deck up in the crown; only isNatural
+// blocks count, R7 2026-11-22).
 // Collision is read with block raycasts, which pass through air and passable plants (as in stand() below), not with the Block
 // property isSolid: beta-only, absent from @minecraft/server 2.8.0, it reads undefined and no column had ground (K36, 2026-11-17).
-// `tally.n` counts the native calls made (the gift-spot job budgets its steps by it).
+// `tally.n` counts the native calls made (the gift-spot job budgets its steps by it); `tally.why` ("ground", "built", "water",
+// "headroom", "none") and `tally.ground` (the block hit) say how the column ended, for the debug summary.
 function groundFeet(dimension, x, z, tally = { n: 0 }) {
+  tally.why = "none";
+  tally.ground = undefined;
   try {
     tally.n++;
     const top = dimension.getTopmostBlock({ x, z });
@@ -65,13 +71,24 @@ function groundFeet(dimension, x, z, tally = { n: 0 }) {
     for (let i = 0; i < GROUND_RAYS && from > WORLD_BOTTOM; i++) {
       tally.n++;
       const hit = dimension.getBlockFromRay({ x: x + 0.5, y: from, z: z + 0.5 }, DOWN, { includeLiquidBlocks: true, maxDistance: from - WORLD_BOTTOM });
-      if (!hit || hit.block.isLiquid) return undefined;
+      if (!hit) return undefined;
+      if (hit.block.isLiquid) {
+        tally.why = "water";
+        return undefined;
+      }
       if (canopy(hit.block.typeId)) {
         from = hit.block.y - 0.01;
         continue;
       }
+      tally.ground = hit.block.typeId;
+      if (!isNatural(hit.block.typeId)) {
+        tally.why = "built";
+        return undefined;
+      }
       const feet = hit.block.y + 1;
-      return clearBody(dimension, x, feet, z, tally) ? feet : undefined;
+      const clear = clearBody(dimension, x, feet, z, tally);
+      tally.why = clear ? "ground" : "headroom";
+      return clear ? feet : undefined;
     }
     return undefined;
   } catch {
@@ -91,35 +108,57 @@ function clearBody(dimension, x, y, z, tally = { n: 0 }) {
   return dry(dimension.getBlock({ x, y, z })) && dry(dimension.getBlock({ x, y: y + 1, z })) &&
     !dimension.getBlockFromRay({ x: x + 0.5, y: y + 0.05, z: z + 0.5 }, UP, { includeLiquidBlocks: true, maxDistance: 1.9 });
 }
-// The spot is still good when the search's own probe (groundFeet) finds the same feet height there: one probe for search and
-// arrival, so a block shape the two would read differently (a thin leaf carpet under the spot) cannot fail the arrival.
+// A kept spot is still good when the search's own probe (groundFeet) finds the same feet height there. Only a kept spot is
+// re-checked (on the next offer); arrival lays the nut at the deer's feet and checks nothing.
 const giftSpace = (dimension, spot) => groundFeet(dimension, spot.x, spot.z) === spot.y;
 const insideGift = (dimension, spot) => biome.at(dimension, spot.x, spot.z) === biome.id;
+
+// Debug lines (content log, only while `/scriptevent lothlorien:debug` is on): one per phase change or exit, never per tick.
+// `line` is a thunk, so no string is built while the switch is off.
+const dlog = (line) => { if (villageDebug()) console.warn(`[lothlorien] white deer: (debug) ${line()}`); };
+const fmt = (p) => p ? `${(+p.x).toFixed(1)},${(+p.y).toFixed(1)},${(+p.z).toFixed(1)}` : "none";
+const errText = (e) => (e && (e.stack || e.message)) || String(e);
 
 // The gift spot for a deer at `origin` (great_mallorn_rules.js, pickGiftSpot): first the border scan over the loaded grid, then
 // the candidates, at most STEP_CALLS native calls per job step. Calls done({x, y, z}) or done(undefined).
 function findGiftSpot(dimension, origin, done) {
   system.runJob(
     (function* () {
-      const tally = { n: 0 };
-      // Yield before a probe that could take the step past STEP_CALLS native calls (so no step exceeds it).
-      const room = (worst) => tally.n + worst <= STEP_CALLS || ((tally.n = 0), false);
-      const border = [];
-      for (const p of borderGrid(origin.x, origin.z)) {
-        if (!room(BIOME_CALLS)) yield;
-        tally.n += BIOME_CALLS;
-        const id = biome.at(dimension, p.x, p.z);
-        if (id !== undefined && id !== biome.id && !biome.transparent.has(id)) border.push(p);
+      try {
+        const tally = { n: 0 };
+        let steps = 1;
+        // Yield before a probe that could take the step past STEP_CALLS native calls (so no step exceeds it).
+        const room = (worst) => tally.n + worst <= STEP_CALLS || ((tally.n = 0), (steps++, false));
+        const border = [];
+        for (const p of borderGrid(origin.x, origin.z)) {
+          if (!room(BIOME_CALLS)) yield;
+          tally.n += BIOME_CALLS;
+          const id = biome.at(dimension, p.x, p.z);
+          if (id !== undefined && id !== biome.id && !biome.transparent.has(id)) border.push(p);
+        }
+        const candidates = giftCandidates(origin.x, origin.z, Math.random() * 2 * Math.PI);
+        const why = { outside: 0, built: 0, water: 0, headroom: 0, ground: 0, none: 0 }, builtOn = new Set();
+        for (const c of candidates) {
+          if (!room(BIOME_CALLS + GROUND_CALLS)) yield;
+          tally.n += BIOME_CALLS;
+          c.inside = biome.at(dimension, c.x, c.z) === biome.id;
+          c.y = c.inside ? groundFeet(dimension, c.x, c.z, tally) : undefined;
+          if (!c.inside) why.outside++;
+          else {
+            why[tally.why]++;
+            c.on = tally.ground;
+            if (tally.why === "built") builtOn.add(tally.ground);
+          }
+        }
+        const best = pickGiftSpot(candidates, border);
+        dlog(() => `search from ${fmt(origin)}: ${candidates.length} candidates: ${why.outside} outside, ${why.built} built (${[...builtOn].join(" ") || "-"}), ` +
+          `${why.water} water, ${why.headroom} headroom, ${why.none} none, ${why.ground} ground; ` +
+          `${best ? `spot ${best.x},${best.y},${best.z} on ${best.on} ring ${best.ring}` : "none"}; ${steps} steps`);
+        done(best && { x: best.x, y: best.y, z: best.z });
+      } catch (e) {
+        dlog(() => `search failed: ${errText(e)}`);
+        done(undefined); // always clears `searching`; the player hears no_spot
       }
-      const candidates = giftCandidates(origin.x, origin.z, Math.random() * 2 * Math.PI);
-      for (const c of candidates) {
-        if (!room(BIOME_CALLS + GROUND_CALLS)) yield;
-        tally.n += BIOME_CALLS;
-        c.inside = biome.at(dimension, c.x, c.z) === biome.id;
-        c.y = c.inside ? groundFeet(dimension, c.x, c.z, tally) : undefined;
-      }
-      const best = pickGiftSpot(candidates, border);
-      done(best && { x: best.x, y: best.y, z: best.z });
     })()
   );
 }
@@ -134,22 +173,18 @@ function storedSpot(deer) {
   }
 }
 
-// Lay one nut at the spot, then record lifetime completion. A spot that is no longer clear (or no longer inside Lothlorien)
-// is forgotten, so the next acorn searches a new one.
+// Lay one nut at the deer's feet (as the squirrel does), then record lifetime completion. The deer is where the player
+// is told it "bows its head"; the guidance spot's own height is never trusted for the nut (R7: a spot on a flet laid the
+// nut 16 blocks overhead).
 function giveGift(deer, s) {
-  const spot = s.spot;
-  if (!giftSpace(deer.dimension, spot) || !insideGift(deer.dimension, spot)) {
-    deer.setDynamicProperty(GIFT_SPOT, undefined);
-    return false;
-  }
-  const at = { x: spot.x + 0.5, y: spot.y + 0.2, z: spot.z + 0.5 };
+  const at = { x: deer.location.x, y: deer.location.y + 0.3, z: deer.location.z };
   const nut = new ItemStack(NUT_ID, 1);
   nut.setLore([message("nut.lore.tree"), message("nut.lore.space"), message("nut.lore.plant")]);
   deer.dimension.spawnItem(nut, at);
   deer.setDynamicProperty(GIFTED, true);
   deer.setDynamicProperty(GIFT_SPOT, undefined);
   try { deer.dimension.spawnParticle("minecraft:totem_particle", at); } catch { /* cosmetic only */ }
-  return true;
+  return at;
 }
 
 // Feet height of a deer standing in column (x, z) near feet height y, or undefined: ground within PROBE_UP above to
@@ -193,17 +228,28 @@ function stillOffering(player, deer, offered) {
   } catch { return false; }
 }
 function offer(player, deer) {
-  if (sessions.has(deer.id) || searching.has(deer.id)) return;
+  if (sessions.has(deer.id)) { // guiding already: the acorn stays in the hand and the deer answers
+    dlog(() => `offer ${deer.id}: ignored (guiding), answered deer.leading`);
+    say(player, message("deer.leading"));
+    return;
+  }
+  if (searching.has(deer.id)) {
+    dlog(() => `offer ${deer.id}: ignored (searching)`);
+    return;
+  }
   const refusal = offerRefusal({ band: bandOf(harmonyOf(player).harmony), leashed: isLeashed(deer) });
   if (refusal === "leashed") {
+    dlog(() => `offer ${deer.id}: refused (leashed)`);
     say(player, message("deer.leashed"));
     return;
   }
   if (refusal === "untrusted") {
+    dlog(() => `offer ${deer.id}: refused (untrusted)`);
     say(player, message("deer.untrusted"));
     return;
   }
   if (refusal) {
+    dlog(() => `offer ${deer.id}: refused (restless)`);
     say(player, message("deer.restless"));
     return;
   }
@@ -213,6 +259,7 @@ function offer(player, deer) {
     return;
   }
   if (deer.getDynamicProperty(GIFTED)) {
+    dlog(() => `offer ${deer.id}: refused (gifted)`);
     say(player, message("deer.gifted"));
     return;
   }
@@ -220,20 +267,25 @@ function offer(player, deer) {
   const kept = storedSpot(deer);
   if (kept) {
     if (giftSpace(deer.dimension, kept) && insideGift(deer.dimension, kept)) {
+      dlog(() => `offer ${deer.id}: kept spot ${kept.x},${kept.y},${kept.z} ok`);
       lead(player, deer, kept);
       return;
     }
-    deer.setDynamicProperty(GIFT_SPOT, undefined); // blocked, flooded or unreadable meanwhile: search a new spot
+    dlog(() => `offer ${deer.id}: kept spot ${kept.x},${kept.y},${kept.z} stale`);
+    deer.setDynamicProperty(GIFT_SPOT, undefined); // blocked, flooded, built over or unreadable meanwhile: search a new spot
   }
   searching.add(deer.id);
   findGiftSpot(offered.dimension, deer.location, (spot) => {
     searching.delete(deer.id);
     try {
-      if (!stillOffering(player, deer, offered)) return;
+      if (!stillOffering(player, deer, offered)) {
+        dlog(() => "search result dropped (hand/slot changed or deer gone)");
+        return;
+      }
       if (spot) lead(player, deer, spot);
       else say(player, message("deer.no_spot"));
-    } catch {
-      // deer or player gone
+    } catch (e) {
+      dlog(() => `search failed: ${errText(e)}`); // deer or player gone
     }
   });
 }
@@ -245,6 +297,7 @@ function lead(player, deer, spot) {
     const dimension = deer.dimension;
     const target = { x: spot.x + 0.5, z: spot.z + 0.5 };
     const wp = pickWaypoint(deer.location, target, standIn(dimension));
+    dlog(() => wp ? `lead to ${spot.x},${spot.y},${spot.z} (deer ${fmt(deer.location)}): first waypoint ${fmt(wp)}` : "lead: no waypoint");
     if (!wp) {
       say(player, message("deer.no_path"));
       return;
@@ -273,14 +326,21 @@ function lead(player, deer, spot) {
     });
     syncSessionTimer();
     say(player, message("deer.accept"));
-  } catch {
+  } catch (e) {
+    dlog(() => `lead failed: ${errText(e)}`);
     sessions.delete(deer.id);
     syncSessionTimer();
     removeBeacon(beaconId);
+    try {
+      if (deer.getProperty("lothlorien:guiding")) deer.triggerEvent("lothlorien:guide_end");
+    } catch { /* deer unloaded */ }
+    say(player, message("deer.abort"));
   }
 }
 
-function end(deerId, deer, player, text) {
+// Ends the session: beacon removed, deer released, `key` (a message key, or undefined for silent) said to the player.
+// `reason` is only for the debug line.
+function end(deerId, deer, player, key, reason = "ended") {
   const s = sessions.get(deerId);
   sessions.delete(deerId);
   syncSessionTimer();
@@ -290,12 +350,15 @@ function end(deerId, deer, player, text) {
   } catch {
     // deer unloaded
   }
-  if (player && text) say(player, text);
+  if (s) dlog(() => `end (${reason}): ${key && player ? key : "silent"}`);
+  if (player && key) say(player, message(key));
 }
 
-function arrive(deerId, deer, player, s) {
-  const delivered = giveGift(deer, s);
-  end(deerId, deer, player, message(delivered ? "deer.gift" : "deer.no_spot"));
+// The nut lies at the deer's feet; arrival cannot fail. `how`: "at spot", "last hop", "last hop stuck" or "stuck".
+function arrive(deerId, deer, player, s, how) {
+  const at = giveGift(deer, s);
+  dlog(() => `arrive (${how}): deer ${fmt(deer.location)}, spot ${s.spot.x},${s.spot.y},${s.spot.z}, nut at ${fmt(at)}`);
+  end(deerId, deer, player, "deer.gift", `arrived, ${how}`);
 }
 
 
@@ -309,18 +372,23 @@ function beaconOf(s, dimension, at) {
 }
 
 // One hop step while walking: follow the current waypoint, pick the next when it is reached, turn when stuck.
+// Returns "go", or why the deer counts as arrived ("last hop", "last hop stuck").
 function walk(s, deer, beacon) {
   const status = hopStatus(s.hop, deer.location, GUIDE_TICKS);
   if (status === "go") return "go";
   if (status === "next") {
-    if (s.hop.wp.final) return "arrived"; // stood at the last waypoint at the spot
+    if (s.hop.wp.final) return "last hop"; // stood at the last waypoint at the spot
     s.skip.clear();
-  } else s.skip.add(s.hop.wp.deg);
+  } else {
+    if (s.hop.wp.final) return "last hop stuck"; // 5 s without getting closer to the last waypoint: arrived here (R7)
+    s.skip.add(s.hop.wp.deg);
+  }
   let wp = pickWaypoint(deer.location, s.target, standIn(deer.dimension), { bias: s.bias, skip: s.skip });
   if (!wp && s.skip.size) {
     s.skip.clear(); // every heading failed once: start the round again
     wp = pickWaypoint(deer.location, s.target, standIn(deer.dimension), { bias: -s.bias });
   }
+  dlog(() => `hop ${status}: ${wp ? `waypoint ${fmt(wp)} heading ${wp.deg}${wp.final ? " final" : ""}` : "none"}`);
   if (!wp) {
     s.hop.stuck = 0; // keep the old waypoint; the session's own stuck timer ends it if nothing helps
     return "go";
@@ -334,14 +402,20 @@ function walk(s, deer, beacon) {
 function tickSession(deerId, s) {
   const deer = world.getEntity(deerId);
   const player = playerById(s.playerId);
-  if (!deer?.isValid || !(deer.getComponent("minecraft:health")?.currentValue > 0) || !activePlayer(player) || deer.dimension.id !== player.dimension.id ||
-      deer.dimension.id !== s.dimensionId) return end(deerId, deer, player, undefined);
+  const dead = !!deer?.isValid && !(deer.getComponent("minecraft:health")?.currentValue > 0);
+  const mismatch = deer?.isValid && player?.isValid && (deer.dimension.id !== player.dimension.id || deer.dimension.id !== s.dimensionId);
+  if (!deer?.isValid || dead || !activePlayer(player) || mismatch) {
+    // nobody to tell when the player is gone; a dead deer is silent; a deer that vanished or a world change gets the abort
+    const reason = dead ? "deer dead" : !deer?.isValid ? "deer gone" : !activePlayer(player) ? "player gone" : "dimension";
+    return end(deerId, deer, player, !dead && activePlayer(player) ? "deer.abort" : undefined, reason);
+  }
   const playerCalm = canBeGuided(bandOf(harmonyOf(player).harmony));
-  if (!playerCalm) return end(deerId, deer, player, message("deer.abort"));
-  if (!deer.getProperty("lothlorien:guiding")) return end(deerId, deer, undefined, undefined); // hurt: the alarm cleared the state
+  if (!playerCalm) return end(deerId, deer, player, "deer.abort", "player below Friend");
+  if (!deer.getProperty("lothlorien:guiding")) return end(deerId, deer, player, "deer.abort", "alarm cleared the guiding state"); // hurt
   const toTarget = horizontal(deer.location, s.target);
   const toPlayer = horizontal(deer.location, player.location);
   trackProgress(s, toTarget, s.phase === "walk", GUIDE_TICKS);
+  const before = s.phase;
   s.phase = phase({
     toTarget,
     toPlayer,
@@ -350,9 +424,11 @@ function tickSession(deerId, s) {
     playerCalm,
     leashed: isLeashed(deer),
   });
-  if (s.phase === "leashed") return end(deerId, deer, player, message("deer.stop_leashed"));
-  if (s.phase === "arrived") return arrive(deerId, deer, player, s);
-  if (s.phase === "abort") return end(deerId, deer, player, message("deer.abort"));
+  if ((before === "walk" || before === "wait") && (s.phase === "walk" || s.phase === "wait") && before !== s.phase)
+    dlog(() => `phase ${before}->${s.phase} (player ${toPlayer.toFixed(1)} blocks)`);
+  if (s.phase === "leashed") return end(deerId, deer, player, "deer.stop_leashed", "leashed");
+  if (s.phase === "arrived") return arrive(deerId, deer, player, s, toTarget <= ARRIVE_DIST ? "at spot" : "stuck");
+  if (s.phase === "abort") return end(deerId, deer, player, "deer.abort", `abort (player ${toPlayer.toFixed(0)} blocks, ${system.currentTick - s.born} ticks, stuck ${s.stuck})`);
   const beacon = beaconOf(s, deer.dimension, s.waiting ? deer.location : s.hop.wp);
   if (s.phase === "wait") {
     // the player lags: the beacon comes to the deer's feet, so the deer stands and waits
@@ -366,7 +442,8 @@ function tickSession(deerId, s) {
     s.hop = newHop(s.hop.wp, deer.location);
     return;
   }
-  if (walk(s, deer, beacon) === "arrived") arrive(deerId, deer, player, s);
+  const arrived = walk(s, deer, beacon);
+  if (arrived !== "go") arrive(deerId, deer, player, s, arrived);
 }
 
 // Beacons with no session: left over from a reload (sessions are not saved) or a chunk that unloaded and came back.
@@ -401,8 +478,12 @@ function tickSessions() {
   for (const [deerId, s] of sessions) {
     try {
       tickSession(deerId, s);
-    } catch {
-      end(deerId, undefined, undefined, undefined); // deer or beacon unloaded mid-tick
+    } catch (e) {
+      // Anything unexpected releases the deer and tells the player; deer and player are read again, they may be what failed.
+      dlog(() => `tick failed: ${errText(e)}`);
+      let deer, player;
+      try { deer = world.getEntity(deerId); player = playerById(s.playerId); } catch { /* unloaded */ }
+      end(deerId, deer, player, "deer.abort", "error");
     }
   }
 }
@@ -440,10 +521,13 @@ export function startWhiteDeer(depth, inside, biomeInfo) {
         }
         return;
       }
-      if (target.getProperty("lothlorien:alarmed")) return;
+      if (target.getProperty("lothlorien:alarmed")) {
+        dlog(() => `offer ${target.id}: ignored (alarmed)`);
+        return;
+      }
       offer(player, target);
-    } catch {
-      // entity gone
+    } catch (e) {
+      dlog(() => `offer failed: ${errText(e)}`); // entity gone
     }
   });
 }

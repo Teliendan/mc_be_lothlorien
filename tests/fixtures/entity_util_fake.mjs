@@ -5,6 +5,7 @@ import * as ids from "../../lothlorien_bp/scripts/ids.js";
 export function entityUtilFake(bindings) {
   return {
     ...ids,
+    villageDebug: () => false, // scripts/village_debug.js: the debug switch (white_deer.js logs through it); a test passes its own
     say: (player, text) => { try { player.sendMessage(text); } catch { /* player left */ } },
     playerById: (id) => { const e = id ? bindings.world.getEntity(id) : undefined; return e?.typeId === ids.PLAYER_ID ? e : undefined; },
     familiesOf: (entity) => { try { return entity.getComponent("minecraft:type_family")?.getTypeFamilies?.() ?? []; } catch { return []; } },

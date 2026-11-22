@@ -136,6 +136,7 @@ lothlorien.message.squirrel.full=§7Wiewiórka obwąchuje żołądź, ale zajmuj
 lothlorien.message.squirrel.untrusted=§7Wiewiórka obwąchuje żołądź i przygląda ci się, ale jeszcze ci nie ufa.
 lothlorien.message.squirrel.restless=§7Wiewiórka wyczuwa twojego niespokojnego ducha i umyka.
 lothlorien.message.deer.abort=§7Biały jeleń gubi drogę i przestaje cię prowadzić. Daj mu kolejny żołądź, a może znów ruszy w drogę.
+lothlorien.message.deer.leading=§7Biały jeleń już cię prowadzi. Idź za nim.
 lothlorien.message.deer.stop_leashed=§7Biały jeleń jest na postronku, więc przestaje cię prowadzić.
 lothlorien.message.deer.gift=§fBiały jeleń zatrzymuje się i pochyla głowę. Coś lśni w mchu: orzech wielkiego mallornu.
 lothlorien.message.deer.accept=§fBiały jeleń bierze żołądź, unosi głowę i odwraca się. Podążaj za nim.

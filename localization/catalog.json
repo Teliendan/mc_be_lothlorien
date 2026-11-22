@@ -7554,6 +7554,63 @@
             }
           }
         },
+        "lothlorien.message.deer.leading": {
+          "source": "§7The white deer is already leading the way. Follow it.",
+          "context": {
+            "meaning": "The player offers a Mallorn acorn to a white deer that is already guiding them to its gift. The acorn is kept; the deer reminds the player to follow it.",
+            "location": "lothlorien_rp: chat or action bar",
+            "trigger": "The player offers a Mallorn acorn to a white deer while its guidance is under way.",
+            "tone": "Gentle woodland narration",
+            "grammar": "Two short sentences; address the player without assuming gender.",
+            "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
+            "source_paths": [
+              "lothlorien_bp/scripts/white_deer.js"
+            ]
+          },
+          "placeholders": [],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Bílý jelen vás už vede. Jděte za ním.",
+              "based_on": "e2f44764f596c64d84171f3036a21d6b777cbc2b29da65cb80e516b5d94fa2b3",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§7El ciervo blanco ya te guía. Síguelo.",
+              "based_on": "e2f44764f596c64d84171f3036a21d6b777cbc2b29da65cb80e516b5d94fa2b3",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§7El venado blanco ya te está guiando. Síguelo.",
+              "based_on": "e2f44764f596c64d84171f3036a21d6b777cbc2b29da65cb80e516b5d94fa2b3",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§7O veado branco já te está a guiar. Segue-o.",
+              "based_on": "e2f44764f596c64d84171f3036a21d6b777cbc2b29da65cb80e516b5d94fa2b3",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§7O veado branco já está guiando você. Siga-o.",
+              "based_on": "e2f44764f596c64d84171f3036a21d6b777cbc2b29da65cb80e516b5d94fa2b3",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§7Der weiße Hirsch führt dich schon. Folge ihm.",
+              "based_on": "e2f44764f596c64d84171f3036a21d6b777cbc2b29da65cb80e516b5d94fa2b3",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§7Le cerf blanc vous guide déjà. Suivez-le.",
+              "based_on": "e2f44764f596c64d84171f3036a21d6b777cbc2b29da65cb80e516b5d94fa2b3",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§7Biały jeleń już cię prowadzi. Idź za nim.",
+              "based_on": "e2f44764f596c64d84171f3036a21d6b777cbc2b29da65cb80e516b5d94fa2b3",
+              "status": "ai-draft"
+            }
+          }
+        },
         "lothlorien.message.deer.stop_leashed": {
           "source": "§7The white deer is held on a lead and stops leading you.",
           "context": {

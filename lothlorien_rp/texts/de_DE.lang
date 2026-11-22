@@ -136,6 +136,7 @@ lothlorien.message.squirrel.full=§7Das Waldhörnchen beschnuppert die Eichel, i
 lothlorien.message.squirrel.untrusted=§7Das Waldhörnchen beschnuppert die Eichel und beobachtet dich, vertraut dir aber noch nicht.
 lothlorien.message.squirrel.restless=§7Das Waldhörnchen spürt deine Unruhe und weicht zurück.
 lothlorien.message.deer.abort=§7Der weiße Hirsch findet den Weg nicht mehr und lässt dich ziehen. Mit einer weiteren Eichel bricht er vielleicht wieder auf.
+lothlorien.message.deer.leading=§7Der weiße Hirsch führt dich schon. Folge ihm.
 lothlorien.message.deer.stop_leashed=§7Der weiße Hirsch ist angeleint und führt dich nicht weiter.
 lothlorien.message.deer.gift=§fDer weiße Hirsch bleibt stehen und senkt den Kopf. Etwas schimmert im Moos: eine Riesenmallorn-Nuss.
 lothlorien.message.deer.accept=§fDer weiße Hirsch nimmt die Eichel, hebt den Kopf und setzt sich in Bewegung. Folge ihm.

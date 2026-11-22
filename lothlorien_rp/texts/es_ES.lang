@@ -136,6 +136,7 @@ lothlorien.message.squirrel.full=§7La ardilla olfatea la bellota, pero anda ocu
 lothlorien.message.squirrel.untrusted=§7La ardilla olfatea la bellota y te observa, pero aún no confía en ti.
 lothlorien.message.squirrel.restless=§7La ardilla rehúye tu espíritu inquieto.
 lothlorien.message.deer.abort=§7El ciervo blanco pierde el rastro y deja de guiarte. Con otra bellota quizá retome el camino.
+lothlorien.message.deer.leading=§7El ciervo blanco ya te guía. Síguelo.
 lothlorien.message.deer.stop_leashed=§7Al atarlo con una rienda, el ciervo blanco deja de guiarte.
 lothlorien.message.deer.gift=§fEl ciervo blanco se detiene e inclina la cabeza. Algo brilla en el musgo: una nuez de gran mallorn.
 lothlorien.message.deer.accept=§fEl ciervo blanco coge la bellota, alza la cabeza y da media vuelta. Síguelo.

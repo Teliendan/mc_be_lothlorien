@@ -137,6 +137,7 @@ lothlorien.message.squirrel.full=§7The squirrel sniffs the acorn, but it is bus
 lothlorien.message.squirrel.untrusted=§7The squirrel sniffs the acorn and watches you, but does not trust you yet.
 lothlorien.message.squirrel.restless=§7The squirrel shies from your restless spirit.
 lothlorien.message.deer.abort=§7The white deer loses the way and lets you go. Another acorn may set it on its way again.
+lothlorien.message.deer.leading=§7The white deer is already leading the way. Follow it.
 lothlorien.message.deer.stop_leashed=§7The white deer is held on a lead and stops leading you.
 lothlorien.message.deer.gift=§fThe white deer stops and bows its head. Something glints in the moss: a Great Mallorn nut.
 lothlorien.message.deer.accept=§fThe white deer takes the acorn, lifts its head and turns. Follow it.

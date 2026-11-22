@@ -273,6 +273,8 @@ lothlorien.message.squirrel.untrusted=§7The squirrel sniffs the acorn and watch
 lothlorien.message.squirrel.restless=§7The squirrel shies from your restless spirit.
 ## Context: Guidance ended unsuccessfully. Offering another acorn can resume toward the saved gift spot.
 lothlorien.message.deer.abort=§7The white deer loses the way and lets you go. Another acorn may set it on its way again.
+## Context: The player offers a Mallorn acorn to a white deer that is already guiding them to its gift. The acorn is kept; the deer reminds the player to follow it.
+lothlorien.message.deer.leading=§7The white deer is already leading the way. Follow it.
 ## Context: Leashing the deer during guidance ends the session; it is not killed or untamed.
 lothlorien.message.deer.stop_leashed=§7The white deer is held on a lead and stops leading you.
 ## Context: Successful guidance ends and a plantable Great Mallorn nut is dropped in moss.

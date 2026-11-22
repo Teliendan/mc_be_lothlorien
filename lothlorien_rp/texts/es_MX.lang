@@ -136,6 +136,7 @@ lothlorien.message.squirrel.full=§7La ardilla olfatea la bellota, pero está oc
 lothlorien.message.squirrel.untrusted=§7La ardilla olfatea la bellota y te observa, pero aún no confía en ti.
 lothlorien.message.squirrel.restless=§7La ardilla rehúye tu espíritu inquieto.
 lothlorien.message.deer.abort=§7El venado blanco pierde el rumbo y te deja ir. Con otra bellota quizá vuelva a guiarte.
+lothlorien.message.deer.leading=§7El venado blanco ya te está guiando. Síguelo.
 lothlorien.message.deer.stop_leashed=§7Con la correa puesta, el venado blanco deja de guiarte.
 lothlorien.message.deer.gift=§fEl venado blanco se detiene e inclina la cabeza. Algo brilla en el musgo: una nuez de gran mallorn.
 lothlorien.message.deer.accept=§fEl venado blanco toma la bellota, levanta la cabeza y se da la vuelta. Síguelo.
