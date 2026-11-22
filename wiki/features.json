@@ -13,7 +13,7 @@
         {
           "id": "lothlorien:athelas/obtain",
           "kind": "gathering",
-          "text": "Bone meal an existing plant to spread more onto suitable nearby ground. Bone meal on grass in Lothlorien can also place woodland flora. Found among the natural vegetation and materials of Lothlorien. Use the gathering tools and conditions described here.",
+          "text": "Grows wild on the Lothlórien forest floor, often in patches. Use bone meal on one to spread more onto nearby ground; bone meal on grass inside Lothlórien can also grow woodland flowers. Gardeners sell it, and Great Mallorn flet chests and root-shrine chests can hold it.",
           "related": []
         }
       ],
@@ -46,7 +46,7 @@
         {
           "id": "lothlorien:athelas_salve/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from 2 Athelas and a Glass Bottle.",
           "related": []
         }
       ],
@@ -75,7 +75,7 @@
         {
           "id": "lothlorien:bottle_of_fireflies/obtain",
           "kind": "capture",
-          "text": "Use an empty glass bottle on a living Firefly to catch it. This is capture, not a death drop.",
+          "text": "Use an empty glass bottle on a Firefly to catch it. You need room in your inventory for the filled bottle.",
           "related": []
         }
       ],
@@ -109,7 +109,7 @@
         {
           "id": "lothlorien:bow/obtain",
           "kind": "gathering",
-          "text": "Obtain through the trades, rewards or gathering routes listed here.",
+          "text": "Buy it from a Woodwright for 32 emeralds once you are a Friend (Harmony +{{lothlorien:rule/friend-harmony}}) with Elf-friend Renown.",
           "related": []
         }
       ],
@@ -138,7 +138,7 @@
         {
           "id": "lothlorien:deer_antler/obtain",
           "kind": "gathering",
-          "text": "Find and collect antlers lying on the ground in Lothlorien. They can be collected from the forest floor.",
+          "text": "Antlers lie on the Lothlórien forest floor; break one by hand to pick it up. An adult Deer buck killed by a player can drop one, a White Deer always drops one, and Lamplighters sell them.",
           "related": []
         }
       ],
@@ -179,7 +179,7 @@
         {
           "id": "lothlorien:dew_bottle/obtain",
           "kind": "gathering",
-          "text": "Use an empty glass bottle on visibly dewy Mallorn Leaf Carpet or Mallorn Blossom. The first drop starts a partial bottle; {{lothlorien:rule/dew-drops}} drops fill it.",
+          "text": "Use an empty glass bottle on Mallorn Leaf Litter or Mallorn Blossom that shows dew in the early morning. The first drop turns the bottle into a Dew Bottle; {{lothlorien:rule/dew-drops}} drops fill it.",
           "related": []
         }
       ],
@@ -208,7 +208,7 @@
         {
           "id": "lothlorien:elanor/obtain",
           "kind": "gathering",
-          "text": "Bone meal an existing plant to spread more onto suitable nearby ground. Bone meal on grass in Lothlorien can also place woodland flora. Found among the natural vegetation and materials of Lothlorien. Use the gathering tools and conditions described here.",
+          "text": "Grows wild on the Lothlórien forest floor, often in patches. Use bone meal on one to spread more onto nearby ground; bone meal on grass inside Lothlórien can also grow woodland flowers. Gardeners sell it, and flower-garden supply barrels can hold it.",
           "related": []
         }
       ],
@@ -241,7 +241,7 @@
         {
           "id": "lothlorien:elven_chandelier/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from 4 Elven Lanterns and a Deer Antler.",
           "related": []
         }
       ],
@@ -274,7 +274,7 @@
         {
           "id": "lothlorien:elven_cloak/obtain",
           "kind": "gathering",
-          "text": "Obtain through the trades, rewards or gathering routes listed here.",
+          "text": "Buy it from a Gardener for 32 emeralds once you are a Friend (Harmony +{{lothlorien:rule/friend-harmony}}) with Elf-friend Renown.",
           "related": []
         }
       ],
@@ -303,7 +303,7 @@
         {
           "id": "lothlorien:elven_lantern/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from 2 Mallorn Trapdoors and a Bottle of Fireflies, or buy it from a Lamplighter.",
           "related": []
         }
       ],
@@ -336,7 +336,7 @@
         {
           "id": "lothlorien:elven_lantern_heartwood/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from 2 Golden Mallorn Trapdoors and a Bottle of Fireflies, or buy it from a Lamplighter.",
           "related": []
         }
       ],
@@ -371,7 +371,7 @@
         {
           "id": "lothlorien:elven_rope/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from a Bottle of Morning Dew and a Golden Fern; you get the glass bottle back. Woodwrights sell it, and Great Mallorn flet chests can hold it. The recipe unlocks when you fill your first Bottle of Morning Dew.",
           "related": []
         }
       ],
@@ -416,7 +416,7 @@
         {
           "id": "lothlorien:firefly_jar/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from a Mallorn Button and a Bottle of Fireflies.",
           "related": []
         }
       ],
@@ -449,7 +449,7 @@
         {
           "id": "lothlorien:galadhrim_arrow/obtain",
           "kind": "gathering",
-          "text": "Obtain through the trades, rewards or gathering routes listed here.",
+          "text": "Buy a bundle from a Woodwright once you have Trusted Renown, or find them in Great Mallorn flet chests.",
           "related": []
         }
       ],
@@ -482,7 +482,7 @@
         {
           "id": "lothlorien:golden_fern/obtain",
           "kind": "gathering",
-          "text": "Bone meal an existing plant to spread more onto suitable nearby ground. Bone meal on grass in Lothlorien can also place woodland flora. Found among the natural vegetation and materials of Lothlorien. Use the gathering tools and conditions described here.",
+          "text": "The most common plant on the Lothlórien forest floor. Break it by hand or with any tool to collect it, or use bone meal on one to spread more nearby. Gardeners sell it too.",
           "related": []
         }
       ],
@@ -517,7 +517,7 @@
         {
           "id": "lothlorien:great_mallorn_nut/obtain",
           "kind": "gift",
-          "text": "At Friend Harmony (+{{lothlorien:rule/friend-harmony}}), offer a Mallorn Acorn to an unleashed White Deer inside Lothlorien and follow its guidance. Each deer gives one nut in its lifetime.",
+          "text": "A White Deer's gift. As a Friend (Harmony +{{lothlorien:rule/friend-harmony}}), offer a Mallorn Acorn to a White Deer inside Lothlórien that is not on a lead, then follow it; when you arrive it lays the nut at its feet. Each White Deer gives one nut in its lifetime.",
           "related": []
         }
       ],
@@ -555,7 +555,7 @@
         {
           "id": "lothlorien:lembas_cake/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Bake Lembas Dough in a furnace or smoker.",
           "related": []
         }
       ],
@@ -584,7 +584,7 @@
         {
           "id": "lothlorien:lembas_dough/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft 2 at a crafting table from 3 Western Corn Grain and 1 Sugar.",
           "related": []
         }
       ],
@@ -613,7 +613,7 @@
         {
           "id": "lothlorien:lembas_wrapped/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Wrap a Lembas Cake in Mallorn Leaves at a crafting table. Great Mallorn flet chests and root-shrine chests can also hold Lembas.",
           "related": []
         }
       ],
@@ -644,7 +644,7 @@
         {
           "id": "lothlorien:mallorn_acorn/obtain",
           "kind": "gathering",
-          "text": "Break ordinary Mallorn leaves without shears or Silk Touch for a chance of acorns. Fortune changes the chance; every native condition is listed below.",
+          "text": "Break Mallorn Leaves without shears or Silk Touch: each leaf block has a small chance to drop an acorn (2%, up to 4% with Fortune III). Gardeners sell acorns, flower-garden supply barrels always hold some, and Great Mallorn flet chests can.",
           "related": []
         }
       ],
@@ -677,7 +677,7 @@
         {
           "id": "lothlorien:mallorn_blossom/obtain",
           "kind": "gathering",
-          "text": "Found among the natural vegetation and materials of Lothlorien. Use the gathering tools and conditions described here.",
+          "text": "Lies on the forest floor under Mallorn trees; breaking a patch gives back all its pieces (1 to 4). Ground Squirrels can bring it as a gift, and Gardeners sell it.",
           "related": []
         }
       ],
@@ -710,7 +710,7 @@
         {
           "id": "lothlorien:mallorn_boat/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from 5 Mallorn Planks.",
           "related": []
         }
       ],
@@ -743,7 +743,7 @@
         {
           "id": "lothlorien:mallorn_button/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from 1 Mallorn Planks.",
           "related": []
         }
       ],
@@ -776,7 +776,7 @@
         {
           "id": "lothlorien:mallorn_chest_boat/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from a Mallorn Boat and a Chest.",
           "related": []
         }
       ],
@@ -809,7 +809,7 @@
         {
           "id": "lothlorien:mallorn_door/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft 3 at a crafting table from 6 Mallorn Planks.",
           "related": []
         }
       ],
@@ -842,7 +842,7 @@
         {
           "id": "lothlorien:mallorn_fence/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft 3 at a crafting table from 4 Mallorn Planks and 2 Sticks.",
           "related": []
         }
       ],
@@ -875,7 +875,7 @@
         {
           "id": "lothlorien:mallorn_fence_gate/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from 2 Mallorn Planks and 4 Sticks.",
           "related": []
         }
       ],
@@ -908,7 +908,7 @@
         {
           "id": "lothlorien:mallorn_golden_leaves/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from a Mallorn Leaf Litter and a Stick. Break it with any tool or by hand to pick it up again.",
           "related": []
         }
       ],
@@ -941,7 +941,7 @@
         {
           "id": "lothlorien:mallorn_heartwood_boat/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from 5 Golden Mallorn Planks.",
           "related": []
         }
       ],
@@ -974,7 +974,7 @@
         {
           "id": "lothlorien:mallorn_heartwood_button/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from 1 Golden Mallorn Planks.",
           "related": []
         }
       ],
@@ -1007,7 +1007,7 @@
         {
           "id": "lothlorien:mallorn_heartwood_chest_boat/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from a Golden Mallorn Boat and a Chest.",
           "related": []
         }
       ],
@@ -1040,7 +1040,7 @@
         {
           "id": "lothlorien:mallorn_heartwood_door/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft 3 at a crafting table from 6 Golden Mallorn Planks.",
           "related": []
         }
       ],
@@ -1073,7 +1073,7 @@
         {
           "id": "lothlorien:mallorn_heartwood_fence/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft 3 at a crafting table from 4 Golden Mallorn Planks and 2 Sticks.",
           "related": []
         }
       ],
@@ -1106,7 +1106,7 @@
         {
           "id": "lothlorien:mallorn_heartwood_fence_gate/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from 2 Golden Mallorn Planks and 4 Sticks.",
           "related": []
         }
       ],
@@ -1139,7 +1139,7 @@
         {
           "id": "lothlorien:mallorn_heartwood_planks/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Strip a Mallorn Log or Mallorn Wood with an axe, then craft 4 Golden Mallorn Planks from 1 Stripped Mallorn Log or 1 Stripped Mallorn Wood at a crafting table.",
           "related": []
         }
       ],
@@ -1172,7 +1172,7 @@
         {
           "id": "lothlorien:mallorn_heartwood_pressure_plate/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from 2 Golden Mallorn Planks.",
           "related": []
         }
       ],
@@ -1207,7 +1207,7 @@
         {
           "id": "lothlorien:mallorn_heartwood_slab/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft 6 at a crafting table from 3 Golden Mallorn Planks.",
           "related": []
         }
       ],
@@ -1244,7 +1244,7 @@
         {
           "id": "lothlorien:mallorn_heartwood_stairs/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft 4 at a crafting table from 6 Golden Mallorn Planks.",
           "related": []
         }
       ],
@@ -1277,7 +1277,7 @@
         {
           "id": "lothlorien:mallorn_heartwood_trapdoor/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft 2 at a crafting table from 6 Golden Mallorn Planks.",
           "related": []
         }
       ],
@@ -1310,7 +1310,7 @@
         {
           "id": "lothlorien:mallorn_leaf_carpet/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Lies on the forest floor under Mallorn trees; breaking a patch gives back all its pieces (1 to 4). You can also craft it from Golden Mallorn Leaves, smelt Mallorn Leaves or Golden Mallorn Leaves in a furnace, or get it as a Ground Squirrel gift.",
           "related": []
         }
       ],
@@ -1343,7 +1343,7 @@
         {
           "id": "lothlorien:mallorn_leaves/obtain",
           "kind": "gathering",
-          "text": "Grow Mallorn trees from acorns and gather their wood or foliage. Ordinary leaves require shears or Silk Touch to collect the leaf block. Found among the natural vegetation and materials of Lothlorien. Use the gathering tools and conditions described here.",
+          "text": "Grows on Mallorn trees in Lothlórien and on trees you grow from Mallorn Acorns. Collect the leaf block with shears or a Silk Touch tool; broken any other way, it can drop sticks or Mallorn Acorns instead.",
           "related": []
         }
       ],
@@ -1376,7 +1376,7 @@
         {
           "id": "lothlorien:mallorn_log/obtain",
           "kind": "gathering",
-          "text": "Grow Mallorn trees from acorns and gather their wood or foliage. Ordinary leaves require shears or Silk Touch to collect the leaf block. Found among the natural vegetation and materials of Lothlorien. Use the gathering tools and conditions described here.",
+          "text": "Cut it from Mallorn trees in Lothlórien, or grow your own trees from Mallorn Acorns. Woodwrights also sell logs.",
           "related": []
         }
       ],
@@ -1409,7 +1409,7 @@
         {
           "id": "lothlorien:mallorn_nectar/obtain",
           "kind": "gathering",
-          "text": "Use an empty glass bottle on a fully filled Nectar Bloom (stage {{lothlorien:rule/nectar-stage}}). It yields one nectar and empties the bloom. Blooms refill on random ticks with Mallorn leaves directly above.",
+          "text": "Use an empty glass bottle on a full Nectar Bloom, one that has refilled through all {{lothlorien:rule/nectar-stage}} stages. The bloom empties and starts refilling. Great Mallorn flet chests can also hold nectar.",
           "related": []
         }
       ],
@@ -1438,7 +1438,7 @@
         {
           "id": "lothlorien:mallorn_planks/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft 4 at a crafting table from 1 Mallorn Log or 1 Mallorn Wood.",
           "related": []
         }
       ],
@@ -1471,7 +1471,7 @@
         {
           "id": "lothlorien:mallorn_pressure_plate/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from 2 Mallorn Planks.",
           "related": []
         }
       ],
@@ -1506,7 +1506,7 @@
         {
           "id": "lothlorien:mallorn_slab/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft 6 at a crafting table from 3 Mallorn Planks.",
           "related": []
         }
       ],
@@ -1543,7 +1543,7 @@
         {
           "id": "lothlorien:mallorn_stairs/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft 4 at a crafting table from 6 Mallorn Planks.",
           "related": []
         }
       ],
@@ -1576,7 +1576,7 @@
         {
           "id": "lothlorien:mallorn_stripped_log/obtain",
           "kind": "gathering",
-          "text": "Use an axe on Mallorn Log, then collect the stripped block.",
+          "text": "Use an axe on a Mallorn Log.",
           "related": []
         }
       ],
@@ -1609,7 +1609,7 @@
         {
           "id": "lothlorien:mallorn_stripped_wood/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Use an axe on Mallorn Wood, or craft 3 at a crafting table from 4 Stripped Mallorn Logs.",
           "related": []
         }
       ],
@@ -1642,7 +1642,7 @@
         {
           "id": "lothlorien:mallorn_trapdoor/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft 2 at a crafting table from 6 Mallorn Planks.",
           "related": []
         }
       ],
@@ -1675,7 +1675,7 @@
         {
           "id": "lothlorien:mallorn_wood/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft 3 at a crafting table from 4 Mallorn Logs.",
           "related": []
         }
       ],
@@ -1708,7 +1708,7 @@
         {
           "id": "lothlorien:miruvor/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft it at a crafting table from an Empty Miruvor Skin, 3 Athelas Salves, 2 Elanor, 2 Niphredil and 1 Mallorn Nectar; you get the 4 glass bottles back. Healers sell it once you have Elf-friend Renown, and Great Mallorn flet chests and root-shrine chests can hold it.",
           "related": []
         }
       ],
@@ -1737,7 +1737,7 @@
         {
           "id": "lothlorien:morning_dew/obtain",
           "kind": "gathering",
-          "text": "Collect {{lothlorien:rule/dew-drops}} drops from dewy Mallorn Leaf Carpet or Mallorn Blossom. Dew forms late at night and early in the morning (time {{lothlorien:rule/dew-start}} until before {{lothlorien:rule/dew-end}}) under Mallorn foliage near players. Visible dew remains collectible until it dries.",
+          "text": "Fill a Dew Bottle with {{lothlorien:rule/dew-drops}} drops of dew from Mallorn Leaf Litter or Mallorn Blossom under Mallorn Leaves. Dew forms only early in the morning (time {{lothlorien:rule/dew-start}} until before {{lothlorien:rule/dew-end}}). Lamplighters also sell it, and the decorated pot at a root shrine holds one.",
           "related": []
         }
       ],
@@ -1766,7 +1766,7 @@
         {
           "id": "lothlorien:nectar_bloom/obtain",
           "kind": "gathering",
-          "text": "Gather a natural or tree-grown Nectar Bloom with shears or Silk Touch. Ordinary breaking does not supply the bloom. Found among the natural vegetation and materials of Lothlorien. Use the gathering tools and conditions described here.",
+          "text": "Hangs under the leaves of Mallorn trees. Collect it with shears or a Silk Touch tool; broken any other way, it drops nothing. Gardeners sell it once you have Trusted Renown.",
           "related": []
         }
       ],
@@ -1799,7 +1799,7 @@
         {
           "id": "lothlorien:niphredil/obtain",
           "kind": "gathering",
-          "text": "Bone meal an existing plant to spread more onto suitable nearby ground. Bone meal on grass in Lothlorien can also place woodland flora. Found among the natural vegetation and materials of Lothlorien. Use the gathering tools and conditions described here.",
+          "text": "Grows wild on the Lothlórien forest floor, often in patches. Use bone meal on one to spread more onto nearby ground; bone meal on grass inside Lothlórien can also grow woodland flowers. Gardeners sell it, and flower-garden supply barrels can hold it.",
           "related": []
         }
       ],
@@ -1832,7 +1832,7 @@
         {
           "id": "lothlorien:phial_of_galadriel/obtain",
           "kind": "gathering",
-          "text": "Obtain through the trades, rewards or gathering routes listed here.",
+          "text": "Buy it from a Lamplighter for 32 emeralds once you are a Friend (Harmony +{{lothlorien:rule/friend-harmony}}) with Elf-friend Renown.",
           "related": []
         }
       ],
@@ -1861,7 +1861,7 @@
         {
           "id": "lothlorien:silver_belt/obtain",
           "kind": "gathering",
-          "text": "Obtain through the trades, rewards or gathering routes listed here.",
+          "text": "Buy it from a Healer for 32 emeralds once you are a Friend (Harmony +{{lothlorien:rule/friend-harmony}}) with Elf-friend Renown.",
           "related": []
         }
       ],
@@ -1890,7 +1890,7 @@
         {
           "id": "lothlorien:star_canopy/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Craft 9 at a crafting table from 3 Mallorn Leaves, 3 Bottles of Morning Dew and 3 Deepslate Tiles; you get the 3 glass bottles back. The recipe unlocks when you fill your first Bottle of Morning Dew.",
           "related": []
         }
       ],
@@ -1923,7 +1923,7 @@
         {
           "id": "lothlorien:swan_meat_cooked/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Cook Raw Swan Meat in a furnace, smoker or campfire, or kill an adult Swan while it is on fire.",
           "related": []
         }
       ],
@@ -1952,7 +1952,7 @@
         {
           "id": "lothlorien:swan_meat_raw/obtain",
           "kind": "gathering",
-          "text": "Obtain from adult swans.",
+          "text": "Adult Swans drop it.",
           "related": []
         }
       ],
@@ -1981,7 +1981,7 @@
         {
           "id": "lothlorien:venison_cooked/obtain",
           "kind": "crafting",
-          "text": "Craft or process it using the recipes shown for this item.",
+          "text": "Cook Raw Venison in a furnace, smoker or campfire, or kill an adult Deer or a White Deer while it is on fire.",
           "related": []
         }
       ],
@@ -2010,7 +2010,7 @@
         {
           "id": "lothlorien:venison_raw/obtain",
           "kind": "gathering",
-          "text": "Obtain from adult deer.",
+          "text": "Adult Deer and White Deer drop it.",
           "related": []
         }
       ],
@@ -2039,7 +2039,7 @@
         {
           "id": "lothlorien:western_corn_grain/obtain",
           "kind": "gathering",
-          "text": "Harvest fully grown Western Corn for grain. Young crops supply seeds instead.",
+          "text": "Harvest fully grown Western Corn; each mature plant gives 1 grain. Young plants give only seeds.",
           "related": []
         }
       ],
@@ -2070,7 +2070,7 @@
         {
           "id": "lothlorien:western_corn_seeds/obtain",
           "kind": "gathering",
-          "text": "Harvest Western Corn. Young crops return seeds; fully grown crops provide grain and independent chances of extra seeds. Fortune adds seed rolls; a mature crop can give no seeds. Find wild corn in Lothlorien and replant it on farmland.",
+          "text": "Break wild Western Corn on the Lothlórien forest floor, or harvest corn you planted: young plants give 1 seed, mature plants up to 3 (more with Fortune, but sometimes none). Gardeners sell seeds, and Ground Squirrels can bring them.",
           "related": []
         }
       ],

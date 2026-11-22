@@ -52,7 +52,7 @@
   {
     "featureId": "lothlorien:mallorn_blossom",
     "id": "lothlorien:mallorn_blossom/bone-meal",
-    "text": "Bone meal does not add segments to blossoms. Add the matching blossom item to fill the patch.",
+    "text": "Bone meal does not add pieces to blossoms. Use more Mallorn Blossom on the patch to fill it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -71,7 +71,7 @@
   {
     "featureId": "lothlorien:mallorn_leaf_carpet",
     "id": "lothlorien:mallorn_leaf_carpet/bone-meal",
-    "text": "Bone meal has no effect on leaf litter. Add the matching item to fill the patch.",
+    "text": "Bone meal does not add pieces to leaf litter. Use more Mallorn Leaf Litter on the patch to fill it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -139,7 +139,7 @@
   {
     "featureId": "lothlorien:flower_garden",
     "id": "lothlorien:flower_garden/locate",
-    "text": "/locate structure does not find Flower Gardens. Look for them in open, level Lothlorien woodland.",
+    "text": "/locate structure does not find Flower Gardens. Look for them in open, level Lothlórien woodland.",
     "evidence": [
       {
         "path": "lothlorien_bp/feature_rules/site_feature_rules.json",
@@ -154,7 +154,7 @@
   {
     "featureId": "lothlorien:memorial",
     "id": "lothlorien:memorial/locate",
-    "text": "/locate structure does not find Forest Memorials. Look for them in open, level Lothlorien woodland.",
+    "text": "/locate structure does not find Forest Memorials. Look for them in open, level Lothlórien woodland.",
     "evidence": [
       {
         "path": "lothlorien_bp/feature_rules/site_feature_rules.json",
@@ -169,7 +169,7 @@
   {
     "featureId": "lothlorien:mallorn_door",
     "id": "lothlorien:mallorn_door/mob-opening",
-    "text": "Elves, villagers and other mobs cannot open this door. They walk through it while it is open, and so can you at the side where the open door stands. Leave it open, or use a vanilla wooden door, where elves and villagers should pass freely.",
+    "text": "Elves, villagers and other mobs cannot open this door; they only walk through it while it stands open. Where elves or villagers should come and go, leave it open or use a vanilla wooden door: elves and Elven Wardens open those.",
     "evidence": [
       {
         "path": "docs/NOT_IMPLEMENTED.md",
@@ -188,7 +188,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_door",
     "id": "lothlorien:mallorn_heartwood_door/mob-opening",
-    "text": "Elves, villagers and other mobs cannot open this door. They walk through it while it is open, and so can you at the side where the open door stands. Leave it open, or use a vanilla wooden door, where elves and villagers should pass freely.",
+    "text": "Elves, villagers and other mobs cannot open this door; they only walk through it while it stands open. Where elves or villagers should come and go, leave it open or use a vanilla wooden door: elves and Elven Wardens open those.",
     "evidence": [
       {
         "path": "docs/NOT_IMPLEMENTED.md",
@@ -207,7 +207,7 @@
   {
     "featureId": "lothlorien:mallorn_log",
     "id": "lothlorien:mallorn_log/first-person-swing",
-    "text": "Stripping with an axe works and wears the axe. In your own first-person view the arm does not swing; other players and the third-person view show the swing.",
+    "text": "Stripping it with an axe works, but your arm does not swing in your own first-person view. Other players, and you in third-person view, see the swing.",
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
@@ -226,7 +226,7 @@
   {
     "featureId": "lothlorien:mallorn_wood",
     "id": "lothlorien:mallorn_wood/first-person-swing",
-    "text": "Stripping with an axe works and wears the axe. In your own first-person view the arm does not swing; other players and the third-person view show the swing.",
+    "text": "Stripping it with an axe works, but your arm does not swing in your own first-person view. Other players, and you in third-person view, see the swing.",
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
@@ -245,7 +245,7 @@
   {
     "featureId": "lothlorien:mallorn_slab",
     "id": "lothlorien:mallorn_slab/first-person-swing",
-    "text": "Two slabs merge into a double slab. In your own first-person view the arm does not swing; other players and the third-person view show the swing.",
+    "text": "Placing a second slab to make a double slab works, but your arm does not swing in your own first-person view. Other players, and you in third-person view, see the swing.",
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
@@ -264,7 +264,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_slab",
     "id": "lothlorien:mallorn_heartwood_slab/first-person-swing",
-    "text": "Two slabs merge into a double slab. In your own first-person view the arm does not swing; other players and the third-person view show the swing.",
+    "text": "Placing a second slab to make a double slab works, but your arm does not swing in your own first-person view. Other players, and you in third-person view, see the swing.",
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
@@ -283,7 +283,7 @@
   {
     "featureId": "lothlorien:nectar_bloom",
     "id": "lothlorien:nectar_bloom/first-person-swing",
-    "text": "Filling a glass bottle from a full bloom works. In your own first-person view the arm does not swing; other players and the third-person view show the swing.",
+    "text": "Filling a glass bottle from a full bloom works, but your arm does not swing in your own first-person view. Other players, and you in third-person view, see the swing.",
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
@@ -302,7 +302,7 @@
   {
     "featureId": "lothlorien:dew_bottle",
     "id": "lothlorien:dew_bottle/first-person-swing",
-    "text": "Collecting dew with a bottle works. In your own first-person view the arm does not swing; other players and the third-person view show the swing.",
+    "text": "Collecting dew with a bottle works, but your arm does not swing in your own first-person view. Other players, and you in third-person view, see the swing.",
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
@@ -321,7 +321,7 @@
   {
     "featureId": "lothlorien:bottle_of_fireflies",
     "id": "lothlorien:bottle_of_fireflies/first-person-swing",
-    "text": "Releasing the firefly against a block works. In your own first-person view the arm does not swing; other players and the third-person view show the swing.",
+    "text": "Releasing the firefly works, but your arm does not swing in your own first-person view. Other players, and you in third-person view, see the swing.",
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
@@ -340,7 +340,7 @@
   {
     "featureId": "lothlorien:growing",
     "id": "lothlorien:growing/first-person-swing",
-    "text": "Bone meal on Lothlorien plants, Western Corn and Mallorn saplings works. In your own first-person view the arm does not swing; other players and the third-person view show the swing.",
+    "text": "Using bone meal on Lothlórien plants, Western Corn and Mallorn saplings works, but your arm does not swing in your own first-person view. Other players, and you in third-person view, see the swing.",
     "evidence": [
       {
         "path": "docs/OWNER_CHECKS.md",
@@ -363,7 +363,7 @@
   {
     "featureId": "lothlorien:elf",
     "id": "lothlorien:elf/village-beds",
-    "text": "Beds work in newly generated Elven villages, including beds you place yourself. A few leaves from trees that grow later can appear at deck edges; break them. A village that was generated before this change still holds invisible blocks that can make a bed say it is obstructed.",
+    "text": "In elven villages generated before version 0.9.0, beds can say they are obstructed, also beds you place there yourself. Sleep in a bed outside the village, or find a newly generated village: its beds work. In new villages a few leaves from trees that grow later can stick into the deck edges; break them.",
     "evidence": [
       {
         "path": "docs/VILLAGES.md",

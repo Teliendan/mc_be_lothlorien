@@ -2,7 +2,7 @@
   {
     "featureId": "lothlorien:athelas",
     "id": "lothlorien:athelas/use",
-    "text": "Plant as woodland decoration, propagate with bone meal, or prepare Athelas Salve. Healers also request it.",
+    "text": "Plant it as decoration, spread it with bone meal, or craft Athelas Salve. Healers ask for it in their requests.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -51,7 +51,7 @@
   {
     "featureId": "lothlorien:bow",
     "id": "lothlorien:bow/use",
-    "text": "Draw and release to fire ordinary arrows or Galadhrim arrows. See Equipment statistics for draw time, Bedrock comparison and enchantments.",
+    "text": "Draw and release like a normal bow; it reaches full draw faster. It shoots ordinary arrows and Galadhrim arrows.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -66,7 +66,7 @@
   {
     "featureId": "lothlorien:deer_antler",
     "id": "lothlorien:deer_antler/use",
-    "text": "Place as a decoration against a supported face, or use in an Elven Chandelier recipe. Losing its support drops the decoration. Antlers are not an animal gift.",
+    "text": "Place it on a floor, wall or ceiling as decoration, or craft an Elven Chandelier. It drops if the block it hangs on is removed.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -93,7 +93,7 @@
   {
     "featureId": "lothlorien:dew_bottle",
     "id": "lothlorien:dew_bottle/use",
-    "text": "Continue gathering visible dew until {{lothlorien:rule/dew-drops}} drops become Morning Dew. Its {{lothlorien:rule/dew-drops}}-step filling progress is not ordinary tool wear. Collecting the drop that completes a Bottle of Morning Dew reveals the Star Canopy and Elven Rope recipes.",
+    "text": "Keep collecting dew with it: after {{lothlorien:rule/dew-drops}} drops it becomes a Bottle of Morning Dew. It keeps its drops between mornings. Filling your first Bottle of Morning Dew unlocks the Star Canopy and Elven Rope recipes.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -120,7 +120,7 @@
   {
     "featureId": "lothlorien:elanor",
     "id": "lothlorien:elanor/use",
-    "text": "Plant as decoration or propagate with bone meal. It lures and feeds butterflies, and is used in unicorn bonding and healing. Healers request it.",
+    "text": "Plant it as decoration or spread it with bone meal. It lures and feeds butterflies, unicorns are bonded and healed with it, and Healers ask for it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -139,7 +139,7 @@
   {
     "featureId": "lothlorien:elven_chandelier",
     "id": "lothlorien:elven_chandelier/use",
-    "text": "Place as a light and decoration. Use its placement support; the recipe book shows its materials.",
+    "text": "A light-level 15 chandelier. Hang it under a block; it drops if that block is removed. It can stand in water and keeps shining.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -173,7 +173,7 @@
   {
     "featureId": "lothlorien:elven_lantern",
     "id": "lothlorien:elven_lantern/use",
-    "text": "Place as a light and decoration. Use its placement support; the recipe book shows its materials.",
+    "text": "A light-level 14 lantern. Stand it on a block or hang it under one; it drops if that block is removed. It can stand in water and keeps shining.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -192,7 +192,7 @@
   {
     "featureId": "lothlorien:elven_lantern_heartwood",
     "id": "lothlorien:elven_lantern_heartwood/use",
-    "text": "Place as a light and decoration. Use its placement support; the recipe book shows its materials.",
+    "text": "A light-level 14 lantern in Golden Mallorn wood. Stand it on a block or hang it under one; it drops if that block is removed. It can stand in water and keeps shining.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -211,7 +211,7 @@
   {
     "featureId": "lothlorien:elven_rope",
     "id": "lothlorien:elven_rope/use",
-    "text": "Use on a wall to hang rope, then extend the strand with more rope. Hold jump or move forward to climb, release to descend, and sneak to hold your height. Breaking rope or removing its wall brings down the connected strand for recovery. Slow Falling potions remain active while climbing; external Levitation takes priority.",
+    "text": "Use it on a wall to hang a rope, then use more rope on it to make it longer. Jump or move forward to climb, let go to slide down, and sneak to stay at your height. Breaking any piece, or the wall behind it, drops the whole connected rope so you can pick it up. Nothing can hang from the rope, so lanterns and other blocks cannot be attached to it. A Slow Falling potion keeps working while you climb; a Levitation effect overrides the rope.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -242,7 +242,7 @@
   {
     "featureId": "lothlorien:firefly_jar",
     "id": "lothlorien:firefly_jar/use",
-    "text": "Place as a light and decoration. Use its placement support; the recipe book shows its materials.",
+    "text": "A small light-level 11 jar. Stand it on top of a block; it drops if that block is removed. It can stand in water and keeps shining.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -280,7 +280,7 @@
   {
     "featureId": "lothlorien:golden_fern",
     "id": "lothlorien:golden_fern/use",
-    "text": "Plant as decoration and use bone meal to spread more onto suitable nearby ground. Collect it with any tool or by hand; it drops one fern, with no extra seeds or Fortune bonus.",
+    "text": "Plant it as decoration and spread it with bone meal. Breaking it by hand or with any tool drops the fern itself; it gives no seeds. Craft it with a Bottle of Morning Dew into Elven Rope.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -318,7 +318,7 @@
   {
     "featureId": "lothlorien:lembas_cake",
     "id": "lothlorien:lembas_cake/use",
-    "text": "Wrap with Mallorn leaves to make portable Lembas. The recipe book gives the exact arrangement.",
+    "text": "Eat it as it is, or wrap it in Mallorn Leaves at a crafting table to make Lembas, the better travel food.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -333,7 +333,7 @@
   {
     "featureId": "lothlorien:lembas_dough",
     "id": "lothlorien:lembas_dough/use",
-    "text": "Cook into Lembas Cake, then wrap it with Mallorn leaves for travel.",
+    "text": "Bake it into Lembas Cake in a furnace or smoker, then wrap the cake in Mallorn Leaves to make Lembas.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -363,7 +363,7 @@
   {
     "featureId": "lothlorien:mallorn_acorn",
     "id": "lothlorien:mallorn_acorn/use",
-    "text": "Plant an ordinary Mallorn sapling, alone or in a 2x2 arrangement for a larger tree. Also offered to White Deer for guidance and squirrels for errands when Harmony permits.",
+    "text": "Plant it to grow a Mallorn sapling; four saplings in a 2 × 2 square grow a larger tree. As a Friend, offer acorns to a White Deer to be led to its gift, or to a Ground Squirrel to send it on an errand.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -382,7 +382,7 @@
   {
     "featureId": "lothlorien:mallorn_blossom",
     "id": "lothlorien:mallorn_blossom/use",
-    "text": "Place one to four segments by adding more blossoms to the same block. Placing any other block into the same space replaces the cover, as with vanilla leaf litter. Bone meal has no effect on this cover. Dewy blossoms under Mallorn foliage supply dew. Blossoms also lure and feed butterflies.",
+    "text": "Place up to four pieces in one block by using more blossoms on it. Placing any other block there replaces it, as with vanilla leaf litter. Bone meal does nothing to it. Under Mallorn Leaves it can gather morning dew for a glass bottle. Blossoms also lure and feed butterflies.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -401,7 +401,7 @@
   {
     "featureId": "lothlorien:mallorn_boat",
     "id": "lothlorien:mallorn_boat/use",
-    "text": "Place on water and ride it. Use its matching chest-boat recipe when you want storage.",
+    "text": "Place it on water and ride it; it carries two riders. Breaking it gives the boat back. For storage, craft it with a Chest into a Mallorn Boat with Chest.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -428,7 +428,7 @@
   {
     "featureId": "lothlorien:mallorn_button",
     "id": "lothlorien:mallorn_button/use",
-    "text": "Place against a supporting block and press to provide a temporary redstone signal. A nearby wind-charge burst also activates it.",
+    "text": "Place it on any side of a block and press it for a short redstone signal. A nearby wind charge burst also presses it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -451,7 +451,7 @@
   {
     "featureId": "lothlorien:mallorn_chest_boat",
     "id": "lothlorien:mallorn_chest_boat/use",
-    "text": "Place on water and ride it. The chest variant also carries an inventory; its wood type changes its appearance.",
+    "text": "Place it on water and ride it; it carries one rider and a 27-slot chest. Breaking it gives the boat back.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -478,7 +478,7 @@
   {
     "featureId": "lothlorien:mallorn_door",
     "id": "lothlorien:mallorn_door/use",
-    "text": "Open and close by interaction or redstone. Matching double doors open together where the door supports pairing. A nearby wind-charge burst also activates it.",
+    "text": "Open and close it by hand or with redstone. Two matching doors side by side open together as a double door. A nearby wind charge burst also opens or closes it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -501,7 +501,7 @@
   {
     "featureId": "lothlorien:mallorn_fence",
     "id": "lothlorien:mallorn_fence/use",
-    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
+    "text": "Part of the silver Mallorn wood set. Golden Mallorn Fence is the golden version, made the same way from Golden Mallorn Planks.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -520,7 +520,7 @@
   {
     "featureId": "lothlorien:mallorn_fence_gate",
     "id": "lothlorien:mallorn_fence_gate/use",
-    "text": "Open and close by interaction or redstone. A nearby wind-charge burst also activates it.",
+    "text": "Open and close it by hand or with redstone. A nearby wind charge burst also opens or closes it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -562,7 +562,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_boat",
     "id": "lothlorien:mallorn_heartwood_boat/use",
-    "text": "Place on water and ride it. Use its matching chest-boat recipe when you want storage.",
+    "text": "Place it on water and ride it; it carries two riders. Breaking it gives the boat back. For storage, craft it with a Chest into a Golden Mallorn Boat with Chest.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -589,7 +589,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_button",
     "id": "lothlorien:mallorn_heartwood_button/use",
-    "text": "Place against a supporting block and press to provide a temporary redstone signal. A nearby wind-charge burst also activates it.",
+    "text": "Place it on any side of a block and press it for a short redstone signal. A nearby wind charge burst also presses it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -612,7 +612,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_chest_boat",
     "id": "lothlorien:mallorn_heartwood_chest_boat/use",
-    "text": "Place on water and ride it. The chest variant also carries an inventory; its wood type changes its appearance.",
+    "text": "Place it on water and ride it; it carries one rider and a 27-slot chest. Breaking it gives the boat back.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -639,7 +639,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_door",
     "id": "lothlorien:mallorn_heartwood_door/use",
-    "text": "Open and close by interaction or redstone. Matching double doors open together where the door supports pairing. A nearby wind-charge burst also activates it.",
+    "text": "Open and close it by hand or with redstone. Two matching doors side by side open together as a double door. A nearby wind charge burst also opens or closes it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -662,7 +662,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_fence",
     "id": "lothlorien:mallorn_heartwood_fence/use",
-    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
+    "text": "Part of the Golden Mallorn wood set. Mallorn Fence is the silver version, made the same way from Mallorn Planks.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -681,7 +681,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_fence_gate",
     "id": "lothlorien:mallorn_heartwood_fence_gate/use",
-    "text": "Open and close by interaction or redstone. A nearby wind-charge burst also activates it.",
+    "text": "Open and close it by hand or with redstone. A nearby wind charge burst also opens or closes it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -704,7 +704,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_planks",
     "id": "lothlorien:mallorn_heartwood_planks/use",
-    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
+    "text": "The golden Mallorn building block. It crafts into the golden wood set: stairs, slabs, fences, gates, doors, trapdoors, buttons, pressure plates and the Golden Mallorn Boat.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -723,7 +723,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_pressure_plate",
     "id": "lothlorien:mallorn_heartwood_pressure_plate/use",
-    "text": "Place on a supporting surface to supply redstone power when activated by an entity.",
+    "text": "Place it on top of a block; it gives a redstone signal while something stands on it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -742,7 +742,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_slab",
     "id": "lothlorien:mallorn_heartwood_slab/use",
-    "text": "Place as a half-height building piece. Matching slabs combine into a double slab, represented by this same article.",
+    "text": "A half-height block. Place a second Golden Mallorn Slab on it to make a double slab; breaking a double slab gives back both slabs.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -765,7 +765,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_stairs",
     "id": "lothlorien:mallorn_heartwood_stairs/use",
-    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
+    "text": "Part of the Golden Mallorn wood set. Mallorn Stairs is the silver version, made the same way from Mallorn Planks.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -784,7 +784,7 @@
   {
     "featureId": "lothlorien:mallorn_heartwood_trapdoor",
     "id": "lothlorien:mallorn_heartwood_trapdoor/use",
-    "text": "Open and close by interaction or redstone. A nearby wind-charge burst also activates it.",
+    "text": "Open and close it by hand or with redstone. A nearby wind charge burst also opens or closes it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -807,7 +807,7 @@
   {
     "featureId": "lothlorien:mallorn_leaf_carpet",
     "id": "lothlorien:mallorn_leaf_carpet/use",
-    "text": "Place one to four segments by adding more leaf carpet to the same block. Placing any other block into the same space replaces the cover, as with vanilla leaf litter. Bone meal has no effect on this cover. Dewy carpet under Mallorn foliage supplies dew.",
+    "text": "Place up to four pieces in one block by using more Mallorn Leaf Litter on it. Placing any other block there replaces it, as with vanilla leaf litter. Bone meal does nothing to it. Under Mallorn Leaves it can gather morning dew for a glass bottle.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -826,7 +826,7 @@
   {
     "featureId": "lothlorien:mallorn_leaves",
     "id": "lothlorien:mallorn_leaves/use",
-    "text": "Place persistent foliage. Leaves above Nectar Blooms enable filling, and nearby foliage enables dew. When a log, wood or leaf next to them breaks, naturally grown leaves that can no longer reach a supported tree log or wood through connected leaves within ten steps start to decay, as slowly as vanilla leaves; placing a log or leaves that reconnects them within ten steps stops it. Mixed vanilla and Mallorn foliage can connect them.",
+    "text": "Leaves you place never decay. Nectar Blooms refill only with Mallorn Leaves directly above them, and dew forms only under Mallorn Leaves. Naturally grown leaves decay like vanilla leaves: when a log, wood or leaf next to them breaks, leaves that are no longer within ten leaves of a tree's log or wood start to fade, as slowly as oak leaves. Placing a log or leaves that reconnects them stops it. Vanilla and Mallorn leaves connect to each other.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -853,7 +853,7 @@
   {
     "featureId": "lothlorien:mallorn_log",
     "id": "lothlorien:mallorn_log/use",
-    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
+    "text": "Strip it with an axe to get a Stripped Mallorn Log, which crafts into Golden Mallorn Planks. Unstripped, it crafts into silver Mallorn Planks or Mallorn Wood.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -872,7 +872,7 @@
   {
     "featureId": "lothlorien:mallorn_nectar",
     "id": "lothlorien:mallorn_nectar/use",
-    "text": "Gathering ingredient for woodland provisions and a Healer request. Keep its bottle distinct from Morning Dew.",
+    "text": "An ingredient of Miruvor Skin. Healers ask for it in their requests.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -887,7 +887,7 @@
   {
     "featureId": "lothlorien:mallorn_planks",
     "id": "lothlorien:mallorn_planks/use",
-    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
+    "text": "The silver Mallorn building block. It crafts into the silver wood set: stairs, slabs, fences, gates, doors, trapdoors, buttons, pressure plates and the Mallorn Boat.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -906,7 +906,7 @@
   {
     "featureId": "lothlorien:mallorn_pressure_plate",
     "id": "lothlorien:mallorn_pressure_plate/use",
-    "text": "Place on a supporting surface to supply redstone power when activated by an entity.",
+    "text": "Place it on top of a block; it gives a redstone signal while something stands on it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -925,7 +925,7 @@
   {
     "featureId": "lothlorien:mallorn_slab",
     "id": "lothlorien:mallorn_slab/use",
-    "text": "Place as a half-height building piece. Matching slabs combine into a double slab, represented by this same article.",
+    "text": "A half-height block. Place a second Mallorn Slab on it to make a double slab; breaking a double slab gives back both slabs.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -948,7 +948,7 @@
   {
     "featureId": "lothlorien:mallorn_stairs",
     "id": "lothlorien:mallorn_stairs/use",
-    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
+    "text": "Part of the silver Mallorn wood set. Golden Mallorn Stairs is the golden version, made the same way from Golden Mallorn Planks.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -967,7 +967,7 @@
   {
     "featureId": "lothlorien:mallorn_stripped_log",
     "id": "lothlorien:mallorn_stripped_log/use",
-    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
+    "text": "Craft it into 4 Golden Mallorn Planks, or 4 of them into 3 Stripped Mallorn Wood.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -986,7 +986,7 @@
   {
     "featureId": "lothlorien:mallorn_stripped_wood",
     "id": "lothlorien:mallorn_stripped_wood/use",
-    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
+    "text": "Craft it into 4 Golden Mallorn Planks.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -1005,7 +1005,7 @@
   {
     "featureId": "lothlorien:mallorn_trapdoor",
     "id": "lothlorien:mallorn_trapdoor/use",
-    "text": "Open and close by interaction or redstone. A nearby wind-charge burst also activates it.",
+    "text": "Open and close it by hand or with redstone. A nearby wind charge burst also opens or closes it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -1028,7 +1028,7 @@
   {
     "featureId": "lothlorien:mallorn_wood",
     "id": "lothlorien:mallorn_wood/use",
-    "text": "Build with this Mallorn timber piece. Silver and Golden Mallorn families have separate appearances and matching recipes.",
+    "text": "Strip it with an axe to get Stripped Mallorn Wood, which crafts into Golden Mallorn Planks. Unstripped, it crafts into silver Mallorn Planks.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -1066,7 +1066,7 @@
   {
     "featureId": "lothlorien:morning_dew",
     "id": "lothlorien:morning_dew/use",
-    "text": "Use in Elven Rope and Star Canopy recipes, or deliver it for the Gardener request. Collecting a full Bottle of Morning Dew reveals the Star Canopy and Elven Rope recipes.",
+    "text": "Craft it into Elven Rope or Star Canopy, or deliver it for the Gardener's request. Filling your first bottle unlocks the Star Canopy and Elven Rope recipes.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -1081,7 +1081,7 @@
   {
     "featureId": "lothlorien:nectar_bloom",
     "id": "lothlorien:nectar_bloom/use",
-    "text": "Hang immediately beneath Mallorn leaves to refill through three nectar stages. Collect a full bloom using an empty glass bottle.",
+    "text": "Hang it directly under Mallorn Leaves; there it refills through three stages. Use an empty glass bottle on a full bloom to get Mallorn Nectar.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -1100,7 +1100,7 @@
   {
     "featureId": "lothlorien:niphredil",
     "id": "lothlorien:niphredil/use",
-    "text": "Plant as decoration or propagate with bone meal. It lures and feeds butterflies, contributes to Miruvor, and is requested by healers.",
+    "text": "Plant it as decoration or spread it with bone meal. It lures and feeds butterflies, goes into Miruvor Skin, and Healers ask for it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -1119,7 +1119,7 @@
   {
     "featureId": "lothlorien:phial_of_galadriel",
     "id": "lothlorien:phial_of_galadriel/use",
-    "text": "Hold offhand to create level-{{lothlorien:rule/phial-light}} light in nearby available air and repel spiders and cave spiders within {{lothlorien:rule/phial-radius}} blocks. It does not replace plants, solids or fluids.",
+    "text": "Hold it in your offhand: the open air around you lights up to level {{lothlorien:rule/phial-light}}, and spiders and cave spiders within {{lothlorien:rule/phial-radius}} blocks are pushed away. The light only fills empty air, not water or spaces taken by plants or blocks.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -1134,7 +1134,7 @@
   {
     "featureId": "lothlorien:silver_belt",
     "id": "lothlorien:silver_belt/use",
-    "text": "Hold offhand for Regeneration level {{lothlorien:rule/belt-level}} while strictly below {{lothlorien:rule/belt-health-fraction}} of your maximum health.",
+    "text": "Hold it in your offhand: while your health is below half, it gives you Regeneration level {{lothlorien:rule/belt-level}}.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -1149,7 +1149,7 @@
   {
     "featureId": "lothlorien:star_canopy",
     "id": "lothlorien:star_canopy/use",
-    "text": "Build with this solid, softly glowing building block. It blocks water and can be collected by hand; a pickaxe is faster.",
+    "text": "A solid building block that glows softly. It keeps water out. Break it by hand or, faster, with a pickaxe.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -1168,7 +1168,7 @@
   {
     "featureId": "lothlorien:swan_meat_cooked",
     "id": "lothlorien:swan_meat_cooked/use",
-    "text": "Eat as provisions. Food points are listed in the quick reference.",
+    "text": "Eat it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -1183,7 +1183,7 @@
   {
     "featureId": "lothlorien:swan_meat_raw",
     "id": "lothlorien:swan_meat_raw/use",
-    "text": "Cook into its prepared meat using the heat-processing recipe below. Food points are listed in the quick reference.",
+    "text": "Cook it into Cooked Swan Meat in a furnace, smoker or campfire; cooked, it fills you up much more.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -1198,7 +1198,7 @@
   {
     "featureId": "lothlorien:venison_cooked",
     "id": "lothlorien:venison_cooked/use",
-    "text": "Eat as provisions. Food points are listed in the quick reference.",
+    "text": "Eat it.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -1213,7 +1213,7 @@
   {
     "featureId": "lothlorien:venison_raw",
     "id": "lothlorien:venison_raw/use",
-    "text": "Cook into its prepared meat using the heat-processing recipe below. Food points are listed in the quick reference.",
+    "text": "Cook it into Cooked Venison in a furnace, smoker or campfire; cooked, it fills you up much more.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -1228,7 +1228,7 @@
   {
     "featureId": "lothlorien:western_corn_grain",
     "id": "lothlorien:western_corn_grain/use",
-    "text": "Food and lure for woodland animals: deer breeding and fawn growth, swan feeding and breeding, and songbird lure/healing. Also an ingredient for Lembas Dough; grain is distinct from seeds.",
+    "text": "Feed it to woodland animals: it breeds Deer and makes fawns grow faster, feeds and breeds Swans, and lures and heals Songbirds. With Sugar it crafts into Lembas Dough. Plant the seeds, not the grain.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -1243,7 +1243,7 @@
   {
     "featureId": "lothlorien:western_corn_seeds",
     "id": "lothlorien:western_corn_seeds/use",
-    "text": "Plant Western Corn on farmland. It grows through {{lothlorien:rule/corn-stages}} stages with light level at least {{lothlorien:rule/corn-min-light}}; moist farmland speeds growth. Bone meal advances it by {{lothlorien:rule/corn-bonemeal-min}}-{{lothlorien:rule/corn-bonemeal-max}} stages. The harvest amounts and Fortune conditions are listed below. Wild corn does not keep growing until replanted on farmland.",
+    "text": "Plant them on farmland. Western Corn grows through {{lothlorien:rule/corn-stages}} stages and needs light level {{lothlorien:rule/corn-min-light}} or more; moist farmland speeds it up, and bone meal advances it {{lothlorien:rule/corn-bonemeal-min}} to {{lothlorien:rule/corn-bonemeal-max}} stages. Wild corn does not grow further: collect its seeds and replant them on farmland.",
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
@@ -1442,7 +1442,7 @@
   {
     "featureId": "lothlorien:unicorn",
     "id": "lothlorien:unicorn/care",
-    "text": "A rare, timid forest encounter. A wild unicorn accepts an Elanor offering from a Friend of Lothlorien at most once every {{lothlorien:rule/unicorn-gap}} seconds; a wild unicorn keeps about 3 blocks from a Friend without Elanor and lets a Friend holding Elanor come close; while it waits between offers it does not follow, and afterwards it follows Elanor again.",
+    "text": "A rare, timid forest encounter. A wild unicorn accepts an Elanor offering from a Friend of Lothlórien at most once every {{lothlorien:rule/unicorn-gap}} seconds; a wild unicorn keeps about 3 blocks from a Friend without Elanor and lets a Friend holding Elanor come close; while it waits between offers it does not follow, and afterwards it follows Elanor again.",
     "evidence": [
       {
         "path": "docs/parity/CREATURES.md",
@@ -2269,7 +2269,7 @@
   {
     "featureId": "lothlorien:harmony",
     "id": "lothlorien:harmony/village-territory",
-    "text": "Village decks and the ground beside or beneath them count as Lothlorien for Harmony, including village portions outside the forest biome.",
+    "text": "Village decks and the ground beside or beneath them count as Lothlórien for Harmony, including village portions outside the forest biome.",
     "evidence": [
       {
         "path": "lothlorien_bp/scripts/main.js",
@@ -2292,7 +2292,7 @@
   {
     "featureId": "lothlorien:renown",
     "id": "lothlorien:renown/village-territory",
-    "text": "Village decks and the ground beside or beneath them count as Lothlorien for Renown, including village portions outside the forest biome.",
+    "text": "Village decks and the ground beside or beneath them count as Lothlórien for Renown, including village portions outside the forest biome.",
     "evidence": [
       {
         "path": "lothlorien_bp/scripts/main.js",
@@ -2315,7 +2315,7 @@
   {
     "featureId": "lothlorien:empty_miruvor_skin",
     "id": "lothlorien:empty_miruvor_skin/use",
-    "text": "Fill it with the Miruvor crafting recipe. The container is returned after drinking the last sip.",
+    "text": "Craft it with the Miruvor ingredients to fill it. Drinking the last sip of a Miruvor Skin gives the empty skin back.",
     "evidence": [
       {
         "path": "lothlorien_bp/items/empty_miruvor_skin.json",
