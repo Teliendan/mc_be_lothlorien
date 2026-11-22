@@ -22,6 +22,29 @@ export const spawnEventOf = (profession) => `lothlorien:as_${profession}`;
 export const POST_KINDS = ["loremaster", "reserve", "home"];
 export const POST_GROUP_PREFIX = "lothlorien:post_";
 
+// Blocks the elves and the Elven Wardens never step on or over (`minecraft:navigation.walk.blocks_to_avoid` by `name` in entities/elf.json and
+// entities/elven_warden.json; tests/elves.mjs checks both files carry exactly this list, in this order). A block beside a fence or wall is a
+// 1-high step over it. No documented block tag covers fences or walls, so each id is listed. Not gates, doors or trapdoors (owner 2026-11-22).
+export const AVOID_BLOCKS = [
+  "lothlorien:elven_rope", "lothlorien:elven_rope_hanging", "lothlorien:mallorn_fence", "lothlorien:mallorn_heartwood_fence",
+  "minecraft:oak_fence", "minecraft:spruce_fence", "minecraft:birch_fence",
+  "minecraft:jungle_fence", "minecraft:acacia_fence", "minecraft:dark_oak_fence",
+  "minecraft:mangrove_fence", "minecraft:cherry_fence", "minecraft:pale_oak_fence",
+  "minecraft:bamboo_fence", "minecraft:crimson_fence", "minecraft:warped_fence",
+  "minecraft:nether_brick_fence", "minecraft:poplar_fence", "minecraft:cobblestone_wall",
+  "minecraft:mossy_cobblestone_wall", "minecraft:granite_wall", "minecraft:diorite_wall",
+  "minecraft:andesite_wall", "minecraft:sandstone_wall", "minecraft:red_sandstone_wall",
+  "minecraft:stone_brick_wall", "minecraft:mossy_stone_brick_wall", "minecraft:brick_wall",
+  "minecraft:nether_brick_wall", "minecraft:red_nether_brick_wall", "minecraft:end_stone_brick_wall",
+  "minecraft:prismarine_wall", "minecraft:blackstone_wall", "minecraft:polished_blackstone_wall",
+  "minecraft:polished_blackstone_brick_wall", "minecraft:cobbled_deepslate_wall", "minecraft:polished_deepslate_wall",
+  "minecraft:deepslate_brick_wall", "minecraft:deepslate_tile_wall", "minecraft:mud_brick_wall",
+  "minecraft:tuff_wall", "minecraft:polished_tuff_wall", "minecraft:tuff_brick_wall",
+  "minecraft:resin_brick_wall", "minecraft:cinnabar_wall", "minecraft:polished_cinnabar_wall",
+  "minecraft:cinnabar_brick_wall", "minecraft:sulfur_wall", "minecraft:polished_sulfur_wall",
+  "minecraft:sulfur_brick_wall",
+];
+
 // ---- Entity values (entities/elf.json): THE place to tune how the elves behave. ----
 // movement stays below warden_replace_rules.js WRONG_MOVEMENT_ABOVE (0.5); a first guess, measure it with /scriptevent lothlorien:speed.
 export const STATS = { health: 20, movement: 0.3, stroll: 0.6, panic: 1.25, avoidDist: 6, avoidWalk: 1.0, avoidSprint: 1.25, home: 0.6, lookDistance: 8 };

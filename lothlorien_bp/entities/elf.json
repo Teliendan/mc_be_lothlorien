@@ -781,6 +781,144 @@
           },
           {
             "name": "lothlorien:mallorn_heartwood_fence"
+          },
+          {
+            "name": "minecraft:oak_fence"
+          },
+          {
+            "name": "minecraft:spruce_fence"
+          },
+          {
+            "name": "minecraft:birch_fence"
+          },
+          {
+            "name": "minecraft:jungle_fence"
+          },
+          {
+            "name": "minecraft:acacia_fence"
+          },
+          {
+            "name": "minecraft:dark_oak_fence"
+          },
+          {
+            "name": "minecraft:mangrove_fence"
+          },
+          {
+            "name": "minecraft:cherry_fence"
+          },
+          {
+            "name": "minecraft:pale_oak_fence"
+          },
+          {
+            "name": "minecraft:bamboo_fence"
+          },
+          {
+            "name": "minecraft:crimson_fence"
+          },
+          {
+            "name": "minecraft:warped_fence"
+          },
+          {
+            "name": "minecraft:nether_brick_fence"
+          },
+          {
+            "name": "minecraft:poplar_fence"
+          },
+          {
+            "name": "minecraft:cobblestone_wall"
+          },
+          {
+            "name": "minecraft:mossy_cobblestone_wall"
+          },
+          {
+            "name": "minecraft:granite_wall"
+          },
+          {
+            "name": "minecraft:diorite_wall"
+          },
+          {
+            "name": "minecraft:andesite_wall"
+          },
+          {
+            "name": "minecraft:sandstone_wall"
+          },
+          {
+            "name": "minecraft:red_sandstone_wall"
+          },
+          {
+            "name": "minecraft:stone_brick_wall"
+          },
+          {
+            "name": "minecraft:mossy_stone_brick_wall"
+          },
+          {
+            "name": "minecraft:brick_wall"
+          },
+          {
+            "name": "minecraft:nether_brick_wall"
+          },
+          {
+            "name": "minecraft:red_nether_brick_wall"
+          },
+          {
+            "name": "minecraft:end_stone_brick_wall"
+          },
+          {
+            "name": "minecraft:prismarine_wall"
+          },
+          {
+            "name": "minecraft:blackstone_wall"
+          },
+          {
+            "name": "minecraft:polished_blackstone_wall"
+          },
+          {
+            "name": "minecraft:polished_blackstone_brick_wall"
+          },
+          {
+            "name": "minecraft:cobbled_deepslate_wall"
+          },
+          {
+            "name": "minecraft:polished_deepslate_wall"
+          },
+          {
+            "name": "minecraft:deepslate_brick_wall"
+          },
+          {
+            "name": "minecraft:deepslate_tile_wall"
+          },
+          {
+            "name": "minecraft:mud_brick_wall"
+          },
+          {
+            "name": "minecraft:tuff_wall"
+          },
+          {
+            "name": "minecraft:polished_tuff_wall"
+          },
+          {
+            "name": "minecraft:tuff_brick_wall"
+          },
+          {
+            "name": "minecraft:resin_brick_wall"
+          },
+          {
+            "name": "minecraft:cinnabar_wall"
+          },
+          {
+            "name": "minecraft:polished_cinnabar_wall"
+          },
+          {
+            "name": "minecraft:cinnabar_brick_wall"
+          },
+          {
+            "name": "minecraft:sulfur_wall"
+          },
+          {
+            "name": "minecraft:polished_sulfur_wall"
+          },
+          {
+            "name": "minecraft:sulfur_brick_wall"
           }
         ]
       },
