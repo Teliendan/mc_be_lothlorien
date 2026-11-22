@@ -37,10 +37,11 @@ drift; `tests/stair_support.mjs` asserts the set and that no permutation overrid
 athelas, elanor, niphredil, golden_fern, mallorn_sapling, great_mallorn_sprout, western_corn, deer_antler,
 both elven lanterns, elven_chandelier, firefly_jar, phial_light, both buttons, both pressure plates, both
 doors, both fence gates, mallorn_leaf_carpet (all four amounts), mallorn_blossom (the two covers were `fence`
-before) and nectar_bloom (hanging bloom, added by the owner 2026-11-04). elven_rope and elven_rope_hanging get
-`fence` (owner 2026-11-04: chain-like centre support, set `ROPES`; was full support). Unchanged: trapdoors, slabs,
-stairs, fences (`fence`) and full blocks; memorial_seed (log look-alike) and star_canopy (full cubes) keep default
-support. Owner checked the stair-trick blocks in game 2026-11-04 (works); rope `fence` not yet checked.
+before), nectar_bloom (hanging bloom, added by the owner 2026-11-04), elven_rope and elven_rope_hanging (set
+`ROPES`; owner 2026-11-22: things hung from a rope look wrong. Full support in 0.8.0, `fence` centre support from
+2026-11-04, never released). The rope's own hold is its wall (script), not its support shape. Unchanged: trapdoors,
+slabs, stairs, fences (`fence`) and full blocks; memorial_seed (log look-alike) and star_canopy (full cubes) keep
+default support. Owner checked the stair-trick blocks in game 2026-11-04 (works); the rope not yet.
 
 Evidence: the trick was verified in game on a throwaway probe pack (since deleted) (Bedrock 1.26.60.5, 2026-11-03/04):
 nothing can be placed on the top or bottom face, side clicks redirect the item to the floor or the face behind,

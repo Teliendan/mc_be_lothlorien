@@ -2,4 +2,4 @@
 type: changed
 new_world: false
 ---
-Flowers, ferns, saplings, corn, nectar blooms, leaf litter, blossoms, antlers, lanterns, buttons, pressure plates, doors and fence gates no longer hold other blocks. Nothing can be placed on their top or bottom face, like their vanilla counterparts. Elven Rope now holds blocks only at its centre, like a chain.
+Flowers, ferns, saplings, corn, nectar blooms, leaf litter, blossoms, antlers, lanterns, buttons, pressure plates, doors, fence gates and Elven Rope no longer hold other blocks. Nothing can be placed on them or hung from them, like their vanilla counterparts.
