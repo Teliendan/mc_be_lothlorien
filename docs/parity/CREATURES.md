@@ -37,7 +37,7 @@ selected slot's item type, native JSON before script).
   (message "no spot"; the next acorn searches again), so the lifetime gift is never lost silently (fixed 2026-10-23).
 - The gift-spot search is a job (yields); when it returns, only deer alive, same dimension, same selected slot and
   an acorn in it are re-checked.
-- Beacon strays: startup sweep, entityLoad cleanup, 330 s native timer (the entitySpawn path was dropped).
+- Beacon strays: `minecraft:transient` (none survives leave/re-enter, verified in game 2026-11-22, 1.26.63) and the 330 s native timer; no script sweep (removed, LM-04 step 2).
 - Natural spawns are thinned by depth (`SPAWN_KEEP_BY_DEPTH` 0 / .15 / .5 / 1); eggs and summons are not.
 
 ## Swans and squirrels

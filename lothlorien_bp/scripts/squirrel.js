@@ -6,7 +6,7 @@ import { message } from "./messages.js";
 // Like the white deer (white_deer.js) the squirrel is never moved by script. During the errand it sits in the component
 // group `lothlorien:state_guiding` (entities/squirrel.json), whose follow goal makes the engine's navigator walk it to the
 // nearest guide beacon; this script moves the beacon: to the away point, to the squirrel's feet while it digs, then onto
-// the player. The beacon is the white deer's invisible helper entity, so white_deer.js's stray sweep is told about ours.
+// the player. The beacon is the white deer's invisible helper entity (`minecraft:transient`, so none survives a reload).
 import { GameMode, system, world } from "@minecraft/server";
 import { harmonyOf } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
@@ -14,7 +14,7 @@ import { eatHeldFood, healAnimal, isInjured } from "./animal_food.js";
 import { noteDeed } from "./deeds.js";
 import { moveBeacon, playerById, removeBeacon, say } from "./entity_util.js";
 import { consumeHeld } from "./deferred_use.js";
-import { addBeaconSource, stand } from "./white_deer.js";
+import { stand } from "./white_deer.js";
 import { ACORN_ID, BEACON_ID } from "./white_deer_rules.js";
 import {
   GIFT_TABLE, SQUIRREL_ID, SQUIRREL_TICKS, cooldownLeft, digTicks, horizontal, nextPhase, offerRefusal, pickAway, COOLDOWN_TICKS, GIFT_HEIGHT, MAX_TICKS,
@@ -156,7 +156,6 @@ function tickSessions() {
 // inside(dimension, location) -> boolean (main.js insideAt); the default derives it from `depth`, which only tests supply.
 export function startSquirrels(depth = () => ({ level: 1 }), inside = (dimension, location) => depth(dimension, location).level > 0) {
   insideAt = inside;
-  addBeaconSource(() => [...sessions.values()].map((s) => s.beaconId));
   world.afterEvents.playerInteractWithEntity.subscribe(({ player, target, beforeItemStack, itemStack }) => {
     try {
       if (target.typeId !== SQUIRREL_ID || (beforeItemStack ?? itemStack)?.typeId !== ACORN_ID) return;

@@ -32,7 +32,6 @@ const GIFTED = "lothlorien:gifted"; // dynamic property on the deer: true once t
 let depthAt; // (dimension, location) -> { level }, from main.js (natural-spawn rolls need the level)
 let insideAt; // (dimension, location) -> boolean, from main.js
 let biome; // { id, transparent: Set, at(dimension, x, z) -> surface biome id or undefined (unloaded) }, from main.js
-const DIMENSIONS = ["overworld", "nether", "the_end"];
 const DOWN = { x: 0, y: -1, z: 0 };
 const UP = { x: 0, y: 1, z: 0 };
 const PROBE_UP = 6; // a waypoint column is searched from 6 above to 6 below the deer's feet
@@ -44,11 +43,6 @@ function syncSessionTimer() {
 }
 
 export const isGuiding = (deerId) => sessions.has(deerId);
-
-// Other users of the guide beacon (the squirrel's errand, squirrel.js) register a function returning their beacon ids,
-// so the stray-beacon sweep below leaves them alone.
-const beaconSources = [];
-export const addBeaconSource = (fn) => beaconSources.push(fn);
 
 const isLeashed = (deer) => deer.getComponent("minecraft:leashable")?.isLeashed ?? false;
 
@@ -446,34 +440,6 @@ function tickSession(deerId, s) {
   if (arrived !== "go") arrive(deerId, deer, player, s, arrived);
 }
 
-// Beacons with no session: left over from a reload (sessions are not saved) or a chunk that unloaded and came back.
-// (The beacon is also `minecraft:transient`, so none should survive a reload; this sweep stays until that is verified in game, LM-04.)
-function sweepBeacons() {
-  const live = new Set([...sessions.values()].map((s) => s.beaconId));
-  for (const source of beaconSources) for (const id of source()) live.add(id);
-  for (const id of DIMENSIONS) {
-    try {
-      for (const beacon of world.getDimension(id).getEntities({ type: BEACON_ID })) {
-        if (!live.has(beacon.id)) beacon.remove();
-      }
-    } catch {
-      // dimension not available
-    }
-  }
-}
-
-function cleanLoadedBeacon(entity) {
-  // Spawn callbacks can arrive before the creator assigns its session beaconId.
-  system.run(() => {
-    try {
-      if (!entity.isValid) return;
-      if ([...sessions.values()].some(s => s.beaconId === entity.id)) return;
-      if (beaconSources.some(source => source().includes(entity.id))) return;
-      entity.remove();
-    } catch { /* unloaded again */ }
-  });
-}
-
 function tickSessions() {
   for (const [deerId, s] of sessions) {
     try {
@@ -502,8 +468,6 @@ export function startWhiteDeer(depth, inside, biomeInfo) {
   depthAt = depth;
   insideAt = inside;
   biome = biomeInfo;
-  sweepBeacons(); // world load: no session survives a reload, so every beacon found is a stray
-  onEntity(BEACON_ID, { load: ({ entity }) => cleanLoadedBeacon(entity) });
   onEntity(WHITE_DEER_ID, {
     spawn: ({ entity, cause }) => {
       if (cause === EntityInitializationCause.Loaded) return;

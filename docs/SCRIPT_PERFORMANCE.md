@@ -159,9 +159,9 @@ entries per animal, evaluated by the engine; not yet measured in game. Wariness 
 Movement/pathfinding stays native JSON.
 
 White-deer guidance (5 ticks) and squirrel errands (10 ticks) run only during
-active sessions. Beacon cleanup uses one startup reconciliation plus spawn/load
-events deferred one tick for ownership registration. Squirrel helpers and tagged
-or named development helpers are preserved; late-loaded orphans are removed.
+active sessions. The guide beacon carries `minecraft:transient`, so the engine
+removes it on leave/re-enter (verified in game 2026-11-22, 1.26.63); there is no
+script sweep or load cleanup (removed, LM-04 step 2).
 Swans and unicorn taming already use events and finite deferred callbacks.
 
 Rope keeps its verified levitation/crouch/brake model, applied every tick only to

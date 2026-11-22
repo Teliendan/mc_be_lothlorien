@@ -136,15 +136,11 @@ const common = h => ({ system: h.system, world: h.world, onEntity: (h.onEntity ?
 
 {
   const h = engine(), dim = h.dimensions.get("overworld");
-  const stray = h.entity(guideRules.BEACON_ID);
   const mod = await load("white_deer", { ...common(h), ...guideRules, ...giftRules,
     EntityInitializationCause: { Loaded: "Loaded" }, ItemStack: TestItem,
     pickWaypoint: () => ({ x: 10, y: 0, z: 0 }), hopStatus: () => "go" });
   mod.startWhiteDeer(() => ({ level: 3, complete: true }), () => true, { id: "lothlorien", at: () => "lothlorien" });
-  assert.equal(stray.isValid, false, "a beacon with no session is removed at world load");
   assert.equal(h.intervals(5), 0);
-  const bootstrap = h.queries;
-  h.advance(400); assert.equal(h.queries, bootstrap, "beacon sweeps do not recur");
   const player = h.entity("minecraft:player"); h.world.players = [player];
   const deer = h.entity(guideRules.WHITE_DEER_ID);
   deer.setDynamicProperty("lothlorien:gift_spot", JSON.stringify({ x: 40, y: 0, z: 0, dim: dim.id }));
@@ -153,26 +149,22 @@ const common = h => ({ system: h.system, world: h.world, onEntity: (h.onEntity ?
   h.advance(1);
   const owned = [...h.entities.values()].find(e => e.typeId === guideRules.BEACON_ID);
   assert.ok(owned?.isValid, "spawn-before-session race preserves owned helper");
-  const external = h.entity(guideRules.BEACON_ID);
-  mod.addBeaconSource(() => [external.id]); h.fire("entityLoad", { entity: external });
-  const lateStray = h.entity(guideRules.BEACON_ID); h.fire("entityLoad", { entity: lateStray }); h.advance(1);
-  assert.ok(external.isValid); assert.equal(lateStray.isValid, false);
   h.world.players = []; player.isValid = false; h.advance(5); // a player who left: not listed, and world.getEntity no longer finds a valid one
   assert.equal(h.intervals(5), 0); assert.equal(owned.isValid, false);
   assert.equal(mod.isGuiding(deer.id), false);
 }
 
 {
-  const h = engine(), sources = [];
+  const h = engine();
   const mod = await load("squirrel", { ...common(h), ...guideRules, ...squirrelRules,
-    addBeaconSource: fn => sources.push(fn), consumeHeld() {}, stand() {},
+    consumeHeld() {}, stand() {},
     pickAway: () => ({ x: 12, y: 0, z: 0 }) });
   mod.startSquirrels(); assert.equal(h.intervals(10), 0);
   const player = h.entity("minecraft:player"); h.world.players = [player];
   player.getGameMode = () => "creative"; // lifecycle test can start two errands without inventory charges
   const first = h.entity(squirrelRules.SQUIRREL_ID), second = h.entity(squirrelRules.SQUIRREL_ID);
   const offer = target => h.fire("playerInteractWithEntity", { player, target, itemStack: { typeId: guideRules.ACORN_ID } });
-  offer(first); offer(second); assert.equal(h.intervals(10), 1); assert.equal(sources[0]().length, 2);
+  offer(first); offer(second); assert.equal(h.intervals(10), 1); assert.equal([...h.entities.values()].filter(e => e.typeId === guideRules.BEACON_ID).length, 2);
   h.entities.delete(first.id); h.advance(10);
   assert.equal(mod.isErrand(first.id), false); assert.equal(h.intervals(10), 1, "other session survives");
   h.world.players = []; player.isValid = false; h.advance(10); assert.equal(h.intervals(10), 0);

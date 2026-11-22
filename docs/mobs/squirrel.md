@@ -51,6 +51,5 @@ Files: BP `entities/squirrel.json`, `spawn_rules/squirrel.json`, `loot_tables/gi
 Owner tried squirrel and deer in game 2026-10-02 ("very good"); the swan floats with an occasional dip, left as is.
 
 - **Shared wariness:** same table and groups as the deer ("Implementation" in `deer.md`; `WARY_TYPES` in `deer_rules.js`). Animals saved by a build before LM-01 carry no flight group and stay fearless until the first alarm (owner 2026-11-11: no migration).
-- **Squirrel errand** reuses the white deer machinery: `squirrel.js` drives `follow_target_leader` with a moved `guide_beacon`; `white_deer.js` exports `stand` and `addBeaconSource` (the stray-beacon sweep would
-  delete it); acceptance consumes the stack synchronously and the four-entry gift table is rolled with `LootTableManager`. Gifts need **Friend** (owner rule 2026-10-02, for squirrel and white deer); luring and taming stay open to
+- **Squirrel errand** reuses the white deer machinery: `squirrel.js` drives `follow_target_leader` with a moved `guide_beacon`; `white_deer.js` exports `stand` (the beacon is `minecraft:transient`; no sweep, so no registry); acceptance consumes the stack synchronously and the four-entry gift table is rolled with `LootTableManager`. Gifts need **Friend** (owner rule 2026-10-02, for squirrel and white deer); luring and taming stay open to
   calm players. Outside or leashed squirrel feeding adds `kept`; inside wild healing and errands do not (owner 2026-10-20). Decisions and limits: parity doc.
