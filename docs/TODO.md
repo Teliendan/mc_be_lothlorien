@@ -76,12 +76,13 @@ Target: tester build on the weekend of 2026-10-24/25.
   decisions of section 5 are folded into it and into `OWNER_CHECKS.md`. The probe docs, the probe mentions in the workspace
   docs and skill reference 21, the two unused tools, `banner_inspiration.jpeg` and the "temporary" `tree_grid_test` naming
   (now `tools/build_tree_grid.mjs`, `tests/tree_grid.mjs`, suite `tree-grid`) are gone.
-  - [ ] Clear workspace `temp/localization/` once the translations are final.
-- [ ] **Tester feedback** worked in.
-- [ ] **Release package:** version bump (to 0.8.5 or higher: testers have 0.8.1-0.8.4 DIAG builds with the same
-  UUIDs installed, and a lower version does not upgrade them), `.\mods package lothlorien --release`, a Defender scan of
-  `dist/lothlorien` (two scans minutes apart; skill `bedrock-modding` reference 05), and a first
-  release note written by hand.
+  - [x] Workspace `temp/localization/` is gone (checked 2026-11-22).
+- [x] **Tester feedback** worked in (owner, 2026-11-22).
+- [ ] **Release 0.9.0** (testers have DIAG builds up to 0.8.13 with the same UUIDs; 0.9.0 upgrades them):
+  check `changes/` covers every player-visible change since v0.8.0, `.\mods release lothlorien --version 0.9.0`,
+  a Defender scan of `dist/lothlorien` (two scans minutes apart; skill `bedrock-modding` reference 05), the smoke
+  test above on the packaged build, then `.\mods release lothlorien --publish` (workspace `docs/changelog.md`).
+  Then update the GitHub repo description (it still says "pre-release (0.8.0)").
 - The website (wiki, documents, download) is a separate project.
 
 ## 4. Known issues (go into the tester brief and README)
@@ -101,10 +102,10 @@ performance, Loremaster edge cases, survival balance and translations are not to
 
 Completed source fixes and accepted checks, and where each open retest below is described: `OWNER_CHECKS.md`.
 
-- [ ] **Retest bounded fixes:** Miruvor empty skin/refill/last sip; Star Canopy
-  survival unlock; Friend unicorn lure; wind-charge controls; rope with an
-  existing Slow Falling potion; full-inventory named/injured firefly capture;
-  water-only boat dispensing; rising-bridge exit closure.
+- [ ] **Retest bounded fixes:** Miruvor empty skin/refill/last sip; Friend unicorn lure (Guest and bonded parts);
+  full-inventory named/injured firefly capture; water-only boat dispensing (owner 2026-11-22: "we should look into
+  it"). Passed 2026-11-22: Star Canopy unlock, wind charges, rope with Slow Falling, firefly release sound, leaf
+  decay, support pop, village generators (`OWNER_CHECKS.md`).
 - [x] **Spawn egg graphics:** the current eggs are final; owner confirmed 2026-10-29 (`GRAPHICS_TASKS.md`). Old note: replace generic eggs with the current
   creature-recognizable vanilla visual language, using the shared Bedrock art
   guide and reproducible asset generators. No artwork overhaul in this pass.
@@ -113,7 +114,7 @@ Completed source fixes and accepted checks, and where each open retest below is 
   to make this cosmetic junction connect.
 - [ ] **Boat hull lift (deferred):** redesign long hull/native dispenser spawn fit;
   the water-only filter does not correct vertical lift above the dispenser.
-- [ ] **Railing follow-up:** verify newly processed upward half-step bridge joins
+- [x] **Railing follow-up:** village generators OK since the fix (owner, 2026-11-22). Was: verify newly processed upward half-step bridge joins
   remain open. Inspect the photographed location (1040,141,-1338) and manually
   remove an old false closure if needed; existing saved fences are retained.
 - [ ] **L8 / L9:** complete targeted deer and squirrel checks with explicit setups
@@ -122,7 +123,7 @@ Completed source fixes and accepted checks, and where each open retest below is 
 ## Bedrock 26.60 impact (2026-10-27, documented only)
 
 Source review against the 26.60 changelog and API 2.11.0 / 2.12.0-beta declarations. Content log on world load: no
-warnings, verified in game (owner, 1.26.63, 2026-11-17, check 45); the alarmed-deer calm time is not checked yet.
+warnings, verified in game (owner, 1.26.63, 2026-11-17, check 45); an alarmed deer calms after about 20 s, verified in game (owner, 1.26.63, 2026-11-22).
 Entities and blocks are format 1.26.50, scripts `@minecraft/server` 2.8.0. (Kept here, not in `parity/`, which is wiki evidence.)
 
 - Verdict: no break expected, no bump wanted (nothing needs 1.26.60). Risk: `minecraft:timer` takes `{min, max}` from

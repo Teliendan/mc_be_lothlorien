@@ -20,6 +20,7 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
 | Unicorn lure | accepted 2026-10-26, **back to recheck since LM-01 (2026-11-12)**: vanilla `tempt` on Elanor in a `lothlorien:lure` group, now added at spawn (priority 4 below the flight), exemption `has_tag lothlorien_friend` + Elanor; the ten-second offer wait is the native group `lothlorien:offer_wait` (`unicorn.js` triggers `offer_taken`; the timer's `offer_ready` event restores the lure; LM-05); a Friend is never fled from; wariness counts Creative players. By owner request the Friend state keeps 3 blocks from a Friend without Elanor (accepted 2026-10-27). Details: `mobs/unicorn.md` |
 | Harmony action-bar icons, elven bow, unicorn art | checked OK (2026-10-24) |
 | Mob hurt and death sounds | kept as they are (2026-10-28) |
+| Retest batch of 2026-11-22 (verified in game (owner, 1.26.63, 2026-11-22)) | Star Canopy unlock in Survival; wind charges open doors (removed-projectile handling); rope with a foreign Slow Falling potion; firefly release sound; leaf decay pace (event-driven, native random tick); support pop of flowers, carpets and lanterns; village generators incl. the railing joins ("seem OK"); alarmed deer calm after about 20 s (26.60 scalar `minecraft:timer` still loads) |
 | First-round batch of 2026-11-11 (checks A-D, F, K, O; verified in game (owner, 1.26.63, 2026-11-17)) | Support and plants (LW-02, incl. farmed corn and `/setblock` onto stone, see `PISTON_SUPPORT.md`); phial light, rope, dew, bone meal; wardens, healers, deer, swan and white deer spawn; fence links repair almost instantly (C12); village music and Harmony status; village complete and lit, moss-bed skirts intact (check 16); Court reading circle, Loremaster pushed back to the circle, four seats read well; warden arrows and chicken jockey (LM-03), unicorn offers (LM-05), cloak and belt, squirrel errand, swans breeding; inline MERS unchanged in Vibrant Visuals (check 40); LC-10 list covers accepted (`TESTING.md`); 26.60 content log clean |
 
 ## Engine limits (deferred, owner-accepted)
@@ -43,7 +44,6 @@ backlog"); the workspace checklist for the remaining focused checks is `docs/gam
 Source fixes made, owner retest pending (fixes of 2026-11-17 in `6d2247e`, `87d619d`, `05d1180`: not re-tested; item list: `VILLAGES.md`, `TESTING.md`):
 
 - Miruvor: empty skin, refill, last sip.
-- Star Canopy discovery in Survival (the unlock is the Bottle of Morning Dew, see above).
 - Friend unicorn lure, native AI (explicit move/look goal ownership), now with the LM-01 per-player flight.
 - LM-01 native per-player wildlife flight (2026-11-12; Survival; set the band with `/scriptevent lothlorien:harmony <n>`: Friend 10, Guest 5, Uneasy -5, Shunned -20, Hated -40):
   1. Old world: no group or property errors in the content log; existing animals saved before LM-01 stay fearless until alarmed (no migration), new ones flee. verified in game (owner, 1.26.63, 2026-11-17).
@@ -59,21 +59,7 @@ Source fixes made, owner retest pending (fixes of 2026-11-17 in `6d2247e`, `87d6
   11. A wolf near a lured deer: the deer flees the wolf (expected change).
   12. Creative, any band: not fled; a Friend lures the unicorn; a Hated player with corn lures a deer (engine behaviour, accepted). Creative never fled: verified in game (owner, 1.26.63, 2026-11-17).
   13. Spectator flying near each species: record whether it flees. Checked, verified in game (owner, 1.26.63, 2026-11-17); no failure.
-- Wind charges: removed-projectile event handling, Breeze radius, paired-door deduplication.
-- Rope while a foreign Slow Falling potion is active (the potion is preserved while climb, hold and slide work).
-- Firefly release now plays `bottle.dragonbreath` at pitch 1.3.
-- Water-only boat dispensing.
-- Leaf decay is event-driven (2026-11-08, `TECHNICAL_NOTES.md`). Owner 2026-11-08: fire and TNT work; decay was far
-  too fast, so cut-off leaves are now only marked and break on their native random tick. Retest: a felled small and
-  giant Mallorn loses its leaves at the pace of a felled oak next to it; leaves of a neighbouring tree with its own trunk
-  stay; placing a log back into a decaying crown saves every leaf within 10 steps of it; leave and re-enter mid-decay
-  (it continues); breaking one leaf of a floating crown (left by a decay-off test build) clears that crown step by step.
-  Player-placed leaves never decay. Freezes while standing in the forest should be rarer (no script call per leaf tick).
-- Support random ticks keep no records (2026-11-08, also Starstone and Torchlight; `PISTON_SUPPORT.md`): flowers,
-  carpets and lanterns still pop when their support is mined, blown up or pushed by a piston.
-- Village railings: the upward half-step bridge join (a connected y+1 surface was misclassified as an unused exit; recognition
-  corrected with rotation tests). Existing closures are saved blocks and are not removed automatically; the photographed
-  location was (1040, 141, -1338).
+- Water-only boat dispensing: owner 2026-11-22 "we should look into it" (details pending).
 
 Passed (owner X1-X3, 1.26.63, 2026-11-22, new village): **elves walk around their posts** after `random_stroll` and `follow_range` moved from the base into every radius group (cause: removing a group stripped the base stroll; `mobs/elves.md`); the Healer roams as before; a led and untied elf strolls round its new spot. Elves saved in older worlds are not repaired (owner decision).
 
