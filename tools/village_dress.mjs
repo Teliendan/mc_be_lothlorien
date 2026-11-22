@@ -22,7 +22,7 @@ import { homeSite } from "../lothlorien_bp/scripts/elf_rules.js";
 import { sideTarget } from "../lothlorien_bp/scripts/village_loop.js"; // the runtime planner's own rim test: a bridge may start on a rim run
 import { isFence, missingLinks } from "../lothlorien_bp/scripts/rail_mender_rules.js";
 import { finishDressing } from "./village_polish.mjs";
-import { isPlanterPanel } from "../lothlorien_bp/scripts/planter_panels.js";
+import { isPlanterPanel, PANEL_AIR } from "../lothlorien_bp/scripts/planter_panels.js";
 
 const L = "lothlorien:", M = "minecraft:";
 const key = (x, y, z) => `${x},${y},${z}`;
@@ -636,6 +636,22 @@ function reserveRuns(blocks, keep, Y) {
     }
 }
 
+// Elves hop over an open panel (owner, 1.26.63, 2026-11-22) and a hop fails without headroom: no moss bed whose skirts would shut a lane across its whole width, i.e. a row of
+// skirt, moss, skirt with a rail (or no deck) beyond both skirts (the 3-wide trunk-rail lane of combo_node_e_*, balcony_braced and lookout_01 would cut off the deck behind it).
+// The skirts are the ones framePlanters (village_polish.mjs) will write: every free neighbour of the bed at +1, in a keep-clear cell too.
+// cells = [[x, z], ...] of the bed at height y (= deck + 1).
+function bothSidesSkirted(blocks, y, cells) {
+  const own = new Set(cells.map(([x, z]) => `${x},${z}`));
+  const free = (x, z) => { const n = blocks.get(key(x, y, z)); return !n || PANEL_AIR.has(n.name); };
+  const open = (x, z) => deckAt(blocks, x, y - 1, z) && !railAt(blocks, x, y - 1, z) && !(blocks.get(key(x, y, z))?.name === RAIL); // a walkable deck cell beyond the skirt
+  return cells.some(([x, z]) => D4.some(([dx, dz]) => {
+    let ax = x, az = z, bx = x, bz = z; // the ends of the row of bed cells along (dx, dz)
+    while (own.has(`${ax + dx},${az + dz}`)) { ax += dx; az += dz; }
+    while (own.has(`${bx - dx},${bz - dz}`)) { bx -= dx; bz -= dz; }
+    return free(ax + dx, az + dz) && free(bx - dx, bz - dz) && (!open(ax + 2 * dx, az + 2 * dz) || !open(bx - 2 * dx, bz - 2 * dz));
+  }));
+}
+
 // ---- rim dressing (7.10): every 5-7 rail posts away from connectors one small thing ---------------------------------------------------------
 function rimDressing(blocks, keep, lv, o, rnd, stats, homeInfo, cushion, flagsLeft) {
   const Y = lv.y, { put, can } = deco(blocks, keep), soft = softWriter(blocks);
@@ -723,6 +739,7 @@ function rimDressing(blocks, keep, lv, o, rnd, stats, homeInfo, cushion, flagsLe
       for (const [x, z] of cells) {
         if (!can(x, Y + 2, z)) return false;
       }
+      if (bothSidesSkirted(blocks, Y + 1, cells)) return false;
       for (const [x, z] of cells) {
         put(x, Y + 1, z, mossBlock());
         const plantsOn = pickPlant(rnd);
@@ -823,7 +840,7 @@ export function dressBalcony(blocks, keep, seed) {
   if (can(sx, 2, 4) && rnd() < 0.7) put(sx, 2, 4, moss(true)); // a beard of moss from the beam (nothing hangs lower than deck + 3 over a walk cell)
   // the other side: a jar and a planter, leaf drifts
   if (can(-sx, 1, 2)) put(-sx, 1, 2, jar());
-  if (can(-sx, 1, 3) && can(-sx, 2, 3)) { put(-sx, 1, 3, mossBlock()); put(-sx, 2, 3, { name: `${L}elanor`, states: { [`${L}on_grass`]: true } }); }
+  if (can(-sx, 1, 3) && can(-sx, 2, 3) && !bothSidesSkirted(blocks, 1, [[-sx, 3]])) { put(-sx, 1, 3, mossBlock()); put(-sx, 2, 3, { name: `${L}elanor`, states: { [`${L}on_grass`]: true } }); }
   finishDressing(blocks, keep, stats.cushions);
   return stats;
 }
@@ -845,7 +862,7 @@ export function dressLookout(blocks, keep, y, seed) {
   // the other corners: planter beds (moss, a flower, open trapdoors round the free sides) and one jar
   const bed = (cx, cz) => {
     const cells = [[cx, cz], [cx + Math.sign(cx), cz]].filter(([x, z]) => blocks.get(key(x, y, z))?.name === PLANKS && !rail(x, z) && can(x, y + 1, z) && can(x, y + 2, z));
-    if (cells.length < 2) return;
+    if (cells.length < 2 || bothSidesSkirted(blocks, y + 1, cells)) return;
     for (const [x, z] of cells) { put(x, y + 1, z, mossBlock()); put(x, y + 2, z, plantBlock(pickPlant(rnd))); }
     for (const [x, z] of cells) for (const d of D4) { const tx = x + d[0], tz = z + d[1]; if (!cells.some(([bx, bz]) => bx === tx && bz === tz) && blocks.get(key(tx, y, tz))?.name === PLANKS && !rail(tx, tz) && can(tx, y + 1, tz) && Math.hypot(tx, tz) > 1.5 && Math.abs(tz) >= 2) put(tx, y + 1, tz, trapOpen(d)); }
   };

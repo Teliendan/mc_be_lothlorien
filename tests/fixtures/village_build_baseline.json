@@ -1,6 +1,6 @@
 {
  "flat-1": {
-  "steps": 23789,
+  "steps": 7747,
   "plans": {
    "hash": "76dd9ef1",
    "cells": 7338
@@ -12,22 +12,22 @@
   }
  },
  "flat-2": {
-  "steps": 32729,
+  "steps": 9561,
   "plans": {
    "hash": "b94e95c5",
    "cells": 9777
   },
   "lights": {
-   "bridge": 3,
-   "plaza": 1,
+   "bridge": 4,
+   "plaza": 2,
    "merge": 0
   }
  },
  "flat-3": {
-  "steps": 24377,
+  "steps": 8034,
   "plans": {
-   "hash": "abb99856",
-   "cells": 7283
+   "hash": "41f7b5e4",
+   "cells": 7234
   },
   "lights": {
    "bridge": 3,
@@ -36,10 +36,10 @@
   }
  },
  "flat-4": {
-  "steps": 13874,
+  "steps": 3727,
   "plans": {
-   "hash": "12ec91ba",
-   "cells": 4535
+   "hash": "cdcad1d4",
+   "cells": 4446
   },
   "lights": {
    "bridge": 0,
@@ -48,22 +48,10 @@
   }
  },
  "flat-5": {
-  "steps": 23144,
+  "steps": 6207,
   "plans": {
    "hash": "e22a3c3d",
    "cells": 7104
-  },
-  "lights": {
-   "bridge": 2,
-   "plaza": 0,
-   "merge": 0
-  }
- },
- "flat-6": {
-  "steps": 23008,
-  "plans": {
-   "hash": "f970ae2",
-   "cells": 7037
   },
   "lights": {
    "bridge": 3,
@@ -71,8 +59,20 @@
    "merge": 0
   }
  },
+ "flat-6": {
+  "steps": 7452,
+  "plans": {
+   "hash": "f970ae2",
+   "cells": 7037
+  },
+  "lights": {
+   "bridge": 4,
+   "plaza": 0,
+   "merge": 0
+  }
+ },
  "flat-7": {
-  "steps": 20126,
+  "steps": 5576,
   "plans": {
    "hash": "5041724a",
    "cells": 6428
@@ -84,19 +84,19 @@
   }
  },
  "flat-8": {
-  "steps": 11439,
+  "steps": 3607,
   "plans": {
-   "hash": "96420677",
-   "cells": 3621
+   "hash": "dd629e04",
+   "cells": 3456
   },
   "lights": {
-   "bridge": 3,
+   "bridge": 0,
    "plaza": 0,
    "merge": 0
   }
  },
  "flat-9": {
-  "steps": 12784,
+  "steps": 3449,
   "plans": {
    "hash": "d2426bc5",
    "cells": 4091
@@ -108,7 +108,7 @@
   }
  },
  "flat-10": {
-  "steps": 15326,
+  "steps": 4089,
   "plans": {
    "hash": "1f4997c5",
    "cells": 4577
@@ -120,19 +120,19 @@
   }
  },
  "flat-11": {
-  "steps": 30970,
+  "steps": 11668,
   "plans": {
    "hash": "32d3f5b6",
    "cells": 8802
   },
   "lights": {
-   "bridge": 3,
+   "bridge": 5,
    "plaza": 0,
    "merge": 0
   }
  },
  "flat-12": {
-  "steps": 22688,
+  "steps": 6091,
   "plans": {
    "hash": "5a616c81",
    "cells": 7288
@@ -144,19 +144,19 @@
   }
  },
  "flat-13": {
-  "steps": 24005,
+  "steps": 7505,
   "plans": {
-   "hash": "682e11f3",
-   "cells": 7220
+   "hash": "204ca869",
+   "cells": 7173
   },
   "lights": {
    "bridge": 3,
-   "plaza": 3,
+   "plaza": 4,
    "merge": 0
   }
  },
  "flat-14": {
-  "steps": 25855,
+  "steps": 7841,
   "plans": {
    "hash": "8780bd31",
    "cells": 8053
@@ -168,19 +168,19 @@
   }
  },
  "flat-15": {
-  "steps": 25043,
+  "steps": 10366,
   "plans": {
-   "hash": "dc1732a8",
+   "hash": "78d2a5f0",
    "cells": 7604
   },
   "lights": {
-   "bridge": 3,
+   "bridge": 6,
    "plaza": 0,
    "merge": 0
   }
  },
  "flat-16": {
-  "steps": 12421,
+  "steps": 4004,
   "plans": {
    "hash": "98c8120d",
    "cells": 3899
@@ -192,19 +192,19 @@
   }
  },
  "flat-17": {
-  "steps": 21922,
+  "steps": 6693,
   "plans": {
    "hash": "d8bc329f",
    "cells": 6641
   },
   "lights": {
-   "bridge": 3,
+   "bridge": 2,
    "plaza": 0,
    "merge": 0
   }
  },
  "flat-18": {
-  "steps": 21056,
+  "steps": 5583,
   "plans": {
    "hash": "ec2e4446",
    "cells": 6454
@@ -216,7 +216,7 @@
   }
  },
  "flat-19": {
-  "steps": 18605,
+  "steps": 3834,
   "plans": {
    "hash": "24360f4f",
    "cells": 5841
@@ -228,22 +228,22 @@
   }
  },
  "flat-20": {
-  "steps": 25942,
+  "steps": 8363,
   "plans": {
    "hash": "9319bc5",
    "cells": 7789
   },
   "lights": {
-   "bridge": 3,
+   "bridge": 4,
    "plaza": 0,
    "merge": 0
   }
  },
  "valley-3": {
-  "steps": 29481,
+  "steps": 8791,
   "plans": {
-   "hash": "9aa03d97",
-   "cells": 9425
+   "hash": "462bb510",
+   "cells": 9382
   },
   "lights": {
    "bridge": 3,
@@ -252,10 +252,10 @@
   }
  },
  "valley-12": {
-  "steps": 28343,
+  "steps": 6914,
   "plans": {
-   "hash": "9ef41c7d",
-   "cells": 9600
+   "hash": "8f6fc951",
+   "cells": 9599
   },
   "lights": {
    "bridge": 0,
@@ -264,10 +264,10 @@
   }
  },
  "lake-7": {
-  "steps": 24676,
+  "steps": 6490,
   "plans": {
-   "hash": "3b5c9fca",
-   "cells": 8281
+   "hash": "6d654845",
+   "cells": 8286
   },
   "lights": {
    "bridge": 0,
@@ -276,13 +276,13 @@
   }
  },
  "lake-15": {
-  "steps": 28719,
+  "steps": 11054,
   "plans": {
-   "hash": "40dc2a04",
-   "cells": 9140
+   "hash": "b5c88c9d",
+   "cells": 9130
   },
   "lights": {
-   "bridge": 3,
+   "bridge": 6,
    "plaza": 0,
    "merge": 0
   }

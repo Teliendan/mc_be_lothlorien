@@ -2,7 +2,8 @@
 import { test, finish, readJson } from './test_helpers.mjs';
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { planterWalkName } from "../lothlorien_bp/scripts/planter_panels.js";
+import { planterWalkName, isPlanterPanel } from "../lothlorien_bp/scripts/planter_panels.js";
+import { findHome, frameCell, frameCu, framePost } from "../lothlorien_bp/scripts/home_furnish.js";
 import { B } from "../tools/flet_mallorn.mjs";
 import { existsSync, readdirSync } from "node:fs";
 import { loadVillageData, runSeeds, PLANKS, FENCE, populateElves, furnishVillage, clearShieldSim } from "../tools/village_sim.mjs";
@@ -201,6 +202,39 @@ test("furnishing in the simulator: 12 villages furnish and skirt homes without a
     objects += fu.objects;
   }
   assert.ok(objects > 100, `${objects} objects furnished`);
+});
+
+test("furnishing in the simulator: with skirts as obstacles no home skirt stands in the door lane and every home post still leads out (elves hop over open panels and a hop fails without headroom, owner 2026-11-22)", () => {
+  const PASS = /^minecraft:(air|cave_air|void_air|wall_banner|pale_hanging_moss|moss_carpet|leaf_litter)$|^minecraft:light_block|carpet$|^lothlorien:elven_rope/;
+  let homes = 0, lane = 0;
+  for (const row of villages().slice(0, 30)) {
+    const world = new Map(row.ck.world), states = new Map(row.ck.states);
+    const lp = planLoops(row.res, world, states, { start: 0 });
+    const before = walkability(row.res, world, states), el = populateElves(row.res, lp.at, lp.rect);
+    const fu = furnishVillage(el, world, states, lp.at, row.res, before);
+    assert.deepEqual(fu.fail, [], `seed ${row.seed}`);
+    const get = (a, b, c) => ({ name: world.get(wkey(a, b, c)), states: states.get(wkey(a, b, c)) });
+    for (const { post } of el.assigned) {
+      if (post.kind === "reserve") continue;
+      const f = findHome(lp.at, post);
+      if (!f) continue;
+      homes++;
+      const nm = (x, yy, z) => world.get(wkey(x, yy, z)) ?? "minecraft:air";
+      const walk = (x, z) => /mallorn_(heartwood_)?planks$/.test(nm(x, f.y, z)) && PASS.test(nm(x, f.y + 1, z)) && PASS.test(nm(x, f.y + 2, z));
+      for (let u = frameCu(f) - 1; u <= frameCu(f) + 1; u++) { const [x, z] = frameCell(f, u, f.k - 2); if (isPlanterPanel(get, x, f.y + 1, z)) lane++; } // a skirt only: the pavilion's own screen is not one
+      const [px, pz] = frameCell(f, ...framePost(f)), seen = new Set([`${px},${pz}`]), q = [[px, pz]];
+      for (let i = 0; i < q.length; i++) for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const x = q[i][0] + dx, z = q[i][1] + dz;
+        if (seen.has(`${x},${z}`) || !walk(x, z)) continue;
+        seen.add(`${x},${z}`); q.push([x, z]);
+      }
+      // the margin ring of the pavilion square counts as outside
+      const out = q.some(([x, z]) => { for (let u = -1; u <= f.k; u++) for (let v = -1; v <= f.k; v++) if ((u === -1 || u === f.k || v === -1 || v === f.k) && frameCell(f, u, v).join() === `${x},${z}`) return true; return false; });
+      assert.ok(out, `seed ${row.seed}: the post at ${post.x},${post.y},${post.z} is walled in by skirts (${q.length} cells)`);
+    }
+  }
+  assert.ok(homes >= 60, `${homes} homes checked`);
+  assert.equal(lane, 0, "no skirt in a door lane");
 });
 
 test("shield clear in the simulator: after furnishing and the final clear every healer bed has free ring cells; only light_block_0 changed, light_block_1..15 untouched, no shield cell left in 12 villages", () => {

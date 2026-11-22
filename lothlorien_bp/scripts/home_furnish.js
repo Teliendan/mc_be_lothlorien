@@ -291,8 +291,40 @@ export function* planFurnishGen(profession, frame, at, {occupied = new Set()} = 
     if(nameAt(x,frame.y+1,z)==="minecraft:moss_block"&&DECK.has(at(x,frame.y,z)))beds.push({x,y:frame.y+1,z});
   }
   const [px,pz]=frameCell(frame,...framePost(frame));
-  best.panels=planPlanterPanels(nameAt,beds,{canPlace:p=>footprint.has(`${p.x},${p.z}`)&&!(p.x===px&&p.z===pz)&&!occupied.has(`${p.x},${p.y},${p.z}`)});
+  // Elves hop over an open panel and a hop fails without headroom (owner, 1.26.63, 2026-11-22): no skirt in the door lane (the marker lantern hangs over it), and
+  // none that is the only link (skirts counted as obstacles) to a cell that could be walked to from outside before: the elf's post and its aisle stay reachable.
+  const doorLane=new Set(),cu=frameCu(frame);
+  for(let u=cu-1;u<=cu+1;u++){const [x,z]=frameCell(frame,u,frame.k-2);doorLane.add(`${x},${z}`);}
+  const panels=planPlanterPanels(nameAt,beds,{canPlace:p=>footprint.has(`${p.x},${p.z}`)&&!doorLane.has(`${p.x},${p.z}`)&&!(p.x===px&&p.z===pz)&&!occupied.has(`${p.x},${p.y},${p.z}`)});
+  best.panels=keepLinks(frame,(x,y,z)=>{const n=nameAt(x,y,z);return n==="minecraft:cushion"?undefined:n;},at,panels);
   return best;
+}
+// Drops, in order, every panel whose cell is the only way to reach a deck cell of the pavilion square (plus a one-cell margin) that was reachable from the margin
+// without panels. Walkable = deck with the two cells above passable (PASS); a margin cell counts as outside. Pure, deterministic.
+function keepLinks(frame,nameAt,at,panels){
+  const {k,y}=frame,nodes=new Map();
+  for(let u=-1;u<=k;u++)for(let v=-1;v<=k;v++){
+    const [x,z]=frameCell(frame,u,v);
+    if(DECK.has(at(x,y,z))&&PASS.test(nameAt(x,y+1,z)??"x")&&PASS.test(nameAt(x,y+2,z)??"x"))nodes.set(`${u},${v}`,{u,v,cell:`${x},${z}`,edge:u===-1||u===k||v===-1||v===k});
+  }
+  const reach=blocked=>{
+    const seen=new Set(),q=[];
+    for(const [id,n] of nodes)if(n.edge&&!blocked.has(n.cell)){seen.add(id);q.push(n);}
+    for(let i=0;i<q.length;i++)for(const [du,dv] of [[1,0],[-1,0],[0,1],[0,-1]]){
+      const id=`${q[i].u+du},${q[i].v+dv}`,m=nodes.get(id);
+      if(m&&!seen.has(id)&&!blocked.has(m.cell)){seen.add(id);q.push(m);}
+    }
+    return seen;
+  };
+  const base=reach(new Set()),blocked=new Set(),kept=[];
+  for(const p of panels){
+    const cell=`${p.x},${p.z}`;
+    if(!nodes.size||![...nodes.values()].some(n=>n.cell===cell)){kept.push(p);continue;} // not a walkable cell: no link to cut
+    blocked.add(cell);
+    const now=reach(blocked);
+    if([...base].some(id=>!blocked.has(nodes.get(id).cell)&&!now.has(id)))blocked.delete(cell);else kept.push(p);
+  }
+  return kept;
 }
 function* planOneGen(profession, frame, at, flip) {
   const layout = furnishLayout(profession, frame, flip), area = new Set(frameArea(frame).map((c) => c.join(",")));

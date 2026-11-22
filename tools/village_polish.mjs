@@ -1,6 +1,6 @@
 // Final decoration relationships, after all seats and gardens have been chosen.
 import { isFence } from "../lothlorien_bp/scripts/rail_mender_rules.js";
-import { relinkFences, frameArea, frameCell } from "./village_dress.mjs";
+import { relinkFences, frameInterior, frameCell } from "./village_dress.mjs";
 import { isAirName } from "./village_checks.mjs";
 import { planPlanterPanels } from "../lothlorien_bp/scripts/planter_panels.js";
 
@@ -58,7 +58,8 @@ export function framePlanters(blocks, keep, reserved = new Set()) {
 export function finishDressing(blocks, keep, cushions = [], home = null) {
   clearSeatViews(blocks, keep, cushions);
   groundWoodPosts(blocks);
-  const reserved = new Set(home ? frameArea(home).map(([u,v]) => {const [x,z]=frameCell(home,u,v);return key(x,home.y+1,z);}) : []);
+  // the whole interior, door lane and post cell too: elves hop over an open panel and a hop fails without headroom (the marker lantern hangs over the lane; owner 2026-11-22)
+  const reserved = new Set(home ? frameInterior(home).map(([u,v]) => {const [x,z]=frameCell(home,u,v);return key(x,home.y+1,z);}) : []);
   for(const c of cushions) reserved.add(key(c.x,c.y+1,c.z));
   framePlanters(blocks, keep, reserved);
   relinkFences(blocks);

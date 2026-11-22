@@ -25,6 +25,11 @@ writer applies them after furniture/structures and excludes existing cushion
 actors. It also completes adjacent static beds after the furniture reservation
 is resolved. Details: `../VILLAGES.md`.
 
+Skirts and elves (2026-11-22, new villages only): elves hop over open panels and a hop fails without headroom, so `planFurnishGen` keeps
+skirts out of the door lane (cells `(u, k-2)`, `|u-cu| <= 1`, under the marker lantern) and drops, in order, any skirt that is the only
+link (skirts as obstacles, `keepLinks`) to a deck cell of the square plus margin that could be reached from outside before. Details and
+numbers: `../VILLAGES.md`.
+
 Same mechanics as the healer's set (`SETS` in `home_furnish.js`, sets for k 4, 5, 6, 7; k >= 8 uses the 7 set); the healer retains its approved layout.
 
 - **Gardener** (green): composter, a cauldron of water (the watering vessel), moss planters with Lothlorien flowers (about a quarter pretty vanilla ones), ferns, bushes and

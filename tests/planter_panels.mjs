@@ -6,7 +6,7 @@ import { framePlanters } from "../tools/village_polish.mjs";
 import { keepClearViolations,supportCheck } from "../tools/village_checks.mjs";
 import { applyPlan, wkey } from "../tools/village_sim.mjs";
 import { sideTarget } from "../lothlorien_bp/scripts/village_loop.js";
-import { findHome,frameArea,frameCell,framePost,planFurnish,frameLamp } from "../lothlorien_bp/scripts/home_furnish.js";
+import { findHome,frameArea,frameCell,framePost,frameCu,planFurnish,frameLamp } from "../lothlorien_bp/scripts/home_furnish.js";
 import { checkWalk } from "../../../.claude/skills/bedrock-worldgen/scripts/structure_walk.mjs";
 import { parseMcstructure } from "../../../.claude/skills/bedrock-worldgen/scripts/mcstructure.mjs";
 
@@ -81,7 +81,9 @@ for(const k of [4,5,6,7])for(const dv of [[1,0],[-1,0],[0,1],[0,-1]])for(const p
   for(const p of plan.panels){assert.ok(isPlanterPanel(get,p.x,p.y,p.z));assert.ok(p.x!==px||p.z!==pz);}
   for(const bed of plan.writes.filter(p=>p.name==="minecraft:moss_block"))for(const d of PANEL_DIRS){
     const x=bed.x+d.dx,z=bed.z+d.dz,inside=Array.from({length:k*k},(_,i)=>frameCell(frame,Math.floor(i/k),i%k)).some(c=>c[0]===x&&c[1]===z);
-    if(inside&&!(x===px&&z===pz))assert.notEqual(at(x,bed.y,z),"minecraft:air",`${profession} k${k}: runtime bed missing ${d.name} side`);
+    // no skirt in the door lane (elves hop over panels, the marker lantern hangs over it) and none that would be the only link to the post: the aisle column is where one of them is dropped
+    const lane=Array.from({length:3},(_,i)=>frameCell(frame,frameCu(frame)-1+i,k-2)).some(c=>c[0]===x&&c[1]===z)||Array.from({length:k+2},(_,i)=>frameCell(frame,frameCu(frame),i-1)).some(c=>c[0]===x&&c[1]===z);
+    if(inside&&!lane&&!(x===px&&z===pz))assert.notEqual(at(x,bed.y,z),"minecraft:air",`${profession} k${k}: runtime bed missing ${d.name} side`);
   }
 }
 console.log("ok   planter borders: runtime healer/gardener beds have every available side in all orientations and sizes");

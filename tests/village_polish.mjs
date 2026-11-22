@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { buildBalcony } from "../tools/village_combo.mjs";
 import { framePlanters, clearSeatViews } from "../tools/village_polish.mjs";
+import { isPlanterPanel } from "../lothlorien_bp/scripts/planter_panels.js";
 import { relinkFences } from "../tools/village_dress.mjs";
 import { connectionChanges, isLinkTarget, LINKS } from "../lothlorien_bp/scripts/rail_mender_rules.js";
 import { closeUnusedExitsGen } from "../lothlorien_bp/scripts/village_repair.js";
@@ -32,6 +33,30 @@ for (const f of readdirSync(dir).filter(f => f.endsWith(".mcstructure"))) {
   }
 }
 console.log("ok   village polish: shipped seats, wood feet, persistent leaves and all known fence targets");
+
+// Elves hop over an open panel and a hop fails without headroom (owner, 1.26.63, 2026-11-22): no moss bed in a shipped piece has a skirt at both ends of one of its rows
+// with a rail (or no deck) beyond one of them, i.e. a row of skirt, moss, skirt that shuts a narrow lane (the 3-wide trunk-rail lane of combo_node_e_*).
+let beds = 0;
+for (const f of readdirSync(dir).filter(f => /^(combo_node_e_|balcony_braced|lookout_01).*\.mcstructure$/.test(f))) { // the pieces with a 3-wide trunk-rail lane (owner-approved scope; the trunk-foot beds of other pieces are not part of this rule)
+  const p = parseMcstructure(readFileSync(new URL(f,dir)), f), st = new Map(p.blocks.map(b => [key(b.x,b.y,b.z), b]));
+  const nm = (x,y,z) => p.at(x,y,z) ?? "minecraft:air";
+  const moss = (x,y,z) => nm(x,y,z) === "minecraft:moss_block" && /mallorn_(heartwood_)?planks$/.test(nm(x,y-1,z));
+  const skirt = (x,y,z) => nm(x,y,z) === "lothlorien:mallorn_trapdoor" && isPlanterPanel((a,b,c) => ({ name: nm(a,b,c), states: st.get(key(a,b,c))?.states }), x, y, z);
+  const open = (x,y,z) => /mallorn_(heartwood_)?planks$/.test(nm(x,y-1,z)) && !/fence$/.test(nm(x,y,z));
+  for (const b of p.blocks) {
+    if (!moss(b.x,b.y,b.z)) continue;
+    beds++;
+    for (const [dx,dz] of [[1,0],[0,1]]) {
+      let ax = b.x, az = b.z, bx = b.x, bz = b.z;
+      while (moss(ax+dx,b.y,az+dz)) { ax += dx; az += dz; }
+      while (moss(bx-dx,b.y,bz-dz)) { bx -= dx; bz -= dz; }
+      if (skirt(ax+dx,b.y,az+dz) && skirt(bx-dx,b.y,bz-dz))
+        assert.ok(open(ax+2*dx,b.y,az+2*dz) && open(bx-2*dx,b.y,bz-2*dz), `${f}: skirt, moss, skirt shuts a lane at ${b.x},${b.y},${b.z}`);
+    }
+  }
+}
+assert.ok(beds >= 6, `${beds} moss beds scanned`);
+console.log("ok   village polish: no rim planter of combo_node_e_*, balcony_braced or lookout_01 shuts a narrow lane with a skirt at each end");
 
 const m = new Map([[key(0,1,0),block(F)],[key(1,1,0),block("minecraft:moss_block")],[key(-1,1,0),block("lothlorien:mallorn_slab")]]);
 relinkFences(m);
