@@ -1,0 +1,7 @@
+{
+  "format_version": "1.21.30",
+  "minecraft:texture_set": {
+    "color": "lembas_wrapped",
+    "metalness_emissive_roughness_subsurface": "lembas_wrapped_mers"
+  }
+}

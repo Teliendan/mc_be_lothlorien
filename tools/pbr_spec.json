@@ -1,0 +1,1263 @@
+{
+  "schema": 1,
+  "rp": "lothlorien_rp",
+  "note": "Vibrant Visuals MERS for the Lothlorien pack (workspace skill bedrock-art, scripts/pbr_mers.py). Rebuild after any colour-texture change: python -I .claude/skills/bedrock-art/scripts/pbr_mers.py build mods/lothlorien/tools/pbr_spec.json",
+  "palettes": {
+    "LAMP_GOLD": [
+      "#fbe9a0",
+      "#eccd76",
+      "#c9a04a",
+      "#8a6a2a"
+    ],
+    "ICON_GOLD": [
+      "#fbe9a0",
+      "#c9a04a",
+      "#8a6a2a"
+    ],
+    "BOAT_GOLD": [
+      "#967034",
+      "#c9a04a",
+      "#eccd76",
+      "#faeaa8"
+    ],
+    "BOAT_SILVER": [
+      "#707786",
+      "#aab1b9",
+      "#c3c8cc",
+      "#dde0df"
+    ],
+    "ICON_SILVER": [
+      "#dde0df",
+      "#aab1b9",
+      "#707786"
+    ],
+    "ELF_SILVER": [
+      "#5f6c75",
+      "#8d9aa3",
+      "#bdc8ce",
+      "#eef3f5"
+    ],
+    "ELF_GOLD": [
+      "#7d6531",
+      "#b3924a",
+      "#dcc27a",
+      "#f3e4a8"
+    ],
+    "LAMPLIGHTER_GLASS": [
+      "#8a6a2a",
+      "#c9a24a",
+      "#f0d27a",
+      "#fff0b0"
+    ],
+    "GARDENER_STEEL": [
+      "#2d2e29",
+      "#46463e",
+      "#6a6a5e",
+      "#8a8a7c"
+    ],
+    "WOODWRIGHT_STEEL": [
+      "#4b535a",
+      "#7a858c",
+      "#aab4b9",
+      "#d6dde0"
+    ],
+    "DEER_BONE": [
+      "#6e5a3e",
+      "#9a8459",
+      "#c4ae80",
+      "#e0cfa4"
+    ],
+    "UNICORN_HORN": [
+      "#faf7eb",
+      "#eee8d4",
+      "#ded5be"
+    ],
+    "LANTERN_ICON_GLOW": [
+      "#ffdc83",
+      "#eda748",
+      "#b66c33",
+      "#fff1b1",
+      "#dcf06a"
+    ],
+    "CHANDELIER_ICON_GLOW": [
+      "#f6cb5a",
+      "#fde48a",
+      "#fcffd8"
+    ],
+    "JAR_ICON_FLIES": [
+      "#c8f03c",
+      "#f0fa96",
+      "#ffffd6"
+    ],
+    "JAR_FLY": [
+      "#a8cc3a",
+      "#c8f03c",
+      "#f0fa96"
+    ],
+    "JAR_MOSS_LEAF": [
+      "#a9c45a",
+      "#86a63e",
+      "#64822f",
+      "#4a6226",
+      "#f4d77a",
+      "#d9a944"
+    ],
+    "JAR_ICON_LID": [
+      "#dde0df",
+      "#b6bcc4",
+      "#8f96a2",
+      "#5f6672"
+    ],
+    "DEW": [
+      "#e2f6ff",
+      "#a0d0e8"
+    ],
+    "SILVER_STEM": [
+      "#dde0df",
+      "#aab1b9",
+      "#c3c8cc",
+      "#8f96a2"
+    ],
+    "FIREFLY_EGG_ABDOMEN": [
+      "#e2f66e",
+      "#c8e846",
+      "#fbffd0"
+    ]
+  },
+  "textures": {
+    "blocks/athelas": {
+      "like": "blocks/fern"
+    },
+    "blocks/deer_antler": {
+      "like": "blocks/bone_block_side"
+    },
+    "blocks/elanor": {
+      "like": "blocks/flower_dandelion"
+    },
+    "blocks/elven_jar_glass": {
+      "like": "blocks/glass"
+    },
+    "blocks/elven_jar_inner": {
+      "light": 11,
+      "regions": [
+        {
+          "select": {
+            "palette": "JAR_FLY"
+          },
+          "like": "blocks/lantern",
+          "like_select": "mers:E>0",
+          "E": 255
+        },
+        {
+          "select": "rest",
+          "like": "blocks/fern",
+          "S": 0
+        }
+      ]
+    },
+    "blocks/elven_lamp": {
+      "regions": [
+        {
+          "select": {
+            "palette": "LAMP_GOLD"
+          },
+          "like": "blocks/gold_block"
+        },
+        {
+          "select": {
+            "rect": [
+              0,
+              13,
+              16,
+              16
+            ]
+          },
+          "like": "blocks/bone_block_side"
+        },
+        {
+          "select": "rest",
+          "like": "blocks/planks_birch"
+        }
+      ]
+    },
+    "blocks/elven_lamp_heartwood": {
+      "regions": [
+        {
+          "select": {
+            "rect": [
+              0,
+              10,
+              16,
+              13
+            ]
+          },
+          "like": "models/armor/iron_1"
+        },
+        {
+          "select": {
+            "rect": [
+              0,
+              13,
+              16,
+              16
+            ]
+          },
+          "like": "blocks/bone_block_side"
+        },
+        {
+          "select": "rest",
+          "like": "blocks/planks_oak"
+        }
+      ]
+    },
+    "blocks/elven_lantern_glow": {
+      "light": 14,
+      "note": "E per colour as before (T8 kept); R from blocks/lantern lit pixels (T7), constants computed over the whole strip",
+      "regions": [
+        {
+          "select": {
+            "colors": [
+              "#000000"
+            ]
+          },
+          "like": "blocks/lantern",
+          "E": 0,
+          "R": 114,
+          "like_select": "mers:E>0"
+        },
+        {
+          "select": {
+            "colors": [
+              "#cc872c"
+            ]
+          },
+          "like": "blocks/lantern",
+          "E": 127,
+          "R": 70,
+          "like_select": "mers:E>0"
+        },
+        {
+          "select": {
+            "colors": [
+              "#cfe85c"
+            ]
+          },
+          "like": "blocks/lantern",
+          "E": 255,
+          "R": 51,
+          "like_select": "mers:E>0"
+        },
+        {
+          "select": {
+            "colors": [
+              "#dcf06a"
+            ]
+          },
+          "like": "blocks/lantern",
+          "E": 255,
+          "R": 47,
+          "like_select": "mers:E>0"
+        },
+        {
+          "select": {
+            "colors": [
+              "#e8aa44"
+            ]
+          },
+          "like": "blocks/lantern",
+          "E": 153,
+          "R": 60,
+          "like_select": "mers:E>0"
+        },
+        {
+          "select": {
+            "colors": [
+              "#ecdc74"
+            ]
+          },
+          "like": "blocks/lantern",
+          "E": 255,
+          "R": 49,
+          "like_select": "mers:E>0"
+        },
+        {
+          "select": {
+            "colors": [
+              "#f6cb5a"
+            ]
+          },
+          "like": "blocks/lantern",
+          "E": 179,
+          "R": 52,
+          "like_select": "mers:E>0"
+        },
+        {
+          "select": {
+            "colors": [
+              "#fcffd8"
+            ]
+          },
+          "like": "blocks/lantern",
+          "E": 255,
+          "R": 38,
+          "like_select": "mers:E>0"
+        }
+      ]
+    },
+    "blocks/elven_lantern_wood": {
+      "like": "blocks/planks_birch"
+    },
+    "blocks/elven_lantern_wood_heartwood": {
+      "like": "blocks/planks_oak"
+    },
+    "blocks/elven_rope": {
+      "like": "items/lead",
+      "like_select": "mers:M==0"
+    },
+    "blocks/golden_fern": {
+      "like": "blocks/fern"
+    },
+    "blocks/great_mallorn_sprout": {
+      "light": 3,
+      "regions": [
+        {
+          "select": {
+            "colors": [
+              "#ffe476"
+            ]
+          },
+          "like": "blocks/sapling_birch",
+          "like_select": "mers:S>0",
+          "emissive": {
+            "like": "blocks/cave_vines_head_berries",
+            "like_select": "mers:E>=26"
+          }
+        },
+        {
+          "select": {
+            "palette": "SILVER_STEM"
+          },
+          "like": "blocks/sapling_birch",
+          "like_select": "mers:S==0"
+        },
+        {
+          "select": "rest",
+          "like": "blocks/sapling_birch",
+          "like_select": "mers:S>0"
+        }
+      ]
+    },
+    "blocks/mallorn_blossom": {
+      "like": "blocks/pink_petals"
+    },
+    "blocks/mallorn_blossom_dew": {
+      "regions": [
+        {
+          "select": {
+            "palette": "DEW"
+          },
+          "like": "blocks/glass"
+        },
+        {
+          "select": "rest",
+          "like": "blocks/pink_petals"
+        }
+      ]
+    },
+    "blocks/mallorn_door_bottom": {
+      "like": "blocks/door_birch_lower",
+      "M": 0,
+      "S": 0
+    },
+    "blocks/mallorn_door_top": {
+      "like": "blocks/door_birch_upper",
+      "M": 0,
+      "S": 0
+    },
+    "blocks/mallorn_fence_post": {
+      "like": "blocks/planks_birch"
+    },
+    "blocks/mallorn_golden_leaves": {
+      "like": "blocks/leaves_birch"
+    },
+    "blocks/mallorn_heartwood_door_bottom": {
+      "like": "blocks/door_wood_lower",
+      "M": 0,
+      "S": 0,
+      "like_select": "mers:M==0"
+    },
+    "blocks/mallorn_heartwood_door_top": {
+      "like": "blocks/door_wood_upper",
+      "M": 0,
+      "S": 0,
+      "like_select": "mers:M==0"
+    },
+    "blocks/mallorn_heartwood_fence_post": {
+      "like": "blocks/planks_oak"
+    },
+    "blocks/mallorn_heartwood_planks": {
+      "like": "blocks/planks_oak"
+    },
+    "blocks/mallorn_heartwood_trapdoor": {
+      "like": "blocks/trapdoor"
+    },
+    "blocks/mallorn_leaf_carpet": {
+      "like": "blocks/leaf_litter"
+    },
+    "blocks/mallorn_leaf_carpet_dew": {
+      "regions": [
+        {
+          "select": {
+            "palette": "DEW"
+          },
+          "like": "blocks/glass"
+        },
+        {
+          "select": "rest",
+          "like": "blocks/leaf_litter"
+        }
+      ]
+    },
+    "blocks/mallorn_leaves_bottom": {
+      "like": "blocks/leaves_birch"
+    },
+    "blocks/mallorn_leaves_side": {
+      "like": "blocks/leaves_birch"
+    },
+    "blocks/mallorn_leaves_top": {
+      "like": "blocks/leaves_birch"
+    },
+    "blocks/mallorn_log_side": {
+      "like": "blocks/log_birch"
+    },
+    "blocks/mallorn_log_top": {
+      "like": "blocks/log_birch_top"
+    },
+    "blocks/mallorn_planks": {
+      "like": "blocks/planks_birch"
+    },
+    "blocks/mallorn_sapling": {
+      "regions": [
+        {
+          "select": {
+            "palette": "SILVER_STEM"
+          },
+          "like": "blocks/sapling_birch",
+          "like_select": "mers:S==0"
+        },
+        {
+          "select": "rest",
+          "like": "blocks/sapling_birch",
+          "like_select": "mers:S>0"
+        }
+      ]
+    },
+    "blocks/mallorn_stripped_log_side": {
+      "like": "blocks/stripped_birch_log"
+    },
+    "blocks/mallorn_stripped_log_top": {
+      "like": "blocks/stripped_birch_log_top"
+    },
+    "blocks/mallorn_trapdoor": {
+      "like": "blocks/birch_trapdoor",
+      "M": 0,
+      "S": 0
+    },
+    "blocks/nectar_bloom_0": {
+      "like": "blocks/wheat_stage_0"
+    },
+    "blocks/nectar_bloom_1": {
+      "like": "blocks/flower_dandelion"
+    },
+    "blocks/nectar_bloom_2": {
+      "like": "blocks/flower_dandelion"
+    },
+    "blocks/nectar_bloom_3": {
+      "like": "blocks/flower_dandelion"
+    },
+    "blocks/niphredil": {
+      "like": "blocks/flower_lily_of_the_valley"
+    },
+    "blocks/phial_light": {
+      "exclude": "fully transparent helper texture"
+    },
+    "blocks/star_canopy": {
+      "light": 6,
+      "note": "E per colour as before; R from blocks/wool_colored_black (T7), S 0 as before",
+      "regions": [
+        {
+          "select": {
+            "colors": [
+              "#0a0e26"
+            ]
+          },
+          "like": "blocks/wool_colored_black",
+          "E": 0,
+          "R": 253,
+          "S": 0
+        },
+        {
+          "select": {
+            "colors": [
+              "#0e1230"
+            ]
+          },
+          "like": "blocks/wool_colored_black",
+          "E": 0,
+          "R": 252,
+          "S": 0
+        },
+        {
+          "select": {
+            "colors": [
+              "#12183c"
+            ]
+          },
+          "like": "blocks/wool_colored_black",
+          "E": 0,
+          "R": 250,
+          "S": 0
+        },
+        {
+          "select": {
+            "colors": [
+              "#161e48"
+            ]
+          },
+          "like": "blocks/wool_colored_black",
+          "E": 0,
+          "R": 248,
+          "S": 0
+        },
+        {
+          "select": {
+            "colors": [
+              "#606e96"
+            ]
+          },
+          "like": "blocks/wool_colored_black",
+          "E": 90,
+          "R": 223,
+          "S": 0
+        },
+        {
+          "select": {
+            "colors": [
+              "#96a4c8"
+            ]
+          },
+          "like": "blocks/wool_colored_black",
+          "E": 255,
+          "R": 206,
+          "S": 0
+        },
+        {
+          "select": {
+            "colors": [
+              "#ced8ee"
+            ]
+          },
+          "like": "blocks/wool_colored_black",
+          "E": 255,
+          "R": 190,
+          "S": 0
+        },
+        {
+          "select": {
+            "colors": [
+              "#f4f7ff"
+            ]
+          },
+          "like": "blocks/wool_colored_black",
+          "E": 255,
+          "R": 180,
+          "S": 0
+        }
+      ]
+    },
+    "blocks/western_corn_stage_0": {
+      "like": "blocks/wheat_stage_0"
+    },
+    "blocks/western_corn_stage_1": {
+      "like": "blocks/wheat_stage_1"
+    },
+    "blocks/western_corn_stage_2": {
+      "like": "blocks/wheat_stage_2"
+    },
+    "blocks/western_corn_stage_3": {
+      "like": "blocks/wheat_stage_3"
+    },
+    "blocks/western_corn_stage_4": {
+      "like": "blocks/wheat_stage_4"
+    },
+    "blocks/western_corn_stage_5": {
+      "like": "blocks/wheat_stage_5"
+    },
+    "blocks/western_corn_stage_6": {
+      "like": "blocks/wheat_stage_6"
+    },
+    "blocks/western_corn_stage_7": {
+      "like": "blocks/wheat_stage_7"
+    },
+    "entity/butterfly/butterfly_blue": {
+      "like": "entity/bee/bee"
+    },
+    "entity/butterfly/butterfly_lime": {
+      "like": "entity/bee/bee"
+    },
+    "entity/butterfly/butterfly_orange": {
+      "like": "entity/bee/bee"
+    },
+    "entity/butterfly/butterfly_pink": {
+      "like": "entity/bee/bee"
+    },
+    "entity/butterfly/butterfly_red": {
+      "like": "entity/bee/bee"
+    },
+    "entity/butterfly/butterfly_turquoise": {
+      "like": "entity/bee/bee"
+    },
+    "entity/butterfly/butterfly_violet": {
+      "like": "entity/bee/bee"
+    },
+    "entity/butterfly/butterfly_yellow": {
+      "like": "entity/bee/bee"
+    },
+    "entity/deer/deer": {
+      "regions": [
+        {
+          "select": {
+            "palette": "DEER_BONE"
+          },
+          "like": "items/bone"
+        },
+        {
+          "select": "rest",
+          "like": "entity/goat/goat"
+        }
+      ]
+    },
+    "entity/deer/deer_baby": {
+      "like": "entity/goat/goat"
+    },
+    "entity/deer/deer_white": {
+      "regions": [
+        {
+          "select": {
+            "palette": "DEER_BONE"
+          },
+          "like": "items/bone"
+        },
+        {
+          "select": "rest",
+          "like": "entity/horse2/horse_white"
+        }
+      ]
+    },
+    "entity/elf/gardener": {
+      "regions": [
+        {
+          "select": {
+            "palette": "GARDENER_STEEL"
+          },
+          "like": "models/armor/iron_1"
+        },
+        {
+          "select": "rest",
+          "like": "entity/wandering_trader",
+          "like_select": "mers:M==0"
+        }
+      ]
+    },
+    "entity/elf/healer": {
+      "regions": [
+        {
+          "select": "rest",
+          "like": "entity/wandering_trader",
+          "like_select": "mers:M==0"
+        }
+      ]
+    },
+    "entity/elf/lamplighter": {
+      "regions": [
+        {
+          "select": {
+            "palette": "ELF_SILVER"
+          },
+          "like": "models/armor/iron_1"
+        },
+        {
+          "select": {
+            "palette": "LAMPLIGHTER_GLASS"
+          },
+          "like": "items/lantern",
+          "like_select": "mers:E>0"
+        },
+        {
+          "select": "rest",
+          "like": "entity/wandering_trader",
+          "like_select": "mers:M==0"
+        }
+      ]
+    },
+    "entity/elf/loremaster": {
+      "regions": [
+        {
+          "select": {
+            "palette": "ELF_SILVER"
+          },
+          "like": "models/armor/iron_1"
+        },
+        {
+          "select": {
+            "palette": "ELF_GOLD"
+          },
+          "like": "blocks/gold_block"
+        },
+        {
+          "select": "rest",
+          "like": "entity/wandering_trader",
+          "like_select": "mers:M==0"
+        }
+      ]
+    },
+    "entity/elf/woodwright": {
+      "regions": [
+        {
+          "select": {
+            "palette": "WOODWRIGHT_STEEL"
+          },
+          "like": "models/armor/iron_1"
+        },
+        {
+          "select": "rest",
+          "like": "entity/wandering_trader",
+          "like_select": "mers:M==0"
+        }
+      ]
+    },
+    "entity/elven_warden/elven_warden": {
+      "regions": [
+        {
+          "select": {
+            "palette": "ELF_SILVER"
+          },
+          "like": "models/armor/iron_1"
+        },
+        {
+          "select": "rest",
+          "like": "entity/vindicator",
+          "like_select": "mers:M==0"
+        }
+      ]
+    },
+    "entity/firefly": {
+      "owner": "tools/make_firefly.py",
+      "note": "emissive abdomen verified glowing in game 1.26.52 (T9 kept)"
+    },
+    "entity/guide_beacon": {
+      "exclude": "fully transparent helper texture"
+    },
+    "entity/mallorn_boat": {
+      "regions": [
+        {
+          "select": {
+            "palette": "BOAT_GOLD"
+          },
+          "like": "blocks/gold_block"
+        },
+        {
+          "select": "rest",
+          "like": "entity/boat/boat_birch"
+        }
+      ]
+    },
+    "entity/mallorn_boat_pretty": {
+      "regions": [
+        {
+          "select": {
+            "palette": "BOAT_GOLD"
+          },
+          "like": "blocks/gold_block"
+        },
+        {
+          "select": "rest",
+          "like": "entity/boat/boat_birch"
+        }
+      ]
+    },
+    "entity/mallorn_chest_boat": {
+      "regions": [
+        {
+          "select": {
+            "palette": "BOAT_GOLD"
+          },
+          "like": "blocks/gold_block"
+        },
+        {
+          "select": "rest",
+          "like": "entity/boat/chest_boat_birch"
+        }
+      ]
+    },
+    "entity/mallorn_heartwood_boat": {
+      "regions": [
+        {
+          "select": {
+            "palette": "BOAT_SILVER"
+          },
+          "like": "models/armor/iron_1"
+        },
+        {
+          "select": "rest",
+          "like": "entity/boat/boat_oak"
+        }
+      ]
+    },
+    "entity/mallorn_heartwood_boat_pretty": {
+      "regions": [
+        {
+          "select": {
+            "palette": "BOAT_SILVER"
+          },
+          "like": "models/armor/iron_1"
+        },
+        {
+          "select": "rest",
+          "like": "entity/boat/boat_oak"
+        }
+      ]
+    },
+    "entity/mallorn_heartwood_chest_boat": {
+      "regions": [
+        {
+          "select": {
+            "palette": "BOAT_SILVER"
+          },
+          "like": "models/armor/iron_1"
+        },
+        {
+          "select": "rest",
+          "like": "entity/boat/chest_boat_oak"
+        }
+      ]
+    },
+    "entity/songbird/songbird_blue": {
+      "like": "entity/parrot/parrot_blue"
+    },
+    "entity/songbird/songbird_pink": {
+      "like": "entity/parrot/parrot_blue"
+    },
+    "entity/songbird/songbird_yellow": {
+      "like": "entity/parrot/parrot_blue"
+    },
+    "entity/squirrel/squirrel_brown": {
+      "like": "entity/fox/fox"
+    },
+    "entity/squirrel/squirrel_dark": {
+      "like": "entity/fox/fox"
+    },
+    "entity/squirrel/squirrel_russet": {
+      "like": "entity/fox/fox"
+    },
+    "entity/swan/swan": {
+      "like": "entity/chicken/chicken"
+    },
+    "entity/unicorn/unicorn": {
+      "regions": [
+        {
+          "select": {
+            "palette": "UNICORN_HORN"
+          },
+          "like": "items/amethyst_shard"
+        },
+        {
+          "select": "rest",
+          "like": "entity/horse2/horse_white"
+        }
+      ]
+    },
+    "items/athelas": {
+      "like": "blocks/fern"
+    },
+    "items/athelas_salve": {
+      "like": "items/honey_bottle"
+    },
+    "items/bottle_of_fireflies": {
+      "regions": [
+        {
+          "select": {
+            "palette": "JAR_ICON_FLIES"
+          },
+          "like": "items/experience_bottle",
+          "like_select": "mers:E>0"
+        },
+        {
+          "select": "rest",
+          "like": "items/experience_bottle"
+        }
+      ]
+    },
+    "items/deer_antler": {
+      "like": "items/bone"
+    },
+    "items/dew_bottle": {
+      "like": "items/potion_bottle_drinkable"
+    },
+    "items/elanor": {
+      "like": "blocks/flower_dandelion"
+    },
+    "items/elven_chandelier": {
+      "regions": [
+        {
+          "select": {
+            "palette": "ICON_GOLD"
+          },
+          "like": "blocks/gold_block"
+        },
+        {
+          "select": {
+            "palette": "CHANDELIER_ICON_GLOW"
+          },
+          "like": "items/lantern",
+          "like_select": "mers:E>0"
+        },
+        {
+          "select": "rest",
+          "like": "blocks/planks_birch"
+        }
+      ]
+    },
+    "items/elven_cloak": {
+      "like": "items/leather_chestplate"
+    },
+    "items/elven_lantern": {
+      "regions": [
+        {
+          "select": {
+            "palette": "ICON_GOLD"
+          },
+          "like": "blocks/gold_block"
+        },
+        {
+          "select": {
+            "palette": "LANTERN_ICON_GLOW"
+          },
+          "like": "items/lantern",
+          "like_select": "mers:E>0"
+        },
+        {
+          "select": "rest",
+          "like": "blocks/planks_birch"
+        }
+      ]
+    },
+    "items/elven_lantern_heartwood": {
+      "regions": [
+        {
+          "select": {
+            "palette": "ICON_SILVER"
+          },
+          "like": "models/armor/iron_1"
+        },
+        {
+          "select": {
+            "palette": "LANTERN_ICON_GLOW"
+          },
+          "like": "items/lantern",
+          "like_select": "mers:E>0"
+        },
+        {
+          "select": "rest",
+          "like": "blocks/planks_oak"
+        }
+      ]
+    },
+    "items/elven_rope": {
+      "like": "items/lead",
+      "like_select": "mers:M==0"
+    },
+    "items/empty_miruvor_skin": {
+      "like": "items/leather"
+    },
+    "items/firefly_jar": {
+      "regions": [
+        {
+          "select": {
+            "palette": "ICON_GOLD"
+          },
+          "like": "blocks/gold_block"
+        },
+        {
+          "select": {
+            "palette": "JAR_ICON_FLIES"
+          },
+          "like": "items/lantern",
+          "like_select": "mers:E>0"
+        },
+        {
+          "select": {
+            "palette": "JAR_MOSS_LEAF"
+          },
+          "like": "blocks/fern",
+          "S": 0
+        },
+        {
+          "select": {
+            "palette": "JAR_ICON_LID"
+          },
+          "like": "blocks/planks_birch"
+        },
+        {
+          "select": "rest",
+          "like": "blocks/glass"
+        }
+      ]
+    },
+    "items/galadhrim_arrow": {
+      "like": "items/arrow"
+    },
+    "items/galadhrim_bow": {
+      "like": "items/bow_standby"
+    },
+    "items/galadhrim_bow_pulling_0": {
+      "like": "items/bow_pulling_0"
+    },
+    "items/galadhrim_bow_pulling_1": {
+      "like": "items/bow_pulling_1"
+    },
+    "items/galadhrim_bow_pulling_2": {
+      "like": "items/bow_pulling_2"
+    },
+    "items/golden_fern": {
+      "like": "blocks/fern"
+    },
+    "items/great_mallorn_nut": {
+      "regions": [
+        {
+          "select": {
+            "colors": [
+              "#aab8cc",
+              "#d4e0ec",
+              "#566278",
+              "#7e8ca2",
+              "#f8fcff"
+            ]
+          },
+          "like": "items/iron_ingot"
+        },
+        {
+          "select": "rest",
+          "like": "items/apple"
+        }
+      ]
+    },
+    "items/lembas_cake": {
+      "like": "items/bread"
+    },
+    "items/lembas_dough": {
+      "like": "items/bread"
+    },
+    "items/lembas_wrapped": {
+      "regions": [
+        {
+          "select": {
+            "colors": [
+              "#fff0b2",
+              "#d9ab52",
+              "#966034",
+              "#edcf7b"
+            ]
+          },
+          "like": "items/bread"
+        },
+        {
+          "select": "rest",
+          "like": "blocks/leaves_birch"
+        }
+      ]
+    },
+    "items/mallorn_acorn": {
+      "like": "items/apple"
+    },
+    "items/mallorn_blossom": {
+      "like": "blocks/pink_petals"
+    },
+    "items/mallorn_boat": {
+      "regions": [
+        {
+          "select": {
+            "palette": "BOAT_GOLD"
+          },
+          "like": "blocks/gold_block"
+        },
+        {
+          "select": "rest",
+          "like": "items/boat_birch"
+        }
+      ]
+    },
+    "items/mallorn_chest_boat": {
+      "regions": [
+        {
+          "select": {
+            "palette": "BOAT_GOLD"
+          },
+          "like": "blocks/gold_block"
+        },
+        {
+          "select": "rest",
+          "like": "items/birch_chest_boat"
+        }
+      ]
+    },
+    "items/mallorn_door": {
+      "like": "items/door_birch",
+      "M": 0,
+      "S": 0
+    },
+    "items/mallorn_heartwood_boat": {
+      "regions": [
+        {
+          "select": {
+            "palette": "BOAT_SILVER"
+          },
+          "like": "models/armor/iron_1"
+        },
+        {
+          "select": "rest",
+          "like": "items/boat_oak"
+        }
+      ]
+    },
+    "items/mallorn_heartwood_chest_boat": {
+      "regions": [
+        {
+          "select": {
+            "palette": "BOAT_SILVER"
+          },
+          "like": "models/armor/iron_1"
+        },
+        {
+          "select": "rest",
+          "like": "items/oak_chest_boat"
+        }
+      ]
+    },
+    "items/mallorn_heartwood_door": {
+      "like": "items/door_wood",
+      "like_select": "mers:M==0"
+    },
+    "items/mallorn_leaf_carpet": {
+      "like": "blocks/leaf_litter"
+    },
+    "items/mallorn_nectar": {
+      "like": "items/honey_bottle"
+    },
+    "items/miruvor": {
+      "like": "items/leather"
+    },
+    "items/morning_dew": {
+      "like": "items/potion_bottle_drinkable"
+    },
+    "items/nectar_bloom": {
+      "like": "blocks/flower_dandelion"
+    },
+    "items/niphredil": {
+      "like": "blocks/flower_lily_of_the_valley"
+    },
+    "items/phial_of_galadriel": {
+      "regions": [
+        {
+          "select": {
+            "colors": [
+              "#f2ffff"
+            ]
+          },
+          "like": "items/potion_bottle_drinkable",
+          "emissive": {
+            "like": "items/nether_star",
+            "like_select": "mers:E>0"
+          }
+        },
+        {
+          "select": "rest",
+          "like": "items/potion_bottle_drinkable"
+        }
+      ]
+    },
+    "items/silver_belt": {
+      "like": "items/iron_chestplate"
+    },
+    "items/spawn_eggs/spawn_egg_butterfly": {
+      "like": "items/spawn_eggs/spawn_egg_bee"
+    },
+    "items/spawn_eggs/spawn_egg_deer": {
+      "like": "items/spawn_eggs/spawn_egg_goat"
+    },
+    "items/spawn_eggs/spawn_egg_elf": {
+      "like": "items/spawn_eggs/spawn_egg_villager"
+    },
+    "items/spawn_eggs/spawn_egg_elven_warden": {
+      "like": "items/spawn_eggs/spawn_egg_vindicator"
+    },
+    "items/spawn_eggs/spawn_egg_firefly": {
+      "regions": [
+        {
+          "select": {
+            "palette": "FIREFLY_EGG_ABDOMEN"
+          },
+          "like": "items/spawn_eggs/spawn_egg_allay",
+          "like_select": "mers:E>0"
+        },
+        {
+          "select": "rest",
+          "like": "items/spawn_eggs/spawn_egg_allay",
+          "E": 0
+        }
+      ]
+    },
+    "items/spawn_eggs/spawn_egg_songbird": {
+      "like": "items/spawn_eggs/spawn_egg_parrot"
+    },
+    "items/spawn_eggs/spawn_egg_squirrel": {
+      "like": "items/spawn_eggs/spawn_egg_fox"
+    },
+    "items/spawn_eggs/spawn_egg_swan": {
+      "like": "items/spawn_eggs/spawn_egg_chicken"
+    },
+    "items/spawn_eggs/spawn_egg_unicorn": {
+      "like": "items/spawn_eggs/spawn_egg_horse"
+    },
+    "items/spawn_eggs/spawn_egg_white_deer": {
+      "like": "items/spawn_eggs/spawn_egg_goat"
+    },
+    "items/swan_meat_cooked": {
+      "like": "items/chicken_cooked"
+    },
+    "items/swan_meat_raw": {
+      "like": "items/chicken_raw"
+    },
+    "items/venison_cooked": {
+      "like": "items/beef_cooked"
+    },
+    "items/venison_raw": {
+      "like": "items/beef_raw"
+    },
+    "items/western_corn_grain": {
+      "like": "items/wheat"
+    },
+    "items/western_corn_seeds": {
+      "like": "items/seeds_wheat"
+    },
+    "models/elven_cloak": {
+      "like": "models/armor/leather_1"
+    },
+    "models/silver_belt": {
+      "like": "models/armor/iron_1"
+    },
+    "particle/mallorn_leaf": {
+      "like": "particle/pale_oak_leaves_atlas"
+    }
+  }
+}

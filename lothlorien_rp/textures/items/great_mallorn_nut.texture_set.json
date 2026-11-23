@@ -1,0 +1,7 @@
+{
+  "format_version": "1.21.30",
+  "minecraft:texture_set": {
+    "color": "great_mallorn_nut",
+    "metalness_emissive_roughness_subsurface": "great_mallorn_nut_mers"
+  }
+}

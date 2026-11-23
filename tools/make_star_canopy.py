@@ -3,10 +3,9 @@
     python -B mods/lothlorien/tools/make_star_canopy.py
 
 Output (overwritten every run): lothlorien_bp/blocks/star_canopy.json, items/star_canopy.json,
-recipes/star_canopy.json, lothlorien_rp/textures/blocks/star_canopy.png (+ star_canopy_mers.tga,
-star_canopy.texture_set.json) and lothlorien_rp/textures/flipbook_textures.json (merged, other entries kept).
+recipes/star_canopy.json, lothlorien_rp/textures/blocks/star_canopy.png and lothlorien_rp/textures/flipbook_textures.json (merged, other entries kept).
 The texture is a vertical strip of FRAMES 16x16 frames, flipbooked with blended frames: silver stars on deep night
-blue, each star on its own phase so they twinkle slowly. Under Vibrant Visuals the stars glow (emissive MERS channel).
+blue, each star on its own phase so they twinkle slowly. Under Vibrant Visuals the stars glow (emissive MERS channel, tools/pbr_spec.json).
 """
 import json
 import random
@@ -76,9 +75,8 @@ def main():
     img, mers = strip()
     (RP / "textures/blocks").mkdir(parents=True, exist_ok=True)
     img.save(RP / "textures/blocks/star_canopy.png")
-    mers.save(RP / "textures/blocks/star_canopy_mers.tga")
-    dump(RP / "textures/blocks/star_canopy.texture_set.json", {"format_version": "1.21.30", "minecraft:texture_set": {
-        "color": "star_canopy", "metalness_emissive_roughness_subsurface": "star_canopy_mers"}})
+    # star_canopy_mers.tga and the texture set come from tools/pbr_spec.json (pbr_mers.py, make_pbr row): the stars'
+    # emissive values there are the ones that used to be written here
 
     flip = RP / "textures/flipbook_textures.json"
     entries = json.loads(flip.read_text()) if flip.exists() else []

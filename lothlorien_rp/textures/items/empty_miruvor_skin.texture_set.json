@@ -1,0 +1,7 @@
+{
+  "format_version": "1.21.30",
+  "minecraft:texture_set": {
+    "color": "empty_miruvor_skin",
+    "metalness_emissive_roughness_subsurface": "empty_miruvor_skin_mers"
+  }
+}

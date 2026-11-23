@@ -21,6 +21,7 @@ Towering Mallorn woodland, wildlife, elven villages and a forest that remembers 
 - **Sindarin voice:** elves and wardens speak short Sindarin phrases.
 - **Soundscape:** harp music in elven villages, and sounds at shrines and memorials.
 - **Items:** the Bow of the Galadhrim and its arrows, the Phial of Galadriel, lembas, Miruvor, Athelas salve, elven cloak and silver belt, firefly jars and more.
+- **Vibrant Visuals:** with Vibrant Visuals on, Mallorn wood shines like pale birch and heartwood like oak, leaves and petals let the light shine through, gold and silver trim gleams, and lanterns, fireflies and the star canopy glow. Without it nothing changes.
 - **Elf skins:** the skin pack "Elves of Lothlórien" with six skins for your character: Warden, Sentinel, Forester, Pathfinder, Highborn Lady and Highborn Lord.
 
 ## Install

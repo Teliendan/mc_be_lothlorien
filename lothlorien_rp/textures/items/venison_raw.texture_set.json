@@ -1,0 +1,7 @@
+{
+  "format_version": "1.21.30",
+  "minecraft:texture_set": {
+    "color": "venison_raw",
+    "metalness_emissive_roughness_subsurface": "venison_raw_mers"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "format_version": "1.21.30",
+  "minecraft:texture_set": {
+    "color": "squirrel_russet",
+    "metalness_emissive_roughness_subsurface": "squirrel_russet_mers"
+  }
+}

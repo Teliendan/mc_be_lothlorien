@@ -1,0 +1,7 @@
+{
+  "format_version": "1.21.30",
+  "minecraft:texture_set": {
+    "color": "western_corn_grain",
+    "metalness_emissive_roughness_subsurface": "western_corn_grain_mers"
+  }
+}
