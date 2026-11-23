@@ -20528,7 +20528,7 @@
         "pack.name": {
           "source": "Lothlórien — Skin Pack",
           "context": {
-            "meaning": "Pack title for lothlorien_skins, the mod's player skin pack (skins the player can wear). Keep the mod brand unchanged.",
+            "meaning": "Name of lothlorien_skins, the mod's player skin pack, shown on import and in Storage. English only: build writes it into the manifest as a literal, because the game does not resolve .lang keys in a skin pack's manifest (it showed \"pack.name\", owner, 2026-11-23). Keep the mod brand unchanged.",
             "location": "lothlorien_skins: pack lists and storage screens",
             "trigger": "Shown when the player views this pack.",
             "tone": "Concise Minecraft UI",
@@ -20536,53 +20536,12 @@
             "constraints": "Preserve Lothlórien and the Lothlorien brand spelling; no Tolkien character names."
           },
           "placeholders": [],
-          "translations": {
-            "cs_CZ": {
-              "text": "Lothlórien — Sada skinů",
-              "based_on": "13409d24f26155f150687c44d0a98a78e67e5a7256303a6f6cae68f5a3908f69",
-              "status": "ai-draft"
-            },
-            "es_ES": {
-              "text": "Lothlórien — Pack de aspectos",
-              "based_on": "13409d24f26155f150687c44d0a98a78e67e5a7256303a6f6cae68f5a3908f69",
-              "status": "ai-draft"
-            },
-            "es_MX": {
-              "text": "Lothlórien — Pack de aspectos",
-              "based_on": "13409d24f26155f150687c44d0a98a78e67e5a7256303a6f6cae68f5a3908f69",
-              "status": "ai-draft"
-            },
-            "pt_PT": {
-              "text": "Lothlórien — Pack de Skins",
-              "based_on": "13409d24f26155f150687c44d0a98a78e67e5a7256303a6f6cae68f5a3908f69",
-              "status": "ai-draft"
-            },
-            "pt_BR": {
-              "text": "Lothlórien — Pacote de Aparências",
-              "based_on": "13409d24f26155f150687c44d0a98a78e67e5a7256303a6f6cae68f5a3908f69",
-              "status": "ai-draft"
-            },
-            "de_DE": {
-              "text": "Lothlórien — Skinpaket",
-              "based_on": "13409d24f26155f150687c44d0a98a78e67e5a7256303a6f6cae68f5a3908f69",
-              "status": "ai-draft"
-            },
-            "fr_FR": {
-              "text": "Lothlórien — Pack de skins",
-              "based_on": "13409d24f26155f150687c44d0a98a78e67e5a7256303a6f6cae68f5a3908f69",
-              "status": "ai-draft"
-            },
-            "pl_PL": {
-              "text": "Lothlórien — Zestaw skórek",
-              "based_on": "13409d24f26155f150687c44d0a98a78e67e5a7256303a6f6cae68f5a3908f69",
-              "status": "ai-draft"
-            }
-          }
+          "translations": {}
         },
         "pack.description": {
           "source": "Lothlórien skin pack: elven player skins from the Golden Wood.",
           "context": {
-            "meaning": "Pack description for lothlorien_skins: player skins showing elves of Lothlórien.",
+            "meaning": "Description of lothlorien_skins, the mod's player skin pack: player skins showing elves of Lothlórien. English only: build writes it into the manifest as a literal, prefixed with the version.",
             "location": "lothlorien_skins: pack details",
             "trigger": "Shown when the player views this pack.",
             "tone": "Concise Minecraft UI",
@@ -20590,48 +20549,7 @@
             "constraints": "Preserve Lothlórien and the Lothlorien brand spelling; no Tolkien character names."
           },
           "placeholders": [],
-          "translations": {
-            "cs_CZ": {
-              "text": "Sada skinů Lothlórien: elfové ze Zlatého lesa.",
-              "based_on": "b113a248aa770c88d75528a55c19fc5e3dbd41a6b8bc02863dceef6bd88c218b",
-              "status": "ai-draft"
-            },
-            "es_ES": {
-              "text": "Pack de aspectos de Lothlórien: aspectos élficos del Bosque Dorado.",
-              "based_on": "b113a248aa770c88d75528a55c19fc5e3dbd41a6b8bc02863dceef6bd88c218b",
-              "status": "ai-draft"
-            },
-            "es_MX": {
-              "text": "Pack de aspectos de Lothlórien: aspectos élficos del Bosque Dorado.",
-              "based_on": "b113a248aa770c88d75528a55c19fc5e3dbd41a6b8bc02863dceef6bd88c218b",
-              "status": "ai-draft"
-            },
-            "pt_PT": {
-              "text": "Pack de skins de Lothlórien: skins de elfos do Bosque Dourado.",
-              "based_on": "b113a248aa770c88d75528a55c19fc5e3dbd41a6b8bc02863dceef6bd88c218b",
-              "status": "ai-draft"
-            },
-            "pt_BR": {
-              "text": "Pacote de aparências de Lothlórien: aparências élficas do Bosque Dourado.",
-              "based_on": "b113a248aa770c88d75528a55c19fc5e3dbd41a6b8bc02863dceef6bd88c218b",
-              "status": "ai-draft"
-            },
-            "de_DE": {
-              "text": "Lothlórien-Skinpaket: Elben-Skins aus dem Goldenen Wald.",
-              "based_on": "b113a248aa770c88d75528a55c19fc5e3dbd41a6b8bc02863dceef6bd88c218b",
-              "status": "ai-draft"
-            },
-            "fr_FR": {
-              "text": "Pack de skins de Lothlórien : des skins d’elfes du Bois Doré.",
-              "based_on": "b113a248aa770c88d75528a55c19fc5e3dbd41a6b8bc02863dceef6bd88c218b",
-              "status": "ai-draft"
-            },
-            "pl_PL": {
-              "text": "Zestaw skórek Lothlórien: skórki elfów ze Złotego Lasu.",
-              "based_on": "b113a248aa770c88d75528a55c19fc5e3dbd41a6b8bc02863dceef6bd88c218b",
-              "status": "ai-draft"
-            }
-          }
+          "translations": {}
         },
         "skinpack.Lothlorien": {
           "source": "Elves of Lothlórien",
