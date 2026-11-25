@@ -30,16 +30,24 @@ export function nearBiome(sample, biomeId) {
 // Natural-spawn surface rule. The spawn rule is the fish pattern (any depth of water), so a natural swan can start
 // submerged or under a bank. typeAt(blockY) -> typeId of the block at the swan's x,z (undefined = unloaded).
 // Returns {action: "keep"} (not in water, or already at the open surface), {action: "move", y} (open water above it: float
-// at the top water block y) or {action: "remove"} (the top water block has a bank or anything else overhead).
+// at the top water block y) or {action: "remove"} (the top water block has a bank or anything else overhead, or the water
+// stands on a block of the mod: a village basin, the Hall trough or the stream falling from it, owner 2026-11-25).
 // ASSUMPTION (in-game check): a swimming swan has floor(location.y) == the top water block, or the air block just above it.
 export const WATER_TYPES = ["minecraft:water", "minecraft:flowing_water"];
 export const WATER_SCAN_MAX = 16;
+// Lakes and rivers lie on terrain; village water lies on Mallorn decks. Deeper water than this is natural (a vessel is 1
+// deep, the stream column shorter than the Hall-to-Court drop). A prop root on a lake bed under the swan also removes it: rare, a lost spawn only.
+export const FLOOR_SCAN_MAX = 32;
+export const BUILT_FLOOR = /^lothlorien:/;
 
 export function surfaceAction(locationY, typeAt) {
   const isWater = y => WATER_TYPES.includes(typeAt(y));
   const fy = Math.floor(locationY);
   let top = isWater(fy) ? fy : isWater(fy - 1) ? fy - 1 : null;
   if (top === null) return { action: "keep" };
+  let bottom = top;
+  for (let i = 0; i < FLOOR_SCAN_MAX && isWater(bottom - 1); i++) bottom--;
+  if (BUILT_FLOOR.test(typeAt(bottom - 1) ?? "")) return { action: "remove" };
   for (let i = 0; i < WATER_SCAN_MAX && isWater(top + 1); i++) top++;
   if (typeAt(top + 1) !== "minecraft:air" || typeAt(top + 2) !== "minecraft:air") return { action: "remove" };
   if (fy === top || fy === top + 1) return { action: "keep" };

@@ -60,6 +60,14 @@ await test("natural swan surface rule: deep open water moves up, bank removes, s
   assert.deepEqual(S.surfaceAction(62.5, column([60, 61, 62])), { action: "keep" });
   assert.deepEqual(S.surfaceAction(63.0, column([60, 61, 62])), { action: "keep" });
   assert.deepEqual(S.surfaceAction(65, column([])), { action: "keep" });
+  // village water stands on Mallorn decks: a basin, the Hall trough, a swan in the stream falling into the Court basin
+  assert.deepEqual(S.surfaceAction(80.5, column([80], { 79: "lothlorien:mallorn_planks" })), { action: "remove" });
+  assert.deepEqual(S.surfaceAction(91.0, column([90], { 89: "lothlorien:mallorn_heartwood_planks" })), { action: "remove" });
+  assert.deepEqual(S.surfaceAction(84.5, column([80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90], { 79: "lothlorien:mallorn_planks" })), { action: "remove" });
+  assert.deepEqual(S.surfaceAction(62.5, column([60, 61, 62], { 59: "minecraft:gravel" })), { action: "keep" });
+  assert.deepEqual(S.surfaceAction(62.5, y => y < 60 ? undefined : column([60, 61, 62])(y)), { action: "keep" }); // unloaded bed
+  const lake = Array.from({ length: 40 }, (_, i) => 23 + i); // deeper than the floor scan: natural, whatever lies below
+  assert.deepEqual(S.surfaceAction(62.5, column(lake, { 22: "lothlorien:mallorn_log" })), { action: "keep" });
   const deep = Array.from({ length: 40 }, (_, i) => 10 + i); // scan stops at the cap
   assert.equal(S.surfaceAction(10.5, column(deep)).action, "remove");
   const h = await setup(), m = await load("swan", { ...h.base, ...S }, "\nexport { judgeNaturalSpawn };\n");
