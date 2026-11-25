@@ -59,11 +59,16 @@ test("LM-01: swan and squirrel fly natively by band tag (state_wild, state_alarm
 });
 function adds2(ev) { return JSON.stringify(ev).includes("lothlorien:state_wild"); }
 
-test("swan floats on the surface like the chicken (float goal, path over water; no fish-style swimming) and drops a feather", () => {
+test("swan floats on the surface with horse-style buoyancy but no bobbing (path over water; no fish-style swimming) and drops a feather", () => {
   const e = swanEntity();
-  assert.ok("minecraft:behavior.float" in e.components, "float goal keeps it on the surface");
+  assert.equal(e.components["minecraft:behavior.float"].chance_per_tick_to_float, 0, "buoyancy, not the float goal, holds it up (horse 1.26.60)");
   assert.equal(e.components["minecraft:navigation.walk"].can_path_over_water, true);
-  assert.ok(!("minecraft:buoyant" in e.components), "buoyant sank the swan to the bottom (game log: simulate_waves not valid; 2026-10-02)");
+  const b = e.components["minecraft:buoyant"];
+  assert.equal(b.movement_type, "none", "26.10 field; bobbing bounced the swan fully under (owner, 2026-11-25); the obsolete simulate_waves sank it (2026-10-02)");
+  assert.ok(!("simulate_waves" in b));
+  assert.equal(b.base_buoyancy, 0.6, "1.0 held it on the surface film: no steering, constant splashing; 0.6 swims (owner, side-by-side 0.9/0.75/0.6, 2026-11-25)");
+  assert.equal(b.apply_gravity, false);
+  assert.deepEqual(b.liquid_blocks, ["minecraft:water", "minecraft:flowing_water"]);
   for (const k of ["minecraft:behavior.random_swim", "minecraft:navigation.generic", "minecraft:movement.amphibious"]) assert.ok(!(k in e.components), `${k} makes it dive`);
   assert.deepEqual(e.components["minecraft:despawn"], { despawn_from_distance: {} });
   const loot = readJson("../lothlorien_bp/loot_tables/entities/swan.json").pools[0].entries.map((x) => x.name);

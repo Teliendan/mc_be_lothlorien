@@ -690,7 +690,18 @@
         "using_door_annotation": true
       },
       "minecraft:behavior.float": {
-        "priority": 0
+        "priority": 0,
+        "chance_per_tick_to_float": 0.0
+      },
+      "minecraft:buoyant": {
+        "base_buoyancy": 0.6,
+        "apply_gravity": false,
+        "can_auto_step_from_liquid": true,
+        "movement_type": "none",
+        "liquid_blocks": [
+          "minecraft:water",
+          "minecraft:flowing_water"
+        ]
       },
       "minecraft:offspring": {
         "offspring_pairs": {

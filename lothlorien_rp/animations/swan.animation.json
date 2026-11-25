@@ -60,7 +60,7 @@
         "body": {
           "position": [
             0,
-            "math.sin(query.life_time * 100.0) * 0.25 - 1.5",
+            "math.sin(query.life_time * 100.0) * 0.25 + 0.0",
             0
           ]
         },
