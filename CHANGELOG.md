@@ -2,6 +2,23 @@
 
 Player-facing changes of each published release, newest first.
 
+## 0.9.1 (2026-11-25)
+
+> ⚠ Changes marked ⚠ change or remove content in existing worlds. Back up your worlds first.
+
+### Changed
+
+- **Harmony**: Your Harmony status no longer stays on screen the whole time you are in the forest. It now shows for a few seconds when it matters: when you enter the forest, when it changes or a deed costs Harmony, when an animal or an elf turns you away, and when a warden greets you or starts shooting. Elf conversation windows show it in grey below the elf's words, with your Renown.
+- With Vibrant Visuals on, the forest's blocks now catch the light: Mallorn wood and heartwood get a natural wood finish, leaves and petals let light shine through, gold and silver trim gleam, glass reflects, and lanterns, fireflies, the star canopy and the Great Mallorn sprout glow. The textures themselves stay the same, and without Vibrant Visuals nothing changes.
+- **Western Corn Grain**: In the translated languages, Western Corn Grain is now named as ears of grain (for example "Klas" in Czech, "Épi" in French), so it no longer looks like the seeds you plant.
+
+### Fixed
+
+- **Mallorn Acorn**: A Mallorn Acorn or Great Mallorn Nut taken out of a flower pot now comes back as the acorn or nut, instead of a separate sapling or sprout item. Saplings and sprouts planted before this version are lost. ⚠
+- The skin pack now shows its real name when you import the add-on, instead of "pack.name".
+- **Swan**: Swans now float steadily on the water instead of sinking up to the neck or head now and then.
+- **Swan**: Swans no longer spawn in the small water basins up in elven villages. Wild swans now appear only on open water at least 4 by 4 blocks across, such as lakes, rivers and large ponds; swans you breed, hatch or lead go anywhere as before.
+
 ## 0.9.0 (2026-11-22)
 
 > Changes marked 🌱 appear only in newly generated chunks: explore new areas or start a new world.

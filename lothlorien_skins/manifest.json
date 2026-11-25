@@ -2,12 +2,12 @@
     "format_version": 2,
     "header": {
         "name": "Lothlórien — Skin Pack",
-        "description": "v0.9.0 · Lothlórien skin pack: elven player skins from the Golden Wood.",
+        "description": "v0.9.1 · Lothlórien skin pack: elven player skins from the Golden Wood.",
         "uuid": "55a2efbb-ebcd-457b-b19d-2ce3d4ae2dd9",
         "version": [
             0,
             9,
-            0
+            1
         ]
     },
     "modules": [
