@@ -3858,7 +3858,7 @@
         "item.lothlorien:western_corn_seeds": {
           "source": "Western Corn Seeds",
           "context": {
-            "meaning": "Plantable seeds of the Western Corn cereal crop; corn means grain, not specifically maize.",
+            "meaning": "The plantable kernels of the Western Corn cereal crop (the icon shows loose kernels). Must read clearly different from Western Corn Grain, the harvested ears that cannot be planted; in Czech the kernel of a cereal is zrno, not semínko. Corn means grain, not maize.",
             "location": "lothlorien_rp: inventory/block tooltip, entity name or spawn egg",
             "trigger": "Viewed in inventory, Creative inventory, block targeting or entity UI, as appropriate to this key.",
             "tone": "Clear Minecraft UI",
@@ -3868,43 +3868,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Semínka západního obilí",
-              "based_on": "ae3722f6a8922acd44f1e622663552ec83b5edb5805b789483c8908449e21759",
+              "text": "Zrno západního obilí",
+              "based_on": "bfbd8b52f1f5e406c587b0659d044c68db584758824f0121f4654d6e44fee4f9",
               "status": "ai-draft"
             },
             "es_ES": {
               "text": "Semillas de cereal del Oeste",
-              "based_on": "ae3722f6a8922acd44f1e622663552ec83b5edb5805b789483c8908449e21759",
+              "based_on": "bfbd8b52f1f5e406c587b0659d044c68db584758824f0121f4654d6e44fee4f9",
               "status": "ai-draft"
             },
             "es_MX": {
               "text": "Semillas de cereal del Oeste",
-              "based_on": "ae3722f6a8922acd44f1e622663552ec83b5edb5805b789483c8908449e21759",
+              "based_on": "bfbd8b52f1f5e406c587b0659d044c68db584758824f0121f4654d6e44fee4f9",
               "status": "ai-draft"
             },
             "pt_PT": {
               "text": "Sementes de Cereal do Oeste",
-              "based_on": "ae3722f6a8922acd44f1e622663552ec83b5edb5805b789483c8908449e21759",
+              "based_on": "bfbd8b52f1f5e406c587b0659d044c68db584758824f0121f4654d6e44fee4f9",
               "status": "ai-draft"
             },
             "pt_BR": {
               "text": "Sementes de Cereal do Oeste",
-              "based_on": "ae3722f6a8922acd44f1e622663552ec83b5edb5805b789483c8908449e21759",
+              "based_on": "bfbd8b52f1f5e406c587b0659d044c68db584758824f0121f4654d6e44fee4f9",
               "status": "ai-draft"
             },
             "de_DE": {
               "text": "Westkornsamen",
-              "based_on": "ae3722f6a8922acd44f1e622663552ec83b5edb5805b789483c8908449e21759",
+              "based_on": "bfbd8b52f1f5e406c587b0659d044c68db584758824f0121f4654d6e44fee4f9",
               "status": "ai-draft"
             },
             "fr_FR": {
               "text": "Graines de céréale de l’Ouest",
-              "based_on": "ae3722f6a8922acd44f1e622663552ec83b5edb5805b789483c8908449e21759",
+              "based_on": "bfbd8b52f1f5e406c587b0659d044c68db584758824f0121f4654d6e44fee4f9",
               "status": "ai-draft"
             },
             "pl_PL": {
               "text": "Nasiona zboża Zachodu",
-              "based_on": "ae3722f6a8922acd44f1e622663552ec83b5edb5805b789483c8908449e21759",
+              "based_on": "bfbd8b52f1f5e406c587b0659d044c68db584758824f0121f4654d6e44fee4f9",
               "status": "ai-draft"
             }
           }
@@ -3912,7 +3912,7 @@
         "item.lothlorien:western_corn_grain": {
           "source": "Western Corn Grain",
           "context": {
-            "meaning": "Harvested cereal grain, used for food and feeding deer; not seeds for planting and not specifically maize.",
+            "meaning": "Harvested ears of the Western Corn cereal (the icon shows ears of grain on short stalks); used for food, Lembas Dough and feeding deer, swans and songbirds. It cannot be planted. Translate as ear(s) of grain (Czech klas, Polish kłos, French épi, Spanish/Portuguese espiga, German Ähre) so it reads clearly different from Western Corn Seeds, the plantable kernels. Not maize: no cob words.",
             "location": "lothlorien_rp: inventory/block tooltip, entity name or spawn egg",
             "trigger": "Viewed in inventory, Creative inventory, block targeting or entity UI, as appropriate to this key.",
             "tone": "Clear Minecraft UI",
@@ -3922,43 +3922,43 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Zrní západního obilí",
-              "based_on": "f4afa97e4e1714abbae2f4b197f0a66f6ffc72633feee8ed01cfbd0c4fcb1bd0",
+              "text": "Klas západního obilí",
+              "based_on": "3aee77b3962156a9ac860b8e9c0138de1a984c8c58067b7988eb4e240b0d13f6",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "Grano de cereal del Oeste",
-              "based_on": "f4afa97e4e1714abbae2f4b197f0a66f6ffc72633feee8ed01cfbd0c4fcb1bd0",
+              "text": "Espiga de cereal del Oeste",
+              "based_on": "3aee77b3962156a9ac860b8e9c0138de1a984c8c58067b7988eb4e240b0d13f6",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "Grano de cereal del Oeste",
-              "based_on": "f4afa97e4e1714abbae2f4b197f0a66f6ffc72633feee8ed01cfbd0c4fcb1bd0",
+              "text": "Espiga de cereal del Oeste",
+              "based_on": "3aee77b3962156a9ac860b8e9c0138de1a984c8c58067b7988eb4e240b0d13f6",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Grão de Cereal do Oeste",
-              "based_on": "f4afa97e4e1714abbae2f4b197f0a66f6ffc72633feee8ed01cfbd0c4fcb1bd0",
+              "text": "Espiga de Cereal do Oeste",
+              "based_on": "3aee77b3962156a9ac860b8e9c0138de1a984c8c58067b7988eb4e240b0d13f6",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Grão de Cereal do Oeste",
-              "based_on": "f4afa97e4e1714abbae2f4b197f0a66f6ffc72633feee8ed01cfbd0c4fcb1bd0",
+              "text": "Espiga de Cereal do Oeste",
+              "based_on": "3aee77b3962156a9ac860b8e9c0138de1a984c8c58067b7988eb4e240b0d13f6",
               "status": "ai-draft"
             },
             "de_DE": {
               "text": "Westkornähre",
-              "based_on": "f4afa97e4e1714abbae2f4b197f0a66f6ffc72633feee8ed01cfbd0c4fcb1bd0",
+              "based_on": "3aee77b3962156a9ac860b8e9c0138de1a984c8c58067b7988eb4e240b0d13f6",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Grain de céréale de l’Ouest",
-              "based_on": "f4afa97e4e1714abbae2f4b197f0a66f6ffc72633feee8ed01cfbd0c4fcb1bd0",
+              "text": "Épi de céréale de l’Ouest",
+              "based_on": "3aee77b3962156a9ac860b8e9c0138de1a984c8c58067b7988eb4e240b0d13f6",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Ziarno zboża Zachodu",
-              "based_on": "f4afa97e4e1714abbae2f4b197f0a66f6ffc72633feee8ed01cfbd0c4fcb1bd0",
+              "text": "Kłos zboża Zachodu",
+              "based_on": "3aee77b3962156a9ac860b8e9c0138de1a984c8c58067b7988eb4e240b0d13f6",
               "status": "ai-draft"
             }
           }
@@ -14264,42 +14264,42 @@
           "placeholders": [],
           "translations": {
             "cs_CZ": {
-              "text": "Zasaďte západní obilí a sklízejte zrní. Zrní smíchejte s cukrem na těsto, těsto upečte a hotovou placku zabalte do mallornového listí. Zabalený lembas dobře zasytí a zažene hlad; je to jídlo na dlouhou cestu.",
+              "text": "Zasaďte západní obilí a sklízejte klasy. Klasy smíchejte s cukrem na těsto, těsto upečte a hotovou placku zabalte do mallornového listí. Zabalený lembas dobře zasytí a zažene hlad; je to jídlo na dlouhou cestu.",
               "based_on": "5af98c33379fb150b1930d194c74a054c65ebb66cd79eea589b7c6ecdcbaf7a3",
               "status": "ai-draft"
             },
             "es_ES": {
-              "text": "Planta cereal del Oeste y recoge su grano. Mézclalo con azúcar para hacer masa, hornéala y envuelve el pan en una hoja de mallorn. El lembas envuelto alimenta mucho y quita el efecto de hambre: es el alimento de los largos caminos.",
+              "text": "Planta cereal del Oeste y recoge sus espigas. Mézclalas con azúcar para hacer masa, hornéala y envuelve el pan en una hoja de mallorn. El lembas envuelto alimenta mucho y quita el efecto de hambre: es el alimento de los largos caminos.",
               "based_on": "5af98c33379fb150b1930d194c74a054c65ebb66cd79eea589b7c6ecdcbaf7a3",
               "status": "ai-draft"
             },
             "es_MX": {
-              "text": "Planta cereal del Oeste y recoge su grano. Mezcla el grano con azúcar para hacer masa, hornéala y envuelve el pan de lembas en una hoja de mallorn. El lembas envuelto alimenta bien y quita el efecto de hambre: es comida para un largo camino.",
+              "text": "Planta cereal del Oeste y recoge sus espigas. Mezcla las espigas con azúcar para hacer masa, hornéala y envuelve el pan de lembas en una hoja de mallorn. El lembas envuelto alimenta bien y quita el efecto de hambre: es comida para un largo camino.",
               "based_on": "5af98c33379fb150b1930d194c74a054c65ebb66cd79eea589b7c6ecdcbaf7a3",
               "status": "ai-draft"
             },
             "pt_PT": {
-              "text": "Planta Cereal do Oeste e colhe o seu grão. Mistura o grão com Açúcar para fazer massa; coze a massa e embrulha o bolo numa folha de mallorn. O Lembas embrulhado alimenta bem e cura a Fome: é o alimento para uma longa viagem.",
+              "text": "Planta Cereal do Oeste e colhe as suas espigas. Mistura as espigas com Açúcar para fazer massa; coze a massa e embrulha o bolo numa folha de mallorn. O Lembas embrulhado alimenta bem e cura a Fome: é o alimento para uma longa viagem.",
               "based_on": "5af98c33379fb150b1930d194c74a054c65ebb66cd79eea589b7c6ecdcbaf7a3",
               "status": "ai-draft"
             },
             "pt_BR": {
-              "text": "Plante Cereal do Oeste e colha os grãos. Misture os grãos com açúcar para fazer a massa; asse a massa e embrulhe o Pão de Lembas em uma folha de mallorn. O Lembas embrulhado sacia bem e remove o efeito Fome: é a comida para uma longa jornada.",
+              "text": "Plante Cereal do Oeste e colha as espigas. Misture as espigas com açúcar para fazer a massa; asse a massa e embrulhe o Pão de Lembas em uma folha de mallorn. O Lembas embrulhado sacia bem e remove o efeito Fome: é a comida para uma longa jornada.",
               "based_on": "5af98c33379fb150b1930d194c74a054c65ebb66cd79eea589b7c6ecdcbaf7a3",
               "status": "ai-draft"
             },
             "de_DE": {
-              "text": "Pflanze Westkorn und ernte es. Vermische das Korn mit Zucker zu Teig, backe ihn und wickle das Lembasbrot dann in Mallornlaub. Eingewickeltes Lembas sättigt gut und vertreibt den Hunger – die Speise für lange Wege.",
+              "text": "Pflanze Westkorn und ernte seine Ähren. Vermische die Ähren mit Zucker zu Teig, backe ihn und wickle das Lembasbrot dann in Mallornlaub. Eingewickeltes Lembas sättigt gut und vertreibt den Hunger – die Speise für lange Wege.",
               "based_on": "5af98c33379fb150b1930d194c74a054c65ebb66cd79eea589b7c6ecdcbaf7a3",
               "status": "ai-draft"
             },
             "fr_FR": {
-              "text": "Plantez la céréale de l’Ouest et récoltez son grain. Mélangez le grain avec du sucre pour obtenir de la pâte ; faites-la cuire, puis enveloppez le pain dans une feuille de mallorn. Le lembas enveloppé nourrit bien et supprime l’effet Faim : c’est le vivre des longues routes.",
+              "text": "Plantez la céréale de l’Ouest et récoltez ses épis. Mélangez les épis avec du sucre pour obtenir de la pâte ; faites-la cuire, puis enveloppez le pain dans une feuille de mallorn. Le lembas enveloppé nourrit bien et supprime l’effet Faim : c’est le vivre des longues routes.",
               "based_on": "5af98c33379fb150b1930d194c74a054c65ebb66cd79eea589b7c6ecdcbaf7a3",
               "status": "ai-draft"
             },
             "pl_PL": {
-              "text": "Zasadź zboże Zachodu i zbieraj jego ziarno. Z ziarna i cukru zarób ciasto, upiecz je, a gotowy placek owiń liściem mallornu. Owinięty lembas dobrze syci i usuwa efekt głodu — to strawa na długą drogę.",
+              "text": "Zasadź zboże Zachodu i zbieraj jego kłosy. Z kłosów i cukru zarób ciasto, upiecz je, a gotowy placek owiń liściem mallornu. Owinięty lembas dobrze syci i usuwa efekt głodu — to strawa na długą drogę.",
               "based_on": "5af98c33379fb150b1930d194c74a054c65ebb66cd79eea589b7c6ecdcbaf7a3",
               "status": "ai-draft"
             }
