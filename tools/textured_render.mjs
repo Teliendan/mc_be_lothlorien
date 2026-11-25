@@ -302,7 +302,7 @@ function kindOf(n) {
   else if (/torch$|^end_rod$|^chain$|_chain$|^elven_rope|^lightning_rod$/.test(name)) kind = "post";
   else if (name === "vine") kind = "vine";
   else if (/^(flowing_)?water$/.test(name)) kind = "water";
-  else if (isCross(name) || /plant_cross|sapling/.test(geo) || /^(athelas|elanor|niphredil|golden_fern|nectar_bloom|western_corn|great_mallorn_sprout)/.test(name)) kind = "cross";
+  else if (isCross(name) || /plant_cross|sapling/.test(geo) || /^(athelas|elanor|niphredil|golden_fern|nectar_bloom|western_corn|great_mallorn_nut)/.test(name)) kind = "cross";
   else if (n.startsWith(MOD_NS) && geo && geo !== "minecraft:geometry.full_block") kind = "small";
   else if (/^(chest|trapped_chest|ender_chest|bed|.*_bed|.*_banner|.*_sign|.*_skull|.*_head)$/.test(name)) kind = "small";
   kindCache.set(n, kind);

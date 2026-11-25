@@ -298,7 +298,7 @@ test("every request item id exists (vanilla catalog or this mod's items/blocks)"
     if (id.startsWith("minecraft:")) assert.ok(catalog.has(id) || [...catalog].some((l) => l.split(/\s/).includes(id) || l.endsWith(id)), `${id} in the vanilla catalog`);
     else assert.ok(existsSync(new URL(`../lothlorien_bp/items/${id.split(":")[1]}.json`, import.meta.url)), `${id} has an item file`);
   }
-  assert.equal(R.SAPLING_BLOCK, "lothlorien:mallorn_sapling"); assert.ok(existsSync(new URL("../lothlorien_bp/blocks/mallorn_sapling.json", import.meta.url)));
+  assert.equal(R.SAPLING_BLOCK, "lothlorien:mallorn_acorn"); assert.ok(existsSync(new URL("../lothlorien_bp/blocks/mallorn_acorn.json", import.meta.url)));
 });
 
 test("every translation key the dialog uses exists in the resource catalog", () => {

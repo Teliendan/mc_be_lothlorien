@@ -22,7 +22,7 @@ import { findDecay, findRescue, BATCH_SPAN, OTHER, LEAF, DECAYABLE, WOOD, UNKNOW
 const NS = "lothlorien";
 const LEAVES = `${NS}:mallorn_leaves`;
 const LOG = `${NS}:mallorn_log`;
-const SAPLING = `${NS}:mallorn_sapling`;
+const SAPLING = `${NS}:mallorn_acorn`;
 const PERSISTENT = `${NS}:persistent`;
 const STAGE = `${NS}:stage`;
 

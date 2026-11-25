@@ -55,9 +55,9 @@ keys no longer work). Blocks (`lothlorien:mallorn_` + `log`, `stripped_log`, `wo
 
 ## Saplings, small and big Mallorns, leaf decay
 
-Files: `scripts/mallorn_tree.js` (pure generator), `scripts/trees.js` (growth, bone meal, decay), `blocks/mallorn_sapling.json`, `items/mallorn_acorn.json`.
+Files: `scripts/mallorn_tree.js` (pure generator), `scripts/trees.js` (growth, bone meal, decay), `blocks/mallorn_acorn.json` (the sapling), `items/mallorn_acorn.json`.
 
-- **Loop:** leaves drop acorns (2 % per leaf, `loot_tables/blocks/mallorn_leaves.json`), the acorn places `mallorn_sapling` (hidden from the menu, loot one acorn), the
+- **Loop:** leaves drop acorns (2 % per leaf, `loot_tables/blocks/mallorn_leaves.json`), the acorn places the sapling block, which shares the acorn's ID (`lothlorien:mallorn_acorn`, `replace_block_item`, so pot, break and pick-block give the acorn; loot one acorn), the
   sapling grows a tree. Saplings need the approved soil list including mycelium (`placement_filter` plus the event-driven support service); random growth reads
   light >= 9 above, ordinary bone meal can work in darkness. Stage 0 -> 1 -> tree, each step 1/7 per random tick; bone meal advances a step with 45 %. The trunk needs
   room (air, leaves, soft plants). Balance estimate: about 4 acorns if every leaf of a small tree is cleared, so a tree replaces itself; `node tools/tree_stats.mjs [n] [chance]`.

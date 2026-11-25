@@ -2937,7 +2937,7 @@
             }
           }
         },
-        "tile.lothlorien:mallorn_sapling.name": {
+        "tile.lothlorien:mallorn_acorn.name": {
           "source": "Mallorn Sapling",
           "context": {
             "meaning": "Mallorn Sapling.",
@@ -3099,7 +3099,7 @@
             }
           }
         },
-        "tile.lothlorien:great_mallorn_sprout.name": {
+        "tile.lothlorien:great_mallorn_nut.name": {
           "source": "Great Mallorn Sprout",
           "context": {
             "meaning": "Planted Great Mallorn nut in its early growth stage.",

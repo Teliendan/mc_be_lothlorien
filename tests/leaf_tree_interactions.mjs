@@ -11,7 +11,7 @@ const SOURCE = readFileSync(new URL('../lothlorien_bp/scripts/trees.js', import.
   .replace(/^import \{([^}]+)\} from "[^"]+";/gm, 'const {$1} = globalThis.__tree;');
 const DEFERRED = readFileSync(new URL('../lothlorien_bp/scripts/deferred_use.js', import.meta.url), 'utf8')
   .replace(/^import \{([^}]+)\} from "[^"]+";/gm, 'const {$1} = globalThis.__tree;');
-const SAPLING = 'lothlorien:mallorn_sapling', LEAF = 'lothlorien:mallorn_leaves', PERSISTENT = 'lothlorien:persistent', STAGE = 'lothlorien:stage';
+const SAPLING = 'lothlorien:mallorn_acorn', LEAF = 'lothlorien:mallorn_leaves', PERSISTENT = 'lothlorien:persistent', STAGE = 'lothlorien:stage';
 const DECAY = 'lothlorien:decay';
 let count = 0;
 const perm = (id, states = {}) => ({ type: { id }, getState: k => states[k], getAllStates: () => ({ ...states }),
@@ -310,11 +310,15 @@ for (const name of ['mallorn_leaves', 'mallorn_golden_leaves']) {
 assert.equal(read('items/mallorn_acorn.json')['minecraft:item'].components['minecraft:fuel'].duration, 5);
 const nut = read('items/great_mallorn_nut.json')['minecraft:item'].components;
 assert.equal(nut['minecraft:fuel'], undefined); assert.equal(nut['minecraft:compostable'], undefined);
-for (const name of ['mallorn_sapling', 'great_mallorn_sprout']) {
+for (const name of ['mallorn_acorn', 'great_mallorn_nut']) {
   const soils = read('blocks/' + name + '.json')['minecraft:block'].components['minecraft:placement_filter'].conditions[0].block_filter;
   assert.deepEqual(new Set(soils), rules.SAPLING_SOILS); assert.deepEqual(SUPPORT_POLICIES['lothlorien:' + name].allowed, soils);
 }
-assert.ok(read('blocks/mallorn_sapling.json')['minecraft:block'].components['minecraft:flower_pottable']);
+// Pottable, and the seed item is the block's own item: a pot, a break or a pick-block gives the acorn or nut back.
+for (const name of ['mallorn_acorn', 'great_mallorn_nut']) {
+  assert.ok(read('blocks/' + name + '.json')['minecraft:block'].components['minecraft:flower_pottable'], name);
+  assert.deepEqual(read('items/' + name + '.json')['minecraft:item'].components['minecraft:block_placer'], { block: 'lothlorien:' + name, replace_block_item: true });
+}
 assert.equal(read('blocks/mallorn_golden_leaves.json')['minecraft:block'].components['lothlorien:leaves'], undefined);
 // Event-driven decay: leaves have no random tick; every Mallorn wood form and golden leaves report destruction.
 for (const name of ['mallorn_log', 'mallorn_wood', 'mallorn_stripped_log', 'mallorn_stripped_wood', 'mallorn_golden_leaves']) {

@@ -66,7 +66,7 @@ Tags below are declared in root components. `omitted` and `[]` both mean no decl
 | [lothlorien:elven_rope_hanging](../lothlorien_bp/blocks/elven_rope_hanging.json) | `minecraft:is_axe_item_destructible` | `ladder`; retain |
 | [lothlorien:firefly_jar](../lothlorien_bp/blocks/firefly_jar.json) | omitted | `glass`; retain |
 | [lothlorien:golden_fern](../lothlorien_bp/blocks/golden_fern.json) | `minecraft:is_shears_item_destructible`, `lothlorien:flower` | `fern`; retain |
-| [lothlorien:great_mallorn_sprout](../lothlorien_bp/blocks/great_mallorn_sprout.json) | `[]` | `sapling`; retain |
+| [lothlorien:great_mallorn_nut](../lothlorien_bp/blocks/great_mallorn_nut.json) | `[]` | `sapling`; retain |
 | [lothlorien:mallorn_blossom](../lothlorien_bp/blocks/mallorn_blossom.json) | `lothlorien:flower` | `ground_cover`; retain |
 | [lothlorien:mallorn_button](../lothlorien_bp/blocks/mallorn_button.json) | `wood`, `minecraft:is_axe_item_destructible` | `wood_control`; retain |
 | [lothlorien:mallorn_door](../lothlorien_bp/blocks/mallorn_door.json) | `wood`, `minecraft:is_axe_item_destructible` | `wood_door`; retain |
@@ -89,7 +89,7 @@ Tags below are declared in root components. `omitted` and `[]` both mean no decl
 | [lothlorien:mallorn_log](../lothlorien_bp/blocks/mallorn_log.json) | `wood`, `minecraft:is_axe_item_destructible`, `log` | `wood_log`; retain |
 | [lothlorien:mallorn_planks](../lothlorien_bp/blocks/mallorn_planks.json) | `wood`, `minecraft:is_axe_item_destructible` | `wood_planks`; retain |
 | [lothlorien:mallorn_pressure_plate](../lothlorien_bp/blocks/mallorn_pressure_plate.json) | `wood`, `minecraft:is_axe_item_destructible` | `wood_control`; retain |
-| [lothlorien:mallorn_sapling](../lothlorien_bp/blocks/mallorn_sapling.json) | `[]` | `sapling`; retain |
+| [lothlorien:mallorn_acorn](../lothlorien_bp/blocks/mallorn_acorn.json) | `[]` | `sapling`; retain |
 | [lothlorien:mallorn_slab](../lothlorien_bp/blocks/mallorn_slab.json) | `wood`, `minecraft:is_axe_item_destructible` | `wood_planks`; retain |
 | [lothlorien:mallorn_stairs](../lothlorien_bp/blocks/mallorn_stairs.json) | `wood`, `minecraft:is_axe_item_destructible` | `wood_planks`; retain |
 | [lothlorien:mallorn_stripped_log](../lothlorien_bp/blocks/mallorn_stripped_log.json) | `wood`, `minecraft:is_axe_item_destructible`, `log` | `wood_log`; retain |

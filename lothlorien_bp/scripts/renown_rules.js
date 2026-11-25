@@ -51,7 +51,7 @@ export const lessonsOfChapter = (n) => LESSONS.filter((l) => l.chapter === n);
 
 // ---- Requests ----
 export const PROFESSIONS = TRADERS; // the trading professions (elf_rules.js), in variant order
-export const SAPLING_BLOCK = "lothlorien:mallorn_sapling";
+export const SAPLING_BLOCK = "lothlorien:mallorn_acorn";
 export const SAPLING_GROWN = ["lothlorien:mallorn_log"]; // a spot where the sapling grew into a tree still counts
 export const REQUESTS = [
   { id: "g_acorns", profession: "gardener", deed: { block: SAPLING_BLOCK, count: 5 } },

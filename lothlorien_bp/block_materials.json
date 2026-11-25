@@ -155,7 +155,7 @@
       },
       "reason": "Owner 2026-10-13: collectible like a flower, overriding vanilla fern shears/seed harvesting. Retain fern material/fire and nonreplaceable placement."
     },
-    "lothlorien:great_mallorn_sprout": {
+    "lothlorien:great_mallorn_nut": {
       "profile": "sapling",
       "reason": "Preserve protected scripted great-tree growth marker.",
       "overrides": {
@@ -438,7 +438,7 @@
       "profile": "wood_control",
       "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
     },
-    "lothlorien:mallorn_sapling": {
+    "lothlorien:mallorn_acorn": {
       "profile": "sapling",
       "harvest": "Existing native loot and scripted family lifecycle retained; tool effectiveness adds no new harvest restriction."
     },

@@ -6,7 +6,7 @@
 // the worldgen giants. It will not grow while anything built stands where the tree would put a block.
 
 export const NUT_ID = "lothlorien:great_mallorn_nut";
-export const SPROUT_ID = "lothlorien:great_mallorn_sprout";
+export const SPROUT_ID = "lothlorien:great_mallorn_nut";
 // The plain giants (tools/build_structures.mjs, CHOSEN roundplain trees; no platform, furnishings or elves).
 // Owner decision 2026-10-16. Structure ids follow the file path
 // structures/lothlorien/<name>.mcstructure.
@@ -49,8 +49,8 @@ const NATURAL = new RegExp(
     "[a-z_]+_leaves", "[a-z_]+_sapling", "oak_log", "spruce_log", "birch_log", "jungle_log", "acacia_log", "dark_oak_log",
     "mangrove_log", "mangrove_roots", "muddy_mangrove_roots", "cherry_log", "pale_oak_log",
   ].join("|") + ")$|^lothlorien:(" + [
-    "mallorn_leaves", "mallorn_log", "mallorn_wood", "mallorn_leaf_carpet", "mallorn_blossom", "mallorn_sapling", "athelas", "elanor",
-    "niphredil", "golden_fern", "deer_antler", "great_mallorn_sprout",
+    "mallorn_leaves", "mallorn_log", "mallorn_wood", "mallorn_leaf_carpet", "mallorn_blossom", "mallorn_acorn", "athelas", "elanor",
+    "niphredil", "golden_fern", "deer_antler", "great_mallorn_nut",
   ].join("|") + ")$"
 );
 export const isNatural = (typeId) => NATURAL.test(typeId) && !typeId.includes("stripped");

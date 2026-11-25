@@ -62,6 +62,10 @@ Creature groups: [CREATURES.md](CREATURES.md).
   particle) delegates to `advance()`/`growTree()`, which check soil and reservation. 2x2 groups grow the Great Mallorn;
   the job rechecks saplings/soil/trunk at start and places the trunk before the canopy.
 - Great Mallorn sprout may be potted like a sapling (owner 2026-10-23). Great nut stays non-fuel, non-compost.
+- Only the seeds are items (owner 2026-11-25): the sapling block is `lothlorien:mallorn_acorn` and the sprout block
+  `lothlorien:great_mallorn_nut`, the same IDs as their items (`replace_block_item`). Before, a pot handed back the blocks'
+  raw items ("Mallorn Sapling", "Great Mallorn Sprout"). No migration: only testers had worlds, and saplings or sprouts
+  planted there before the change become unknown blocks. Owner in game 2026-11-25 (1.26.65): the pot gives the acorn back.
 - Leaf decay: reach 10, event-driven since 2026-11-08 (`onBreak` on Mallorn wood/leaves, player-break and explosion events for
   vanilla ones; a player placing wood or leaves clears marks it reconnects). Cut-off leaves are marked and break on their native
   random tick, at vanilla pace; ordinary leaves have no random tick. Accepts vanilla and mixed-species logs/leaves.
@@ -110,6 +114,7 @@ Creature groups: [CREATURES.md](CREATURES.md).
 - 2026-10-23: gate hinge choice by solid neighbours and the exact wall-connection filter are closed as cosmetic limits.
 - 2026-10-23: litter replacement (replacing vanilla leaf litter) is not being done.
 - 2026-10-23: Great Mallorn sprout is pottable (done).
+- 2026-11-25: only the acorn and the nut are items; the planted blocks share their IDs (see Leaves and trees).
 - Adventure players: no scripted strip/merge (2026-10-23).
 - 2026-11-08: covers become replaceable for native stacking; the scripted (third-person) swing stays where no native route
   exists (stripping, slab merge, bone meal, nectar/dew bottling, firefly release).

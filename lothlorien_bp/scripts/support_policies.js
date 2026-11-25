@@ -76,7 +76,22 @@ export const SUPPORT_POLICIES = {
       "minecraft:muddy_mangrove_roots"
     ]
   },
-  "lothlorien:great_mallorn_sprout": {
+  "lothlorien:great_mallorn_nut": {
+    "mount": "floor",
+    "allowed": [
+      "minecraft:grass_block",
+      "minecraft:dirt",
+      "minecraft:coarse_dirt",
+      "minecraft:podzol",
+      "minecraft:dirt_with_roots",
+      "minecraft:moss_block",
+      "minecraft:pale_moss_block",
+      "minecraft:mud",
+      "minecraft:farmland",
+      "minecraft:mycelium"
+    ]
+  },
+  "lothlorien:mallorn_acorn": {
     "mount": "floor",
     "allowed": [
       "minecraft:grass_block",
@@ -802,21 +817,6 @@ export const SUPPORT_POLICIES = {
   "lothlorien:mallorn_pressure_plate": {
     "mount": "floor",
     "allowed": null
-  },
-  "lothlorien:mallorn_sapling": {
-    "mount": "floor",
-    "allowed": [
-      "minecraft:grass_block",
-      "minecraft:dirt",
-      "minecraft:coarse_dirt",
-      "minecraft:podzol",
-      "minecraft:dirt_with_roots",
-      "minecraft:moss_block",
-      "minecraft:pale_moss_block",
-      "minecraft:mud",
-      "minecraft:farmland",
-      "minecraft:mycelium"
-    ]
   },
   "lothlorien:nectar_bloom": {
     "mount": "ceiling",

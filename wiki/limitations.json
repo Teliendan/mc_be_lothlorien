@@ -56,7 +56,7 @@
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
-        "sha256": "6747b58c27e0bef65f7610451fad1be1236b85a62a46b09ccd036f1dda128904"
+        "sha256": "540066b570533e559c8c6e3bb5b71642adbe063b2dbd110a12529ad5a9040eb0"
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_blossom.json",
@@ -75,7 +75,7 @@
     "evidence": [
       {
         "path": "docs/parity/BLOCKS_ITEMS.md",
-        "sha256": "6747b58c27e0bef65f7610451fad1be1236b85a62a46b09ccd036f1dda128904"
+        "sha256": "540066b570533e559c8c6e3bb5b71642adbe063b2dbd110a12529ad5a9040eb0"
       },
       {
         "path": "lothlorien_bp/blocks/mallorn_leaf_carpet.json",
@@ -94,7 +94,7 @@
     "evidence": [
       {
         "path": "docs/TECHNICAL_NOTES.md",
-        "sha256": "d38f9343140bd894077b2200af78a7ee1ba8e85cae19d4c3836d9a99b921514d"
+        "sha256": "9b72297a99f7cd8f3921389728ca891395c062edc5f1341d2492ab32fd5f94e2"
       },
       {
         "path": "lothlorien_bp/scripts/leaf_decay.js",
@@ -102,7 +102,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/trees.js",
-        "sha256": "7c1556fae65aa6b62c8c30b583e86d7a50a48f28930a62714e21252fff00bfb1"
+        "sha256": "95eef19b92f6d29b3fc27254a1110072f1e063c9444dfdabbf776217f60ae573"
       }
     ]
   },
@@ -352,7 +352,7 @@
       },
       {
         "path": "lothlorien_bp/scripts/trees.js",
-        "sha256": "7c1556fae65aa6b62c8c30b583e86d7a50a48f28930a62714e21252fff00bfb1"
+        "sha256": "95eef19b92f6d29b3fc27254a1110072f1e063c9444dfdabbf776217f60ae573"
       },
       {
         "path": "lothlorien_bp/scripts/swing.js",

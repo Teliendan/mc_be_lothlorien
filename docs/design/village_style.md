@@ -79,7 +79,7 @@ and light that seems to belong to the trees rather than to lamps**.
 | Structure | `lothlorien:mallorn_planks`, `_slab`, `_stairs`, `_log`, `_wood`, `_stripped_log`, `_stripped_wood`, `_fence` (THE rail), `_fence_gate`, `_trapdoor` |
 | Gold accent | `lothlorien:mallorn_heartwood_planks/_slab/_stairs/_fence/_trapdoor` (trim, inlays, workbench tops; never a whole surface) |
 | Foliage | `lothlorien:mallorn_leaves`, `mallorn_golden_leaves` (crown tips, roof ridges, central tree), `mallorn_leaf_carpet` (drifts), `mallorn_blossom` |
-| Mod flora | `elanor`, `niphredil`, `athelas`, `golden_fern`, `nectar_bloom`, `mallorn_sapling` (nursery) |
+| Mod flora | `elanor`, `niphredil`, `athelas`, `golden_fern`, `nectar_bloom`, `mallorn_acorn` sapling block (nursery) |
 | Vanilla flora | `pale_hanging_moss` (silver beards under decks/branches), `leaf_litter`, `wildflowers`, `pink_petals` (sparingly), `firefly_bush`, `moss_carpet`, `flowering_azalea`, `azalea_leaves_flowered`, `bush`, `fern`/`large_fern`, `lily_of_the_valley`, `spore_blossom` (central tree only), `cave_vines*_with_berries` (glow berries) |
 | Light, visible | `lothlorien:elven_lantern` (silver, stand or hang), `elven_lantern_heartwood` (gold), `elven_chandelier` (ceiling), `firefly_jar` (floor), `verdant_froglight` / `pearlescent_froglight` (only *inside* leaf blobs: glowing fruit), glow berries, `end_rod` (only as star-spires on the highest points) |
 | Light, hidden | `minecraft:light_block_<n>` (section 5) |

@@ -104,13 +104,13 @@ tile.lothlorien:mallorn_heartwood_pressure_plate.name=Golden Mallorn Pressure Pl
 ## Context: Golden Mallorn Pressure Plate. Mallorn is a fictional tree. Log is the trunk block with end grain; Wood is the all-bark block; Planks are sawn boards. 'Golden Mallorn' is the warm golden inner wood (heartwood) of Mallorn, crafted from stripped Mallorn logs or wood. Translate 'Golden' as a colour (golden-toned), never as gold metal; owner decision 2026-11-21.
 item.lothlorien:mallorn_heartwood_pressure_plate=Golden Mallorn Pressure Plate
 ## Context: Mallorn Sapling.
-tile.lothlorien:mallorn_sapling.name=Mallorn Sapling
+tile.lothlorien:mallorn_acorn.name=Mallorn Sapling
 ## Context: Mallorn Acorn.
 item.lothlorien:mallorn_acorn=Mallorn Acorn
 ## Context: Plantable gift from a white deer; grows into a giant Mallorn with a wooden platform (flet).
 item.lothlorien:great_mallorn_nut=Great Mallorn Nut
 ## Context: Planted Great Mallorn nut in its early growth stage.
-tile.lothlorien:great_mallorn_sprout.name=Great Mallorn Sprout
+tile.lothlorien:great_mallorn_nut.name=Great Mallorn Sprout
 ## Context: Lore proper name of a woodland flower/herb. Preserve its identity; Athelas is medicinal. Inflection is allowed by locale, but do not substitute an unrelated real plant.
 tile.lothlorien:elanor.name=Elanor
 ## Context: Lore proper name of a woodland flower/herb. Preserve its identity; Athelas is medicinal. Inflection is allowed by locale, but do not substitute an unrelated real plant.

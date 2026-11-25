@@ -791,11 +791,11 @@
   "name": "Lothlórien",
   "nativeForms": {
     "lothlorien:elven_rope_hanging": "Hanging rope",
-    "lothlorien:great_mallorn_sprout": "Planted Great Mallorn sprout",
+    "lothlorien:great_mallorn_nut": "Planted Great Mallorn sprout",
+    "lothlorien:mallorn_acorn": "Mallorn sapling",
     "lothlorien:mallorn_double_slab": "Double slab",
     "lothlorien:mallorn_heartwood_double_slab": "Double slab",
     "lothlorien:mallorn_heartwood_slab": "Single slab",
-    "lothlorien:mallorn_sapling": "Mallorn sapling",
     "lothlorien:mallorn_slab": "Single slab",
     "lothlorien:western_corn": "Growing corn crop"
   },

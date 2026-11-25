@@ -2,7 +2,7 @@
   "format_version": "1.26.50",
   "minecraft:block": {
     "description": {
-      "identifier": "lothlorien:mallorn_sapling",
+      "identifier": "lothlorien:great_mallorn_nut",
       "menu_category": {
         "category": "none"
       },
@@ -14,22 +14,22 @@
       }
     },
     "components": {
+      "minecraft:flammable": false,
       "minecraft:tags": [],
       "minecraft:destructible_by_mining": {
         "seconds_to_destroy": 0
       },
       "minecraft:destructible_by_explosion": {
-        "explosion_resistance": 0
+        "explosion_resistance": 1200
       },
-      "minecraft:flammable": false,
       "minecraft:sound": {
         "sound": "grass"
       },
-      "minecraft:map_color": "#e0b43a",
+      "minecraft:map_color": "#f0c850",
       "minecraft:geometry": "geometry.lothlorien.mallorn_sapling",
       "minecraft:material_instances": {
         "*": {
-          "texture": "lothlorien:mallorn_sapling",
+          "texture": "lothlorien:great_mallorn_sprout",
           "render_method": "alpha_test",
           "ambient_occlusion": 0
         }
@@ -69,8 +69,9 @@
           }
         ]
       },
-      "minecraft:loot": "loot_tables/blocks/mallorn_sapling.json",
-      "lothlorien:sapling": {},
+      "minecraft:loot": "loot_tables/blocks/great_mallorn_sprout.json",
+      "minecraft:light_emission": 3,
+      "lothlorien:great_sprout": {},
       "minecraft:flower_pottable": {},
       "minecraft:movable": {
         "movement_type": "popped"

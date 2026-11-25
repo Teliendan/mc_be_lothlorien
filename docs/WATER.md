@@ -9,7 +9,7 @@ parity still need side-by-side in-game checks.
 | Policy | Complete block inventory (prefix `lothlorien:`) | Counterpart / reason |
 | --- | --- | --- |
 | Pop, no waterlogging | `athelas`, `elanor`, `golden_fern`, `nectar_bloom`, `niphredil` | Land flowers/herbs/fern; owner decision |
-| Pop, no waterlogging | `western_corn`, `mallorn_sapling`, `great_mallorn_sprout` | Land crop and saplings |
+| Pop, no waterlogging | `western_corn`, `mallorn_acorn`, `great_mallorn_nut` | Land crop and saplings |
 | Pop, no waterlogging | `mallorn_blossom`, `mallorn_leaf_carpet` | Petals/leaf litter; native loot counts every segment |
 | Waterlog, survive | `mallorn_slab`, `mallorn_heartwood_slab`, `mallorn_stairs`, `mallorn_heartwood_stairs` | Single slabs/stairs; current native concrete sample recipe |
 | Waterlog, survive | `mallorn_fence`, `mallorn_heartwood_fence`, `mallorn_fence_gate`, `mallorn_heartwood_fence_gate` | Fences/gates |

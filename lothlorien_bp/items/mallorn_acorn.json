@@ -10,7 +10,11 @@
     },
     "components": {
       "minecraft:block_placer": {
-        "block": "lothlorien:mallorn_sapling"
+        "block": "lothlorien:mallorn_acorn",
+        "replace_block_item": true
+      },
+      "minecraft:display_name": {
+        "value": "item.lothlorien:mallorn_acorn"
       },
       "minecraft:icon": "lothlorien:mallorn_acorn",
       "minecraft:compostable": {

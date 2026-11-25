@@ -10,7 +10,11 @@
     },
     "components": {
       "minecraft:block_placer": {
-        "block": "lothlorien:great_mallorn_sprout"
+        "block": "lothlorien:great_mallorn_nut",
+        "replace_block_item": true
+      },
+      "minecraft:display_name": {
+        "value": "item.lothlorien:great_mallorn_nut"
       },
       "minecraft:icon": "lothlorien:great_mallorn_nut",
       "minecraft:glint": true,

@@ -5,7 +5,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 // states) gives no support; verified in game 1.26.60.5 on the supportprobe pack.
 const dir = new URL('../lothlorien_bp/blocks/', import.meta.url);
 const read = name => JSON.parse(readFileSync(new URL(`${name}.json`, dir), 'utf8'))['minecraft:block'];
-const STAIR_TRICK = ['athelas', 'elanor', 'niphredil', 'golden_fern', 'mallorn_sapling', 'great_mallorn_sprout',
+const STAIR_TRICK = ['athelas', 'elanor', 'niphredil', 'golden_fern', 'mallorn_acorn', 'great_mallorn_nut',
   'western_corn', 'deer_antler', 'elven_lantern', 'elven_lantern_heartwood', 'elven_chandelier', 'firefly_jar',
   'phial_light', 'mallorn_button', 'mallorn_heartwood_button', 'mallorn_pressure_plate',
   'mallorn_heartwood_pressure_plate', 'mallorn_door', 'mallorn_heartwood_door', 'mallorn_fence_gate',

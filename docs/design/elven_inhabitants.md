@@ -111,7 +111,7 @@ Design: sections 2-3 above. Commits 88dbbe2 (Renown + dialog), 6019c88, f854117,
 - **Delivery:** `tradersAround` uses `getEntities({ type, location, maxDistance: 96 })` (loaded chunks); none found -> the Loremaster takes the request himself. Direction: 8 compass words, north = -Z, "close by" under 8 blocks.
 - **Firefly catch:** the prompt stays in `firefly.json`; `fireflies.js` catches in `afterEvents.playerInteractWithEntity` (the native interaction swings) and owns the deferred release; `firefly_bottle.js` stores name and current health as visible localized raw lore (stackable items cannot hold
   dynamic properties). Offhand bottles do not catch; healthy unnamed bottles stay plain. Details `mobs/firefly.md`.
-- **Sapling request:** `afterEvents.playerPlaceBlock` with `mallorn_sapling`; inside the biome it is remembered as a distinct cell (checked at turn-in); outside it prints `lore.saplings.outside`.
+- **Sapling request:** `afterEvents.playerPlaceBlock` with the sapling block (`mallorn_acorn`); inside the biome it is remembered as a distinct cell (checked at turn-in); outside it prints `lore.saplings.outside`.
 - Verified in game 2026-10-11 (owner): dialog redesign, trader hand-over, directions, the missing-trader fallback, firefly catch, Harmony nudge, the acorn request, time-shaped morning dew, Niphredil round 5. Status unverified: the outside-sapling
   line, the Uneasy/Shunned/Hated dialog bands, a v1 save migrating, two players on one firefly, the forms in the AI-drafted locales, completing all 12 requests (testers, `TODO.md` section 2).
 

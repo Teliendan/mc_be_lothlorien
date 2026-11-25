@@ -23,7 +23,7 @@ COVERS = {"mallorn_leaf_carpet", "mallorn_blossom"}
 # 2026-11-22: things hung from a rope look wrong; was fence, chain-like centre support, since 2026-11-04);
 # trapdoors, slabs, stairs, fences and full blocks are untouched.
 ROPES = {"elven_rope", "elven_rope_hanging"}
-NO_SUPPORT = {"athelas", "elanor", "niphredil", "golden_fern", "mallorn_sapling", "great_mallorn_sprout",
+NO_SUPPORT = {"athelas", "elanor", "niphredil", "golden_fern", "mallorn_acorn", "great_mallorn_nut",
               "western_corn", "deer_antler", "elven_lantern", "elven_lantern_heartwood", "elven_chandelier",
               "firefly_jar", "phial_light", "mallorn_button", "mallorn_heartwood_button",
               "mallorn_pressure_plate", "mallorn_heartwood_pressure_plate", "mallorn_door",
@@ -31,7 +31,7 @@ NO_SUPPORT = {"athelas", "elanor", "niphredil", "golden_fern", "mallorn_sapling"
               "nectar_bloom"} | COVERS | ROPES
 SNOWLOGGABLE = {"athelas", "elanor", "golden_fern", "niphredil"}
 WATER_POP = {"athelas", "elanor", "golden_fern", "nectar_bloom", "niphredil",
-             "western_corn", "mallorn_sapling", "great_mallorn_sprout"} | COVERS
+             "western_corn", "mallorn_acorn", "great_mallorn_nut"} | COVERS
 WATER_SOLID = {"mallorn_log", "mallorn_wood", "mallorn_stripped_log", "mallorn_stripped_wood",
                "mallorn_planks", "mallorn_heartwood_planks", "mallorn_double_slab",
                "mallorn_heartwood_double_slab", "star_canopy", "memorial_seed"}

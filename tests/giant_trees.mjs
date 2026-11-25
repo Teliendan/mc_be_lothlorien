@@ -169,14 +169,15 @@ test("great nut: terrain, plants, leaves and logs give way; anything built stops
     "minecraft:stone_slab", "minecraft:sandstone"]) assert.ok(!N.isNatural(id), id);
 });
 
-test("great nut: unique rare item that plants the sprout; sprout grows like a sapling, survives blasts, gives the nut back", () => {
+test("great nut: unique rare item that is also the planted sprout; sprout grows like a sapling, survives blasts, gives the nut back", () => {
   const item = readJson("../lothlorien_bp/items/great_mallorn_nut.json")["minecraft:item"];
   assert.equal(item.description.identifier, N.NUT_ID);
-  assert.equal(item.components["minecraft:block_placer"].block, N.SPROUT_ID);
+  assert.equal(N.SPROUT_ID, N.NUT_ID, "the sprout block shares the nut's id, so a pot or pick-block gives the nut");
+  assert.deepEqual(item.components["minecraft:block_placer"], { block: N.SPROUT_ID, replace_block_item: true });
   assert.equal(item.components["minecraft:glint"], true);
   assert.equal(item.components["minecraft:compostable"], undefined, "the one gift is never composted by accident");
-  const block = readJson("../lothlorien_bp/blocks/great_mallorn_sprout.json")["minecraft:block"];
-  const sapling = readJson("../lothlorien_bp/blocks/mallorn_sapling.json")["minecraft:block"];
+  const block = readJson("../lothlorien_bp/blocks/great_mallorn_nut.json")["minecraft:block"];
+  const sapling = readJson("../lothlorien_bp/blocks/mallorn_acorn.json")["minecraft:block"];
   assert.equal(block.description.identifier, N.SPROUT_ID);
   assert.deepEqual(block.description.states, sapling.description.states);
   assert.deepEqual(block.components["minecraft:placement_filter"], sapling.components["minecraft:placement_filter"], "same soil as the sapling");

@@ -34,7 +34,7 @@ the owner chose the "stair trick": `"minecraft:support": {"shape": "stair"}` on 
 stair states. It is applied by `tools/configure_support.py` (set `NO_SUPPORT`, so a regenerated block cannot
 drift; `tests/stair_support.mjs` asserts the set and that no permutation overrides it):
 
-athelas, elanor, niphredil, golden_fern, mallorn_sapling, great_mallorn_sprout, western_corn, deer_antler,
+athelas, elanor, niphredil, golden_fern, mallorn_acorn, great_mallorn_nut, western_corn, deer_antler,
 both elven lanterns, elven_chandelier, firefly_jar, phial_light, both buttons, both pressure plates, both
 doors, both fence gates, mallorn_leaf_carpet (all four amounts), mallorn_blossom (the two covers were `fence`
 before), nectar_bloom (hanging bloom, added by the owner 2026-11-04), elven_rope and elven_rope_hanging (set

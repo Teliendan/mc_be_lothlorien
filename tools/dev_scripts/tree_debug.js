@@ -87,9 +87,9 @@ export function handleTreeScriptEvent(event, player) {
       const targets = (big ? [[0, 0], [1, 0], [0, 1], [1, 1]] : [[0, 0]])
         .map(([dx, dz]) => readTreeBlock(player.dimension, { x: x + dx, y, z: z + dz }));
       if (targets.some(b => !b || !validSaplingSoil(b) || (!b.isAir &&
-          !["minecraft:short_grass", "minecraft:fern", "lothlorien:mallorn_sapling"].includes(b.typeId)))) continue;
+          !["minecraft:short_grass", "minecraft:fern", "lothlorien:mallorn_acorn"].includes(b.typeId)))) continue;
       // Production growth deliberately requires real saplings; this DEV helper plants them first.
-      for (const b of targets) b.setPermutation(BlockPermutation.resolve("lothlorien:mallorn_sapling", { "lothlorien:stage": 1 }));
+      for (const b of targets) b.setPermutation(BlockPermutation.resolve("lothlorien:mallorn_acorn", { "lothlorien:stage": 1 }));
       if (growTree(targets[0], undefined, big)) grown++;
     }
     player.sendMessage(`[lothlorien] grew ${grown}/${n} ${big ? "big " : ""}Mallorns`);
