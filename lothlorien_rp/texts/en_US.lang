@@ -137,7 +137,7 @@ tile.lothlorien:mallorn_leaf_carpet.name=Mallorn Leaf Litter
 item.lothlorien:mallorn_leaf_carpet=Mallorn Leaf Litter
 ## Context: A cereal grain crop used for flour and feeding deer. Corn means grain here, not specifically maize.
 tile.lothlorien:western_corn.name=Western Corn
-## Context: The plantable kernels of the Western Corn cereal crop (the icon shows loose kernels). Must read clearly different from Western Corn Grain, the harvested ears that cannot be planted; in Czech the kernel of a cereal is zrno, not semínko. Corn means grain, not maize.
+## Context: The plantable kernels of the Western Corn cereal crop (the icon shows loose kernels). Must read clearly different from Western Corn Grain, the harvested ears that cannot be planted; in Czech keep Semínka, like vanilla Semínka pšenice (the harvest is the ear, Klas). Corn means grain, not maize.
 item.lothlorien:western_corn_seeds=Western Corn Seeds
 ## Context: Harvested ears of the Western Corn cereal (the icon shows ears of grain on short stalks); used for food, Lembas Dough and feeding deer, swans and songbirds. It cannot be planted. Translate as ear(s) of grain (Czech klas, Polish kłos, French épi, Spanish/Portuguese espiga, German Ähre) so it reads clearly different from Western Corn Seeds, the plantable kernels. Not maize: no cob words.
 item.lothlorien:western_corn_grain=Western Corn Grain
