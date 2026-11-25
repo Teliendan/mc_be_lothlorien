@@ -50,24 +50,16 @@ await test("swans need an actually readable nearby Lothlorien sample, once only"
     m.judgeNaturalSpawn(swan, biome); assert.equal(probes, 25);
   }
 });
-await test("natural swan surface rule: deep open water moves up, bank removes, surface and land keep", async () => {
+await test("natural swan surface rule: deep open water moves up, bank removes, surface and land keep, small water removes", async () => {
   const column = (water, over = {}) => y => over[y] ?? (water.includes(y) ? "minecraft:water" : y > Math.max(...water) ? "minecraft:air" : "minecraft:dirt");
   assert.deepEqual(S.surfaceAction(62.3, column([60, 61, 62, 63, 64])), { action: "move", y: 64 });
   assert.deepEqual(S.surfaceAction(60.5, column([60, 61, 62, 63, 64], { 62: "minecraft:flowing_water" })), { action: "move", y: 64 });
   assert.deepEqual(S.surfaceAction(62.5, column([60, 61, 62], { 64: "minecraft:stone" })), { action: "remove" });
   assert.deepEqual(S.surfaceAction(61.5, column([60, 61, 62], { 63: "minecraft:oak_leaves" })), { action: "remove" });
   assert.deepEqual(S.surfaceAction(61.5, column([60, 61, 62], { 64: "minecraft:stone" })), { action: "remove" });
-  assert.deepEqual(S.surfaceAction(62.5, column([60, 61, 62])), { action: "keep" });
-  assert.deepEqual(S.surfaceAction(63.0, column([60, 61, 62])), { action: "keep" });
+  assert.deepEqual(S.surfaceAction(62.5, column([60, 61, 62])), { action: "keep", y: 62 });
+  assert.deepEqual(S.surfaceAction(63.0, column([60, 61, 62])), { action: "keep", y: 62 });
   assert.deepEqual(S.surfaceAction(65, column([])), { action: "keep" });
-  // village water stands on Mallorn decks: a basin, the Hall trough, a swan in the stream falling into the Court basin
-  assert.deepEqual(S.surfaceAction(80.5, column([80], { 79: "lothlorien:mallorn_planks" })), { action: "remove" });
-  assert.deepEqual(S.surfaceAction(91.0, column([90], { 89: "lothlorien:mallorn_heartwood_planks" })), { action: "remove" });
-  assert.deepEqual(S.surfaceAction(84.5, column([80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90], { 79: "lothlorien:mallorn_planks" })), { action: "remove" });
-  assert.deepEqual(S.surfaceAction(62.5, column([60, 61, 62], { 59: "minecraft:gravel" })), { action: "keep" });
-  assert.deepEqual(S.surfaceAction(62.5, y => y < 60 ? undefined : column([60, 61, 62])(y)), { action: "keep" }); // unloaded bed
-  const lake = Array.from({ length: 40 }, (_, i) => 23 + i); // deeper than the floor scan: natural, whatever lies below
-  assert.deepEqual(S.surfaceAction(62.5, column(lake, { 22: "lothlorien:mallorn_log" })), { action: "keep" });
   const deep = Array.from({ length: 40 }, (_, i) => 10 + i); // scan stops at the cap
   assert.equal(S.surfaceAction(10.5, column(deep)).action, "remove");
   const h = await setup(), m = await load("swan", { ...h.base, ...S }, "\nexport { judgeNaturalSpawn };\n");
@@ -75,6 +67,7 @@ await test("natural swan surface rule: deep open water moves up, bank removes, s
   const water = (...ys) => { for (const y of ys) h.dimension.blocked.set(`0,${y},0`, "minecraft:water"); };
   const deepSwan = h.entity(S.SWAN_ID, { x: 0.5, y: 62.2, z: 0.5 }); deepSwan.setProperty("lothlorien:natural", true);
   h.dimension.blocked.clear(); water(62, 63, 64); // air above, grass block y=64 replaced by water
+  for (let dx = -2; dx <= 2; dx++) for (let dz = -2; dz <= 2; dz++) if (dx || dz) h.dimension.blocked.set(`${dx},64,${dz}`, "minecraft:water"); // a 5 x 5 pond
   m.judgeNaturalSpawn(deepSwan, biome); assert.equal(deepSwan.isValid, true); assert.equal(deepSwan.location.y, 64);
   assert.equal(deepSwan.location.x, 0.5); assert.equal(deepSwan.location.z, 0.5);
   const bank = h.entity(S.SWAN_ID, { x: 0.5, y: 62.2, z: 0.5 }); bank.setProperty("lothlorien:natural", true);
@@ -82,6 +75,26 @@ await test("natural swan surface rule: deep open water moves up, bank removes, s
   m.judgeNaturalSpawn(bank, biome); assert.equal(bank.isValid, false);
   const land = h.entity(S.SWAN_ID, { x: 20.5, y: 65, z: 20.5 }); land.setProperty("lothlorien:natural", true);
   m.judgeNaturalSpawn(land, biome); assert.equal(land.isValid, true); assert.equal(land.location.y, 65);
+});
+await test("natural swans need open water of MIN_OPEN_WATER cells: lakes keep, village vessels and small ponds remove", async () => {
+  const rect = (w, d, holes = []) => (dx, dz) => dx >= 0 && dx < w && dz >= 0 && dz < d && !holes.some(([hx, hz]) => hx === dx && hz === dz);
+  assert.equal(S.MIN_OPEN_WATER, 16);
+  assert.equal(S.openWaterArea(() => true), 16); // a lake: stops at the minimum
+  assert.equal(S.openWaterArea(rect(4, 4)), 16); // 4 x 4 is just enough
+  assert.equal(S.openWaterArea(rect(3, 2)), 6); // the Court basin
+  assert.equal(S.openWaterArea(rect(1, 7)), 7); // the Hall trough with the niche
+  assert.equal(S.openWaterArea(rect(1, 1)), 1); // a stair basin
+  assert.equal(S.openWaterArea(rect(4, 4, [[3, 3]])), 15); // a lily pad closes a cell
+  assert.equal(S.openWaterArea((dx, dz) => dx === dz), 1); // diagonals do not join
+  let calls = 0; S.openWaterArea(() => (calls++, true)); assert.ok(calls <= 4 * S.MIN_OPEN_WATER, `${calls} reads`);
+  const h = await setup(), m = await load("swan", { ...h.base, ...S }, "\nexport { judgeNaturalSpawn };\n");
+  const biome = { id: "lothlorien", at: () => "lothlorien" };
+  const pond = (w, d, y) => { h.dimension.blocked.clear(); for (let dx = 0; dx < w; dx++) for (let dz = 0; dz < d; dz++) h.dimension.blocked.set(`${dx},${y},${dz}`, "minecraft:water"); };
+  for (const [w, d, y, stays] of [[3, 2, 90, false], [1, 1, 90, false], [3, 3, 64, false], [4, 4, 64, true], [8, 8, 64, true]]) {
+    pond(w, d, y);
+    const swan = h.entity(S.SWAN_ID, { x: 0.5, y: y + 0.2, z: 0.5 }); swan.setProperty("lothlorien:natural", true);
+    m.judgeNaturalSpawn(swan, biome); assert.equal(swan.isValid, stays, `${w} x ${d} at y ${y}`);
+  }
 });
 await test("swan eggs/summons and born cygnets are not filtered without the natural flag", async () => {
   const h = await setup(), m = await load("swan", { ...h.base, ...S }); let probes = 0;

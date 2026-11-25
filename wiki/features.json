@@ -2367,11 +2367,11 @@
         },
         {
           "path": "lothlorien_bp/scripts/swan.js",
-          "sha256": "2ffcf08f2b3429852d379bce39519cd29e9d95997c8357c5dae8619ae11cb755"
+          "sha256": "fc5fe1bd2fc9a4daee4539745070e666b3376173826cb44e6272e7c672711b93"
         },
         {
           "path": "lothlorien_bp/scripts/swan_rules.js",
-          "sha256": "4a7499608bc1836b17ca39f9b6822aa1e36e094b3f4159dc8c9636a26f0c11fd"
+          "sha256": "b05bc3ef08e963cf48eb0a1126f652ae33b7cc7e9ba856ebfeb2a4b4d29d6abe"
         }
       ]
     },
