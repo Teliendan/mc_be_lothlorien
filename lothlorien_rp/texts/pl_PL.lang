@@ -184,6 +184,7 @@ lothlorien.message.status.guest=Gościna w Lothlórien
 lothlorien.message.status.uneasy=Niepokój w Lothlórien
 lothlorien.message.status.shunned=Niełaska Lothlórien
 lothlorien.message.status.hated=Nienawiść Lothlórien
+lothlorien.message.status.line=§7Harmonia:§r %s
 lothlorien.message.harmony.worse.uneasy=§6Las patrzy krzywo na twoje czyny.
 lothlorien.message.harmony.worse.shunned=§cLas odwraca się od ciebie.
 lothlorien.message.harmony.worse.hated=§4Strażnicy nie zniosą już twojej obecności.

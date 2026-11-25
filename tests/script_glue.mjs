@@ -396,6 +396,56 @@ await scenario("harmony: inside the forest monsters and players the wardens hunt
   assert.ok(harmony() < before, "a riderless horse still costs");
 });
 
+await scenario("harmony: the status shows on triggers only (entering after 10 s outside, band change, deed hint, respawn), never every second", async () => {
+  const HG = await loadScript("harmony_game.js");
+  const player = mock.addEntity("minecraft:player", { x: 0, y: 70, z: 0 });
+  mock.players.push(player); player.sendMessage = () => {};
+  const bars = []; player.onScreenDisplay = { setActionBar: (text) => bars.push(text) };
+  const band = () => bars.at(-1).rawtext[1].translate.split(".").pop();
+  let here = false;
+  HG.startHarmony(() => here, "dbg");
+  await mock.advance(40);
+  assert.equal(bars.length, 0, "outside the forest nothing is shown");
+  here = true; await mock.advance(20);
+  assert.equal(bars.length, 1, "entering (first time since joining) shows it once"); assert.equal(band(), "guest");
+  await mock.advance(200);
+  assert.equal(bars.length, 1, "staying inside does not repeat it");
+  here = false; await mock.advance(100); here = true; await mock.advance(20);
+  assert.equal(bars.length, 1, "back after a few seconds outside: not again");
+  here = false; await mock.advance(240); here = true; await mock.advance(20);
+  assert.equal(bars.length, 2, "back after more than 10 s outside");
+  const kill = () => mock.fire("entityDie", { deadEntity: mock.addEntity("lothlorien:deer", { x: 1, y: 70, z: 1 }), damageSource: { damagingEntity: player } });
+  kill();
+  assert.equal(bars.length, 3, "a band change shows it"); assert.equal(band(), "uneasy");
+  kill();
+  assert.equal(bars.length, 4, "a costly deed in the same band shows it with the chat hint");
+  kill();
+  assert.equal(bars.length, 4, "the next deed within the hint gap: neither hint nor status");
+  player.addTag("dbg");
+  HG.handleHarmonyEvent({ id: "lothlorien:harmony", message: "5" }, player);
+  assert.equal(bars.length, 4, "the debug readout keeps the action bar"); player.removeTag("dbg");
+  mock.fire("playerSpawn", { player, initialSpawn: false }); await mock.advance(20);
+  assert.equal(bars.length, 5, "a respawn in the forest shows it"); assert.equal(band(), "guest");
+  here = false; HG.showStatus(player);
+  assert.equal(bars.length, 6, "the other triggers (refusals, greetings) call showStatus anywhere");
+});
+
+await scenario("harmony: recovering into a better band over time shows the status, also outside the forest", async () => {
+  const HG = await loadScript("harmony_game.js");
+  const player = mock.addEntity("minecraft:player", { x: 0, y: 70, z: 0 });
+  player.setDynamicProperty("lothlorien:harmony", '{"harmony":-1,"timer":0}');
+  mock.players.push(player); const said = []; player.sendMessage = (m) => said.push(m);
+  const bars = []; player.onScreenDisplay = { setActionBar: (text) => bars.push(text) };
+  HG.startHarmony(() => false, "dbg");
+  await mock.advance(118 * 20);
+  assert.equal(bars.length, 0, "still Uneasy: nothing shown outside");
+  await mock.advance(4 * 20);
+  assert.equal(HG.harmonyOf(player).harmony, 0, "+1 after 120 s outside");
+  assert.equal(bars.length, 1, "Uneasy -> Guest by time shows the status");
+  assert.equal(bars[0].rawtext[1].translate, "lothlorien.message.status.guest");
+  assert.ok(said.some((m) => JSON.stringify(m).includes("harmony.better.guest")), "with its chat line");
+});
+
 // ---- planner speed: the time-boxed job driver and the timing log ----
 await scenario("loop_marker.js: sliced() runs many inner steps per engine step, returns the same value, counts steps; the timing log lines appear in debug mode", async () => {
   const mod = await loadScript("loop_marker.js");

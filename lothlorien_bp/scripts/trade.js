@@ -138,6 +138,7 @@ function onInteract(event) {
       applyKey(target, NO_TABLE);
       sayKey(player, decision.line);
       greet(target, player, band); // a refusal means Shunned (refuse_speak) or Hated (silence)
+      deps.showStatus?.(player); // no screen opens, so the status is seen; the native shop screen hides it and has no close event (not shown there)
     } else if (decision.action === "form") {
       openForm(player, target, profession);
     } else if (decision.action === "swap") {

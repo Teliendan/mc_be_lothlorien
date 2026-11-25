@@ -117,7 +117,7 @@ test("voice: hooks sit at the accepted actions, no timers", () => {
   const wardenJs = src("elven_warden.js");
   const greeting = wardenJs.match(/beforeEvents\.playerInteractWithEntity\.subscribe\([\s\S]*?\n  \}\);/)?.[0] ?? "";
   assert.ok(greeting.includes("target.typeId !== WARDEN_ID") && greeting.includes("nativeElfUse(target, itemStack)") && greeting.includes("fighting(player)"));
-  assert.ok(greeting.includes("system.run(() => greet(target, player, band))") && !greeting.includes("cancel"), "the click is never cancelled");
+  assert.ok(greeting.includes("system.run(() => { greet(target, player, band); showStatus(player); })") && !greeting.includes("cancel"), "greets with the Harmony status; the click is never cancelled");
   assert.ok(wardenJs.includes("player.hasTag(FOE_TAG)") && wardenJs.includes("isNewFight(Date.now() - at)"));
   assert.ok(src("main.js").includes("startElvenWardens(depthAt, (player) => bandOf(harmonyOf(player).harmony))"));
   assert.ok(!/runInterval|runTimeout/.test(src("voice.js")) && !/@minecraft/.test(src("voice_rules.js")));

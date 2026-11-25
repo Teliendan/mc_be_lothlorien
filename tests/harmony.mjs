@@ -119,11 +119,35 @@ test("harmony: chat lines per band change and direction; Friend gained / lost; t
   assert.equal(H.HINT_GAP_MS, 30000);
 });
 
-test("harmony: the action bar shows the band name inside the forest only; saved state round-trips; junk is tolerated", () => {
+test("harmony: the status triggers sit where the band explains what happens (owner 2026-11-25)", () => {
+  const src = (f) => readFileSync(new URL(`../lothlorien_bp/scripts/${f}`, import.meta.url), "utf8");
+  const count = (f) => (src(f).match(/showStatus\(player\)/g) ?? []).length;
+  assert.equal(count("squirrel.js"), 2, "squirrel: restless and untrusted");
+  assert.equal(count("white_deer.js"), 2, "white deer: restless and untrusted");
+  assert.ok(src("unicorn.js").includes('if (refusal === "restless" || refusal === "untrusted") showStatus(player);'));
+  assert.ok(src("trade.js").includes("deps.showStatus?.(player);") && src("main.js").includes("    showStatus,\n"), "a refused trader click");
+  const lore = src("loremaster.js");
+  assert.equal((lore.match(/statusLine\(harmonyOf\(player\)\)/g) ?? []).length, 2, "on top of the Loremaster and the trader delivery window");
+  assert.ok(lore.includes('if (menu.mode === "hated" || menu.mode === "shunned") {') && count("loremaster.js") === 1, "a refused Loremaster opens no window");
+  const warden = src("elven_warden.js");
+  assert.ok(warden.includes("greet(target, player, band); showStatus(player);"), "warden greeting");
+  assert.ok(warden.includes("system.run(() => showStatus(victim))") && warden.includes("isNewFight(shot === undefined"), "first warden hit of a fight on a Hated player");
+  assert.ok(!/setActionBar/.test(src("harmony_game.js").replace(/export function showStatus[\s\S]*?\n}\n/, "")), "showStatus is the only action bar write");
+});
+
+test("harmony: entering the forest shows the status after more than 10 s outside (owner 2026-11-25)", () => {
+  assert.equal(H.ENTRY_GAP_TICKS, 200);
+  assert.ok(H.entryDue(undefined, 0), "first time inside since joining or respawning");
+  assert.ok(!H.entryDue(1000, 1020), "still inside: the one-second tick does not repeat it");
+  assert.ok(!H.entryDue(1000, 1200), "back after 10 s (9.x s outside): not again");
+  assert.ok(H.entryDue(1000, 1220), "back after more than 10 s outside");
+});
+
+test("harmony: the status is the band icon and name for every band; saved state round-trips; junk is tolerated", () => {
   const entries = catalogEntries();
   for (const [h, band] of [[10, "friend"], [0, "guest"], [-5, "uneasy"], [-20, "shunned"], [-40, "hated"]]) {
-    assert.deepEqual(H.statusText(hs(h), true), { rawtext: [{ text: H.BAND_ICONS[band] }, { translate: `lothlorien.message.status.${band}` }] }, band);
-    assert.equal(H.statusText(hs(h), false), undefined);
+    assert.deepEqual(H.statusText(hs(h)), { rawtext: [{ text: H.BAND_ICONS[band] }, { translate: `lothlorien.message.status.${band}` }] }, band);
+    assert.deepEqual(H.statusLine(hs(h)), { translate: "lothlorien.message.status.line", with: { rawtext: [{ rawtext: [{ text: H.BAND_ICONS[band] }, { text: "§7" }, { translate: `lothlorien.message.status.${band}` }, { text: "§r" }] }] } }, `${band}: dialog line, grey after the icon`);
     assert.ok(entries[`lothlorien.message.status.${band}`], band);
   }
   const glyphs = Object.values(H.BAND_ICONS).map((i) => i.trim());

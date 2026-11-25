@@ -16,8 +16,8 @@ import { ELF_ID, PROFESSIONS } from "./elf_rules.js";
 import { say, traderProfession } from "./entity_util.js";
 import { nativeElfUse } from "./elf_native_use.js";
 import { greet, speak } from "./voice.js";
-import { bandOf } from "./harmony.js";
-import { harmonyOf } from "./harmony_game.js";
+import { bandOf, statusLine } from "./harmony.js";
+import { harmonyOf, showStatus } from "./harmony_game.js";
 import { repeatedUse } from "./use_guard.js";
 import {
   SEARCH_RADIUS, abandonTask, accept, completeLore, currentOffer, deliveryPlace, deliveryPlan, elfAccepts, isTaskLesson, lessonById, lessonDone,
@@ -50,6 +50,9 @@ const BUSY = Symbol("busy");
 const t = (key, ...values) => message(key, ...values);
 const join = (...parts) => ({ rawtext: parts.map((p) => (typeof p === "string" ? { text: p } : p)) });
 const lines = (list) => join(...list.flatMap((x, i) => (i ? ["\n\n", x] : [x])));
+// Information in a window (status, renown, progress, task lines, headings) is grey; the Loremaster's own words stay white
+// (owner 2026-11-25, after the grey Harmony line). §r ends it: a colour code would otherwise carry into the following text.
+const info = (x) => join("§7", x, "§r");
 
 function isLoremaster(entity) {
   try {
@@ -76,8 +79,8 @@ const placeFor = (ctx, profession) => deliveryPlace(profession, tradersAround(ct
 // The "where" line under a request text: the trader's direction, or "I ask in their place" when none lives near.
 function whereLine(profession, place) {
   if (place.who !== "trader") return t(`lore.where.none.${profession}`);
-  if (place.direction === "nearby") return t("lore.where.near", t(`lore.who.${profession}`));
-  return t("lore.where.dir", t(`lore.who.${profession}`), t(`lore.dir.${place.direction}`));
+  if (place.direction === "nearby") return info(t("lore.where.near", t(`lore.who.${profession}`)));
+  return info(t("lore.where.dir", t(`lore.who.${profession}`), t(`lore.dir.${place.direction}`)));
 }
 
 const wait = (ticks) => new Promise((resolve) => system.runTimeout(resolve, ticks));
@@ -175,9 +178,9 @@ const back = (to = "main") => ({ text: t("lore.btn.back"), icon: ICON.back, next
 const step = (name, arg) => [name, arg];
 
 function progressLine(player, request) {
-  if (request.deed) return t("lore.saplings.counted", Math.min(request.deed.count, saplingsPlanted(player)), request.deed.count);
+  if (request.deed) return info(t("lore.saplings.counted", Math.min(request.deed.count, saplingsPlanted(player)), request.deed.count));
   const plan = deliveryPlan(request, inventoryCounts(player));
-  return t("lore.req.have", plan.have, plan.need);
+  return info(t("lore.req.have", plan.have, plan.need));
 }
 
 
@@ -185,21 +188,26 @@ function progressLine(player, request) {
 async function mainScreen(ctx) {
   const { player } = ctx;
   const { state, band, menu } = view(ctx);
-  if (menu.mode === "hated") return undefined;
-  if (menu.mode === "shunned") {
-    player.sendMessage(t("lore.shunned"));
+  if (menu.mode === "hated" || menu.mode === "shunned") {
+    if (menu.mode === "shunned") player.sendMessage(t("lore.shunned"));
+    showStatus(player); // no window opens: the action bar tells why (owner 2026-11-25)
     return undefined;
   }
   const full = menu.mode === "full";
+  // Layout (owner 2026-11-25): the Loremaster's words first, then a grey standing block (Harmony, Renown, progress) right above
+  // the buttons it explains; "Your task:" last, as the label of the task button.
   const parts = [t(band === "friend" ? "lore.greet.friend" : band === "guest" ? "lore.greet.guest" : "lore.greet.uneasy")];
   const buttons = [];
   if (full) {
-    parts.push("\n\n", t("lore.rank.line", t(`lore.rank.${rankOf(state.points)}`)), "\n", rankProgress(state));
     if (!menu.requestsOpen) parts.push("\n\n", t("lore.requests.locked"));
     else if (!state.task && requestsLeft(state) === 0) parts.push("\n\n", t("lore.requests.none"));
+  } else if (state.task) parts.push("\n\n", t("lore.requests.paused"));
+  parts.push("\n\n", statusLine(harmonyOf(player)));
+  if (full) parts.push("\n", info(join(t("lore.rank.line", t(`lore.rank.${rankOf(state.points)}`)), "\n", rankProgress(state))));
+  if (full) {
     if (state.task) {
       const status = statusOf(ctx, state);
-      parts.push("\n\n", t("lore.task.header"));
+      parts.push("\n\n", info(t("lore.task.header")));
       buttons.push({
         text: join(taskName(state.task), "\n", statusText(ctx, state.task, status)),
         icon: status === "ready" ? ICON.ready : taskIcon(state.task),
@@ -212,7 +220,6 @@ async function mainScreen(ctx) {
     } else if (menu.teaching.done.length) buttons.push({ text: t("lore.btn.earlier"), icon: ICON.done, next: step("earlier") });
     if (menu.canOfferRequest) buttons.push({ text: t("lore.btn.request_new"), icon: ICON.kin, next: step("kinOffer") });
   } else {
-    if (state.task) parts.push("\n\n", t("lore.requests.paused"));
     for (const id of [...menu.teaching.offered, ...menu.teaching.done]) {
       buttons.push({ text: t(`lore.lesson.${id}.name`), icon: ICON.lore, next: step("lesson", { id, from: "main" }) });
     }
@@ -228,7 +235,7 @@ async function teachingScreen(ctx, notice) {
   const chapter = menu.teaching.chapter;
   const parts = [];
   if (notice) parts.push(notice);
-  parts.push(chapter <= 3 ? t(`lore.chapter.${chapter}`) : t("lore.btn.earlier"));
+  parts.push(info(chapter <= 3 ? t(`lore.chapter.${chapter}`) : t("lore.btn.earlier")));
   if (state.task && menu.teaching.offered.length) parts.push(t("lore.teach.busy"));
   const buttons = [];
   if (!state.task) {
@@ -260,7 +267,7 @@ async function lessonScreen(ctx, { id, from }) {
   const parts = [t(`lore.lesson.${id}.text`)];
   const buttons = [];
   if (!readOnly && isTaskLesson(lesson)) {
-    parts.push(t("lore.lesson.task", t(`lore.lesson.${id}.goal`)));
+    parts.push(info(t("lore.lesson.task", t(`lore.lesson.${id}.goal`))));
     if (!state.task) buttons.push({ text: t("lore.btn.take"), icon: ICON.ready, next: step("takeLesson", id) });
   } else if (!readOnly) buttons.push({ text: t("lore.btn.understand"), icon: ICON.ready, next: step("learn", id) });
   buttons.push(back(from));
@@ -279,7 +286,7 @@ async function lessonScreen(ctx, { id, from }) {
     saveRenown(player);
     celebrate(player, [result], ctx.elf);
     speak(ctx.elf, "completion", player);
-    const notice = result.chapterOpened ? join(t("lore.result.learned", t(`lore.lesson.${id}.name`)), "\n", t("lore.chapter.opened")) : t("lore.result.learned", t(`lore.lesson.${id}.name`));
+    const notice = info(result.chapterOpened ? join(t("lore.result.learned", t(`lore.lesson.${id}.name`)), "\n", t("lore.chapter.opened")) : t("lore.result.learned", t(`lore.lesson.${id}.name`)));
     return step("teaching", notice);
   }
   return next;
@@ -295,7 +302,7 @@ async function taskScreen(ctx) {
   const parts = [];
   let place;
   if (task.kind === "lesson") {
-    parts.push(t(`lore.lesson.${task.id}.text`), t("lore.lesson.task", t(`lore.lesson.${task.id}.goal`)));
+    parts.push(t(`lore.lesson.${task.id}.text`), info(t("lore.lesson.task", t(`lore.lesson.${task.id}.goal`))));
   } else {
     const request = requestById(task.id);
     place = placeFor(ctx, request.profession);
@@ -370,7 +377,8 @@ async function traderDialog(ctx, profession) {
   buttons.push({ text: join(t("lore.btn.trade"), "\n§7", t("lore.btn.trade_hint")), icon: "textures/items/emerald", next: step("trade") });
   buttons.push({ text: t("lore.btn.farewell"), icon: ICON.farewell, next: undefined });
   ctx.title = { translate: `lothlorien.elf.profession.${profession}` };
-  const next = await choose(ctx, lines([t(`lore.req.${request.id}.text`), progressLine(player, request)]), buttons);
+  // the request first, then the grey block: Harmony and what the player carries (same layout as the Loremaster's main window)
+  const next = await choose(ctx, join(t(`lore.req.${request.id}.text`), "\n\n", statusLine(harmonyOf(player)), "\n", progressLine(player, request)), buttons);
   const current = renownOf(player);
   const band = bandOf(harmonyOf(player).harmony);
   if (!ctx.ok() || !elfAccepts(current, profession) || current.task.id !== request.id || band === "shunned" || band === "hated") return;

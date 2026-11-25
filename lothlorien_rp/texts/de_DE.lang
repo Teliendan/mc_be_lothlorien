@@ -184,6 +184,7 @@ lothlorien.message.status.guest=Gastrecht in Lothlórien
 lothlorien.message.status.uneasy=Unbehagen in Lothlórien
 lothlorien.message.status.shunned=Von Lothlórien gemieden
 lothlorien.message.status.hated=Von Lothlórien gehasst
+lothlorien.message.status.line=§7Harmonie:§r %s
 lothlorien.message.harmony.worse.uneasy=§6Der Wald sieht deine Taten mit Missfallen.
 lothlorien.message.harmony.worse.shunned=§cDer Wald kehrt dir den Rücken zu.
 lothlorien.message.harmony.worse.hated=§4Die Wächter dulden deine Gegenwart nicht länger.

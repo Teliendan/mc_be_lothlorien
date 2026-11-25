@@ -10132,10 +10132,10 @@
           "source": "Guest of Lothlórien",
           "context": {
             "meaning": "Action-bar label while the player is in the Guest band (Harmony 0 to +9): welcome, but not yet trusted. Harmony is a per-player number from -60 to +10 with five bands: Friend (+10), Guest (0 to +9), Uneasy (-1 to -14), Shunned (-15 to -29), Hated (-30 to -60). Deeds against the forest's creatures lower it; peaceful time inside the forest raises it.",
-            "location": "lothlorien_rp: action bar (inside the forest only)",
+            "location": "lothlorien_rp: action bar (shown for a few seconds on triggers) and after the Harmony label on top of elf dialog windows",
             "trigger": "Action-bar label while the player is in the Guest band (Harmony 0 to +9): welcome, but not yet trusted.",
             "tone": "Short status label",
-            "grammar": "Short standalone noun phrase naming the forest's attitude, not the player; also nested in the debug readout. Must not assume player gender; keep it short.",
+            "grammar": "Short standalone noun phrase naming the forest's attitude, not the player; also nested in the debug readout and after the 'Harmony:' label of the dialog line. Must not assume player gender; keep it short.",
             "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
             "source_paths": [
               "lothlorien_bp/scripts/harmony.js"
@@ -10145,42 +10145,42 @@
           "translations": {
             "cs_CZ": {
               "text": "Pohostinnost Lothlórienu",
-              "based_on": "9cce692111e5b59c8bb3e1bbdd45eb15d1ab021a406b165c47ea0dbd898f82e9",
+              "based_on": "0183079153632f5eb8848699a6b1a992a102671282f217d168f4bc7fb9c228fa",
               "status": "ai-draft"
             },
             "es_ES": {
               "text": "Acogida de Lothlórien",
-              "based_on": "9cce692111e5b59c8bb3e1bbdd45eb15d1ab021a406b165c47ea0dbd898f82e9",
+              "based_on": "0183079153632f5eb8848699a6b1a992a102671282f217d168f4bc7fb9c228fa",
               "status": "ai-draft"
             },
             "es_MX": {
               "text": "Hospitalidad de Lothlórien",
-              "based_on": "9cce692111e5b59c8bb3e1bbdd45eb15d1ab021a406b165c47ea0dbd898f82e9",
+              "based_on": "0183079153632f5eb8848699a6b1a992a102671282f217d168f4bc7fb9c228fa",
               "status": "ai-draft"
             },
             "pt_PT": {
               "text": "Acolhimento de Lothlórien",
-              "based_on": "9cce692111e5b59c8bb3e1bbdd45eb15d1ab021a406b165c47ea0dbd898f82e9",
+              "based_on": "0183079153632f5eb8848699a6b1a992a102671282f217d168f4bc7fb9c228fa",
               "status": "ai-draft"
             },
             "pt_BR": {
               "text": "Acolhimento de Lothlórien",
-              "based_on": "9cce692111e5b59c8bb3e1bbdd45eb15d1ab021a406b165c47ea0dbd898f82e9",
+              "based_on": "0183079153632f5eb8848699a6b1a992a102671282f217d168f4bc7fb9c228fa",
               "status": "ai-draft"
             },
             "de_DE": {
               "text": "Gastrecht in Lothlórien",
-              "based_on": "9cce692111e5b59c8bb3e1bbdd45eb15d1ab021a406b165c47ea0dbd898f82e9",
+              "based_on": "0183079153632f5eb8848699a6b1a992a102671282f217d168f4bc7fb9c228fa",
               "status": "ai-draft"
             },
             "fr_FR": {
               "text": "Hospitalité de Lothlórien",
-              "based_on": "9cce692111e5b59c8bb3e1bbdd45eb15d1ab021a406b165c47ea0dbd898f82e9",
+              "based_on": "0183079153632f5eb8848699a6b1a992a102671282f217d168f4bc7fb9c228fa",
               "status": "ai-draft"
             },
             "pl_PL": {
               "text": "Gościna w Lothlórien",
-              "based_on": "9cce692111e5b59c8bb3e1bbdd45eb15d1ab021a406b165c47ea0dbd898f82e9",
+              "based_on": "0183079153632f5eb8848699a6b1a992a102671282f217d168f4bc7fb9c228fa",
               "status": "ai-draft"
             }
           }
@@ -10189,10 +10189,10 @@
           "source": "Unease in Lothlórien",
           "context": {
             "meaning": "Action-bar label while the player is in the Uneasy band (Harmony -1 to -14): the forest is uneasy about the player. Harmony is a per-player number from -60 to +10 with five bands: Friend (+10), Guest (0 to +9), Uneasy (-1 to -14), Shunned (-15 to -29), Hated (-30 to -60). Deeds against the forest's creatures lower it; peaceful time inside the forest raises it.",
-            "location": "lothlorien_rp: action bar (inside the forest only)",
+            "location": "lothlorien_rp: action bar (shown for a few seconds on triggers) and after the Harmony label on top of elf dialog windows",
             "trigger": "Action-bar label while the player is in the Uneasy band (Harmony -1 to -14): the forest is uneasy about the player.",
             "tone": "Short status label",
-            "grammar": "Short standalone noun phrase naming the forest's attitude, not the player; also nested in the debug readout. Must not assume player gender; keep it short.",
+            "grammar": "Short standalone noun phrase naming the forest's attitude, not the player; also nested in the debug readout and after the 'Harmony:' label of the dialog line. Must not assume player gender; keep it short.",
             "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
             "source_paths": [
               "lothlorien_bp/scripts/harmony.js"
@@ -10202,42 +10202,42 @@
           "translations": {
             "cs_CZ": {
               "text": "Neklid v Lothlórienu",
-              "based_on": "8b0715174febe0a47492f8c824ed5d333f81e9000e83072a559cf2f667f731a0",
+              "based_on": "e9c31f5221d02cc63d19fc95363343f5b202b93aa84ff430a538232b04cd11ee",
               "status": "ai-draft"
             },
             "es_ES": {
               "text": "Inquietud en Lothlórien",
-              "based_on": "8b0715174febe0a47492f8c824ed5d333f81e9000e83072a559cf2f667f731a0",
+              "based_on": "e9c31f5221d02cc63d19fc95363343f5b202b93aa84ff430a538232b04cd11ee",
               "status": "ai-draft"
             },
             "es_MX": {
               "text": "Inquietud en Lothlórien",
-              "based_on": "8b0715174febe0a47492f8c824ed5d333f81e9000e83072a559cf2f667f731a0",
+              "based_on": "e9c31f5221d02cc63d19fc95363343f5b202b93aa84ff430a538232b04cd11ee",
               "status": "ai-draft"
             },
             "pt_PT": {
               "text": "Inquietação em Lothlórien",
-              "based_on": "8b0715174febe0a47492f8c824ed5d333f81e9000e83072a559cf2f667f731a0",
+              "based_on": "e9c31f5221d02cc63d19fc95363343f5b202b93aa84ff430a538232b04cd11ee",
               "status": "ai-draft"
             },
             "pt_BR": {
               "text": "Inquietação em Lothlórien",
-              "based_on": "8b0715174febe0a47492f8c824ed5d333f81e9000e83072a559cf2f667f731a0",
+              "based_on": "e9c31f5221d02cc63d19fc95363343f5b202b93aa84ff430a538232b04cd11ee",
               "status": "ai-draft"
             },
             "de_DE": {
               "text": "Unbehagen in Lothlórien",
-              "based_on": "8b0715174febe0a47492f8c824ed5d333f81e9000e83072a559cf2f667f731a0",
+              "based_on": "e9c31f5221d02cc63d19fc95363343f5b202b93aa84ff430a538232b04cd11ee",
               "status": "ai-draft"
             },
             "fr_FR": {
               "text": "Malaise en Lothlórien",
-              "based_on": "8b0715174febe0a47492f8c824ed5d333f81e9000e83072a559cf2f667f731a0",
+              "based_on": "e9c31f5221d02cc63d19fc95363343f5b202b93aa84ff430a538232b04cd11ee",
               "status": "ai-draft"
             },
             "pl_PL": {
               "text": "Niepokój w Lothlórien",
-              "based_on": "8b0715174febe0a47492f8c824ed5d333f81e9000e83072a559cf2f667f731a0",
+              "based_on": "e9c31f5221d02cc63d19fc95363343f5b202b93aa84ff430a538232b04cd11ee",
               "status": "ai-draft"
             }
           }
@@ -10246,10 +10246,10 @@
           "source": "Shunned by Lothlórien",
           "context": {
             "meaning": "Action-bar label while the player is in the Shunned band (Harmony -15 to -29): the forest turns away from the player. Harmony is a per-player number from -60 to +10 with five bands: Friend (+10), Guest (0 to +9), Uneasy (-1 to -14), Shunned (-15 to -29), Hated (-30 to -60). Deeds against the forest's creatures lower it; peaceful time inside the forest raises it.",
-            "location": "lothlorien_rp: action bar (inside the forest only)",
+            "location": "lothlorien_rp: action bar (shown for a few seconds on triggers) and after the Harmony label on top of elf dialog windows",
             "trigger": "Action-bar label while the player is in the Shunned band (Harmony -15 to -29): the forest turns away from the player.",
             "tone": "Short status label",
-            "grammar": "Short standalone noun phrase naming the forest's attitude, not the player; also nested in the debug readout. Must not assume player gender; keep it short.",
+            "grammar": "Short standalone noun phrase naming the forest's attitude, not the player; also nested in the debug readout and after the 'Harmony:' label of the dialog line. Must not assume player gender; keep it short.",
             "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
             "source_paths": [
               "lothlorien_bp/scripts/harmony.js"
@@ -10259,42 +10259,42 @@
           "translations": {
             "cs_CZ": {
               "text": "Chlad Lothlórienu",
-              "based_on": "2afdecde23d691dfff3b2e5680284d31761c5c82a12b9869a7ebf31efde724e1",
+              "based_on": "449b588ea430257b21d0d1321fb0c8fbc84b55a5481f2fccaf91acfb6c437295",
               "status": "ai-draft"
             },
             "es_ES": {
               "text": "Rechazo de Lothlórien",
-              "based_on": "2afdecde23d691dfff3b2e5680284d31761c5c82a12b9869a7ebf31efde724e1",
+              "based_on": "449b588ea430257b21d0d1321fb0c8fbc84b55a5481f2fccaf91acfb6c437295",
               "status": "ai-draft"
             },
             "es_MX": {
               "text": "Rechazo de Lothlórien",
-              "based_on": "2afdecde23d691dfff3b2e5680284d31761c5c82a12b9869a7ebf31efde724e1",
+              "based_on": "449b588ea430257b21d0d1321fb0c8fbc84b55a5481f2fccaf91acfb6c437295",
               "status": "ai-draft"
             },
             "pt_PT": {
               "text": "Rejeição de Lothlórien",
-              "based_on": "2afdecde23d691dfff3b2e5680284d31761c5c82a12b9869a7ebf31efde724e1",
+              "based_on": "449b588ea430257b21d0d1321fb0c8fbc84b55a5481f2fccaf91acfb6c437295",
               "status": "ai-draft"
             },
             "pt_BR": {
               "text": "Rejeição de Lothlórien",
-              "based_on": "2afdecde23d691dfff3b2e5680284d31761c5c82a12b9869a7ebf31efde724e1",
+              "based_on": "449b588ea430257b21d0d1321fb0c8fbc84b55a5481f2fccaf91acfb6c437295",
               "status": "ai-draft"
             },
             "de_DE": {
               "text": "Von Lothlórien gemieden",
-              "based_on": "2afdecde23d691dfff3b2e5680284d31761c5c82a12b9869a7ebf31efde724e1",
+              "based_on": "449b588ea430257b21d0d1321fb0c8fbc84b55a5481f2fccaf91acfb6c437295",
               "status": "ai-draft"
             },
             "fr_FR": {
               "text": "Rejet de Lothlórien",
-              "based_on": "2afdecde23d691dfff3b2e5680284d31761c5c82a12b9869a7ebf31efde724e1",
+              "based_on": "449b588ea430257b21d0d1321fb0c8fbc84b55a5481f2fccaf91acfb6c437295",
               "status": "ai-draft"
             },
             "pl_PL": {
               "text": "Niełaska Lothlórien",
-              "based_on": "2afdecde23d691dfff3b2e5680284d31761c5c82a12b9869a7ebf31efde724e1",
+              "based_on": "449b588ea430257b21d0d1321fb0c8fbc84b55a5481f2fccaf91acfb6c437295",
               "status": "ai-draft"
             }
           }
@@ -10303,10 +10303,10 @@
           "source": "Hated by Lothlórien",
           "context": {
             "meaning": "Action-bar label while the player is in the Hated band (Harmony -30 to -60): the forest hates the player and its wardens attack on sight. Harmony is a per-player number from -60 to +10 with five bands: Friend (+10), Guest (0 to +9), Uneasy (-1 to -14), Shunned (-15 to -29), Hated (-30 to -60). Deeds against the forest's creatures lower it; peaceful time inside the forest raises it.",
-            "location": "lothlorien_rp: action bar (inside the forest only)",
+            "location": "lothlorien_rp: action bar (shown for a few seconds on triggers) and after the Harmony label on top of elf dialog windows",
             "trigger": "Action-bar label while the player is in the Hated band (Harmony -30 to -60): the forest hates the player and its wardens attack on sight.",
             "tone": "Short status label",
-            "grammar": "Short standalone noun phrase naming the forest's attitude, not the player; also nested in the debug readout. Must not assume player gender; keep it short.",
+            "grammar": "Short standalone noun phrase naming the forest's attitude, not the player; also nested in the debug readout and after the 'Harmony:' label of the dialog line. Must not assume player gender; keep it short.",
             "constraints": "Preserve namespace IDs, commands, coordinates, color codes, placeholder order and lore proper names. Action-bar labels must stay short; no assumed player gender.",
             "source_paths": [
               "lothlorien_bp/scripts/harmony.js"
@@ -10316,42 +10316,106 @@
           "translations": {
             "cs_CZ": {
               "text": "Nenávist Lothlórienu",
-              "based_on": "edda96955681cda1fd80c1a0caec47fe4b5b3c3fbaa8533696651b1d1a987491",
+              "based_on": "e5ce7ec4b7a93eca9f7f7b0d495c837bc8abf712a15f35338c4d48fec063c5ff",
               "status": "ai-draft"
             },
             "es_ES": {
               "text": "Odio de Lothlórien",
-              "based_on": "edda96955681cda1fd80c1a0caec47fe4b5b3c3fbaa8533696651b1d1a987491",
+              "based_on": "e5ce7ec4b7a93eca9f7f7b0d495c837bc8abf712a15f35338c4d48fec063c5ff",
               "status": "ai-draft"
             },
             "es_MX": {
               "text": "Odio de Lothlórien",
-              "based_on": "edda96955681cda1fd80c1a0caec47fe4b5b3c3fbaa8533696651b1d1a987491",
+              "based_on": "e5ce7ec4b7a93eca9f7f7b0d495c837bc8abf712a15f35338c4d48fec063c5ff",
               "status": "ai-draft"
             },
             "pt_PT": {
               "text": "Ódio de Lothlórien",
-              "based_on": "edda96955681cda1fd80c1a0caec47fe4b5b3c3fbaa8533696651b1d1a987491",
+              "based_on": "e5ce7ec4b7a93eca9f7f7b0d495c837bc8abf712a15f35338c4d48fec063c5ff",
               "status": "ai-draft"
             },
             "pt_BR": {
               "text": "Ódio de Lothlórien",
-              "based_on": "edda96955681cda1fd80c1a0caec47fe4b5b3c3fbaa8533696651b1d1a987491",
+              "based_on": "e5ce7ec4b7a93eca9f7f7b0d495c837bc8abf712a15f35338c4d48fec063c5ff",
               "status": "ai-draft"
             },
             "de_DE": {
               "text": "Von Lothlórien gehasst",
-              "based_on": "edda96955681cda1fd80c1a0caec47fe4b5b3c3fbaa8533696651b1d1a987491",
+              "based_on": "e5ce7ec4b7a93eca9f7f7b0d495c837bc8abf712a15f35338c4d48fec063c5ff",
               "status": "ai-draft"
             },
             "fr_FR": {
               "text": "Haine de Lothlórien",
-              "based_on": "edda96955681cda1fd80c1a0caec47fe4b5b3c3fbaa8533696651b1d1a987491",
+              "based_on": "e5ce7ec4b7a93eca9f7f7b0d495c837bc8abf712a15f35338c4d48fec063c5ff",
               "status": "ai-draft"
             },
             "pl_PL": {
               "text": "Nienawiść Lothlórien",
-              "based_on": "edda96955681cda1fd80c1a0caec47fe4b5b3c3fbaa8533696651b1d1a987491",
+              "based_on": "e5ce7ec4b7a93eca9f7f7b0d495c837bc8abf712a15f35338c4d48fec063c5ff",
+              "status": "ai-draft"
+            }
+          }
+        },
+        "lothlorien.message.status.line": {
+          "source": "§7Harmony:§r %s",
+          "context": {
+            "meaning": "Line on top of an elf dialog window (Loremaster, trader delivery window) showing the player's current Harmony band: a grey label, then the band icon and band name. It is information, not the elf's speech. Harmony is a per-player number from -60 to +10 with five bands: Friend (+10), Guest (0 to +9), Uneasy (-1 to -14), Shunned (-15 to -29), Hated (-30 to -60).",
+            "location": "lothlorien_rp: first line of the body of a Loremaster or trader dialog form",
+            "trigger": "Player opens the Loremaster's dialog or a trader's delivery window.",
+            "tone": "Neutral interface label",
+            "grammar": "A one-word label (the glossary term for Harmony) followed by a colon; %s is the band icon and name, e.g. 'Guest of Lothlórien'.",
+            "constraints": "Preserve color codes (§7 before the label, §r after the colon) and the %s placeholder. Keep the label to the glossary term; no sentence.",
+            "source_paths": [
+              "lothlorien_bp/scripts/harmony.js",
+              "lothlorien_bp/scripts/loremaster.js"
+            ]
+          },
+          "placeholders": [
+            {
+              "name": "status",
+              "type": "RawMessage",
+              "meaning": "status: band icon and nested translated band name"
+            }
+          ],
+          "translations": {
+            "cs_CZ": {
+              "text": "§7Soulad:§r %s",
+              "based_on": "0d6f8de47ec8b43277249a0c4b8122c457d16ea043b5e60cdb3fa010ba682283",
+              "status": "ai-draft"
+            },
+            "es_ES": {
+              "text": "§7Armonía:§r %s",
+              "based_on": "0d6f8de47ec8b43277249a0c4b8122c457d16ea043b5e60cdb3fa010ba682283",
+              "status": "ai-draft"
+            },
+            "es_MX": {
+              "text": "§7Armonía:§r %s",
+              "based_on": "0d6f8de47ec8b43277249a0c4b8122c457d16ea043b5e60cdb3fa010ba682283",
+              "status": "ai-draft"
+            },
+            "pt_PT": {
+              "text": "§7Harmonia:§r %s",
+              "based_on": "0d6f8de47ec8b43277249a0c4b8122c457d16ea043b5e60cdb3fa010ba682283",
+              "status": "ai-draft"
+            },
+            "pt_BR": {
+              "text": "§7Harmonia:§r %s",
+              "based_on": "0d6f8de47ec8b43277249a0c4b8122c457d16ea043b5e60cdb3fa010ba682283",
+              "status": "ai-draft"
+            },
+            "de_DE": {
+              "text": "§7Harmonie:§r %s",
+              "based_on": "0d6f8de47ec8b43277249a0c4b8122c457d16ea043b5e60cdb3fa010ba682283",
+              "status": "ai-draft"
+            },
+            "fr_FR": {
+              "text": "§7Harmonie :§r %s",
+              "based_on": "0d6f8de47ec8b43277249a0c4b8122c457d16ea043b5e60cdb3fa010ba682283",
+              "status": "ai-draft"
+            },
+            "pl_PL": {
+              "text": "§7Harmonia:§r %s",
+              "based_on": "0d6f8de47ec8b43277249a0c4b8122c457d16ea043b5e60cdb3fa010ba682283",
               "status": "ai-draft"
             }
           }

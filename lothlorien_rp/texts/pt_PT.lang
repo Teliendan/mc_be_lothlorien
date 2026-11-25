@@ -184,6 +184,7 @@ lothlorien.message.status.guest=Acolhimento de Lothlórien
 lothlorien.message.status.uneasy=Inquietação em Lothlórien
 lothlorien.message.status.shunned=Rejeição de Lothlórien
 lothlorien.message.status.hated=Ódio de Lothlórien
+lothlorien.message.status.line=§7Harmonia:§r %s
 lothlorien.message.harmony.worse.uneasy=§6A floresta franze o sobrolho perante os teus atos.
 lothlorien.message.harmony.worse.shunned=§cA floresta vira-te as costas.
 lothlorien.message.harmony.worse.hated=§4Os guardiões já não toleram a tua presença.

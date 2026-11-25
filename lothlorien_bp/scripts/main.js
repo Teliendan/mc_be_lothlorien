@@ -25,7 +25,7 @@ import "./warden_replace.js";
 import "./boat_drop.js";
 import "./boat_wobble.js";
 import { leafUndersideY } from "./leaf_fall.js";
-import { handleHarmonyEvent, harmonyOf, startHarmony } from "./harmony_game.js";
+import { handleHarmonyEvent, harmonyOf, showStatus, startHarmony } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { startDeer } from "./deer.js";
 import { startWhiteDeer } from "./white_deer.js";
@@ -225,6 +225,7 @@ world.afterEvents.worldLoad.subscribe(() => {
     rankOf: (player) => rankIndexOf(renownOf(player).points),
     requestProfession: (player) => requestProfession(renownOf(player)),
     openRequestForm: openTraderForm,
+    showStatus,
   });
   startRopeClimbing();
   // music also while a village is still being planned and built (owner 2026-10-27): village_area.js remembers a village as its first marker loads

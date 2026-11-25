@@ -5,7 +5,7 @@ import { world, system } from "@minecraft/server";
 import { FOE_TAG } from "./elf_rules.js";
 import { familiesOf } from "./entity_util.js";
 import { PLAYER_ID } from "./ids.js";
-import { BAND_TAGS, EVERYWHERE_DEEDS, MAX_HARMONY, MIN_HARMONY, bandOf, markMount, wasMount, changeMessages, deedCounts, deedKindOf, hintDue, parse, recordDeath, recordDeed, serialize, statusText, tick } from "./harmony.js";
+import { BAND_TAGS, EVERYWHERE_DEEDS, MAX_HARMONY, MIN_HARMONY, bandOf, markMount, wasMount, changeMessages, deedCounts, deedKindOf, entryDue, hintDue, parse, recordDeath, recordDeed, serialize, statusText, tick } from "./harmony.js";
 
 const PROPERTY = "lothlorien:harmony";
 export const HATED_TAG = BAND_TAGS.hated; // read by entities/elven_warden.json (wardens attack tagged players on sight)
@@ -18,7 +18,9 @@ const PLAYER_DAMAGE_CAUSES = ["entityAttack", "projectile", "magic", "maceSmash"
 const states = new Map();
 const lastHint = new Map(); // player id -> Date.now() of the last deed hint
 const mounts = new Map(); // mob id -> Date.now() of a player hit while a monster rode it (harmony.js markMount)
+const lastInside = new Map(); // player id -> system.currentTick of the last one-second tick that found the player inside
 let isInside = () => false;
+let debugTag; // players with this tag see the debug readout on the action bar instead
 
 // Current state of a player (loaded from the dynamic property on first use). Consumers read bandOf(state.harmony).
 export function harmonyOf(player) {
@@ -45,6 +47,17 @@ function syncBandTags(player, state) {
   }
 }
 
+// Shows the player's Harmony status (icon and band name) on the action bar once; vanilla fades it after about 3 s. Called when
+// something happens that the status explains (owner 2026-11-25): band change, entering the forest, a costly deed (with the chat
+// hint), an animal or elf refusing because of the band, a warden greeting, wardens starting to shoot a Hated player.
+export function showStatus(player) {
+  try {
+    if (!player.hasTag(debugTag)) player.onScreenDisplay.setActionBar(statusText(harmonyOf(player)));
+  } catch {
+    // player gone
+  }
+}
+
 // Listeners told when a player's Harmony number changed (same shape as deeds.js onDeed); renown_game.js uses it for the Harmony nudge.
 const changeListeners = [];
 export function onHarmonyChange(listener) {
@@ -56,7 +69,10 @@ export function onHarmonyChange(listener) {
 function update(player, state, change) {
   const before = state.harmony;
   change();
-  if (bandOf(before) !== bandOf(state.harmony)) syncBandTags(player, state);
+  if (bandOf(before) !== bandOf(state.harmony)) {
+    syncBandTags(player, state);
+    showStatus(player);
+  }
   if (state.harmony === before) return false;
   const keys = changeMessages(before, state.harmony);
   for (const key of keys) player.sendMessage(message(key));
@@ -77,6 +93,7 @@ function hint(player) {
   if (!hintDue(lastHint.get(player.id), now)) return;
   lastHint.set(player.id, now);
   player.sendMessage(message("harmony.hint"));
+  showStatus(player);
 }
 
 // A deed of `player` against `victim` (an entity): counts when either stands inside the forest; elf and warden deeds count everywhere.
@@ -122,8 +139,9 @@ export function handleHarmonyEvent(event, player) {
   return true;
 }
 
-export function startHarmony(inside, debugTag) {
+export function startHarmony(inside, debugReadoutTag) {
   isInside = inside;
+  debugTag = debugReadoutTag;
   world.afterEvents.entityDie.subscribe(({ deadEntity, damageSource }) => {
     try {
       // read before recordDeath: a Hated player dying inside drops to Shunned and loses the tag
@@ -156,7 +174,10 @@ export function startHarmony(inside, debugTag) {
     states.delete(playerId);
     lastHint.delete(playerId);
     synced.delete(playerId);
+    lastInside.delete(playerId);
   });
+  // A respawn in the forest shows the status like an entry (the tick below sees no recent visit).
+  world.afterEvents.playerSpawn.subscribe(({ player }) => lastInside.delete(player.id));
 
   system.runInterval(() => {
     for (const player of world.getPlayers()) {
@@ -164,9 +185,11 @@ export function startHarmony(inside, debugTag) {
       if (!synced.has(player.id)) { synced.add(player.id); syncBandTags(player, state); }
       const here = inside(player.dimension, player.location);
       update(player, state, () => tick(state, here, TICK_SECONDS));
-      const text = statusText(state, here);
-      // the debug readout owns the actionbar of players who switched it on
-      if (text && !player.hasTag(debugTag)) player.onScreenDisplay.setActionBar(text);
+      if (!here) continue;
+      // entering the forest (also joining or respawning in it) shows the status once
+      const now = system.currentTick;
+      if (entryDue(lastInside.get(player.id), now)) showStatus(player);
+      lastInside.set(player.id, now);
     }
   }, TICK_SECONDS * 20);
 }

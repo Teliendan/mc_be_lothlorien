@@ -33,7 +33,7 @@ try {
   assert.equal(inside(player.dimension, player.location), true, "first marker establishes village territory before queued planning starts");
   assert.equal(world.getDynamicProperty(VILLAGE_PLANS), undefined, "recognition does not mark repairs complete");
   await mock.advance(20);
-  assert.equal(bars.at(-1).rawtext[1].translate, "lothlorien.message.status.friend", "existing Friend badge appears on its normal refresh outside the forest biome");
+  assert.equal(bars.at(-1).rawtext[1].translate, "lothlorien.message.status.friend", "village territory counts as the forest: entering it shows the Friend status outside the forest biome");
   assert.equal(inside(mock.dimension("minecraft:nether"), player.location), false);
   assert.equal(area(-200, 50), false, "unrelated outside terrain stays outside");
   assert.equal(area(-125, 50), false, "loading padding without village blocks stays outside");

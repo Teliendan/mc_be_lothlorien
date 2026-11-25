@@ -23,7 +23,7 @@ makes the **engine** do. Ranked by expected effect; all open until tried on the 
    6 squirrels + 4 wardens + 3 swans near one player, on top of vanilla animals; 26 of them are flying pathfinders
    (per entity the same settings as vanilla bee/parrot, but vanilla rarely has that many). All despawn by distance,
    so herds are replaced continually. Trade-off route: lower the three flier limits.
-4. Small: the Harmony action bar is re-sent every second although it rarely changes; pressure plates poll at 4 ticks.
+4. Small: pressure plates poll at 4 ticks. (The Harmony action bar, re-sent every second, is shown on triggers only since 2026-11-25: `design/harmony.md` section 3.)
 
 Entity events (2026-11-11, finding LV-09; structure, not measured). `entityLoad` and `entitySpawn` take no native filter,
 so each subscriber used to run on every entity and test its type. All 15 subscriptions now go through one router

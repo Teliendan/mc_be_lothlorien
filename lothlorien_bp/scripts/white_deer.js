@@ -12,7 +12,7 @@ import { message } from "./messages.js";
 // hops of 8-14 blocks. Several guiding deer close together may follow each other's beacon (accepted by the owner).
 import { EntityInitializationCause, EquipmentSlot, GameMode, ItemStack, system, world } from "@minecraft/server";
 import { onEntity } from "./entity_events.js";
-import { harmonyOf } from "./harmony_game.js";
+import { harmonyOf, showStatus } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { consumeHeld } from "./deferred_use.js";
 import { judgeNatural, moveBeacon, playerById, removeBeacon, say } from "./entity_util.js";
@@ -239,11 +239,13 @@ function offer(player, deer) {
   }
   if (refusal === "untrusted") {
     dlog(() => `offer ${deer.id}: refused (untrusted)`);
+    showStatus(player); // the band is the reason
     say(player, message("deer.untrusted"));
     return;
   }
   if (refusal) {
     dlog(() => `offer ${deer.id}: refused (restless)`);
+    showStatus(player);
     say(player, message("deer.restless"));
     return;
   }

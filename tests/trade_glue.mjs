@@ -35,11 +35,12 @@ function click(p, e, typeId) {
   return event.cancel;
 }
 const chatCount = (p, key) => p.sent.filter((m) => m.translate === `lothlorien.message.${key}`).length;
-async function start() {
+async function start(extra = {}) {
   const mod = await import(`../lothlorien_bp/scripts/trade.js?trade_glue=${++run}`);
   mod.startTrade({
     bandOf: (p) => p.band, rankOf: (p) => p.rank, requestProfession: (p) => p.request,
     openRequestForm: (p, e, profession) => new Promise((resolve) => requests.push({ p, e, profession, resolve })),
+    ...extra,
   });
   return mod;
 }
@@ -75,6 +76,16 @@ await scenario("refusal wins over requests and repeats do not repeat feedback", 
   assert.equal(chatCount(p, "trade.refused.shunned"), 1);
   assert.equal(click(p, e), true); await mock.advance(1);
   assert.equal(chatCount(p, "trade.refused.shunned"), 1); assert.equal(requests.length, 0);
+});
+
+await scenario("a refused click shows the Harmony status at once; an opened shop does not", async () => {
+  const p = player(), e = elf(), shown = [];
+  await start({ showStatus: (who) => shown.push(who.id) });
+  await mock.advance(10);
+  assert.equal(click(p, e), false, "the native shop opens"); await mock.advance(30);
+  assert.equal(shown.length, 0, "the shop screen hides the action bar: nothing is shown");
+  p.band = "shunned"; await mock.advance(10); click(p, e); await mock.advance(1);
+  assert.deepEqual(shown, [p.id], "a refused click shows it");
 });
 
 await scenario("a mismatching click swaps next tick and cancels its repeats", async () => {

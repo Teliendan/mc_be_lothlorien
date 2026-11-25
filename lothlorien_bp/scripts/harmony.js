@@ -150,18 +150,29 @@ export function changeMessages(from, to) {
 export const HINT_GAP_MS = 30000;
 export const hintDue = (lastMs, nowMs) => lastMs === undefined || nowMs - lastMs >= HINT_GAP_MS;
 
-// Per-band prefix of the action bar: a glyph from the custom font page lothlorien_rp/font/glyph_E5.png (U+E500 + cell, made
-// by tools/make_harmony_icons.py) and a space. Whether an add-on glyph page renders in the action bar is not verified in game.
+// Entering the forest shows the status only when the player was outside for longer than this (walking along the border does
+// not repeat it). Ticks: harmony_game.js compares system.currentTick values sampled by its one-second tick.
+export const ENTRY_GAP_TICKS = 200;
+export const entryDue = (lastInsideTick, nowTick) => lastInsideTick === undefined || nowTick - lastInsideTick > ENTRY_GAP_TICKS;
+
+// Per-band prefix of the status: a glyph from the custom font page lothlorien_rp/font/glyph_E5.png (U+E500 + cell, made
+// by tools/make_harmony_icons.py) and a space. Seen in the action bar (owner, 2026-10-24); in a form body seen too (owner, 2026-11-25).
 export const BAND_ICONS = { friend: "\uE500 ", guest: "\uE501 ", uneasy: "\uE502 ", shunned: "\uE503 ", hated: "\uE504 " };
 
-// Status text for the action bar, or undefined outside the forest. Shown for every band; the status is only ever
-// visible inside the biome.
-export function statusText(state, inside) {
-  if (!inside) return undefined;
+// Status text: icon and band name, for every band. harmony_game.js showStatus puts it on the action bar when something happens
+// (vanilla shows one action bar message for about 3 s, then fades it). The elf dialogs use statusLine below.
+export function statusText(state) {
   const band = bandOf(state.harmony);
   const label = message(`status.${band}`);
   const icon = BAND_ICONS[band];
   return icon ? { rawtext: [{ text: icon }, label] } : label;
+}
+
+// The status as a line of an elf dialog window (the first of its grey information block, below the elf's words): a grey "Harmony:" label, then the icon and the band name in grey, so it
+// reads as information, not as the elf's speech (owner 2026-11-25). The colour code comes after the icon, so it cannot tint the glyph.
+export function statusLine(state) {
+  const band = bandOf(state.harmony);
+  return message("status.line", { rawtext: [{ text: BAND_ICONS[band] }, { text: "§7" }, message(`status.${band}`), { text: "§r" }] });
 }
 
 export function serialize(state) {

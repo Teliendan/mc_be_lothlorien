@@ -184,6 +184,7 @@ lothlorien.message.status.guest=Hospitalité de Lothlórien
 lothlorien.message.status.uneasy=Malaise en Lothlórien
 lothlorien.message.status.shunned=Rejet de Lothlórien
 lothlorien.message.status.hated=Haine de Lothlórien
+lothlorien.message.status.line=§7Harmonie :§r %s
 lothlorien.message.harmony.worse.uneasy=§6La forêt désapprouve vos actes.
 lothlorien.message.harmony.worse.shunned=§cLa forêt vous tourne le dos.
 lothlorien.message.harmony.worse.hated=§4Les gardiens ne toléreront plus votre présence.

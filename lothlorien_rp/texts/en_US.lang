@@ -369,6 +369,8 @@ lothlorien.message.status.uneasy=Unease in Lothlórien
 lothlorien.message.status.shunned=Shunned by Lothlórien
 ## Context: Action-bar label while the player is in the Hated band (Harmony -30 to -60): the forest hates the player and its wardens attack on sight. Harmony is a per-player number from -60 to +10 with five bands: Friend (+10), Guest (0 to +9), Uneasy (-1 to -14), Shunned (-15 to -29), Hated (-30 to -60). Deeds against the forest's creatures lower it; peaceful time inside the forest raises it.
 lothlorien.message.status.hated=Hated by Lothlórien
+## Context: Line on top of an elf dialog window (Loremaster, trader delivery window) showing the player's current Harmony band: a grey label, then the band icon and band name. It is information, not the elf's speech. Harmony is a per-player number from -60 to +10 with five bands: Friend (+10), Guest (0 to +9), Uneasy (-1 to -14), Shunned (-15 to -29), Hated (-30 to -60).
+lothlorien.message.status.line=§7Harmony:§r %s
 ## Context: Chat line when Harmony falls from Guest (or Friend) into the Uneasy band.. Harmony is a per-player number from -60 to +10 with five bands: Friend (+10), Guest (0 to +9), Uneasy (-1 to -14), Shunned (-15 to -29), Hated (-30 to -60). Deeds against the forest's creatures lower it; peaceful time inside the forest raises it.
 lothlorien.message.harmony.worse.uneasy=§6The forest frowns upon your deeds.
 ## Context: Chat line when Harmony falls into the Shunned band (-15 to -29), from a better band.. Harmony is a per-player number from -60 to +10 with five bands: Friend (+10), Guest (0 to +9), Uneasy (-1 to -14), Shunned (-15 to -29), Hated (-30 to -60). Deeds against the forest's creatures lower it; peaceful time inside the forest raises it.

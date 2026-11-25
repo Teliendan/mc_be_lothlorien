@@ -8,7 +8,7 @@ import { message } from "./messages.js";
 // nearest guide beacon; this script moves the beacon: to the away point, to the squirrel's feet while it digs, then onto
 // the player. The beacon is the white deer's invisible helper entity (`minecraft:transient`, so none survives a reload).
 import { GameMode, system, world } from "@minecraft/server";
-import { harmonyOf } from "./harmony_game.js";
+import { harmonyOf, showStatus } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { eatHeldFood, healAnimal, isInjured } from "./animal_food.js";
 import { noteDeed } from "./deeds.js";
@@ -69,10 +69,12 @@ function offer(player, squirrel) {
   const refusal = offerRefusal({ band, cooldownLeft: left });
   if (refusal === "restless") {
     dlog(() => `offer ${squirrel.id}: refused (restless)`);
+    showStatus(player); // the band is the reason
     return say(player, message("squirrel.restless"));
   }
   if (refusal === "untrusted") {
     dlog(() => `offer ${squirrel.id}: refused (untrusted)`);
+    showStatus(player);
     return say(player, message("squirrel.untrusted"));
   }
   if (refusal === "full") {

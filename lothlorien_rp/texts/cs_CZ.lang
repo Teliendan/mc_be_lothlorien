@@ -184,6 +184,7 @@ lothlorien.message.status.guest=Pohostinnost Lothlórienu
 lothlorien.message.status.uneasy=Neklid v Lothlórienu
 lothlorien.message.status.shunned=Chlad Lothlórienu
 lothlorien.message.status.hated=Nenávist Lothlórienu
+lothlorien.message.status.line=§7Soulad:§r %s
 lothlorien.message.harmony.worse.uneasy=§6Les se mračí nad vašimi skutky.
 lothlorien.message.harmony.worse.shunned=§cLes se k vám otočil zády.
 lothlorien.message.harmony.worse.hated=§4Strážci už vaši přítomnost nestrpí.

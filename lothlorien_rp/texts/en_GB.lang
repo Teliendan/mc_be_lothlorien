@@ -185,6 +185,7 @@ lothlorien.message.status.guest=Guest of Lothlórien
 lothlorien.message.status.uneasy=Unease in Lothlórien
 lothlorien.message.status.shunned=Shunned by Lothlórien
 lothlorien.message.status.hated=Hated by Lothlórien
+lothlorien.message.status.line=§7Harmony:§r %s
 lothlorien.message.harmony.worse.uneasy=§6The forest frowns upon your deeds.
 lothlorien.message.harmony.worse.shunned=§cThe forest turns its back on you.
 lothlorien.message.harmony.worse.hated=§4The wardens will no longer suffer your presence.

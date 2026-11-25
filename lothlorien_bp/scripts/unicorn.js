@@ -4,7 +4,7 @@ import { message } from "./messages.js";
 // and lure one with Elanor. This file is the taming: three offers of Elanor from a Friend bond the unicorn to that player
 // (the `lothlorien:bonded` group in entities/unicorn.json makes it rideable without a saddle), and only the owner may ride it.
 import { system, world } from "@minecraft/server";
-import { harmonyOf } from "./harmony_game.js";
+import { harmonyOf, showStatus } from "./harmony_game.js";
 import { bandOf } from "./harmony.js";
 import { healAnimal } from "./animal_food.js";
 import { consumeHeld } from "./deferred_use.js";
@@ -46,6 +46,7 @@ function offer(player, unicorn) {
     ready: unicorn.getProperty(OFFER_READY) !== false,
   });
   if (refusal === "tame") return;
+  if (refusal === "restless" || refusal === "untrusted") showStatus(player); // the band is the reason
   if (refusal) return say(player, REFUSALS[refusal]);
   const { trust, bonded } = nextTrust(unicorn.getProperty("lothlorien:trust"));
   consumeHeld(player, ELANOR_ID);

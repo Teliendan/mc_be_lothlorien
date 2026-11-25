@@ -17,7 +17,7 @@ import { EntityInitializationCause, EquipmentSlot, ItemStack, system, world } fr
 import { onEntity } from "./entity_events.js";
 import { familiesOf, judgeNatural, playerById } from "./entity_util.js";
 import { ANGRY_EVENT, BOW_ID, DECK_BLOCKS, WARDEN_ID, isFriendlyFire, isNewFight, keepNaturalSpawn, PLAYER_ID, THANKS_RADIUS, isWardenQuarry, WARDEN_DAMAGE_CAUSES } from "./elven_warden_rules.js";
-import { HATED_TAG, recordElfFight, recordWardenFight } from "./harmony_game.js";
+import { HATED_TAG, recordElfFight, recordWardenFight, showStatus } from "./harmony_game.js";
 import { ELF_ID, FOE_MS, FOE_TAG, HOME_OF_ELF, MOVED_PROPERTY, REHOME_EVENT, homeCell } from "./elf_rules.js";
 import { nativeElfUse } from "./elf_native_use.js";
 import { greet, speak } from "./voice.js";
@@ -26,6 +26,7 @@ import { thanksPool } from "./voice_rules.js";
 const provoked = new Map(); // player id -> Date.now() of the last hit on a warden (Date: readable in restricted mode)
 const TICKS_PER_MS = 20 / 1000;
 const elfHit = new Map(); // player id -> Date.now() of the last hit on an elf
+const hatedShot = new Map(); // Hated player id -> Date.now() of the last warden hit on them (a new fight shows the status)
 const foeSerial = new Map(); // player id -> counter: only the latest elf hit's timer removes the foe tag
 
 
@@ -136,12 +137,13 @@ export function startElvenWardens(depthAt, bandOf) {
       // entity gone
     }
   }, { entityTypes: [WARDEN_ID] });
-  world.afterEvents.playerLeave.subscribe(({ playerId }) => provoked.delete(playerId));
+  world.afterEvents.playerLeave.subscribe(({ playerId }) => { provoked.delete(playerId); hatedShot.delete(playerId); });
   world.beforeEvents.playerInteractWithEntity.subscribe(({ player, target, itemStack }) => {
     try {
       if (target.typeId !== WARDEN_ID || nativeElfUse(target, itemStack) || fighting(player)) return;
       const band = bandOf(player);
-      system.run(() => greet(target, player, band)); // sound needs privilege; the click itself is left alone
+      system.run(() => { greet(target, player, band); showStatus(player); }); // sound needs privilege; the click itself is left alone
+      // the status shown with the greeting: a cheap way to check one's Harmony (owner 2026-11-25)
     } catch {
       // entity gone
     }
@@ -155,6 +157,11 @@ export function startElvenWardens(depthAt, bandOf) {
       const hated = victim.typeId === PLAYER_ID && victim.hasTag(HATED_TAG), foe = victim.typeId === PLAYER_ID && victim.hasTag(FOE_TAG);
       if (isFriendlyFire({ victim: { typeId: victim.typeId, families: familiesOf(victim) }, hated, foe, sinceProvokedMs: at === undefined ? undefined : Date.now() - at })) {
         event.cancel = true;
+      } else if (hated) {
+        // the first warden hit of a fight on a Hated player shows the status: it explains the attack (setActionBar needs privilege)
+        const now = Date.now(), shot = hatedShot.get(victim.id);
+        hatedShot.set(victim.id, now);
+        if (isNewFight(shot === undefined ? undefined : now - shot)) system.run(() => showStatus(victim));
       }
     } catch {
       // entity gone
